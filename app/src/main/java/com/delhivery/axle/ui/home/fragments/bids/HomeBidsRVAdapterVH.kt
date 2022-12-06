@@ -3,11 +3,14 @@ package com.delhivery.axle.ui.home.fragments.bids
 import android.util.Log
 import androidx.databinding.ViewDataBinding
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
+import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
@@ -64,10 +67,15 @@ internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
       -1 -> ""
       else -> item.data.lostBids.toString() + " Bids"
     }
+    binding.contractBids = when (item.data.contractBids) {
+      -1 -> ""
+      else -> item.data.contractBids.toString() + " Bids"
+    }
 
     binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
     binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
     binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
+    binding.viewContractBids.clickToAction(HomeBidsHeaderAction_ContractBids, item, _interface)
   }
 }
 
@@ -118,6 +126,49 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
       binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
       binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
+    }
+
+    val res = item.data.resOffer
+    if(item.data.resOffer?.first?.first==null){
+      _interface.getTotalOffers(item.data)
+    }
+  }
+}
+
+/**
+ * Contracts Bid request item view holder
+ */
+class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
+  BaseHomeBidsRVAdapterViewHolder<ViewContractsBidItemBinding, HomeContractsBidsRequestItem>(binding) {
+  override fun bind(
+    item: HomeContractsBidsRequestItem,
+    _interface: HomeBidsRVAdapterInterface
+  ) {
+    binding.request = item.data
+    if(item.data.bidStatus().statusKey.toLowerCase().equals("open")){
+      binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.bid_under_review))
+      binding.tvBidStatus.text = context.resources.getString(R.string.label_under_review)
+      binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_under_review_icon, 0, 0, 0)
+      binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_under_review)
+      binding.tvBidStatus.compoundDrawablePadding =8
+    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
+        binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.bid_placed_green))
+        binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_won)
+      binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_won)
+      binding.tvBidStatus.compoundDrawablePadding =8
+      binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up_green, 0, 0, 0)
+    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
+      binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_lost)
+      binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
+      binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.destructive_red))
+      binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_lost_red)
+      binding.tvBidStatus.compoundDrawablePadding =8
+    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
+      binding.tvBidStatus.text = context.resources.getString(R.string.cancelled)
+      binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_cancel_bid, 0, 0, 0)
+      binding.tvBidStatus.setTextColor(ContextCompat.getColor(context,R.color.heading_black))
+      binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_round_corner_light_grey)
+      binding.tvBidStatus.compoundDrawablePadding =8
     }
 
     val res = item.data.resOffer

@@ -37,6 +37,17 @@ data class BidDetailsUserBidState_EditBid(
   val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
 
+
+/**
+ * Contract Bid Accepted
+ */
+data class BidDetailsUserBidState_ContractResult(
+  val bidsCount: Int,
+  val bids: List<TransactionBid>,
+  val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+  val isPMTIndent: Boolean
+) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
+
 /**
  * Bids loading UI
  */
@@ -79,3 +90,10 @@ data class BidDetailsUserBidState_BulkLoad_Edit(
     val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
     val isPMTIndent: Boolean
 ): BidDetailsUserBidState(R.layout.view_bid_details_bulk_load_edit)
+
+/**
+ * Cancelled bid state
+ */
+data class BidDetailsContractCancelled(val bidsCount: Int = 0) : BidDetailsUserBidState(
+  R.layout.view_bid_details_place_bid_first
+)

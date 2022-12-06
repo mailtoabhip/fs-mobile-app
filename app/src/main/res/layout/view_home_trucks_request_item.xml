@@ -117,12 +117,13 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/sep1"
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
                     android:layout_below="@+id/lay1"
                     android:layout_marginTop="@dimen/size_8dp"
-                    android:id="@+id/sep1"
-                    android:src="@drawable/seperator_line" />
+                    android:src="@drawable/seperator_line"
+                    />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -206,11 +207,12 @@
                     android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/div1"
                         android:layout_width="match_parent"
                         android:layout_height="5dp"
-                        android:id="@+id/div1"
                         android:layout_marginTop="@dimen/size_8dp"
-                        android:src="@drawable/seperator_line" />
+                        android:src="@drawable/seperator_line"
+                        />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"

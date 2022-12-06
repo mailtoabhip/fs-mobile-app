@@ -41,6 +41,7 @@
   <color name="background_grey">#D3D3D3</color>
   <color name="view_selected">#500fb687</color>
   <color name="orange">#FF5722</color>
+  <color name="background_dark_grey">#525B7A</color>
   <!--  <color name="light_red">#F19690</color>-->
   <color name="price_red">#bf4242</color>
   <color name="trip_red">#d36a1b</color>
@@ -77,4 +78,16 @@
   <color name="reward_status_active">#5B80F7</color>
   <color name="reward_status_confirmed">#059669</color>
   <color name="reward_status_lost">#DC2626</color>
+
+  <color name="contracts_bid_amount">#1C1C1C</color>
+  <color name="contracts_bid_hint">#1C1C1C60</color>
+  <color name="contracts_result_success">#047857</color>
+  <color name="info_title">#111111</color>
+
+  <color name="bid_error">#DB2777</color>
+  <color name="bid_hint">#A3AAC2</color>
+  <color name="bid_under_review">#7C3AED</color>
+  <color name="bid_under_review_bg">#F5F3FF</color>
+
+
 </resources>

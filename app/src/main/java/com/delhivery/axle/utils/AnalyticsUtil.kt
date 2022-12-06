@@ -325,6 +325,13 @@ const val EVENT_LOGIN = "login"
 const val EVENT_HOME_ORDER_CARD_CLICK = "home_order_card_click"
 const val EVENT_HOME_LOADS_TAB_CLICK = "home_loads_tab_click"
 const val EVENT_HOME_MY_TRUCKS_TAB_CLICK = "home_my_trucks_tab_click"
+const val EVENT_HOME_CONTRACT_TAB_CLICK = "view_contract_tab"
+const val EVENT_HOME_CONTRACT_CARD_CLICK = "view_contract"
+const val EVENT_SUBMIT_CONTRACT_BID = "submit_contract_bid"
+const val EVENT_REVISE_CONTRACT_BID = "revise_contract_bid"
+const val EVENT_VIEW_CONTRACT_STATUS = "view_contract_status"
+
+
 const val EVENT_HOME_SEARCH_INITIATE = "home_search_initiate"
 const val EVENT_NAVIGATION_MY_BIDS = "navigation_my_bids"
 const val EVENT_NAVIGATION_MY_TRIPS = "navigation_my_trips"
@@ -383,6 +390,11 @@ const val PROPERTY_INVENTORY_UUID = "inventory_uuid"
 const val PROPERTY_VENDOR_ID = "vendor_id"
 const val PROPERTY_FIELD_EDITED = "field_edited"
 const val PROPERTY_PREVIOUS_SOURCE = "previous_source"
+const val PROPERTY_CONTRACT_TYPE = "contract_type"
+const val PROPERTY_BID_AMOUNT_DIFF = "bid_amount_diff"
+
+
+
 
 const val VALUE_BANNER = "banner"
 const val VALUE_MY_TRUCKS = "my_trucks"
@@ -395,6 +407,8 @@ const val VALUE_APP_FLOW = "app_flow"
 const val VALUE_PUSH_NOTIFICATION = "push_notification"
 const val VALUE_VENDOR_SUBSOURCE = "new_order_vendor_match"
 const val VALUE_INVENTORY_SUBSOURCE = "new_order_inventory_match"
+
+
 
 
 

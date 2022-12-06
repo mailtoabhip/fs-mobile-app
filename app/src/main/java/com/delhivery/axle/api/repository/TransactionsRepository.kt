@@ -40,6 +40,10 @@ class TransactionsRepository @Inject constructor(
 //                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
           ).convertResponse()
 
+  fun fetchContractsTransactions(offset: Int, demand_type: String) =
+    transactionService.contractsTransactions(
+      userRepository.userId(), offset, UserTripsLoadLimit,demand_type
+    ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions
    */

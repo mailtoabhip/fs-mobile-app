@@ -18,6 +18,8 @@ import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.bids.BidType.ContractBid
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
@@ -69,6 +71,14 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     /* get bid type from intent */
     viewModel.bidType =
       BidType.byTypeId(intent.getIntExtra(IntentExtraBidTypeKey, BidType.Unknown.typeId))
+
+    if(viewModel.bidType==ContractBid){
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_VIEW_CONTRACT_STATUS,mutableListOf(
+          PROPERTY_USER_ID, PROPERTY_PHONE_NO
+        ),
+        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -160,19 +170,30 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
-        val dmtStatus = if(_item.isDMTIndent())
-          "dmt"
-        else ""
 
-        val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
-          _item.transactionBid!!.childTransactionId else _item.key()
-        if(id!=null) {
-          userPrefs.setPreviousScreen( this.javaClass.name)
-          startActivity(bidDetailsIntent(id, this, dmtStatus, true, active))
-        }
-        else{
-          Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
+        if(_item.requestType=="contract"){
+          if(_item.transactionId!=null) {
+            userPrefs.setPreviousScreen( this.javaClass.name)
+            startActivity(contractDetailsIntent(_item.transactionId, this))
+          }
+          else{
+            Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
+          }
+        }else{
+          val dmtStatus = if(_item.isDMTIndent())
+            "dmt"
+          else ""
+
+          val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
+          val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
+            _item.transactionBid!!.childTransactionId else _item.key()
+          if(id!=null) {
+            userPrefs.setPreviousScreen( this.javaClass.name)
+            startActivity(bidDetailsIntent(id, this, dmtStatus, true, active))
+          }
+          else{
+            Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
+          }
         }
       }
       HomeBidsRequestAction_ViewOtherDetails -> {

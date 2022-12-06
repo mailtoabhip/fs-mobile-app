@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.widget.ImageView
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -23,19 +24,26 @@ import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_home_loads_truck.*
 import java.util.Calendar
 import java.util.Date
-import kotlinx.android.synthetic.main.view_home_summary_item.loads_count
 import javax.inject.Inject
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
+import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_TAB_CLICK
+import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
 
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
-    TitleProvider{
+    TitleProvider, UpdateTabCountAndBadgeInterface{
 
     var _title: String = "Home"
     var vehicleNo = ""
     var fromNotification = false
     var fromDeepLink = false
+    var fromNotificationContract = false
+    var fromContractDeepLink = false
     override val title: CharSequence
         get() = _title
     @Inject lateinit var userPrefs: UserPrefs
@@ -86,9 +94,15 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
+        val tab1 =   binding.tabLayout.getTabAt(0)
+        val tab2 =   binding.tabLayout.getTabAt(1)
+        val tab3 =   binding.tabLayout.getTabAt(2)
 
-        binding.tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_loads_home)
-        binding.tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_my_truck)
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")?.setIcon(R.drawable.ic_load_home_icon)
+
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("My Trucks")?.setIcon(R.drawable.ic_home_truck_icon)
+
+        tab3?.setCustomView(R.layout.badge_tab)?.setText("Contracts")?.setIcon(R.drawable.ic_contract_icon)
 
         if(activity!!.fromDeepLink){
             binding.tabLayout.getTabAt(1)?.select()
@@ -97,6 +111,11 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                vehicleNo = activity.vehicleNum
             fromDeepLink=true
         }
+        if(activity!!.fromDeepLinkContract){
+            binding.tabLayout.getTabAt(2)?.select()
+            activity.fromDeepLinkContract = false
+            fromContractDeepLink=true
+        }
 
         if(activity.fromNotification){
             binding.tabLayout.getTabAt(1)?.select()
@@ -104,6 +123,12 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             if(activity.vehicleNum.isNotEmpty())
                 vehicleNo = activity.vehicleNum
             fromNotification=true
+        }
+
+        if(activity!!.fromNotificationContract){
+            binding.tabLayout.getTabAt(2)?.select()
+            activity.fromNotificationContract = false
+            fromNotificationContract=true
         }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -120,6 +145,13 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
                         PROPERTY_INVENTORY_COUNT),
                         mutableListOf(userPrefs.inventoryCount))
+                }else if(tab?.position==2){
+                    userPrefs.currentNavigationTab = HomeContractsFragment::class.java.name
+                    userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+                    analyticsUtil.moEngageTrackEvent(EVENT_HOME_CONTRACT_TAB_CLICK,mutableListOf(PROPERTY_USER_ID,
+                        PROPERTY_PHONE_NO,
+                        PROPERTY_CONTRACT_TYPE),
+                        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if(userPrefs.demandType.contains("Internal") )"LH_FTL" else "FRC"))
                 }
             }
 
@@ -134,6 +166,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     }
 
 
+
     fun fragmentAction(action: BaseHomeFragmentAction) {
         when (action.type) {
             /* navigate to fragment action */
@@ -144,7 +177,25 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         }
     }
 
+    override fun dataToUpdate(type: String,showBadge: Boolean, count: Int) {
+        try {
+            if (showBadge && type == "contracts") {
+                if (binding.tabLayout.getTabAt(2)?.customView != null) {
+                    binding.tabLayout.getTabAt(2)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
+                        "($count)"
+                    binding.tabLayout.getTabAt(2)?.customView?.findViewById<ImageView>(R.id.badge)?.visibility =
+                        View.VISIBLE
+                }
+            }
+        }catch (e:Exception){}
+    }
+
 }
+interface UpdateTabCountAndBadgeInterface{
+
+    fun dataToUpdate(type:String,showBadge:Boolean, count:Int)
+}
+
 
 
 

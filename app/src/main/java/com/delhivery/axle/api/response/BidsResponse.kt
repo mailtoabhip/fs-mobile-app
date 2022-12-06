@@ -17,7 +17,9 @@ data class CreateTransactionBidResponse(
 data class BidSummaryResponse(
   @SerializedName("confirmed_bids") val confirmedBids: Int,
   @SerializedName("my_bids") val myBids: Int,
-  @SerializedName("lost_bids") val lostBids: Int
+  @SerializedName("lost_bids") val lostBids: Int,
+  @SerializedName("contract_bids") val contractBids: Int
+
 )
 
 data class LowestBidResponse(

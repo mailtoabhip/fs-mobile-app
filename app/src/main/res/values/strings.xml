@@ -16,6 +16,7 @@
   <string name="title_dialog_delete_member">Delete Member</string>
   <string name="title_account_setup">Account Setup</string>
   <string name="title_enter_route_details">Enter route details</string>
+  <string name="title_contracts_details">Contract Details</string>
 
   <!--Messages (msg_)-->
   <string name="msg_hello_world">Message Hello World</string>
@@ -177,6 +178,10 @@
   <string name="action_retry_verification">Retry Verification</string>
   <string name="action_got">Got it</string>
   <string name="action_learn">Learn More</string>
+  <string name="action_express">Express</string>
+  <string name="action_non_express">Non Express</string>
+  <string name="action_ok">Ok</string>
+
 
   <!--Label (label_)-->
   <string name="label_hello_world">Label Hello World</string>
@@ -191,6 +196,7 @@
   <string name="label_active_bids">Active Bids</string>
   <string name="label_confirmed_bids">Confirmed Bids</string>
   <string name="label_lost_bids">Lost Bids</string>
+  <string name="label_contract_bids">Contract Bids</string>
   <string name="label_my_bids">My Bids</string>
   <string name="label_nav_load">Load</string>
   <string name="label_nav_date">Date</string>
@@ -350,6 +356,7 @@
   <string name="label_with_sign_value">₹ %1$d</string>
   <string name="label_home">Home</string>
   <string name="nav_label_trucks">My Trucks</string>
+  <string name="nav_label_contracts">Contracts</string>
   <string name="label_unloading_locations">Drop Location</string>
   <string name="label_current_locations">Current location</string>
   <string name="label_more_options">More Options</string>
@@ -376,7 +383,10 @@
   <string name="label_confirm_details">Confirm truck details</string>
   <string name="label_no_loads_found">Can\'t find relevant loads?</string>
   <string name="label_active">Active</string>
+  <string name="label_under_review">Under Review</string>
   <string name="label_lost">Bid Lost</string>
+  <string name="label_contract_lost">You Lost</string>
+  <string name="label_contract_won">You Won</string>
   <string name="label_cancel">Bid Cancelled</string>
   <string name="label_pending">Bid Won\nConfirmation Pending</string>
   <string name="label_confirm">Order Confirmed</string>
@@ -635,6 +645,81 @@
   <string name="rejected_due">Rejected due to </string>
   <string name="price_banner_text">Earn ₹500 on this lane offer</string>
   <string name="share_rate">Share Rate</string>
+  <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
+  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Non-Express load</font>, means consignor to consignee movement]]></string>
+  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Express Load</font> , requires hub to hub time critical movement ]]></string>
+  <string name="collecting_bids">Collecting Bids</string>
+  <string name="live_bidding_at">Live Bidding at</string>
+  <string name="vehicle_requirement">Vehicle Requirement</string>
+  <string name="tentative_total_vehicles">Tentative Total vehicles</string>
+  <string name="tentative_total_vehicles_count">Tentative Total vehicles,</string>
+  <string name="daily_departure_approximately">Daily Departure approximately</string>
+  <string name="one_way">1 Way</string>
+  <string name="trip_details">Trip Details</string>
+  <string name="trip_type">Trip Type</string>
+  <string name="connection_type">Connection Type</string>
+  <string name="continuous">Continuous</string>
+  <string name="bidding_will_close_in">Bidding will close in </string>
+  <string name="custom_date">10 nov</string>
+  <string name="you_have_not_bid_yet">You have not bid yet</string>
+  <string name="your_pmt_bid">Your PMT bid</string>
+  <string name="your_bid_ftl_rate">Your bid (FTL rate)</string>
+  <string name="higher_tha_other_by_500">Higher tha other by 500</string>
+  <string name="_2_bids_received">2 Bids received</string>
+  <string name="higher_than_other_by_500">Higher than other by 500</string>
+  <string name="your_trip_commitment">Your Trip Commitment</string>
+  <string name="place_your_bid">Place Your Bid</string>
+  <string name="bid_placed_sucessfully">Bid placed successfully</string>
+  <string name="your_bid">Your Bid</string>
+  <string name="invalid_amount_out_of_range">Invalid amount, out of range.</string>
+  <string name="exceeds_tentative_trip_count">Exceeds tentative trip count</string>
+  <string name="bid_amount">Bid Amount</string>
+  <string name="important_information">Important Information</string>
+  <string name="travel_time_between_two_stops_should_not_exceed_the_time_stated_in_schedule">Travel Time, between two stops should not exceed the time stated in schedule.</string>
+  <string name="appropriate_penalties_laid_out_in_rules_will_be_levied_in_case_of_failure_to_meet_stated_drive_time">Appropriate penalties(laid out in ‘Rules’) will be levied in case of failure to meet stated Drive Time</string>
+  <string name="information">Information</string>
+  <string name="under_review">Under Review</string>
+  <string name="you_did_not_bid_for_this_contract">You did not bid for this contract</string>
+  <string name="results_will_be_announced_shortly">Results will be announced shortly</string>
+  <string name="your_bid_amount">Your Bid Amount</string>
+  <string name="trip_commitment">Trip Commitment</string>
+  <string name="departure">Departure</string>
+  <string name="arrival">Arrival</string>
+  <string name="route_details">Route Details</string>
+  <string name="route_schedule">Route Schedule</string>
+  <string name="only_bid_if_you_match_vehicle_type_amp_total_vehicles"><![CDATA[Only bid if you match vehicle type & total vehicles]]></string>
+  <string name="ensure_vehicle_reaches_as_per_given_schedule">Ensure vehicle reaches as per given schedule</string>
+  <string name="schedule_might_change_amp_you_will_be_notified"><![CDATA[Schedule might change & you will be notified]]></string>
+  <string name="not_meeting_travel_time_will_result_in_delay_penalty">Not meeting travel time will result in delay penalty</string>
+  <string name="for_continuous_lanes_ensure_empty_vehicle_is_always_available_for_docking_loading">For continuous lanes, ensure empty vehicle is always available for docking/loading</string>
+  <string name="note_that_the_number_of_trips_are_tentative">Note that the number of trips are tentative</string>
+  <string name="ensure_adherence_to_no_of_trip_commitments">Ensure adherence to no. of trip commitments</string>
+  <string name="non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"><![CDATA[Non-adherence to contract will impact your performance score & may result in contract cancellation]]></string>
+  <string name="bidding_cancelled">Bidding has been Cancelled</string>
+  <string name="cancelled">Cancelled</string>
+  <string name="revise_your_bid">Revise Your Bid</string>
+  <string name="bid_received">Bids Received</string>
+  <string name="higher_than">Higher than other by"</string>
+  <string name="current_lowest">Current Lowest Bid</string>
+  <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
+  <string name="your_ftl_rate">Your Bid (FTL Rate)</string>
+  <string name="more_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by more than 5%</string>
+  <string name="less_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by approx. 5%</string>
+  <string name="not_meeting_expectation">Thank you for participating! Your service levels do not meet the expectation.</string>
+  <string name="won_contracts">Congratulations you have won the contract!</string>
+  <string name="awaiting_results">Awaiting Result</string>
+  <string name="bidding_closed">Bidding Closed</string>
+  <string name="result_declared">Result Declared</string>
+  <string name="live_bidding">Live Bidding</string>
+  <string name="live_11_12">Live bidding at 11 AM to 12 PM</string>
+  <string name="live_4_5">Live bidding at 4 PM to 5 PM</string>
+  <string name="bid_revise_successfully">Bid Revised Successfully</string>
+  <string name="view_details">View Details and Place Bid</string>
+  <string name="you_have_not_bid">You have not bid yet</string>
+  <string name="you_did_not_bid">You did not bid</string>
+  <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
+  <string name="rules">Rules</string>
+
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>

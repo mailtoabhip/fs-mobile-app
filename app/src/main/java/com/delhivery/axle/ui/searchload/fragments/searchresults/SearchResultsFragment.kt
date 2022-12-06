@@ -83,6 +83,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       addOnScrollListener(_scrollListener)
     }
 
+    viewModel.reviseBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if (it.first) {
+        val data = _adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
+        reviseInitiated=true
+        BidDetailsCreateEditDialog(
+          context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "search_screen"
+        ).show()
+      }
+    })
+
     viewModel.bidsActionLiveData.observe(this, Observer {
       uiUtils.toggleKeyboard()
           .apply {
@@ -215,6 +225,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           )
           reviseInitiated=false
         }
+
+        BidConfirmReviseDialog(
+          context!!, it.second, viewModel, it.first
+        ).show()
       }
     })
     viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {

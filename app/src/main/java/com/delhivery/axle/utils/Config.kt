@@ -8,7 +8,7 @@ package com.delhivery.axle.utils
 object Config {
   const val AppDatabaseName = "db_name"   //<---todo database name
   const val BaseUrl = "http://demo5995716.mockable.io"
-  const val AxleSupportEmail = "axle-support@delhivery.com"
+  const val AxleSupportEmail = "vendorhelpdesk@delhivery.com"
   const val AxleOnboardingEmail = "axle-onboarding@delhivery.com"
   const val AxleCallSupport = "01246719699"
 }

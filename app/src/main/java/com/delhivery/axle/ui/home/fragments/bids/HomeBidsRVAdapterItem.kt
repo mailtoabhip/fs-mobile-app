@@ -7,6 +7,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchItemData
 import com.delhivery.axle.data.home.bids.HomeBidsTimeOutItemData
 import com.delhivery.axle.data.home.bids.HomeBidsWarningItemData
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
@@ -23,7 +24,8 @@ enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Request(2),
   Warning(3),
   Progress(4),
-  Timeout(5);
+  Timeout(5),
+  Contracts(6);
 
   companion object {
     /**
@@ -80,3 +82,9 @@ class HomeBidsTimeoutItem(data: HomeBidsTimeOutItemData) :
  */
 class HomeBidsProgressItem(data: HomeBidsProgressItemData = HomeBidsProgressItemData()) :
     BaseHomeBidsRVAdapterItem<HomeBidsProgressItemData>(Progress, data)
+
+/**
+ * Contracts Bid request item
+ */
+class HomeContractsBidsRequestItem(data: HomeBidsRequestItemData) :
+  BaseHomeBidsRVAdapterItem<HomeBidsRequestItemData>(Contracts, data)

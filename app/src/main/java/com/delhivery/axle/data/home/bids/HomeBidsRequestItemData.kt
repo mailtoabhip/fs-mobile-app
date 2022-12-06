@@ -1,13 +1,13 @@
 package com.delhivery.axle.data.home.bids
 
-import android.R
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
 import com.delhivery.axle.data.bids.TransactionBid
@@ -19,6 +19,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -31,12 +32,12 @@ import java.util.*
  * Transaction details
  */
 data class HomeBidsRequestItemData(
-  @SerializedName("material_type") val materialType: String,
+  @SerializedName("material_type") val materialType: String?,
   @SerializedName("pickup_location") val pickupLocation: String,
   @SerializedName("destination") val destination: String,
-  @SerializedName("origin_state") val originState: String,
-  @SerializedName("required_on") val _requiredOn: String,
-  @SerializedName("target_price") val targetPrice: Double,
+  @SerializedName("origin_state") val originState: String="",
+  @SerializedName("required_on") val _requiredOn: String?,
+  @SerializedName("target_price") val targetPrice: Double?=0.0,
   @SerializedName("uuid") val uuid: String?,
   @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
@@ -51,7 +52,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2") val stop2: String,
   @SerializedName("intermediary_pickup_stop1_city") val pickup1City: String,
   @SerializedName("intermediary_pickup_stop2_city") val pickup2City: String,
-  @SerializedName("destination_state") val destinationState: String,
+  @SerializedName("destination_state") val destinationState: String="",
   @SerializedName("truck_display_name") val truckDisplayName: Any?,
   @SerializedName("bidding_type") val biddingType: String? = "FTL",
   @SerializedName("load_price_percent") var loadPricePercent: Int,
@@ -100,6 +101,17 @@ data class HomeBidsRequestItemData(
   @SerializedName("destination_city_code") var destinationCityCode: String? =null,
   @SerializedName("additional_remarks") var additionalRemarks: String? = null,
   @SerializedName("order_creation_remarks") var orderCreationRemarks: String? =null,
+  @SerializedName("bidding_end_time") var contractBiddingEndTime: String? =null,
+  @SerializedName("halt_centers") var haltCenters:List<HaltCenters>? =  null,
+  @SerializedName("continuous_connection") var continuousConnection:Boolean? =  false,
+  @SerializedName("contract_type") var contractType:String? =  null,
+  @SerializedName("tentative_trip_count") var tentativeTripCount:Int? =  null,
+  @SerializedName("bid_collection_slot") var bidCollectionSlot:String? =  null,
+  @SerializedName("contract_validity") var contractValidity:String? =  null,
+  @SerializedName("route_type") var routeType:String? =  null,
+  @SerializedName("vehicle_count_cc_lane") var vehicleCountCCLane:Int? =  null,
+  @SerializedName("vehicle_count_per_route") var vehicleCountPerRoute:Int? =  null,
+
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -110,8 +122,8 @@ data class HomeBidsRequestItemData(
 
   fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
 
-  fun target() = if (targetPrice > 0 && loadPricePercent > 0) {
-    targetPrice * loadPricePercent / 100
+  fun target() = if (targetPrice?:0.0 > 0 && loadPricePercent > 0) {
+    targetPrice?:0.0 * loadPricePercent / 100
   } else {
     0.0
   }
@@ -146,7 +158,6 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
-
 
   fun bidInfoVisibility() = if (isDMTIndent()) {
     View.GONE
@@ -283,6 +294,22 @@ data class HomeBidsRequestItemData(
     return stopBuilder.toString()
   }
 
+  fun tripContractRoute(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(originCityName())
+      .append(" to ")
+    if (!TextUtils.isEmpty(stop1City)) {
+      stopBuilder.append(StringUtils.capitalize(stop1City))
+        .append(" to ")
+    }
+    if (!TextUtils.isEmpty(stop2City)) {
+      stopBuilder.append(StringUtils.capitalize(stop2City))
+        .append(" to ")
+    }
+    stopBuilder.append(destinationCityName())
+    return stopBuilder.toString()
+  }
+
   /**
    * @return intermediary stops
    */
@@ -336,9 +363,22 @@ data class HomeBidsRequestItemData(
   } else {
     ""
   }
+
+  /**
+   * @return formatted bid amount
+   */
+  fun bidContractAmount() = if (transactionBid != null) {
+    when (transactionBid!!.status()) {
+      Accepted, Open, Rejected -> "₹ ${StringUtils.formatAmount(transactionBid!!.bidAmount)}"
+      else -> ""
+    }
+  } else {
+    ""
+  }
+
   fun bidAmountValue() = if (transactionBid != null) {
     when (transactionBid!!.status()) {
-      Accepted, Open, Rejected, Cancelled ->transactionBid!!.bidAmount.toString()
+      Accepted, Open, Rejected, Cancelled -> transactionBid!!.bidAmount.toString()
       else -> ""
     }
   } else {
@@ -361,30 +401,43 @@ data class HomeBidsRequestItemData(
   fun truckTypeDrawableRes() = DrawableProviderUtils.truckTypeDrawableRes(truckType)
 
   /**
-   * @return truck_type with placed capacity
+   * @return vehicleCloseOpenDrawable basis[indent tyoe]
    */
-  fun truckTypeWithCapacity() = "$truckType/${StringUtils.formatAmount(placedTruckPassing?: 0.0)}MT"
+  @DrawableRes
+  fun vehicleCloseOpenDrawable() = DrawableProviderUtils.vehicleOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
+
+  /**
+   * @return tripCloseOpenDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun tripCloseOpenDrawable() = DrawableProviderUtils.tripOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
 
   /**
    * @return truck_type with placed capacity
    */
-  fun truckCapacity() = "${StringUtils.formatAmount(placedTruckPassing?: 0.0)}MT"
+  fun truckTypeWithCapacity() =
+    "$truckType/${StringUtils.formatAmount(placedTruckPassing ?: 0.0)}MT"
+
+  /**
+   * @return truck_type with placed capacity
+   */
+  fun truckCapacity() = "${StringUtils.formatAmount(placedTruckPassing ?: 0.0)}MT"
 
   /**
    * Formatted required at
    */
-  fun requiredAt() = DateUtils.daysDiffWithTimeStr(_requiredOn, DatePatterns.OrionDateFormat)
+  fun requiredAt() = _requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat) }
 
   /**
    * Required at background as per designs
    */
   @DrawableRes
   fun requiredAtBg() =
-    DrawableProviderUtils.daysDiffBgDrawableRes(_requiredOn, DatePatterns.OrionDateFormat)
+    _requiredOn?.let { DrawableProviderUtils.daysDiffBgDrawableRes(it, DatePatterns.OrionDateFormat) }
 
   @DrawableRes
   fun requiredAtDraw() =
-    DrawableProviderUtils.daysDiffBgDrawableResDraw(_requiredOn, DatePatterns.OrionDateFormat)
+    _requiredOn?.let { DrawableProviderUtils.daysDiffBgDrawableResDraw(it, DatePatterns.OrionDateFormat) }
 
   /**
    * Required at text color as per status
@@ -396,12 +449,12 @@ data class HomeBidsRequestItemData(
   /**
    * Get truck details/type
    */
-  fun truckDetail() = if (isDMTIndent()){
-      truckType!!.capitalize() ?:""
-    }else{
-    truckSpecification?.let {
-      it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
-    }
+  fun truckDetail() = if (isDMTIndent()) {
+    truckType!!.capitalize() ?: ""
+  } else {
+      truckSpecification?.let {
+        it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+      }
   }
 
   /**
@@ -443,11 +496,13 @@ data class HomeBidsRequestItemData(
    * @return bid text
    */
   fun bidText(): String {
-    return if(!isDMTIndent())
-      "Bid placed for ₹ ${StringUtils.formatAmount(
-              transactionBid?.bidAmount ?: 0.0
-      )}" + if (isPMTIndent()) " /MT" else ""
-    else{
+    return if (!isDMTIndent())
+      "Bid placed for ₹ ${
+        StringUtils.formatAmount(
+          transactionBid?.bidAmount ?: 0.0
+        )
+      }" + if (isPMTIndent()) " /MT" else ""
+    else {
       "Bid Placed"
     }
   }
@@ -455,38 +510,79 @@ data class HomeBidsRequestItemData(
   /**
    * @return lowest bid difference
    */
-  fun lowestbidDifference() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
-    if (isPMTIndent()) {
-      " (₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}" + " /MT"
+  fun lowestbidDifference() =
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+      if (isPMTIndent()) {
+        " (₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}" + " /MT"
+      } else {
+        " (₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}"
+      }
     } else {
-      " (₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}"
+      ""
     }
-  } else {
-    ""
-  }
+
+  fun contractLowestbidDifference() =
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+      if (isPMTIndent()) {
+        " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}" + " /MT"
+      } else {
+        " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}"
+      }
+    } else {
+      ""
+    }
+
+  /**
+   * @return lowest percentage diff
+   */
+  fun userBidLessThanFivePercentage(): Boolean =
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+      if (transactionBid?.bidAmount != null && lowestBid != null) {
+        val perc = ((transactionBid?.bidAmount!! - lowestBid!!) / transactionBid?.bidAmount!!) * 100
+        perc < 5
+      } else {
+        false
+      }
+
+    } else {
+      false
+    }
 
   /**
    * @return lowest bid text
    */
-  fun lowestbidText() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
-    if (isPMTIndent()) {
-      "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)}/MT (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}/MT)"
+  fun lowestbidText() =
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+      if (isPMTIndent()) {
+        "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)}/MT (-${
+          StringUtils.formatAmount(
+            (transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0)
+          )
+        }/MT)"
+      } else {
+        "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)} (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))})"
+      }
     } else {
-      "Lowest Bid: ₹ ${StringUtils.formatAmount(lowestBid ?: 0.0)} (-${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))})"
+      ""
     }
-  } else {
-    ""
-  }
 
   /**
    * @return benchmark price text
    */
-  fun benchmarkPriceText() : String {
+  fun benchmarkPriceText(): String {
     guidancePrice?.let {
       return if (isPMTIndent()) {
-        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)}/MT (-${StringUtils.formatAmount(transactionBid!!.bidAmount - guidancePrice)}/MT)"
+        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)}/MT (-${
+          StringUtils.formatAmount(
+            transactionBid!!.bidAmount - guidancePrice
+          )
+        }/MT)"
       } else {
-        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)} (-${StringUtils.formatAmount(transactionBid!!.bidAmount - guidancePrice)})"
+        "Benchmark Price: ₹ ${StringUtils.formatAmount(guidancePrice)} (-${
+          StringUtils.formatAmount(
+            transactionBid!!.bidAmount - guidancePrice
+          )
+        })"
       }
     }
     return ""
@@ -495,20 +591,22 @@ data class HomeBidsRequestItemData(
   /**
    * @return set image if supplier bid is more than lowest bid
    */
-  fun setLowestBidImage() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
+  fun setLowestBidImage() =
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
 
   /**
    * @return set close bracket text if lowest bid is present
    */
-  fun setCloseText() = if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
+  fun setCloseText() =
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
 
 
   /**
@@ -519,38 +617,35 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if request type(dmt)
    */
-  fun isDMTIndent() = isDmt!= null && isDmt == true
+  fun isDMTIndent() = isDmt != null && isDmt == true
 
   /**
    * @return true if speed is express
    */
   fun isExpress() = speed?.compareTo("EXP") == 0
 
-
-
   /**
    * @return expressText with tat
    */
   fun expressText(showNum: Boolean): String {
     val sb = StringBuilder()
-    if(showNum)
+    if (showNum)
       sb.append("1. ")
     sb.append("Delhivery Load")
     if (tatMinutes != null) {
       val tat = tatMinutes?.toDouble() ?: 0.0
       if (tat > 60) {
         sb.append("(")
-            .append(tat / 60)
-            .append(" hrs)")
+          .append(tat / 60)
+          .append(" hrs)")
       } else {
         sb.append("(")
-            .append(tat)
-            .append(" min)")
+          .append(tat)
+          .append(" min)")
       }
     }
     return sb.toString()
   }
-
 
   /**
    * bid amount text
@@ -564,15 +659,15 @@ data class HomeBidsRequestItemData(
   /**
    * Suggested price w.r.t lowest bid price text
    */
-  fun benchmarkSuggestedAmount() : String {
+  fun benchmarkSuggestedAmount(): String {
     guidancePrice?.let {
       val bid: Double = transactionBid!!.bidAmount
       var diff = 500
       if (isPMTIndent()) {
-        diff=25
+        diff = 25
         //diff = (diff/requestedCapacityMg).roundToInt()
       }
-      val suggestedBidAmount : Double
+      val suggestedBidAmount: Double
       suggestedBidAmount = if ((bid - guidancePrice) > diff) {
         guidancePrice
       } else {
@@ -660,7 +755,7 @@ data class HomeBidsRequestItemData(
   /**
    * Condition-2 check
    */
-  fun layoutTwoVisibility() : Boolean {
+  fun layoutTwoVisibility(): Boolean {
     val bid: Double = transactionBid!!.bidAmount
     var condition1 = true
     var condition2 = true
@@ -670,9 +765,9 @@ data class HomeBidsRequestItemData(
       }
     }
     lowestBid?.let {
-     if (bid > lowestBid!! && numBids > 1) {
-       condition2 = false
-     }
+      if (bid > lowestBid!! && numBids > 1) {
+        condition2 = false
+      }
     }
     return condition1 && condition2
   }
@@ -680,7 +775,7 @@ data class HomeBidsRequestItemData(
   /**
    * Condition-3 check
    */
-  fun layoutThreeVisibility() : Boolean {
+  fun layoutThreeVisibility(): Boolean {
     val bid: Double = transactionBid!!.bidAmount
     var condition1 = false
     var condition2 = true
@@ -703,7 +798,7 @@ data class HomeBidsRequestItemData(
   /**
    * Condition-4 check
    */
-  fun layoutFourVisibility() : Boolean {
+  fun layoutFourVisibility(): Boolean {
     val bid: Double = transactionBid!!.bidAmount
     var condition1 = false
     var condition2 = false
@@ -748,50 +843,354 @@ data class HomeBidsRequestItemData(
   /**
    * layout visibility one
    */
-  fun oneVisibility() = if (layoutOneVisibility() && !(layoutTwoVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
+  fun oneVisibility() =
+    if (layoutOneVisibility() && !(layoutTwoVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
 
   /**
    * layout visibility two
    */
-  fun twoVisibility() = if (layoutTwoVisibility() && !(layoutOneVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
+  fun twoVisibility() =
+    if (layoutTwoVisibility() && !(layoutOneVisibility() || layoutThreeVisibility() || layoutFourVisibility())) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
 
   /**
    * layout visibility three
    */
-  fun threeVisibility() = if (layoutThreeVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutFourVisibility())) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
+  fun threeVisibility() =
+    if (layoutThreeVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutFourVisibility())) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
 
   /**
    * layout visibility four
    */
-  fun fourVisibility() = if (layoutFourVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutThreeVisibility())) {
-    View.VISIBLE
-  } else {
-    View.GONE
-  }
+  fun fourVisibility() =
+    if (layoutFourVisibility() && !(layoutOneVisibility() || layoutTwoVisibility() || layoutThreeVisibility())) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
 
   /**
    * revise bid button visibility
    *
    */
-  fun reviseButtonVisibility() = if(layoutThreeVisibility() || layoutFourVisibility()){
+  fun reviseButtonVisibility() = if (layoutThreeVisibility() || layoutFourVisibility()) {
     View.VISIBLE
-  } else{
+  } else {
     View.GONE
   }
 
-}
+  // Contract end bid time
+  fun bidEndTime(): String {
+    if(transactionStatus=="cancelled"){
+      return ""
+    }else if (contractBiddingEndTime != null) {
+      val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(contractBiddingEndTime)
+      if (date2.compareTo(date1) < 0) {
+        return "Bidding Closed on " + formatDate(
+          DateUtils.parseDate(
+            contractBiddingEndTime!!,
+            DatePatterns.OrionDateFormat
+          ), "dd MMM"
+        )
+      } else {
+        return "Bidding Closes on " + formatDate(
+          DateUtils.parseDate(
+            contractBiddingEndTime!!,
+            DatePatterns.OrionDateFormat
+          ), "dd MMM"
+        )
+      }
+
+    } else {
+      return ""
+    }
+
+  }
+
+  // Contract end bid time
+  fun bidEndDate(): String {
+    if(transactionStatus=="cancelled"){
+      return ""
+    }else if (contractBiddingEndTime != null) {
+      val format = SimpleDateFormat("yyyy-MM-dd")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(contractBiddingEndTime)
+      if (date2.compareTo(date1) ==0) {
+        return if (bidCollectionSlot == "morning") {
+          "Live bidding at 11 AM to 12 PM"
+        } else {
+          "Live bidding at 4 PM to 5 PM"
+        }
+      } else if(date2.compareTo(date1) >0){
+        return "Closes on " + formatDate(
+          DateUtils.parseDate(
+            contractBiddingEndTime!!,
+            DatePatterns.OrionDateFormat
+          ), "dd MMM"
+        )
+      }else{
+          ""
+      }
+
+    } else {
+      return ""
+    }
+    return ""
+  }
+
+  fun bidDifferenceContract(): String {
+    if (bidStatus() == Cancelled) {
+      return ""
+    }
+    if (bidStatus() == Accepted) {
+      return ""
+    }
+    if (bidStatus() == Open) {
+      return ""
+    }
+  if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)&&numBids > 1 && lowestBid != null && lowestBid!! > 0) {
+      return "You lost the bid by "+contractLowestbidDifference()
+    }
+    return ""
+  }
+
+  fun isContractBiddingOpen(): Boolean {
+    if (contractBiddingEndTime != null) {
+      val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(contractBiddingEndTime)
+      return date2.compareTo(date1) >= 0
+    }
+    return false
+  }
+
+  fun isUnderOneHour(): Boolean {
+    if (contractBiddingEndTime != null && isContractBiddingOpen()) {
+      try {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        format.setTimeZone(TimeZone.getTimeZone("IST"));
+        val date1: Date = format.parse(format.format(Date()))
+        val date2: Date = format.parse(contractBiddingEndTime)
+        if (date2.compareTo(date1) > 0) {
+          val mills: Long = date2.getTime() - date1.getTime()
+          val hours = (mills / (1000 * 60 * 60)).toInt()
+          val mins = (mills / (1000 * 60)).toInt() % 60
+          val secs = ((mills / 1000).toInt() % 60).toLong()
+          if (hours < 1 && mins > 0) {
+            return true
+          }
+
+        }
+      } catch (e: Exception) {
+        Log.i("exception", e.toString())
+      }
+    }
+    return false
+  }
+
+
+  fun contractBidStatusText(): String =
+    if(transactionStatus=="cancelled"){
+      "Cancelled"
+    }
+    else if (bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+      "Result Declared"
+    } else {
+      if (isContractBiddingOpen()) {
+        if (isUnderOneHour()) {
+          "Live Bidding"
+        } else {
+          "Collecting Bids"
+        }
+
+      } else {
+        "Bidding Closed"
+      }
+
+    }
+
+  fun contractEventStatusText(): String =
+    if(transactionStatus=="cancelled"){
+      "cancelled"
+    }
+    else if (bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+      "closed_order"
+    } else {
+      if (isContractBiddingOpen()) {
+        if (isUnderOneHour()) {
+          "active_bidding"
+        } else {
+          "active_order"
+        }
+
+      } else {
+        "closed_order"
+      }
+
+    }
+
+  fun contractBidsTimerText(): String =
+    if (bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+      ""
+    } else {
+      if (isContractBiddingOpen()) {
+        if (isUnderOneHour()) {
+          "Closes in"
+        } else {
+          "Live Bidding at"
+        }
+
+      } else {
+        "Awaiting Result"
+      }
+
+    }
+
+  fun contractBidsTimerTextVisibility() =
+     if (transactionStatus=="cancelled"||bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+      View.GONE
+    } else {
+      View.VISIBLE
+    }
+
+  fun contractBidsStatusTextVisibility() =
+    if(transactionStatus=="cancelled"){
+      View.GONE
+    }
+    else {
+      View.VISIBLE
+    }
+
+
+  fun isLHContract() = if (contractType == "LH_FTL") {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isItLHContract() = contractType == "LH_FTL"
+
+  fun isFRCContract() = if (contractType == "LH_FTL") {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun isLHContinousContract() = if (continuousConnection == true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isLHVehicleVisible() = if (contractType == "LH_FTL" && vehicleCountPerRoute != null) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun totalVehicleCount():String=
+    if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
+      (vehicleCountCCLane!! * vehicleCountPerRoute!!).toString() + " Vehicle"
+    }else if(vehicleCountCCLane==null && vehicleCountPerRoute!=null){
+      (1*vehicleCountPerRoute!!).toString() + " Vehicle"
+    }else {
+      ""
+    }
+
+  fun totalVehicleCountOnList():String=
+    if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
+      "(X "+(vehicleCountCCLane!! * vehicleCountPerRoute!!).toString()+" Veh.)"
+    }else if(vehicleCountCCLane==null && vehicleCountPerRoute!=null){
+      "(x "+(1*vehicleCountPerRoute!!).toString()+" Veh.)"
+    }else {
+      ""
+    }
+
+  fun vehicleCCCount():String=
+    if(vehicleCountCCLane!=null){
+      (vehicleCountCCLane).toString()
+    }else if(vehicleCountCCLane==null){
+      "1"
+    }else {
+      "1"
+    }
+
+  fun vehicleRouteCount():String=
+    if(vehicleCountPerRoute!=null){
+     vehicleCountPerRoute!!.toString()
+    }else {
+      ""
+    }
+
+  fun haltStops():String=
+    if(haltCenters!=null){
+      if(haltCenters!!.size>=2){
+        (haltCenters?.size!!-2).toString()+" stops"
+      }else{
+        ""
+      }
+    }else  {
+      ""
+    }
+
+  fun biddingTypeText()=
+    if(biddingType=="FTL"){
+      "FTL"
+    }else{
+      "PMT"
+    }
+
+  fun tentativeTripCount()=
+    if(!isItLHContract()&& tentativeTripCount!=null){
+      tentativeTripCount.toString()+" Trips"
+    }else{
+      ""
+    }
+
+  fun contractValidity()=
+    if(!isItLHContract()&& contractValidity!=null){
+      contractValidity.toString()+" for weeks"
+    }else{
+      ""
+    }
+
+  fun tripLHWays()=
+    if(isItLHContract() && routeType!=null){
+      if (routeType == "one_way") {
+        if (continuousConnection == true) {
+         "1 Way . Continuous"
+        } else {
+         "1 Way"
+        }
+      } else {
+        if (continuousConnection == true) {
+           "2 Way . Continuous"
+        } else {
+           "2 Way"
+        }
+      }
+    }else{
+      ""
+    }
+  }
+
+
 
 @BindingAdapter("layoutMarginStart")
 fun setLayoutMarginBottom(view: View, dimen: Float) {
@@ -808,6 +1207,20 @@ data class TruckSpecification(
   @SerializedName("truck_display_name") val truckDispName: String?,
   @SerializedName("truck_type")val truckType:String?
 )
+
+/**
+ * Truck specification detail
+ */
+data class HaltCenters(
+  @SerializedName("rel_etd") val relEtd: String?,
+  @SerializedName("rel_eta") val relEta: String?,
+  @SerializedName("name")val name:String?,
+  @SerializedName("state")val state:String?,
+  @SerializedName("past_travel_hrs")val pastTravelHrs:String?,
+  @SerializedName("halt_hrs")val haltHrs:String?
+
+)
+
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"

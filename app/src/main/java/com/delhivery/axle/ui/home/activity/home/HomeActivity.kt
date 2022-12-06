@@ -13,6 +13,7 @@ import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
@@ -57,6 +58,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   var fromLink = false
   var fromNotification = false
   var fromDeepLink = false
+  var fromDeepLinkContract = false
+  var fromNotificationContract= false
   var vehicleNum =""
   var count =0
   @Inject lateinit var userPrefs : UserPrefs
@@ -87,6 +90,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromLink = false
     fromNotification = false
     fromDeepLink = false
+    fromDeepLinkContract = false
+    fromNotificationContract= false
     viewModel.getUserDetails()
   }
   override fun onBackPressed() {
@@ -270,6 +275,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
           }
         }
+        CONTRACT_DETAILS -> {
+          if(dplink_tid!="")
+          startActivity(contractDetailsIntent(dplink_tid,this))
+        }
+        CONTRACT_LIST -> {
+          fromDeepLinkContract = true
+          fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+        }
         else -> {
           fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
         }
@@ -375,6 +388,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           VALUE_NOTIFICATION))
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
+      REDIRECT_TO_CONTRACT -> {
+        startActivity(contractDetailsIntent(preferredTransactionId,this))
+      }
+      REDIRECT_TO_CONTRACT_LIST -> {
+        fromNotificationContract = true
+        fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
+      }
       else -> {
         fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
       }
@@ -421,6 +441,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromLink = false
     fromNotification=false
     fromDeepLink=false
+    fromNotificationContract= false
+    fromDeepLinkContract = false
     processDeepLink()
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
@@ -491,8 +513,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }catch (e:Exception){}
       }
     }
-
-
   }
   override fun markNotificationRead() {
     super.markNotificationRead()
@@ -648,6 +668,8 @@ private const val LOWEST_BID_NOTIFICATION = "lower_bid_notification"
 private const val LANE_PREFERENCE_UPDATE_NOTIFICATION = "lane_preference_update"
 private const val REDIRECT_TO_TRIP = "redirect_to_trip"
 private const val REDIRECT_TO_LOAD ="redirect_to_load"
+private const val REDIRECT_TO_CONTRACT ="redirect_to_contract"
+private const val REDIRECT_TO_CONTRACT_LIST ="redirect_to_contract_list"
 private const val ACTIVATE_TRUCK_NOTIFICATION = "vehicle_about_to_reach_destination_notification"
 private const val TRUCK_REACHED_NOTIFICATION = "truck_reached_notification"
 private const val REDIRECT_TO_TRUCKS = "truck_unloaded_notification"
@@ -673,6 +695,9 @@ private const val KYC_VERIFIED = "kycverified"
 private const val SUPPLIER_LOAD_REDIRECT = "rectransdtl"
 private const val SHARE_RATE = "sharerate"
 private const val ADD_TRUCK_REDIRECT = "add_truck"
+private const val CONTRACT_LIST = "contractlst"
+private const val CONTRACT_DETAILS = "contractdtl"
+
 
 
 public const val OFF_SET_LIMIT = 500

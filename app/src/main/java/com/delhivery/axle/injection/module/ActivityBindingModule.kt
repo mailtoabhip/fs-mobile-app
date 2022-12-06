@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -331,6 +332,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsShareRateActivityModule::class])
   internal abstract fun bindShareRateActivity(): ShareRateActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsContractDetailsActivityModule::class])
+  internal abstract fun bindContractDetailsActivity(): ContractDetailsActivity
 }
 
 
@@ -498,6 +503,9 @@ internal abstract class AbsShareRateActivityModule : ActivityModule<ShareRateAct
 
 @Module
 internal abstract class AbsShareRateGetRewardsActivityModule : ActivityModule<ShareRateGetRewardsActivity>()
+
+@Module
+internal abstract class AbsContractDetailsActivityModule : ActivityModule<ContractDetailsActivity>()
 
 /**
  * Activity Binds Module
