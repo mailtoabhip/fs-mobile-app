@@ -259,7 +259,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 
                 override fun onFinish() {
                   // Awaiting results after closing live bidding
-                  binding.tvBidStatus.text = context.getString(R.string.collecting_bids)
+                  binding.tvBidStatus.text = "Bidding Closed"
                   binding.tvBidStatus.setTextColor(
                     ContextCompat.getColor(
                       context,
