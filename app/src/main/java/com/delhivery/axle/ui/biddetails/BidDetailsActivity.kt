@@ -32,7 +32,6 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*

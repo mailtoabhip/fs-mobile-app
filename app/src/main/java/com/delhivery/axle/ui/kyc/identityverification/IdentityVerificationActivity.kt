@@ -38,7 +38,6 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_identity_verification.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

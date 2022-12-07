@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 android {
-  compileSdkVersion 30
+  compileSdkVersion 31
   signingConfigs {
     release {
       keyAlias 'axle_delhivery'
@@ -15,7 +14,7 @@ android {
   defaultConfig {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
-    targetSdkVersion 30
+    targetSdkVersion 31
     versionCode 97
     versionName "1.97"
     multiDexEnabled true
@@ -79,7 +78,7 @@ android {
       def project = "Axle"
       def SEP = "_"
       def flavor = variant.productFlavors[0].name
-      def buildType = variant.variantData.variantConfiguration.buildType.name
+      def buildType = variant.buildType.name
       def version = variant.versionName
       def date = new Date()
       def formattedDate = date.format('ddMMyy_HHmm')

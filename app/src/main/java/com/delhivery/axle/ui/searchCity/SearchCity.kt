@@ -26,7 +26,6 @@ import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripRVAdapter
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>() ,

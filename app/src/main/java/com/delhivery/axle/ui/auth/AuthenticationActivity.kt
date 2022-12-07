@@ -39,15 +39,8 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.moengage.core.internal.MoEConstants
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_authentication.*
-import kotlinx.android.synthetic.main.truck_spinner_item.view.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
-import kotlinx.android.synthetic.main.view_trip_history_item.view.*
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import kotlinx.android.synthetic.main.view_active_trips_progress_item.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.view
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

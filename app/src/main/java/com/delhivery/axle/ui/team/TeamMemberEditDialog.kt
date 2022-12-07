@@ -19,7 +19,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogTeamMemberEditBinding
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.spinner_item.view.*
 import javax.inject.Inject
 
 /**

@@ -30,7 +30,6 @@ import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_profile_details.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

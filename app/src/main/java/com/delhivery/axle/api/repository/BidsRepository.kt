@@ -57,7 +57,7 @@ class BidsRepository @Inject constructor(
         }
         var lowestBid: TransactionBid? = null
         if ((hasPMT && !hasFTL) || (!hasPMT && hasFTL)) {
-          lowestBid = (it.bids.minBy { b -> b.bidAmount })
+          lowestBid = (it.bids.minByOrNull { b -> b.bidAmount })
         }
         userBid = if (userPrefs.isParent) {
           it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }

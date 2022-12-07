@@ -26,8 +26,6 @@ import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.view_bid_create_edit_item.view.*
-import kotlinx.android.synthetic.main.view_transaction_item.amount
 import javax.inject.Inject
 
 class BulkBidDetailsCreateEditDialog @Inject constructor(

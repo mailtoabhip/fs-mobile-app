@@ -37,7 +37,6 @@ import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.TotalStepsKey
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setup
-import kotlinx.android.synthetic.main.activity_verify_pan.*
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCitySelected

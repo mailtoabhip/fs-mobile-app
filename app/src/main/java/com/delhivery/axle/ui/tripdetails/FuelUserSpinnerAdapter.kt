@@ -15,7 +15,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.ledger.LedgerSpinnerOptions
-import kotlinx.android.synthetic.main.spinner_item_for_fuel_card_user.view.*
 
 class FuelUserSpinnerAdapter : BaseAdapter() {
     private val items: MutableList<FuelUserSpinnerOptions> = mutableListOf()
