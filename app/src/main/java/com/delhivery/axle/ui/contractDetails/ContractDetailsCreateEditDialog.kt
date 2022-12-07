@@ -91,8 +91,15 @@ class ContractDetailsCreateEditDialog @Inject constructor(
       request = transaction
       route = transaction.tripContractRoute()
         transactionBid?.bidAmount?.let {
+          isValidBidAmount= true
           binding.title.text = "Revise Your Bid"
           binding.editBidAmount?.setText(DecimalFormat("#########").format(it))
+          if(transaction.isPMTIndent()){
+            pmtRate = it.toInt()
+            amount = (it*transaction.requestedCapacityMg).toInt()
+          }else{
+            amount = it.toInt()
+          }
         }
         transactionBid?.tentativeTripCount?.let {
           isValidTripCommit = true
@@ -199,6 +206,10 @@ class ContractDetailsCreateEditDialog @Inject constructor(
           } catch (e: Exception) {
             amount = 0
           }
+        }else{
+          amount = 0
+          isValidBidAmount = false
+          enableSubmit()
         }
       }
     })
@@ -223,7 +234,12 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             .toString()
             .toInt()
           if(!transaction.isItLHContract()) {
-            if (input > 0 && input > transaction.tentativeTripCount!!) {
+            if(input==0){
+              binding.tripCountError.visibility = View.VISIBLE
+              binding.tripCountError.text ="Invalid trip count"
+              isValidTripCommit = false
+            }else if (input > 0 && input > transaction.tentativeTripCount!!) {
+              binding.tripCountError.text =context.getString(R.string.exceeds_tentative_trip_count)
               binding.tripCountError.visibility = View.VISIBLE
               isValidTripCommit = false
 
@@ -235,6 +251,11 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             enableSubmit()
           }else{
             isValidTripCommit = true
+            enableSubmit()
+          }
+        }else{
+          if(!transaction.isItLHContract()){
+            isValidTripCommit = false
             enableSubmit()
           }
         }
@@ -256,12 +277,30 @@ class ContractDetailsCreateEditDialog @Inject constructor(
      if(transaction.isItLHContract()){
        isValidTripCommit = true
      }
-    if(isValidBidAmount&&isValidTripCommit){
-      binding.buttonSubmit.isEnabled = true
-        binding.buttonSubmit.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_blue_corner)
+    if(isValidBidAmount&&isValidTripCommit) {
+      if (transactionBid != null) {
+        // checking if value has changed
+        if (!transaction.isItLHContract()&&Integer.parseInt(binding.editTripCommitted.text.toString()) == transactionBid.tentativeTripCount && if(transaction.isPMTIndent())amount == (transactionBid!!.bidAmount*transaction.requestedCapacityMg).toInt() else amount==transactionBid.bidAmount.toInt()) {
+          binding.buttonSubmit.background =
+            ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
+          binding.buttonSubmit.isEnabled = false
+        } else if(transaction.isItLHContract() && amount == transactionBid!!.bidAmount.toInt() ) {
+          binding.buttonSubmit.isEnabled = false
+          binding.buttonSubmit.background =
+            ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
+        }else{
+          binding.buttonSubmit.isEnabled = true
+          binding.buttonSubmit.background =
+            ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_blue_corner)
+        }
+      } else {
+        binding.buttonSubmit.isEnabled = true
+        binding.buttonSubmit.background =
+          ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_blue_corner)
+      }
     }else{
-      binding.buttonSubmit.background = ContextCompat.getDrawable(context,R.drawable.bg_all_round_corner_grey_boundary)
       binding.buttonSubmit.isEnabled = false
+      binding.buttonSubmit.background = ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
     }
   }
 
