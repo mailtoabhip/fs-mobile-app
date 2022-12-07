@@ -170,7 +170,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           if(data?.numBids==0){
             numBids = newBidCount
           }else{
-            numBids = data?.numBids-oldBidCount+newBidCount
+            numBids = data?.numBids!!-oldBidCount+newBidCount
           }
           data.numBids = numBids
           data.lowestBid = lowestBid

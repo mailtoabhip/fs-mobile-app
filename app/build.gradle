@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-  compileSdkVersion 31
+  compileSdkVersion 32
   signingConfigs {
     release {
       keyAlias 'axle_delhivery'
@@ -14,7 +14,7 @@ android {
   defaultConfig {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
-    targetSdkVersion 31
+    targetSdkVersion 32
     versionCode 97
     versionName "1.97"
     multiDexEnabled true

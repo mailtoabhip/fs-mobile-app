@@ -1278,7 +1278,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                       mutableListOf(
                         state.lowestAndUserBidPair.second?.transactionId ?: "",
                         state.bidsCount.toString() ?: "",
-                        state?.lowestAndUserBidPair.first?.bidAmount.toString() ?: " ",
+                        state.lowestAndUserBidPair?.first?.bidAmount?.toString() ?: " ",
                         oldAmountbids,
                         bidAmount,
                         source,

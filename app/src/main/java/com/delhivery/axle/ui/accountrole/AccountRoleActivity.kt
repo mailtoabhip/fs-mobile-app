@@ -237,6 +237,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
                         }
                     }
                   }
+                  else ->{}
                 }
             }
         }

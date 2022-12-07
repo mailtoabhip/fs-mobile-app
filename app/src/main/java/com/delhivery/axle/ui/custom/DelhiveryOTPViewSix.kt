@@ -126,6 +126,7 @@ class DelhiveryOTPViewSix(
                             otpSubmitted()
                         }
                     }
+                else ->{}
             }
         }
 

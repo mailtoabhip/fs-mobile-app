@@ -31,16 +31,19 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
         binding.paymentTerms.setOnClickListener {
             when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/paymentterms")) {
                 false -> uiUtils.showSnackbar("Could not open url")
+                else ->{}
             }
         }
         binding.terms.setOnClickListener {
             when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/axle-app-conditions")) {
                 false -> uiUtils.showSnackbar("Could not open url")
+                else ->{}
             }
         }
         binding.privacy.setOnClickListener {
             when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/axle-app-privacy-policy")) {
                 false -> uiUtils.showSnackbar("Could not open url")
+                else ->{}
             }
         }
 

@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".05"
             android:fontFamily="sans-serif"
-            android:text=""
+            android:text="@{ledger.getAmount()}"
             android:textColor="@color/status_confirmed"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintEnd_toEndOf="@id/text_LR_main"

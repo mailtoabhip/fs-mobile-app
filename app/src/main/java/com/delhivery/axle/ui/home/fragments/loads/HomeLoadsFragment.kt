@@ -235,7 +235,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
         data?.bulkTransactionBids = it.second
         if(data!=null &&data?.bulkTransactionBids.isNotEmpty()) {
-          newBidCount = data?.bulkTransactionBids.size
+          newBidCount = data?.bulkTransactionBids!!.size
         for(transactionBid in data!!.bulkTransactionBids){
           if(data?.lowestBid!=null){
            if(data?.lowestBid!!>transactionBid.bidAmount){
@@ -265,7 +265,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           if(data?.numBids==0){
             numBids = newBidCount
           }else{
-            numBids = data?.numBids-oldBidCount+newBidCount
+            numBids = (data?.numBids?:0)-oldBidCount+newBidCount
           }
           data.numBids = numBids
           data.lowestBid = lowestBid

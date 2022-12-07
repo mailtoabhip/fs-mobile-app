@@ -219,6 +219,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
             )
           }
           EditRoute -> finish()
+          else ->{}
         }
       }
       RouteDetail -> {
