@@ -173,6 +173,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
         binding.userBidInfo.text = " You Won"
         binding.userBidInfo.background = null
+        binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
           R.drawable.ic_thumbs_up_green,
           0,
@@ -185,6 +186,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
         binding.userBidInfo.text = " You Lost"
         binding.userBidInfo.background = null
+        binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
           R.drawable.ic_thumbs_down,
           0,
@@ -197,6 +199,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
       //Bidding open
       if (item.data.isContractBiddingOpen()) {
         binding.userBidInfo.visibility= View.VISIBLE
+        // Live bidding
         if (item.data.isUnderOneHour()) {
           binding.clBidStatus.visibility = View.VISIBLE
           binding.tvBidStatus.text = "Live Bidding"
@@ -255,8 +258,8 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                 }
 
                 override fun onFinish() {
-                  // Awaiting results
-                  binding.tvBidStatus.text = context.getString(R.string.collecting_bids)
+                  // Awaiting results after closing live bidding
+                  binding.tvBidStatus.text = "Bidding Closed"
                   binding.tvBidStatus.setTextColor(
                     ContextCompat.getColor(
                       context,
@@ -277,7 +280,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                 }
               }.start()
             } else {
-              //Awaiting Results
+              //Awaiting Results after bidding closed
               binding.tvBidStatus.setTextColor(
                 ContextCompat.getColor(
                   context,
@@ -298,6 +301,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             }
 
         } else {
+          // open bidding but not live bidding
           binding.tvBidStatus.setTextColor(
             ContextCompat.getColor(
               context,
@@ -317,7 +321,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           binding.tvBidTime.text = item.data.bidEndDate()
 
         }
-
+        // setting the user bid amount and status
         if (item.data.transactionBid != null) {
            if(item.data.isContractBiddingOpen()&& item.data.isUnderOneHour()){
              binding.userBidInfo.visibility = View.VISIBLE
@@ -330,6 +334,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 
               }
           if (item.data.lowestBid != null) {
+            // user bid is lowest bid
             if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
@@ -349,6 +354,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
               )
               binding.userBidInfo.text = " Your bid is the lowest"
             } else {
+              // user bid is higher than lowest bid
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -365,6 +371,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             }
           }
         } else {
+          // No user Bid
           binding.userBidStatus.text = context.getString(string.you_have_not_bid)
           binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.dark_blue))
           binding.userBidInfo.background = null

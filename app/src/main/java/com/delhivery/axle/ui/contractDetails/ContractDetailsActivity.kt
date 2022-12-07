@@ -350,14 +350,17 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             val userBid = state.lowestAndUserBidPair.first
             val lowestTBid = state.lowestAndUserBidPair.second
             data.lowestBid = lowestTBid?.bidAmount
+            //for more than 1 bids and within live bidding
             if(state.bidsCount>1 && data.isUnderOneHour()){
               binding.clBidYet.visibility = View.GONE
               binding.clExpressBidStatus.visibility = data.isLHContract()
               binding.clNonExpressBidStatus.visibility = data.isFRCContract()
+              //LH contract within live bidding
               if(data.isItLHContract()){
                 binding.bidReceived.text = state.bidsCount.toString()+" "+ getString(string.bid_received)
                 binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 if (lowestTBid?.bidAmount != null) {
+                  // user bid same as Lowest bid
                   if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
                     binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
                     binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
@@ -371,6 +374,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   }
                 }
               }else{
+                // FRC contract within live bidding
                 binding.tripCommitted.text = userBid?.tentativeTripCount.toString()
                 binding.nonExpressBidReceived.text = state.bidsCount.toString()+ " Bids Received"
                 binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
@@ -380,6 +384,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                         }else{
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
                         }
+                // user bid same as Lowest bid
                 if (lowestTBid?.bidAmount != null) {
                   if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
@@ -395,6 +400,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 }
               }
             }else{
+                  // if only 1 bid -> targetPrice available and is greater than use bid within live bidding
                   if(viewModel.transaction.targetPrice!=null && userBid?.bidAmount!=null&&userBid?.bidAmount?:0.0>viewModel.transaction.targetPrice?:0.0 && data.isUnderOneHour()){
                     binding.clBidYet.visibility = View.GONE
                     binding.clExpressBidStatus.visibility = data.isLHContract()
@@ -420,6 +426,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     }
 
                   }else{
+                    // if only 1 bid -> no target price or bid amount < Lowest bid
                     binding.clExpressBidStatus.visibility = View.GONE
                     binding.clNonExpressBidStatus.visibility =View.GONE
                     binding.clBidYet.visibility = View.VISIBLE

@@ -1141,7 +1141,15 @@ data class HomeBidsRequestItemData(
   fun haltStops():String=
     if(haltCenters!=null){
       if(haltCenters!!.size>=2){
-        (haltCenters?.size!!-2).toString()+" stops"
+        var numStops = 0
+        var i =1
+        while (i< haltCenters!!.size-1) {
+          if(haltCenters!![i].name != haltCenters!![i+1].name){
+           numStops++
+          }
+          i++
+        }
+        (numStops).toString()+" stops"
       }else{
         ""
       }
@@ -1188,7 +1196,19 @@ data class HomeBidsRequestItemData(
     }else{
       ""
     }
+
+  fun tripWays()=
+    if(isItLHContract() && routeType!=null){
+      if (routeType == "one_way") {
+          "1 Way"
+      } else {
+          "2 Way"
+      }
+    }else{
+      ""
+    }
   }
+
 
 
 
