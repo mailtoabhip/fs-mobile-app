@@ -108,7 +108,7 @@ enum class UrlConfig(
   InventoryService(
       "https://orion-inventory-api-v2.delhivery.com",
       "https://zxfddco9gg.execute-api.ap-southeast-1.amazonaws.com/dev/",
-      "https://fz55n4je56.execute-api.us-east-1.amazonaws.com/uat/"
+      "https://orion-inventory-uat-v2.delhivery.com"
 
   ),
   LoadboardService(
