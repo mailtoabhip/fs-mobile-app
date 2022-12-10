@@ -17,7 +17,7 @@ enum class AWSConfig(
   private val uat: String
 ) {
 
-  Target("orion-sts-prod", "orion-sts-dev", "orion-sts-dev"),
+  Target("347095250728", "086341552770", "086341552770"),
   Bucket("orion-service-prod", "orion-service", "orion-uat"),
   ServerRegion("ap-southeast-1", "ap-southeast-1", "us-east-1");
 
