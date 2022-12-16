@@ -194,6 +194,27 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           0
         )
       }
+    }else if(item.data.transactionStatus=="allocated"){
+      binding.userBidInfo.visibility= View.GONE
+      //Result status
+      binding.tvBidStatus.setTextColor(
+        ContextCompat.getColor(
+          context,
+          R.color.bid_placed_green
+        )
+      )
+      binding.statusImage.setImageDrawable(
+        ContextCompat.getDrawable(
+          context,
+          R.drawable.ic_bid_result
+        )
+      )
+      binding.clBidStatus.background = ContextCompat.getDrawable(
+        context,
+        R.drawable.bg_all_rounded_won
+      )
+      binding.tvBidTime.visibility = View.GONE
+      binding.userBidStatus.text = "You did not bid"
     } else {
       binding.tvBidTime.visibility = View.VISIBLE
       //Bidding open
@@ -218,6 +239,8 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             context,
             R.drawable.bg_all_rounded_lost_red
           )
+          synchronized(this) {
+
 
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             format.setTimeZone(TimeZone.getTimeZone("IST"));
@@ -240,16 +263,6 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                     if (hours == 0 && binding.tvBidStatus.text=="Live Bidding") {
                       binding.tvBidTime.visibility = View.VISIBLE
                       binding.tvBidTime.setText("Closes in $diff")
-                    }else{
-                      if(binding.tvBidStatus.text=="Collecting Bids"){
-                        binding.tvBidTime.visibility = View.VISIBLE
-                        binding.tvBidTime.text = item.data.bidEndDate()
-                      }else if(binding.tvBidStatus.text=="Bidding Closed"){
-                        binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
-                      }else{
-                        binding.tvBidTime.visibility = View.GONE
-                      }
-
                     }
 
                   } catch (e: Exception) {
@@ -299,7 +312,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
               )
               binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
             }
-
+          }
         } else {
           // open bidding but not live bidding
           binding.tvBidStatus.setTextColor(
@@ -335,7 +348,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
               }
           if (item.data.lowestBid != null) {
             // user bid is lowest bid
-            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true) {
+            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true && (item.data.targetPrice==null||item.data.transactionBid?.bidAmount?:0.0<=item.data.targetPrice?:0.0)) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -367,7 +380,33 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                 ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_lost_red)
               binding.userBidInfo.text =
                 "Higher than other by" + item.data.contractLowestbidDifference()
-
+              binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                0,
+                0
+              )
+            }
+          }else{
+            if(item.data.targetPrice!=null){
+              binding.userBidStatus.text =
+                "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
+              binding.userBidInfo.setTextColor(
+                ContextCompat.getColor(
+                  context,
+                  R.color.destructive_red
+                )
+              )
+              binding.userBidInfo.background =
+                ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_lost_red)
+              binding.userBidInfo.text =
+                "Higher than other by" + item.data.contractLowestbidDifference()
+              binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+               0,
+                0,
+                0,
+                0
+              )
             }
           }
         } else {
@@ -386,9 +425,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
         }
 
       }else{
-        //Bidding closed, set awaiting for result
-        binding.userBidStatus.text= context.getString(string.you_did_not_bid)
-        binding.userBidInfo.visibility= View.GONE
+        //Awaiting Results after bidding closed
         binding.tvBidStatus.setTextColor(
           ContextCompat.getColor(
             context,
@@ -406,6 +443,31 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           R.drawable.bg_all_rounded_under_review
         )
         binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
+        // setting the user bid amount and status
+        if (item.data.transactionBid != null) {
+          binding.userBidStatus.text =
+            "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
+          binding.userBidInfo.text = "Your Bid"
+          binding.userBidInfo.setTextColor(
+            ContextCompat.getColor(
+              context,
+              R.color.heading_black
+            )
+          )
+          binding.userBidInfo.background = null
+          binding.userBidInfo.visibility = View.VISIBLE
+          binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+            0,
+            0,
+            0,
+            0
+          )
+        } else {
+          // No user Bid
+          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+          binding.userBidInfo.visibility = View.GONE
+
+        }
       }
 
     }
