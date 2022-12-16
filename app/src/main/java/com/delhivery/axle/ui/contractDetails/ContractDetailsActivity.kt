@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_EditBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_LoadingBids
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
+import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -692,7 +693,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
 
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){
-
+       REFRESH_ON_BACK = true
       val dialog = Dialog(this)
       val bindingDialog = DialogContractsBidSuccessBinding.inflate(this.layoutInflater)
       bindingDialog.buttonCancel.setOnClickListener {
