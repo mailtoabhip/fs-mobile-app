@@ -652,7 +652,7 @@
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
   <string name="tentative_total_vehicles">Tentative Total vehicles</string>
-  <string name="tentative_total_vehicles_count">Vehicle Per Departure,</string>
+  <string name="tentative_total_vehicles_count">Vehicle Per Departure ,</string>
   <string name="daily_departure_approximately">Daily Departure approximately</string>
   <string name="one_way">1 Way</string>
   <string name="trip_details">Trip Details</string>
