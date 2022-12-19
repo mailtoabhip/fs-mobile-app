@@ -290,6 +290,31 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                     R.drawable.bg_all_rounded_under_review
                   )
                   binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
+                  // setting the user bid amount and status
+                  if (item.data.transactionBid != null) {
+                    binding.userBidStatus.text =
+                      "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
+                    binding.userBidInfo.text = "Your Bid"
+                    binding.userBidInfo.setTextColor(
+                      ContextCompat.getColor(
+                        context,
+                        R.color.heading_black
+                      )
+                    )
+                    binding.userBidInfo.background = null
+                    binding.userBidInfo.visibility = View.VISIBLE
+                    binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+                      0,
+                      0,
+                      0,
+                      0
+                    )
+                  } else {
+                    // No user Bid
+                    binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+                    binding.userBidInfo.visibility = View.GONE
+
+                  }
                 }
               }.start()
             } else {
