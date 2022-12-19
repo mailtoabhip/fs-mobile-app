@@ -94,6 +94,13 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
                  BidDetailsContractCancelled()
                )
              }
+            transaction.transactionStatus=="allocated"->{
+              transactionBidLiveData.postValue(
+                BidDetailsUserBidState_ContractResult(
+                  _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
+                )
+              )
+            }
             _bRes.third == 0 -> {
               transactionBidLiveData.postValue(
                 BidDetailsUserBidState_PlaceBidFirst()

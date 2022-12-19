@@ -331,6 +331,7 @@
           android:textColor="@color/color_hint"
           android:layout_marginTop="@dimen/size_18dp"
           android:paddingTop="@dimen/size_2dp"
+          android:paddingStart="@dimen/size_2dp"
           android:text="@string/tentative_total_vehicles_count"/>
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/dailyDepApproxValue"
@@ -338,6 +339,7 @@
           android:layout_height="wrap_content"
           app:layout_constraintTop_toBottomOf="@id/operateRoute"
           android:textSize="@dimen/text_14sp"
+          android:paddingStart="@dimen/size_2dp"
           app:layout_constraintStart_toEndOf="@+id/vehiclePerDeparture"
           app:layout_constraintEnd_toStartOf="@id/dailyDepApprox"
           android:visibility="@{transaction.isLHVehicleVisible()}"
@@ -358,6 +360,7 @@
           android:layout_marginTop="@dimen/size_18dp"
           android:paddingTop="@dimen/size_2dp"
           android:layout_marginStart="@dimen/size_2dp"
+          android:paddingStart="@dimen/size_2dp"
           android:text="@string/daily_departure_approximately"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -585,7 +588,8 @@
               app:layout_constraintTop_toBottomOf="@id/bidAmount"
               app:layout_constraintStart_toStartOf="@id/bidAmount"
               android:textSize="@dimen/text_12sp"
-              android:text="@string/your_bid_ftl_rate"/>
+              android:visibility="gone"
+              tools:text="@string/your_bid_ftl_rate"/>
           <androidx.appcompat.widget.AppCompatImageView
               android:id="@+id/moneyIcon"
               android:layout_width="wrap_content"
@@ -607,7 +611,7 @@
               android:paddingBottom="@dimen/size_4dp"
               android:paddingEnd="@dimen/size_10dp"
               android:text="@string/higher_tha_other_by_500"
-              android:textSize="@dimen/text_16sp"
+              android:textSize="@dimen/text_12sp"
               />
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/bidReceived"

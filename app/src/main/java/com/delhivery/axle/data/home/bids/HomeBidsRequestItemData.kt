@@ -78,6 +78,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("entity") val entity:String?= "",
   @SerializedName("bidding_ending_time_for_axle_app") val bidEndingTime:String? =  null,
   @SerializedName("indent_origin") val indentOrigin:String? =  null,
+  @SerializedName("client_name") val clientName:String? =  null,
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null,
   @SerializedName("expected_arrival_time_pickup") val expectedArrivalTimePickup:String? =  null,
@@ -208,6 +209,7 @@ data class HomeBidsRequestItemData(
   fun setUnAllocatedVol() = if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated vol: ${unAllocatedVolume.toInt()} MT" else ""
 
 
+  fun clientName() = StringUtils.capitalize(clientName) ?: ""
 
   /**
    * @return formatted origin city name
@@ -521,16 +523,29 @@ data class HomeBidsRequestItemData(
       ""
     }
 
-  fun contractLowestbidDifference() =
-    if ((transactionBid?.bidAmount ?: 0.0 > lowestBid ?: 0.0) && (numBids > 1) && (lowestBid ?: 0.0 > 0.0)) {
+  fun contractLowestbidDifference():String {
+    var lowestOfBidAndTargetPrice = 0.0
+    if(lowestBid!=null&& lowestBid?:0.0>0.0){
+        if(targetPrice!=null && targetPrice<lowestBid?:0.0){
+          lowestOfBidAndTargetPrice = targetPrice
+        }else{
+          lowestOfBidAndTargetPrice = lowestBid?:0.0
+        }
+    } else {
+      if(targetPrice!=null){
+        lowestOfBidAndTargetPrice = targetPrice
+      }
+    }
+    if ((transactionBid?.bidAmount ?: 0.0 > lowestOfBidAndTargetPrice ?: 0.0) && (numBids > 0)) {
       if (isPMTIndent()) {
-        " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}" + " /MT"
+         return " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestOfBidAndTargetPrice))}" + " /MT"
       } else {
-        " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestBid ?: 0.0))}"
+       return " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestOfBidAndTargetPrice))}"
       }
     } else {
-      ""
+     return ""
     }
+  }
 
   /**
    * @return lowest percentage diff
@@ -1009,7 +1024,7 @@ data class HomeBidsRequestItemData(
     if(transactionStatus=="cancelled"){
       "Cancelled"
     }
-    else if (bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+    else if (bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected || transactionStatus=="allocated") {
       "Result Declared"
     } else {
       if (isContractBiddingOpen()) {
@@ -1063,7 +1078,7 @@ data class HomeBidsRequestItemData(
     }
 
   fun contractBidsTimerTextVisibility() =
-     if (transactionStatus=="cancelled"||bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
+     if (transactionStatus=="cancelled"|| transactionStatus=="allocated"||bidStatus() == Accepted || bidStatus() == Cancelled || bidStatus() == Rejected) {
       View.GONE
     } else {
       View.VISIBLE
@@ -1173,7 +1188,7 @@ data class HomeBidsRequestItemData(
 
   fun contractValidity()=
     if(!isItLHContract()&& contractValidity!=null){
-      contractValidity.toString()+" for weeks"
+     "for "+ contractValidity.toString()+" weeks"
     }else{
       ""
     }

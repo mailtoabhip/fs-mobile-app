@@ -133,9 +133,10 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   override fun onResume() {
     super.onResume()
     viewModel.paginateCount = 0
-    if (viewModel.fromNotification) {
+    if (viewModel.fromNotification || REFRESH_ON_BACK) {
       refreshData()
       viewModel.fromNotification = false
+      REFRESH_ON_BACK = false
     }
   }
 
@@ -319,4 +320,4 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   }
 
 }
-const val STATIC_ITEM_LIST = 3
+ var REFRESH_ON_BACK = false

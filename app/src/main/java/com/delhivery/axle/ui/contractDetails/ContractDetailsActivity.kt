@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_EditBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_LoadingBids
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
+import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -241,8 +242,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.routeDetails.clNonExpTimeInterval1.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_round_corner_light_blue)
               binding.routeDetails.nonExpTimeInterval1.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.dark_blue))
             }
-            binding.routeDetails.nonExpTvHubCity.text = t.originCityName()
-            binding.routeDetails.nonExpTvState.text = t.originState
+            binding.routeDetails.nonExpTvHubCity.text = t.clientName()
+            binding.routeDetails.nonExpTvCity.text =  t.originCityName()
+            binding.routeDetails.nonExpTvState.text =  ", "+t.originState
             binding.routeDetails.nonExpTvHubCity2.text = t.destinationCityName()
             binding.routeDetails.nonExpTvState2.text = t.destinationState
             binding.routeDetails.nonExpTimeInterval1.text  =
@@ -361,7 +363,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 if (lowestTBid?.bidAmount != null) {
                   // user bid same as Lowest bid
-                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
+                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true && (data.targetPrice==null||userBid?.bidAmount<=data.targetPrice?:0.0)) {
                     binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
                     binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
                     binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_low_bid, 0, 0, 0)
@@ -372,6 +374,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
+                }else{
+                      if(data.targetPrice!=null){
+                        binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                        binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                        binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                        binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
+                      }
                 }
               }else{
                 // FRC contract within live bidding
@@ -386,7 +395,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                         }
                 // user bid same as Lowest bid
                 if (lowestTBid?.bidAmount != null) {
-                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
+                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true &&(data.targetPrice==null||userBid?.bidAmount<=data.targetPrice?:0.0)) {
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
                     binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
                     binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_low_bid, 0, 0, 0)
@@ -394,7 +403,14 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   }else{
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
                     binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                    binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
+                  }
+                }else{
+                  if(data.targetPrice!=null){
+                    binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                    binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                    binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
                 }
@@ -416,11 +432,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                       binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                       binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
                       binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                      binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                       binding.bidStatus.text = getString(string.higher_than) +" ₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
                     }else{
                       binding.tripCommitted.text = userBid?.tentativeTripCount.toString()
                       binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                       binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                      binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                       binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
                       binding.nonExpressBidStatus.text = getString(string.higher_than) +" ₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
                     }
@@ -460,6 +478,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           }
           //Result for closed bidding time
           is BidDetailsUserBidState_ContractResult -> {
+
             val data = viewModel.transaction
             data.transactionBid =  state.lowestAndUserBidPair.first
             data.numBids = state.bidsCount
@@ -468,14 +487,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
              data.lowestBid =lowestTBid?.bidAmount
               binding.bottomLay.visibility = View.GONE
             binding.viewMarginResult.visibility = View.VISIBLE
-            if(userBid?.bidAmount==null){
-              binding.contractResult.haveNoBid.visibility = View.VISIBLE
-            }else{
-              binding.contractResult.haveNoBid.visibility = View.GONE
-            }
+
             binding.viewMarginRoute.visibility = View.VISIBLE
             binding.viewMarginRule.visibility = View.VISIBLE
-            binding.contractResult.contractBidResultLayout.visibility = View.VISIBLE
+
             binding.contractResult.bidAmountLayout.visibility = View.VISIBLE
             binding.contractResult.seperator.visibility = data.isFRCContract()
             binding.contractResult.yourTripCommitment.visibility =data.isFRCContract()
@@ -488,6 +503,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.contractResult.yourTripCommitmentValue.text = data.transactionBid?.tentativeTripCount?.toString()
             }
             binding.viewMarginWithoutResult.visibility = View.GONE
+              if(userBid?.bidAmount==null){
+              binding.contractResult.haveNoBid.visibility = View.VISIBLE
+                binding.contractResult.contractBidResultLayout.visibility = View.GONE
+            }else{
+              binding.contractResult.haveNoBid.visibility = View.GONE
+                binding.contractResult.contractBidResultLayout.visibility = View.VISIBLE
+            }
             if(userBid?.status()==Open){
               binding.contractResult.resultDescribe.visibility = View.VISIBLE
               binding.contractResult.yourBidAmountValue.text = "₹"+StringUtils.formatAmount(userBid?.bidAmount!!)
@@ -496,22 +518,28 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.contractResult.resultDescribe.text = getString(string.won_contracts)
               binding.contractResult.yourBidAmountValue.text = "₹"+StringUtils.formatAmount(userBid?.bidAmount!!)
             }else{
-              binding.contractResult.resultDescribe.visibility = View.VISIBLE
-              binding.contractResult.yourBidAmountValue.text = "₹"+StringUtils.formatAmount(userBid?.bidAmount!!)
-              if (lowestTBid?.bidAmount != null) {
-                if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
-                  binding.contractResult.resultDescribe.text=getString(string.not_meeting_expectation)
-                }else{
-                  if(data.userBidLessThanFivePercentage()){
-                    binding.contractResult.resultDescribe.text=getString(string.less_than_5_percentage)
-                  }else{
-                    binding.contractResult.resultDescribe.text=getString(string.more_than_5_percentage)
+              if(userBid?.bidAmount!=null) {
+                binding.contractResult.resultDescribe.visibility = View.VISIBLE
+                binding.contractResult.yourBidAmountValue.text =
+                  "₹" + StringUtils.formatAmount(userBid?.bidAmount!!)
+                if (lowestTBid?.bidAmount != null) {
+                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
+                    binding.contractResult.resultDescribe.text =
+                      getString(string.not_meeting_expectation)
+                  } else {
+                    if (data.userBidLessThanFivePercentage()) {
+                      binding.contractResult.resultDescribe.text =
+                        getString(string.less_than_5_percentage)
+                    } else {
+                      binding.contractResult.resultDescribe.text =
+                        getString(string.more_than_5_percentage)
+
+                    }
 
                   }
-
+                } else {
+                  binding.contractResult.resultDescribe.visibility = View.GONE
                 }
-              }else{
-                binding.contractResult.resultDescribe.visibility = View.GONE
               }
             }
             if(userBid?.status()==Open) {
@@ -665,7 +693,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
 
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){
-
+       REFRESH_ON_BACK = true
       val dialog = Dialog(this)
       val bindingDialog = DialogContractsBidSuccessBinding.inflate(this.layoutInflater)
       bindingDialog.buttonCancel.setOnClickListener {
