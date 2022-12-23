@@ -341,7 +341,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
   private fun dispatchTakePictureIntent() {
     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    if (takePictureIntent.resolveActivity(packageManager) != null) {
       try {
         mPhotoFile = createImageFile()
         val photoURI = FileProvider.getUriForFile(
@@ -352,7 +351,6 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
       } catch (e: java.lang.Exception) {
         e.printStackTrace()
       }
-    }
   }
 
   private fun dispatchGalleryIntent() {

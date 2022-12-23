@@ -45,7 +45,7 @@
             >
         </service>
 
-        <provider android:name="androidx.work.impl.WorkManagerInitializer" android:authorities="${applicationId}.workmanager-init" android:exported="false" tools:node="remove"/>
+        <provider android:name="androidx.startup.InitializationProvider" android:authorities="${applicationId}.workmanager-init" android:exported="false" tools:node="remove" tools:replace="android:authorities"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
