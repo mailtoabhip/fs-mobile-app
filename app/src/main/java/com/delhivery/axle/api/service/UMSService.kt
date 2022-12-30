@@ -44,7 +44,7 @@ interface UMSService {
   @POST("/v2/login/")
   fun requestPasswordVerification(
    @Body passwordRequest: PasswordLoginRequest
-  ): Single<LoginResponse>
+  ): Single<LoginPasswordResponse>
 
 
 }
