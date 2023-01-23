@@ -36,7 +36,6 @@ private val userPrefs: UserPrefs
   fun getDelegationToken(file: File) {
     compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
         .onBackground()
-        .progress()
         .subscribe { _res, error ->
           if (!error) {
             delegationLiveData.postValue(Pair(_res.delegationToken, file))

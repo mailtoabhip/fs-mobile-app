@@ -255,8 +255,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
+         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -267,7 +267,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
+
     }
 
 

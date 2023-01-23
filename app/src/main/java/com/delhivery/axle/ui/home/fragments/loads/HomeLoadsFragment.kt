@@ -52,15 +52,6 @@ import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import com.moe.pushlibrary.MoEHelper
-import com.moengage.core.Properties
-import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_UNIQUE_ID
-import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME
-import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME
-import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_MOBILE
-import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_NAME
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
