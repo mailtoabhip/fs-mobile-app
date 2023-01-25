@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -16,37 +17,23 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
+import com.delhivery.axle.data.home.contracts.*
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
+import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
+import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.DialogContractsTypeInfoBinding
 import com.delhivery.axle.databinding.FragmentHomeContractsBinding
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
-import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_EDIT_ROUTE
-import com.delhivery.axle.utils.EVENT_FILTER_EXPRESS_LOADS
-import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.FCMUtils
-import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
-import com.delhivery.axle.utils.PROPERTY_ORDER_ID
-import com.delhivery.axle.utils.PROPERTY_PHONE_NO
-import com.delhivery.axle.utils.PROPERTY_SOURCE
-import com.delhivery.axle.utils.PROPERTY_STATUS
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.VALUE_LOAD
-import com.delhivery.axle.utils.VALUE_NO_RESULTS
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -104,9 +91,16 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeContractsFragment.adapter
+      addOnScrollListener(HomeContractsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
+
+    binding.editStickySearch.setOnClickListener {
+      handleAction(
+        HomeContractsSearchAction_Search, HomeContractsSearchItem()
+      )
+    }
     binding.rvLoads.setItemAnimator(null);
 
 
@@ -180,21 +174,18 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
           startActivity(contractDetailsIntent(data.key(), it))
         }
       }
-
-      HomeLoadsWarningAction_NoLoads -> {
-        // Capture event
-        analyticsUtil.trackEvent(
-          EVENT_EDIT_ROUTE,
-          mutableListOf(PROPERTY_SOURCE),
-          mutableListOf(VALUE_NO_RESULTS)
-        )
+      HomeContractsSearchAction_Search -> {
         context?.let {
-          userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(userRoutesIntent(it))
+          startActivity(
+            Intent(it, SearchLoadActivity::class.java)
+          )
         }
       }
+      HomeContractsWarningAction_NoLoads -> {
+       refreshData()
+      }
 
-      HomeLoadsTimeOutAction -> {
+      HomeContractsTimeOutAction -> {
         refreshData()
       }
       HomeContractsFilterExpress -> {

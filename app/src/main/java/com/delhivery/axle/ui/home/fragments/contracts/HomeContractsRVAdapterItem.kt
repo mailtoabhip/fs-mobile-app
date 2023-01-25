@@ -6,25 +6,24 @@ import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsProgressItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsTimeOutItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsWarningItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsProgressItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsWarningItemData
+import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Filters
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Warning
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Search
 
 /*
 * RV item type for [HomeContractsRVAdapter]
 */
 enum class HomeContractsRVAdapterItemType(val typeId: Int) {
   Contracts(0),
-  Progress(1),
-  Warning(2),
-  Timeout(3),
-  Filters(4);
+  Search(1),
+  Progress(2),
+  Warning(3),
+  Timeout(4),
+  Filters(5);
 
   companion object {
     /**
@@ -58,6 +57,12 @@ class HomeContractsProgressItem(
   data: HomeContractsProgressItemData = HomeContractsProgressItemData()
 ) : BaseHomeContractsRVAdapterItem<HomeContractsProgressItemData>(Progress, data)
 
+/**
+ * Search item with live contract requests
+ */
+class HomeContractsSearchItem(
+  data: HomeContractsSearchItemData = HomeContractsSearchItemData()
+) : BaseHomeContractsRVAdapterItem<HomeContractsSearchItemData>(Search, data)
 
 /**
  * Warning/action item

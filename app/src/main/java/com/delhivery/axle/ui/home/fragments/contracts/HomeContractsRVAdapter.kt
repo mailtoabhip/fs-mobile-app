@@ -3,13 +3,7 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
-import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
-import com.delhivery.axle.databinding.ViewTimeOutItemBinding
-import com.delhivery.axle.databinding.ViewWarningItemBinding
+import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -20,6 +14,7 @@ import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Warning
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Search
 
 class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInterface) :
   BaseDataRVAdapter<BaseHomeContractsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
@@ -39,6 +34,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     parent: ViewGroup,
     viewType: Int
   ) = when (HomeContractsRVAdapterItemType.byTypeId(viewType)) {
+    Search -> ViewHomeLoadsSearchItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
@@ -47,6 +43,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
+    is ViewHomeLoadsSearchItemBinding -> HomeContractsSearchItemVH(binding)
     is ViewHomeLoadsProgressItemBinding -> HomeContractsProgressItemVH(binding)
     is ViewWarningItemBinding -> HomeContractsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)
@@ -59,6 +56,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     item: BaseHomeContractsRVAdapterItem<*>
   ) {
     when (holder) {
+      is HomeContractsSearchItemVH -> holder.bind(item as HomeContractsSearchItem, _interface)
       is HomeContractsRequestItemVH -> holder.bind(item as HomeContractsRequestItem, _interface)
       is HomeContractsProgressItemVH -> holder.bind(item as HomeContractsProgressItem, _interface)
       is HomeContractsWarningItemVH -> holder.bind(item as HomeContractsWarningItem, _interface)
@@ -93,7 +91,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     mutableListOf<Pair<BaseHomeContractsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeContractsProgressItem(), AddUpdate))
       items.filter {
-        it.type == Contracts || it.type == Warning || it.type == Timeout || it.type ==Filters
+        it.type == Contracts || it.type == Warning || it.type == Timeout || it.type ==Filters ||  it.type == Search
       }
         .map { Pair(it, Remove) }
         .let {

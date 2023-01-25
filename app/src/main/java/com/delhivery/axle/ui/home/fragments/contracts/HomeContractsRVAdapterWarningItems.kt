@@ -8,7 +8,7 @@ val HomeContractsWarningItem_NoLoads = HomeContractsWarningItem(
   HomeContractsWarningItemData(
     "No Contracts found",
     " ",
-    "", HomeContractsWarningAction_NoLoads
+    "REFRESH", HomeContractsWarningAction_NoLoads
   )
 )
 
