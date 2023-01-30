@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter.ItemClickListener
 import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterItem
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
 import com.delhivery.axle.ui.searchtrip.BaseSearchRVAdapterItem
 
@@ -11,7 +12,7 @@ import com.delhivery.axle.ui.searchtrip.BaseSearchRVAdapterItem
  */
 interface SearchLoadsRVAdapterInterface : ItemClickListener<BaseSearchLoadsRVAdapterItem<*>> {
   override fun onItemClicked(item: BaseSearchLoadsRVAdapterItem<*>) {
-    if (item.type == Request) {
+    if (item.type == Request || item.type==Contracts) {
       handleAction(HomeBidsRequestAction_ViewDetails, item)
     }
   }

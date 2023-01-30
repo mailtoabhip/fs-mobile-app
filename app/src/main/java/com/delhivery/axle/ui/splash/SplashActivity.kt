@@ -77,7 +77,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     //Capture event
     val cal = Calendar.getInstance()
     val currentHourIn24Format = cal[Calendar.HOUR_OF_DAY]

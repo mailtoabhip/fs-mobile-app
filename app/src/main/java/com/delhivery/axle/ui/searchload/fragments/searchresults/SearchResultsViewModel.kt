@@ -58,16 +58,18 @@ class SearchResultsViewModel @Inject constructor(
   fun searchLoad(
     origin: CityModel,
     destination: CityModel?,
-    type: String
+    type: String,
+    requestType:String?,
+    contractType:String?
   ) {
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        0, origin.orionDbCityCode, destination?.orionDbCityCode, type.toLowerCase()
+        0, origin.orionDbCityCode, destination?.orionDbCityCode, type.toLowerCase(),requestType,contractType
     )
         .flatMap { t ->
           this.loadPricePercent = t.loadPricePercent
           Single.zip(
-            bidsRepository.bidsForLoads(t.transactions),
+            bidsRepository.bidsForLoads(t.transactions, requestType=="contract"),
             bidsRepository.bulkLowestBidsForLoads(t.transactions),
             BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
                 Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->

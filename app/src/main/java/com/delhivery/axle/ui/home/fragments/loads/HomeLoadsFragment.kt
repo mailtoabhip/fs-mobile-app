@@ -41,6 +41,7 @@ import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
@@ -499,7 +500,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             mutableListOf(viewModel.total.toString()))
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(
-                  Intent(it, SearchLoadActivity::class.java)
+                  Intent(searchLoadContractsIntent(it,"load"))
           )
         }
       }

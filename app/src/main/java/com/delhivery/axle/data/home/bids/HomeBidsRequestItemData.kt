@@ -1099,6 +1099,8 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isItContract() = requestType == "contract"
+
   fun isItLHContract() = contractType == "LH_FTL"
 
   fun isFRCContract() = if (contractType == "LH_FTL") {

@@ -4,17 +4,16 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
 import com.delhivery.axle.data.home.bids.HomeBidsWarningItemData
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.SearchSpinner
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Warning
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.*
 
 /**
  * RV item type for [SearchLoadsRVAdapter]
  */
 enum class SearchResultsRVAdapterItemType(val typeId: Int) {
   Request(0),
-  SearchSpinner(1),
-  Warning(2);
+  Contracts(1),
+  SearchSpinner(2),
+  Warning(3);
 
   companion object {
     /**
@@ -39,6 +38,12 @@ abstract class BaseSearchLoadsRVAdapterItem<D : BaseKeyTypeModel<String>>(
  */
 class SearchLoadsRequestItem(data: HomeBidsRequestItemData) :
     BaseSearchLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
+
+/**
+ * Search contracts item
+ */
+class SearchContractsRequestItem(data: HomeBidsRequestItemData) :
+    BaseSearchLoadsRVAdapterItem<HomeBidsRequestItemData>(Contracts, data)
 
 /**
  * Search load screen dummy view

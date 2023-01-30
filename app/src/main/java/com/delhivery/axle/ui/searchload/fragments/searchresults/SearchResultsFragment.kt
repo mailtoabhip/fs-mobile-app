@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
@@ -285,7 +286,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if (it.isNullOrEmpty()) {
           add(Pair(SearchLoadWarningItem_NoLoad, Add))
         } else {
-          it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
+          it.forEach { _item -> if(_item.isItContract())add(Pair(SearchContractsRequestItem(_item), Add)) else add(Pair(SearchLoadsRequestItem(_item), Add)) }
         }
       }
     }
@@ -306,6 +307,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     destination: CityModel?,
     type: String,
     saveToHistory: Boolean,
+    requestType:String?,
+    contractType:String?,
     progress: Boolean = true
   ) {
     this.saveToHistory = saveToHistory
@@ -324,7 +327,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       else -> 0
     }
     binding.spinnerTruckType.setSelection(pos, true)
-    viewModel.searchLoad(origin, destination, type)
+    viewModel.searchLoad(origin, destination, type,requestType,contractType)
   }
 
   override fun handleAction(
@@ -334,20 +337,30 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
+        if (_item.isItContract()) {
+          if (_item.transactionId != null) {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            startActivity(contractDetailsIntent(_item.transactionId, context!!))
+          } else {
+            Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+          }
+        } else {
         // Capture event
         analyticsUtil.moEngageTrackEvent(
-            EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
-            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
-            mutableListOf( _item.transactionId ?: "",orderRank.toString())
+          EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
+          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
+          mutableListOf(_item.transactionId ?: "", orderRank.toString())
         )
         analyticsUtil.trackEvent(
-            EVENT_LIST_ITEM,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
+          startActivity(bidDetailsIntent(_item.key(), it, if (_item.isDMTIndent()) "dmt" else ""))
+        }
+      }
       }
     }
   }

@@ -32,6 +32,7 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -177,7 +178,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(it, SearchLoadActivity::class.java)
+            Intent(searchLoadContractsIntent(it,"contract",if(isInternal)"LH_FTL" else "FRC"))
           )
         }
       }

@@ -11,6 +11,8 @@ data class SearchLoadHistoryEntity(
   @Embedded(prefix = "origin_") var originCity: CityModel,
   @Embedded(prefix = "dest_") var destinationCity: CityModel,
   @ColumnInfo(name = "type") var truckType: String,
+  @ColumnInfo(name = "request_type") var requestType: String?,
+  @ColumnInfo(name = "contract_type") var contractType: String?,
   @ColumnInfo(name = "created_at") var createdAt: Long = System.currentTimeMillis(),
   @PrimaryKey(autoGenerate = true) var id: Long? = null
 )

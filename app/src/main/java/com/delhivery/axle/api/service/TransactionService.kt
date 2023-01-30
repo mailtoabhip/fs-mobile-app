@@ -25,8 +25,10 @@ interface TransactionService {
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_types") truckType: String? = null,
-    @Query("axle_current_week_loads") currWeekLoads: String = "yes",
-    @Query("apply_100km_logic") nearby100kmcities: Boolean = true
+    @Query("axle_current_week_loads") currWeekLoads: String?,
+    @Query("apply_100km_logic") nearby100kmcities: Boolean?,
+    @Query("request_type") requestType:String?,
+    @Query("contract_type") contractType:String?
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

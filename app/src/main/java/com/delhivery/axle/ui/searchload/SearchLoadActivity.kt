@@ -1,9 +1,12 @@
 package com.delhivery.axle.ui.searchload
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySearchLoadBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.searchload.fragments.BaseSearchLoadFragmentAction
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
@@ -13,11 +16,7 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
-import com.delhivery.axle.utils.EVENT_NAVIGATION_PODS
-import com.delhivery.axle.utils.EVENT_SEARCH_DETAILS_SUBMIT
-import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
-import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
-import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -36,12 +35,29 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
   /* current Fragment type */
   private var currentFragmentType: SearchLoadFragmentType? = null
 
+   var intentRequestType:String? = ""
+   var intentContractType:String? =" "
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
+    try {
+      intentRequestType = intent?.getStringExtra(
+        RequestTypeIntentKey
+      )
+      intentContractType = intent?.getStringExtra(ContractTypeIntentKey)
+    } catch (e: Exception) {
+    }
+
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = "Search Load"
+
+    title = if(intentRequestType =="load"){
+      "Search Load"
+    }else{
+      "Search Contract"
+    }
+
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* start with load fragment */
@@ -57,7 +73,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
     navigationUtils.addReplaceFragment(
         R.id.container, fragmentType.fragment, SearchLoadFragmentTag
     )
-    title = currentFragmentType?.title
+   // title = currentFragmentType?.title
   }
 
   /**
@@ -89,7 +105,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
           navigate(ResultsFragment)
           /* search query */
           (ResultsFragment.fragment as SearchResultsFragment).search(
-              originCity, destinationCity, truckType, saveToHistory, false
+              originCity, destinationCity, truckType, saveToHistory, requestType,contractType, false
           )
         }
       }
@@ -105,5 +121,19 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
   }
 }
 
+fun searchLoadContractsIntent(
+  context: Context,
+  requestType:String?=null,
+  contractType:String?=null
+) = Intent(context, SearchLoadActivity::class.java).apply {
+  if(requestType!=null)
+    putExtra(RequestTypeIntentKey, requestType)
+  if(contractType!=null)
+    putExtra(ContractTypeIntentKey, contractType)
+}
 /* Search load fragment tag */
 private const val SearchLoadFragmentTag = "search_load_fragment_tag"
+private const val RequestTypeIntentKey = "request_type"
+private const val ContractTypeIntentKey = "contract_type"
+
+

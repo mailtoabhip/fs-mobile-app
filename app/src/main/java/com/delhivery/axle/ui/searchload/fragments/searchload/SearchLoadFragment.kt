@@ -11,6 +11,7 @@ import com.delhivery.axle.database.entity.SearchLoadHistoryEntity
 import com.delhivery.axle.databinding.FragmentSearchLoadBinding
 import com.delhivery.axle.databinding.ViewSearchLoadHistoryItemBinding
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
+import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
@@ -40,13 +41,17 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
   private var origin: CityModel? = null
   private var destination: CityModel? = null
+  private var requestType: String? =""
+  private var contractType:String? =""
 
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    val activity: SearchLoadActivity? = activity as SearchLoadActivity?
+    requestType = activity?.intentRequestType
+    contractType = activity?.intentContractType
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
     binding.btnRetry.setOnClickListener {
@@ -126,7 +131,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* submit */
     binding.btnAction.setOnClickListener {
-      searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString())
+        searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString())
     }
 
     /* reverse origin/destination cities */
@@ -185,7 +190,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           city = getString(string.label_anywhere),
           state = getString(string.label_anywhere)
       ),
-          truckType
+          truckType,
+        requestType,contractType
       )
     }
     /* searching progress */
@@ -193,7 +199,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
     Handler().postDelayed({
-      action(SearchLoadAction(origin, destination, truckType, saveToHistory))
+      action(SearchLoadAction(origin, destination, truckType,requestType,contractType,saveToHistory))
     }, 200)
   }
 
@@ -202,8 +208,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
    */
   private fun initObservers() {
     /* observe live data for search history */
-    viewModel.searchLoadHistoryLiveData()
-        .observe(this, SearchLoadHistoryObserver())
+    viewModel.searchLoadHistoryLiveData(requestType,contractType)
+        ?.observe(this, SearchLoadHistoryObserver())
   }
 
   /**
