@@ -190,7 +190,7 @@ class TeamMembersEditDialog @Inject constructor(
             binding.editName.clearFocus()
             submit()
         }
-        binding.dieselIocl
+
         binding.btnClose.setOnClickListener { dismiss() }
     }
 
