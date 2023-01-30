@@ -35,8 +35,9 @@ class TransactionsRepository @Inject constructor(
    */
   fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
          recommendationService.recommendationTransactions(
-                  ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset,
-             demand_type, vehicle_type)
+                  ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset)
+//             demand_type, vehicle_type,
+//                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
           ).convertResponse()
 
   fun fetchContractsTransactions(offset: Int, demand_type: String) =
