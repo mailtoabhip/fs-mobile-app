@@ -39,7 +39,6 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 import android.text.method.LinkMovementMethod
 
@@ -173,7 +172,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                 when (state) {
                     AuthenticationUIState.PhoneNo -> { }
                     AuthenticationUIState.OTP -> {uiUtils.hideDelhiveryProgress()
-                    uiUtils.showSnackbar("Something went wrong, Please try again")
+                    uiUtils.showSnackbar(viewModel.errorAccountCreate?:"Something went wrong, Please try again")
                     }
                     AuthenticationUIState.Password ->{}
                     AuthenticationUIState.LoginProgress -> {

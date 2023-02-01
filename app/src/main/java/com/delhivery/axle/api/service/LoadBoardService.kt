@@ -202,4 +202,12 @@ interface LoadBoardService {
     @Body bankValidationRequest: BankValidationRequest
   ): Single<BaseResponse<BankValidationResponse>>
 
+    /**
+     * Get delegation token for AWS
+     */
+    @GET("/delegation-token")
+    fun getDelegationToken(
+        @Query("target_id") targetId: String
+    ): Single<DelegationTokenResponse>
+
 }

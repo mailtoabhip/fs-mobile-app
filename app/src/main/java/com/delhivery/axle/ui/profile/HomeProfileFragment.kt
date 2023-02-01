@@ -116,6 +116,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     binding.containerPaymentTerms.setOnClickListener {
       when (contactUtils.openURL("${DashboardUrl.url()}/#/paymentterms")) {
         false -> uiUtils.showSnackbar("Could not open url")
+        else ->{}
       }
     }
 

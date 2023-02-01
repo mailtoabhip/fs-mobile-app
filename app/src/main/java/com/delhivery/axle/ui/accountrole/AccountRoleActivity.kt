@@ -22,8 +22,6 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_account_action.*
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import javax.inject.Inject
 
 
@@ -239,6 +237,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
                         }
                     }
                   }
+                  else ->{}
                 }
             }
         }

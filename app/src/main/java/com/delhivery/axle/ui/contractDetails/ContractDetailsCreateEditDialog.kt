@@ -42,7 +42,6 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_bid_details.tvRemark
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar

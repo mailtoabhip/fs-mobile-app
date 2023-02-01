@@ -24,7 +24,6 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.spinner_item.view.text
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

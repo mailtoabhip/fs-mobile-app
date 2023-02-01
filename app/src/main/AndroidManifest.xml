@@ -45,7 +45,7 @@
             >
         </service>
 
-        <provider android:name="androidx.work.impl.WorkManagerInitializer" android:authorities="${applicationId}.workmanager-init" android:exported="false" tools:node="remove"/>
+        <provider android:name="androidx.startup.InitializationProvider" android:authorities="${applicationId}.workmanager-init" android:exported="false" tools:node="remove" tools:replace="android:authorities"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -81,7 +81,8 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.splash.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

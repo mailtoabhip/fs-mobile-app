@@ -14,7 +14,6 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_account_action.*
 import javax.inject.Inject
 
 
@@ -77,9 +76,9 @@ class AccountActionActivity  : BaseActivity<ActivityAccountActionBinding, Accoun
         binding.btnProceed.setOnClickListener {
             if (binding.radioPostBoth.isChecked) {
                 redirectRole(AccountType.Both)
-            } else if (radioPostTruck.isChecked) {
+            } else if (binding.radioPostTruck.isChecked) {
                 redirectRole(AccountType.PostTruck)
-            } else if (radioPostloads.isChecked) {
+            } else if (binding.radioPostloads.isChecked) {
                  redirectRole(AccountType.PostLoad)
             }
         }

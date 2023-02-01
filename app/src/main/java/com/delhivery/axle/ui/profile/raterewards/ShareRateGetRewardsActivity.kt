@@ -18,7 +18,6 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFr
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType.RewardsFragment
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.view_your_rewards_item.offer_text
 import javax.inject.Inject
 
 

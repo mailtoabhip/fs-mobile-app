@@ -19,7 +19,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogTeamMemberEditBinding
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.spinner_item.view.*
 import javax.inject.Inject
 
 /**
@@ -160,12 +159,22 @@ class TeamMembersEditDialog @Inject constructor(
                 }
             }
         })
-
+        binding.dieselReliance.setOnCheckedChangeListener { compoundButton, ischecked -> if(ischecked){
+            binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)
+        }else{
+            binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)&& binding.dieselIocl.isChecked
+        } }
+        binding.dieselIocl.setOnCheckedChangeListener { compoundButton, ischecked -> if(ischecked){
+            binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)
+        }else{
+            binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)&& binding.dieselReliance.isChecked
+        } }
         binding.editMemberDieselReferenceSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked){
                 binding.dieselReliance.isEnabled = true
                 binding.dieselIocl.isEnabled= true
                 binding.cardLayout.visibility = View.VISIBLE
+                binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)
             }
             else{
                 binding.dieselReliance.isEnabled = false
@@ -173,6 +182,7 @@ class TeamMembersEditDialog @Inject constructor(
                 binding.dieselReliance.isChecked = false
                 binding.dieselIocl.isChecked = false
                 binding.cardLayout.visibility = View.GONE
+                binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)
             }
         })
 

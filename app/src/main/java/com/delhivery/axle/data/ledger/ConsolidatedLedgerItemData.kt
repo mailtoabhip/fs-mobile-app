@@ -58,7 +58,7 @@ data class ConsolidatedLedgerItemData(
         return spannableTitle
     }
 
-    public fun getAmount(): String{
+    public fun getAmountValue(): String{
         var amt = amount
         for(deduction in deductions){
             if(deduction["deduction_type"] == "tds_deduction"){

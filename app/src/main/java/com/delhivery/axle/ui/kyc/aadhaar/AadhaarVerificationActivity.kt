@@ -53,7 +53,6 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import kotlinx.android.synthetic.main.activity_verify_pan.*
 import java.lang.StringBuilder
 
 

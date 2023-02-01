@@ -93,7 +93,7 @@ class UserRepository @Inject constructor(
   /**
    * Get delegation token for AWS
    */
-  fun getDelegationToken(target: String) = umsService.getDelegationToken(target)
+  fun getDelegationToken(target: String) = loadBoardService.getDelegationToken(target)
 
   /**
    * Fetch roles and permissions

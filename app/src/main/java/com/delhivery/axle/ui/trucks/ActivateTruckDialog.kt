@@ -18,7 +18,6 @@ import com.delhivery.axle.databinding.DialogBottomActivateTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.spinner_item.view.*
 import javax.inject.Inject
 
 class ActivateTruckDialog @Inject constructor(

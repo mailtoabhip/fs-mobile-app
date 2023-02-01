@@ -301,7 +301,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
     private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -482,7 +482,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
     }
 
-
+    var spinnerIndex=0
     private fun showAddAlternateAddressDialog(isEdit:Boolean, addressData: AddAddressModel?) {
         val dialog = Dialog(this)
         val bindingDialog =DialogAddAlternateAddressBinding.inflate(layoutInflater)
@@ -713,7 +713,17 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                     bindingDialog.addressProofText.visibility = View.GONE
                     docUploadProof = true
                 } else {
-                    bindingDialog.uploadDocLay.visibility = View.VISIBLE
+                    if(addressData==null){
+                        bindingDialog.uploadDocLay.visibility = View.VISIBLE
+                        bindingDialog.uploadedDocLay.visibility = View.GONE
+                    }else{
+                        if(spinnerIndex==p&&p>0){
+                            docUploadProof = true
+                        bindingDialog.uploadDocLay.visibility = View.GONE
+                        bindingDialog.uploadedDocLay.visibility = View.VISIBLE
+                        }
+                    }
+
                 }
             }
             enableAddAddressDialogButton(bindingDialog)
@@ -802,7 +812,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         }
 
 
-        var spinnerIndex=0
+         spinnerIndex=0
         if(addressData.proofDocumentType!=null) {
             spinnerIndex = when {
                 addressData.proofDocumentType!!.startsWith("V", true) -> 1

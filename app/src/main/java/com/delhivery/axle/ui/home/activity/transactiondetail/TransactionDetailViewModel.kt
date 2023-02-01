@@ -80,6 +80,7 @@ class TransactionDetailViewModel @Inject constructor(
           fetchTripAndFuelCard()
         }
       }
+      else ->{}
     }
   }
 

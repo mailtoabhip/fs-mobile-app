@@ -30,8 +30,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.Schedulers.io
-import kotlinx.android.synthetic.main.spinner_item.text
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import io.reactivex.subjects.BehaviorSubject

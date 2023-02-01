@@ -195,6 +195,11 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                         viewModel.getAllInventories(search = true)
                     }
 
+                }else{
+                    adapter.clearItems()
+                    viewModel.userTrucksData.postValue(null)
+                    viewModel.searchFlag = false
+                    viewModel.getAllInventories(search = false)
                 }
             }
         })

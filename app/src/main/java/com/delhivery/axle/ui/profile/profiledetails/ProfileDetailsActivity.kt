@@ -30,7 +30,6 @@ import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.activity_profile_details.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -256,8 +255,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
+         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
             try {
                 mPhotoFile = createImageFile()
                 val photoURI = FileProvider.getUriForFile(
@@ -268,7 +267,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-        }
+
     }
 
 

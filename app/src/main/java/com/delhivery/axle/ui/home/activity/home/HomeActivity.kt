@@ -443,6 +443,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromDeepLink=false
     fromNotificationContract= false
     fromDeepLinkContract = false
+    fragmentType = intent?.extras?.getString(IntentExtraFragmentTypeKey)
+    if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_NAVIGATION_PODS
+      )
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      fragmentAction(NavigateHomeFragmentAction(PodFragment))
+    }
     processDeepLink()
     if (transactions.isNotEmpty())
       transactionIds = transactions.split(",")
@@ -577,7 +585,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             if(count==1){
               userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
               userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
-                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
               analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_BIDS,
                 mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
@@ -590,7 +598,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             if(count==1){
               userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
               userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
-                userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
 
               analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_PODS

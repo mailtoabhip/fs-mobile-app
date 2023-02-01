@@ -8,6 +8,7 @@ import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.google.gson.JsonObject
 import javax.inject.Inject
 
@@ -95,9 +96,8 @@ class LoadboardRepository @Inject constructor(
             }
             .onErrorReturn {
                 /* handle error if needed */
-                Pair(false, "Account not created")
+                    Pair(false, it.errorResponseBody()?.errorBody?.errorMessage.toString())
             }
-
     fun validatePanNumber(panNumber:String)= loadboardService.validatePanNumber(PanVerificationRequest(panNumber)).convertResponse()
 
     /**

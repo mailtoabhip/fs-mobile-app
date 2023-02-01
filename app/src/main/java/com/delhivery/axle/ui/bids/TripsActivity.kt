@@ -36,7 +36,6 @@ import com.delhivery.axle.data.home.trips.*
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import kotlinx.android.synthetic.main.view_home_loads_progress_item.*
 import java.util.*
 import javax.inject.Inject
 

@@ -182,6 +182,7 @@
             android:textColor="@color/sub_heading_black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+            app:layout_constraintBottom_toTopOf="@id/lay_promise_date_ageing"
             tools:text="Suresh raj (+91 9823222123)"
             />
 

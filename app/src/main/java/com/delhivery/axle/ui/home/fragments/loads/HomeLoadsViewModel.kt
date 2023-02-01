@@ -169,7 +169,7 @@ class HomeLoadsViewModel @Inject constructor(
 
         compositeDisposable += transactionsRepository.fetchRecommTransactions(0, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
                 .flatMap  { _res ->
-                    total = _res.total
+
                         offset = _res.offset
                         total = _res.total
                         hasMoreData = _res.offset!=_res.total
@@ -205,6 +205,7 @@ class HomeLoadsViewModel @Inject constructor(
 //                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                                   add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                                 }
+                                 if(total>0)
                                 add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
                                 for ((index, load) in loads.toMutableList().withIndex()) {
                                     try {
