@@ -39,7 +39,10 @@ class RefreshAuthTokenService : Service(){
         super.onCreate()
         Log.d("prefs","Service Check")
         val notificationIntent = Intent(this, HomeActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent =
+            PendingIntent.getActivity(this, 0, notificationIntent, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+            else PendingIntent.FLAG_ONE_SHOT)
+
         val title: String = when (BuildConfig.FLAVOR) {
             "production" -> "Axle is running"
             else -> "Dev Axle is running"
