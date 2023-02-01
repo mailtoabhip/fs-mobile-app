@@ -12,6 +12,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.datatransport.runtime.scheduling.jobscheduling.SchedulerConfig.Flag
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
@@ -39,7 +40,10 @@ class RefreshAuthTokenService : Service(){
         super.onCreate()
         Log.d("prefs","Service Check")
         val notificationIntent = Intent(this, HomeActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent =
+            PendingIntent.getActivity(this, 0, notificationIntent, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+            else PendingIntent.FLAG_ONE_SHOT)
+
         val title: String = when (BuildConfig.FLAVOR) {
             "production" -> "Axle is running"
             else -> "Dev Axle is running"

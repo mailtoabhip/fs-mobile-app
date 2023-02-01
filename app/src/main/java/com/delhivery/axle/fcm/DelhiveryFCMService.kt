@@ -145,15 +145,22 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
 
       }
-      val pendingIntent = PendingIntent.getActivity(
-          this, 0, intent, PendingIntent.FLAG_ONE_SHOT
-      )
+
+      val pendingIntent =
+        PendingIntent.getActivity(
+          this, 0, intent, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+          else PendingIntent.FLAG_ONE_SHOT
+        )
+
 
       /*Dismiss Notification*/
       val intentDismissNotification = Intent("NOTIFICATION_DELETED_ACTION").apply {
         putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
       }
-      val pendingIntentDismiss  = PendingIntent.getBroadcast(this , 0, intentDismissNotification , 0)
+      val pendingIntentDismiss  =
+        PendingIntent.getBroadcast(this , 0, intentDismissNotification , if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+        else PendingIntent.FLAG_ONE_SHOT)
+
       registerReceiver(receiver, IntentFilter("NOTIFICATION_DELETED_ACTION"))
 
       val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
