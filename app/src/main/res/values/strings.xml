@@ -653,6 +653,7 @@
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
   <string name="tentative_total_vehicles">Tentative Total vehicles</string>
+  <string name="operating_days">Operating Days</string>
   <string name="tentative_total_vehicles_count">Vehicle Per Departure ,</string>
   <string name="daily_departure_approximately">Daily Departure approximately</string>
   <string name="one_way">1 Way</string>
@@ -720,6 +721,7 @@
   <string name="you_did_not_bid">You did not bid</string>
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
   <string name="rules">Rules</string>
+  <string name="view_on_map">View on map</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

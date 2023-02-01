@@ -1130,6 +1130,8 @@ data class HomeBidsRequestItemData(
       ""
     }
 
+  fun vehicleOperatingDays():String="- days a week"
+
   fun totalVehicleCountOnList():String=
     if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
       "(X "+(vehicleCountCCLane!! * vehicleCountPerRoute!!).toString()+" Veh.)"

@@ -2,6 +2,8 @@ package com.delhivery.axle.ui.contractDetails
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
@@ -27,6 +30,8 @@ class ContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>,priva
       var clTravelTime: View = view.findViewById(R.id.clTravelTime)
       var timeTravel: TextView  = view.findViewById(R.id.timeInterval) as TextView
       var hubIcon : ImageView = view .findViewById(R.id.hubIcon) as ImageView
+      var tvMapView: TextView  = view.findViewById(R.id.tvMapView) as TextView
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -48,6 +53,17 @@ class ContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>,priva
       holder.arvTime.text = dataList[position].relEta
       holder.depTime.text = dataList[position].relEtd
       holder.timeTravel.text = "Travel Time - "+dataList[position].pastTravelHrs+ " hrs"
+      holder.tvMapView.setOnClickListener {
+        try {
+          val gmmIntentUri = Uri.parse("geo:17.4368947,78.3863081?q=" + Uri.encode("1st & Pike, Seattle"))
+          val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+          mapIntent.setPackage("com.google.android.apps.maps")
+          context.startActivity(mapIntent)
+        }catch (e:Exception){
+          Toast.makeText(context,"Unable to open map",Toast.LENGTH_SHORT).show()
+        }
+
+      }
 
       if(transaction?.transactionStatus=="cancelled"){
         holder.timeTravel.setTextColor(ContextCompat.getColor(context,R.color.heading_black))
