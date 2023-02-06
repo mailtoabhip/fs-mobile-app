@@ -60,7 +60,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var pos = 0
   var oldAmount:Double?=0.0
   var reviseInitiated:Boolean=false
-
+  var isContract = false
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -317,7 +317,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
     if (progress)
-      action(ProgressSearchLoadAction(true))
+      action(ProgressSearchLoadAction(true, if(isContract)"Searching contracts" else "Searching loads"))
     binding.origin = origin
     binding.destination = destination
     val pos = when (type) {
@@ -327,6 +327,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       else -> 0
     }
     binding.spinnerTruckType.setSelection(pos, true)
+    isContract = contractType!=null
     viewModel.searchLoad(origin, destination, type,requestType,contractType)
   }
 
@@ -463,7 +464,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
       if(t==null || t.contains(Pair(SearchLoadWarningItem_NoLoad, Add))){
         analyticsUtil.moEngageTrackEvent(
-            EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
+            if(isContract)EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
                 PROPERTY_SEARCH_BODY_TYPE),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
@@ -472,7 +473,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         )
       }else{
         analyticsUtil.moEngageTrackEvent(
-            EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
+            if(isContract) EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
                 PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",

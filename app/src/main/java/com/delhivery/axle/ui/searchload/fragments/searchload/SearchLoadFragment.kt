@@ -195,7 +195,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       )
     }
     /* searching progress */
-    action(ProgressSearchLoadAction(true))
+    action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
 
     /* delay and search for better UX */
     Handler().postDelayed({

@@ -165,6 +165,13 @@ object DrawableProviderUtils {
   }
 
   @DrawableRes
+  fun vehicleOperatingDrawableRes(containerType: String?) = when (containerType) {
+    "cancel" -> R.drawable.icon_calender_grey
+    "open" -> R.drawable.icon_calender
+    else -> R.drawable.icon_calender
+  }
+
+  @DrawableRes
   fun tripOpenCancelDrawableRes(containerType: String?) = when (containerType) {
     "cancel" -> R.drawable.ic_icon_trip_grey
     "open" -> R.drawable.ic_icon_trip

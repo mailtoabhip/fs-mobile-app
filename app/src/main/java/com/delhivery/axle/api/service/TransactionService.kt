@@ -27,8 +27,9 @@ interface TransactionService {
     @Query("truck_types") truckType: String? = null,
     @Query("axle_current_week_loads") currWeekLoads: String?,
     @Query("apply_100km_logic") nearby100kmcities: Boolean?,
-    @Query("request_type") requestType:String?,
-    @Query("contract_type") contractType:String?
+    @Query("request_types") requestType:String?,
+    @Query("contract_type") contractType:String?,
+    @Query("active_contract") activeContract:Boolean?
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
