@@ -172,7 +172,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                 when (state) {
                     AuthenticationUIState.PhoneNo -> { }
                     AuthenticationUIState.OTP -> {uiUtils.hideDelhiveryProgress()
-                    uiUtils.showSnackbar("Something went wrong, Please try again")
+                    uiUtils.showSnackbar(viewModel.errorAccountCreate?:"Something went wrong, Please try again")
                     }
                     AuthenticationUIState.Password ->{}
                     AuthenticationUIState.LoginProgress -> {

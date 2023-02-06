@@ -37,7 +37,7 @@ class AccountDetailsViewModel @Inject constructor(
     var stateLiveData = MutableLiveData<AuthenticationUIState>()
     var mode:AccountType? = null
     var role: AccountRole? = null
-
+    var errorAccountCreate: String? = null
     var state: AuthenticationUIState = AuthenticationUIState.PhoneNo
         set(value) {
             stateLiveData.postValue(value)
@@ -72,13 +72,13 @@ class AccountDetailsViewModel @Inject constructor(
                         } else {
                             "Account not created"
                         }
-                        Triple(_otpRes.first, msg, it)
+                        Triple(_otpRes, msg, it)
                     }
         }
                 .onBackground()
                 .progress()
                 .subscribe { _res, error ->
-                    state = if (!error && _res.first) {
+                    state = if (!error && _res.first.first) {
                         if(_res.third.supplierDetails?.isLoadBoardSupplier == true || _res.third.clientDetails?.isLoadBoardClient == true){
                             if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                                 userPrefs.hasLoggedIn = false
@@ -105,6 +105,7 @@ class AccountDetailsViewModel @Inject constructor(
                         if (error is HttpException) {
                             userPrefs.hasLoggedIn = false
                         }
+                        errorAccountCreate = _res.first.second
                         OTP
                     }
                 }
