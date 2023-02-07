@@ -224,7 +224,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
 // 194c upload condition
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
-            if (userPrefs.ownedTruck.toInt() <= 10) {
+            if (true) {
                 binding.uploadDoc1.visibility = View.VISIBLE
             } else {
                 binding.uploadDoc1.visibility = View.GONE
@@ -273,15 +273,16 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             }
         }
         binding.uploadDocLay.setOnClickListener {
+            viewModel.accountUpload.value = true
             val imageName = "accountProof_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
-            viewModel.accountUpload.value = true
+
         }
         binding.uploadDocLay1.setOnClickListener {
+            viewModel.selected194CUpload.value=true
+            viewModel.accountUpload.value = false
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
             captureImage(imageName, imageName)
-            viewModel.accountUpload.value = false
-            viewModel.selected194CUpload.value=true
         }
         binding.docRemove.setOnClickListener {
             showUploadImage()
@@ -588,7 +589,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                 "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
             this.localImageName =
                 "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
-        }else{
+        }else if(viewModel.selected194CUpload.value == true) {
             this.uploadImageName =
                 "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber + ".jpg"
             this.localImageName =
@@ -638,7 +639,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(uploadArray1.size>0){
             uploadArray1.clear()
         }
-
     }
 
     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
@@ -699,6 +699,17 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     }
 
                     try {
+                        if(viewModel.accountUpload.value == true) {
+                            this.uploadImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ mPhotoFile?.extension
+                            this.localImageName =
+                                "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+mPhotoFile?.extension
+                        }else if(viewModel.selected194CUpload.value == true) {
+                            this.uploadImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ mPhotoFile?.extension
+                            this.localImageName =
+                                "194C_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ mPhotoFile?.extension
+                        }
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
                         viewModel.getDelegationToken(mPhotoFile!!)
