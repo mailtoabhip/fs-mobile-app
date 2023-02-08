@@ -196,8 +196,8 @@ interface LoadBoardService {
   fun getPopularLocations(
     @Query("user_id") userId: String
   ): Single<BaseResponse<List<PopularLocationsResponse>>>
-//TODO validate_banks
-  @POST("/validate_banks")
+
+  @POST("/validate_bank")
   fun getBankName(
     @Body bankValidationRequest: BankValidationRequest
   ): Single<BaseResponse<BankValidationResponse>>
