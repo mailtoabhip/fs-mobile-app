@@ -224,7 +224,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
 // 194c upload condition
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
-            if (true) {
+            if (userPrefs.ownedTruck.toInt() <= 10) {
                 binding.uploadDoc1.visibility = View.VISIBLE
             } else {
                 binding.uploadDoc1.visibility = View.GONE
