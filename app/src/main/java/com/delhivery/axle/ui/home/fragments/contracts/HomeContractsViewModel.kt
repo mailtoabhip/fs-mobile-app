@@ -170,6 +170,7 @@ class HomeContractsViewModel@Inject constructor(
             if (_tRes.fourth.transactions.isEmpty() && _tRes.fifth.transactions.isEmpty()) {
               add(Pair(HomeContractsWarningItem_NoLoads, Add))
             } else {
+              add(Pair(HomeContractsSearchItem(), Add))
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0

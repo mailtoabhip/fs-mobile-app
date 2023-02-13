@@ -530,7 +530,19 @@ internal class HomeContractsWarningItemVH(binding: ViewWarningItemBinding) :
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }
-
+/**
+* Search item view holder
+*/
+internal class HomeContractsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
+  BaseHomeContractsRVAdapterViewHolder<ViewHomeLoadsSearchItemBinding, HomeContractsSearchItem>(
+    binding
+  ) {
+  override fun bind(
+    item: HomeContractsSearchItem,
+    _interface: HomeContractsRVAdapterInterface
+  ) {
+  }
+}
 
 /**
  * Loads filter view holder

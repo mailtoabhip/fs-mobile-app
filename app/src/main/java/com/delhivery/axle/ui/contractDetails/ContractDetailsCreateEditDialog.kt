@@ -133,7 +133,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             var lowerPercentage = 0
             var upperPercentage = 0
             if(transaction.isItLHContract()){
-              lowerPercentage  = 20
+              lowerPercentage  = 30
               upperPercentage  = 20
             }else{
               lowerPercentage  = 20

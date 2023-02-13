@@ -89,6 +89,7 @@
                 android:drawablePadding="@dimen/size_4dp"
                 android:layout_marginStart="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/size_8dp"
+                tools:text="32FTXL"
                 android:textColor="@color/background_dark_grey"
                 android:text="@{request.truckDetail()}"/>
             <androidx.appcompat.widget.AppCompatTextView
@@ -104,6 +105,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:text="@{request.tripLHWays()}"
                />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/operatingDaysnfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:textSize="@dimen/text_14sp"
+                    android:drawableStart="@drawable/bid_operating_days_icon"
+                    android:drawablePadding="@dimen/size_4dp"
+                    app:layout_constraintTop_toBottomOf="@id/connectionInfo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="2 days a week"
+                    android:text="@{request.vehicleOperatingDays()}"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -113,6 +128,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:visibility="@{request.isFRCContract()}"
+                tools:visibility="gone"
                 android:layout_marginBottom="@dimen/size_8dp">
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/nonExpRoute"

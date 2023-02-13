@@ -35,9 +35,8 @@ class TransactionsRepository @Inject constructor(
    */
   fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
          recommendationService.recommendationTransactions(
-                  ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset)
-//             demand_type, vehicle_type,
-//                  "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn
+           ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset,
+             demand_type, vehicle_type)
           ).convertResponse()
 
   fun fetchContractsTransactions(offset: Int, demand_type: String) =
@@ -51,9 +50,12 @@ class TransactionsRepository @Inject constructor(
     offset: Int,
     source: String?,
     destination: String?,
-    truckType: String?
+    truckType: String?,
+    requestType:String?,
+    contractType:String?
   ) = transactionService.transactions(
-      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType
+      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType,if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+    contractType,if(requestType=="load") null else true
   ).convertResponse()
 
   /**

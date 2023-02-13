@@ -112,6 +112,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("route_type") var routeType:String? =  null,
   @SerializedName("vehicle_count_cc_lane") var vehicleCountCCLane:Int? =  null,
   @SerializedName("vehicle_count_per_route") var vehicleCountPerRoute:Int? =  null,
+  @SerializedName("operating_days") var operatingDays:Int? =  null,
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -407,6 +408,12 @@ data class HomeBidsRequestItemData(
    */
   @DrawableRes
   fun vehicleCloseOpenDrawable() = DrawableProviderUtils.vehicleOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
+
+  /**
+   * @return vehicleCloseOpenDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun vehicleOperationDrawable() = DrawableProviderUtils.vehicleOperatingDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
 
   /**
    * @return tripCloseOpenDrawable basis[indent tyoe]
@@ -942,15 +949,23 @@ data class HomeBidsRequestItemData(
       return ""
     }else if (contractBiddingEndTime != null) {
       val format = SimpleDateFormat("yyyy-MM-dd")
-      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      format.setTimeZone(TimeZone.getTimeZone("IST"))
       val date1: Date = format.parse(format.format(Date()))
       val date2: Date = format.parse(contractBiddingEndTime)
+      val istDate = DateUtils.getUtcToIstFormatTime(contractBiddingEndTime)
+      val sdf = SimpleDateFormat("dd MMM yyyy hh:mm a")
+      val timeFormat = SimpleDateFormat("h a")
+      val date3: Date = sdf.parse(istDate)
+      val biddingDateTime = date3
+      val c = Calendar.getInstance()
+      c.time = biddingDateTime
+      val endTime = timeFormat.format(biddingDateTime)
+      c.add(Calendar.HOUR, -1)
+      val timeMinusHrs = c.time
+      val startTime = timeFormat.format(timeMinusHrs)
       if (date2.compareTo(date1) ==0) {
-        return if (bidCollectionSlot == "morning") {
-          "Live bidding at 11 AM to 12 PM"
-        } else {
-          "Live bidding at 4 PM to 5 PM"
-        }
+        return "Live bidding at $startTime to $endTime"
+
       } else if(date2.compareTo(date1) >0){
         return "Closes on " + formatDate(
           DateUtils.parseDate(
@@ -1099,6 +1114,8 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isItContract() = requestType == "contract"
+
   fun isItLHContract() = contractType == "LH_FTL"
 
   fun isFRCContract() = if (contractType == "LH_FTL") {
@@ -1119,6 +1136,12 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isLHVehicleRouteVisible() = if (contractType == "LH_FTL" && operatingDays!=null) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
   fun totalVehicleCount():String=
     if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
       (vehicleCountCCLane!! * vehicleCountPerRoute!!).toString() + " Vehicle"
@@ -1127,6 +1150,8 @@ data class HomeBidsRequestItemData(
     }else {
       ""
     }
+
+  fun vehicleOperatingDays():String="$operatingDays days a week"
 
   fun totalVehicleCountOnList():String=
     if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
@@ -1252,7 +1277,9 @@ data class HaltCenters(
   @SerializedName("name")val name:String?,
   @SerializedName("state")val state:String?,
   @SerializedName("past_travel_hrs")val pastTravelHrs:String?,
-  @SerializedName("halt_hrs")val haltHrs:String?
+  @SerializedName("halt_hrs")val haltHrs:String?,
+  @SerializedName("longitude")val longitude:String?,
+  @SerializedName("latitude")val latitude:String?
 
 )
 

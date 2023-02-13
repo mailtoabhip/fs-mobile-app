@@ -183,6 +183,7 @@
         android:layout_height="@dimen/size_10dp"
         android:background="@color/transparent_white"
         app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/contractResult"
         />
     <include
@@ -191,6 +192,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/view_margin_rule"/>
     <View
         android:visibility="gone"
@@ -213,6 +215,7 @@
         android:layout_marginRight="@dimen/size_16dp"
         android:layout_marginTop="@dimen/size_16dp"
         android:layout_marginBottom="@dimen/size_16dp"
+        tools:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/view_margin_route"/>
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/seperator2"
@@ -229,6 +232,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        tools:visibility="visible"
         android:layout_margin="@dimen/size_16dp"
         app:layout_constraintStart_toStartOf="@id/routeDetails"
         app:layout_constraintTop_toBottomOf="@id/seperator2">
@@ -253,6 +257,7 @@
           android:textColor="@color/background_dark_grey"
           android:layout_marginTop="@dimen/size_8dp"
           android:textSize="@dimen/text_16sp"
+          tools:text="32FTXL"
           />
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/bodyType"
@@ -262,7 +267,8 @@
           app:layout_constraintStart_toStartOf="@id/vehicleType"
           android:textSize="@dimen/text_12sp"
           android:textColor="@color/color_hint"
-          android:text="@{transaction.truckType}"/>
+          android:text="@{transaction.truckType}"
+          tools:text="closed"/>
       <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/vehicleIcon"
           android:layout_width="wrap_content"
@@ -362,7 +368,41 @@
           android:layout_marginStart="@dimen/size_2dp"
           android:paddingStart="@dimen/size_2dp"
           android:text="@string/daily_departure_approximately"/>
-
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/operatingDays"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toBottomOf="@id/vehiclePerDeparture"
+          app:layout_constraintStart_toEndOf="@+id/operationalDaysIcon"
+          android:text="@{transaction.vehicleOperatingDays()}"
+          android:visibility="@{transaction.isLHVehicleRouteVisible()}"
+          android:textColor="@color/background_dark_grey"
+          android:layout_marginTop="@dimen/size_18dp"
+          android:textSize="@dimen/text_16sp"
+          tools:text="4 days a week"
+          />
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/operationalDaysText"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toBottomOf="@id/operatingDays"
+          android:textSize="@dimen/text_12sp"
+          app:layout_constraintStart_toEndOf="@+id/operationalDaysIcon"
+          android:visibility="@{transaction.isLHVehicleRouteVisible()}"
+          android:textColor="@color/color_hint"
+          android:text="@string/operating_days"/>
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/operationalDaysIcon"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@{transaction.vehicleOperationDrawable()}"
+          tools:visibility="visible"
+          android:paddingEnd="@dimen/size_8dp"
+          app:layout_constraintStart_toStartOf="parent"
+          android:visibility="@{transaction.isLHVehicleRouteVisible()}"
+          app:layout_constraintEnd_toStartOf="@id/operatingDays"
+          app:layout_constraintTop_toTopOf="@id/operatingDays"
+          app:layout_constraintBottom_toBottomOf="@id/operationalDaysText"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/seperator3"

@@ -15,8 +15,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 19
     targetSdkVersion 32
-    versionCode 100
-    versionName "1.100"
+    versionCode 101
+    versionName "1.101"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -147,7 +147,7 @@ dependencies {
   implementation 'com.google.firebase:firebase-core:20.0.0'
   implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.1'
   implementation 'com.google.firebase:firebase-config:20.0.4'
-  implementation 'com.google.firebase:firebase-messaging:21.1.0'
+  implementation 'com.google.firebase:firebase-messaging:22.0.0'
   implementation platform('com.google.firebase:firebase-bom:27.1.0')
   implementation 'com.google.firebase:firebase-crashlytics-ktx'
   implementation 'com.google.firebase:firebase-analytics-ktx'

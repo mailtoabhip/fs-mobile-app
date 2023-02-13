@@ -19,9 +19,11 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
@@ -59,7 +61,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var pos = 0
   var oldAmount:Double?=0.0
   var reviseInitiated:Boolean=false
-
+  var isContract = false
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -283,9 +285,14 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     Transformations.map(viewModel.searchResults) {
       return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
         if (it.isNullOrEmpty()) {
-          add(Pair(SearchLoadWarningItem_NoLoad, Add))
+          if(isContract){
+            add(Pair(SearchContractWarningItem_NoLoad, Add))
+          } else{
+            add(Pair(SearchLoadWarningItem_NoLoad, Add))
+          }
+
         } else {
-          it.forEach { _item -> add(Pair(SearchLoadsRequestItem(_item), Add)) }
+          it.forEach { _item -> if(_item.isItContract())add(Pair(SearchContractsRequestItem(_item), Add)) else add(Pair(SearchLoadsRequestItem(_item), Add)) }
         }
       }
     }
@@ -306,6 +313,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     destination: CityModel?,
     type: String,
     saveToHistory: Boolean,
+    requestType:String?,
+    contractType:String?,
     progress: Boolean = true
   ) {
     this.saveToHistory = saveToHistory
@@ -314,7 +323,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
     if (progress)
-      action(ProgressSearchLoadAction(true))
+      action(ProgressSearchLoadAction(true, if(isContract)"Searching contracts" else "Searching loads"))
     binding.origin = origin
     binding.destination = destination
     val pos = when (type) {
@@ -324,7 +333,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       else -> 0
     }
     binding.spinnerTruckType.setSelection(pos, true)
-    viewModel.searchLoad(origin, destination, type)
+    isContract = contractType!=null
+    viewModel.searchLoad(origin, destination, type,requestType,contractType)
   }
 
   override fun handleAction(
@@ -334,20 +344,30 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
+        if (_item.isItContract()) {
+          if (_item.transactionId != null) {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            startActivity(contractDetailsIntent(_item.transactionId, context!!))
+          } else {
+            Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
+          }
+        } else {
         // Capture event
         analyticsUtil.moEngageTrackEvent(
-            EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
-            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
-            mutableListOf( _item.transactionId ?: "",orderRank.toString())
+          EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK,
+          mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
+          mutableListOf(_item.transactionId ?: "", orderRank.toString())
         )
         analyticsUtil.trackEvent(
-            EVENT_LIST_ITEM,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(bidDetailsIntent(_item.key(), it, if(_item.isDMTIndent()) "dmt" else "")) }
+          startActivity(bidDetailsIntent(_item.key(), it, if (_item.isDMTIndent()) "dmt" else ""))
+        }
+      }
       }
     }
   }
@@ -450,7 +470,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
       if(t==null || t.contains(Pair(SearchLoadWarningItem_NoLoad, Add))){
         analyticsUtil.moEngageTrackEvent(
-            EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
+            if(isContract)EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
                 PROPERTY_SEARCH_BODY_TYPE),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
@@ -459,7 +479,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         )
       }else{
         analyticsUtil.moEngageTrackEvent(
-            EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
+            if(isContract) EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
                 PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
