@@ -34,3 +34,12 @@ val SearchLoadWarningItem_NoLoad = SearchLoadsWarningItem(
     )
 )
 
+val SearchContractWarningItem_NoLoad = SearchLoadsWarningItem(
+    HomeBidsWarningItemData(
+        "No Contract found",
+        "Please change the search parameters",
+        "", HomeBidsWarningAction_NoBids
+    )
+)
+
+

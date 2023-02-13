@@ -184,7 +184,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -212,7 +214,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.setOnDismissListener {
           resetManualVerification.resetManualData(true)
         }
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -247,7 +251,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -464,7 +470,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -490,7 +498,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -537,7 +547,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -568,7 +580,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
@@ -593,7 +607,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             dialog.dismiss()
         }
 
-        dialog.show()
+        if (!activity.isFinishing){
+            dialog.show()
+        }
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation

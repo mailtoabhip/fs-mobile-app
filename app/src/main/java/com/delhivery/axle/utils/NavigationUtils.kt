@@ -433,12 +433,14 @@ class NavigationUtils @Inject constructor(
             bindingDialog.titleText.text = activity.resources.getString(R.string.details_submitted_successfully)
             bindingDialog.titleSubText.text = activity.resources.getString(R.string.notify_kyc_verification)
         }
-        dialog.show()
+        if(!activity.isFinishing)
+            dialog.show()
        userPrefs.setPreviousScreen(VendorPolicyActivity::class.java.name)
-        Handler().postDelayed({
-            dialog.dismiss()
-            this.navigate(HomeActivity::class.java, true)
-        }, 2000)
+        if(!activity.isFinishing)
+            Handler().postDelayed({
+                dialog.dismiss()
+                this.navigate(HomeActivity::class.java, true)
+            }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }

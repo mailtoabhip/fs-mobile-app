@@ -23,6 +23,7 @@ import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
+import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
@@ -284,7 +285,12 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     Transformations.map(viewModel.searchResults) {
       return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
         if (it.isNullOrEmpty()) {
-          add(Pair(SearchLoadWarningItem_NoLoad, Add))
+          if(isContract){
+            add(Pair(SearchContractWarningItem_NoLoad, Add))
+          } else{
+            add(Pair(SearchLoadWarningItem_NoLoad, Add))
+          }
+
         } else {
           it.forEach { _item -> if(_item.isItContract())add(Pair(SearchContractsRequestItem(_item), Add)) else add(Pair(SearchLoadsRequestItem(_item), Add)) }
         }
