@@ -138,15 +138,11 @@ class HomeContractsViewModel@Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchContractsTransactions(0, demandType)
+    compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
-        total = _res.total
-        hasMoreData = _res.offset!=_res.total
-        fecthToCalled =_res.offset<_res.total
-        loadPricePercent = _res.loadPricePercent
-        more_default_loads = _res.more_loads
+        hasMoreData = _res.hasNext
         var oppositeDemandType = if(demandType=="Internal"){ "Corporate" }else{ "Internal" }
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true),
@@ -168,9 +164,9 @@ class HomeContractsViewModel@Inject constructor(
             val bids = _tRes.second
 
             if (_tRes.fourth.transactions.isEmpty() && _tRes.fifth.transactions.isEmpty()) {
-              add(Pair(HomeContractsWarningItem_NoLoads, Add))
+              add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
             } else {
-              add(Pair(HomeContractsSearchItem(), Add))
+              add(Pair(HomeContractsSearchItem(), AddUpdate))
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0

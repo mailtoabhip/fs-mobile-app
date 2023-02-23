@@ -96,6 +96,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       addOnScrollListener(PaginationInterface())
     }
 
+    viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+      isLoadingData = it ?: false
+    })
 
     binding.editStickySearch.setOnClickListener {
       handleAction(

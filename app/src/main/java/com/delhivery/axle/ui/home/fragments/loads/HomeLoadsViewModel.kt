@@ -167,7 +167,7 @@ class HomeLoadsViewModel @Inject constructor(
 
         dataLoadingLiveData.postValue(true)
 
-        compositeDisposable += transactionsRepository.fetchRecommTransactions(0, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+        compositeDisposable += transactionsRepository.fetchRecommTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
                 .flatMap  { _res ->
 
                         offset = _res.offset

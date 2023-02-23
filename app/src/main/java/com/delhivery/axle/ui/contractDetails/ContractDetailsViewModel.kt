@@ -174,6 +174,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
           showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),tentativeTripCount?.toString(),Pair(isPMT,false)))
 
         } else {
+          fetchTransactionBids()
           hideProgress.postValue(true)
           error.handle()
         }
@@ -201,6 +202,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
         if (!error && _res.isSuccess) {
           showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),tentativeTripCount?.toString(),Pair(isPMT,true)))
         } else {
+          fetchTransactionBids()
          hideProgress.postValue(true)
           error.handle()
         }
