@@ -10,8 +10,6 @@ data class Sixtuple<out A, out B, out C, out D, out E,  out F>(
 
 ) {
 
-  /**
-   * Returns string representation of the [Quintuple] including its [first], [second], [third], [fourth] and [fifth] values.
-   */
+
   override fun toString(): String = "($first, $second, $third, $fourth, $fifth)"
 }
