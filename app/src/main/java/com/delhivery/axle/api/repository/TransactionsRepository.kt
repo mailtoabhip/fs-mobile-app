@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import android.text.BoringLayout
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
@@ -39,9 +40,9 @@ class TransactionsRepository @Inject constructor(
              demand_type, vehicle_type)
           ).convertResponse()
 
-  fun fetchContractsTransactions(offset: Int, demand_type: String) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,count:String?=null) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, UserTripsLoadLimit,demand_type
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,count
     ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions

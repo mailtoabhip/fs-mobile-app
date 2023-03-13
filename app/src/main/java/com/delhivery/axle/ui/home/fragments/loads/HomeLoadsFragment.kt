@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -983,7 +984,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(50) {
+  inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
     override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
 
     override fun hasMore() = viewModel.hasMoreData

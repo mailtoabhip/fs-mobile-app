@@ -90,7 +90,8 @@ interface TransactionService {
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
     @Query("demand_types") vendorType: String ?,
-    @Query("new_limit") new_limit: Boolean= true
+    @Query("all_active_fetched") allActiveFetched: Boolean?= null,
+    @Query("only_count") onlyCount: String?
   ): Single<BaseResponse<TransactionsResponse>>
 
 }

@@ -8,10 +8,12 @@ import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.Quintuple
+import com.delhivery.axle.data.Sixtuple
 import com.delhivery.axle.data.bids.BulkBidCreateRequest
 import com.delhivery.axle.data.bids.BulkBidRemoveRequest
 import com.delhivery.axle.data.bids.BulkBidUpdateRequest
@@ -92,6 +94,7 @@ class HomeContractsViewModel@Inject constructor(
   var filterVehicleType: Boolean?= null
   var offset = 0
   var total = 0
+  var allActiveFetched = false
   var transactionIds:String?=null
 
   var hasOrionLoadOnce = false
@@ -119,6 +122,7 @@ class HomeContractsViewModel@Inject constructor(
     isInternal: Boolean = false) {
     if (!paginate ) {
       offset = 0
+      allActiveFetched = false
     } else if (paginate && !hasMoreData) {
       return
     }
@@ -138,20 +142,22 @@ class HomeContractsViewModel@Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType)
+    compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
+        UserTripsLoadLimit)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
         hasMoreData = _res.hasNext
+        allActiveFetched = _res.allActiveFetched?:false
         var oppositeDemandType = if(demandType=="Internal"){ "Corporate" }else{ "Internal" }
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true),
           bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-          transactionsRepository.fetchContractsTransactions(0, oppositeDemandType),
-          Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,TransactionsResponse,
-              Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,TransactionsResponse,TransactionsResponse>> { t1, t2,t3 ->
-            Quintuple(t1.first, t1.second, t2.second,t3,_res)
-          })
+          transactionsRepository.fetchContractsTransactions(0, oppositeDemandType,null,1,"yes"),
+          transactionsRepository.fetchContractsTransactions(0, demandType,null,1,"yes"),
+          ) { t1, t2, t3, t4 ->
+          Sixtuple(t1.first, t1.second, t2.second, t3, _res,t4)
+        }
       }
       .onBackground()
       .subscribe { _tRes, error ->
@@ -171,16 +177,16 @@ class HomeContractsViewModel@Inject constructor(
               var expressCount =0
               var nonExpressCount =0
               if(userPrefs.demandType.contains("Internal")){
-                if(_tRes.fourth.activeCount!=null && _tRes.fifth.activeCount!=null){
-                  totalActive = _tRes.fourth.activeCount+_tRes.fifth.activeCount
+                if(_tRes.fourth.activeCount!=null && _tRes.sixth.activeCount!=null){
+                  totalActive = _tRes.fourth.activeCount+_tRes.sixth.activeCount
                 }
               }else{
                 val contractType = "FRC"
                 if(_tRes.fourth.activeCount!=null && _tRes.fourth.transactions.isNotEmpty()&& _tRes.fourth.transactions.isNotEmpty() &&_tRes.fourth.transactions[0].contractType==contractType){
                   totalActive = _tRes.fourth.activeCount
                 }
-                else if(_tRes.fifth.activeCount!=null && _tRes.fifth.transactions.isNotEmpty()&& _tRes.fifth.transactions.isNotEmpty() &&_tRes.fifth.transactions[0].contractType==contractType){
-                  totalActive = _tRes.fifth.activeCount
+                else if(_tRes.sixth.activeCount!=null && _tRes.sixth.transactions.isNotEmpty()&& _tRes.sixth.transactions.isNotEmpty() &&_tRes.sixth.transactions[0].contractType==contractType){
+                  totalActive = _tRes.sixth.activeCount
                 }
 
               }
@@ -191,11 +197,11 @@ class HomeContractsViewModel@Inject constructor(
                    nonExpressCount = _tRes.fourth.total
                  }
                }
-              if(_tRes.fifth.transactions.isNotEmpty()){
-                if(_tRes.fifth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
-                  expressCount = _tRes.fifth.total
+              if(_tRes.sixth.transactions.isNotEmpty()){
+                if(_tRes.sixth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
+                  expressCount = _tRes.sixth.total
                 }else{
-                  nonExpressCount = _tRes.fifth.total
+                  nonExpressCount = _tRes.sixth.total
                 }
               }
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(isInternal, expressCount ,nonExpressCount,userPrefs.demandType)), AddUpdate))
