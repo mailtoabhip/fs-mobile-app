@@ -1,6 +1,8 @@
 package com.delhivery.axle.data
-
-data class Sixtuple<out A, out B, out C, out D, out E,  out F>(
+/**
+ * Data class for tuple with six elements
+ */
+data class SixTuple<out A, out B, out C, out D, out E,  out F>(
   val first: A,
   val second: B,
   val third: C,
@@ -10,6 +12,8 @@ data class Sixtuple<out A, out B, out C, out D, out E,  out F>(
 
 ) {
 
-
-  override fun toString(): String = "($first, $second, $third, $fourth, $fifth)"
+  /**
+   * Returns string representation of the [SixTuple] including its [first], [second], [third], [fourth], [fifth] and [sixth]values.
+   */
+  override fun toString(): String = "($first, $second, $third, $fourth, $fifth, $sixth)"
 }

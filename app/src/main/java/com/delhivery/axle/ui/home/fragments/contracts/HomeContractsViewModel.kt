@@ -1,62 +1,28 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.util.Log
-import android.view.SurfaceControl.Transaction
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
-import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
-import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.data.Quintuple
-import com.delhivery.axle.data.Sixtuple
-import com.delhivery.axle.data.bids.BulkBidCreateRequest
-import com.delhivery.axle.data.bids.BulkBidRemoveRequest
-import com.delhivery.axle.data.bids.BulkBidUpdateRequest
-import com.delhivery.axle.data.bids.ModifyVehicleData
+import com.delhivery.axle.data.SixTuple
 import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.data.bids.VehicleBidData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
-import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
-import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
-import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsAddTruckItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFilterItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsMoreInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsProgressItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSummaryItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTruckPriorityAccessItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem_NoLoads
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem_TimeOut
-import com.delhivery.axle.ui.home.fragments.loads_truck.UpdateTabCountAndBadgeInterface
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import java.lang.reflect.Constructor
-import java.util.concurrent.TimeUnit.SECONDS
-import io.reactivex.functions.Function3
 
 import javax.inject.Inject
 
@@ -156,7 +122,7 @@ class HomeContractsViewModel@Inject constructor(
           transactionsRepository.fetchContractsTransactions(0, oppositeDemandType,null,1,"yes"),
           transactionsRepository.fetchContractsTransactions(0, demandType,null,1,"yes"),
           ) { t1, t2, t3, t4 ->
-          Sixtuple(t1.first, t1.second, t2.second, t3, _res,t4)
+          SixTuple(t1.first, t1.second, t2.second, t3, _res,t4)
         }
       }
       .onBackground()

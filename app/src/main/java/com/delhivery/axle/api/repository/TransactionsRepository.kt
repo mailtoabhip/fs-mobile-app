@@ -40,6 +40,9 @@ class TransactionsRepository @Inject constructor(
              demand_type, vehicle_type)
           ).convertResponse()
 
+  /**
+   * Get contracts transactions
+   */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,count:String?=null) =
     transactionService.contractsTransactions(
       userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,count
