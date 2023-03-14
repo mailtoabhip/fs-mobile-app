@@ -1,60 +1,28 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.util.Log
-import android.view.SurfaceControl.Transaction
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
-import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.api.response.TransactionsResponse
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.data.Quintuple
-import com.delhivery.axle.data.bids.BulkBidCreateRequest
-import com.delhivery.axle.data.bids.BulkBidRemoveRequest
-import com.delhivery.axle.data.bids.BulkBidUpdateRequest
-import com.delhivery.axle.data.bids.ModifyVehicleData
+import com.delhivery.axle.data.SixTuple
 import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.data.bids.VehicleBidData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
-import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
-import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
-import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
-import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsAddTruckItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFilterItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsMoreInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsProgressItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSummaryItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTruckPriorityAccessItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem_NoLoads
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem_TimeOut
-import com.delhivery.axle.ui.home.fragments.loads_truck.UpdateTabCountAndBadgeInterface
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import java.lang.reflect.Constructor
-import java.util.concurrent.TimeUnit.SECONDS
-import io.reactivex.functions.Function3
 
 import javax.inject.Inject
 
@@ -92,6 +60,7 @@ class HomeContractsViewModel@Inject constructor(
   var filterVehicleType: Boolean?= null
   var offset = 0
   var total = 0
+  var allActiveFetched = false
   var transactionIds:String?=null
 
   var hasOrionLoadOnce = false
@@ -119,6 +88,7 @@ class HomeContractsViewModel@Inject constructor(
     isInternal: Boolean = false) {
     if (!paginate ) {
       offset = 0
+      allActiveFetched = false
     } else if (paginate && !hasMoreData) {
       return
     }
@@ -138,24 +108,22 @@ class HomeContractsViewModel@Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    compositeDisposable += transactionsRepository.fetchContractsTransactions(0, demandType)
+    compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
+        UserTripsLoadLimit)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
-        total = _res.total
-        hasMoreData = _res.offset!=_res.total
-        fecthToCalled =_res.offset<_res.total
-        loadPricePercent = _res.loadPricePercent
-        more_default_loads = _res.more_loads
+        hasMoreData = _res.hasNext
+        allActiveFetched = _res.allActiveFetched?:false
         var oppositeDemandType = if(demandType=="Internal"){ "Corporate" }else{ "Internal" }
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true),
           bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-          transactionsRepository.fetchContractsTransactions(0, oppositeDemandType),
-          Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,TransactionsResponse,
-              Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,TransactionsResponse,TransactionsResponse>> { t1, t2,t3 ->
-            Quintuple(t1.first, t1.second, t2.second,t3,_res)
-          })
+          transactionsRepository.fetchContractsTransactions(0, oppositeDemandType,null,1,"yes"),
+          transactionsRepository.fetchContractsTransactions(0, demandType,null,1,"yes"),
+          ) { t1, t2, t3, t4 ->
+          SixTuple(t1.first, t1.second, t2.second, t3, _res,t4)
+        }
       }
       .onBackground()
       .subscribe { _tRes, error ->
@@ -168,23 +136,23 @@ class HomeContractsViewModel@Inject constructor(
             val bids = _tRes.second
 
             if (_tRes.fourth.transactions.isEmpty() && _tRes.fifth.transactions.isEmpty()) {
-              add(Pair(HomeContractsWarningItem_NoLoads, Add))
+              add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
             } else {
-              add(Pair(HomeContractsSearchItem(), Add))
+              add(Pair(HomeContractsSearchItem(), AddUpdate))
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0
               if(userPrefs.demandType.contains("Internal")){
-                if(_tRes.fourth.activeCount!=null && _tRes.fifth.activeCount!=null){
-                  totalActive = _tRes.fourth.activeCount+_tRes.fifth.activeCount
+                if(_tRes.fourth.activeCount!=null && _tRes.sixth.activeCount!=null){
+                  totalActive = _tRes.fourth.activeCount+_tRes.sixth.activeCount
                 }
               }else{
                 val contractType = "FRC"
                 if(_tRes.fourth.activeCount!=null && _tRes.fourth.transactions.isNotEmpty()&& _tRes.fourth.transactions.isNotEmpty() &&_tRes.fourth.transactions[0].contractType==contractType){
                   totalActive = _tRes.fourth.activeCount
                 }
-                else if(_tRes.fifth.activeCount!=null && _tRes.fifth.transactions.isNotEmpty()&& _tRes.fifth.transactions.isNotEmpty() &&_tRes.fifth.transactions[0].contractType==contractType){
-                  totalActive = _tRes.fifth.activeCount
+                else if(_tRes.sixth.activeCount!=null && _tRes.sixth.transactions.isNotEmpty()&& _tRes.sixth.transactions.isNotEmpty() &&_tRes.sixth.transactions[0].contractType==contractType){
+                  totalActive = _tRes.sixth.activeCount
                 }
 
               }
@@ -195,11 +163,11 @@ class HomeContractsViewModel@Inject constructor(
                    nonExpressCount = _tRes.fourth.total
                  }
                }
-              if(_tRes.fifth.transactions.isNotEmpty()){
-                if(_tRes.fifth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
-                  expressCount = _tRes.fifth.total
+              if(_tRes.sixth.transactions.isNotEmpty()){
+                if(_tRes.sixth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
+                  expressCount = _tRes.sixth.total
                 }else{
-                  nonExpressCount = _tRes.fifth.total
+                  nonExpressCount = _tRes.sixth.total
                 }
               }
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(isInternal, expressCount ,nonExpressCount,userPrefs.demandType)), AddUpdate))

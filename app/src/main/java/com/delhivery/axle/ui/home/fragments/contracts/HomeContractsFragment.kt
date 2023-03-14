@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.*
@@ -89,6 +90,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       addOnScrollListener(PaginationInterface())
     }
 
+    viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+      isLoadingData = it ?: false
+    })
 
     binding.editStickySearch.setOnClickListener {
       handleAction(
@@ -300,7 +304,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(50) {
+  inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
     override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
 
     override fun hasMore() = viewModel.hasMoreData
