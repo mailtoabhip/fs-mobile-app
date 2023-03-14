@@ -89,7 +89,9 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
-    @Query("demand_types") vendorType: String ?
+    @Query("demand_types") vendorType: String ?,
+    @Query("all_active_fetched") allActiveFetched: Boolean?= null,
+    @Query("only_count") onlyCount: String?
   ): Single<BaseResponse<TransactionsResponse>>
 
 }

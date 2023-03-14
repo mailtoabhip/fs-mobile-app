@@ -146,6 +146,9 @@ class HomeLoadsViewModel @Inject constructor(
             isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
         if (!paginate || infoSearch) {
             offset = 0
+            offsetFetch = 0
+            totalFetchTitle =0
+            hasMoreData = true
         } else if (paginate && !hasMoreData) {
             return
         }
@@ -167,12 +170,11 @@ class HomeLoadsViewModel @Inject constructor(
 
         dataLoadingLiveData.postValue(true)
 
-        compositeDisposable += transactionsRepository.fetchRecommTransactions(0, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
+        compositeDisposable += transactionsRepository.fetchRecommTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true)
                 .flatMap  { _res ->
 
                         offset = _res.offset
                         total = _res.total
-                        hasMoreData = _res.offset!=_res.total
                         fecthToCalled =_res.offset<_res.total
                         loadPricePercent = _res.loadPricePercent
                         more_default_loads = _res.more_loads
@@ -205,8 +207,13 @@ class HomeLoadsViewModel @Inject constructor(
 //                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                                   add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                                 }
-                                 if(total>0)
-                                add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
+                                 if(totalFetchTitle>total){
+                                   add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
+                                 }else{
+                                   if(total>=0)
+                                     add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)), AddUpdate))
+                                 }
+
                                 for ((index, load) in loads.toMutableList().withIndex()) {
                                     try {
                                         load.transactionId?.let { txnIds.add(it) }
@@ -236,7 +243,7 @@ class HomeLoadsViewModel @Inject constructor(
                                     add(Pair(HomeLoadsRequestItem(load), Add))
                                 }
 
-                                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads && totalFetchTitle<total) {
                                     add(Pair(HomeLoadsInfoItem(), AddUpdate))
                                 }
                                 add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
@@ -244,13 +251,12 @@ class HomeLoadsViewModel @Inject constructor(
                         }.let { userLoadsData.postValue(it) }
 
                         if(!fecthToCalled) {
-                          hasMoreData=true
                           fetchSupplierTransactions(
-                              true, demandType, isInternal, infoSearch, excludeTruckTypes
+                            total>0, demandType, isInternal, infoSearch, excludeTruckTypes
                           )
                         }
                     } else {
-                        fetchSupplierTransactions(true, demandType, isInternal, infoSearch, excludeTruckTypes)
+                        fetchSupplierTransactions(totalFetchTitle>0, demandType, isInternal, infoSearch, excludeTruckTypes)
                     }
 
                     dataLoadingLiveData.postValue(false)
@@ -265,7 +271,7 @@ class HomeLoadsViewModel @Inject constructor(
     paginate: Boolean = false, demandType: String,
     isInternal: Boolean = false, infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
-      offset = 0
+      offsetFetch = 0
     } else if (paginate && !hasMoreData ) {
       return
     }
@@ -291,12 +297,12 @@ class HomeLoadsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-      compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offset, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, transactionIds)
+      compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offsetFetch, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, transactionIds)
                               .flatMap { t ->
                                   offsetFetch = t.offset
                                   totalFetchTitle = total+t.total
                                   totalFetch=t.total
-                                  hasMoreData = t.offset != t.total
+                                  hasMoreData =t.hasNext
                                   loadPricePercent = t.loadPricePercent
                                   more_default_loads = t.more_loads
                                   loadsCountLiveData.postValue(totalFetchTitle)
@@ -356,11 +362,18 @@ class HomeLoadsViewModel @Inject constructor(
                       add(Pair(HomeLoadsRequestItem(load), Add))
                   }
 
-                  if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                  if (!hasMoreData && !hasOrionLoadOnce) {
+                    if (more_default_loads){
+                      add(Pair(HomeLoadsInfoItem(), Remove))
                       add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                    }else{
+                      add(Pair(HomeLoadsInfoItem(), Remove))
+                    }
+                      add(Pair(HomeLoadsMoreInfoItem(), Remove))
+                      add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
                   }
-                add(Pair(HomeLoadsMoreInfoItem(), Remove))
-                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+
+
               }
             }
                 .let {
