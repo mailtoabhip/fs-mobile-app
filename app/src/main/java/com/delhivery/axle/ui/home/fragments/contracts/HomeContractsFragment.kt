@@ -19,21 +19,14 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.*
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
-import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
-import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.databinding.DialogContractsTypeInfoBinding
 import com.delhivery.axle.databinding.FragmentHomeContractsBinding
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
-import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
-import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -189,15 +182,18 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsTimeOutAction -> {
         refreshData()
       }
-      HomeContractsFilterExpress -> {
+      HomeContractsFilterDLVIntercity -> {
         isInternal = true
         demandType = "Internal"
         refreshData()
       }
-      HomeContractsFilterNonExpress -> {
+      HomeContractsFilterCustomerIntercity -> {
         isInternal = false
         demandType = "Corporate"
         refreshData()
+      }
+      HomeContractsFilterDLVIntracity ->{
+
       }
       HomeContractsFilterInfo -> {
         infoDialog()
@@ -229,8 +225,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       bindingDialog.buttonCancel.setOnClickListener {
         dialog.cancel()
       }
-      bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
-      bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.customer_intercity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intercity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule3.text=    HtmlCompat.fromHtml(getString(R.string.action_dlv_intracity), HtmlCompat.FROM_HTML_MODE_LEGACY)
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
       dialog.setContentView(bindingDialog.root)
       dialog.show()

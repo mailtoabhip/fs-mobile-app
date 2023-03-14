@@ -628,7 +628,7 @@
   <string name="sharing_rate_rupee">/rate </string>
   <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
   <string name="earn_cash_reward">Earn cash rewards upto</string>
-  <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
+  <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditiorule2ns of Use. </string>
   <string name="our_privacy_policy_outlines">Our <a href="https://orion.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
   <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
   <string name="error_update_failed">Update Failed, Please try again</string>
@@ -647,8 +647,9 @@
   <string name="price_banner_text">Earn ₹500 on this lane offer</string>
   <string name="share_rate">Share Rate</string>
   <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
-  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Non-Express load</font>, means consignor to consignee movement]]></string>
-  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Express Load</font> , requires hub to hub time critical movement ]]></string>
+  <string name="customer_intercity_info"><![CDATA[<font color=\'#5B80F7\'>Customer Intercity - </font>contract for movement of Customer load between different cities.]]></string>
+  <string name="dlv_intercity_info"><![CDATA[<font color=\'#5B80F7\'>DLV Intercity - </font> contract for movement of Delhivery load between different cities.]]></string>
+  <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>DLV Intracity - </font> contract for movement of Delhivery load within the same city.]]></string>
   <string name="collecting_bids">Collecting Bids</string>
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
@@ -722,6 +723,7 @@
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
   <string name="rules">Rules</string>
   <string name="view_on_map">View on map</string>
+  <string name="action_dlv_intracity">DLV Intracity</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

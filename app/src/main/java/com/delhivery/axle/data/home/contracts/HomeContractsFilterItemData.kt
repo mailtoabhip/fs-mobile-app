@@ -12,6 +12,7 @@ data class HomeContractsFilterItemData(
 const val HomeContractsFilterItemDataKeyPrefix = "filter_"
 
 /* actions */
-const val HomeContractsFilterExpress = "filter_express"
-const val HomeContractsFilterNonExpress = "filter_non_express"
+const val HomeContractsFilterDLVIntercity = "filter_express"
+const val HomeContractsFilterCustomerIntercity = "filter_non_express"
+const val HomeContractsFilterDLVIntracity="filter_dlv_intracity"
 const val HomeContractsFilterInfo = "filter_info"

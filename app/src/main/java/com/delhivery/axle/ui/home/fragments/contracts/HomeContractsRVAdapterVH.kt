@@ -1,67 +1,28 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextUtils
-import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
-import com.delhivery.axle.R.color
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterCustomerIntercity
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntercity
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
-import com.delhivery.axle.data.home.loads.HomeLoadsBannerAction
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
-import com.delhivery.axle.data.home.loads.HomeLoadsShareRateAction
-import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsTruckBannerItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsTruckPriorityItemBinding
-import com.delhivery.axle.databinding.ViewHomeSummaryItemBinding
-import com.delhivery.axle.databinding.ViewShareLayoutBannerBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterViewHolder
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsAddTruckItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFilterItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsMoreInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsProgressItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterInterface
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsShareRateItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSummaryItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTimeoutItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTruckPriorityAccessItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem
-import com.delhivery.axle.utils.DatePatterns
-import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -553,29 +514,30 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     item: HomeContractsFilterItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
-     binding.nonExpressToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
-     binding.expressToggle.text =   "Express Load (${item.data.expressCount})"
+     binding.customerIntercityToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
+     binding.dlvIntercityToggle.text =   "Express Load (${item.data.expressCount})"
       if(item.data.userDemandType.contains("Internal") ){
-        binding.expressToggle.visibility = View.VISIBLE
-        binding.nonExpressToggle.visibility = View.VISIBLE
+        binding.dlvIntercityToggle.visibility = View.VISIBLE
+        binding.customerIntercityToggle.visibility = View.VISIBLE
       }else{
-          binding.expressToggle.visibility = View.GONE
-          binding.nonExpressToggle.visibility = View.VISIBLE
+          binding.dlvIntercityToggle.visibility = View.GONE
+          binding.customerIntercityToggle.visibility = View.VISIBLE
       }
     if (!item.data.actionLabel) {
-      binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-      binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-      binding.expressToggle.isSelected = false
-      binding.nonExpressToggle.isSelected=true
+      binding.customerIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+      binding.dlvIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+      binding.dlvIntercityToggle.isSelected = false
+      binding.customerIntercityToggle.isSelected=true
     } else {
-      binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-      binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-      binding.expressToggle.isSelected = true
-      binding.nonExpressToggle.isSelected=false
+      binding.dlvIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+      binding.customerIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+      binding.dlvIntercityToggle.isSelected = true
+      binding.customerIntercityToggle.isSelected=false
     }
 
-    binding.expressToggle.clickToAction(HomeContractsFilterExpress, item, _interface)
-    binding.nonExpressToggle.clickToAction(HomeContractsFilterNonExpress, item, _interface)
+    binding.dlvIntercityToggle.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
+    binding.customerIntercityToggle.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
+    binding.dlvIntracityToggle.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
     binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }
 }

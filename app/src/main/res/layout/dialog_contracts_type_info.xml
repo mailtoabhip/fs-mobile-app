@@ -54,7 +54,7 @@
             android:textSize="@dimen/text_14sp"
             android:textColor="@color/background_dark_grey"
             android:lineSpacingExtra="@dimen/size_12dp"
-            android:text="@string/express_load_info"/>
+            android:text="@string/customer_intercity_info"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/dot2"
             android:layout_width="wrap_content"
@@ -75,14 +75,36 @@
             android:textSize="@dimen/text_14sp"
             android:layout_marginTop="@dimen/size_12dp"
             android:lineSpacingExtra="@dimen/size_12dp"
-            android:text="@string/non_express_load_info"/>
+            android:text="@string/dlv_intercity_info"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dot3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\u2022  "
+            android:layout_marginTop="@dimen/size_14dp"
+            android:textColor="@color/background_dark_grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rule2"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/rule3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/rule2"
+            app:layout_constraintStart_toEndOf="@id/dot3"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_14sp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:lineSpacingExtra="@dimen/size_12dp"
+            android:text="@string/dlv_intracity_info"/>
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/action_got"
             android:textColor="@color/background_dark_grey"
-            app:layout_constraintTop_toBottomOf="@+id/rule2"
+            app:layout_constraintTop_toBottomOf="@+id/rule3"
+
             android:background="@drawable/bg_all_round_corner_grey_boundary"
             android:textAllCaps="false"
             android:paddingStart="@dimen/size_32dp"
