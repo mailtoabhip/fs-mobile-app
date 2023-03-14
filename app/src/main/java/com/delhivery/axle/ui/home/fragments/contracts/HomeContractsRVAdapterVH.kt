@@ -514,8 +514,8 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     item: HomeContractsFilterItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
-     binding.customerIntercityToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
-     binding.dlvIntercityToggle.text =   "Express Load (${item.data.expressCount})"
+     binding.customerIntercityToggle.text =  "Customer Intercity (${item.data.nonExpressCount})"
+     binding.dlvIntercityToggle.text =   "DLV Intercity (${item.data.expressCount})"
       if(item.data.userDemandType.contains("Internal") ){
         binding.dlvIntercityToggle.visibility = View.VISIBLE
         binding.customerIntercityToggle.visibility = View.VISIBLE

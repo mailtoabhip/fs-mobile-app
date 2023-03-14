@@ -231,7 +231,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       }
       bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.customer_intercity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intercity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
-      bindingDialog.rule3.text=    HtmlCompat.fromHtml(getString(R.string.action_dlv_intracity), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule3.text=    HtmlCompat.fromHtml(getString(R.string.dlv_intracity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
       dialog.setContentView(bindingDialog.root)
       dialog.show()
