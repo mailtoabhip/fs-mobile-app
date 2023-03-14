@@ -179,8 +179,9 @@
   <string name="action_retry_verification">Retry Verification</string>
   <string name="action_got">Got it</string>
   <string name="action_learn">Learn More</string>
-  <string name="action_express">Express</string>
-  <string name="action_non_express">Non Express</string>
+  <string name="action_dlv_intercity">DLV Intercity</string>
+  <string name="action_customer_intercity">Customer Intercity</string>
+  <string name="action_dlv_intracity">DLV Intracity</string>
   <string name="action_ok">Ok</string>
 
 
@@ -723,7 +724,6 @@
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
   <string name="rules">Rules</string>
   <string name="view_on_map">View on map</string>
-  <string name="action_dlv_intracity">DLV Intracity</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
