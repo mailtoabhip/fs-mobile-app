@@ -197,7 +197,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterDLVIntracity ->{
-
+        refreshData()
       }
       HomeContractsFilterInfo -> {
         infoDialog()
