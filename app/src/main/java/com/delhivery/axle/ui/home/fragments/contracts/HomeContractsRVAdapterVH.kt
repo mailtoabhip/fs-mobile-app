@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -14,6 +15,9 @@ import com.delhivery.axle.data.home.contracts.HomeContractsFilterCustomerInterci
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntercity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
+import com.delhivery.axle.databinding.ViewFilterInfoItemBinding
+import com.delhivery.axle.databinding.ViewFilterToggleItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
@@ -22,6 +26,7 @@ import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.utils.StringUtils
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -514,32 +519,21 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     item: HomeContractsFilterItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
-     binding.customerIntercityToggle.text =  "Customer Intercity (${item.data.nonExpressCount})"
-     binding.dlvIntercityToggle.text =   "DLV Intercity (${item.data.expressCount})"
-     binding.dlvIntracityToggle.text =   "DLV Intracity (${item.data.intracityCount})"
-      if(item.data.userDemandType.contains("Internal") ){
-        binding.dlvIntercityToggle.visibility = View.VISIBLE
-        binding.customerIntercityToggle.visibility = View.VISIBLE
-      }else{
-          binding.dlvIntercityToggle.visibility = View.GONE
-          binding.customerIntercityToggle.visibility = View.VISIBLE
-      }
-    if (!item.data.actionLabel) {
-      binding.customerIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-      binding.dlvIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-      binding.dlvIntercityToggle.isSelected = false
-      binding.customerIntercityToggle.isSelected=true
-    } else {
-      binding.dlvIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-      binding.customerIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-      binding.dlvIntercityToggle.isSelected = true
-      binding.customerIntercityToggle.isSelected=false
+    val filterRVAdapter=ContractsFilterRVAdapter(_interface)
+    binding.filterRv.apply {
+      layoutManager=LinearLayoutManager(this.context,LinearLayoutManager.HORIZONTAL,false)
+      adapter=filterRVAdapter
     }
-
-    binding.dlvIntercityToggle.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
-    binding.customerIntercityToggle.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
-    binding.dlvIntracityToggle.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
-    binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
+    filterRVAdapter.operation(FilterToggleItem(HomeContractsFilterItemData("CustomerIntercityToggle",item.data.actionLabel,item.data.expressCount,item.data.nonExpressCount,item.data.intracityCount,item.data.userDemandType)),
+      Add)
+    filterRVAdapter.operation(
+      FilterToggleItem(HomeContractsFilterItemData("DLVIntercityToggle",item.data.actionLabel,item.data.expressCount,item.data.nonExpressCount,item.data.intracityCount,item.data.userDemandType)),
+      Add
+    )
+    filterRVAdapter.operation(
+      FilterToggleItem(HomeContractsFilterItemData("DLVIntracityToggle",item.data.actionLabel,item.data.expressCount,item.data.nonExpressCount,item.data.intracityCount,item.data.userDemandType)),
+      Add)
+    filterRVAdapter.operation(FilterInfoItem(),Add)
   }
 }
 
@@ -556,6 +550,54 @@ internal class HomeContractsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
+  }
+}
+
+internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
+  BaseHomeContractsRVAdapterViewHolder<ViewFilterToggleItemBinding,FilterToggleItem>(binding){
+  override fun bind(item: FilterToggleItem, _interface: HomeContractsRVAdapterInterface) {
+    if(item.data.itemType=="CustomerIntercityToggle"){
+      binding.toggleView.text="Customer Intercity (${item.data.nonExpressCount})"
+      binding.toggleView.visibility=View.VISIBLE
+      if (!item.data.actionLabel) {
+        binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.toggleView.isSelected=true
+      } else {
+        binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.toggleView.isSelected=false
+      }
+      binding.toggleView.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
+
+    }
+    else if(item.data.itemType=="DLVIntercityToggle"){
+      binding.toggleView.text="DLV Intercity (${item.data.expressCount})"
+     if(item.data.userDemandType.contains("Internal") ){
+       binding.toggleView.visibility = View.VISIBLE
+
+     }else{
+         binding.toggleView.visibility = View.GONE
+     }
+     if (!item.data.actionLabel) {
+       binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+       binding.toggleView.isSelected = false
+     } else {
+       binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+       binding.toggleView.isSelected = true
+     }
+      binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
+    }
+    else{
+      binding.toggleView.text="DLV Intracity (${item.data.intracityCount})"
+      binding.toggleView.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
+    }
+  }
+
+}
+
+internal class FilterInfoItemVH(binding: ViewFilterInfoItemBinding):
+  BaseHomeContractsRVAdapterViewHolder<ViewFilterInfoItemBinding,FilterInfoItem>(binding){
+  override fun bind(item: FilterInfoItem, _interface: HomeContractsRVAdapterInterface) {
+    binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }
 }
 

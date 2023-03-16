@@ -6,13 +6,14 @@ import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsProgressItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsTimeOutItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsWarningItemData
-import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Contracts
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.FilterInfo
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.FilterToggle
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Filters
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Progress
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Search
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Warning
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Search
 
 /*
 * RV item type for [HomeContractsRVAdapter]
@@ -23,7 +24,9 @@ enum class HomeContractsRVAdapterItemType(val typeId: Int) {
   Progress(2),
   Warning(3),
   Timeout(4),
-  Filters(5);
+  Filters(5),
+  FilterToggle(6),
+  FilterInfo(7);
 
   companion object {
     /**
@@ -33,7 +36,6 @@ enum class HomeContractsRVAdapterItemType(val typeId: Int) {
       .filter { typeId == it.typeId }.firstOrNull()
   }
 }
-
 /**
  * Base Home Contracts type adapter item
  */
@@ -80,7 +82,18 @@ class HomeContractsTimeoutItem(data: HomeContractsTimeOutItemData) :
  * Filter item
  */
 class HomeContractsFilterItem(
-  data: HomeContractsFilterItemData = HomeContractsFilterItemData(
+  data: HomeContractsFilterItemData = HomeContractsFilterItemData("",
     false, 0,0,0,""
   )
 ) : BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(Filters, data)
+class FilterToggleItem(
+  data: HomeContractsFilterItemData = HomeContractsFilterItemData("",
+    false, 0,0,0,""
+  )
+): BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(FilterToggle,data)
+
+class FilterInfoItem(
+  data: HomeContractsFilterItemData = HomeContractsFilterItemData("Info",
+    false, 0,0,0,""
+  )
+): BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(FilterInfo,data)

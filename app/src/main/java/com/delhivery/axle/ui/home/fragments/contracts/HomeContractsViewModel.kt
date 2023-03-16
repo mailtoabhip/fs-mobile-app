@@ -170,7 +170,7 @@ class HomeContractsViewModel@Inject constructor(
                   nonExpressCount = _tRes.sixth.total
                 }
               }
-              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(isInternal, expressCount ,nonExpressCount,0,userPrefs.demandType)), AddUpdate))
+              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData("",isInternal, expressCount ,nonExpressCount,0,userPrefs.demandType)), AddUpdate))
 
               loadsCountLiveData.postValue(totalActive)
               for ((index, load) in loads.toMutableList().withIndex()) {
