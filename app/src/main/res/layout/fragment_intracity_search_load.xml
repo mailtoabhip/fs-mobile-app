@@ -2,6 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/tools">
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.axle.ui.searchload.fragments.IntracitySearchLoadFragmentViewModel"
+        />
+  </data>
   <RelativeLayout
       android:id="@+id/container_search_load"
       android:layout_width="match_parent"
@@ -72,6 +78,8 @@
           >
         <TextView
             android:id="@+id/select_reporting_center_header"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/select_reporting_center"
@@ -112,9 +120,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/truck_type"
-            app:layout_constraintStart_toStartOf="@id/spinner_truck_type"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/spinner_truck_type"
-            bind:layout_editor_absoluteX="24dp"/>
+            app:layout_constraintStart_toStartOf="@id/spinner_truck_type"
+            />
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_truck_type"
             android:layout_width="0dp"
@@ -135,9 +145,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/status"
-            app:layout_constraintStart_toStartOf="@id/spinner_status"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/spinner_status"
-            bind:layout_editor_absoluteX="24dp"/>
+            app:layout_constraintStart_toStartOf="@id/spinner_status"
+            />
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_status"
             android:layout_width="0dp"
