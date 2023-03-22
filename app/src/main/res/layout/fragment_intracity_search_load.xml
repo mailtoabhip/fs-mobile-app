@@ -89,7 +89,7 @@
             app:layout_constraintBottom_toTopOf="@id/edit_reporting_center"
             bind:layout_editor_absoluteX="24dp"/>
 
-        <EditText
+        <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
             android:id="@+id/edit_reporting_center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
