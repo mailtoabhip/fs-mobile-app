@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.searchload.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -134,7 +133,6 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
     status: String
   ) {
     uiUtils.toggleKeyboard(true)
-    Log.d("STATUS", reportingCenter.toString()+" "+truckType+" "+status)
     if (reportingCenter == null) {
       binding.editReportingCenter.error = getString(string.error_search_missing_origin)
       binding.editReportingCenter.errorAnimate()
@@ -147,7 +145,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
       return
     }
 
-    if(status.toLowerCase().contains("select status")){
+    if(status.toLowerCase().contains("select")){
       binding.spinnerStatus.errorVibrate()
       return
     }

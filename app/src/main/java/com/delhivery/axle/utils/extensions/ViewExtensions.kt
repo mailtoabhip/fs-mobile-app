@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.extensions
 
 import android.app.Activity
+import android.graphics.Color
 import android.graphics.Paint
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.*
@@ -110,13 +112,14 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
           override fun onNothingSelected(p0: AdapterView<*>?) {
             selected(-1, null)
           }
-
           override fun onItemSelected(
             p0: AdapterView<*>?,
             p1: View?,
             p2: Int,
             p3: Long
           ) {
+            if(p2==0)
+              (p1 as TextView).setTextColor(Color.GRAY)
             selected(p2, getItemAtPosition(p2).toString())
           }
         }
