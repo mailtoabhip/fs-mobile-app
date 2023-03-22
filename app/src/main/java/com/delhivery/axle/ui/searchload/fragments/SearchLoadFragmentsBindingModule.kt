@@ -11,5 +11,8 @@ abstract class SearchLoadFragmentsBindingModule {
   internal abstract fun provideSearchLoadFragment(): SearchLoadFragment
 
   @ContributesAndroidInjector
+  internal abstract fun provideIntracitySearchLoadFragment(): IntracitySearchLoadFragment
+
+  @ContributesAndroidInjector
   internal abstract fun provideSearchResultsFragment(): SearchResultsFragment
 }

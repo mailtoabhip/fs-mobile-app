@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentActionType.Progress
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentActionType.Search
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
+import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.IntracityLoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
@@ -54,14 +55,16 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
 
     title = if(intentRequestType =="load"){
       "Search Load"
-    }else{
+    }else {
       "Search Contract"
     }
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* start with load fragment */
-    navigate(LoadFragment)
+    if(intentRequestType=="intracity_contract")
+    navigate(IntracityLoadFragment)
+    else navigate(LoadFragment)
   }
 
   /**

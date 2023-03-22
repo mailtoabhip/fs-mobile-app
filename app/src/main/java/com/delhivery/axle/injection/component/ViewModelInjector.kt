@@ -40,6 +40,7 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.YourRewardsFr
 import com.delhivery.axle.ui.profile.raterewards.fragments.sharerate.ShareRateFragmentViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
+import com.delhivery.axle.ui.searchload.fragments.IntracitySearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripViewModel
@@ -161,6 +162,10 @@ interface ViewModelInjector {
    */
   fun inject(viewModel: SearchLoadViewModel)
 
+  /*
+   * Injects [IntracitySearchLoadFragmentViewModel]
+   */
+  fun inject(viewModel: IntracitySearchLoadFragmentViewModel)
   /**
    * Injects [SearchLoadFragmentViewModel]
    */

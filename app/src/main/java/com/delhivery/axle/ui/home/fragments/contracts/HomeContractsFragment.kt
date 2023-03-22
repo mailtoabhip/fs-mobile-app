@@ -197,7 +197,11 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterDLVIntracity ->{
-        refreshData()
+        context?.let{
+          startActivity(
+            Intent(searchLoadContractsIntent(it,"intracity_contract",if(isInternal)"LH_FTL" else "FRC"))
+          )
+        }
       }
       HomeContractsFilterInfo -> {
         infoDialog()

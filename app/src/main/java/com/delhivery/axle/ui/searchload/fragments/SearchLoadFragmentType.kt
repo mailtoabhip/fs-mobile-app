@@ -6,10 +6,11 @@ import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFra
 /**
  * Search load fragment type
  */
-enum class SearchLoadFragmentType(
+enum class  SearchLoadFragmentType(
   val fragment: SearchLoadBaseFragment<*, *>,
   val title: String
 ) {
   LoadFragment(SearchLoadFragment._instance, "Search load"),
+  IntracityLoadFragment(IntracitySearchLoadFragment._instance,"Search contract"),
   ResultsFragment(SearchResultsFragment._instance, "Search results")
 }
