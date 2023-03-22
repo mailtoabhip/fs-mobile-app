@@ -570,7 +570,7 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
 
     }
     else if(item.data.itemType=="DLVIntercityToggle"){
-      binding.toggleView.text="DLV Intercity (${item.data.expressCount})"
+      binding.toggleView.text="Delhivery Line Haul (${item.data.expressCount})"
      if(item.data.userDemandType.contains("Internal") ){
        binding.toggleView.visibility = View.VISIBLE
 
@@ -587,7 +587,7 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
       binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
     }
     else{
-      binding.toggleView.text="DLV Intracity (${item.data.intracityCount})"
+      binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
       binding.toggleView.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
     }
   }
