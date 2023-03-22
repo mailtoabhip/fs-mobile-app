@@ -134,7 +134,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
   ) {
     uiUtils.toggleKeyboard(true)
     if (reportingCenter == null) {
-      binding.editReportingCenter.error = getString(string.error_search_missing_origin)
+      binding.editReportingCenter.error = getString(string.error_search_missing_reporting_center)
       binding.editReportingCenter.errorAnimate()
       analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
       return
