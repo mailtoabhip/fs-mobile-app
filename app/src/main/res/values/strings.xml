@@ -736,6 +736,13 @@
     <item>Trailer</item>
   </string-array>
 
+  <string-array name="array_status">
+    <item>Select status</item>
+    <item>Scheduled</item>
+    <item>In transit</item>
+    <item>Arrived</item>
+  </string-array>
+
   <string-array name="array_truck_size">
     <!--<item>Size</item>-->
     <item>32ft</item>
