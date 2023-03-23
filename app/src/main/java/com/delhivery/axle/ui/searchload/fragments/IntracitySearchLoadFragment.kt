@@ -115,7 +115,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
     }
 
     /* submit */
-    binding.btnAction.setOnClickListener {
+    binding.btnSearch.setOnClickListener {
       searchLoad(true,reportingCenter,null,binding.spinnerTruckType.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString())
     }
     /* init */
@@ -140,13 +140,8 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
       return
     }
 
-    if (truckType.toLowerCase().contains("choose")) {
+    if (truckType.toLowerCase().contains("select")) {
       binding.spinnerTruckType.errorVibrate()
-      return
-    }
-
-    if(status.toLowerCase().contains("select")){
-      binding.spinnerStatus.errorVibrate()
       return
     }
 
