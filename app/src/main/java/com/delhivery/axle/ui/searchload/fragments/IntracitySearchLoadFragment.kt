@@ -107,7 +107,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
       reportingCenter = it
     }
     /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { pos, v ->
+    binding.spinnerTruckType.setup(R.array.array_truck_type_name) { pos, v ->
 
     }
     binding.spinnerStatus.setup(R.array.array_status){ pos, v ->
