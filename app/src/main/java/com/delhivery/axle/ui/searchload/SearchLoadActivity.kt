@@ -62,7 +62,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* start with load fragment */
-    if(intentRequestType=="intracity_contract")
+    if(intentContractType=="Intracity")
     navigate(IntracityLoadFragment)
     else navigate(LoadFragment)
   }

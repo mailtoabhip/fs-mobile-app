@@ -739,10 +739,10 @@
 
   <string-array name="array_status">
     <item>Select status</item>
-    <item>Active Order</item>
-    <item>Active Bidding</item>
-    <item>Closed Bidding</item>
-    <item>Closed Order</item>
+    <item>Collecting bids</item>
+    <item>Live bidding</item>
+    <item>Awaiting result</item>
+    <item>Result declared</item>
   </string-array>
 
   <string-array name="array_truck_type_name">

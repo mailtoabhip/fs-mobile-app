@@ -76,7 +76,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   ) {
     super.onViewCreated(view, savedInstanceState)
     isInternal = userPrefs.demandType.contains("Internal")
-    demandType= if(userPrefs.demandType.contains("Internal")){ "Internal" }else{ "Corporate" }
+    demandType= if(userPrefs.demandType.contains("Internal")){ "Internal" }else { "Corporate" }
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -175,7 +175,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(isInternal)"LH_FTL" else "FRC"))
+            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Intracity") "Intracity" else if(isInternal)"LH_FTL" else "FRC"))
           )
         }
       }
@@ -197,11 +197,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterDLVIntracity ->{
-        context?.let{
-          startActivity(
-            Intent(searchLoadContractsIntent(it,"intracity_contract",if(isInternal)"LH_FTL" else "FRC"))
-          )
-        }
+        isInternal = true
+        demandType = "Intracity"
+        refreshData()
       }
       HomeContractsFilterInfo -> {
         infoDialog()

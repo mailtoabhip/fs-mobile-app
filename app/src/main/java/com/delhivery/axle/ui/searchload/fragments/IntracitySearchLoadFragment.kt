@@ -11,6 +11,7 @@ import com.delhivery.axle.databinding.FragmentIntracitySearchLoadBinding
 import com.delhivery.axle.databinding.ViewSearchLoadHistoryItemBinding
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
 import com.delhivery.axle.utils.extensions.errorVibrate
@@ -19,13 +20,13 @@ import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
 import javax.inject.Inject
 
-class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearchLoadBinding,IntracitySearchLoadFragmentViewModel>() {
+class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearchLoadBinding,SearchLoadFragmentViewModel>() {
 
   companion object{
     /*singleton instance */
     val _instance: IntracitySearchLoadFragment by lazy { IntracitySearchLoadFragment() }
   }
-  override fun getViewModelClass() = IntracitySearchLoadFragmentViewModel::class.java
+  override fun getViewModelClass() = SearchLoadFragmentViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_intracity_search_load
 

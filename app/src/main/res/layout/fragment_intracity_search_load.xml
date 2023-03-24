@@ -5,7 +5,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.searchload.fragments.IntracitySearchLoadFragmentViewModel"
+        type="com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel"
         />
   </data>
   <RelativeLayout
