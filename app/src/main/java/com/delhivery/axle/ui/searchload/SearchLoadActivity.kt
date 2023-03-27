@@ -14,8 +14,10 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentActionType.P
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentActionType.Search
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.IntracityLoadFragment
+import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.IntracityResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
+import com.delhivery.axle.ui.searchload.fragments.searchresults.IntracitySearchResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -104,12 +106,31 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
                   destinationCity?.cityName() ?: "Anywhere",truckType)
           )
           userPrefs.setPreviousScreen(SearchLoadActivity::class.java.name)
-          /* navigate to search results fragment */
-          navigate(ResultsFragment)
-          /* search query */
-          (ResultsFragment.fragment as SearchResultsFragment).search(
-              originCity, destinationCity, truckType, saveToHistory, requestType,contractType, false
-          )
+          if(action.contractType=="Intracity") {
+            navigate(IntracityResultsFragment)
+            (IntracityResultsFragment.fragment as IntracitySearchResultsFragment).search(
+              originCity,
+              destinationCity,
+              truckType,
+              saveToHistory,
+              requestType,
+              contractType,
+              false
+            )
+          }
+          else {/* navigate to search results fragment */
+            navigate(ResultsFragment)
+            /* search query */
+            (ResultsFragment.fragment as SearchResultsFragment).search(
+              originCity,
+              destinationCity,
+              truckType,
+              saveToHistory,
+              requestType,
+              contractType,
+              false
+            )
+          }
         }
       }
     }

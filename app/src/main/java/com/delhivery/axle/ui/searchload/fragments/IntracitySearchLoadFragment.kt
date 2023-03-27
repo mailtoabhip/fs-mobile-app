@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.searchload.fragments
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -20,21 +21,23 @@ import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
 import javax.inject.Inject
 
-class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearchLoadBinding,SearchLoadFragmentViewModel>() {
+class IntracitySearchLoadFragment :
+  SearchLoadBaseFragment<FragmentIntracitySearchLoadBinding, SearchLoadFragmentViewModel>() {
 
-  companion object{
+  companion object {
     /*singleton instance */
     val _instance: IntracitySearchLoadFragment by lazy { IntracitySearchLoadFragment() }
   }
+
   override fun getViewModelClass() = SearchLoadFragmentViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_intracity_search_load
 
   @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
 
-  private var reportingCenter: CityModel?= null
-  private var requestType: String? =""
-  private var contractType:String? =""
+  private var reportingCenter: CityModel? = null
+  private var requestType: String? = ""
+  private var contractType: String? = ""
 
   override fun onViewCreated(
     view: View,
@@ -99,7 +102,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
   }
 
   override fun onDestroy() {
-    reportingCenter=null
+    reportingCenter = null
     super.onDestroy()
   }
 
@@ -108,16 +111,11 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
       reportingCenter = it
     }
     /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type_name) { pos, v ->
-
-    }
-    binding.spinnerStatus.setup(R.array.array_status){ pos, v ->
-
-    }
-
+    binding.spinnerTruckType.setup(R.array.array_truck_type_name) { pos, v -> }
+    binding.spinnerStatus.setup(R.array.array_status) { pos, v -> }
     /* submit */
     binding.btnSearch.setOnClickListener {
-      searchLoad(true,reportingCenter,null,binding.spinnerTruckType.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString())
+      searchLoad(true, reportingCenter, null, binding.spinnerTruckType.selectedItem.toString())
     }
     /* init */
     initObservers()
@@ -130,8 +128,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
     saveToHistory: Boolean = true,
     reportingCenter: CityModel? = null,
     destination: CityModel? = null,
-    truckType: String,
-    status: String
+    truckType: String
   ) {
     uiUtils.toggleKeyboard(true)
     if (reportingCenter == null) {
@@ -149,9 +146,26 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
     /* save to history if needed */
 
     /* searching progress */
-    action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
+    action(
+      ProgressSearchLoadAction(
+        true,
+        if (requestType == "contract") "Searching contracts" else "Searching loads"
+      )
+    )
 
     /* delay and search for better UX */
+    Handler().postDelayed({
+      action(
+        SearchLoadAction(
+          reportingCenter,
+          destination,
+          truckType,
+          requestType,
+          contractType,
+          saveToHistory
+        )
+      )
+    }, 200)
   }
 
   /**
@@ -159,7 +173,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
    */
   private fun initObservers() {
     /* observe live data for search history */
-    viewModel.searchLoadHistoryLiveData(requestType,contractType)
+    viewModel.searchLoadHistoryLiveData(requestType, contractType)
       ?.observe(this, SearchLoadHistoryObserver())
   }
 
@@ -174,7 +188,7 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
           val itemBinding = historyItemBinding()
           itemBinding.data = item
           itemBinding.root.setOnClickListener {
-            searchLoad(false, item.originCity, item.destinationCity, item.truckType, binding.spinnerStatus.selectedItem.toString())
+            searchLoad(false, item.originCity, item.destinationCity, item.truckType)
           }
           itemBinding.root.setOnLongClickListener {
             viewModel.deleteSearchResult(item)
@@ -211,6 +225,5 @@ class IntracitySearchLoadFragment:SearchLoadBaseFragment<FragmentIntracitySearch
   private fun historyItemBinding() = ViewSearchLoadHistoryItemBinding.inflate(
     layoutInflater, binding.containerHistory, false
   )
-
 
 }
