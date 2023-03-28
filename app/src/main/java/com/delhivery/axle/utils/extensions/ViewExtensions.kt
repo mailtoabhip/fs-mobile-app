@@ -118,8 +118,6 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
             p2: Int,
             p3: Long
           ) {
-            if(p2==0)
-              (p1 as TextView).setTextColor(Color.parseColor("#A3AAC2"))
             selected(p2, getItemAtPosition(p2).toString())
           }
         }
@@ -127,6 +125,10 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
       }
 }
 
+fun Spinner.setHintColor(selectedText: String?){
+  if(selectedText!!.toLowerCase().contains("select") && selectedView!=null)
+    (selectedView as TextView).setTextColor(Color.GRAY)
+}
 /**
  * Set view visibility
  */

@@ -111,10 +111,10 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
             (IntracityResultsFragment.fragment as IntracitySearchResultsFragment).search(
               originCity,
               destinationCity,
-              truckType,
+              "Closed",
               saveToHistory,
-              requestType,
-              contractType,
+              "Corporate",
+              "LH_FTL",
               false
             )
           }
@@ -140,6 +140,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
     userPrefs.setPreviousScreen(this.javaClass.name)
     when (currentFragmentType) {
       ResultsFragment -> navigate(LoadFragment)
+      IntracityResultsFragment -> navigate(IntracityLoadFragment)
       else -> super.onBackPressed()
     }
   }

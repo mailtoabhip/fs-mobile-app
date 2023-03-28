@@ -62,6 +62,7 @@ import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.isNotEmpty
+import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -335,8 +336,10 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
       isEnabled = false
       isClickable = false
     }
-    binding.spinnerTruckType.setup(array.array_truck_type){p,v -> }
-    binding.spinnerStatus.setup(array.array_status){p,v ->}
+    binding.spinnerTruckType.setup(array.array_truck_type_name){p,v ->
+    }
+    binding.spinnerStatus.setup(array.array_status){p,v ->
+    }
   }
 
   /**

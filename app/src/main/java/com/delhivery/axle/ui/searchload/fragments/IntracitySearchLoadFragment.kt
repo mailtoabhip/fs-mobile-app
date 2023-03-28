@@ -1,8 +1,10 @@
 package com.delhivery.axle.ui.searchload.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -16,6 +18,7 @@ import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentV
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
 import com.delhivery.axle.utils.extensions.errorVibrate
+import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -111,8 +114,12 @@ class IntracitySearchLoadFragment :
       reportingCenter = it
     }
     /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type_name) { pos, v -> }
-    binding.spinnerStatus.setup(R.array.array_status) { pos, v -> }
+    binding.spinnerTruckType.setup(R.array.array_truck_type_name) { pos, v ->
+      binding.spinnerTruckType.setHintColor(v)
+    }
+    binding.spinnerStatus.setup(R.array.array_status) { pos, v ->
+      binding.spinnerStatus.setHintColor(v)
+    }
     /* submit */
     binding.btnSearch.setOnClickListener {
       searchLoad(true, reportingCenter, null, binding.spinnerTruckType.selectedItem.toString())
