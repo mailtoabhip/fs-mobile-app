@@ -544,6 +544,7 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
   private fun resetSpinnerContainer() {
     binding.apply {
       _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
+      _scrollListener.coordinateView(spinnerStatus, viewHiddenIndicator, 0f)
       viewHiddenIndicator.alpha = 0f
       rv.scrollToPosition(0)
       containerSpinner.translationY = 0f

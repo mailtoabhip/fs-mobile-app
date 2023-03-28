@@ -98,6 +98,4 @@ class IntracitySearchLoadFragmentViewModel @Inject constructor(
         }
       }
   }
-
-
 }
