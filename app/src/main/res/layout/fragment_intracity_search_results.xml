@@ -9,7 +9,7 @@
         type="com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel"
         />
     <variable
-        name="origin"
+        name="reportingCenter"
         type="com.delhivery.axle.data.CityModel"
         />
     <variable
@@ -60,7 +60,7 @@
 
        <androidx.appcompat.widget.AppCompatTextView
            android:id="@+id/tv_reporting_center_city"
-           android:text="@{origin.cityName()+','}"
+           android:text="@{reportingCenter.cityName()+','}"
            android:textColor="@color/black"
            android:textSize="@dimen/text_16sp"
            android:layout_height="match_parent"
@@ -68,7 +68,7 @@
 
        <androidx.appcompat.widget.AppCompatTextView
            android:id="@+id/tv_reporting_center_state"
-           android:text="@{' '+origin.stateName()}"
+           android:text="@{' '+reportingCenter.stateName()}"
            android:textColor="#A3AAC2"
            android:textSize="@dimen/text_16sp"
            android:layout_height="match_parent"

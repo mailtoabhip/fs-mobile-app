@@ -1,6 +1,5 @@
 package com.delhivery.axle.injection.module
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.SyncOfferData.MyWorker
@@ -52,10 +51,8 @@ import com.delhivery.axle.ui.profile.kycdetails.fragments.YourKYCDetailsViewMode
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsViewModel
 import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.YourRewardsFragmentViewModel
 import com.delhivery.axle.ui.profile.raterewards.fragments.sharerate.ShareRateFragmentViewModel
-import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
-import com.delhivery.axle.ui.searchload.fragments.IntracitySearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripViewModel
@@ -189,11 +186,6 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(SearchLoadViewModel::class)
   abstract fun bindSearchLoadViewModel(searchLoadViewModel: SearchLoadViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelScope(IntracitySearchLoadFragmentViewModel::class)
-  abstract fun bindIntracitySearchLoadFragmentViewModel(intracitySearchLoadFragmentViewModel: IntracitySearchLoadFragmentViewModel): ViewModel
 
   @Binds
   @IntoMap

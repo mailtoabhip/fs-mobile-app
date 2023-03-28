@@ -1,10 +1,8 @@
-package com.delhivery.axle.ui.searchload.fragments
+package com.delhivery.axle.ui.searchload.fragments.searchload
 
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.TextView
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -14,7 +12,9 @@ import com.delhivery.axle.databinding.FragmentIntracitySearchLoadBinding
 import com.delhivery.axle.databinding.ViewSearchLoadHistoryItemBinding
 import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
-import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
+import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
+import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
+import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
 import com.delhivery.axle.utils.extensions.errorVibrate

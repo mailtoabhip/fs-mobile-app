@@ -1,6 +1,5 @@
 package com.delhivery.axle.injection.component
 
-import android.view.inputmethod.BaseInputConnection
 import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
@@ -26,7 +25,6 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
@@ -40,7 +38,6 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.YourRewardsFr
 import com.delhivery.axle.ui.profile.raterewards.fragments.sharerate.ShareRateFragmentViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.searchload.SearchLoadViewModel
-import com.delhivery.axle.ui.searchload.fragments.IntracitySearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripViewModel
@@ -162,10 +159,7 @@ interface ViewModelInjector {
    */
   fun inject(viewModel: SearchLoadViewModel)
 
-  /*
-   * Injects [IntracitySearchLoadFragmentViewModel]
-   */
-  fun inject(viewModel: IntracitySearchLoadFragmentViewModel)
+
   /**
    * Injects [SearchLoadFragmentViewModel]
    */

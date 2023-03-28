@@ -346,7 +346,7 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
    * Search with query params
    */
   fun search(
-    origin: CityModel,
+    reportingCenter: CityModel,
     destination: CityModel?,
     type: String,
     saveToHistory: Boolean,
@@ -361,12 +361,12 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
     /* show progress if needed */
     if (progress)
       action(ProgressSearchLoadAction(true, if(isContract)"Searching contracts" else "Searching loads"))
-    binding.origin = origin
+    binding.reportingCenter = reportingCenter
     binding.destination = destination
     binding.spinnerTruckType.setSelection(resources.getStringArray(array.array_truck_type_name).asList().indexOf(type))
     binding.spinnerStatus.setSelection(resources.getStringArray(array.array_status).asList().indexOf(type))
     isContract = contractType!=null
-    viewModel.searchLoad(origin, destination, type,requestType,contractType)
+    viewModel.searchLoad(reportingCenter, destination, type,requestType,contractType)
   }
 
   override fun handleAction(
@@ -505,7 +505,7 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
           if(isContract)EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
           mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
             PROPERTY_SEARCH_BODY_TYPE),
-          mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
+          mutableListOf(  binding.reportingCenter?.cityName() ?: "Anywhere",
             binding.destination?.cityName() ?: "Anywhere",
             binding.spinnerTruckType.selectedItem.toString())
         )
@@ -514,7 +514,7 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
           if(isContract) EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS,
           mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
             PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
-          mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
+          mutableListOf(  binding.reportingCenter?.cityName() ?: "Anywhere",
             binding.destination?.cityName() ?: "Anywhere",
             binding.spinnerTruckType.selectedItem.toString(),
             numResults.toString())
@@ -529,7 +529,7 @@ class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySea
         ),
         mutableListOf(
           userPrefs.userId(),
-          binding.origin?.cityName() ?: "Anywhere",
+          binding.reportingCenter?.cityName() ?: "Anywhere",
           binding.destination?.cityName() ?: "Anywhere",
           binding.spinnerTruckType.selectedItem.toString(),
           numResults.toString()

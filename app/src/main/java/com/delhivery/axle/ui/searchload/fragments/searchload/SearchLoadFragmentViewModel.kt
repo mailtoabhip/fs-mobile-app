@@ -102,5 +102,4 @@ class SearchLoadFragmentViewModel @Inject constructor(
           }
         }
   }
-
 }
