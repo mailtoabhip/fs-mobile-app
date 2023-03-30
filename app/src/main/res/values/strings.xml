@@ -742,6 +742,7 @@
     <item>Collecting bids</item>
     <item>Live bidding</item>
     <item>Awaiting result</item>
+    <item>Cancelled</item>
     <item>Result declared</item>
   </string-array>
 
