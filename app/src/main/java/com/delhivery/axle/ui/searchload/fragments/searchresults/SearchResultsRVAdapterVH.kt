@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
@@ -199,28 +200,9 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
   ) {
     binding.request = item.data
     if(item.data.contractType=="Intracity"){
-      binding.hubIcon.visibility=View.VISIBLE
-      binding.tvStops.visibility=View.GONE
-      binding.forwardArrow.visibility=View.VISIBLE
-      binding.tvHubDestinationCity.visibility=View.GONE
-      binding.tvHubDestinationState.visibility=View.GONE
-      binding.connectionTypeImage.visibility=View.GONE
-      binding.connectionTypeText.visibility=View.GONE
-      binding.vehicleRunningTime.visibility=View.VISIBLE
-      binding.truckTypeImage.layoutParams.apply {
-        (this as ConstraintLayout.LayoutParams).startToEnd=binding.tvHubOriginCity.id
-        this.topToBottom=binding.seperator.id
-        (this as MarginLayoutParams).leftMargin=96
-        this.topMargin=21
-      }
-      binding.truckTypeText.layoutParams.apply {
-        (this as ConstraintLayout.LayoutParams).endToEnd=binding.containerData.id
-        this.startToEnd=binding.truckTypeImage.id
-        this.topToBottom=binding.seperator.id
-        (this as MarginLayoutParams).rightMargin=12
-        this.leftMargin=8
-        this.topMargin=21
-      }
+      hideConnectionTypeAndHubDestinationViews()
+      showHubIconAndVehicleRunningInfo()
+      realignTruckTypeInfo()
     }
 
     //Transaction Cancelled
@@ -593,6 +575,37 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
       }
 
     }
+  }
+
+  private fun showHubIconAndVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.VISIBLE
+    binding.vehicleRunningTime.visibility = View.VISIBLE
+  }
+
+  private fun realignTruckTypeInfo() {
+    binding.truckTypeImage.layoutParams.apply {
+      (this as LayoutParams).startToEnd = binding.tvHubOriginCity.id
+      this.topToBottom = binding.seperator.id
+      (this as MarginLayoutParams).leftMargin = 96
+      this.topMargin = 21
+    }
+    binding.truckTypeText.layoutParams.apply {
+      (this as LayoutParams).endToEnd = binding.containerData.id
+      this.startToEnd = binding.truckTypeImage.id
+      this.topToBottom = binding.seperator.id
+      (this as MarginLayoutParams).rightMargin = 12
+      this.leftMargin = 8
+      this.topMargin = 21
+    }
+  }
+
+  private fun hideConnectionTypeAndHubDestinationViews(){
+    binding.tvHubDestinationCity.visibility=View.GONE
+    binding.tvHubDestinationState.visibility=View.GONE
+    binding.connectionTypeImage.visibility=View.GONE
+    binding.connectionTypeText.visibility=View.GONE
+    binding.tvStops.visibility=View.GONE
+    binding.forwardArrow.visibility=View.GONE
   }
 }
 

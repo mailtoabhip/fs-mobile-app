@@ -3,7 +3,9 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -94,6 +96,30 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.request = item.data
+    if(item.data.contractType=="Intracity"){
+      binding.hubIcon.visibility=View.VISIBLE
+      binding.tvStops.visibility=View.GONE
+      binding.forwardArrow.visibility=View.VISIBLE
+      binding.tvHubDestinationCity.visibility=View.GONE
+      binding.tvHubDestinationState.visibility=View.GONE
+      binding.connectionTypeImage.visibility=View.GONE
+      binding.connectionTypeText.visibility=View.GONE
+      binding.vehicleRunningTime.visibility=View.VISIBLE
+      binding.truckTypeImage.layoutParams.apply {
+        (this as ConstraintLayout.LayoutParams).startToEnd=binding.tvHubOriginCity.id
+        this.topToBottom=binding.seperator.id
+        (this as MarginLayoutParams).leftMargin=96
+        this.topMargin=21
+      }
+      binding.truckTypeText.layoutParams.apply {
+        (this as ConstraintLayout.LayoutParams).endToEnd=binding.containerData.id
+        this.startToEnd=binding.truckTypeImage.id
+        this.topToBottom=binding.seperator.id
+        (this as MarginLayoutParams).rightMargin=12
+        this.leftMargin=8
+        this.topMargin=21
+      }
+    }
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
       binding.userBidInfo.visibility= View.GONE
