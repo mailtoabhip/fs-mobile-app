@@ -159,7 +159,6 @@ interface ViewModelInjector {
    */
   fun inject(viewModel: SearchLoadViewModel)
 
-
   /**
    * Injects [SearchLoadFragmentViewModel]
    */

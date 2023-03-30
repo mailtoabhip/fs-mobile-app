@@ -175,7 +175,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Intracity") "Intracity" else if(isInternal)"LH_FTL" else "FRC"))
+            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Intracity") demandType else if(isInternal)"LH_FTL" else "FRC"))
           )
         }
       }

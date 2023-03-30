@@ -70,6 +70,9 @@ import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
+/**
+ * Fragment to manage the intracity search results
+ */
 class IntracitySearchResultsFragment:SearchLoadBaseFragment<FragmentIntracitySearchResultsBinding, SearchResultsViewModel>(),
   SearchLoadsRVAdapterInterface {
 

@@ -9,6 +9,9 @@ import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.FilterToggle
 
+/*
+** Adapter for contract filter recycler view
+ */
 class ContractsFilterRVAdapter(private val _interface:HomeContractsRVAdapterInterface) :
   BaseDataRVAdapter<BaseHomeContractsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
     _interface
@@ -30,7 +33,6 @@ class ContractsFilterRVAdapter(private val _interface:HomeContractsRVAdapterInte
       FilterToggle -> ViewFilterToggleItemBinding.inflate(inflater,parent,false)
       else -> ViewFilterInfoItemBinding.inflate(inflater,parent,false)
     }
-
 
   override fun bindVH(holder: BaseViewHolder<*>, item: BaseHomeContractsRVAdapterItem<*>) {
       when(holder){

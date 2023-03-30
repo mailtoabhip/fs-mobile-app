@@ -86,12 +86,18 @@ class HomeContractsFilterItem(
     false, 0,0,0,""
   )
 ) : BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(Filters, data)
+/**
+ * Filter option toggle item
+ */
 class FilterToggleItem(
   data: HomeContractsFilterItemData = HomeContractsFilterItemData("",
     false, 0,0,0,""
   )
 ): BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(FilterToggle,data)
 
+/**
+ * Filter option info item
+ */
 class FilterInfoItem(
   data: HomeContractsFilterItemData = HomeContractsFilterItemData("Info",
     false, 0,0,0,""

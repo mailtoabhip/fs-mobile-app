@@ -24,6 +24,9 @@ import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
 import javax.inject.Inject
 
+/**
+ * Fragment to manage Intracity search loads
+ */
 class IntracitySearchLoadFragment :
   SearchLoadBaseFragment<FragmentIntracitySearchLoadBinding, SearchLoadFragmentViewModel>() {
 
