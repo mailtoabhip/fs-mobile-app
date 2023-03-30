@@ -109,6 +109,19 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_bid_status"
             />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/hub_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_12dp"
+            android:layout_marginRight="9dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@id/tv_hub_origin_city"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seperator"
+            app:srcCompat="@drawable/ic_black_hub"
+            />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_hub_origin_city"
             android:layout_width="0dp"
@@ -235,9 +248,44 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_hub_destination_state"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"/>
-
-
+        <LinearLayout
+            android:id="@+id/vehicle_running_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginBottom="9dp">
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/view_kms_per_month"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              tools:text="~2000 Kms/month"/>
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="8dp"
+              android:layout_marginRight="8dp"
+              android:text="\u2022"/>
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/view_days_per_month"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              tools:text="28 days/Month"/>
+          <androidx.appcompat.widget.AppCompatTextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="8dp"
+              android:layout_marginRight="8dp"
+              android:text="\u2022"/>
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/view_hours_per_day"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              tools:text="14h/day"/>
+        </LinearLayout>
       </androidx.constraintlayout.widget.ConstraintLayout>
-
   </androidx.cardview.widget.CardView>
 </layout>

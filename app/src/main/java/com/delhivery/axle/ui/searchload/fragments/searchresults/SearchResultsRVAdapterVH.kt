@@ -3,6 +3,8 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 import android.os.CountDownTimer
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
@@ -15,13 +17,11 @@ import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.home.fragments.contracts.BaseHomeContractsRVAdapterViewHolder
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterInterface
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRequestItem
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.TimeZone
 
 /**
  * Base Home bids RV adapter view holder
@@ -198,6 +198,31 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+    if(item.data.contractType=="Intracity"){
+      binding.hubIcon.visibility=View.VISIBLE
+      binding.tvStops.visibility=View.GONE
+      binding.forwardArrow.visibility=View.VISIBLE
+      binding.tvHubDestinationCity.visibility=View.GONE
+      binding.tvHubDestinationState.visibility=View.GONE
+      binding.connectionTypeImage.visibility=View.GONE
+      binding.connectionTypeText.visibility=View.GONE
+      binding.vehicleRunningTime.visibility=View.VISIBLE
+      binding.truckTypeImage.layoutParams.apply {
+        (this as ConstraintLayout.LayoutParams).startToEnd=binding.tvHubOriginCity.id
+        this.topToBottom=binding.seperator.id
+        (this as MarginLayoutParams).leftMargin=96
+        this.topMargin=21
+      }
+      binding.truckTypeText.layoutParams.apply {
+        (this as ConstraintLayout.LayoutParams).endToEnd=binding.containerData.id
+        this.startToEnd=binding.truckTypeImage.id
+        this.topToBottom=binding.seperator.id
+        (this as MarginLayoutParams).rightMargin=12
+        this.leftMargin=8
+        this.topMargin=21
+      }
+    }
+
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
       binding.userBidInfo.visibility= View.GONE
