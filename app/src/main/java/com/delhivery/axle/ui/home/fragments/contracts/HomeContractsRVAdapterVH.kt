@@ -597,17 +597,17 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
         binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.toggleView.isSelected=false
       }
+      if(item.data.userDemandType.contains("Internal") || item.data.userDemandType.contains("Corporate"))
+        binding.toggleView.visibility=View.VISIBLE
+      else
+        binding.toggleView.visibility=View.GONE
       binding.toggleView.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
-
     }
     else if(item.data.itemType=="DLVIntercityToggle"){
       binding.toggleView.text="Delhivery Line Haul (${item.data.expressCount})"
-     /*if(item.data.userDemandType.contains("Internal") ){
-       binding.toggleView.visibility = View.VISIBLE
-
-     }else{
-         binding.toggleView.visibility = View.GONE
-     }*/
+      if(item.data.userDemandType.contains("Internal"))
+        binding.toggleView.visibility=View.VISIBLE
+      else binding.toggleView.visibility=View.GONE
      if (!item.data.actionLabel) {
        binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
        binding.toggleView.isSelected = false
@@ -619,6 +619,9 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
     }
     else{
       binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
+      if(item.data.userDemandType.contains("Intracity"))
+        binding.toggleView.visibility=View.VISIBLE
+      else binding.toggleView.visibility=View.VISIBLE
       if(item.data.userDemandType=="Intracity") {
         binding.toggleView.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
         binding.toggleView.isSelected=true
