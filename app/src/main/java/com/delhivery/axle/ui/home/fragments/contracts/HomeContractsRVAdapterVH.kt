@@ -97,28 +97,12 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
   ) {
     binding.request = item.data
     if(item.data.contractType=="Intracity"){
-      binding.hubIcon.visibility=View.VISIBLE
-      binding.tvStops.visibility=View.GONE
-      binding.forwardArrow.visibility=View.VISIBLE
-      binding.tvHubDestinationCity.visibility=View.GONE
-      binding.tvHubDestinationState.visibility=View.GONE
-      binding.connectionTypeImage.visibility=View.GONE
-      binding.connectionTypeText.visibility=View.GONE
-      binding.vehicleRunningTime.visibility=View.VISIBLE
-      binding.truckTypeImage.layoutParams.apply {
-        (this as ConstraintLayout.LayoutParams).startToEnd=binding.tvHubOriginCity.id
-        this.topToBottom=binding.seperator.id
-        (this as MarginLayoutParams).leftMargin=96
-        this.topMargin=21
-      }
-      binding.truckTypeText.layoutParams.apply {
-        (this as ConstraintLayout.LayoutParams).endToEnd=binding.containerData.id
-        this.startToEnd=binding.truckTypeImage.id
-        this.topToBottom=binding.seperator.id
-        (this as MarginLayoutParams).rightMargin=12
-        this.leftMargin=8
-        this.topMargin=21
-      }
+      hideDestinationAndConnectionTypeViews()
+      displayVehicleRunningInfo()
+    }
+    else{
+      showDestinationAndConnnectionTypeViews()
+      hideVehicleRunningInfo()
     }
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
@@ -490,6 +474,39 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
       }
 
     }
+  }
+
+  private fun displayVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.VISIBLE
+    binding.vehicleRunningTime.visibility = View.VISIBLE
+    binding.truckTypeImage2.visibility = View.VISIBLE
+    binding.truckTypeImage2.visibility = View.VISIBLE
+  }
+
+  private fun hideVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.GONE
+    binding.vehicleRunningTime.visibility = View.GONE
+    binding.truckTypeImage2.visibility = View.GONE
+    binding.truckTypeImage2.visibility = View.GONE
+  }
+
+  private fun showDestinationAndConnnectionTypeViews(){
+    binding.tvStops.visibility = View.VISIBLE
+    binding.forwardArrow.visibility = View.VISIBLE
+    binding.tvHubDestinationCity.visibility = View.VISIBLE
+    binding.tvHubDestinationState.visibility = View.VISIBLE
+    binding.connectionTypeImage.visibility = View.VISIBLE
+    binding.connectionTypeText.visibility = View.VISIBLE
+    binding.vehicleNumber.visibility = View.VISIBLE
+  }
+  private fun hideDestinationAndConnectionTypeViews() {
+    binding.tvStops.visibility = View.GONE
+    binding.forwardArrow.visibility = View.GONE
+    binding.tvHubDestinationCity.visibility = View.GONE
+    binding.tvHubDestinationState.visibility = View.GONE
+    binding.connectionTypeImage.visibility = View.GONE
+    binding.connectionTypeText.visibility = View.GONE
+    binding.vehicleNumber.visibility = View.GONE
   }
 }
 

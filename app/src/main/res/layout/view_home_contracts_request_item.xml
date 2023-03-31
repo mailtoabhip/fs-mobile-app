@@ -114,13 +114,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/size_12dp"
-            android:layout_marginRight="9dp"
             android:layout_marginTop="@dimen/size_16dp"
             android:visibility="visible"
-            app:layout_constraintEnd_toStartOf="@id/tv_hub_origin_city"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/seperator"
-            app:srcCompat="@drawable/ic_black_hub"
             />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_hub_origin_city"
@@ -204,6 +201,30 @@
             android:text="@{request.truckDetail()}"
             tools:text=" 32FTMXL"/>
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/truck_type_image_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:layout_marginTop="21dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/truck_type_text_2"
+            app:layout_constraintTop_toBottomOf="@id/seperator"
+            app:srcCompat="@drawable/ic_truck"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/truck_type_text_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_12dp"
+            android:layout_marginTop="19dp"
+            android:text="@{request.truckDetail()}"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seperator"
+            tools:text=" 32FTMXL"
+            />
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/truck_type_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -213,7 +234,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/size_20dp"
             android:paddingTop="@dimen/size_4dp"
-           app:layout_constraintTop_toBottomOf="@+id/tv_origin_state"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_origin_state"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/vehicle_number"
             android:layout_width="0dp"
@@ -255,9 +276,9 @@
             android:orientation="horizontal"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seperator"
             android:layout_marginStart="@dimen/size_12dp"
-            android:layout_marginBottom="9dp">
+            android:layout_marginTop="65dp">
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/view_kms_per_month"
               android:layout_width="wrap_content"
