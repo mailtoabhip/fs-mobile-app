@@ -729,7 +729,8 @@
   <string name="truck_type">Type</string>
   <string name="enter_reporting_center">Enter Reporting Center</string>
   <string name="select_reporting_center">Select Reporting Center</string>
-A  <string name="intracity_contract">Intracity</string>
+  <string name="intracity_demand_type">Intracity</string>
+  <string name="intracity_contract_type">INTRACITY</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
