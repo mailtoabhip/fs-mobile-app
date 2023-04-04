@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -115,8 +116,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         else -> "${getString(string.label_load_request)}($it)"
       }
     })
-
-
     refreshData()
   }
 

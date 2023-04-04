@@ -93,6 +93,15 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.request = item.data
+
+    if(item.data.contractType==context.getString(string.intracity_contract_type)){
+      showVehicleRunningInfo()
+      hideDestinationAndConnectionTypeViews()
+    }
+    else{
+      hideVehicleRunningInfo()
+      showDestinationAndConnnectionTypeViews()
+    }
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
       binding.userBidInfo.visibility= View.GONE
@@ -464,7 +473,43 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 
     }
   }
+  private fun showVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.VISIBLE
+    binding.vehicleRunningTime.visibility = View.VISIBLE
+    binding.truckTypeImage2.visibility = View.VISIBLE
+    binding.truckTypeText2.visibility=View.VISIBLE
+  }
 
+  private fun hideVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.GONE
+    binding.vehicleRunningTime.visibility = View.GONE
+    binding.truckTypeImage2.visibility = View.GONE
+    binding.truckTypeText2.visibility = View.GONE
+  }
+
+  private fun showDestinationAndConnnectionTypeViews() {
+    binding.tvStops.visibility = View.VISIBLE
+    binding.forwardArrow.visibility = View.VISIBLE
+    binding.tvHubDestinationCity.visibility = View.VISIBLE
+    binding.tvHubDestinationState.visibility = View.VISIBLE
+    binding.connectionTypeImage.visibility = View.VISIBLE
+    binding.connectionTypeText.visibility = View.VISIBLE
+    binding.vehicleNumber.visibility = View.VISIBLE
+    binding.truckTypeImage.visibility = View.VISIBLE
+    binding.truckTypeText.visibility = View.VISIBLE
+  }
+
+  private fun hideDestinationAndConnectionTypeViews() {
+    binding.tvStops.visibility = View.GONE
+    binding.forwardArrow.visibility = View.GONE
+    binding.tvHubDestinationCity.visibility = View.GONE
+    binding.tvHubDestinationState.visibility = View.GONE
+    binding.connectionTypeImage.visibility = View.GONE
+    binding.connectionTypeText.visibility = View.GONE
+    binding.vehicleNumber.visibility = View.GONE
+    binding.truckTypeText.visibility=View.GONE
+    binding.truckTypeImage.visibility=View.GONE
+  }
 }
 
 /**
@@ -571,10 +616,10 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
           binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
           binding.toggleView.isSelected=false
         }
-        if(!item.data.actionLabel)
+        if(item.data.actionLabel)
           binding.toggleView.visibility=View.VISIBLE
         else
-          binding.toggleView.visibility=View.INVISIBLE
+          binding.toggleView.visibility=View.GONE
         binding.toggleView.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
       }
       "DLVIntercityToggle" -> {
@@ -599,7 +644,7 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
           binding.toggleView.isSelected=true
         }
         else {
-          binding.toggleView.visibility=View.INVISIBLE
+          binding.toggleView.visibility=View.GONE
           binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
           binding.toggleView.isSelected=false
         }
