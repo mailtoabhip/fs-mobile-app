@@ -1,17 +1,13 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
+import com.delhivery.axle.R.color
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
@@ -97,11 +93,6 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.request = item.data
-    if(item.data.contractType=="Intracity"){
-      showHubIconAndVehicleRunningInfo()
-      hideDestinationAndConnectionTypeViews()
-      realignTruckTypeInfo()
-    }
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
       binding.userBidInfo.visibility= View.GONE
@@ -474,36 +465,6 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
     }
   }
 
-  private fun showHubIconAndVehicleRunningInfo() {
-    binding.hubIcon.visibility=View.VISIBLE
-    binding.vehicleRunningTime.visibility=View.VISIBLE
-  }
-
-  private fun hideDestinationAndConnectionTypeViews() {
-    binding.tvStops.visibility = View.GONE
-    binding.forwardArrow.visibility = View.GONE
-    binding.tvHubDestinationCity.visibility = View.GONE
-    binding.tvHubDestinationState.visibility = View.GONE
-    binding.connectionTypeImage.visibility = View.GONE
-    binding.connectionTypeText.visibility = View.GONE
-  }
-
-  private fun realignTruckTypeInfo() {
-    binding.truckTypeImage.layoutParams.apply {
-      (this as LayoutParams).startToEnd = binding.tvHubOriginCity.id
-      this.topToBottom = binding.seperator.id
-      (this as MarginLayoutParams).leftMargin = 96
-      this.topMargin = 21
-    }
-    binding.truckTypeText.layoutParams.apply {
-      (this as LayoutParams).endToEnd = binding.containerData.id
-      this.startToEnd = binding.truckTypeImage.id
-      this.topToBottom = binding.seperator.id
-      (this as MarginLayoutParams).rightMargin = 12
-      this.leftMargin = 8
-      this.topMargin = 21
-    }
-  }
 }
 
 /**
@@ -600,47 +561,50 @@ internal class HomeContractsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
 internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
   BaseHomeContractsRVAdapterViewHolder<ViewFilterToggleItemBinding,FilterToggleItem>(binding){
   override fun bind(item: FilterToggleItem, _interface: HomeContractsRVAdapterInterface) {
-    if(item.data.itemType=="CustomerIntercityToggle"){
-      binding.toggleView.text="Customer Intercity (${item.data.nonExpressCount})"
-      binding.toggleView.visibility=View.VISIBLE
-      if (!item.data.actionLabel && item.data.userDemandType!="Intracity") {
-        binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-        binding.toggleView.isSelected=true
-      } else {
-        binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-        binding.toggleView.isSelected=false
+    when (item.data.itemType) {
+      "CustomerIntercityToggle" -> {
+        binding.toggleView.text="Customer Intercity (${item.data.nonExpressCount})"
+        if (!item.data.actionLabel && !item.data.userDemandType.contains(context.getString(string.intracity_contract))) {
+          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
+          binding.toggleView.isSelected=true
+        } else {
+          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
+          binding.toggleView.isSelected=false
+        }
+        if(!item.data.actionLabel)
+          binding.toggleView.visibility=View.VISIBLE
+        else
+          binding.toggleView.visibility=View.INVISIBLE
+        binding.toggleView.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
       }
-      binding.toggleView.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
-
-    }
-    else if(item.data.itemType=="DLVIntercityToggle"){
-      binding.toggleView.text="Delhivery Line Haul (${item.data.expressCount})"
-     /*if(item.data.userDemandType.contains("Internal") ){
-       binding.toggleView.visibility = View.VISIBLE
-
-     }else{
-         binding.toggleView.visibility = View.GONE
-     }*/
-     if (!item.data.actionLabel) {
-       binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-       binding.toggleView.isSelected = false
-     } else if(item.data.userDemandType!="Intracity"){
-       binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-       binding.toggleView.isSelected = true
-     }
-      binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
-    }
-    else{
-      binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
-      if(item.data.userDemandType=="Intracity") {
-        binding.toggleView.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
-        binding.toggleView.isSelected=true
+      "DLVIntercityToggle" -> {
+        binding.toggleView.text="Delhivery Line Haul (${item.data.expressCount})"
+        if(item.data.userDemandType.contains("Internal"))
+          binding.toggleView.visibility=View.VISIBLE
+        else binding.toggleView.visibility=View.GONE
+        if (!item.data.actionLabel) {
+          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
+          binding.toggleView.isSelected = false
+        } else if(!item.data.userDemandType.contains(context.getString(string.intracity_contract))){
+          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
+          binding.toggleView.isSelected = true
+        }
+        binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
       }
-      else{
-        binding.toggleView.setTextColor(ContextCompat.getColor(context,R.color.background_dark_grey))
-        binding.toggleView.isSelected=false
+      else -> {
+        binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
+        if(item.data.userDemandType.contains(context.getString(string.intracity_contract))){
+          binding.toggleView.visibility=View.VISIBLE
+          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
+          binding.toggleView.isSelected=true
+        }
+        else {
+          binding.toggleView.visibility=View.INVISIBLE
+          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
+          binding.toggleView.isSelected=false
+        }
+        binding.toggleView.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
       }
-      binding.toggleView.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
     }
   }
 
@@ -649,7 +613,6 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
 internal class FilterInfoItemVH(binding: ViewFilterInfoItemBinding):
   BaseHomeContractsRVAdapterViewHolder<ViewFilterInfoItemBinding,FilterInfoItem>(binding){
   override fun bind(item: FilterInfoItem, _interface: HomeContractsRVAdapterInterface) {
-    Log.d("Home Contracts",item.data.userDemandType)
     binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }
 }
