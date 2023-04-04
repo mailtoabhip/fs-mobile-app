@@ -563,7 +563,7 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
     when (item.data.itemType) {
       "CustomerIntercityToggle" -> {
         binding.toggleView.text="Customer Intercity (${item.data.nonExpressCount})"
-        if (!item.data.actionLabel && item.data.userDemandType!="Intracity") {
+        if (!item.data.actionLabel && !item.data.userDemandType.contains("Intracity")) {
           binding.toggleView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
           binding.toggleView.isSelected=true
         } else {
@@ -592,14 +592,13 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
       }
       else -> {
         binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
-        if(item.data.userDemandType.contains("Intracity"))
+        if(item.data.userDemandType.contains("Intracity")){
           binding.toggleView.visibility=View.VISIBLE
-        else binding.toggleView.visibility=View.VISIBLE
-        if(item.data.userDemandType.contains("Intracity")) {
           binding.toggleView.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
           binding.toggleView.isSelected=true
         }
-        else{
+        else {
+          binding.toggleView.visibility=View.INVISIBLE
           binding.toggleView.setTextColor(ContextCompat.getColor(context,R.color.background_dark_grey))
           binding.toggleView.isSelected=false
         }

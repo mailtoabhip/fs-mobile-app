@@ -9,8 +9,8 @@ import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.FilterToggle
 
-/*
-** Adapter for contract filter recycler view
+/**
+ * Adapter for contract filter recycler view
  */
 class ContractsFilterRVAdapter(private val _interface:HomeContractsRVAdapterInterface) :
   BaseDataRVAdapter<BaseHomeContractsRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(

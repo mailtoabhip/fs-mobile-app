@@ -128,6 +128,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       autoCompleteUtils.autoCompleteCity(binding.editReportingCenter){
         origin = it
       }
+      binding.btnSearch.setOnClickListener{
+        searchLoad(true, origin, destination, binding.spinnerTruckType2.selectedItem.toString())
+      }
     }
     else{
       hideIntracityRelatedViews()
@@ -143,15 +146,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }
       /* truck type */
       binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
-    }
-    /* submit */
-    if(contractType=="INTRACITY")
-      binding.btnSearch.setOnClickListener{
-        searchLoad(true, origin, destination, binding.spinnerTruckType2.selectedItem.toString())
-      }
-    else
       binding.btnAction.setOnClickListener{
         searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString())
+        }
     }
 
     /* reverse origin/destination cities */
