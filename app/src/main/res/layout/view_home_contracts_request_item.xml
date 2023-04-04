@@ -269,44 +269,69 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_hub_destination_state"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"/>
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/vehicle_running_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_12dp"
+            android:layout_marginTop="65dp"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/seperator"
-            android:layout_marginStart="@dimen/size_12dp"
-            android:layout_marginTop="65dp">
+            >
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/view_kms_per_month"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              tools:text="~2000 Kms/month"/>
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
+              tools:text="~2000 Kms/month"
+              />
           <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/placeholder_1"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginLeft="8dp"
               android:layout_marginRight="8dp"
-              android:text="\u2022"/>
+              android:gravity="center"
+              android:text="\u2022"
+              app:layout_constraintEnd_toStartOf="@+id/view_days_per_month"
+              app:layout_constraintStart_toEndOf="@id/view_kms_per_month"
+              app:layout_constraintTop_toTopOf="parent"
+              />
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/view_days_per_month"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              tools:text="28 days/Month"/>
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toEndOf="@id/placeholder_1"
+              app:layout_constraintTop_toTopOf="parent"
+              tools:text="28 days/Month"
+              />
           <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/placeholder_2"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:gravity="center"
               android:layout_marginLeft="8dp"
               android:layout_marginRight="8dp"
-              android:text="\u2022"/>
+              android:text="\u2022"
+              app:layout_constraintEnd_toStartOf="@+id/view_hours_per_day"
+              app:layout_constraintStart_toEndOf="@id/view_days_per_month"
+              app:layout_constraintTop_toTopOf="parent"
+              />
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/view_hours_per_day"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              tools:text="14h/day"/>
-        </LinearLayout>
+              app:layout_constraintBottom_toBottomOf="parent"
+              app:layout_constraintStart_toEndOf="@id/placeholder_2"
+              app:layout_constraintTop_toTopOf="parent"
+              tools:text="14h/day"
+              />
+        </androidx.constraintlayout.widget.ConstraintLayout>
       </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.cardview.widget.CardView>
 </layout>

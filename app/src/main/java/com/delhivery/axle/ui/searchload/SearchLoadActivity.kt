@@ -6,20 +6,19 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySearchLoadBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.searchload.fragments.BaseSearchLoadFragmentAction
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentActionType.Progress
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentActionType.Search
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
-import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.IntracityLoadFragment
-import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.IntracityResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
-import com.delhivery.axle.ui.searchload.fragments.searchresults.IntracitySearchResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.EVENT_SEARCH_DETAILS_SUBMIT
+import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
+import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
+import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -64,9 +63,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     /* start with load fragment */
-    if(intentContractType=="Intracity")
-    navigate(IntracityLoadFragment)
-    else navigate(LoadFragment)
+    navigate(LoadFragment)
   }
 
   /**
@@ -106,19 +103,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
                   destinationCity?.cityName() ?: "Anywhere",truckType)
           )
           userPrefs.setPreviousScreen(SearchLoadActivity::class.java.name)
-          if(action.contractType=="Intracity") {
-            navigate(IntracityResultsFragment)
-            (IntracityResultsFragment.fragment as IntracitySearchResultsFragment).search(
-              originCity,
-              destinationCity,
-              "Closed",
-              saveToHistory,
-              "Corporate",
-              "LH_FTL",
-              false
-            )
-          }
-          else {/* navigate to search results fragment */
+         /* navigate to search results fragment */
             navigate(ResultsFragment)
             /* search query */
             (ResultsFragment.fragment as SearchResultsFragment).search(
@@ -133,14 +118,12 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
           }
         }
       }
-    }
   }
 
   override fun onBackPressed() {
     userPrefs.setPreviousScreen(this.javaClass.name)
     when (currentFragmentType) {
       ResultsFragment -> navigate(LoadFragment)
-      IntracityResultsFragment -> navigate(IntracityLoadFragment)
       else -> super.onBackPressed()
     }
   }
