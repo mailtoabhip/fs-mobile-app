@@ -211,7 +211,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-    if (item.data.contractType == "INTRACITY") {
+    if (item.data.contractType == context.getString(string.intracity_contract_type)) {
       hideDestinationAndConnectionTypeViews()
       displayVehicleRunningInfo()
     } else {

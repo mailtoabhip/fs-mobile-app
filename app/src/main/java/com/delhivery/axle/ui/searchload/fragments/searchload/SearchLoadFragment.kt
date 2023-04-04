@@ -115,7 +115,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   }
 
   private fun setupSearchScreen() {
-    if(contractType=="INTRACITY"){
+    if(contractType==getString(string.intracity_contract_type)){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
       binding.editReportingCenter.setText("")
@@ -187,7 +187,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     truckType: String
   ) {
     uiUtils.toggleKeyboard(true)
-    if(contractType=="INTRACITY"){
+    if(contractType==getString(string.intracity_contract_type)){
       if(origin==null){
         binding.editReportingCenter.error="Please select reporting center"
         binding.editReportingCenter.errorAnimate()

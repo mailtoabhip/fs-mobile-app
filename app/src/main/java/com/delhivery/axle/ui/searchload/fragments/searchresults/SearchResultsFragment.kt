@@ -357,7 +357,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     this.saveToHistory = saveToHistory
     /* clear and add first dummy item */
     _adapter.clearItems()
-    if(contractType=="INTRACITY")
+    if(contractType==getString(string.intracity_contract_type))
       _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
     else
       _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
@@ -375,7 +375,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.spinnerTruckType.setSelection(pos, true)
     binding.spinnerStatus.setSelection(0)
     binding.spinnerTruckType2.setSelection(resources.getStringArray(array.array_truck_type_name).toList().indexOf(type))
-    if(contractType=="INTRACITY"){
+    if(contractType==getString(string.intracity_contract_type)){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
     }
