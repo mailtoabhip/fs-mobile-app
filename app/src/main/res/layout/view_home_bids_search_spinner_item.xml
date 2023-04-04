@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
 
-  <RelativeLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/container_spinner"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="@dimen/size_12dp"
       android:background="@color/colorPrimary"
-      android:clickable="false"
-      android:focusable="false"
+      android:layout_marginBottom="@dimen/size_12dp"
       android:paddingBottom="@dimen/size_8dp"
       android:paddingEnd="@dimen/size_16dp"
       android:paddingStart="@dimen/size_16dp"
@@ -18,58 +19,77 @@
       bind:shadow="@{ @dimen/size_4dp }"
       >
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_truck_type"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_14sp"
-        android:textFontWeight="500"
-        android:fontFamily="sans-serif"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/truck_type"
-        />
-
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/spinner_truck_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/size_16dp"
-        android:layout_marginTop="@dimen/size_4dp"
-        android:textSize="@dimen/text_16sp"
-        android:paddingTop="@dimen/size_8dp"
-        android:paddingBottom="@dimen/size_8dp"
-        android:paddingStart="@dimen/size_12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_search_load_spinner"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:layout_below="@id/tv_truck_type"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         bind:shadow="@{ @dimen/size_2dp }"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_truck_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="@string/truck_type"
+        android:textColor="@color/black"
+        android:textFontWeight="500"
+        android:textSize="@dimen/text_14sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spinner_truck_type_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_search_load_spinner"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:paddingBottom="@dimen/size_8dp"
+        android:paddingStart="@dimen/size_12dp"
+        android:paddingTop="@dimen/size_8dp"
+        android:textSize="@dimen/text_16sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_truck_type"
         />
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_status"
-        android:textColor="@color/black"
-        android:textFontWeight="500"
-        android:fontFamily="sans-serif"
-        android:textSize="@dimen/text_14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinner_truck_type"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:fontFamily="sans-serif"
         android:text="@string/status"
+        android:textColor="@color/black"
+        android:textFontWeight="500"
+        android:textSize="@dimen/text_14sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_truck_type_2"
         />
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@id/spinner_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_status"
-        android:textSize="@dimen/text_16sp"
-        android:paddingTop="@dimen/size_8dp"
-        android:paddingBottom="@dimen/size_8dp"
-        android:paddingStart="@dimen/size_12dp"
-        android:layout_marginBottom="@dimen/size_8dp"
-        android:layout_marginTop="@dimen/size_4dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/bg_search_load_spinner"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        bind:shadow="@{ @dimen/size_2dp }"
+        android:paddingBottom="@dimen/size_8dp"
+        android:paddingStart="@dimen/size_12dp"
+        android:paddingTop="@dimen/size_8dp"
+        android:textSize="@dimen/text_16sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_status"
         />
-
-  </RelativeLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
