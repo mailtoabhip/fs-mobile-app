@@ -1,6 +1,11 @@
 package com.delhivery.axle.api.repository
 
 import android.text.BoringLayout
+import com.delhivery.axle.api.repository.ContractStatus.BiddingClosed
+import com.delhivery.axle.api.repository.ContractStatus.Cancelled
+import com.delhivery.axle.api.repository.ContractStatus.CollectingBids
+import com.delhivery.axle.api.repository.ContractStatus.LiveBidding
+import com.delhivery.axle.api.repository.ContractStatus.ResultDeclared
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
@@ -60,7 +65,7 @@ class TransactionsRepository @Inject constructor(
     requestType:String?,
     contractType:String?
   ) = transactionService.transactions(
-      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType, truckDisplayName, status, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType, truckDisplayName, if(status!=null) contractsMap[status]?.statusId else null, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
     contractType,if(requestType=="load") null else true
   ).convertResponse()
 
@@ -89,6 +94,16 @@ class TransactionsRepository @Inject constructor(
     transactionId: String,
     fuelPayoutRequest: FuelPayoutRequest
   ) = transactionService.updateTripForFuelPayout(transactionId, fuelPayoutRequest).convertResponse()
+
+  private fun mapStatus(status: String):String{
+    return when(status){
+      "Live Bidding" -> "live_bidding"
+      "Collecting Bids" -> "active_bidding"
+      "Bidding Closed" -> "closed_bidding"
+      "Cancelled" ->"cancelled"
+      else -> "allocated"
+    }
+  }
 }
 
 enum class TransactionStatus(val statusId: String) {
@@ -96,4 +111,20 @@ enum class TransactionStatus(val statusId: String) {
   InEnquiry("in_enquiry"),
   TruckConfirmed("truck_confirmed"),
   Completed("completed")
+}
+
+val contractsMap= mapOf(
+  Pair("Live Bidding", LiveBidding),
+  Pair("Collecting Bids",CollectingBids),
+  Pair("Bidding Closed",BiddingClosed),
+  Pair("Cancelled",Cancelled),
+  Pair("Result Declared",ResultDeclared)
+)
+
+enum class ContractStatus(val statusId:String){
+  LiveBidding("live_bidding"),
+  CollectingBids("active_bidding"),
+  BiddingClosed("closed_bidding"),
+  Cancelled("cancelled"),
+  ResultDeclared("result_declared")
 }
