@@ -632,7 +632,6 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
         binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
       }
       else -> {
-        Log.d("demand_type",item.data.userDemandType)
         binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
         if(item.data.userDemandType.contains(context.getString(string.intracity_demand_type))){
           binding.toggleView.visibility=View.VISIBLE
