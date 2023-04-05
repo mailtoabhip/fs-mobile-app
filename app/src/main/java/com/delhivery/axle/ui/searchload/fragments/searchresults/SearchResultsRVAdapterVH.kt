@@ -185,14 +185,14 @@ internal class SearchLoadsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinner
       binding.tvStatus.visibility=View.INVISIBLE
       binding.tvTruckType.visibility=View.INVISIBLE
       binding.spinnerStatus.visibility=View.INVISIBLE
-      binding.spinnerTruckType2.visibility=View.INVISIBLE
+      binding.spinnerTruckDisplayName.visibility=View.INVISIBLE
       binding.spinnerTruckType.visibility=View.GONE
     }
     else{
       binding.tvStatus.visibility=View.GONE
       binding.tvTruckType.visibility=View.GONE
       binding.spinnerStatus.visibility=View.GONE
-      binding.spinnerTruckType2.visibility=View.GONE
+      binding.spinnerTruckDisplayName.visibility=View.GONE
       binding.spinnerTruckType.visibility=View.INVISIBLE
     }
   }

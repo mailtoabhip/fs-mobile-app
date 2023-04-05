@@ -335,11 +335,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.spinnerTruckType.isClickable = false
     binding.spinnerStatus.isEnabled = false
     binding.spinnerStatus.isClickable = false
-    binding.spinnerTruckType2.isEnabled = false
-    binding.spinnerTruckType2.isClickable = false
+    binding.spinnerTruckDisplayName.isEnabled = false
+    binding.spinnerTruckDisplayName.isClickable = false
     binding.spinnerTruckType.setup(array.array_truck_type) { p, v -> }
     binding.spinnerStatus.setup(array.array_status) { p, v -> }
-    binding.spinnerTruckType2.setup(array.array_truck_type_name) { p, v -> }
+    binding.spinnerTruckDisplayName.setup(array.array_truck_type_name) { p, v -> }
   }
 
   /**
@@ -348,7 +348,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   fun search(
     origin: CityModel,
     destination: CityModel?,
-    type: String,
+    type: String?,
+    displayName: String?,
+    status: String?,
     saveToHistory: Boolean,
     requestType:String?,
     contractType:String?,
@@ -373,8 +375,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       else -> 0
     }
     binding.spinnerTruckType.setSelection(pos, true)
-    binding.spinnerStatus.setSelection(0)
-    binding.spinnerTruckType2.setSelection(resources.getStringArray(array.array_truck_type_name).toList().indexOf(type))
+    binding.spinnerStatus.setSelection(resources.getStringArray(array.array_status).toList().indexOf(type))
+    binding.spinnerTruckDisplayName.setSelection(resources.getStringArray(array.array_truck_type_name).toList().indexOf(type))
     if(contractType==getString(string.intracity_contract_type)){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
@@ -384,14 +386,14 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       showIntercityRelatedViews()
     }
     isContract = contractType!=null
-    viewModel.searchLoad(origin, destination, type,requestType,contractType)
+    viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
   }
 
   private fun hideIntracityRelatedViews() {
     binding.containerReportingCenter.visibility = View.GONE
     binding.tvTruckType.visibility = View.GONE
     binding.tvReportingCenter.visibility=View.GONE
-    binding.spinnerTruckType2.visibility = View.GONE
+    binding.spinnerTruckDisplayName.visibility = View.GONE
     binding.tvStatus.visibility = View.GONE
     binding.spinnerStatus.visibility = View.GONE
   }
@@ -409,7 +411,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.containerReportingCenter.visibility = View.VISIBLE
     binding.tvReportingCenter.visibility=View.VISIBLE
     binding.tvTruckType.visibility = View.VISIBLE
-    binding.spinnerTruckType2.visibility = View.VISIBLE
+    binding.spinnerTruckDisplayName.visibility = View.VISIBLE
     binding.tvStatus.visibility = View.VISIBLE
     binding.spinnerStatus.visibility = View.VISIBLE
   }

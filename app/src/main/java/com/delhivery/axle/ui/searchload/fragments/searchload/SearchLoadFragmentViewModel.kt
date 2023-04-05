@@ -39,13 +39,15 @@ class SearchLoadFragmentViewModel @Inject constructor(
   fun saveToHistory(
     originCity: CityModel,
     destinationCity: CityModel,
-    type: String,
+    truckType: String?,
+    truckDisplayName: String?,
+    status: String?,
     requestType: String?,
-    contractType: String?
+    contractType: String?,
   ) {
     compositeDisposable += Single.fromCallable {
       appDB.searchHistoryDao()
-          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, type,if(requestType=="load") "fixed,spot" else "contract",contractType))
+          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, truckType, truckDisplayName, status, if(requestType=="load") "fixed,spot" else "contract",contractType))
     }
         .onBackground()
         .subscribe { res, error ->

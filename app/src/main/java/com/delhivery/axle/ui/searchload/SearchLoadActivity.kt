@@ -100,7 +100,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
                   PROPERTY_SEARCH_BODY_TYPE),
               mutableListOf( originCity.cityName() ?: "Anywhere",
-                  destinationCity?.cityName() ?: "Anywhere",truckType)
+                  destinationCity?.cityName() ?: "Anywhere", truckType ?: "null")
           )
           userPrefs.setPreviousScreen(SearchLoadActivity::class.java.name)
          /* navigate to search results fragment */
@@ -110,6 +110,8 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               originCity,
               destinationCity,
               truckType,
+              truckDisplayName,
+              status,
               saveToHistory,
               requestType,
               contractType,

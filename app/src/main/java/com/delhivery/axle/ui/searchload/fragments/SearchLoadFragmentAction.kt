@@ -34,7 +34,9 @@ class ProgressSearchLoadAction(
 class SearchLoadAction(
   val originCity: CityModel,
   val destinationCity: CityModel?,
-  val truckType: String,
+  val truckType: String?,
+  val truckDisplayName: String?,
+  val status: String?,
   val requestType:String?,
   val contractType:String?,
   val saveToHistory: Boolean = false
