@@ -94,16 +94,6 @@ class TransactionsRepository @Inject constructor(
     transactionId: String,
     fuelPayoutRequest: FuelPayoutRequest
   ) = transactionService.updateTripForFuelPayout(transactionId, fuelPayoutRequest).convertResponse()
-
-  private fun mapStatus(status: String):String{
-    return when(status){
-      "Live Bidding" -> "live_bidding"
-      "Collecting Bids" -> "active_bidding"
-      "Bidding Closed" -> "closed_bidding"
-      "Cancelled" ->"cancelled"
-      else -> "allocated"
-    }
-  }
 }
 
 enum class TransactionStatus(val statusId: String) {
@@ -121,6 +111,9 @@ val contractsMap= mapOf(
   Pair("Result Declared",ResultDeclared)
 )
 
+/**
+ * Map the status values for contracts to their corresponding values used in the api
+ */
 enum class ContractStatus(val statusId:String){
   LiveBidding("live_bidding"),
   CollectingBids("active_bidding"),
