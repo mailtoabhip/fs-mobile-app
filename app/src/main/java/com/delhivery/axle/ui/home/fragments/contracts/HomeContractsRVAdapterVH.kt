@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
@@ -609,13 +610,10 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
     when (item.data.itemType) {
       "CustomerIntercityToggle" -> {
         binding.toggleView.text="Customer Intercity (${item.data.nonExpressCount})"
-        if (!item.data.actionLabel && !item.data.userDemandType.contains(context.getString(string.intracity_demand_type))) {
-          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
-          binding.toggleView.isSelected=true
-        } else {
-          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
-          binding.toggleView.isSelected=false
-        }
+        if (!item.data.actionLabel && !item.data.userDemandType.contains(context.getString(string.intracity_demand_type)))
+          setToggleItemAsSelected()
+         else
+          setToggleItemAsUnselected()
         if(item.data.actionLabel)
           binding.toggleView.visibility=View.VISIBLE
         else
@@ -627,30 +625,36 @@ internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
         if(item.data.userDemandType.contains("Internal"))
           binding.toggleView.visibility=View.VISIBLE
         else binding.toggleView.visibility=View.GONE
-        if (!item.data.actionLabel) {
-          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
-          binding.toggleView.isSelected = false
-        } else if(!item.data.userDemandType.contains(context.getString(string.intracity_demand_type))){
-          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
-          binding.toggleView.isSelected = true
-        }
+        if (!item.data.actionLabel)
+          setToggleItemAsUnselected()
+         else if(!item.data.userDemandType.contains(context.getString(string.intracity_demand_type)))
+          setToggleItemAsSelected()
         binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
       }
       else -> {
+        Log.d("demand_type",item.data.userDemandType)
         binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
         if(item.data.userDemandType.contains(context.getString(string.intracity_demand_type))){
           binding.toggleView.visibility=View.VISIBLE
-          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
-          binding.toggleView.isSelected=true
+          setToggleItemAsSelected()
         }
         else {
           binding.toggleView.visibility=View.GONE
-          binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
-          binding.toggleView.isSelected=false
+          setToggleItemAsUnselected()
         }
         binding.toggleView.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
       }
     }
+  }
+
+  private fun setToggleItemAsUnselected() {
+    binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
+    binding.toggleView.isSelected = false
+  }
+
+  private fun setToggleItemAsSelected() {
+    binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
+    binding.toggleView.isSelected = true
   }
 
 }
