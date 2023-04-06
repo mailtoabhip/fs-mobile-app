@@ -47,8 +47,8 @@ data class MonthlyEarning(
   fun sum() = "₹ ${StringUtils.formatAmount(sum)}"
 }
 
-/*
-  Holder for the truck display name literal
+/**
+ * Holder for the truck display name literal
  */
 data class TruckDisplayNameItem(
   @SerializedName("key") val truckDisplayName:String
