@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.repository.ContractStatus
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
@@ -22,10 +23,11 @@ interface TransactionService {
   @GET("/transactions/list/")
   fun transactions(
     @Query("offset") offset: Int,
-    @Query("contract_status") contractStatus: String?,
+    @Query("status_list") status_list: String?,
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_types") truckType: String? = null,
+    @Query("contract_status") contractStatus: String?,
     @Query("truck_display_name") truckDisplayName: String? = null,
     @Query("axle_current_week_loads") currWeekLoads: String?,
     @Query("apply_100km_logic") nearby100kmcities: Boolean?,
