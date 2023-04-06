@@ -750,9 +750,6 @@
 
   <string-array name="array_truck_display_name">
     <item>Select Vehicle Type</item>
-    <item>TATA_ACE</item>
-    <item>BOLERO_PICKUP</item>
-    <item>TATA_407</item>
   </string-array>
 
   <string-array name="array_truck_size">

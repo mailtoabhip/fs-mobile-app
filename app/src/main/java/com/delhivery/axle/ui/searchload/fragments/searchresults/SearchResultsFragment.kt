@@ -1,10 +1,16 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
+import android.R.layout
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -342,7 +348,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.spinnerTruckDisplayName.isClickable = false
     binding.spinnerTruckType.setup(array.array_truck_type) {  p, v -> }
     binding.spinnerStatus.setup(array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
-    binding.spinnerTruckDisplayName.setup(array.array_truck_display_name) { p, v -> binding.spinnerTruckDisplayName.setHintColor(v) }
     }
 
   /**
@@ -357,6 +362,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     saveToHistory: Boolean,
     requestType:String?,
     contractType:String?,
+    truckDisplayNames: ArrayList<String>,
     progress: Boolean = true
   ) {
     this.saveToHistory = saveToHistory
@@ -377,9 +383,13 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       "Trailer" -> 3
       else -> 0
     }
+    binding.spinnerTruckDisplayName.apply {
+      setTruckDisplayAdapter(truckDisplayNames)
+    }
     binding.spinnerTruckType.setSelection(pos, true)
-    binding.spinnerStatus.setSelection(resources.getStringArray(array.array_status).toList().indexOf(type))
-    binding.spinnerTruckDisplayName.setSelection(resources.getStringArray(array.array_truck_display_name).toList().indexOf(displayName))
+    binding.spinnerStatus.setSelection(resources.getStringArray(array.array_status).toList().indexOf(status))
+    Log.d("NAMES LIST",truckDisplayNames.size.toString()+" "+truckDisplayNames.indexOf(displayName))
+    binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
     if(contractType==getString(string.intracity_contract_type)){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
@@ -390,6 +400,27 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     }
     isContract = contractType!=null
     viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
+  }
+
+  private fun AppCompatSpinner.setTruckDisplayAdapter(truckDisplayNames: ArrayList<String>) {
+    val truckDisplayAdapter =
+      ArrayAdapter(this.context!!, layout.simple_spinner_item, truckDisplayNames).apply {
+        setDropDownViewResource(layout.simple_spinner_dropdown_item)
+        onItemSelectedListener = object : OnItemSelectedListener {
+          override fun onItemSelected(
+            p0: AdapterView<*>?,
+            p1: View?,
+            p2: Int,
+            p3: Long
+          ) {
+            setHintColor(getItemAtPosition(p2).toString())
+          }
+
+          override fun onNothingSelected(parent: AdapterView<*>?) {
+          }
+        }
+      }
+    adapter = truckDisplayAdapter
   }
 
   private fun hideIntracityRelatedViews() {

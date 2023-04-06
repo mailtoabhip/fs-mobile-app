@@ -115,6 +115,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               saveToHistory,
               requestType,
               contractType,
+              truckDisplayNames,
               false
             )
           }

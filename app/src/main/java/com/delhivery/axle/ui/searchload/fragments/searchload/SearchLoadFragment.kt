@@ -50,7 +50,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   private var destination: CityModel? = null
   private var requestType: String? =  ""
   private var contractType:String? = ""
-  private var truckDisplayNames = arrayListOf<String>()
+  private var truckDisplayNames = arrayListOf("Select Type")
 
   override fun onViewCreated(
     view: View,
@@ -68,12 +68,11 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         else uiUtils.hideProgress()
       }
       viewModel.truckDisplayNamesLiveData.observe(this){
-        if(it!=null){
           truckDisplayNames.clear()
           truckDisplayNames.add("Select Type")
-          truckDisplayNames.addAll(it)
-          (binding.spinnerTruckDisplayName.adapter as ArrayAdapter<*>).notifyDataSetChanged()
-        }
+          if(it!=null)
+            truckDisplayNames.addAll(it)
+          binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
       }
     }
     binding.btnRetry.setOnClickListener {
@@ -146,7 +145,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           if(p==0) setHintColor(v)
         }
       }
-      binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
       autoCompleteUtils.autoCompleteCity(binding.editReportingCenter){
         origin = it
       }
@@ -199,7 +197,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     initObservers()
   }
 
-  private fun AppCompatSpinner.setTruckDisplayNamesAdapter() {
+   private fun AppCompatSpinner.setTruckDisplayNamesAdapter() {
     val truckDisplayAdapter =
       ArrayAdapter(this.context, layout.simple_spinner_item, truckDisplayNames).apply {
         setDropDownViewResource(layout.simple_spinner_dropdown_item)
@@ -210,7 +208,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
             p2: Int,
             p3: Long
           ) {
-            if (p2 == 0) setHintColor(getItemAtPosition(p2).toString())
+            setHintColor(getItemAtPosition(p2).toString())
           }
           override fun onNothingSelected(parent: AdapterView<*>?) {
           }
@@ -273,7 +271,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
       Handler().postDelayed({
-        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, status, requestType,contractType,saveToHistory))
+        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, status, requestType,contractType,truckDisplayNames,saveToHistory))
       }, 200)
   }
 
