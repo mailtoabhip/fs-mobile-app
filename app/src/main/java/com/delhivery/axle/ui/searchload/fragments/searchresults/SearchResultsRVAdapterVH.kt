@@ -214,6 +214,9 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     if (item.data.contractType == context.getString(string.intracity_contract_type)) {
       hideDestinationAndConnectionTypeViews()
       displayVehicleRunningInfo()
+      binding.viewKmsPerMonth.text=item.data.intracityKms.plus(" Kms/Month")
+      binding.viewDaysPerMonth.text=item.data.intracityDays.plus(" days/Month")
+      binding.viewHoursPerDay.text=item.data.intracityHours.plus("h/day")
     } else {
       showDestinationAndConnnectionTypeViews()
       hideVehicleRunningInfo()
