@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.*
@@ -131,6 +130,8 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
 fun Spinner.setHintColor(selectedText: String?){
   if(selectedText!!.toLowerCase().contains("select") && selectedView!=null)
     (selectedView as TextView).setTextColor(Color.GRAY)
+  else if(selectedView!=null)
+    (selectedView as TextView).setTextColor(Color.BLACK)
 }
 /**
  * Set view visibility

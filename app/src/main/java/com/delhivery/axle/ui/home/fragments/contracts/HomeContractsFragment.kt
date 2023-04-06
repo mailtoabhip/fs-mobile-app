@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -19,7 +18,12 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.contracts.*
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterCustomerIntercity
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntercity
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntracity
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
+import com.delhivery.axle.data.home.contracts.HomeContractsTimeOutAction
+import com.delhivery.axle.data.home.contracts.HomeContractsWarningAction_NoLoads
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
 import com.delhivery.axle.databinding.DialogContractsTypeInfoBinding
 import com.delhivery.axle.databinding.FragmentHomeContractsBinding
@@ -29,7 +33,16 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_FILTER_EXPRESS_LOADS
+import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
+import com.delhivery.axle.utils.FCMUtils
+import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_STATUS
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -174,7 +187,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(demandType.contains(getString(string.intracity_demand_type))) getString(string.intracity_contract_type) else if(isInternal) "LH_FTL" else "FRC"))
+            Intent(searchLoadContractsIntent(it,"contract","INTRACITY"))
           )
         }
       }

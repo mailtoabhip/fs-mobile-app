@@ -748,7 +748,7 @@
     <item>Result declared</item>
   </string-array>
 
-  <string-array name="array_truck_type_name">
+  <string-array name="array_truck_display_name">
     <item>Select Vehicle Type</item>
     <item>TATA_ACE</item>
     <item>BOLERO_PICKUP</item>

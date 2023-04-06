@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
@@ -63,6 +65,7 @@ import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.isNotEmpty
+import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -337,10 +340,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.spinnerStatus.isClickable = false
     binding.spinnerTruckDisplayName.isEnabled = false
     binding.spinnerTruckDisplayName.isClickable = false
-    binding.spinnerTruckType.setup(array.array_truck_type) { p, v -> }
-    binding.spinnerStatus.setup(array.array_status) { p, v -> }
-    binding.spinnerTruckDisplayName.setup(array.array_truck_type_name) { p, v -> }
-  }
+    binding.spinnerTruckType.setup(array.array_truck_type) {  p, v -> }
+    binding.spinnerStatus.setup(array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
+    binding.spinnerTruckDisplayName.setup(array.array_truck_display_name) { p, v -> binding.spinnerTruckDisplayName.setHintColor(v) }
+    }
 
   /**
    * Search with query params
@@ -376,7 +379,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     }
     binding.spinnerTruckType.setSelection(pos, true)
     binding.spinnerStatus.setSelection(resources.getStringArray(array.array_status).toList().indexOf(type))
-    binding.spinnerTruckDisplayName.setSelection(resources.getStringArray(array.array_truck_type_name).toList().indexOf(type))
+    binding.spinnerTruckDisplayName.setSelection(resources.getStringArray(array.array_truck_display_name).toList().indexOf(displayName))
     if(contractType==getString(string.intracity_contract_type)){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
@@ -400,11 +403,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   private fun hideIntercityRelatedViews() {
     binding.spinnerTruckType.visibility = View.GONE
-    binding.imgForward.visibility = View.GONE
-    binding.textSourceCity.visibility = View.GONE
-    binding.textSourceState.visibility = View.GONE
-    binding.textDestinationCity.visibility = View.GONE
-    binding.textDestinationState.visibility = View.GONE
+    binding.containerCities.visibility = View.GONE
   }
 
   private fun showIntracityRelatedViews() {
@@ -418,11 +417,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   private fun showIntercityRelatedViews() {
     binding.spinnerTruckType.visibility = View.VISIBLE
-    binding.imgForward.visibility = View.VISIBLE
-    binding.textSourceCity.visibility = View.VISIBLE
-    binding.textSourceState.visibility = View.VISIBLE
-    binding.textDestinationCity.visibility = View.VISIBLE
-    binding.textDestinationState.visibility = View.VISIBLE
+    binding.containerCities.visibility = View.VISIBLE
   }
 
   override fun handleAction(
@@ -600,9 +595,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private fun resetSpinnerContainer() {
     binding.apply {
       if(spinnerTruckType.visibility==View.VISIBLE)
-      {
         _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
-      }
       if(spinnerStatus.visibility==View.VISIBLE)
         _scrollListener.coordinateView(spinnerStatus, viewHiddenIndicator, 0f)
       viewHiddenIndicator.alpha = 0f
@@ -675,4 +668,4 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
     }
   }
-}
+  }

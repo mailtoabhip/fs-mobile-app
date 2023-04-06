@@ -6,6 +6,7 @@ import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
+import com.delhivery.axle.api.response.TruckDisplayNamesResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import retrofit2.http.*
@@ -21,12 +22,11 @@ interface TransactionService {
   @GET("/transactions/list/")
   fun transactions(
     @Query("offset") offset: Int,
-    @Query("status_list") status_list: String?,
+    @Query("contract_status") contractStatus: String?,
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_types") truckType: String? = null,
     @Query("truck_display_name") truckDisplayName: String? = null,
-    @Query("status") status: String? = null,
     @Query("axle_current_week_loads") currWeekLoads: String?,
     @Query("apply_100km_logic") nearby100kmcities: Boolean?,
     @Query("request_types") requestType:String?,
@@ -96,4 +96,8 @@ interface TransactionService {
     @Query("only_count") onlyCount: String?
   ): Single<BaseResponse<TransactionsResponse>>
 
+  @GET("/transactions/loadboard/contracts")
+  fun getTruckDisplayNames(
+    @Query("only_display_names") displayNames: String,
+  ): Single<BaseResponse<TruckDisplayNamesResponse>>
 }

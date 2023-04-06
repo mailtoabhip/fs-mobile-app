@@ -15,6 +15,10 @@ data class TransactionsResponse(
   @SerializedName("all_active_fetched") val allActiveFetched: Boolean?,
 )
 
+data class TruckDisplayNamesResponse(
+  @SerializedName("truck_display_names") val truckDisplayNames: List<TruckDisplayNameItem>
+)
+
 data class TripMeterResponse(
   @SerializedName("1") val jan: MonthlyEarning? = null,
   @SerializedName("2") val feb: MonthlyEarning? = null,
@@ -40,3 +44,6 @@ data class MonthlyEarning(
   fun sum() = "₹ ${StringUtils.formatAmount(sum)}"
 }
 
+data class TruckDisplayNameItem(
+  @SerializedName("key") val truckDisplayName:String
+)
