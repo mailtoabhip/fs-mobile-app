@@ -210,8 +210,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           ) {
             setHintColor(getItemAtPosition(p2).toString())
           }
-          override fun onNothingSelected(parent: AdapterView<*>?) {
-          }
+          override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
       }
     adapter = truckDisplayAdapter

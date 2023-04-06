@@ -98,8 +98,11 @@ interface TransactionService {
     @Query("only_count") onlyCount: String?
   ): Single<BaseResponse<TransactionsResponse>>
 
+  /**
+   * Endpoint to get display names for intracity supported vehicle names
+   */
   @GET("/transactions/loadboard/contracts")
   fun getTruckDisplayNames(
-    @Query("only_display_names") displayNames: String,
+    @Query("only_display_names") displayNames: String="yes",
   ): Single<BaseResponse<TruckDisplayNamesResponse>>
 }
