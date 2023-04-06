@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.searchload.fragments.searchload
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
-import com.delhivery.axle.api.response.TruckDisplayNameItem
 import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.CityModel
@@ -31,7 +30,8 @@ class SearchLoadFragmentViewModel @Inject constructor(
 
   var citiesLiveData = MutableLiveData<List<CityModel>>()
   var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
-  var truckDisplayNamesLiveData = MutableLiveData<List<String   >>()
+  var truckDisplayNamesLiveData = MutableLiveData<List<String>>()
+  var loadingProgressLiveData = MutableLiveData<Boolean>()
   /**
    * Search load history live data
    */
@@ -115,6 +115,12 @@ class SearchLoadFragmentViewModel @Inject constructor(
   fun fetchTruckDisplayNames(){
     compositeDisposable+=transactionService.getTruckDisplayNames("yes")
       .onBackground()
+      .doOnSubscribe{
+        loadingProgressLiveData.postValue(true)
+      }
+      .doFinally{
+        loadingProgressLiveData.postValue(false)
+      }
       .subscribe { res, _ ->
         if(res!=null){
           val converted= mutableListOf<String>()

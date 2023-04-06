@@ -60,18 +60,22 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     val activity: SearchLoadActivity? = activity as SearchLoadActivity?
     requestType = activity?.intentRequestType
     contractType = activity?.intentContractType
-    viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.fetchTruckDisplayNames()
-    viewModel.truckDisplayNamesLiveData.observe(this, Observer {
-      if(contractType==context?.getString(string.intracity_contract_type) && it!=null) {
-        truckDisplayNames.clear()
-        truckDisplayNames.add("Select type")
-        truckDisplayNames.addAll(it)
-        binding.spinnerTruckDisplayName.apply {
-          setTruckDisplayNamesAdapter()
+    viewModel.progressLiveData.observe(this, ProgressObserver())
+    if(contractType==getString(R.string.intracity_contract_type)){
+      viewModel.loadingProgressLiveData.observe(this){
+        if(it) uiUtils.showProgress()
+        else uiUtils.hideProgress()
+      }
+      viewModel.truckDisplayNamesLiveData.observe(this){
+        if(it!=null){
+          truckDisplayNames.clear()
+          truckDisplayNames.add("Select Type")
+          truckDisplayNames.addAll(it)
+          (binding.spinnerTruckDisplayName.adapter as ArrayAdapter<*>).notifyDataSetChanged()
         }
       }
-    })
+    }
     binding.btnRetry.setOnClickListener {
       binding.warningItem.visibility = View.GONE
       binding.warningItem.alpha = 0f
@@ -142,6 +146,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           if(p==0) setHintColor(v)
         }
       }
+      binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
       autoCompleteUtils.autoCompleteCity(binding.editReportingCenter){
         origin = it
       }

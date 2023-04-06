@@ -741,11 +741,11 @@
 
   <string-array name="array_status">
     <item>Select status</item>
-    <item>Collecting bids</item>
-    <item>Live bidding</item>
-    <item>Awaiting result</item>
+    <item>Live Bidding</item>
+    <item>Collecting Bids</item>
+    <item>Bidding Closed</item>
     <item>Cancelled</item>
-    <item>Result declared</item>
+    <item>Result Declared</item>
   </string-array>
 
   <string-array name="array_truck_display_name">
