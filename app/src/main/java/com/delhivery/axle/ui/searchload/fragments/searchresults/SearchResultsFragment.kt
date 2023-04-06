@@ -417,6 +417,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           }
 
           override fun onNothingSelected(parent: AdapterView<*>?) {
+            return
           }
         }
       }
