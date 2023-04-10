@@ -43,5 +43,6 @@ object StringUtils {
     val currency: String = nf.format(amount)
     return currency.substring(0,currency.length-3)
   }
-
+  const val INTRACITY_CONTRACT_TYPE="INTRACITY"
+  const val INTRACITY_DEMAND_TYPE="Intracity"
 }

@@ -1,18 +1,23 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
+import android.R.layout
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
 import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -22,16 +27,49 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS
+import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS
+import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS
+import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS
+import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_INITIATE
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_INITIATED
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_SUBMITTED
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_SUBMIT
+import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
+import com.delhivery.axle.utils.PROPERTY_BID_COUNT
+import com.delhivery.axle.utils.PROPERTY_DESTINATION
+import com.delhivery.axle.utils.PROPERTY_NUM_RESULTS
+import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_ORDER_RANK
+import com.delhivery.axle.utils.PROPERTY_ORIGIN
+import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
+import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
+import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.PROPERTY_TRUCK_TYPE
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
+import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.isNotEmpty
+import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -302,8 +340,13 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private fun setupSpinners() {
     binding.spinnerTruckType.isEnabled = false
     binding.spinnerTruckType.isClickable = false
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
-  }
+    binding.spinnerStatus.isEnabled = false
+    binding.spinnerStatus.isClickable = false
+    binding.spinnerTruckDisplayName.isEnabled = false
+    binding.spinnerTruckDisplayName.isClickable = false
+    binding.spinnerTruckType.setup(R.array.array_truck_type) {  p, v -> }
+    binding.spinnerStatus.setup(R.array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
+    }
 
   /**
    * Search with query params
@@ -311,16 +354,22 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   fun search(
     origin: CityModel,
     destination: CityModel?,
-    type: String,
+    type: String?,
+    displayName: String?,
+    status: String?,
     saveToHistory: Boolean,
     requestType:String?,
     contractType:String?,
+    truckDisplayNames: ArrayList<String>,
     progress: Boolean = true
   ) {
     this.saveToHistory = saveToHistory
     /* clear and add first dummy item */
     _adapter.clearItems()
-    _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
+    if(contractType==INTRACITY_CONTRACT_TYPE)
+      _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
+    else
+      _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
     if (progress)
       action(ProgressSearchLoadAction(true, if(isContract)"Searching contracts" else "Searching loads"))
@@ -332,9 +381,73 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       "Trailer" -> 3
       else -> 0
     }
+    binding.spinnerTruckDisplayName.apply {
+      setTruckDisplayAdapter(truckDisplayNames)
+    }
     binding.spinnerTruckType.setSelection(pos, true)
+    binding.spinnerStatus.setSelection(resources.getStringArray(R.array.array_status).toList().indexOf(status))
+    Log.d("NAMES LIST",truckDisplayNames.size.toString()+" "+truckDisplayNames.indexOf(displayName))
+    binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
+    if(contractType== INTRACITY_CONTRACT_TYPE){
+      showIntracityRelatedViews()
+      hideIntercityRelatedViews()
+    }
+    else{
+      hideIntracityRelatedViews()
+      showIntercityRelatedViews()
+    }
     isContract = contractType!=null
-    viewModel.searchLoad(origin, destination, type,requestType,contractType)
+    viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
+  }
+
+  private fun AppCompatSpinner.setTruckDisplayAdapter(truckDisplayNames: ArrayList<String>) {
+    val truckDisplayAdapter =
+      ArrayAdapter(this.context!!, layout.simple_spinner_item, truckDisplayNames).apply {
+        setDropDownViewResource(layout.simple_spinner_dropdown_item)
+        onItemSelectedListener = object : OnItemSelectedListener {
+          override fun onItemSelected(
+            p0: AdapterView<*>?,
+            p1: View?,
+            p2: Int,
+            p3: Long
+          ) {
+            setHintColor(getItemAtPosition(p2).toString())
+          }
+
+          override fun onNothingSelected(parent: AdapterView<*>?) {
+            return
+          }
+        }
+      }
+    adapter = truckDisplayAdapter
+  }
+
+  private fun hideIntracityRelatedViews() {
+    binding.containerReportingCenter.visibility = View.GONE
+    binding.tvTruckType.visibility = View.GONE
+    binding.tvReportingCenter.visibility=View.GONE
+    binding.spinnerTruckDisplayName.visibility = View.GONE
+    binding.tvStatus.visibility = View.GONE
+    binding.spinnerStatus.visibility = View.GONE
+  }
+
+  private fun hideIntercityRelatedViews() {
+    binding.spinnerTruckType.visibility = View.GONE
+    binding.containerCities.visibility = View.GONE
+  }
+
+  private fun showIntracityRelatedViews() {
+    binding.containerReportingCenter.visibility = View.VISIBLE
+    binding.tvReportingCenter.visibility=View.VISIBLE
+    binding.tvTruckType.visibility = View.VISIBLE
+    binding.spinnerTruckDisplayName.visibility = View.VISIBLE
+    binding.tvStatus.visibility = View.VISIBLE
+    binding.spinnerStatus.visibility = View.VISIBLE
+  }
+
+  private fun showIntercityRelatedViews() {
+    binding.spinnerTruckType.visibility = View.VISIBLE
+    binding.containerCities.visibility = View.VISIBLE
   }
 
   override fun handleAction(
@@ -417,17 +530,17 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_not_approved,
-            string.msg_dialog_supplier_not_approved,
-            getString(string.label_call_us), getString(string.label_mail_us),
+            R.string.title_dialog_supplier_not_approved,
+            R.string.msg_dialog_supplier_not_approved,
+            getString(R.string.label_call_us), getString(R.string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_disabled,
-            string.msg_dialog_supplier_disabled,
-            getString(string.label_call_us), getString(string.label_mail_us),
+            R.string.title_dialog_supplier_disabled,
+            R.string.msg_dialog_supplier_disabled,
+            getString(R.string.label_call_us), getString(R.string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
       }
@@ -511,7 +624,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   private fun resetSpinnerContainer() {
     binding.apply {
-      _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
+      if(spinnerTruckType.visibility==View.VISIBLE)
+        _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
+      if(spinnerStatus.visibility==View.VISIBLE)
+        _scrollListener.coordinateView(spinnerStatus, viewHiddenIndicator, 0f)
       viewHiddenIndicator.alpha = 0f
       rv.scrollToPosition(0)
       containerSpinner.translationY = 0f
@@ -537,14 +653,20 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
         containerSpinner.translationY = if (pos >= 1) {
           viewHiddenIndicator.alpha = 1f
-          updateVisibility(spinnerTruckType, View.INVISIBLE)
+          if(spinnerTruckType.visibility==View.VISIBLE)
+          {
+            updateVisibility(spinnerTruckType, View.INVISIBLE)
+          }
           maxTranslationY
         } else {
           val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
           val childTop = childView.top * 1f
           val factor = Math.min(childTop / maxTranslationY, 1f)
           viewHiddenIndicator.alpha = factor
-          coordinateView(spinnerTruckType, viewHiddenIndicator, factor)
+          if(spinnerTruckType.visibility==View.VISIBLE)
+          {
+            coordinateView(spinnerTruckType, viewHiddenIndicator, factor)
+          }
           Math.max(maxTranslationY, childTop)
         }
       }
@@ -576,4 +698,4 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
     }
   }
-}
+  }

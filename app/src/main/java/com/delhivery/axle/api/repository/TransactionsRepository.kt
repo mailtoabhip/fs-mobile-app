@@ -1,6 +1,11 @@
 package com.delhivery.axle.api.repository
 
 import android.text.BoringLayout
+import com.delhivery.axle.api.repository.ContractStatus.BiddingClosed
+import com.delhivery.axle.api.repository.ContractStatus.Cancelled
+import com.delhivery.axle.api.repository.ContractStatus.CollectingBids
+import com.delhivery.axle.api.repository.ContractStatus.LiveBidding
+import com.delhivery.axle.api.repository.ContractStatus.ResultDeclared
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
@@ -63,10 +68,13 @@ class TransactionsRepository @Inject constructor(
     source: String?,
     destination: String?,
     truckType: String?,
+    truckDisplayName: String?,
+    status: String?,
     requestType:String?,
     contractType:String?
   ) = transactionService.transactions(
-      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType,if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+      offset, if(contractType!="INTRACITY") Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
+    contractsMap[status]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
     contractType,if(requestType=="load") null else true
   ).convertResponse()
 
@@ -115,4 +123,23 @@ enum class RequestType(val type: String) {
   Contract("contract"),
   Spot("spot"),
   Fixed("fixed")
+}
+
+val contractsMap= mapOf(
+  Pair("Live Bidding", LiveBidding),
+  Pair("Collecting Bids",CollectingBids),
+  Pair("Bidding Closed",BiddingClosed),
+  Pair("Cancelled",Cancelled),
+  Pair("Result Declared",ResultDeclared)
+)
+
+/**
+ * Map the status values for contracts to their corresponding values used in the api
+ */
+enum class ContractStatus(val statusId:String){
+  LiveBidding("live_bidding"),
+  CollectingBids("active_bidding"),
+  BiddingClosed("closed_bidding"),
+  Cancelled("cancelled"),
+  ResultDeclared("result_declared")
 }

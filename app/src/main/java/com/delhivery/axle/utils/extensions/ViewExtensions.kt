@@ -1,6 +1,7 @@
 package com.delhivery.axle.utils.extensions
 
 import android.app.Activity
+import android.graphics.Color
 import android.graphics.Paint
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -110,7 +111,6 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
           override fun onNothingSelected(p0: AdapterView<*>?) {
             selected(-1, null)
           }
-
           override fun onItemSelected(
             p0: AdapterView<*>?,
             p1: View?,
@@ -124,6 +124,15 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
       }
 }
 
+/**
+ * Show the first item in a spinner as hint by setting its color to gray
+ */
+fun Spinner.setHintColor(selectedText: String?){
+  if(selectedText!!.toLowerCase().contains("select") && selectedView!=null)
+    (selectedView as TextView).setTextColor(Color.GRAY)
+  else if(selectedView!=null)
+    (selectedView as TextView).setTextColor(Color.BLACK)
+}
 /**
  * Set view visibility
  */

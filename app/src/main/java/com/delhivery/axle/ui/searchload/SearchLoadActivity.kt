@@ -6,7 +6,6 @@ import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySearchLoadBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.searchload.fragments.BaseSearchLoadFragmentAction
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
@@ -16,7 +15,10 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.EVENT_SEARCH_DETAILS_SUBMIT
+import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
+import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
+import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -54,7 +56,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
 
     title = if(intentRequestType =="load"){
       "Search Load"
-    }else{
+    }else {
       "Search Contract"
     }
 
@@ -98,18 +100,27 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
                   PROPERTY_SEARCH_BODY_TYPE),
               mutableListOf( originCity.cityName() ?: "Anywhere",
-                  destinationCity?.cityName() ?: "Anywhere",truckType)
+                  destinationCity?.cityName() ?: "Anywhere", truckType ?: "null")
           )
           userPrefs.setPreviousScreen(SearchLoadActivity::class.java.name)
-          /* navigate to search results fragment */
-          navigate(ResultsFragment)
-          /* search query */
-          (ResultsFragment.fragment as SearchResultsFragment).search(
-              originCity, destinationCity, truckType, saveToHistory, requestType,contractType, false
-          )
+         /* navigate to search results fragment */
+            navigate(ResultsFragment)
+            /* search query */
+            (ResultsFragment.fragment as SearchResultsFragment).search(
+              originCity,
+              destinationCity,
+              truckType,
+              truckDisplayName,
+              status,
+              saveToHistory,
+              requestType,
+              contractType,
+              truckDisplayNames,
+              false
+            )
+          }
         }
       }
-    }
   }
 
   override fun onBackPressed() {

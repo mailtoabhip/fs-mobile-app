@@ -7,7 +7,10 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
-import com.delhivery.axle.data.bids.TransactionBidStatus
+import com.delhivery.axle.R.string
+import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
+import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
+import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
@@ -15,13 +18,12 @@ import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.home.fragments.contracts.BaseHomeContractsRVAdapterViewHolder
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterInterface
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRequestItem
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.TimeZone
 
 /**
  * Base Home bids RV adapter view holder
@@ -87,7 +89,6 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-
     if(item.data.isDMTIndent()){
       binding.timerLayout.visibility = View.GONE
     }else{
@@ -181,7 +182,20 @@ internal class SearchLoadsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinner
     item: SearchLoadsSearchSpinnerItem,
     _interface: SearchLoadsRVAdapterInterface
   ) {
-
+    if(item.data.visibility==View.VISIBLE){
+      binding.tvStatus.visibility=View.INVISIBLE
+      binding.tvTruckType.visibility=View.INVISIBLE
+      binding.spinnerStatus.visibility=View.INVISIBLE
+      binding.spinnerTruckDisplayName.visibility=View.INVISIBLE
+      binding.spinnerTruckType.visibility=View.GONE
+    }
+    else{
+      binding.tvStatus.visibility=View.GONE
+      binding.tvTruckType.visibility=View.GONE
+      binding.spinnerStatus.visibility=View.GONE
+      binding.spinnerTruckDisplayName.visibility=View.GONE
+      binding.spinnerTruckType.visibility=View.INVISIBLE
+    }
   }
 }
 
@@ -198,9 +212,19 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+    if (item.data.contractType == INTRACITY_CONTRACT_TYPE) {
+      hideDestinationAndConnectionTypeViews()
+      displayVehicleRunningInfo()
+      binding.viewKmsPerMonth.text=item.data.intracityKms.plus(" Kms/Month")
+      binding.viewDaysPerMonth.text=item.data.intracityDays.plus(" days/Month")
+      binding.viewHoursPerDay.text=item.data.intracityHours.plus("h/day")
+    } else {
+      showDestinationAndConnnectionTypeViews()
+      hideVehicleRunningInfo()
+    }
     //Transaction Cancelled
-    if(item.data.transactionStatus=="cancelled"){
-      binding.userBidInfo.visibility= View.GONE
+    if (item.data.transactionStatus == "cancelled") {
+      binding.userBidInfo.visibility = View.GONE
       binding.tvBidStatus.text = "Cancelled"
       binding.tvBidTime.visibility = View.GONE
       binding.tvBidStatus.setTextColor(
@@ -219,8 +243,8 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
         context,
         R.drawable.bg_all_round_corner_light_grey
       )
-    }else if (item.data.bidStatus() == TransactionBidStatus.Accepted || item.data.bidStatus() == TransactionBidStatus.Cancelled || item.data.bidStatus() == TransactionBidStatus.Rejected) {
-      binding.userBidInfo.visibility= View.VISIBLE
+    } else if (item.data.bidStatus() == Accepted || item.data.bidStatus() == Cancelled || item.data.bidStatus() == Rejected) {
+      binding.userBidInfo.visibility = View.VISIBLE
       //Result status
       binding.tvBidStatus.setTextColor(
         ContextCompat.getColor(
@@ -239,26 +263,36 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
         R.drawable.bg_all_rounded_won
       )
       binding.tvBidTime.visibility = View.GONE
-      if (item.data.bidStatus() == TransactionBidStatus.Accepted) {
+      if (item.data.bidStatus() == Accepted) {
         //Bid Won
         binding.userBidStatus.text =
           "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
         binding.userBidInfo.text = " You Won"
         binding.userBidInfo.background = null
-        binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.userBidInfo.setTextColor(
+          ContextCompat.getColor(
+            context,
+            R.color.background_dark_grey
+          )
+        )
         binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
           R.drawable.ic_thumbs_up_green,
           0,
           0,
           0
         )
-      } else if (item.data.bidStatus() == TransactionBidStatus.Rejected) {
+      } else if (item.data.bidStatus() == Rejected) {
         //Bid Lost
         binding.userBidStatus.text =
           "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
         binding.userBidInfo.text = " You Lost"
         binding.userBidInfo.background = null
-        binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.userBidInfo.setTextColor(
+          ContextCompat.getColor(
+            context,
+            R.color.background_dark_grey
+          )
+        )
         binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
           R.drawable.ic_thumbs_down,
           0,
@@ -266,8 +300,8 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
           0
         )
       }
-    }else if(item.data.transactionStatus=="allocated"){
-      binding.userBidInfo.visibility= View.GONE
+    } else if (item.data.transactionStatus == "allocated") {
+      binding.userBidInfo.visibility = View.GONE
       //Result status
       binding.tvBidStatus.setTextColor(
         ContextCompat.getColor(
@@ -291,7 +325,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
       binding.tvBidTime.visibility = View.VISIBLE
       //Bidding open
       if (item.data.isContractBiddingOpen()) {
-        binding.userBidInfo.visibility= View.VISIBLE
+        binding.userBidInfo.visibility = View.VISIBLE
         // Live bidding
         if (item.data.isUnderOneHour()) {
           binding.clBidStatus.visibility = View.VISIBLE
@@ -313,7 +347,6 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
           )
           synchronized(this) {
 
-
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             format.setTimeZone(TimeZone.getTimeZone("IST"));
             val date1: Date = format.parse(format.format(Date()))
@@ -332,7 +365,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
                     val ms = String.format(format, mins)
                     val sec = String.format(format, secs)
                     val diff = ms + "m $sec" + "s"
-                    if (hours == 0 && binding.tvBidStatus.text=="Live Bidding") {
+                    if (hours == 0 && binding.tvBidStatus.text == "Live Bidding") {
                       binding.tvBidTime.visibility = View.VISIBLE
                       binding.tvBidTime.setText("Closes in $diff")
                     }
@@ -383,7 +416,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
                     )
                   } else {
                     // No user Bid
-                    binding.userBidStatus.text = context.getString(R.string.you_have_not_bid)
+                    binding.userBidStatus.text = context.getString(string.you_have_not_bid)
                     binding.userBidInfo.visibility = View.GONE
 
                   }
@@ -433,19 +466,19 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
         }
         // setting the user bid amount and status
         if (item.data.transactionBid != null) {
-          if(item.data.isContractBiddingOpen()&& item.data.isUnderOneHour()){
+          if (item.data.isContractBiddingOpen() && item.data.isUnderOneHour()) {
             binding.userBidInfo.visibility = View.VISIBLE
-          }else{
-            if(!item.data.isContractBiddingOpen()){
+          } else {
+            if (!item.data.isContractBiddingOpen()) {
               binding.userBidInfo.visibility = View.VISIBLE
-            }else{
+            } else {
               binding.userBidInfo.visibility = View.GONE
             }
 
           }
           if (item.data.lowestBid != null) {
             // user bid is lowest bid
-            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true && (item.data.targetPrice==null||item.data.transactionBid?.bidAmount?:0.0<=item.data.targetPrice?:0.0)) {
+            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true && (item.data.targetPrice == null || item.data.transactionBid?.bidAmount ?: 0.0 <= item.data.targetPrice ?: 0.0)) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -484,8 +517,8 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
                 0
               )
             }
-          }else{
-            if(item.data.targetPrice!=null){
+          } else {
+            if (item.data.targetPrice != null) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -508,10 +541,10 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
           }
         } else {
           // No user Bid
-          binding.userBidStatus.text = context.getString(R.string.you_have_not_bid)
+          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
           binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.dark_blue))
           binding.userBidInfo.background = null
-          binding.userBidInfo.text = context.getString(R.string.view_details)
+          binding.userBidInfo.text = context.getString(string.view_details)
           binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
@@ -521,7 +554,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
 
         }
 
-      }else{
+      } else {
         //Awaiting Results after bidding closed
         binding.tvBidStatus.setTextColor(
           ContextCompat.getColor(
@@ -561,13 +594,51 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
           )
         } else {
           // No user Bid
-          binding.userBidStatus.text = context.getString(R.string.you_have_not_bid)
+          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
           binding.userBidInfo.visibility = View.GONE
 
         }
       }
 
     }
+  }
+
+  private fun displayVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.VISIBLE
+    binding.vehicleRunningTime.visibility = View.VISIBLE
+    binding.truckTypeImage2.visibility = View.VISIBLE
+    binding.truckTypeText2.visibility=View.VISIBLE
+  }
+
+  private fun hideVehicleRunningInfo() {
+    binding.hubIcon.visibility = View.GONE
+    binding.vehicleRunningTime.visibility = View.GONE
+    binding.truckTypeImage2.visibility = View.GONE
+    binding.truckTypeText2.visibility = View.GONE
+  }
+
+  private fun showDestinationAndConnnectionTypeViews() {
+    binding.tvStops.visibility = View.VISIBLE
+    binding.forwardArrow.visibility = View.VISIBLE
+    binding.tvHubDestinationCity.visibility = View.VISIBLE
+    binding.tvHubDestinationState.visibility = View.VISIBLE
+    binding.connectionTypeImage.visibility = View.VISIBLE
+    binding.connectionTypeText.visibility = View.VISIBLE
+    binding.vehicleNumber.visibility = View.VISIBLE
+    binding.truckTypeImage.visibility = View.VISIBLE
+    binding.truckTypeText.visibility = View.VISIBLE
+  }
+
+  private fun hideDestinationAndConnectionTypeViews() {
+    binding.tvStops.visibility = View.GONE
+    binding.forwardArrow.visibility = View.GONE
+    binding.tvHubDestinationCity.visibility = View.GONE
+    binding.tvHubDestinationState.visibility = View.GONE
+    binding.connectionTypeImage.visibility = View.GONE
+    binding.connectionTypeText.visibility = View.GONE
+    binding.vehicleNumber.visibility = View.GONE
+    binding.truckTypeText.visibility=View.GONE
+    binding.truckTypeImage.visibility=View.GONE
   }
 }
 

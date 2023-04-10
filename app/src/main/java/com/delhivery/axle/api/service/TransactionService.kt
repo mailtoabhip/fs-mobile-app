@@ -7,6 +7,7 @@ import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ContractsSummaryResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
+import com.delhivery.axle.api.response.TruckDisplayNamesResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import retrofit2.http.*
@@ -26,6 +27,8 @@ interface TransactionService {
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_types") truckType: String? = null,
+    @Query("contract_status") contractStatus: String?,
+    @Query("truck_display_name") truckDisplayName: String? = null,
     @Query("axle_current_week_loads") currWeekLoads: String?,
     @Query("apply_100km_logic") nearby100kmcities: Boolean?,
     @Query("request_types") requestType:String?,
@@ -103,4 +106,11 @@ interface TransactionService {
     @Query("only_contract_counts") onlyCount: String?
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
+  /**
+   * Endpoint to get display names for intracity supported vehicle names
+   */
+  @GET("/transactions/loadboard/contracts")
+  fun getTruckDisplayNames(
+    @Query("only_display_names") displayNames: String="yes",
+  ): Single<BaseResponse<TruckDisplayNamesResponse>>
 }

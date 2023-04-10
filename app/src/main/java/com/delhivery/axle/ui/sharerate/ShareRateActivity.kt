@@ -24,11 +24,9 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.api.response.GetSupplierRewardsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.yourrewards.YourRewardsItemData
-import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.ActivityShareRateBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.databinding.DialogRateUploadSuccessBinding
@@ -46,8 +44,6 @@ import com.delhivery.axle.ui.trucks.TruckSizeAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

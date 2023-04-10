@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
-import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
@@ -9,17 +8,17 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
-import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.data.Quintuple
-import com.delhivery.axle.data.bids.*
+import com.delhivery.axle.data.bids.BulkBidCreateRequest
+import com.delhivery.axle.data.bids.BulkBidRemoveRequest
+import com.delhivery.axle.data.bids.BulkBidUpdateRequest
+import com.delhivery.axle.data.bids.ModifyVehicleData
+import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.bids.VehicleBidData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsAddTruckItemDataConfig
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterItemData
-import com.delhivery.axle.data.home.loads.HomeLoadsShareRateItemData
 import com.delhivery.axle.data.home.loads.HomeLoadsSummaryItemData
-import com.delhivery.axle.exception.NoBidsFoundException
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -34,7 +33,6 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.moengage.firebase.MoEFireBaseHelper
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import java.util.concurrent.TimeUnit.SECONDS

@@ -179,9 +179,9 @@
   <string name="action_retry_verification">Retry Verification</string>
   <string name="action_got">Got it</string>
   <string name="action_learn">Learn More</string>
-  <string name="action_express">Express</string>
-  <string name="action_non_express">Non Express</string>
-  <string name="action_intracity">Intracity</string>
+  <string name="action_express">Delhivery Line Haul</string>
+  <string name="action_non_express">Customer Intercity</string>
+  <string name="action_intracity">Delhivery Fleet</string>
   <string name="action_ok">Ok</string>
 
 
@@ -518,6 +518,7 @@
   <string name="error_dob_required">Please enter Date of birth</string>
   <string name="error_location_permission_denied">Location Permission Denied</string>
   <string name="error_search_missing_origin">Please select origin</string>
+  <string name="error_search_missing_reporting_center">Please select reporting center</string>
   <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
   <string name="error_upload">Oops! Something went wrong</string>
   <string name="error_upload_document">Try uploading the document once again</string>
@@ -648,8 +649,9 @@
   <string name="price_banner_text">Earn ₹500 on this lane offer</string>
   <string name="share_rate">Share Rate</string>
   <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
-  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Non-Express load</font>, means consignor to consignee movement]]></string>
-  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Express Load</font> , requires hub to hub time critical movement ]]></string>
+  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Customer Intercity - </font>contract for movement of Customer load between different cities.]]></string>
+  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Line Haul - </font> contract for movement of Delhivery load between different cities.]]></string>
+  <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Fleet - </font> contract for movement of Delhivery load within the same city.]]></string>
   <string name="collecting_bids">Collecting Bids</string>
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
@@ -736,6 +738,10 @@
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
   <string name="rules">Rules</string>
   <string name="view_on_map">View on map</string>
+  <string name="status">Status</string>
+  <string name="truck_type">Type</string>
+  <string name="enter_reporting_center">Enter Reporting Center</string>
+  <string name="select_reporting_center">Select Reporting Center</string>
   <string name="add_bid_only">Add bid only if you can match the vehicle type</string>
   <string name="ensure_the_vehicle_registration">Ensure the vehicle registration number is correct</string>
   <string name="ensure_the_same_vehicle_reports">Ensure the same vehicle reports at the center on time</string>
@@ -750,6 +756,19 @@
     <item>Closed</item>
     <item>Open</item>
     <item>Trailer</item>
+  </string-array>
+
+  <string-array name="array_status">
+    <item>Select status</item>
+    <item>Live Bidding</item>
+    <item>Collecting Bids</item>
+    <item>Bidding Closed</item>
+    <item>Cancelled</item>
+    <item>Result Declared</item>
+  </string-array>
+
+  <string-array name="array_truck_display_name">
+    <item>Select Vehicle Type</item>
   </string-array>
 
   <string-array name="array_truck_size">
