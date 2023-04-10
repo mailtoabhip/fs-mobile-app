@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
-
+    <data>
+      <variable
+          name="transaction"
+          type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+          />
+    </data>
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -68,6 +73,7 @@
           app:layout_constraintStart_toStartOf="parent"
           android:textStyle="bold"
           android:textSize="@dimen/text_14sp"
+          tools:text="₹ 2000"
           android:textColor="@color/heading_black"/>
 
       <androidx.appcompat.widget.AppCompatTextView
@@ -81,7 +87,8 @@
           app:layout_constraintEnd_toStartOf="@+id/moneyIcon"
           app:layout_constraintStart_toEndOf="@+id/yourBidAmountLabel"
           android:textColor="@color/background_dark_grey"
-          android:visibility="gone"
+          tools:visibility="gone"
+          android:visibility="@{transaction.isFRCContract()}"
           android:text="@string/trip_commitment"/>
       <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/yourTripValue"
@@ -93,8 +100,35 @@
           android:textStyle="bold"
           android:textSize="@dimen/text_14sp"
           android:textColor="@color/heading_black"
-          android:visibility="gone"
+          tools:visibility="gone"
+          android:visibility="@{transaction.isFRCContract()}"
           tools:text="25"/>
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/yourVehicleLabel"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_12dp"
+          android:drawablePadding="@dimen/size_12dp"
+          android:textSize="@dimen/text_12sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/yourBidAmountValue"
+          android:textColor="@color/background_dark_grey"
+          android:visibility="@{transaction.isIntraCityContract()}"
+          tools:visibility="visible"
+          android:text="@string/your_vehicle_number"/>
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/yourVehicleValue"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/size_8dp"
+          app:layout_constraintTop_toBottomOf="@+id/yourVehicleLabel"
+          app:layout_constraintStart_toStartOf="@id/yourVehicleLabel"
+          android:textStyle="bold"
+          android:textSize="@dimen/text_14sp"
+          android:textColor="@color/heading_black"
+          android:visibility="@{transaction.isIntraCityContract()}"
+          tools:visibility="visible"
+          tools:text="MK 89 NH 76544"/>
       <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/moneyIcon"
           android:layout_width="0dp"

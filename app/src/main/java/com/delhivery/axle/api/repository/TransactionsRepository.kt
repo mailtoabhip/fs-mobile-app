@@ -43,9 +43,17 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,count:String?=null) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,count
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched
+    ).convertResponse()
+
+
+  /**
+   * Get contracts summary count
+   */
+  fun fetchContractsSummaryCount() =
+    transactionService.contractsCountSummary("yes"
     ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions
@@ -74,7 +82,7 @@ class TransactionsRepository @Inject constructor(
   /**
    * Transaction details
    */
-  fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
+  fun transactionDetails(id: String, spId:String?=null) = transactionService.transactionDetails(id,spId).convertResponse()
 
   /**
    * Transaction trip meter
@@ -93,5 +101,18 @@ enum class TransactionStatus(val statusId: String) {
   Requested("requested"),
   InEnquiry("in_enquiry"),
   TruckConfirmed("truck_confirmed"),
-  Completed("completed")
+  Completed("completed"),
+  Cancelled("cancelled")
+}
+
+enum class ContractType(val type: String) {
+  LH_FTL("LH_FTL"),
+  FRC("FRC"),
+  INTRACITY("INTRACITY")
+}
+
+enum class RequestType(val type: String) {
+  Contract("contract"),
+  Spot("spot"),
+  Fixed("fixed")
 }

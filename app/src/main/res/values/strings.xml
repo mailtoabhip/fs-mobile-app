@@ -181,6 +181,7 @@
   <string name="action_learn">Learn More</string>
   <string name="action_express">Express</string>
   <string name="action_non_express">Non Express</string>
+  <string name="action_intracity">Intracity</string>
   <string name="action_ok">Ok</string>
 
 
@@ -652,13 +653,21 @@
   <string name="collecting_bids">Collecting Bids</string>
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
+  <string name="payment_slabs">Payment Slabs</string>
+  <string name="see_full_slabs_list">See full slabs list</string>
   <string name="tentative_total_vehicles">Tentative Total vehicles</string>
   <string name="operating_days">Operating Days</string>
+  <string name="per_day">Per day</string>
+  <string name="per_month">Per month</string>
   <string name="tentative_total_vehicles_count">Vehicle Per Departure ,</string>
   <string name="daily_departure_approximately">Daily Departure approximately</string>
   <string name="one_way">1 Way</string>
   <string name="trip_details">Trip Details</string>
+  <string name="payment_info">Payment Information</string>
   <string name="trip_type">Trip Type</string>
+  <string name="per_extra_km">per extra Km</string>
+  <string name="per_extra_hour">per extra hour</string>
+  <string name="per_extra_day">per extra day</string>
   <string name="connection_type">Connection Type</string>
   <string name="continuous">Continuous</string>
   <string name="bidding_will_close_in">Bidding will close in </string>
@@ -675,6 +684,7 @@
   <string name="your_bid">Your Bid</string>
   <string name="invalid_amount_out_of_range">Invalid amount, out of range.</string>
   <string name="exceeds_tentative_trip_count">Exceeds tentative trip count</string>
+  <string name="invalid_vehicle_number">Invalid Vehicle Number</string>
   <string name="bid_amount">Bid Amount</string>
   <string name="important_information">Important Information</string>
   <string name="travel_time_between_two_stops_should_not_exceed_the_time_stated_in_schedule">Travel Time, between two stops should not exceed the time stated in schedule.</string>
@@ -685,9 +695,13 @@
   <string name="results_will_be_announced_shortly">Results will be announced shortly</string>
   <string name="your_bid_amount">Your Bid Amount</string>
   <string name="trip_commitment">Trip Commitment</string>
+  <string name="your_vehicle_number">Your Vehicle Number</string>
+  <string name="vehicle_number">Vehicle Number</string>
+  <string name="placement_days">Placement Days</string>
   <string name="departure">Departure</string>
   <string name="arrival">Arrival</string>
   <string name="route_details">Route Details</string>
+  <string name="reporting_center">Reporting Center</string>
   <string name="route_schedule">Route Schedule</string>
   <string name="only_bid_if_you_match_vehicle_type_amp_total_vehicles"><![CDATA[Only bid if you match vehicle type & total vehicles]]></string>
   <string name="ensure_vehicle_reaches_as_per_given_schedule">Ensure vehicle reaches as per given schedule</string>
@@ -722,6 +736,14 @@
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
   <string name="rules">Rules</string>
   <string name="view_on_map">View on map</string>
+  <string name="add_bid_only">Add bid only if you can match the vehicle type</string>
+  <string name="ensure_the_vehicle_registration">Ensure the vehicle registration number is correct</string>
+  <string name="ensure_the_same_vehicle_reports">Ensure the same vehicle reports at the center on time</string>
+  <string name="any_change_in_operating_days"><![CDATA[Any change in operating days & rates will be notified]]></string>
+  <string name="note_that_expected_payout"><![CDATA[Note that expected payout may vary basis slab & SLA]]></string>
+  <string name="reporting_time">Reporting Time</string>
+  <string name="vehicle_is_placed_selected_days">Ensure the vehicle is placed within selected days</string>
+  <string name="payment_slabs_details"><![CDATA[Monthly payout per slab is determined by vehicle type & location, and is calculated by addition of monthly average km rate for that vehicle type per slab increment.]]></string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

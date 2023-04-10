@@ -4,6 +4,7 @@ import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.ContractsSummaryResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -54,7 +55,8 @@ interface TransactionService {
    */
   @GET("/transactions/")
   fun transactionDetails(
-    @Query("uuid") transactionId: String
+    @Query("uuid") transactionId: String,
+    @Query("sp_id") supplierId:String?=null
   ): Single<BaseResponse<HomeBidsRequestItemData>>
 
   /**
@@ -90,8 +92,15 @@ interface TransactionService {
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
     @Query("demand_types") vendorType: String ?,
-    @Query("all_active_fetched") allActiveFetched: Boolean?= null,
-    @Query("only_count") onlyCount: String?
+    @Query("all_active_fetched") allActiveFetched: Boolean?= null
   ): Single<BaseResponse<TransactionsResponse>>
+
+  /**
+   * Loadboard transactions
+   */
+  @GET("/transactions/loadboard/contracts")
+  fun contractsCountSummary(
+    @Query("only_contract_counts") onlyCount: String?
+  ): Single<BaseResponse<ContractsSummaryResponse>>
 
 }

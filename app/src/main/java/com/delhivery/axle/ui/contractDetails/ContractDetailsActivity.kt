@@ -3,23 +3,27 @@ package com.delhivery.axle.ui.contractDetails
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.RequestType
+import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.bids.PaymentSlabs
 import com.delhivery.axle.databinding.ActivityContractDetailsBinding
 import com.delhivery.axle.databinding.DialogContractsBidSuccessBinding
 import com.delhivery.axle.injection.module.GlideApp
@@ -32,11 +36,13 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_LoadingBids
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -49,6 +55,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   @Inject lateinit var userPrefs: UserPrefs
   var routesArray:ArrayList<HaltCenters> = ArrayList()
+  var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -62,7 +69,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
-
+    viewModel.requestType = RequestType.Contract.type
 
     binding.backArrow.setOnClickListener {
       onBackPressed()
@@ -225,13 +232,14 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         t.let { _transaction ->
           binding.error = false
           binding.transaction = _transaction
-
           binding.routeDetails.nonExpRouteDetails.visibility = t.isFRCContract()
           binding.routeDetails.routeDetails.visibility =  t.isLHContract()
+          binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityContract()
+
           binding.vehicleDetails.visibility = View.VISIBLE
           // for FRC contract
-          if(!t.isItLHContract()){
-            if(t.transactionStatus=="cancelled"){
+          if(t.isItFRContract()){
+            if(t.transactionStatus==TransactionStatus.Cancelled.statusId){
               binding.routeDetails.nonExpHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
               binding.routeDetails.nonExpHubIcon2.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
               binding.routeDetails.clNonExpTimeInterval1.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_round_corner_light_grey)
@@ -249,9 +257,32 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.routeDetails.nonExpTvState2.text = t.destinationState
             binding.routeDetails.nonExpTimeInterval1.text  =
               t.tentativeTripCount?.let { Integer.toString(it) } +" Trips in "+ t.contractValidity+" weeks"
+          }else if(t.isItIntraCityContract()){
+            if(t.transactionStatus== TransactionStatus.Cancelled.statusId){
+              binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
+              binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_time_grey))
+            }else{
+              binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_hub_route))
+              binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_time))
+            }
+            binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
+            binding.routeDetails.intraCityTvState.text = t.originState
+            binding.routeDetails.intraCityTvCity.text = t.originCity?.capitalize()+", "
+            binding.routeDetails.intraCityTvHubCity.text = t.origin
+            binding.routeDetails.intraCityTvMapView.setOnClickListener{
+              try {
+                val gmmIntentUri = Uri.parse("geo:0,0?q=${t.latitude},${t.longitude}"+"(" + t.origin+ ")")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                startActivity(mapIntent)
+              } catch (e: Exception) {
+                Toast.makeText(this@ContractDetailsActivity, "Unable to open map", Toast.LENGTH_SHORT).show()
+              }
+            }
           }
           binding.contractRules.nonExpRules.visibility = t.isFRCContract()
           binding.contractRules.rules.visibility = t.isLHContract()
+          binding.contractRules.intraCityRules.visibility = t.isIntraCityContract()
           binding.tripDetails.visibility = t.isLHContract()
           // For LH contract listing recycleview with halt centers
           if(_transaction.haltCenters!=null) {
@@ -320,6 +351,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                this@ContractDetailsActivity,
                R.drawable.bg_all_round_corner_light_grey
              )
+
            }
           //Placed first bid
           is BidDetailsUserBidState_PlaceBidFirst -> {
@@ -352,18 +384,21 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             val userBid = state.lowestAndUserBidPair.first
             val lowestTBid = state.lowestAndUserBidPair.second
             data.lowestBid = lowestTBid?.bidAmount
+
+            // For intracity payment slabs if user has bids
+              showPayoutSlabs(data)
             //for more than 1 bids and within live bidding
             if(state.bidsCount>1 && data.isUnderOneHour()){
               binding.clBidYet.visibility = View.GONE
               binding.clExpressBidStatus.visibility = data.isLHContract()
               binding.clNonExpressBidStatus.visibility = data.isFRCContract()
               //LH contract within live bidding
-              if(data.isItLHContract()){
+              if(data.isItLHContract() || data.isItIntraCityContract()){
                 binding.bidReceived.text = state.bidsCount.toString()+" "+ getString(string.bid_received)
                 binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 if (lowestTBid?.bidAmount != null) {
                   // user bid same as Lowest bid
-                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true && (data.targetPrice==null||userBid?.bidAmount<=data.targetPrice?:0.0)) {
+                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
                     binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
                     binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
                     binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_low_bid, 0, 0, 0)
@@ -374,13 +409,6 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
-                }else{
-                      if(data.targetPrice!=null){
-                        binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
-                        binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                        binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                        binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
-                      }
                 }
               }else{
                 // FRC contract within live bidding
@@ -395,7 +423,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                         }
                 // user bid same as Lowest bid
                 if (lowestTBid?.bidAmount != null) {
-                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true &&(data.targetPrice==null||userBid?.bidAmount<=data.targetPrice?:0.0)) {
+                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true ) {
                     binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
                     binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
                     binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_low_bid, 0, 0, 0)
@@ -406,44 +434,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
                   }
-                }else{
-                  if(data.targetPrice!=null){
-                    binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
-                    binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                    binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                    binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
-                  }
                 }
               }
             }else{
-                  // if only 1 bid -> targetPrice available and is greater than use bid within live bidding
-                  if(viewModel.transaction.targetPrice!=null && userBid?.bidAmount!=null&&userBid?.bidAmount?:0.0>viewModel.transaction.targetPrice?:0.0 && data.isUnderOneHour()){
-                    binding.clBidYet.visibility = View.GONE
-                    binding.clExpressBidStatus.visibility = data.isLHContract()
-                    binding.clNonExpressBidStatus.visibility = data.isFRCContract()
-                    binding.bidPmtFtlStatus.visibility = View.GONE
-                    binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
-                     if(data.biddingType?.toLowerCase()=="pmt"){
-                       binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
-                        }else{
-                       binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
-                        }
-                    if(data.isItLHContract()){
-                      binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
-                      binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
-                      binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                      binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                      binding.bidStatus.text = getString(string.higher_than) +" ₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
-                    }else{
-                      binding.tripCommitted.text = userBid?.tentativeTripCount.toString()
-                      binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
-                      binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
-                      binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                      binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
-                      binding.nonExpressBidStatus.text = getString(string.higher_than) +" ₹"+StringUtils.formatAmount(userBid?.bidAmount-viewModel.transaction.targetPrice!!)
-                    }
-
-                  }else{
                     // if only 1 bid -> no target price or bid amount < Lowest bid
                     binding.clExpressBidStatus.visibility = View.GONE
                     binding.clNonExpressBidStatus.visibility =View.GONE
@@ -453,7 +446,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     if(data.isUnderOneHour()){
                       binding.bidPmtFtl.text =getString(string.current_lowest)
                     }else{
-                      if(data.isItLHContract()){
+                      if(data.isItLHContract()|| data.isItIntraCityContract()){
                         binding.bidPmtFtl.visibility = View.GONE
                       }else{
                         if(data.biddingType?.toLowerCase()=="pmt"){
@@ -464,7 +457,6 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                       }
 
                     }
-                  }
 
             }
             binding.buttonConfirm.setOnClickListener {
@@ -485,7 +477,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             val userBid = state.lowestAndUserBidPair.first
             val lowestTBid = state.lowestAndUserBidPair.second
              data.lowestBid =lowestTBid?.bidAmount
-              binding.bottomLay.visibility = View.GONE
+             showPayoutSlabs(data)
+            binding.bottomLay.visibility = View.GONE
             binding.viewMarginResult.visibility = View.VISIBLE
 
             binding.viewMarginRoute.visibility = View.VISIBLE
@@ -499,7 +492,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.contractRulesWithResult.nonExpRules.visibility = data.isFRCContract()
             binding.contractRules.rules.visibility = View.GONE
             binding.contractRules.nonExpRules.visibility = View.GONE
-            if(!data.isItLHContract()){
+            if(data.isItFRContract()){
               binding.contractResult.yourTripCommitmentValue.text = data.transactionBid?.tentativeTripCount?.toString()
             }
             binding.viewMarginWithoutResult.visibility = View.GONE
@@ -593,7 +586,33 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       }
     }
 
-    // set header status and bottom button
+  private fun showPayoutSlabs(data:HomeBidsRequestItemData) {
+    if(data.paymentSlabs!=null && data.isItIntraCityContract()&& data.transactionStatus!=TransactionStatus.Cancelled.statusId) {
+      val keys = data.paymentSlabs!!.keySet()
+      binding.transaction = data
+      paymentSlabsArray.add(PaymentSlabs("Kms","Monthly Payout"))
+      for (key in keys) {
+        val value = data.paymentSlabs!!.get(key).asString
+        paymentSlabsArray.add(PaymentSlabs(key,value))
+      }
+      if(keys.size<5){
+        binding.paymentSlabsMoreSlab.visibility =  View.GONE
+      }else{
+        binding.paymentSlabsMoreSlab.visibility =  View.VISIBLE
+      }
+      val contractPaymentSlabsAdapter  = ContractPaymentSlabsAdapter(paymentSlabsArray,data,this@ContractDetailsActivity)
+      binding.rvPaymentSlabs.apply {
+        layoutManager = LinearLayoutManager(applicationContext)
+        adapter = contractPaymentSlabsAdapter
+      }
+      binding.paymentSlabsMoreSlab.setOnClickListener {
+        contractPaymentSlabsAdapter.expand()
+        binding.paymentSlabsMoreSlab.visibility = View.GONE
+      }
+    }
+  }
+
+  // set header status and bottom button
    fun setBidStatusHeaderLayout(data:HomeBidsRequestItemData) {
      if (data.isContractBiddingOpen()) {
      if (data.isUnderOneHour()) {
@@ -672,9 +691,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.contractResult.yourTripCommitmentValue.visibility =View.GONE
             binding.contractRulesWithResult.rules.visibility = data.isLHContract()
             binding.contractRulesWithResult.nonExpRules.visibility = data.isFRCContract()
+            binding.contractRulesWithResult.intraCityRules.visibility = data.isIntraCityContract()
             binding.contractRules.rules.visibility = View.GONE
             binding.contractRules.nonExpRules.visibility = View.GONE
-            if(!data.isItLHContract()){
+            binding.contractRules.intraCityRules.visibility = View.GONE
+            if(data.isItFRContract()){
               binding.contractResult.yourTripCommitmentValue.text = data.transactionBid?.tentativeTripCount?.toString()
             }
             binding.viewMarginWithoutResult.visibility = View.GONE
@@ -696,6 +717,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
        REFRESH_ON_BACK = true
       val dialog = Dialog(this)
       val bindingDialog = DialogContractsBidSuccessBinding.inflate(this.layoutInflater)
+      bindingDialog.transaction = viewModel.transaction
       bindingDialog.buttonCancel.setOnClickListener {
         dialog.cancel()
         uiUtils.hideProgress()
@@ -708,14 +730,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         bindingDialog.title.text = getString(string.bid_placed_sucessfully)
       }
        if(viewModel.transaction.isItLHContract()){
-         bindingDialog.clBidAmount.visibility = View.VISIBLE
          bindingDialog.yourBidAmountValue.text = "₹ "+bidInfo.first.first
-         bindingDialog.yourTripLabel.visibility = View.GONE
-         bindingDialog.yourTripValue.visibility = View.GONE
-       }else{
-         bindingDialog.clBidAmount.visibility = View.VISIBLE
-         bindingDialog.yourTripLabel.visibility = View.VISIBLE
-         bindingDialog.yourTripValue.visibility = View.VISIBLE
+       }else if(viewModel.transaction.isItFRContract()){
          bindingDialog.yourTripValue.text = bidInfo.second
          if(bidInfo.third.first){
          bindingDialog.yourBidAmountValue.text = "₹ "+bidInfo.first.second+ "\n (PMT)"
@@ -723,7 +739,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
          else{
            bindingDialog.yourBidAmountValue.text= "₹ "+bidInfo.first.first+ "\n (FTL)"
          }
-
+       }else if(viewModel.transaction.isItIntraCityContract()){
+         bindingDialog.yourVehicleValue.text = bidInfo.second
+         bindingDialog.yourBidAmountValue.text= "₹ "+bidInfo.first.first
        }
 
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -738,6 +756,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
 /* intent keys */
 private const val TransactionIdIntentKey = "transaction_id"
+
 /* intent keys */
 private const val RequestTypeIntentKey = "request_type"
 /**

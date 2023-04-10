@@ -203,7 +203,7 @@
           android:drawSelectorOnTop="true"
           android:spinnerMode="dropdown"
           android:layout_marginBottom="@dimen/size_12dp"
-           android:entries="@array/reportingTimeItems"
+          android:entries="@array/reportingTimeItems"
           android:imeOptions="actionDone"
           android:textSize="@dimen/text_14sp"
           />

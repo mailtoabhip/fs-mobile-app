@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -53,7 +54,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   var visible = false
   var demandType: String = ""
-  var isInternal = false
   var pos = 0
 
 
@@ -82,8 +82,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-    isInternal = userPrefs.demandType.contains("Internal")
-    demandType= if(userPrefs.demandType.contains("Internal")){ "Internal" }else{ "Corporate" }
+
+    demandType= if(userPrefs.demandType.contains("Internal")){ "Corporate" }else if (userPrefs.demandType.contains("Intracity")){"Intracity"} else {"Corporate"}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -123,7 +123,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       }
     })
 
-
     refreshData()
   }
 
@@ -153,7 +152,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType, isInternal)
+    viewModel.fetchUserTransactions(false, demandType)
   }
 
   override fun handleAction(
@@ -182,7 +181,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(isInternal)"LH_FTL" else "FRC"))
+            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Internal") ContractType.LH_FTL.type else if(demandType=="Corporate") ContractType.FRC.type else ContractType.INTRACITY.type))
           )
         }
       }
@@ -194,35 +193,20 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterExpress -> {
-        isInternal = true
         demandType = "Internal"
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
-        isInternal = false
         demandType = "Corporate"
+        refreshData()
+      }
+      HomeContractsFilterIntracity -> {
+        demandType = "Intracity"
         refreshData()
       }
       HomeContractsFilterInfo -> {
         infoDialog()
       }
-
-      HomeLoadsFilterAction -> {
-        //Capture Event
-        analyticsUtil.trackEvent(
-          EVENT_FILTER_EXPRESS_LOADS,
-          mutableListOf(PROPERTY_USER_ID),
-          mutableListOf(userPrefs.userId())
-        )
-
-
-        demandType = userPrefs.demandType
-        isInternal = demandType =="Internal"
-
-
-        refreshData()
-      }
-
     }
   }
 
@@ -308,7 +292,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType)
 
     override fun hasMore() = viewModel.hasMoreData
 

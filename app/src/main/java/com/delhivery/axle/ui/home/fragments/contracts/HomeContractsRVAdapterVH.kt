@@ -13,12 +13,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.color
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
+import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
 import com.delhivery.axle.data.home.loads.HomeLoadsBannerAction
 import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
@@ -555,27 +557,54 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
   ) {
      binding.nonExpressToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
      binding.expressToggle.text =   "Express Load (${item.data.expressCount})"
-      if(item.data.userDemandType.contains("Internal") ){
+     binding.intracityToggle.text =   "Intracity Load (${item.data.intraCity})"
+      if(item.data.userDemandType.contains("Internal") && item.data.userDemandType.contains("Intracity") ){
         binding.expressToggle.visibility = View.VISIBLE
         binding.nonExpressToggle.visibility = View.VISIBLE
+        binding.intracityToggle.visibility = View.VISIBLE
+      }else if(item.data.userDemandType.contains("Internal")){
+        binding.expressToggle.visibility = View.VISIBLE
+        binding.nonExpressToggle.visibility = View.VISIBLE
+        binding.intracityToggle.visibility = View.GONE
+      }else if (item.data.userDemandType.contains("Intracity")){
+        binding.expressToggle.visibility = View.GONE
+        binding.nonExpressToggle.visibility = View.GONE
+        binding.intracityToggle.visibility = View.VISIBLE
       }else{
-          binding.expressToggle.visibility = View.GONE
-          binding.nonExpressToggle.visibility = View.VISIBLE
+        binding.expressToggle.visibility = View.GONE
+        binding.nonExpressToggle.visibility = View.VISIBLE
+        binding.intracityToggle.visibility = View.GONE
       }
-    if (!item.data.actionLabel) {
-      binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-      binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-      binding.expressToggle.isSelected = false
-      binding.nonExpressToggle.isSelected=true
-    } else {
-      binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-      binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-      binding.expressToggle.isSelected = true
-      binding.nonExpressToggle.isSelected=false
+    when (item.data.filterType) {
+     "Corporate"-> {
+        binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.expressToggle.isSelected = false
+        binding.nonExpressToggle.isSelected=true
+        binding.intracityToggle.isSelected=false
+      }
+      "Internal"-> {
+        binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.expressToggle.isSelected = true
+        binding.nonExpressToggle.isSelected=false
+        binding.intracityToggle.isSelected=false
+      }
+      "Intracity" -> {
+        binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.expressToggle.isSelected = false
+        binding.nonExpressToggle.isSelected=false
+        binding.intracityToggle.isSelected=true
+      }
     }
 
     binding.expressToggle.clickToAction(HomeContractsFilterExpress, item, _interface)
     binding.nonExpressToggle.clickToAction(HomeContractsFilterNonExpress, item, _interface)
+    binding.intracityToggle.clickToAction(HomeContractsFilterIntracity, item, _interface)
     binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }
 }

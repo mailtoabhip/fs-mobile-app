@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -42,6 +43,9 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
   /* transaction id */
   lateinit var transactionId: String
 
+  /* transaction id */
+  lateinit var requestType: String
+
   /* live data */
   var transactionLiveData = MutableLiveData<HomeBidsRequestItemData>()
 
@@ -61,7 +65,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
    * Fetch transaction details
    */
   fun fetchTransactionDetails() {
-    compositeDisposable += transactionsRepository.transactionDetails(transactionId)
+    compositeDisposable += transactionsRepository.transactionDetails(transactionId, if(requestType==RequestType.Contract.type) userPrefs.userId()else null)
       .onBackground()
       .progress()
       .subscribe { _tRes, error ->
@@ -161,18 +165,19 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
     pmtRate: Int,
     commercialType: String,
     position: Int,
-    tentativeTripCount:Int?
+    tentativeTripCount:Int?,
+    vehicleNumber:String?,
+    placementDays:String?
   ) {
     compositeDisposable += bidsRepository.createBid(
-      isPMT, transactionId, bidAmount, pmtRate, commercialType,null,null,tentativeTripCount
+      isPMT, transactionId, bidAmount, pmtRate, commercialType,null,null,tentativeTripCount,vehicleNumber,placementDays
     )
       .delay(BidsUpdateDelay, SECONDS)
       .onBackground()
       .bidsProgress()
       .subscribe { _res, error ->
         if (!error && _res.isSuccess) {
-          showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),tentativeTripCount?.toString(),Pair(isPMT,false)))
-
+          showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),if(transaction.isItIntraCityContract())vehicleNumber?.toString() else tentativeTripCount?.toString(),Pair(isPMT,false)))
         } else {
           fetchTransactionBids()
           hideProgress.postValue(true)
@@ -190,17 +195,19 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
     pmtRate: Int,
     commercialType: String,
     position: Int,
-    tentativeTripCount:Int?
+    tentativeTripCount:Int?,
+    vehicleNumber:String?,
+    placementDays:String?
   ) {
     compositeDisposable += bidsRepository.editBid(
-      isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,null,null,tentativeTripCount
+      isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,null,null,tentativeTripCount,vehicleNumber,placementDays
     )
       .delay(BidsUpdateDelay, SECONDS)
       .onBackground()
       .bidsProgress()
       .subscribe { _res, error ->
         if (!error && _res.isSuccess) {
-          showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),tentativeTripCount?.toString(),Pair(isPMT,true)))
+          showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),if(transaction.isItIntraCityContract())vehicleNumber?.toString() else tentativeTripCount?.toString(),Pair(isPMT,true)))
         } else {
           fetchTransactionBids()
          hideProgress.postValue(true)

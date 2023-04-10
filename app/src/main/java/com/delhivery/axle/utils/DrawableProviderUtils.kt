@@ -158,17 +158,66 @@ object DrawableProviderUtils {
   }
 
   @DrawableRes
-  fun vehicleOpenCancelDrawableRes(containerType: String?) = when (containerType) {
-    "cancel" -> R.drawable.ic_icon_vehicle_grey
-    "open" -> R.drawable.ic_container_vehicle
-    else -> R.drawable.ic_container_vehicle
+  fun vehicleOpenCancelDrawableRes(status: String?)= when(status){
+        "cancel" -> R.drawable.ic_icon_vehicle_grey
+        "open" -> R.drawable.ic_container_vehicle
+        else -> R.drawable.ic_container_vehicle
   }
 
   @DrawableRes
-  fun vehicleOperatingDrawableRes(containerType: String?) = when (containerType) {
+  fun vehicleCloseOpenOperatingPerMonthDrawable(status: String?, contractType:String?)=
+    if(contractType=="LH_FTL"){
+      when (status) {
+        "cancel" -> R.drawable.ic_icon_vehicle_grey
+        "open" -> R.drawable.ic_container_vehicle
+        else -> R.drawable.ic_container_vehicle
+      }
+    }else if(contractType =="INTRACITY"){
+      when (status) {
+        "cancel" -> R.drawable.icon_calender_days_grey
+        "open" -> R.drawable.icon_calender_days
+        else -> R.drawable.icon_calender_days
+      }
+    }else{
+      R.drawable.ic_container_vehicle
+    }
+  @DrawableRes
+  fun vehicleRateDrawableRes(status: String?)= when(status){
+    "cancel" -> R.drawable.ic_money_grey
+    "open" -> R.drawable.ic_money
+    else -> R.drawable.ic_money
+  }
+  @DrawableRes
+  fun vehicleOperatingDrawableRes(status: String?) = when (status) {
     "cancel" -> R.drawable.icon_calender_grey
     "open" -> R.drawable.icon_calender
     else -> R.drawable.icon_calender
+  }
+
+  @DrawableRes
+  fun vehicleOperationDrawableKmPerMonth(status: String?, contractType:String?) =
+    if(contractType=="LH_FTL"){
+      when (status) {
+        "cancel" -> R.drawable.icon_calender_grey
+        "open" -> R.drawable.icon_calender
+        else -> R.drawable.icon_calender
+      }
+    }else if(contractType =="INTRACITY"){
+      when (status) {
+        "cancel" -> R.drawable.icon_calender_month_grey
+        "open" -> R.drawable.icon_calender_month
+        else -> R.drawable.icon_calender_month
+      }
+    }else{
+      R.drawable.icon_calender
+    }
+
+
+  @DrawableRes
+  fun vehicleOperationDrawablePerHrs(status: String?) = when (status) {
+    "cancel" -> R.drawable.icon_hours_per_day_grey
+    "open" -> R.drawable.icon_hours_per_day
+    else -> R.drawable.icon_hours_per_day
   }
 
   @DrawableRes

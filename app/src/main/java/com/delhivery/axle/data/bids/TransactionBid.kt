@@ -26,7 +26,9 @@ data class TransactionBid(
   @SerializedName("child_transaction_id") val childTransactionId: String?=null,
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null,
-  @SerializedName("tentative_trip_count") val tentativeTripCount: Int?=null
+  @SerializedName("tentative_trip_count") val tentativeTripCount: Int?=null,
+  @SerializedName("placement_days") val placementDays: String?=null
+
 
   ) : BaseKeyTypeModel<String>() {
   override fun key() = id
