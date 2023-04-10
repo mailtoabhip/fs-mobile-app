@@ -54,7 +54,7 @@
             android:textSize="@dimen/text_14sp"
             android:textColor="@color/background_dark_grey"
             android:lineSpacingExtra="@dimen/size_12dp"
-            android:text="@string/customer_intercity_info"/>
+            android:text="@string/non_express_load_info"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/dot2"
             android:layout_width="wrap_content"
@@ -75,7 +75,7 @@
             android:textSize="@dimen/text_14sp"
             android:layout_marginTop="@dimen/size_12dp"
             android:lineSpacingExtra="@dimen/size_12dp"
-            android:text="@string/dlv_intercity_info"/>
+            android:text="@string/express_load_info"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/dot3"
             android:layout_width="wrap_content"
