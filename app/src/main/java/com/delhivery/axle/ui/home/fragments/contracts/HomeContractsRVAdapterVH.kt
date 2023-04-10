@@ -1,15 +1,11 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
-import com.delhivery.axle.R.color
-import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
@@ -17,9 +13,6 @@ import com.delhivery.axle.data.home.contracts.HomeContractsFilterCustomerInterci
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntercity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterDLVIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
-import com.delhivery.axle.databinding.ViewFilterInfoItemBinding
-import com.delhivery.axle.databinding.ViewFilterToggleItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
@@ -28,8 +21,8 @@ import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -95,7 +88,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
   ) {
     binding.request = item.data
 
-    if(item.data.contractType==context.getString(string.intracity_contract_type)){
+    if(item.data.contractType==INTRACITY_CONTRACT_TYPE){
       showVehicleRunningInfo()
       hideDestinationAndConnectionTypeViews()
     }
@@ -288,7 +281,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                     )
                   } else {
                     // No user Bid
-                    binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+                    binding.userBidStatus.text = context.getString(R.string.you_have_not_bid)
                     binding.userBidInfo.visibility = View.GONE
 
                   }
@@ -413,10 +406,10 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           }
         } else {
           // No user Bid
-          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+          binding.userBidStatus.text = context.getString(R.string.you_have_not_bid)
           binding.userBidInfo.setTextColor(ContextCompat.getColor(context, R.color.dark_blue))
           binding.userBidInfo.background = null
-          binding.userBidInfo.text = context.getString(string.view_details)
+          binding.userBidInfo.text = context.getString(R.string.view_details)
           binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
            0,
             0,
@@ -466,7 +459,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           )
         } else {
           // No user Bid
-          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+          binding.userBidStatus.text = context.getString(R.string.you_have_not_bid)
           binding.userBidInfo.visibility = View.GONE
 
         }
@@ -567,24 +560,32 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     item: HomeContractsFilterItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
-    val filterRVAdapter=ContractsFilterRVAdapter(_interface)
-    binding.filterRv.apply {
-      layoutManager=LinearLayoutManager(this.context,LinearLayoutManager.HORIZONTAL,false)
-      adapter=filterRVAdapter
+    binding.customerIntercityToggle.text="Customer Intercity (${item.data.nonExpressCount})"
+    binding.delhiveryIntercityToggle.text="Delhivery Intercity (${item.data.expressCount})"
+    binding.delhiveryIntracityToggle.text="Delhivery Intracity (${item.data.intracityCount})"
+    if(item.data.userDemandType.contains("Corporate") || item.data.userDemandType.contains("Internal"))
+      binding.customerIntercityToggle.visibility=View.VISIBLE
+    if(item.data.userDemandType.contains("Intracity"))
+      binding.delhiveryIntracityToggle.visibility=View.VISIBLE
+    if(item.data.userDemandType.contains("Internal"))
+      binding.delhiveryIntercityToggle.visibility=View.VISIBLE
+
+    if (!item.data.actionLabel) {
+      binding.customerIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+      binding.delhiveryIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+      binding.delhiveryIntercityToggle.isSelected = false
+      binding.customerIntercityToggle.isSelected=true
+    } else {
+      binding.delhiveryIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+      binding.customerIntercityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+      binding.delhiveryIntercityToggle.isSelected = true
+      binding.customerIntercityToggle.isSelected=false
     }
-    filterRVAdapter.operation(
-      FilterToggleItem(HomeContractsFilterItemData("CustomerIntercityToggle",item.data.actionLabel,item.data.expressCount,item.data.nonExpressCount,item.data.intracityCount,item.data.userDemandType)),
-      Add
-    )
-    filterRVAdapter.operation(
-      FilterToggleItem(HomeContractsFilterItemData("DLVIntercityToggle",item.data.actionLabel,item.data.expressCount,item.data.nonExpressCount,item.data.intracityCount,item.data.userDemandType)),
-      Add
-    )
-    filterRVAdapter.operation(
-      FilterToggleItem(HomeContractsFilterItemData("DLVIntracityToggle",item.data.actionLabel,item.data.expressCount,item.data.nonExpressCount,item.data.intracityCount,item.data.userDemandType)),
-      Add
-    )
-    filterRVAdapter.operation(FilterInfoItem(),Add)
+
+    binding.delhiveryIntercityToggle.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
+    binding.customerIntercityToggle.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
+    binding.delhiveryIntracityToggle.clickToAction(HomeContractsFilterDLVIntracity, item, _interface)
+    binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }
 }
 
@@ -603,65 +604,3 @@ internal class HomeContractsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     binding.btnAction.clickToAction(item.data.actionId, item, _interface)
   }
 }
-
-internal class FilterToggleItemVH(binding: ViewFilterToggleItemBinding):
-  BaseHomeContractsRVAdapterViewHolder<ViewFilterToggleItemBinding,FilterToggleItem>(binding){
-  override fun bind(item: FilterToggleItem, _interface: HomeContractsRVAdapterInterface) {
-    when (item.data.itemType) {
-      "CustomerIntercityToggle" -> {
-        binding.toggleView.text="Customer Intercity (${item.data.nonExpressCount})"
-        if (!item.data.actionLabel && !item.data.userDemandType.contains(context.getString(string.intracity_demand_type)))
-          setToggleItemAsSelected()
-         else
-          setToggleItemAsUnselected()
-        if(item.data.actionLabel)
-          binding.toggleView.visibility=View.VISIBLE
-        else
-          binding.toggleView.visibility=View.GONE
-        binding.toggleView.clickToAction(HomeContractsFilterCustomerIntercity, item, _interface)
-      }
-      "DLVIntercityToggle" -> {
-        binding.toggleView.text="Delhivery Line Haul (${item.data.expressCount})"
-        if(item.data.userDemandType.contains("Internal"))
-          binding.toggleView.visibility=View.VISIBLE
-        else binding.toggleView.visibility=View.GONE
-        if (!item.data.actionLabel)
-          setToggleItemAsUnselected()
-         else if(!item.data.userDemandType.contains(context.getString(string.intracity_demand_type)))
-          setToggleItemAsSelected()
-        binding.toggleView.clickToAction(HomeContractsFilterDLVIntercity, item, _interface)
-      }
-      else -> {
-        binding.toggleView.text="Delhivery Fleet (${item.data.intracityCount})"
-        if(item.data.userDemandType.contains(context.getString(string.intracity_demand_type))){
-          binding.toggleView.visibility=View.VISIBLE
-          setToggleItemAsSelected()
-        }
-        else {
-          binding.toggleView.visibility=View.GONE
-          setToggleItemAsUnselected()
-        }
-        binding.toggleView.clickToAction(HomeContractsFilterDLVIntracity,item,_interface)
-      }
-    }
-  }
-
-  private fun setToggleItemAsUnselected() {
-    binding.toggleView.setTextColor(ContextCompat.getColor(context, color.background_dark_grey))
-    binding.toggleView.isSelected = false
-  }
-
-  private fun setToggleItemAsSelected() {
-    binding.toggleView.setTextColor(ContextCompat.getColor(context, color.colorAccent))
-    binding.toggleView.isSelected = true
-  }
-
-}
-
-internal class FilterInfoItemVH(binding: ViewFilterInfoItemBinding):
-  BaseHomeContractsRVAdapterViewHolder<ViewFilterInfoItemBinding,FilterInfoItem>(binding){
-  override fun bind(item: FilterInfoItem, _interface: HomeContractsRVAdapterInterface) {
-    binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
-  }
-}
-

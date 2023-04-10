@@ -7,8 +7,6 @@ import com.delhivery.axle.data.home.contracts.HomeContractsProgressItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsTimeOutItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsWarningItemData
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Contracts
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.FilterInfo
-import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.FilterToggle
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Filters
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Search
@@ -24,9 +22,7 @@ enum class HomeContractsRVAdapterItemType(val typeId: Int) {
   Progress(2),
   Warning(3),
   Timeout(4),
-  Filters(5),
-  FilterToggle(6),
-  FilterInfo(7);
+  Filters(5);
 
   companion object {
     /**
@@ -86,20 +82,3 @@ class HomeContractsFilterItem(
     false, 0,0,0,""
   )
 ) : BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(Filters, data)
-/**
- * Filter option toggle item
- */
-class FilterToggleItem(
-  data: HomeContractsFilterItemData = HomeContractsFilterItemData("",
-    false, 0,0,0,""
-  )
-): BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(FilterToggle,data)
-
-/**
- * Filter option info item
- */
-class FilterInfoItem(
-  data: HomeContractsFilterItemData = HomeContractsFilterItemData("Info",
-    false, 0,0,0,""
-  )
-): BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(FilterInfo,data)

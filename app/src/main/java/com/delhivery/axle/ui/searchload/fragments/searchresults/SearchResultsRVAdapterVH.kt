@@ -19,6 +19,7 @@ import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -211,7 +212,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-    if (item.data.contractType == context.getString(string.intracity_contract_type)) {
+    if (item.data.contractType == INTRACITY_CONTRACT_TYPE) {
       hideDestinationAndConnectionTypeViews()
       displayVehicleRunningInfo()
       binding.viewKmsPerMonth.text=item.data.intracityKms.plus(" Kms/Month")

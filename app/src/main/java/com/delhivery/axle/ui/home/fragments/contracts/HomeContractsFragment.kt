@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -125,8 +124,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       HomeLoadsTruckFragment._instance.dataToUpdate("contracts",it>0,it)
       _title = when (it) {
-        0, null -> getString(string.label_load_request)
-        else -> "${getString(string.label_load_request)}($it)"
+        0, null -> getString(R.string.label_load_request)
+        else -> "${getString(R.string.label_load_request)}($it)"
       }
     })
     refreshData()

@@ -1,22 +1,18 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.R.layout
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.R.array
-import com.delhivery.axle.R.string
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
@@ -67,6 +63,8 @@ import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
 import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
+import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
@@ -346,8 +344,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.spinnerStatus.isClickable = false
     binding.spinnerTruckDisplayName.isEnabled = false
     binding.spinnerTruckDisplayName.isClickable = false
-    binding.spinnerTruckType.setup(array.array_truck_type) {  p, v -> }
-    binding.spinnerStatus.setup(array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
+    binding.spinnerTruckType.setup(R.array.array_truck_type) {  p, v -> }
+    binding.spinnerStatus.setup(R.array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
     }
 
   /**
@@ -368,7 +366,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     this.saveToHistory = saveToHistory
     /* clear and add first dummy item */
     _adapter.clearItems()
-    if(contractType==getString(string.intracity_contract_type))
+    if(contractType==INTRACITY_CONTRACT_TYPE)
       _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
     else
       _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
@@ -387,10 +385,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       setTruckDisplayAdapter(truckDisplayNames)
     }
     binding.spinnerTruckType.setSelection(pos, true)
-    binding.spinnerStatus.setSelection(resources.getStringArray(array.array_status).toList().indexOf(status))
+    binding.spinnerStatus.setSelection(resources.getStringArray(R.array.array_status).toList().indexOf(status))
     Log.d("NAMES LIST",truckDisplayNames.size.toString()+" "+truckDisplayNames.indexOf(displayName))
     binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
-    if(contractType==getString(string.intracity_contract_type)){
+    if(contractType== INTRACITY_CONTRACT_TYPE){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
     }
@@ -532,17 +530,17 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_not_approved,
-            string.msg_dialog_supplier_not_approved,
-            getString(string.label_call_us), getString(string.label_mail_us),
+            R.string.title_dialog_supplier_not_approved,
+            R.string.msg_dialog_supplier_not_approved,
+            getString(R.string.label_call_us), getString(R.string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_disabled,
-            string.msg_dialog_supplier_disabled,
-            getString(string.label_call_us), getString(string.label_mail_us),
+            R.string.title_dialog_supplier_disabled,
+            R.string.msg_dialog_supplier_disabled,
+            getString(R.string.label_call_us), getString(R.string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
       }

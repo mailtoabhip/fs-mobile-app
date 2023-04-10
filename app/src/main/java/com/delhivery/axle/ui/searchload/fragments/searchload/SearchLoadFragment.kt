@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.database.entity.SearchLoadHistoryEntity
 import com.delhivery.axle.databinding.FragmentSearchLoadBinding
@@ -22,12 +21,12 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
-import com.jakewharton.rxbinding2.view.RxView.selected
 import javax.inject.Inject
 
 /**
@@ -62,7 +61,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     contractType = activity?.intentContractType
     viewModel.fetchTruckDisplayNames()
     viewModel.progressLiveData.observe(this, ProgressObserver())
-    if(contractType==getString(R.string.intracity_contract_type)){
+    if(contractType==INTRACITY_CONTRACT_TYPE){
       viewModel.loadingProgressLiveData.observe(this){
         if(it) uiUtils.showProgress()
         else uiUtils.hideProgress()
@@ -136,7 +135,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   }
 
   private fun setupSearchScreen() {
-    if(contractType==getString(string.intracity_contract_type)){
+    if(contractType== INTRACITY_CONTRACT_TYPE){
       showIntracityRelatedViews()
       hideIntercityRelatedViews()
       binding.editReportingCenter.setText("")
@@ -230,7 +229,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     status: String?
   ) {
     uiUtils.toggleKeyboard(true)
-    if(contractType==getString(string.intracity_contract_type)){
+    if(contractType== INTRACITY_CONTRACT_TYPE){
       if(origin==null){
         binding.editReportingCenter.error="Please select reporting center"
         binding.editReportingCenter.errorAnimate()
@@ -243,7 +242,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     }
     else{
       if (origin == null) {
-        binding.editOriginCity.error = getString(string.error_search_missing_origin)
+        binding.editOriginCity.error = getString(R.string.error_search_missing_origin)
         binding.editOriginCity.errorAnimate()
         analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
         return
@@ -258,8 +257,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     if (saveToHistory) {
       viewModel.saveToHistory(
           origin, destination ?: CityModel(
-          city = getString(string.label_anywhere),
-          state = getString(string.label_anywhere)
+          city = getString(R.string.label_anywhere),
+          state = getString(R.string.label_anywhere)
       ),
           truckType,
         truckDisplayName,

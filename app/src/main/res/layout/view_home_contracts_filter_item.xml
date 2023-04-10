@@ -9,17 +9,71 @@
         />
 
   </data>
-  <androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+  <HorizontalScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/size_12dp"
       android:layout_marginTop="@dimen/size_10dp"
-      android:layout_marginBottom="@dimen/size_12dp">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/filter_rv"
+      android:scrollbars="none"
+      >
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="wrap_content"
+        >
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/info"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:padding="@dimen/size_6dp"
+          android:layout_marginLeft="@dimen/size_8dp"
+          app:layout_constraintStart_toEndOf="@id/delhiveryIntracityToggle"
+          app:layout_constraintTop_toTopOf="parent"
+          app:srcCompat="@drawable/ic_info_contract"
+          />
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/delhiveryIntercityToggle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_8dp"
+          android:visibility="gone"
+          android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+          android:paddingBottom="@dimen/size_6dp"
+          android:paddingEnd="@dimen/size_10dp"
+          android:paddingStart="@dimen/size_10dp"
+          android:paddingTop="@dimen/size_6dp"
+          android:text="@string/action_dlv_intercity"
+          app:layout_constraintStart_toEndOf="@id/customerIntercityToggle"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/delhiveryIntracityToggle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_8dp"
+          android:visibility="gone"
+          android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+          android:paddingBottom="@dimen/size_6dp"
+          android:paddingEnd="@dimen/size_10dp"
+          android:paddingStart="@dimen/size_10dp"
+          android:paddingTop="@dimen/size_6dp"
+          android:text="@string/action_dlv_intracity"
+          app:layout_constraintStart_toEndOf="@id/delhiveryIntercityToggle"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/customerIntercityToggle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+          android:paddingBottom="@dimen/size_6dp"
+          android:paddingEnd="@dimen/size_10dp"
+          android:paddingStart="@dimen/size_10dp"
+          android:paddingTop="@dimen/size_6dp"
+          android:text="@string/action_customer_intercity"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </HorizontalScrollView>
 </layout>

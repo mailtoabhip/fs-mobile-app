@@ -66,7 +66,7 @@ class TransactionsRepository @Inject constructor(
     contractType:String?
   ) = transactionService.transactions(
       offset, if(contractType!="INTRACITY") Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
-    status, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+    contractsMap[status]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
     contractType,if(requestType=="load") null else true
   ).convertResponse()
 
