@@ -392,7 +392,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if (_item.isItContract()) {
           if (_item.transactionId != null) {
             userPrefs.setPreviousScreen(this.javaClass.name)
-            startActivity(contractDetailsIntent(_item.transactionId, context!!))
+            startActivity(contractDetailsIntent(_item.transactionId, context!!, VALUE_SEARCH_LISITING))
           } else {
             Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
           }

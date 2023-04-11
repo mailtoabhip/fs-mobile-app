@@ -37,7 +37,15 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
+import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_STATUS
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -56,6 +64,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   @Inject lateinit var userPrefs: UserPrefs
   var routesArray:ArrayList<HaltCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
+  var source= VALUE_APP_FLOW
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -70,6 +79,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.requestType = RequestType.Contract.type
+    source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
 
     binding.backArrow.setOnClickListener {
       onBackPressed()
@@ -180,7 +190,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         binding.transaction?.let {
             ContractDetailsCreateEditDialog(
               this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs,
-              fromPage = "contract_detail"
+               source= source
             ).show()
 
         }
@@ -237,6 +247,20 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityContract()
 
           binding.vehicleDetails.visibility = View.VISIBLE
+
+          // Capture event
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_HOME_CONTRACT_CARD_CLICK,
+            mutableListOf(
+              PROPERTY_USER_ID,
+              PROPERTY_PHONE_NO, PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE,
+              PROPERTY_STATUS
+            ),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
+              _transaction.uuid ?: " ",_transaction.contractEventStatusText(),
+              _transaction.contractType?:"",source
+            )
+          )
           // for FRC contract
           if(t.isItFRContract()){
             if(t.transactionStatus==TransactionStatus.Cancelled.statusId){
@@ -766,7 +790,10 @@ private const val RequestTypeIntentKey = "request_type"
  */
 fun contractDetailsIntent(
   transactionId: String,
-  context: Context
+  context: Context,
+  source: String?= VALUE_APP_FLOW,
 ) = Intent(context, ContractDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
+  putExtra(PROPERTY_SOURCE,source)
+
 }

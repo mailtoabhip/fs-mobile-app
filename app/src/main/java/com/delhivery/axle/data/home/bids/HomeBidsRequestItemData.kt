@@ -1256,9 +1256,20 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-  fun routeVehicleMarginVisibility()=if (contractType==ContractType.INTRACITY.type && transactionBid!=null){
-    View.GONE
-  }else{
+  fun routeVehicleMarginVisibility()=if (contractType==ContractType.INTRACITY.type) {
+    if(transactionStatus==TransactionStatus.Cancelled.statusId){
+      View.VISIBLE
+    }else{
+      if (transactionBid != null) {
+        when (transactionBid!!.status()) {
+          Accepted, Open -> View.GONE
+          else -> View.VISIBLE
+        }
+      } else {
+        View.VISIBLE
+      }
+    }
+  } else {
     View.VISIBLE
   }
   fun vehiclePermitRequiredText():String=
@@ -1351,8 +1362,8 @@ data class HomeBidsRequestItemData(
       ""
     }
 
-  fun operatingDistancePerMoth()= "~"+intracityKms+ " Kms/Months"
-  fun operatingDurations()= intracityDays+ " days/Months"+ " \u2022 "+ intracityHours+ "h/day"
+  fun operatingDistancePerMoth()= "~"+intracityKms+ " Kms/Month"
+  fun operatingDurations()= intracityDays+ " days/Month"+ " \u2022 "+ intracityHours+ "h/day"
 
 
   fun tripWays()=

@@ -34,6 +34,7 @@ import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_OVERALL_PERFORMANCE
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TIME_LAPSE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
@@ -61,7 +62,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private val position: Int = 0,
   private val analyticsUtil: AnalyticsUtil,
   private var userPrefs: UserPrefs,
-  private var fromPage: String
+  private var source: String
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -457,8 +458,8 @@ class ContractDetailsCreateEditDialog @Inject constructor(
           analyticsUtil.moEngageTrackEvent(
             EVENT_SUBMIT_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
               PROPERTY_PHONE_NO,
-              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key()))
+              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(),source))
           dialogInterface.createBid(
             transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
             transaction.biddingType
@@ -468,8 +469,8 @@ class ContractDetailsCreateEditDialog @Inject constructor(
           analyticsUtil.moEngageTrackEvent(
             EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
               PROPERTY_PHONE_NO,
-              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.transactionStatus?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString()))
+              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF, PROPERTY_SOURCE),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.transactionStatus?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString(),source))
 
           dialogInterface.editBid(
             transaction.isPMTIndent(), transaction.key(), transactionBid.key(),

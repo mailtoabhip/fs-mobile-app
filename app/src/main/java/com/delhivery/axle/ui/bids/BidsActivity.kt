@@ -174,7 +174,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
         if(_item.requestType=="contract"){
           if(_item.transactionId!=null) {
             userPrefs.setPreviousScreen( this.javaClass.name)
-            startActivity(contractDetailsIntent(_item.transactionId, this))
+            startActivity(contractDetailsIntent(_item.transactionId, this, VALUE_BID_LISTING))
           }
           else{
             Toast.makeText(this,"Not Found", Toast.LENGTH_SHORT).show()
