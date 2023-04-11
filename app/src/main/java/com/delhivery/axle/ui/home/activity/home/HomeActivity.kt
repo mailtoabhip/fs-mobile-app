@@ -105,7 +105,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         navigationUtils.navigateOnboardingSteps(true)
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
-        title = "Load Requests"
+        title = "Home"
         if(!userPrefs.userName.isEmpty()) {
           binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
         }

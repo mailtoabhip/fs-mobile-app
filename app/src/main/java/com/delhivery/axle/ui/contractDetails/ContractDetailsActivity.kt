@@ -390,7 +390,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             //for more than 1 bids and within live bidding
             if(state.bidsCount>1 && data.isUnderOneHour()){
               binding.clBidYet.visibility = View.GONE
-              binding.clExpressBidStatus.visibility = data.isLHContract()
+              binding.clExpressBidStatus.visibility = data.isLHIntraCityContract()
               binding.clNonExpressBidStatus.visibility = data.isFRCContract()
               //LH contract within live bidding
               if(data.isItLHContract() || data.isItIntraCityContract()){
@@ -489,9 +489,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.contractResult.yourTripCommitment.visibility =data.isFRCContract()
             binding.contractResult.yourTripCommitmentValue.visibility =data.isFRCContract()
             binding.contractRulesWithResult.rules.visibility = data.isLHContract()
+            binding.contractRulesWithResult.intraCityRules.visibility = data.isIntraCityContract()
             binding.contractRulesWithResult.nonExpRules.visibility = data.isFRCContract()
             binding.contractRules.rules.visibility = View.GONE
             binding.contractRules.nonExpRules.visibility = View.GONE
+            binding.contractRules.intraCityRules.visibility = View.GONE
             if(data.isItFRContract()){
               binding.contractResult.yourTripCommitmentValue.text = data.transactionBid?.tentativeTripCount?.toString()
             }

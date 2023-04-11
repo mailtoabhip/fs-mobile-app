@@ -183,7 +183,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
               lowerPercentage  = 20
               upperPercentage  = 10
             }else if(transaction.isItIntraCityContract()){
-              lowerPercentage  = 30
+              lowerPercentage  = 20
               upperPercentage  = 20
             }
             if (transaction.isPMTIndent()) {

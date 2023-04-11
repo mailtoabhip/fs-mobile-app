@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -83,7 +84,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    demandType= if(userPrefs.demandType.contains("Internal")){ "Corporate" }else if (userPrefs.demandType.contains("Intracity")){"Intracity"} else {"Corporate"}
+    demandType= if(userPrefs.demandType.contains(DemandType.Internal.type)){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Intracity.type)){DemandType.Intracity.type} else {DemandType.Corporate.type}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -117,10 +118,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     })
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       HomeLoadsTruckFragment._instance.dataToUpdate("contracts",it>0,it)
-      _title = when (it) {
-        0, null -> getString(string.label_load_request)
-        else -> "${getString(string.label_load_request)}($it)"
-      }
     })
 
     refreshData()
@@ -193,15 +190,15 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterExpress -> {
-        demandType = "Internal"
+        demandType = DemandType.Internal.type
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
-        demandType = "Corporate"
+        demandType = DemandType.Corporate.type
         refreshData()
       }
       HomeContractsFilterIntracity -> {
-        demandType = "Intracity"
+        demandType = DemandType.Intracity.type
         refreshData()
       }
       HomeContractsFilterInfo -> {
@@ -217,8 +214,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       bindingDialog.buttonCancel.setOnClickListener {
         dialog.cancel()
       }
-      bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
-      bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule3.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
       dialog.setContentView(bindingDialog.root)
       dialog.show()

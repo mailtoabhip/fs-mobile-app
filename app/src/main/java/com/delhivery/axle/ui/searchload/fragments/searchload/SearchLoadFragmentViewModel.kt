@@ -45,13 +45,13 @@ class SearchLoadFragmentViewModel @Inject constructor(
     destinationCity: CityModel,
     truckType: String?,
     truckDisplayName: String?,
-    status: String?,
+    contractStatus: String?,
     requestType: String?,
     contractType: String?,
   ) {
     compositeDisposable += Single.fromCallable {
       appDB.searchHistoryDao()
-          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, truckType, truckDisplayName, status, if(requestType=="load") "fixed,spot" else "contract",contractType))
+          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, truckType, truckDisplayName, contractStatus, if(requestType=="load") "fixed,spot" else "contract",contractType))
     }
         .onBackground()
         .subscribe { res, error ->

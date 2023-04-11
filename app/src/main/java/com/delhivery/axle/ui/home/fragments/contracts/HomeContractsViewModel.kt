@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -143,13 +144,14 @@ class HomeContractsViewModel@Inject constructor(
               add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
             } else {
               add(Pair(HomeContractsSearchItem(), AddUpdate))
+              // calculating the count based on user demand type
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0
               var intraCityCount =0
 
                 for(item in _tRes.fourth.contractsCount.all){
-                  if(userPrefs.demandType.contains("Internal")&& userPrefs.demandType.contains("Intracity")) {
+                  if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)) {
                     if (item.key == ContractType.LH_FTL.type) {
                       expressCount = item.count ?: 0
                     }
@@ -159,7 +161,7 @@ class HomeContractsViewModel@Inject constructor(
                     if (item.key == ContractType.INTRACITY.type) {
                       intraCityCount = item.count ?: 0
                     }
-                  }else if(userPrefs.demandType.contains("Internal")){
+                  }else if(userPrefs.demandType.contains(DemandType.Internal.type)){
                     if(item.key==ContractType.LH_FTL.type){
                       expressCount =item.count?:0
                     }
@@ -167,7 +169,7 @@ class HomeContractsViewModel@Inject constructor(
                       nonExpressCount=item.count?:0
                     }
 
-                  }else if(userPrefs.demandType.contains("Intracity")){
+                  }else if(userPrefs.demandType.contains(DemandType.Intracity.type)){
                     if(item.key==ContractType.INTRACITY.type){
                       intraCityCount = item.count?:0
                     }
@@ -177,7 +179,7 @@ class HomeContractsViewModel@Inject constructor(
                   }
               }}
                 for(item in _tRes.fourth.contractsCount.active){
-                  if(userPrefs.demandType.contains("Internal")&& userPrefs.demandType.contains("Intracity")) {
+                  if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)) {
                     if(item.key==ContractType.LH_FTL.type){
                     totalActive+=item.count?:0
                   }
@@ -187,7 +189,7 @@ class HomeContractsViewModel@Inject constructor(
                   if(item.key==ContractType.INTRACITY.type){
                     totalActive+=item.count?:0
                   }
-                }else if(userPrefs.demandType.contains("Internal")){
+                }else if(userPrefs.demandType.contains(DemandType.Internal.type)){
                     if(item.key==ContractType.LH_FTL.type){
                       totalActive+=item.count?:0
                     }
@@ -195,7 +197,7 @@ class HomeContractsViewModel@Inject constructor(
                       totalActive+=item.count?:0
                     }
 
-                }else if(userPrefs.demandType.contains("Intracity")){
+                }else if(userPrefs.demandType.contains(DemandType.Intracity.type)){
                     if(item.key==ContractType.INTRACITY.type){
                       totalActive+=item.count?:0
                     }
@@ -251,9 +253,6 @@ class HomeContractsViewModel@Inject constructor(
       }
   }
 
-  fun getSummaryCount(){
-
-  }
 }
 
 

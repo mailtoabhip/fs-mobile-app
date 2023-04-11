@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
@@ -31,41 +32,7 @@ import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoa
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
-import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_LIST_ITEM
-import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS
-import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS
-import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS
-import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS
-import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
-import com.delhivery.axle.utils.EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK
-import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_INITIATE
-import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_INITIATED
-import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_SUBMITTED
-import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_SUBMIT
-import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
-import com.delhivery.axle.utils.PROPERTY_BID_COUNT
-import com.delhivery.axle.utils.PROPERTY_DESTINATION
-import com.delhivery.axle.utils.PROPERTY_NUM_RESULTS
-import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
-import com.delhivery.axle.utils.PROPERTY_ORDER_ID
-import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
-import com.delhivery.axle.utils.PROPERTY_ORDER_RANK
-import com.delhivery.axle.utils.PROPERTY_ORIGIN
-import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
-import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
-import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
-import com.delhivery.axle.utils.PROPERTY_TRUCK_TYPE
-import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE
-import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
-import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
-import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
-import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
-import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.isNotEmpty
@@ -100,6 +67,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var oldAmount:Double?=0.0
   var reviseInitiated:Boolean=false
   var isContract = false
+  var isIntraCityContract  =false
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -366,7 +334,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     this.saveToHistory = saveToHistory
     /* clear and add first dummy item */
     _adapter.clearItems()
-    if(contractType==INTRACITY_CONTRACT_TYPE)
+    if(contractType==ContractType.INTRACITY.type)
       _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
     else
       _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
@@ -386,17 +354,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     }
     binding.spinnerTruckType.setSelection(pos, true)
     binding.spinnerStatus.setSelection(resources.getStringArray(R.array.array_status).toList().indexOf(status))
-    Log.d("NAMES LIST",truckDisplayNames.size.toString()+" "+truckDisplayNames.indexOf(displayName))
     binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
-    if(contractType== INTRACITY_CONTRACT_TYPE){
-      showIntracityRelatedViews()
-      hideIntercityRelatedViews()
-    }
-    else{
-      hideIntracityRelatedViews()
-      showIntercityRelatedViews()
-    }
     isContract = contractType!=null
+    binding.isIntraCityContract = contractType!=null && contractType==ContractType.INTRACITY.type
     viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
   }
 
@@ -420,34 +380,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         }
       }
     adapter = truckDisplayAdapter
-  }
-
-  private fun hideIntracityRelatedViews() {
-    binding.containerReportingCenter.visibility = View.GONE
-    binding.tvTruckType.visibility = View.GONE
-    binding.tvReportingCenter.visibility=View.GONE
-    binding.spinnerTruckDisplayName.visibility = View.GONE
-    binding.tvStatus.visibility = View.GONE
-    binding.spinnerStatus.visibility = View.GONE
-  }
-
-  private fun hideIntercityRelatedViews() {
-    binding.spinnerTruckType.visibility = View.GONE
-    binding.containerCities.visibility = View.GONE
-  }
-
-  private fun showIntracityRelatedViews() {
-    binding.containerReportingCenter.visibility = View.VISIBLE
-    binding.tvReportingCenter.visibility=View.VISIBLE
-    binding.tvTruckType.visibility = View.VISIBLE
-    binding.spinnerTruckDisplayName.visibility = View.VISIBLE
-    binding.tvStatus.visibility = View.VISIBLE
-    binding.spinnerStatus.visibility = View.VISIBLE
-  }
-
-  private fun showIntercityRelatedViews() {
-    binding.spinnerTruckType.visibility = View.VISIBLE
-    binding.containerCities.visibility = View.VISIBLE
   }
 
   override fun handleAction(

@@ -69,12 +69,12 @@ class TransactionsRepository @Inject constructor(
     destination: String?,
     truckType: String?,
     truckDisplayName: String?,
-    status: String?,
+    contractStatus: String?,
     requestType:String?,
     contractType:String?
   ) = transactionService.transactions(
-      offset, if(contractType!="INTRACITY") Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
-    contractsMap[status]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+      offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
+    contractsMap[contractStatus]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
     contractType,if(requestType=="load") null else true
   ).convertResponse()
 
@@ -124,7 +124,12 @@ enum class RequestType(val type: String) {
   Spot("spot"),
   Fixed("fixed")
 }
-
+enum class DemandType(val type: String) {
+  Internal("Internal"),
+  Others("Others"),
+  Intracity("Intracity"),
+  Corporate("Corporate")
+}
 val contractsMap= mapOf(
   Pair("Live Bidding", LiveBidding),
   Pair("Collecting Bids",CollectingBids),

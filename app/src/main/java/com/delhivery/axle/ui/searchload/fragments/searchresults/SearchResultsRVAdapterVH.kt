@@ -416,7 +416,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
                     )
                   } else {
                     // No user Bid
-                    binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+                    binding.userBidStatus.text = context.getString(string.you_did_not_bid)
                     binding.userBidInfo.visibility = View.GONE
 
                   }
@@ -478,7 +478,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
           }
           if (item.data.lowestBid != null) {
             // user bid is lowest bid
-            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true && (item.data.targetPrice == null || item.data.transactionBid?.bidAmount ?: 0.0 <= item.data.targetPrice ?: 0.0)) {
+            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true ) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -495,30 +495,9 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
                 0,
                 0
               )
-              binding.userBidInfo.text = " Your bid is the lowest"
+              binding.userBidInfo.text = " Your bid is the lowest "
             } else {
               // user bid is higher than lowest bid
-              binding.userBidStatus.text =
-                "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
-              binding.userBidInfo.setTextColor(
-                ContextCompat.getColor(
-                  context,
-                  R.color.destructive_red
-                )
-              )
-              binding.userBidInfo.background =
-                ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_lost_red)
-              binding.userBidInfo.text =
-                "Higher than other by" + item.data.contractLowestbidDifference()
-              binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                0,
-                0
-              )
-            }
-          } else {
-            if (item.data.targetPrice != null) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -594,7 +573,7 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
           )
         } else {
           // No user Bid
-          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+          binding.userBidStatus.text = context.getString(string.you_did_not_bid)
           binding.userBidInfo.visibility = View.GONE
 
         }

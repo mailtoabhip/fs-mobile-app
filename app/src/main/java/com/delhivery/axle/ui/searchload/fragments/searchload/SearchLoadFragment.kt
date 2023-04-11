@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.database.entity.SearchLoadHistoryEntity
 import com.delhivery.axle.databinding.FragmentSearchLoadBinding
@@ -49,7 +50,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   private var destination: CityModel? = null
   private var requestType: String? =  ""
   private var contractType:String? = ""
-  private var truckDisplayNames = arrayListOf("Select Type")
+  private var truckDisplayNames = arrayListOf("Select Vehicle Type")
 
   override fun onViewCreated(
     view: View,
@@ -59,16 +60,22 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     val activity: SearchLoadActivity? = activity as SearchLoadActivity?
     requestType = activity?.intentRequestType
     contractType = activity?.intentContractType
-    viewModel.fetchTruckDisplayNames()
+    binding.intracity = contractType!=null && contractType==ContractType.INTRACITY.type
+
+    if(contractType==ContractType.INTRACITY.type){
+      viewModel.fetchTruckDisplayNames()
+    }
+
     viewModel.progressLiveData.observe(this, ProgressObserver())
-    if(contractType==INTRACITY_CONTRACT_TYPE){
+
+    if(contractType==ContractType.INTRACITY.type){
       viewModel.loadingProgressLiveData.observe(this){
         if(it) uiUtils.showProgress()
         else uiUtils.hideProgress()
       }
       viewModel.truckDisplayNamesLiveData.observe(this){
           truckDisplayNames.clear()
-          truckDisplayNames.add("Select Type")
+          truckDisplayNames.add("Select Vehicle Type")
           if(it!=null)
             truckDisplayNames.addAll(it)
           binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
@@ -112,12 +119,14 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         binding.containerHistory.visibility = View.GONE
         binding.textHistoryTitle.visibility = View.GONE
         binding.containerSearchLoadHeaderForm.visibility = View.GONE
+        binding.clIntracitySearch.visibility = View.GONE
       }
       false -> {
         binding.warningItem.visibility = View.GONE
         binding.containerHistory.visibility = View.VISIBLE
         binding.textHistoryTitle.visibility = View.VISIBLE
         binding.containerSearchLoadHeaderForm.visibility = View.VISIBLE
+        binding.clIntracitySearch.visibility = View.VISIBLE
       }
     }
   }
@@ -135,9 +144,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   }
 
   private fun setupSearchScreen() {
-    if(contractType== INTRACITY_CONTRACT_TYPE){
-      showIntracityRelatedViews()
-      hideIntercityRelatedViews()
+    if(contractType== ContractType.INTRACITY.type){
       binding.editReportingCenter.setText("")
       binding.spinnerStatus.apply{
         setup(R.array.array_status){ p, v ->
@@ -152,8 +159,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }
     }
     else{
-      hideIntracityRelatedViews()
-      showIntercityRelatedViews()
       autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
         origin = it
         binding.editDestinationCity.requestFocus()
@@ -226,10 +231,10 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     destination: CityModel? = null,
     truckType: String?,
     truckDisplayName: String?,
-    status: String?
+    contractStatus: String?
   ) {
     uiUtils.toggleKeyboard(true)
-    if(contractType== INTRACITY_CONTRACT_TYPE){
+    if(contractType== ContractType.INTRACITY.type){
       if(origin==null){
         binding.editReportingCenter.error="Please select reporting center"
         binding.editReportingCenter.errorAnimate()
@@ -262,7 +267,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       ),
           truckType,
         truckDisplayName,
-        status,
+        contractStatus,
         requestType,contractType
       )
     }
@@ -271,48 +276,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
       Handler().postDelayed({
-        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, status, requestType,contractType,truckDisplayNames,saveToHistory))
+        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory))
       }, 200)
-  }
-
-  private fun showIntracityRelatedViews() {
-    binding.selectReportingCenterHeader.visibility = View.VISIBLE
-    binding.editReportingCenter.visibility = View.VISIBLE
-    binding.btnSearch.visibility = View.VISIBLE
-    binding.truckTypeHeader.visibility = View.VISIBLE
-    binding.spinnerTruckDisplayName.visibility = View.VISIBLE
-    binding.statusHeader.visibility = View.VISIBLE
-    binding.spinnerStatus.visibility = View.VISIBLE
-  }
-
-  private fun showIntercityRelatedViews() {
-    binding.tilOrigin.visibility = View.VISIBLE
-    binding.tilDestination.visibility = View.VISIBLE
-    binding.viewSelectOriginCity.visibility=View.VISIBLE
-    binding.viewSelectDestinationCity.visibility=View.VISIBLE
-    binding.imgForward.visibility = View.VISIBLE
-    binding.spinnerTruckType.visibility = View.VISIBLE
-    binding.btnAction.visibility = View.VISIBLE
-  }
-
-  private fun hideIntracityRelatedViews(){
-    binding.selectReportingCenterHeader.visibility = View.GONE
-    binding.editReportingCenter.visibility = View.GONE
-    binding.btnSearch.visibility = View.GONE
-    binding.truckTypeHeader.visibility = View.GONE
-    binding.spinnerTruckDisplayName.visibility = View.GONE
-    binding.statusHeader.visibility = View.GONE
-    binding.spinnerStatus.visibility = View.GONE
-  }
-
-  private fun hideIntercityRelatedViews() {
-    binding.tilOrigin.visibility = View.GONE
-    binding.tilDestination.visibility = View.GONE
-    binding.viewSelectOriginCity.visibility=View.GONE
-    binding.viewSelectDestinationCity.visibility=View.GONE
-    binding.imgForward.visibility = View.GONE
-    binding.spinnerTruckType.visibility = View.GONE
-    binding.btnAction.visibility = View.GONE
   }
 
   /**

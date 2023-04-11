@@ -717,7 +717,7 @@
   <string name="cancelled">Cancelled</string>
   <string name="revise_your_bid">Revise Your Bid</string>
   <string name="bid_received">Bids Received</string>
-  <string name="higher_than">Higher than other by"</string>
+  <string name="higher_than">\u2022 Higher than other by"</string>
   <string name="current_lowest">Current Lowest Bid</string>
   <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
   <string name="your_ftl_rate">Your Bid (FTL Rate)</string>
@@ -759,7 +759,7 @@
   </string-array>
 
   <string-array name="array_status">
-    <item>Select status</item>
+    <item>Select Status</item>
     <item>Live Bidding</item>
     <item>Collecting Bids</item>
     <item>Bidding Closed</item>

@@ -1161,6 +1161,11 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+  fun isLHIntraCityContract() = if (contractType == ContractType.LH_FTL.type || contractType==ContractType.INTRACITY.type) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
 
   fun isIntraCityContract() = if (contractType == ContractType.INTRACITY.type) {
     View.VISIBLE
@@ -1224,6 +1229,10 @@ data class HomeBidsRequestItemData(
   fun vehicleOperatingDaysPerMonthLabel():String=if(isItIntraCityContract()){"Per Month"} else "Tentative Total vehicles"
 
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
+
+  fun intracityHours() = intracityHours+"h/day"
+  fun intracityDays() = "$intracityDays days/month"
+  fun intracityKms() = "~$intracityKms Kms/month"
 
   fun intracityExtraKmRate()="₹ "+ intracityExtraKmRate
   fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
@@ -1362,7 +1371,7 @@ data class HomeBidsRequestItemData(
 
 
 @BindingAdapter("layoutMarginStart")
-fun setLayoutMarginBottom(view: View, dimen: Float) {
+fun setLayoutMarginBottom(view: View, dimen: Int) {
   val layoutParams = view.layoutParams as MarginLayoutParams
   layoutParams.marginStart = dimen.toInt()
   view.layoutParams = layoutParams

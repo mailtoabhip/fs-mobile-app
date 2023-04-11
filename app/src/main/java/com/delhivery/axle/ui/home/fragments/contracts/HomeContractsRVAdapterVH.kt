@@ -1,69 +1,28 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextUtils
-import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
-import com.delhivery.axle.R.color
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
-import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
-import com.delhivery.axle.data.home.loads.HomeLoadsBannerAction
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_EditRoute
-import com.delhivery.axle.data.home.loads.HomeLoadsInfoAction_Search
-import com.delhivery.axle.data.home.loads.HomeLoadsPriorityAction
-import com.delhivery.axle.data.home.loads.HomeLoadsShareRateAction
-import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsFilterItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsInfoItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsMoreInfoItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsTruckBannerItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsTruckPriorityItemBinding
-import com.delhivery.axle.databinding.ViewHomeSummaryItemBinding
-import com.delhivery.axle.databinding.ViewShareLayoutBannerBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.home.fragments.loads.BaseHomeLoadsRVAdapterViewHolder
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsAddTruckItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFilterItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsMoreInfoItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsProgressItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterInterface
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsShareRateItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSummaryItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTimeoutItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsTruckPriorityAccessItem
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsWarningItem
-import com.delhivery.axle.utils.DatePatterns
-import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -313,7 +272,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                     )
                   } else {
                     // No user Bid
-                    binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+                    binding.userBidStatus.text = context.getString(string.you_did_not_bid)
                     binding.userBidInfo.visibility = View.GONE
 
                   }
@@ -375,7 +334,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
               }
           if (item.data.lowestBid != null) {
             // user bid is lowest bid
-            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true && (item.data.targetPrice==null||item.data.transactionBid?.bidAmount?:0.0<=item.data.targetPrice?:0.0)) {
+            if (item.data.transactionBid?.bidAmount?.equals(item.data.lowestBid) == true) {
               binding.userBidStatus.text =
                 "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
               binding.userBidInfo.setTextColor(
@@ -409,27 +368,6 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                 "Higher than other by" + item.data.contractLowestbidDifference()
               binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
                 0,
-                0,
-                0,
-                0
-              )
-            }
-          }else{
-            if(item.data.targetPrice!=null){
-              binding.userBidStatus.text =
-                "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
-              binding.userBidInfo.setTextColor(
-                ContextCompat.getColor(
-                  context,
-                  R.color.destructive_red
-                )
-              )
-              binding.userBidInfo.background =
-                ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_lost_red)
-              binding.userBidInfo.text =
-                "Higher than other by" + item.data.contractLowestbidDifference()
-              binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
-               0,
                 0,
                 0,
                 0
@@ -491,7 +429,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
           )
         } else {
           // No user Bid
-          binding.userBidStatus.text = context.getString(string.you_have_not_bid)
+          binding.userBidStatus.text = context.getString(string.you_did_not_bid)
           binding.userBidInfo.visibility = View.GONE
 
         }
@@ -555,9 +493,10 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     item: HomeContractsFilterItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
-     binding.nonExpressToggle.text =  "Non Express Load (${item.data.nonExpressCount})"
-     binding.expressToggle.text =   "Express Load (${item.data.expressCount})"
-     binding.intracityToggle.text =   "Intracity Load (${item.data.intraCity})"
+     binding.nonExpressToggle.text =  "${context.getString(R.string.action_non_express)} (${item.data.nonExpressCount})"
+     binding.expressToggle.text =   "${context.getString(string.action_express)} (${item.data.expressCount})"
+     binding.intracityToggle.text =   "${context.getString(string.action_intracity)} (${item.data.intraCity})"
+    // filter visibility based on user's demand type
       if(item.data.userDemandType.contains("Internal") && item.data.userDemandType.contains("Intracity") ){
         binding.expressToggle.visibility = View.VISIBLE
         binding.nonExpressToggle.visibility = View.VISIBLE
