@@ -146,5 +146,5 @@ enum class ContractStatus(val statusId:String){
   CollectingBids("active_bidding"),
   BiddingClosed("closed_bidding"),
   Cancelled("cancelled"),
-  ResultDeclared("result_declared")
+  ResultDeclared("allocated")
 }
