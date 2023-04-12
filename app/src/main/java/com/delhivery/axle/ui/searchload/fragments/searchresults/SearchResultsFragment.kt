@@ -67,7 +67,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var oldAmount:Double?=0.0
   var reviseInitiated:Boolean=false
   var isContract = false
-  var isIntraCityContract  =false
+  var isIntraCity  =false
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -356,7 +356,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     binding.spinnerStatus.setSelection(resources.getStringArray(R.array.array_status).toList().indexOf(status))
     binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
     isContract = contractType!=null
-    binding.isIntraCityContract = contractType!=null && contractType==ContractType.INTRACITY.type
+    isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
+    binding.isIntraCityContract = isIntraCity
     viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
   }
 
@@ -392,7 +393,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if (_item.isItContract()) {
           if (_item.transactionId != null) {
             userPrefs.setPreviousScreen(this.javaClass.name)
-            startActivity(contractDetailsIntent(_item.transactionId, context!!))
+            startActivity(contractDetailsIntent(_item.transactionId, context!!, VALUE_SEARCH_LISITING))
           } else {
             Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
           }
@@ -556,10 +557,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   private fun resetSpinnerContainer() {
     binding.apply {
-      if(spinnerTruckType.visibility==View.VISIBLE)
-        _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
-      if(spinnerStatus.visibility==View.VISIBLE)
-        _scrollListener.coordinateView(spinnerStatus, viewHiddenIndicator, 0f)
+      _scrollListener.coordinateView(spinnerTruckType, viewHiddenIndicator, 0f)
       viewHiddenIndicator.alpha = 0f
       rv.scrollToPosition(0)
       containerSpinner.translationY = 0f
@@ -585,8 +583,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
         containerSpinner.translationY = if (pos >= 1) {
           viewHiddenIndicator.alpha = 1f
-          if(spinnerTruckType.visibility==View.VISIBLE)
-          {
+          if(!isIntraCity){
             updateVisibility(spinnerTruckType, View.INVISIBLE)
           }
           maxTranslationY
@@ -595,10 +592,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           val childTop = childView.top * 1f
           val factor = Math.min(childTop / maxTranslationY, 1f)
           viewHiddenIndicator.alpha = factor
-          if(spinnerTruckType.visibility==View.VISIBLE)
-          {
-            coordinateView(spinnerTruckType, viewHiddenIndicator, factor)
-          }
+          coordinateView(spinnerTruckType, viewHiddenIndicator, factor)
           Math.max(maxTranslationY, childTop)
         }
       }
@@ -612,7 +606,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       target: View,
       factor: Float
     ) {
-      updateVisibility(view, View.VISIBLE)
+      if(!isIntraCity)
+        updateVisibility(view, View.VISIBLE)
       view.alpha = 1f - factor
       view.translationX = (target.centerX() - view.centerX()) * factor
       view.translationY = (target.centerY() - view.centerY()) * factor

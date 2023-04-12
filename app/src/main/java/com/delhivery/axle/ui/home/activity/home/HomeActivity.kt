@@ -277,7 +277,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         CONTRACT_DETAILS -> {
           if(dplink_tid!="")
-          startActivity(contractDetailsIntent(dplink_tid,this))
+          startActivity(contractDetailsIntent(dplink_tid,this,VALUE_DEEP_LINKING))
         }
         CONTRACT_LIST -> {
           fromDeepLinkContract = true
@@ -389,7 +389,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
       }
       REDIRECT_TO_CONTRACT -> {
-        startActivity(contractDetailsIntent(preferredTransactionId,this))
+        startActivity(contractDetailsIntent(preferredTransactionId,this, VALUE_PUSH_NOTIFICATION))
       }
       REDIRECT_TO_CONTRACT_LIST -> {
         fromNotificationContract = true

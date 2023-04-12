@@ -29,6 +29,8 @@ import java.util.Date
 import javax.inject.Inject
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
@@ -151,7 +153,11 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_CONTRACT_TAB_CLICK,mutableListOf(PROPERTY_USER_ID,
                         PROPERTY_PHONE_NO,
                         PROPERTY_CONTRACT_TYPE),
-                        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if(userPrefs.demandType.contains("Internal") )"LH_FTL" else "FRC"))
+                        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if(userPrefs.demandType.contains(
+                                DemandType.Internal.type)){ ContractType.FRC.type }else if (userPrefs.demandType.contains(
+                                DemandType.Intracity.type)){
+                            ContractType.INTRACITY.type} else {
+                            ContractType.FRC.type}))
                 }
             }
 

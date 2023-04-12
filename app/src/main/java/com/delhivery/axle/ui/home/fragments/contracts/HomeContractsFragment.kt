@@ -160,19 +160,10 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
         val data = item.data as HomeBidsRequestItemData
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-          EVENT_HOME_CONTRACT_CARD_CLICK,
-          mutableListOf(PROPERTY_USER_ID,
-            PROPERTY_PHONE_NO,PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE),
-          mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
-            data.transactionId ?: " ",data.contractEventStatusText(),
-            data.contractType?:""
-          )
-        )
+
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(contractDetailsIntent(data.key(), it))
+          startActivity(contractDetailsIntent(data.key(), it,VALUE_ORDER_LISTING))
         }
       }
       HomeContractsSearchAction_Search -> {
