@@ -616,10 +616,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     if(data.paymentSlabs!=null && data.isItIntraCityContract()&& data.transactionStatus!=TransactionStatus.Cancelled.statusId) {
       val keys = data.paymentSlabs!!.keySet()
       binding.transaction = data
+      paymentSlabsArray = ArrayList()
       paymentSlabsArray.add(PaymentSlabs("Kms","Monthly Payout"))
       for (key in keys) {
         val value = data.paymentSlabs!!.get(key).asString
-        paymentSlabsArray.add(PaymentSlabs(key,value))
+        paymentSlabsArray.add(PaymentSlabs(key,"₹ "+value))
       }
       if(keys.size<5){
         binding.paymentSlabsMoreSlab.visibility =  View.GONE
