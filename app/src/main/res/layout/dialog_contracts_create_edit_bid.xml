@@ -356,6 +356,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:textColor="@color/heading_black"
             android:maxLength="10"
+            android:inputType="textCapCharacters"
             android:hint="ex: MK87HG7865"
             android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginStart="@dimen/size_12dp"

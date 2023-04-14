@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidCreateEditBinding
@@ -123,6 +124,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
         transactionBid?.bidAmount?.let {
           isValidBidAmount= true
           binding.title.text = "Revise Your Bid"
+          binding.bidAmountLbl.text = "Revised Bid Amount"
           binding.editBidAmount?.setText(DecimalFormat("#########").format(it))
           if(transaction.isPMTIndent()){
             pmtRate = it.toInt()
@@ -407,7 +409,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
 
   private fun validateTruckNumber(number: String): Boolean{
     val pattern = Pattern.compile(
-      "[a-zA-Z]{2}((([0-9]{1,2}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}\$|^[a-zA-Z]{3}[0-9]{4}"
+      "^[a-zA-Z]{2}(((0?[1-9]{1}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}$|^[a-zA-Z]{3}[0-9]{4}$"
     )
     return pattern.matcher(number).matches()
   }
@@ -415,7 +417,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private fun showInvalidBidAmountError(amount:String?=null){
     isValidBidAmount = false
     if(amount!=null){
-      binding.bidError.text = "Bid difference should be multiple of $amount"
+      binding.bidError.text = context.getString(string.bid_revise_error)+amount
     }else{
       binding.bidError.text =  "Invalid Bid Amount, Out of range"
     }

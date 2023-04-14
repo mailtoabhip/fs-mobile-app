@@ -530,7 +530,7 @@
                 android:paddingEnd="@dimen/size_16dp"
                 android:textSize="@dimen/text_12sp"
                 android:visibility="@{transaction.isIntraCityContract()}"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
                 app:layout_constraintTop_toBottomOf="@id/operatingHrPerDay"
                 />
 

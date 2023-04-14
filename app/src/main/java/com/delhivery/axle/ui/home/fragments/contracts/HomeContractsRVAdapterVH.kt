@@ -7,6 +7,8 @@ import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
@@ -497,23 +499,10 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
      binding.expressToggle.text =   "${context.getString(string.action_express)} (${item.data.expressCount})"
      binding.intracityToggle.text =   "${context.getString(string.action_intracity)} (${item.data.intraCity})"
     // filter visibility based on user's demand type
-      if(item.data.userDemandType.contains("Internal") && item.data.userDemandType.contains("Intracity") ){
-        binding.expressToggle.visibility = View.VISIBLE
-        binding.nonExpressToggle.visibility = View.VISIBLE
-        binding.intracityToggle.visibility = View.VISIBLE
-      }else if(item.data.userDemandType.contains("Internal")){
-        binding.expressToggle.visibility = View.VISIBLE
-        binding.nonExpressToggle.visibility = View.VISIBLE
-        binding.intracityToggle.visibility = View.GONE
-      }else if (item.data.userDemandType.contains("Intracity")){
-        binding.expressToggle.visibility = View.GONE
-        binding.nonExpressToggle.visibility = View.GONE
-        binding.intracityToggle.visibility = View.VISIBLE
-      }else{
-        binding.expressToggle.visibility = View.GONE
-        binding.nonExpressToggle.visibility = View.VISIBLE
-        binding.intracityToggle.visibility = View.GONE
-      }
+        binding.expressToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
+        binding.nonExpressToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type) ||item.data.userDemandType.contains(DemandType.Others.type))View.VISIBLE else View.GONE
+        binding.intracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
+
     when (item.data.filterType) {
      "Corporate"-> {
         binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))

@@ -332,6 +332,7 @@
         android:layout_marginBottom="@dimen/size_4dp"
         android:layout_marginTop="@dimen/size_4dp"
         android:alpha="0"
+        android:visibility="@{intracity?View.GONE : View.VISIBLE}"
         android:orientation="vertical"
         />
 
@@ -346,6 +347,7 @@
         android:letterSpacing="0.01"
         android:lineSpacingExtra="4sp"
         android:text="@string/label_your_recent_search"
+        android:visibility="@{intracity?View.GONE : View.VISIBLE}"
         android:textColor="@color/sub_heading_black"
         />
   </RelativeLayout>

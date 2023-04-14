@@ -49,8 +49,8 @@ class ContractPaymentSlabsAdapter(private val dataList: List<PaymentSlabs>,priva
     }
   }
 
-  fun expand(){
-      mExpanded = true
+  fun expand(expanded:Boolean){
+      mExpanded = expanded
       notifyDataSetChanged()
   }
   override fun getItemCount(): Int {

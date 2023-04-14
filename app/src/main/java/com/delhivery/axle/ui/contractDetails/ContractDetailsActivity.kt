@@ -349,6 +349,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               this@ContractDetailsActivity,
               R.drawable.ic_cancel_icon
             ))
+            binding.bidClosingStatus.visibility = View.VISIBLE
             binding.bidClosingStatus.text = getString(string.bidding_cancelled)
             binding.confirmedText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_money_grey, 0, 0, 0)
             binding.buttonConfirm.background = ContextCompat.getDrawable(
@@ -632,9 +633,17 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         layoutManager = LinearLayoutManager(applicationContext)
         adapter = contractPaymentSlabsAdapter
       }
+      var isExpanded = false
+      binding.paymentSlabsMoreSlab.text = getString(string.see_full_slabs_list)
       binding.paymentSlabsMoreSlab.setOnClickListener {
-        contractPaymentSlabsAdapter.expand()
-        binding.paymentSlabsMoreSlab.visibility = View.GONE
+        isExpanded = !isExpanded
+        contractPaymentSlabsAdapter.expand(isExpanded)
+        if(isExpanded){
+          binding.paymentSlabsMoreSlab.text = getString(string.hide_slabs)
+        }else{
+          binding.paymentSlabsMoreSlab.text = getString(string.see_full_slabs_list)
+        }
+
       }
     }
   }

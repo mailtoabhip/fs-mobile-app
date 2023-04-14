@@ -94,10 +94,12 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     binding.arcView.animate(RevealOpen) {
       please {
         animate(binding.containerHistory) toBe {
+          if(contractType!=ContractType.INTRACITY.type)
           visible()
         }
         animate(binding.textHistoryTitle) toBe {
-          visible()
+          if(contractType!=ContractType.INTRACITY.type)
+            visible()
         }
         animate(binding.containerSearchLoadHeaderForm) toBe {
           visible()
@@ -123,8 +125,13 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }
       false -> {
         binding.warningItem.visibility = View.GONE
-        binding.containerHistory.visibility = View.VISIBLE
-        binding.textHistoryTitle.visibility = View.VISIBLE
+        if(contractType!=null && contractType==ContractType.INTRACITY.type){
+          binding.containerHistory.visibility = View.GONE
+          binding.textHistoryTitle.visibility = View.GONE
+        }else{
+          binding.containerHistory.visibility = View.VISIBLE
+          binding.textHistoryTitle.visibility = View.VISIBLE
+        }
         binding.containerSearchLoadHeaderForm.visibility = View.VISIBLE
         binding.clIntracitySearch.visibility = View.VISIBLE
       }
@@ -155,7 +162,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         origin = it
       }
       binding.btnSearch.setOnClickListener{
-        searchLoad(true, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString())
+        searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString())
       }
     }
     else{
@@ -310,6 +317,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         }
       }
       /* title as per search results */
+      if(contractType!=ContractType.INTRACITY.type)
       binding.textHistoryTitle.visible(!t.isNullOrEmpty())
     }
   }

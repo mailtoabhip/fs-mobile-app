@@ -154,7 +154,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                         PROPERTY_PHONE_NO,
                         PROPERTY_CONTRACT_TYPE),
                         mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if(userPrefs.demandType.contains(
-                                DemandType.Internal.type)){ ContractType.FRC.type }else if (userPrefs.demandType.contains(
+                                DemandType.Internal.type)||userPrefs.demandType.contains(
+                                DemandType.Others.type) ){ ContractType.FRC.type }else if (userPrefs.demandType.contains(
                                 DemandType.Intracity.type)){
                             ContractType.INTRACITY.type} else {
                             ContractType.FRC.type}))
