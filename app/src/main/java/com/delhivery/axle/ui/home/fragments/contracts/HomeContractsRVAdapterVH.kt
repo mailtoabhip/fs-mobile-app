@@ -499,9 +499,9 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
      binding.expressToggle.text =   "${context.getString(string.action_express)} (${item.data.expressCount})"
      binding.intracityToggle.text =   "${context.getString(string.action_intracity)} (${item.data.intraCity})"
     // filter visibility based on user's demand type
-        binding.expressToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
-        binding.nonExpressToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type) ||item.data.userDemandType.contains(DemandType.Others.type))View.VISIBLE else View.GONE
-        binding.intracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
+        binding.expressToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type)&&item.data.userContractDemand)View.VISIBLE else View.GONE
+        binding.nonExpressToggle.visibility = if((item.data.userDemandType.contains(DemandType.Internal.type)&&item.data.userContractDemand)||item.data.userDemandType.contains(DemandType.Others.type))View.VISIBLE else View.GONE
+        binding.intracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type)&&item.data.userContractDemand)View.VISIBLE else View.GONE
 
     when (item.data.filterType) {
      "Corporate"-> {

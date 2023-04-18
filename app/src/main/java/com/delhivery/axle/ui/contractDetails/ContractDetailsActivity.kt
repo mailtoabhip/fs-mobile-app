@@ -419,6 +419,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.clNonExpressBidStatus.visibility = data.isFRCContract()
               //LH contract within live bidding
               if(data.isItLHContract() || data.isItIntraCityContract()){
+                binding.bidPmtFtlStatus.visibility = View.VISIBLE
                 binding.bidReceived.text = state.bidsCount.toString()+" "+ getString(string.bid_received)
                 binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 if (lowestTBid?.bidAmount != null) {
@@ -468,20 +469,17 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     binding.clBidYet.visibility = View.VISIBLE
                     binding.bidUserStatusOrAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                     binding.bidPmtFtl.visibility = View.VISIBLE
-                    if(data.isUnderOneHour()){
-                      binding.bidPmtFtl.text =getString(string.current_lowest)
+                    if(data.isItLHContract()|| data.isItIntraCityContract()){
+                      binding.bidPmtFtl.text =getString(string.your_bid)
                     }else{
-                      if(data.isItLHContract()|| data.isItIntraCityContract()){
-                        binding.bidPmtFtl.visibility = View.GONE
+                      if(data.biddingType?.toLowerCase()=="pmt"){
+                        binding.bidPmtFtl.text = getString(string.your_pmt_rate)
                       }else{
-                        if(data.biddingType?.toLowerCase()=="pmt"){
-                          binding.bidPmtFtl.text = getString(string.your_pmt_rate)
-                        }else{
-                          binding.bidPmtFtl.text = getString(string.your_ftl_rate)
-                        }
+                        binding.bidPmtFtl.text = getString(string.your_ftl_rate)
                       }
-
                     }
+
+
 
             }
             binding.buttonConfirm.setOnClickListener {
@@ -623,11 +621,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         val value = data.paymentSlabs!!.get(key).asString
         paymentSlabsArray.add(PaymentSlabs(key,"₹ "+value))
       }
-      if(keys.size<5){
-        binding.paymentSlabsMoreSlab.visibility =  View.GONE
-      }else{
-        binding.paymentSlabsMoreSlab.visibility =  View.VISIBLE
-      }
+        binding.paymentSlabsMoreSlab.visibility = if(data.isPaymentSlabsVisible()&&keys.size>3) View.VISIBLE else View.GONE
+
       val contractPaymentSlabsAdapter  = ContractPaymentSlabsAdapter(paymentSlabsArray,data,this@ContractDetailsActivity)
       binding.rvPaymentSlabs.apply {
         layoutManager = LinearLayoutManager(applicationContext)

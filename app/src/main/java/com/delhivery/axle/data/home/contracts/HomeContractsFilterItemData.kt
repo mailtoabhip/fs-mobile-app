@@ -3,7 +3,7 @@ package com.delhivery.axle.data.home.contracts
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeContractsFilterItemData(
-  var filterType: String, var expressCount:Int, var nonExpressCount:Int, var intraCity:Int, var userDemandType:String
+  var filterType: String, var expressCount:Int, var nonExpressCount:Int, var intraCity:Int, var userDemandType:String,var userContractDemand:Boolean
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeContractsFilterItemDataKeyPrefix
 }

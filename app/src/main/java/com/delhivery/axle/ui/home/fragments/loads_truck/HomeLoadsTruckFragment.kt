@@ -153,10 +153,10 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_CONTRACT_TAB_CLICK,mutableListOf(PROPERTY_USER_ID,
                         PROPERTY_PHONE_NO,
                         PROPERTY_CONTRACT_TYPE),
-                        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if(userPrefs.demandType.contains(
-                                DemandType.Internal.type)||userPrefs.demandType.contains(
+                        mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",if((userPrefs.demandType.contains(
+                                DemandType.Internal.type)&&userPrefs.contractDemand)||userPrefs.demandType.contains(
                                 DemandType.Others.type) ){ ContractType.FRC.type }else if (userPrefs.demandType.contains(
-                                DemandType.Intracity.type)){
+                                DemandType.Intracity.type)&& userPrefs.contractDemand){
                             ContractType.INTRACITY.type} else {
                             ContractType.FRC.type}))
                 }

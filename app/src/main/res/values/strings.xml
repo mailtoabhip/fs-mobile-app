@@ -676,7 +676,7 @@
   <string name="custom_date">10 nov</string>
   <string name="you_have_not_bid_yet">You have not bid yet</string>
   <string name="your_pmt_bid">Your PMT bid</string>
-  <string name="your_bid_ftl_rate">Your bid (FTL rate)</string>
+  <string name="your_bid_ftl_rate">Your Bid </string>
   <string name="higher_tha_other_by_500">Higher tha other by 500</string>
   <string name="_2_bids_received">2 Bids received</string>
   <string name="higher_than_other_by_500">Higher than other by 500</string>
@@ -717,7 +717,7 @@
   <string name="cancelled">Cancelled</string>
   <string name="revise_your_bid">Revise Your Bid</string>
   <string name="bid_received">Bids Received</string>
-  <string name="higher_than">\u2022 Higher than other by"</string>
+  <string name="higher_than">Higher than other by"</string>
   <string name="current_lowest">Current Lowest Bid</string>
   <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
   <string name="your_ftl_rate">Your Bid (FTL Rate)</string>
@@ -740,6 +740,7 @@
   <string name="view_on_map">View on map</string>
   <string name="status">Status</string>
   <string name="truck_type">Type</string>
+  <string name="vehicle_type">Vehicle Type</string>
   <string name="enter_reporting_center">Enter Reporting Center</string>
   <string name="select_reporting_center">Select Reporting Center</string>
   <string name="add_bid_only">Add bid only if you can match the vehicle type</string>

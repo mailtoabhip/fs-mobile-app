@@ -245,7 +245,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_10dp"
-            android:text="@string/truck_type"
+            android:text="@string/vehicle_type"
             android:textColor="@color/heading_black"
             android:visibility="visible"
             android:textSize="@dimen/text_14sp"

@@ -281,7 +281,7 @@
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
               tools:visibility="gone"
-              android:visibility="@{transaction.paymentSlabsVisibility()}"
+              android:visibility="gone"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/rvPaymentSlabs"
               />
@@ -930,6 +930,7 @@
               app:layout_constraintStart_toStartOf="@id/bidAmount"
               android:textSize="@dimen/text_12sp"
               android:visibility="gone"
+              android:text="@string/your_bid_ftl_rate"
               tools:text="@string/your_bid_ftl_rate"/>
           <androidx.appcompat.widget.AppCompatImageView
               android:id="@+id/moneyIcon"

@@ -131,7 +131,6 @@ data class HomeBidsRequestItemData(
   @SerializedName("origin_longitude")val longitude:String?,
   @SerializedName("origin_latitude")val latitude:String?,
   @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
-
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -1244,10 +1243,7 @@ data class HomeBidsRequestItemData(
       View.GONE
     }else{
       if (transactionBid != null) {
-        when (transactionBid!!.status()) {
-          Accepted, Open -> View.VISIBLE
-          else -> View.GONE
-        }
+        View.VISIBLE
       } else {
         View.GONE
       }
@@ -1256,15 +1252,22 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isPaymentSlabsVisible():Boolean = if (contractType==ContractType.INTRACITY.type) {
+    if(transactionStatus==TransactionStatus.Cancelled.statusId){
+     false
+    }else{
+      transactionBid != null
+    }
+  } else {
+    false
+  }
+
   fun routeVehicleMarginVisibility()=if (contractType==ContractType.INTRACITY.type) {
     if(transactionStatus==TransactionStatus.Cancelled.statusId){
       View.VISIBLE
     }else{
       if (transactionBid != null) {
-        when (transactionBid!!.status()) {
-          Accepted, Open -> View.GONE
-          else -> View.VISIBLE
-        }
+        View.GONE
       } else {
         View.VISIBLE
       }
@@ -1274,7 +1277,7 @@ data class HomeBidsRequestItemData(
   }
   fun vehiclePermitRequiredText():String=
    if(nepRequired!=null) {
-     if (nepRequired!!) "\u2022\u0020 Entry Permit Required" else "\u2022\u0020 No Entry Permit Required "
+     if (nepRequired!!) "\u2022\u0020 No Entry Permit Required" else "\u2022\u0020 No Entry Permit not Required "
    }else{
      ""
    }

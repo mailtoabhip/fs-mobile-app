@@ -48,17 +48,17 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,originCityList:String?) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,originCityList
     ).convertResponse()
 
 
   /**
    * Get contracts summary count
    */
-  fun fetchContractsSummaryCount() =
-    transactionService.contractsCountSummary("yes"
+  fun fetchContractsSummaryCount(originCityList:String?) =
+    transactionService.contractsCountSummary("yes",originCityList
     ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions
