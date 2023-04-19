@@ -162,8 +162,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   binding.bidClosingStatusTime.text = hrs+ " hrs"
                   binding.bidClosingStatusTime.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.heading_black))
                 }else{
-                  binding.bidClosingStatusTime.visibility = View.GONE
-                  binding.bidClosingStatus.text = viewModel.transaction.bidEndTime()
+                  if(viewModel.transaction.transactionStatus==TransactionStatus.Cancelled.statusId){
+                    binding.bidClosingStatusTime.visibility = View.VISIBLE
+                  }else{
+                    binding.bidClosingStatusTime.visibility = View.GONE
+                    binding.bidClosingStatus.text = viewModel.transaction.bidEndTime()
+                  }
+
                 }
 
               } catch (e: Exception) {
