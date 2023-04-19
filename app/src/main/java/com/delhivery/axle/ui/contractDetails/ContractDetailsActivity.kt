@@ -291,7 +291,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             }
             binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
             binding.routeDetails.intraCityTvState.text = t.originState
-            binding.routeDetails.intraCityTvCity.text = t.originCity?.capitalize()+", "
+            binding.routeDetails.intraCityTvCity.text = t.originCity?.capitalize()
             binding.routeDetails.intraCityTvHubCity.text = t.origin
             binding.routeDetails.intraCityTvMapView.setOnClickListener{
               try {

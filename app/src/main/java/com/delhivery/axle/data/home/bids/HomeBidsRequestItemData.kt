@@ -1277,7 +1277,7 @@ data class HomeBidsRequestItemData(
   }
   fun vehiclePermitRequiredText():String=
    if(nepRequired!=null) {
-     if (nepRequired!!) "\u2022\u0020 No Entry Permit Required" else "\u2022\u0020 No Entry Permit not Required "
+     if (nepRequired!!) "\u2022\u0020 No Entry Permit Required" else "\u2022\u0020 No Entry Permit Not Required "
    }else{
      ""
    }
