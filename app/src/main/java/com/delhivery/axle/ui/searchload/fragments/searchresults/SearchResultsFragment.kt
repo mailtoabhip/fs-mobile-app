@@ -521,7 +521,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 PROPERTY_SEARCH_BODY_TYPE),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
-                binding.spinnerTruckType.selectedItem.toString())
+                if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem.toString() else binding.spinnerTruckType.selectedItem.toString())
         )
       }else{
         analyticsUtil.moEngageTrackEvent(
@@ -530,7 +530,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
-                binding.spinnerTruckType.selectedItem.toString(),
+              if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem.toString() else binding.spinnerTruckType.selectedItem.toString(),
               numResults.toString())
         )
       }

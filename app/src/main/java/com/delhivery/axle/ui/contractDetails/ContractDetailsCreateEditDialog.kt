@@ -472,7 +472,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
               PROPERTY_PHONE_NO,
               PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF, PROPERTY_SOURCE),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.transactionStatus?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString(),source))
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString(),source))
 
           dialogInterface.editBid(
             transaction.isPMTIndent(), transaction.key(), transactionBid.key(),

@@ -254,7 +254,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             mutableListOf(
               PROPERTY_USER_ID,
               PROPERTY_PHONE_NO, PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE,
-              PROPERTY_STATUS
+              PROPERTY_SOURCE
             ),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
               _transaction.uuid ?: " ",_transaction.contractEventStatusText(),
