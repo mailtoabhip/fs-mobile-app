@@ -35,7 +35,7 @@ interface TransactionService {
     @Query("request_types") requestType:String?,
     @Query("contract_type") contractType:String?,
     @Query("active_contract") activeContract:Boolean?,
-    @Query("limit") limit: Int= UserSearchLimit
+    @Query("limit") limit: Int= 100
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
