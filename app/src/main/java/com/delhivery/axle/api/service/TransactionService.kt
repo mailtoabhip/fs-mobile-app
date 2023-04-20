@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
@@ -33,7 +34,8 @@ interface TransactionService {
     @Query("apply_100km_logic") nearby100kmcities: Boolean?,
     @Query("request_types") requestType:String?,
     @Query("contract_type") contractType:String?,
-    @Query("active_contract") activeContract:Boolean?
+    @Query("active_contract") activeContract:Boolean?,
+    @Query("limit") limit: Int= UserSearchLimit
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
