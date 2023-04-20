@@ -368,6 +368,22 @@ object DateUtils {
     }
   }
 
+  fun getFormattedTimeIn12Hrs(time:String):String{
+    val split = time.split(":")
+    return if(split.size==3){
+      if(split[0].toInt()<12){
+        split[0]+":"+split[1] +" AM"
+      }else if(split[0].toInt()==12){
+        split[0]+":"+split[1] +" PM"
+      } else if(split[0].toInt()==24){
+        (split[0].toInt()-12).toString()+":"+split[1] +" AM"
+      }else{
+        if(split[0].toInt()-12<10) "0"+(split[0].toInt()-12).toString()+":"+split[1] +" PM" else (split[0].toInt()-12).toString()+":"+split[1] +" PM"
+      }
+    }else{
+      ""
+    }
+  }
 
 }
 

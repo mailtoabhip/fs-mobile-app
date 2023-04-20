@@ -784,6 +784,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.isKycVerified, false)
 
+  var contractDemand: Boolean
+    set(value) = editor.putBoolean(PrefKeys.contractDemand, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.contractDemand, false)
+
   var userPreviousScreen: String
     set(value) = editor.putString(PrefKeys.userPreviousScreen,value)
       .apply()
@@ -1031,6 +1036,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.MoengageFCMTokenGenerated)
       .apply()
+    editor.remove(PrefKeys.contractDemand)
+      .apply()
     editor.commit()
   }
 
@@ -1188,7 +1195,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     subStatus = user.supplierDetails?.subStatus?:""
     creationDate = user.supplierDetails?.creationDate?:""
     isKycVeriifed = user.supplierDetails?.isKycVerified?:false
-
+    contractDemand = user.supplierDetails?.contractDemand?:false
   }
 
 
@@ -1335,6 +1342,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val orderRank = "order_rank"
     const val previousNavigationTab = "previous_navigation_tab"
     const val currentNavigationTab = "current_navigation_tab"
+    const val contractDemand= "contract_demand"
+
 
   }
 }

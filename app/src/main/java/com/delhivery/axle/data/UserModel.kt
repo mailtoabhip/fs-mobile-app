@@ -170,5 +170,7 @@ data class SupplierModel(
         @SerializedName("status") var status: String?,
         @SerializedName("sub_status") var subStatus: String?,
         @SerializedName("is_kyc_verified") var isKycVerified: Boolean?,
-        @SerializedName("creation_date") var creationDate: String?
+        @SerializedName("creation_date") var creationDate: String?,
+        @SerializedName("contract_demand")val contractDemand:Boolean?=false
+
   )

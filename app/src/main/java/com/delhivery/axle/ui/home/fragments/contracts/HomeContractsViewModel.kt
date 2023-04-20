@@ -3,12 +3,17 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
+import com.delhivery.axle.api.response.ContractsSummaryResponse
+import com.delhivery.axle.api.response.LowestBidResponse
+import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.data.SixTuple
+import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
@@ -17,12 +22,14 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
+import io.reactivex.functions.Function3
 
 import javax.inject.Inject
 
@@ -84,8 +91,7 @@ class HomeContractsViewModel@Inject constructor(
    * Fetch user [Requested] transactions
    */
   fun fetchUserTransactions(
-    paginate: Boolean = false, demandType: String,
-    isInternal: Boolean = false) {
+    paginate: Boolean = false, demandType: String) {
     if (!paginate ) {
       offset = 0
       allActiveFetched = false
@@ -108,22 +114,27 @@ class HomeContractsViewModel@Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
+    val originCityList= ArrayList<String>()
+    if(userPrefs.getLanesPreference()!=null ){
+      for(item in userPrefs.getLanesPreference()!!){
+        originCityList?.add(item?.origin?.orion_db_city_code?:"")
+      }
+    }
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit)
+        UserTripsLoadLimit,if(originCityList.isNotEmpty()&& demandType==DemandType.Intracity.type)originCityList?.joinToString(separator = ",")else null)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
         hasMoreData = _res.hasNext
         allActiveFetched = _res.allActiveFetched?:false
-        var oppositeDemandType = if(demandType=="Internal"){ "Corporate" }else{ "Internal" }
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true),
           bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-          transactionsRepository.fetchContractsTransactions(0, oppositeDemandType,null,1,"yes"),
-          transactionsRepository.fetchContractsTransactions(0, demandType,null,1,"yes"),
-          ) { t1, t2, t3, t4 ->
-          SixTuple(t1.first, t1.second, t2.second, t3, _res,t4)
-        }
+          transactionsRepository.fetchContractsSummaryCount(if(originCityList.isNotEmpty())originCityList?.joinToString(separator = ",")else null),
+          Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse,
+              Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse>> { t1, t2,t3 ->
+            Quintuple(t1.first, t1.second, t2.second,t3,_res)
+          })
       }
       .onBackground()
       .subscribe { _tRes, error ->
@@ -134,45 +145,78 @@ class HomeContractsViewModel@Inject constructor(
 
             val loads = _tRes.first
             val bids = _tRes.second
-
-            if (_tRes.fourth.transactions.isEmpty() && _tRes.fifth.transactions.isEmpty()) {
-              add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
-            } else {
               add(Pair(HomeContractsSearchItem(), AddUpdate))
+              // calculating the count based on user demand type
               var totalActive=0
               var expressCount =0
               var nonExpressCount =0
-              if(userPrefs.demandType.contains("Internal")){
-                if(_tRes.fourth.activeCount!=null && _tRes.sixth.activeCount!=null){
-                  totalActive = _tRes.fourth.activeCount+_tRes.sixth.activeCount
-                }
-              }else{
-                val contractType = "FRC"
-                if(_tRes.fourth.activeCount!=null && _tRes.fourth.transactions.isNotEmpty()&& _tRes.fourth.transactions.isNotEmpty() &&_tRes.fourth.transactions[0].contractType==contractType){
-                  totalActive = _tRes.fourth.activeCount
-                }
-                else if(_tRes.sixth.activeCount!=null && _tRes.sixth.transactions.isNotEmpty()&& _tRes.sixth.transactions.isNotEmpty() &&_tRes.sixth.transactions[0].contractType==contractType){
-                  totalActive = _tRes.sixth.activeCount
-                }
+              var intraCityCount =0
 
-              }
-               if(_tRes.fourth.transactions.isNotEmpty()){
-                 if(_tRes.fourth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
-                   expressCount = _tRes.fourth.total
-                 }else{
-                   nonExpressCount = _tRes.fourth.total
-                 }
-               }
-              if(_tRes.sixth.transactions.isNotEmpty()){
-                if(_tRes.sixth.transactions.get(0).isItLHContract()&& userPrefs.demandType.contains("Internal")){
-                  expressCount = _tRes.sixth.total
+                for(item in _tRes.fourth.contractsCount.all){
+                  if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
+                    if (item.key == ContractType.LH_FTL.type) {
+                      expressCount = item.count ?: 0
+                    }
+                    if (item.key == ContractType.FRC.type) {
+                      nonExpressCount = item.count ?: 0
+                    }
+                    if (item.key == ContractType.INTRACITY.type) {
+                      intraCityCount = item.count ?: 0
+                    }
+                  }else if(userPrefs.demandType.contains(DemandType.Internal.type) && userPrefs.contractDemand){
+                    if(item.key==ContractType.LH_FTL.type){
+                      expressCount =item.count?:0
+                    }
+                    if(item.key==ContractType.FRC.type){
+                      nonExpressCount=item.count?:0
+                    }
+
+                  }else if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand){
+                    if(item.key==ContractType.INTRACITY.type){
+                      intraCityCount = item.count?:0
+                    }
                 }else{
-                  nonExpressCount = _tRes.sixth.total
+                  if(item.key==ContractType.FRC.type){
+                    nonExpressCount=item.count?:0
+                  }
+              }}
+                for(item in _tRes.fourth.contractsCount.active){
+                  if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
+                    if(item.key==ContractType.LH_FTL.type){
+                    totalActive+=item.count?:0
+                  }
+                  if(item.key==ContractType.FRC.type){
+                    totalActive+=item.count?:0
+                  }
+                  if(item.key==ContractType.INTRACITY.type){
+                    totalActive+=item.count?:0
+                  }
+                }else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){
+                    if(item.key==ContractType.LH_FTL.type){
+                      totalActive+=item.count?:0
+                    }
+                    if(item.key==ContractType.FRC.type){
+                      totalActive+=item.count?:0
+                    }
+
+                }else if(userPrefs.demandType.contains(DemandType.Intracity.type)&&userPrefs.contractDemand){
+                    if(item.key==ContractType.INTRACITY.type){
+                      totalActive+=item.count?:0
+                    }
+                }else{
+                    if(item.key==ContractType.FRC.type){
+                      totalActive+=item.count?:0
+                    }
                 }
               }
-              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(isInternal, expressCount ,nonExpressCount,userPrefs.demandType)), AddUpdate))
+
+              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
 
               loadsCountLiveData.postValue(totalActive)
+             if (_tRes.fifth.transactions.isEmpty()) {
+               add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
+              }
+              if(_tRes.fifth.transactions.isNotEmpty()){
               for ((index, load) in loads.toMutableList().withIndex()) {
                 try {
                   load.transactionId?.let { txnIds.add(it) }
@@ -194,7 +238,8 @@ class HomeContractsViewModel@Inject constructor(
                 add(Pair(HomeContractsRequestItem(load), Add))
               }
 
-            }
+              }
+
           }.let { userLoadsData.postValue(it) }
         }else{
           mutableListOf<Pair<BaseHomeContractsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

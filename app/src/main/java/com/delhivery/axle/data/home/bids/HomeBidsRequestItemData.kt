@@ -8,6 +8,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.RequestType
+import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
 import com.delhivery.axle.data.bids.TransactionBid
@@ -23,7 +26,9 @@ import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -99,6 +104,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("intermediary_stop2_pincode") val intermediaryStop2AddressPin: String?,
   @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Triple<String?, String?,String?>?>? =Triple(Pair(null, null), Pair(null, null), Triple(null, null,null)),
   @SerializedName("origin_city_code") var originCityCode: String? =null,
+  @SerializedName("origin_city") var originCity: String? =null,
   @SerializedName("destination_city_code") var destinationCityCode: String? =null,
   @SerializedName("additional_remarks") var additionalRemarks: String? = null,
   @SerializedName("order_creation_remarks") var orderCreationRemarks: String? =null,
@@ -113,7 +119,18 @@ data class HomeBidsRequestItemData(
   @SerializedName("vehicle_count_cc_lane") var vehicleCountCCLane:Int? =  null,
   @SerializedName("vehicle_count_per_route") var vehicleCountPerRoute:Int? =  null,
   @SerializedName("operating_days") var operatingDays:Int? =  null,
-
+  @SerializedName("slab_payout_details") var paymentSlabs:JsonObject? =  null,
+  @SerializedName("reporting_time") var reportingTime:String? =  null ,
+  @SerializedName("intracity_days") var intracityDays:String? =  null ,
+  @SerializedName("intracity_hours") var intracityHours:String? =  null ,
+  @SerializedName("intracity_kms") var intracityKms:String? =  null ,
+  @SerializedName("intracity_extra_km_rate") var intracityExtraKmRate:String? =  null ,
+  @SerializedName("intracity_extra_hour_rate") var intracityExtraHourRate:String? =  null ,
+  @SerializedName("intracity_extra_day_rate") var intracityExtraDayRate:String? =  null ,
+  @SerializedName("nep_required") var nepRequired:Boolean? =  false ,
+  @SerializedName("origin_longitude")val longitude:String?,
+  @SerializedName("origin_latitude")val latitude:String?,
+  @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -298,19 +315,24 @@ data class HomeBidsRequestItemData(
   }
 
   fun tripContractRoute(): String {
-    val stopBuilder = StringBuilder()
-    stopBuilder.append(originCityName())
-      .append(" to ")
-    if (!TextUtils.isEmpty(stop1City)) {
-      stopBuilder.append(StringUtils.capitalize(stop1City))
+    if(contractType==ContractType.INTRACITY.type){
+      return StringUtils.capitalize(origin)?:""
+    }else{
+      val stopBuilder = StringBuilder()
+      stopBuilder.append(originCityName())
         .append(" to ")
+      if (!TextUtils.isEmpty(stop1City)) {
+        stopBuilder.append(StringUtils.capitalize(stop1City))
+          .append(" to ")
+      }
+      if (!TextUtils.isEmpty(stop2City)) {
+        stopBuilder.append(StringUtils.capitalize(stop2City))
+          .append(" to ")
+      }
+      stopBuilder.append(destinationCityName())
+      return stopBuilder.toString()
     }
-    if (!TextUtils.isEmpty(stop2City)) {
-      stopBuilder.append(StringUtils.capitalize(stop2City))
-        .append(" to ")
-    }
-    stopBuilder.append(destinationCityName())
-    return stopBuilder.toString()
+
   }
 
   /**
@@ -410,10 +432,28 @@ data class HomeBidsRequestItemData(
   fun vehicleCloseOpenDrawable() = DrawableProviderUtils.vehicleOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
 
   /**
-   * @return vehicleCloseOpenDrawable basis[indent tyoe]
+   * @return vehicleRateDrawable basis[indent tyoe]
    */
   @DrawableRes
-  fun vehicleOperationDrawable() = DrawableProviderUtils.vehicleOperatingDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
+  fun vehicleRateDrawable() = DrawableProviderUtils.vehicleRateDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
+
+  /**
+   * @return vehicleCloseOpenOperatingPerMonthDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun  vehicleCloseOpenOperatingPerMonthDrawable() = DrawableProviderUtils.vehicleCloseOpenOperatingPerMonthDrawable(if (transactionStatus=="cancelled"){"cancel"}else{"open"} ,contractType )
+
+  /**
+   * @return vehicleOperationDrawableKmPerMonth basis[indent tyoe]
+   */
+  @DrawableRes
+  fun vehicleOperationDrawableKmPerMonth() = DrawableProviderUtils.vehicleOperationDrawableKmPerMonth(if (transactionStatus=="cancelled"){"cancel"}else{"open"}, contractType)
+
+  /**
+   * @return vehicleOperationDrawablePerHrs basis[indent tyoe]
+   */
+  @DrawableRes
+  fun vehicleOperationDrawablePerHrs() = DrawableProviderUtils.vehicleOperationDrawablePerHrs(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
 
   /**
    * @return tripCloseOpenDrawable basis[indent tyoe]
@@ -462,7 +502,7 @@ data class HomeBidsRequestItemData(
     truckType!!.capitalize() ?: ""
   } else {
       truckSpecification?.let {
-        it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+        it.truckDispName
       }
   }
 
@@ -531,26 +571,14 @@ data class HomeBidsRequestItemData(
     }
 
   fun contractLowestbidDifference():String {
-    var lowestOfBidAndTargetPrice = 0.0
-    if(lowestBid!=null&& lowestBid?:0.0>0.0){
-        if(targetPrice!=null && targetPrice<lowestBid?:0.0){
-          lowestOfBidAndTargetPrice = targetPrice
-        }else{
-          lowestOfBidAndTargetPrice = lowestBid?:0.0
-        }
-    } else {
-      if(targetPrice!=null){
-        lowestOfBidAndTargetPrice = targetPrice
-      }
-    }
-    if ((transactionBid?.bidAmount ?: 0.0 > lowestOfBidAndTargetPrice ?: 0.0) && (numBids > 0)) {
+    return if ((transactionBid?.bidAmount ?: 0.0 > lowestBid?:0.0) && (numBids > 0)) {
       if (isPMTIndent()) {
-         return " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestOfBidAndTargetPrice))}" + " /MT"
+        " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - ( lowestBid?:0.0))}" + " /MT"
       } else {
-       return " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - (lowestOfBidAndTargetPrice))}"
+        " ₹ ${StringUtils.formatAmount((transactionBid?.bidAmount ?: 0.0) - ( lowestBid?:0.0))}"
       }
     } else {
-     return ""
+      ""
     }
   }
 
@@ -1100,7 +1128,7 @@ data class HomeBidsRequestItemData(
     }
 
   fun contractBidsStatusTextVisibility() =
-    if(transactionStatus=="cancelled"){
+    if(transactionStatus==TransactionStatus.Cancelled.statusId){
       View.GONE
     }
     else {
@@ -1108,20 +1136,46 @@ data class HomeBidsRequestItemData(
     }
 
 
-  fun isLHContract() = if (contractType == "LH_FTL") {
+  fun isLHContract() = if (contractType == ContractType.LH_FTL.type) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
-  fun isItContract() = requestType == "contract"
+  fun isItContract() = requestType == RequestType.Contract.type
 
-  fun isItLHContract() = contractType == "LH_FTL"
+  fun isItLHContract() = contractType == ContractType.LH_FTL.type
+  fun isItFRContract() = contractType == ContractType.FRC.type
+  fun isItIntraCityContract() = contractType == ContractType.INTRACITY.type
 
-  fun isFRCContract() = if (contractType == "LH_FTL") {
-    View.GONE
-  } else {
+
+  fun isFRCContract() = if (contractType == ContractType.FRC.type) {
     View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isFRCLHContract() = if (contractType == ContractType.FRC.type || contractType==ContractType.LH_FTL.type) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+  fun isLHIntraCityContract() = if (contractType == ContractType.LH_FTL.type || contractType==ContractType.INTRACITY.type) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isIntraCityContract() = if (contractType == ContractType.INTRACITY.type) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isIntraCityContractWithBid() = if (contractType == ContractType.INTRACITY.type && transactionBid!=null) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   fun isLHContinousContract() = if (continuousConnection == true) {
@@ -1130,29 +1184,103 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-  fun isLHVehicleVisible() = if (contractType == "LH_FTL" && vehicleCountPerRoute != null) {
+  fun isLHVehicleVisible() = if (contractType == ContractType.LH_FTL.type && vehicleCountPerRoute != null) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
-  fun isLHVehicleRouteVisible() = if (contractType == "LH_FTL" && operatingDays!=null) {
+  fun isLHIntraCityVehicleVisible() = if ((contractType == ContractType.LH_FTL.type && vehicleCountPerRoute != null) || contractType==ContractType.INTRACITY.type) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
-  fun totalVehicleCount():String=
-    if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
-      (vehicleCountCCLane!! * vehicleCountPerRoute!!).toString() + " Vehicle"
-    }else if(vehicleCountCCLane==null && vehicleCountPerRoute!=null){
-      (1*vehicleCountPerRoute!!).toString() + " Vehicle"
-    }else {
-      ""
+  fun isLHVehicleRouteVisible() = if (contractType == ContractType.LH_FTL.type && operatingDays!=null) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isLHIntraCityVehicleRouteVisible() = if ((contractType == ContractType.LH_FTL.type && operatingDays!=null)|| contractType==ContractType.INTRACITY.type) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun totalVehicleCountOperationDays():String=
+    if(contractType==ContractType.INTRACITY.type){
+      vehicleOperatingDaysPerMonth()
+    }else{
+      if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
+        (vehicleCountCCLane!! * vehicleCountPerRoute!!).toString() + " Vehicle"
+      }else if(vehicleCountCCLane==null && vehicleCountPerRoute!=null){
+        (1*vehicleCountPerRoute!!).toString() + " Vehicle"
+      }else {
+        ""
+      }
     }
 
-  fun vehicleOperatingDays():String="$operatingDays days a week"
+  fun vehicleOperatingDays():String=if(isItIntraCityContract()){"~"+intracityKms+ " Kms"} else "$operatingDays days a week"
+  fun vehicleOperatingDaysLabel():String=if(isItIntraCityContract()){"Per Month"} else "Operating Days"
 
+  fun vehicleOperatingDaysPerMonth()= intracityDays?.toString()+" days"
+  fun vehicleOperatingDaysPerMonthLabel():String=if(isItIntraCityContract()){"Per Month"} else "Tentative Total vehicles"
+
+  fun vehicleOperatingHrsPerDays()="$intracityHours h"
+
+  fun intracityHours() = intracityHours+"h/day"
+  fun intracityDays() = "$intracityDays days/month"
+  fun intracityKms() = "~$intracityKms Kms/month"
+
+  fun intracityExtraKmRate()="₹ "+ intracityExtraKmRate
+  fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
+  fun intracityExtraDayRate()="₹ "+ intracityExtraDayRate
+
+
+  fun paymentSlabsVisibility() = if (contractType==ContractType.INTRACITY.type) {
+    if(transactionStatus==TransactionStatus.Cancelled.statusId){
+      View.GONE
+    }else{
+      if (transactionBid != null) {
+        View.VISIBLE
+      } else {
+        View.GONE
+      }
+    }
+  } else {
+    View.GONE
+  }
+
+  fun isPaymentSlabsVisible():Boolean = if (contractType==ContractType.INTRACITY.type) {
+    if(transactionStatus==TransactionStatus.Cancelled.statusId){
+     false
+    }else{
+      transactionBid != null
+    }
+  } else {
+    false
+  }
+
+  fun routeVehicleMarginVisibility()=if (contractType==ContractType.INTRACITY.type) {
+    if(transactionStatus==TransactionStatus.Cancelled.statusId){
+      View.VISIBLE
+    }else{
+      if (transactionBid != null) {
+        View.GONE
+      } else {
+        View.VISIBLE
+      }
+    }
+  } else {
+    View.VISIBLE
+  }
+  fun vehiclePermitRequiredText():String=
+   if(nepRequired!=null) {
+     if (nepRequired!!) "\u2022\u0020 No Entry Permit Required" else "\u2022\u0020 No Entry Permit Not Required "
+   }else{
+     ""
+   }
   fun totalVehicleCountOnList():String=
     if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
       "(X "+(vehicleCountCCLane!! * vehicleCountPerRoute!!).toString()+" Veh.)"
@@ -1237,6 +1365,10 @@ data class HomeBidsRequestItemData(
       ""
     }
 
+  fun operatingDistancePerMoth()= "~"+intracityKms+ " Kms/Month"
+  fun operatingDurations()= intracityDays+ " days/Month"+ " \u2022 "+ intracityHours+ "h/day"
+
+
   fun tripWays()=
     if(isItLHContract() && routeType!=null){
       if (routeType == "one_way") {
@@ -1253,7 +1385,7 @@ data class HomeBidsRequestItemData(
 
 
 @BindingAdapter("layoutMarginStart")
-fun setLayoutMarginBottom(view: View, dimen: Float) {
+fun setLayoutMarginBottom(view: View, dimen: Int) {
   val layoutParams = view.layoutParams as MarginLayoutParams
   layoutParams.marginStart = dimen.toInt()
   view.layoutParams = layoutParams
@@ -1283,9 +1415,18 @@ data class HaltCenters(
 
 )
 
+/**
+ * Monthly Payout detail
+ */
+data class PaymentSlabs(
+  @SerializedName("distance") val distance: String?,
+  @SerializedName("payout") val monthlyPayout: String?,
+
+)
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
+

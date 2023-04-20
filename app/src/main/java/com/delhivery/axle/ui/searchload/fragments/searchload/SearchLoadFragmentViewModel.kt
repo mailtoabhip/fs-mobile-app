@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.service.CityService
+import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.database.AppDatabase
@@ -23,11 +24,14 @@ import javax.inject.Inject
 class SearchLoadFragmentViewModel @Inject constructor(
   private val appDB: AppDatabase,
   private val cityService: CityService,
+  private val transactionService: TransactionService,
   private val bidsRepository: BidsRepository
 ) : BaseViewModel() {
 
   var citiesLiveData = MutableLiveData<List<CityModel>>()
   var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
+  var truckDisplayNamesLiveData = MutableLiveData<List<String>>()
+  var loadingProgressLiveData = MutableLiveData<Boolean>()
   /**
    * Search load history live data
    */
@@ -39,13 +43,15 @@ class SearchLoadFragmentViewModel @Inject constructor(
   fun saveToHistory(
     originCity: CityModel,
     destinationCity: CityModel,
-    type: String,
+    truckType: String?,
+    truckDisplayName: String?,
+    contractStatus: String?,
     requestType: String?,
-    contractType: String?
+    contractType: String?,
   ) {
     compositeDisposable += Single.fromCallable {
       appDB.searchHistoryDao()
-          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, type,if(requestType=="load") "fixed,spot" else "contract",contractType))
+          .newSearchEntry(SearchLoadHistoryEntity(originCity, destinationCity, truckType, truckDisplayName, contractStatus, if(requestType=="load") "fixed,spot" else "contract",contractType))
     }
         .onBackground()
         .subscribe { res, error ->
@@ -103,4 +109,28 @@ class SearchLoadFragmentViewModel @Inject constructor(
         }
   }
 
+  /**
+   * Fetch truck display names
+   */
+  fun fetchTruckDisplayNames(){
+    compositeDisposable+=transactionService.getTruckDisplayNames("yes")
+      .onBackground()
+      .doOnSubscribe{
+        loadingProgressLiveData.postValue(true)
+      }
+      .doFinally{
+        loadingProgressLiveData.postValue(false)
+      }
+      .subscribe { res, _ ->
+        if(res!=null){
+          val converted= mutableListOf<String>()
+          res.responseData?.truckDisplayNames?.forEach { it ->
+            converted.add(it.truckDisplayName)
+          }
+          truckDisplayNamesLiveData.postValue(converted)
+        }
+        else
+          truckDisplayNamesLiveData.postValue(null)
+      }
+  }
 }

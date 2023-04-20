@@ -81,6 +81,6 @@ class HomeContractsTimeoutItem(data: HomeContractsTimeOutItemData) :
  */
 class HomeContractsFilterItem(
   data: HomeContractsFilterItemData = HomeContractsFilterItemData(
-    false, 0,0,""
+    "", 0,0,0,"",false
   )
 ) : BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(Filters, data)

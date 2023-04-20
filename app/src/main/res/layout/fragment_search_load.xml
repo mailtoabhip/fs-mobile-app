@@ -8,6 +8,11 @@
         name="viewModel"
         type="com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel"
         />
+    <variable
+        name="intracity"
+        type="Boolean"
+        />
+    <import type="android.view.View"/>
   </data>
   <RelativeLayout
       android:id="@+id/container_search_load"
@@ -75,6 +80,7 @@
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
+          android:visibility="@{intracity?View.GONE : View.VISIBLE}"
           >
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -192,7 +198,128 @@
             style="@style/ActionButton"
             />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+      </androidx.constraintlayout.widget.ConstraintLayout>
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/clIntracitySearch"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          android:background="@color/white"
+          android:visibility="@{intracity?View.VISIBLE : View.GONE}">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/select_reporting_center_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:text="@string/select_reporting_center"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lineHeight="@dimen/size_20dp"
+            />
+
+        <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+            android:id="@+id/edit_reporting_center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_48dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:hint="@string/enter_reporting_center"
+            android:inputType="text"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/select_reporting_center_header"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/truck_type_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:text="@string/vehicle_type"
+            android:textColor="@color/heading_black"
+            android:visibility="visible"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_reporting_center"
+            app:lineHeight="@dimen/size_20dp"
+            />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner_truck_display_name"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_40dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_search_white_load_spinner"
+            android:paddingBottom="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_8dp"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="visible"
+            android:textColor="@color/heading_black"
+            app:layout_constraintBottom_toTopOf="@id/status_header"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/truck_type_header"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/status_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_4dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:text="@string/status"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@id/spinner_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:lineHeight="@dimen/size_20dp"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_12dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:text="@string/action_search"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/ActionButton"
+            />
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spinner_status"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_40dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:background="@drawable/bg_search_white_load_spinner"
+            android:paddingBottom="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_8dp"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="visible"
+            android:textColor="@color/heading_black"
+            app:layout_constraintBottom_toTopOf="@id/btn_search"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -205,6 +332,7 @@
         android:layout_marginBottom="@dimen/size_4dp"
         android:layout_marginTop="@dimen/size_4dp"
         android:alpha="0"
+        android:visibility="@{intracity?View.GONE : View.VISIBLE}"
         android:orientation="vertical"
         />
 
@@ -219,6 +347,7 @@
         android:letterSpacing="0.01"
         android:lineSpacingExtra="4sp"
         android:text="@string/label_your_recent_search"
+        android:visibility="@{intracity?View.GONE : View.VISIBLE}"
         android:textColor="@color/sub_heading_black"
         />
   </RelativeLayout>

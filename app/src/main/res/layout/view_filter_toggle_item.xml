@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+  <androidx.appcompat.widget.AppCompatTextView
+      android:id="@+id/toggle_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+      android:paddingBottom="@dimen/size_6dp"
+      android:paddingEnd="@dimen/size_10dp"
+      android:paddingStart="@dimen/size_10dp"
+      android:paddingTop="@dimen/size_6dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

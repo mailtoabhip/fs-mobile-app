@@ -1,6 +1,11 @@
 package com.delhivery.axle.api.repository
 
 import android.text.BoringLayout
+import com.delhivery.axle.api.repository.ContractStatus.BiddingClosed
+import com.delhivery.axle.api.repository.ContractStatus.Cancelled
+import com.delhivery.axle.api.repository.ContractStatus.CollectingBids
+import com.delhivery.axle.api.repository.ContractStatus.LiveBidding
+import com.delhivery.axle.api.repository.ContractStatus.ResultDeclared
 import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
@@ -43,9 +48,17 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,count:String?=null) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,originCityList:String?) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,count
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,originCityList
+    ).convertResponse()
+
+
+  /**
+   * Get contracts summary count
+   */
+  fun fetchContractsSummaryCount(originCityList:String?) =
+    transactionService.contractsCountSummary("yes",originCityList
     ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions
@@ -55,10 +68,13 @@ class TransactionsRepository @Inject constructor(
     source: String?,
     destination: String?,
     truckType: String?,
+    truckDisplayName: String?,
+    contractStatus: String?,
     requestType:String?,
     contractType:String?
   ) = transactionService.transactions(
-      offset, Requested.statusId + "," + InEnquiry.statusId, source, destination, truckType,if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+      offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
+    contractsMap[contractStatus]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
     contractType,if(requestType=="load") null else true
   ).convertResponse()
 
@@ -74,7 +90,7 @@ class TransactionsRepository @Inject constructor(
   /**
    * Transaction details
    */
-  fun transactionDetails(id: String) = transactionService.transactionDetails(id).convertResponse()
+  fun transactionDetails(id: String, spId:String?=null) = transactionService.transactionDetails(id,spId).convertResponse()
 
   /**
    * Transaction trip meter
@@ -93,5 +109,42 @@ enum class TransactionStatus(val statusId: String) {
   Requested("requested"),
   InEnquiry("in_enquiry"),
   TruckConfirmed("truck_confirmed"),
-  Completed("completed")
+  Completed("completed"),
+  Cancelled("cancelled")
+}
+
+enum class ContractType(val type: String) {
+  LH_FTL("LH_FTL"),
+  FRC("FRC"),
+  INTRACITY("INTRACITY")
+}
+
+enum class RequestType(val type: String) {
+  Contract("contract"),
+  Spot("spot"),
+  Fixed("fixed")
+}
+enum class DemandType(val type: String) {
+  Internal("Internal"),
+  Others("Others"),
+  Intracity("Intracity"),
+  Corporate("Corporate")
+}
+val contractsMap= mapOf(
+  Pair("Live Bidding", LiveBidding),
+  Pair("Collecting Bids",CollectingBids),
+  Pair("Bidding Closed",BiddingClosed),
+  Pair("Cancelled",Cancelled),
+  Pair("Result Declared",ResultDeclared)
+)
+
+/**
+ * Map the status values for contracts to their corresponding values used in the api
+ */
+enum class ContractStatus(val statusId:String){
+  LiveBidding("live_bidding"),
+  CollectingBids("active_bidding"),
+  BiddingClosed("closed_bidding"),
+  Cancelled("cancelled"),
+  ResultDeclared("allocated")
 }

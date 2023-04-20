@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -53,7 +55,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   var visible = false
   var demandType: String = ""
-  var isInternal = false
   var pos = 0
 
 
@@ -82,8 +83,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-    isInternal = userPrefs.demandType.contains("Internal")
-    demandType= if(userPrefs.demandType.contains("Internal")){ "Internal" }else{ "Corporate" }
+
+    demandType= if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else{""}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -117,12 +118,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     })
     viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       HomeLoadsTruckFragment._instance.dataToUpdate("contracts",it>0,it)
-      _title = when (it) {
-        0, null -> getString(string.label_load_request)
-        else -> "${getString(string.label_load_request)}($it)"
-      }
     })
-
 
     refreshData()
   }
@@ -153,7 +149,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType, isInternal)
+    viewModel.fetchUserTransactions(false, demandType)
   }
 
   override fun handleAction(
@@ -164,25 +160,16 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
         val data = item.data as HomeBidsRequestItemData
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-          EVENT_HOME_CONTRACT_CARD_CLICK,
-          mutableListOf(PROPERTY_USER_ID,
-            PROPERTY_PHONE_NO,PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE),
-          mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
-            data.transactionId ?: " ",data.contractEventStatusText(),
-            data.contractType?:""
-          )
-        )
+
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(contractDetailsIntent(data.key(), it))
+          startActivity(contractDetailsIntent(data.key(), it,VALUE_ORDER_LISTING))
         }
       }
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(isInternal)"LH_FTL" else "FRC"))
+            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Internal") ContractType.LH_FTL.type else if(demandType=="Corporate") ContractType.FRC.type else ContractType.INTRACITY.type))
           )
         }
       }
@@ -194,35 +181,20 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterExpress -> {
-        isInternal = true
-        demandType = "Internal"
+        demandType = DemandType.Internal.type
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
-        isInternal = false
-        demandType = "Corporate"
+        demandType = DemandType.Corporate.type
+        refreshData()
+      }
+      HomeContractsFilterIntracity -> {
+        demandType = DemandType.Intracity.type
         refreshData()
       }
       HomeContractsFilterInfo -> {
         infoDialog()
       }
-
-      HomeLoadsFilterAction -> {
-        //Capture Event
-        analyticsUtil.trackEvent(
-          EVENT_FILTER_EXPRESS_LOADS,
-          mutableListOf(PROPERTY_USER_ID),
-          mutableListOf(userPrefs.userId())
-        )
-
-
-        demandType = userPrefs.demandType
-        isInternal = demandType =="Internal"
-
-
-        refreshData()
-      }
-
     }
   }
 
@@ -233,8 +205,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       bindingDialog.buttonCancel.setOnClickListener {
         dialog.cancel()
       }
-      bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
-      bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule3.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
       dialog.setContentView(bindingDialog.root)
       dialog.show()
@@ -308,7 +281,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType)
 
     override fun hasMore() = viewModel.hasMoreData
 

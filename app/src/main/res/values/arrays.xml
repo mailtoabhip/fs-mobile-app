@@ -21,4 +21,11 @@
         <item>Loading Advice/Memo</item>
         <item>POD</item>
     </string-array>
+
+    <string-array name="placementDaysItems">
+        <item>Select Placement Days</item>
+        <item>1-2 Days</item>
+        <item>3-5 Days</item>
+        <item>6-8 Days</item>
+    </string-array>
 </resources>

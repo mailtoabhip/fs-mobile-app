@@ -65,6 +65,8 @@
   <color name="light_blue">#ECF0FF</color>
   <color name="truck_banner_background">#4DFFF1CF</color>
   <color name="truck_load_banner_background">#FFFAF0</color>
+  <color name="dark_light_blue"> #D2D9F4</color>
+  <color name="lighter_blue"> #FAFCFF</color>
 
   <color name="custom_grey">#E5E5E5</color>
     <color name="custom_dark_grey">#991C1C1C</color>

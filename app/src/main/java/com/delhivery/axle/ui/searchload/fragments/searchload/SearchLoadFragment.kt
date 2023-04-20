@@ -1,11 +1,16 @@
 package com.delhivery.axle.ui.searchload.fragments.searchload
 
+import android.R.layout
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.database.entity.SearchLoadHistoryEntity
 import com.delhivery.axle.databinding.FragmentSearchLoadBinding
@@ -17,7 +22,9 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
+import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.errorVibrate
+import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -41,8 +48,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
   private var origin: CityModel? = null
   private var destination: CityModel? = null
-  private var requestType: String? =""
-  private var contractType:String? =""
+  private var requestType: String? =  ""
+  private var contractType:String? = ""
+  private var truckDisplayNames = arrayListOf("Select Vehicle Type")
 
   override fun onViewCreated(
     view: View,
@@ -52,8 +60,27 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     val activity: SearchLoadActivity? = activity as SearchLoadActivity?
     requestType = activity?.intentRequestType
     contractType = activity?.intentContractType
+    binding.intracity = contractType!=null && contractType==ContractType.INTRACITY.type
+
+    if(contractType==ContractType.INTRACITY.type){
+      viewModel.fetchTruckDisplayNames()
+    }
+
     viewModel.progressLiveData.observe(this, ProgressObserver())
 
+    if(contractType==ContractType.INTRACITY.type){
+      viewModel.loadingProgressLiveData.observe(this){
+        if(it) uiUtils.showProgress()
+        else uiUtils.hideProgress()
+      }
+      viewModel.truckDisplayNamesLiveData.observe(this){
+          truckDisplayNames.clear()
+          truckDisplayNames.add("Select Vehicle Type")
+          if(it!=null)
+            truckDisplayNames.addAll(it)
+          binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
+      }
+    }
     binding.btnRetry.setOnClickListener {
       binding.warningItem.visibility = View.GONE
       binding.warningItem.alpha = 0f
@@ -67,10 +94,12 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     binding.arcView.animate(RevealOpen) {
       please {
         animate(binding.containerHistory) toBe {
+          if(contractType!=ContractType.INTRACITY.type)
           visible()
         }
         animate(binding.textHistoryTitle) toBe {
-          visible()
+          if(contractType!=ContractType.INTRACITY.type)
+            visible()
         }
         animate(binding.containerSearchLoadHeaderForm) toBe {
           visible()
@@ -81,6 +110,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }.setStartDelay(300)
           .start()
     }
+
     setupSearchScreen()
   }
 
@@ -91,12 +121,19 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         binding.containerHistory.visibility = View.GONE
         binding.textHistoryTitle.visibility = View.GONE
         binding.containerSearchLoadHeaderForm.visibility = View.GONE
+        binding.clIntracitySearch.visibility = View.GONE
       }
       false -> {
         binding.warningItem.visibility = View.GONE
-        binding.containerHistory.visibility = View.VISIBLE
-        binding.textHistoryTitle.visibility = View.VISIBLE
+        if(contractType!=null && contractType==ContractType.INTRACITY.type){
+          binding.containerHistory.visibility = View.GONE
+          binding.textHistoryTitle.visibility = View.GONE
+        }else{
+          binding.containerHistory.visibility = View.VISIBLE
+          binding.textHistoryTitle.visibility = View.VISIBLE
+        }
         binding.containerSearchLoadHeaderForm.visibility = View.VISIBLE
+        binding.clIntracitySearch.visibility = View.VISIBLE
       }
     }
   }
@@ -114,24 +151,35 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   }
 
   private fun setupSearchScreen() {
-    autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
-      origin = it
-      binding.editDestinationCity.requestFocus()
+    if(contractType== ContractType.INTRACITY.type){
+      binding.editReportingCenter.setText("")
+      binding.spinnerStatus.apply{
+        setup(R.array.array_status){ p, v ->
+          if(p==0) setHintColor(v)
+        }
+      }
+      autoCompleteUtils.autoCompleteCity(binding.editReportingCenter){
+        origin = it
+      }
+      binding.btnSearch.setOnClickListener{
+        searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString())
+      }
     }
+    else{
+      autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
+        origin = it
+        binding.editDestinationCity.requestFocus()
+      }
 
-    autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
-      destination = it
-      uiUtils.toggleKeyboard()
-    }
-
-    /* truck type */
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v ->
-
-    }
-
-    /* submit */
-    binding.btnAction.setOnClickListener {
-        searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString())
+      autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
+        destination = it
+        uiUtils.toggleKeyboard()
+      }
+      /* truck type */
+      binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
+      binding.btnAction.setOnClickListener{
+        searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString(),null,null)
+        }
     }
 
     /* reverse origin/destination cities */
@@ -160,6 +208,27 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     initObservers()
   }
 
+   private fun AppCompatSpinner.setTruckDisplayNamesAdapter() {
+    val truckDisplayAdapter =
+      ArrayAdapter(this.context, layout.simple_spinner_item, truckDisplayNames).apply {
+        setDropDownViewResource(layout.simple_spinner_dropdown_item)
+        onItemSelectedListener = object : OnItemSelectedListener {
+          override fun onItemSelected(
+            p0: AdapterView<*>?,
+            p1: View?,
+            p2: Int,
+            p3: Long
+          ) {
+            setHintColor(getItemAtPosition(p2).toString())
+          }
+          override fun onNothingSelected(parent: AdapterView<*>?) {
+            return
+          }
+        }
+      }
+    adapter = truckDisplayAdapter
+  }
+
   /**
    * Search load as per user selections
    */
@@ -167,30 +236,45 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     saveToHistory: Boolean = true,
     origin: CityModel? = null,
     destination: CityModel? = null,
-    truckType: String
+    truckType: String?,
+    truckDisplayName: String?,
+    contractStatus: String?
   ) {
     uiUtils.toggleKeyboard(true)
-
-    if (origin == null) {
-      binding.editOriginCity.error = getString(string.error_search_missing_origin)
-      binding.editOriginCity.errorAnimate()
-      analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
-      return
+    if(contractType== ContractType.INTRACITY.type){
+      if(origin==null){
+        binding.editReportingCenter.error="Please select reporting center"
+        binding.editReportingCenter.errorAnimate()
+        return
+      }
+      if(truckDisplayName!!.toLowerCase().contains("select")) {
+        binding.spinnerTruckDisplayName.errorVibrate()
+        return
+      }
     }
+    else{
+      if (origin == null) {
+        binding.editOriginCity.error = getString(R.string.error_search_missing_origin)
+        binding.editOriginCity.errorAnimate()
+        analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
+        return
+      }
 
-    if (truckType.toLowerCase().contains("choose")) {
-      binding.spinnerTruckType.errorVibrate()
-      return
+      if (truckType!!.toLowerCase().contains("choose")) {
+        binding.spinnerTruckType.errorVibrate()
+        return
+      }
     }
-
     /* save to history if needed */
     if (saveToHistory) {
       viewModel.saveToHistory(
           origin, destination ?: CityModel(
-          city = getString(string.label_anywhere),
-          state = getString(string.label_anywhere)
+          city = getString(R.string.label_anywhere),
+          state = getString(R.string.label_anywhere)
       ),
           truckType,
+        truckDisplayName,
+        contractStatus,
         requestType,contractType
       )
     }
@@ -198,9 +282,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
 
     /* delay and search for better UX */
-    Handler().postDelayed({
-      action(SearchLoadAction(origin, destination, truckType,requestType,contractType,saveToHistory))
-    }, 200)
+      Handler().postDelayed({
+        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory))
+      }, 200)
   }
 
   /**
@@ -223,7 +307,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           val itemBinding = historyItemBinding()
           itemBinding.data = item
           itemBinding.root.setOnClickListener {
-            searchLoad(false, item.originCity, item.destinationCity, item.truckType)
+            searchLoad(false, item.originCity, item.destinationCity, item.truckType, item.truckDisplayName, item.status)
           }
           itemBinding.root.setOnLongClickListener {
             viewModel.deleteSearchResult(item)
@@ -233,6 +317,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         }
       }
       /* title as per search results */
+      if(contractType!=ContractType.INTRACITY.type)
       binding.textHistoryTitle.visible(!t.isNullOrEmpty())
     }
   }

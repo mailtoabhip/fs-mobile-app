@@ -6,7 +6,7 @@ import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFra
 /**
  * Search load fragment type
  */
-enum class SearchLoadFragmentType(
+enum class  SearchLoadFragmentType(
   val fragment: SearchLoadBaseFragment<*, *>,
   val title: String
 ) {

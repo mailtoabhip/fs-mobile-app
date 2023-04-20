@@ -1,11 +1,14 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.ContractsSummaryResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
+import com.delhivery.axle.api.response.TruckDisplayNamesResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import retrofit2.http.*
@@ -25,11 +28,14 @@ interface TransactionService {
     @Query("origin_city_code") source: String? = null,
     @Query("destination_city_code") destination: String? = null,
     @Query("truck_types") truckType: String? = null,
+    @Query("truck_display_names") truckDisplayName: String? = null,
+    @Query("contract_status") contractStatus: String?,
     @Query("axle_current_week_loads") currWeekLoads: String?,
     @Query("apply_100km_logic") nearby100kmcities: Boolean?,
     @Query("request_types") requestType:String?,
     @Query("contract_type") contractType:String?,
-    @Query("active_contract") activeContract:Boolean?
+    @Query("active_contract") activeContract:Boolean?,
+    @Query("limit") limit: Int= 100
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -54,7 +60,8 @@ interface TransactionService {
    */
   @GET("/transactions/")
   fun transactionDetails(
-    @Query("uuid") transactionId: String
+    @Query("uuid") transactionId: String,
+    @Query("sp_id") supplierId:String?=null
   ): Single<BaseResponse<HomeBidsRequestItemData>>
 
   /**
@@ -91,7 +98,23 @@ interface TransactionService {
     @Query("limit") limit: Int,
     @Query("demand_types") vendorType: String ?,
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
-    @Query("only_count") onlyCount: String?
+    @Query("origin_city_list") originCityList: String ?=null
   ): Single<BaseResponse<TransactionsResponse>>
 
+  /**
+   * Loadboard transactions
+   */
+  @GET("/transactions/loadboard/contracts")
+  fun contractsCountSummary(
+    @Query("only_contract_counts") onlyCount: String?,
+    @Query("origin_city_list") originCityList: String ?=null
+  ): Single<BaseResponse<ContractsSummaryResponse>>
+
+  /**
+   * Endpoint to get display names for intracity supported vehicle names
+   */
+  @GET("/transactions/loadboard/contracts")
+  fun getTruckDisplayNames(
+    @Query("only_display_names") displayNames: String="yes",
+  ): Single<BaseResponse<TruckDisplayNamesResponse>>
 }

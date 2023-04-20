@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidCreateEditBinding
@@ -34,6 +35,7 @@ import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_OVERALL_PERFORMANCE
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TIME_LAPSE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
@@ -41,12 +43,15 @@ import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.UserPrefs
+import okhttp3.internal.Util
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
+import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -58,7 +63,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private val position: Int = 0,
   private val analyticsUtil: AnalyticsUtil,
   private var userPrefs: UserPrefs,
-  private var fromPage: String
+  private var source: String
 ) : AlertDialog(context) {
 
   /* dialog binding */
@@ -68,6 +73,9 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private var isChecked = false
   private var isValidBidAmount = false
   private var isValidTripCommit = false
+  private var isValidVehicleNumber = false
+  private var isValidPlacementDays = false
+
 
   private var expectedArrivalTimePickup = ""
   private var expectedArrivalTimePickupRemark = ""
@@ -85,6 +93,30 @@ class ContractDetailsCreateEditDialog @Inject constructor(
     binding = DialogContractsCreateEditBidBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
+    val items= context.resources.getStringArray(R.array.placementDaysItems)
+
+    val spinnerAdapter= object : ArrayAdapter<String>(context,android.R.layout.simple_spinner_item, items) {
+
+      override fun isEnabled(position: Int): Boolean {
+        return position != 0
+      }
+
+      override fun getDropDownView(
+        position: Int,
+        convertView: View?,
+        parent: ViewGroup
+      ): View {
+        val view: TextView = super.getDropDownView(position, convertView, parent) as TextView
+        if(position == 0) {
+          view.setTextColor(Color.GRAY)
+        }
+        return view
+      }
+
+    }
+
+    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    binding.spinnerPlacementDays.adapter = spinnerAdapter
     /* set binding params */
     binding.apply {
       request = transaction
@@ -92,6 +124,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
         transactionBid?.bidAmount?.let {
           isValidBidAmount= true
           binding.title.text = "Revise Your Bid"
+          binding.bidAmountLbl.text = "Revised Bid Amount"
           binding.editBidAmount?.setText(DecimalFormat("#########").format(it))
           if(transaction.isPMTIndent()){
             pmtRate = it.toInt()
@@ -104,6 +137,20 @@ class ContractDetailsCreateEditDialog @Inject constructor(
           isValidTripCommit = true
           binding.editTripCommitted?.setText(DecimalFormat("#########").format(it))
         }
+      transactionBid?.vehicleNumber?.let {
+        isValidVehicleNumber = true
+        binding.editVehicleNumber?.setText(it)
+      }
+      transactionBid?.placementDays?.let {
+        isValidPlacementDays = true
+        if(it.equals("1-2 Days")) {
+          binding.spinnerPlacementDays.setSelection(1)
+        }else if(it.equals("3-5 Days")) {
+          binding.spinnerPlacementDays.setSelection(2)
+        }else if(it.equals("6-8 Days")) {
+          binding.spinnerPlacementDays.setSelection(3)
+        }
+      }
       enableSubmit()
     }
 
@@ -135,64 +182,58 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             if(transaction.isItLHContract()){
               lowerPercentage  = 30
               upperPercentage  = 20
-            }else{
+            }else if(transaction.isItFRContract()){
               lowerPercentage  = 20
               upperPercentage  = 10
+            }else if(transaction.isItIntraCityContract()){
+              lowerPercentage  = 20
+              upperPercentage  = 20
             }
             if (transaction.isPMTIndent()) {
               pmtRate = input
               amount = (input * transaction.requestedCapacityMg).toInt()
               if(amount<250){
-                isValidBidAmount = false
-                binding.bidError.text = "Invalid Bid Amount, Out of range"
-                binding.bidError.visibility = View.VISIBLE
+                showInvalidBidAmountError()
               }else{
                   if(transaction.targetPrice!=null&&(amount>(transaction.targetPrice+transaction.targetPrice*upperPercentage/100)|| amount<(transaction.targetPrice-transaction.targetPrice*lowerPercentage/100))){
-                    isValidBidAmount = false
-                    binding.bidError.text = "Invalid Bid Amount, Out of range"
-                    binding.bidError.visibility = View.VISIBLE
+                    showInvalidBidAmountError()
                   }else{
-                    isValidBidAmount = true
-                    binding.bidError.visibility = View.GONE
+                    removeInvalidBidAmountError()
                   }
               }
               enableSubmit()
             }else{
               amount = input
               if(amount<250){
-                isValidBidAmount = false
-                binding.bidError.text =  "Invalid Bid Amount, Out of range"
-                binding.bidError.visibility = View.VISIBLE
+                showInvalidBidAmountError()
               }else{
                   if (transaction.targetPrice!=null&&(amount > (transaction.targetPrice + transaction.targetPrice * upperPercentage / 100) || amount <(transaction.targetPrice - transaction.targetPrice * lowerPercentage / 100))) {
-                    isValidBidAmount = false
-                    binding.bidError.text = "Invalid Bid Amount, Out of range"
-                    binding.bidError.visibility = View.VISIBLE
+                    showInvalidBidAmountError()
                   } else {
                     if (transactionBid != null) {
-                      if(amount<12000){
-                        if (abs(amount-transactionBid.bidAmount.toInt())>=50 && abs(amount-transactionBid.bidAmount.toInt())%50==0) {
-                          isValidBidAmount = true
-                          binding.bidError.visibility = View.GONE
+                      if(transaction.isItIntraCityContract()){
+                        if (abs(amount-transactionBid.bidAmount.toInt())>=100 && abs(amount-transactionBid.bidAmount.toInt())%100==0) {
+                          removeInvalidBidAmountError()
                         }else{
-                          isValidBidAmount = false
-                          binding.bidError.text = "Bid difference should be multiple of 50"
-                          binding.bidError.visibility = View.VISIBLE
+                          showInvalidBidAmountError("100")
                         }
                       }else{
-                        if (abs(amount-transactionBid.bidAmount.toInt())>=250 && abs(amount-transactionBid.bidAmount.toInt())%250==0) {
-                          isValidBidAmount = true
-                          binding.bidError.visibility = View.GONE
+                        if(amount<12000){
+                          if (abs(amount-transactionBid.bidAmount.toInt())>=50 && abs(amount-transactionBid.bidAmount.toInt())%50==0) {
+                            removeInvalidBidAmountError()
+                          }else{
+                            showInvalidBidAmountError("50")
+                          }
                         }else{
-                          isValidBidAmount = false
-                          binding.bidError.text = "Bid difference should be multiple of 250"
-                          binding.bidError.visibility = View.VISIBLE
+                          if (abs(amount-transactionBid.bidAmount.toInt())>=250 && abs(amount-transactionBid.bidAmount.toInt())%250==0) {
+                            removeInvalidBidAmountError()
+                          }else{
+                            showInvalidBidAmountError("250")
+                          }
                         }
                       }
-
                     }else{
-                      isValidBidAmount = true
-                      binding.bidError.visibility = View.GONE
+                      removeInvalidBidAmountError()
                     }
                   }
 
@@ -232,7 +273,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
           val input = s.trim()
             .toString()
             .toInt()
-          if(!transaction.isItLHContract()) {
+          if(transaction.isItFRContract()) {
             if(input==0){
               binding.tripCountError.visibility = View.VISIBLE
               binding.tripCountError.text ="Invalid trip count"
@@ -253,7 +294,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
             enableSubmit()
           }
         }else{
-          if(!transaction.isItLHContract()){
+          if(transaction.isItFRContract()){
             isValidTripCommit = false
             enableSubmit()
           }
@@ -262,6 +303,73 @@ class ContractDetailsCreateEditDialog @Inject constructor(
     })
 
 
+    binding.editVehicleNumber?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim()
+            .toString()
+          if(transaction.isItIntraCityContract()) {
+            if(validateTruckNumber(input)){
+              isValidVehicleNumber = true
+              binding.vehicleNumberError.visibility = View.GONE
+            } else {
+              binding.vehicleNumberError.visibility = View.VISIBLE
+              binding.vehicleNumberError.text ="Invalid vehicle Number"
+              isValidVehicleNumber = false
+
+            }
+            enableSubmit()
+          }else{
+            isValidVehicleNumber = true
+            enableSubmit()
+          }
+        }else{
+          if(transaction.isItIntraCityContract()){
+            isValidVehicleNumber = false
+            enableSubmit()
+          }
+        }
+      }
+    })
+
+
+
+
+    binding.spinnerPlacementDays.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+      override fun onNothingSelected(parent: AdapterView<*>?) {
+      }
+
+      override fun onItemSelected(
+        parent: AdapterView<*>?,
+        view: View?,
+        position: Int,
+        id: Long
+      ) {
+        val value = parent!!.getItemAtPosition(position).toString()
+        if(value == items[0]){
+          (view as TextView).setTextColor(Color.GRAY)
+          isValidPlacementDays = false
+          enableSubmit()
+        }else{
+          isValidPlacementDays = true
+          enableSubmit()
+        }
+      }
+
+    }
 
     binding.buttonSubmit.setOnClickListener {
       binding.editBidAmount.clearFocus()
@@ -275,57 +383,100 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private fun  enableSubmit(){
      if(transaction.isItLHContract()){
        isValidTripCommit = true
+       isValidVehicleNumber=true
+       isValidPlacementDays = true
+     }else if (transaction.isItFRContract()){
+        isValidVehicleNumber=true
+       isValidPlacementDays = true
+     }else if (transaction.isItIntraCityContract()){
+       isValidTripCommit = true
      }
-    if(isValidBidAmount&&isValidTripCommit) {
+    if(isValidBidAmount&&isValidTripCommit&&isValidVehicleNumber&&isValidPlacementDays) {
       if (transactionBid != null) {
         // checking if value has changed
-        if (!transaction.isItLHContract()&&Integer.parseInt(binding.editTripCommitted.text.toString()) == transactionBid.tentativeTripCount && if(transaction.isPMTIndent())amount == (transactionBid!!.bidAmount*transaction.requestedCapacityMg).toInt() else amount==transactionBid.bidAmount.toInt()) {
-          binding.buttonSubmit.background =
-            ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
-          binding.buttonSubmit.isEnabled = false
-        } else if(transaction.isItLHContract() && amount == transactionBid!!.bidAmount.toInt() ) {
-          binding.buttonSubmit.isEnabled = false
-          binding.buttonSubmit.background =
-            ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
+        if(checkValueChangesForLHFTL()||checkValueChangeForFRC()||checkValueChangesForIntraCity()) {
+          disableSubmitButton()
         }else{
-          binding.buttonSubmit.isEnabled = true
-          binding.buttonSubmit.background =
-            ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_blue_corner)
+        enableSubmitButton()
         }
       } else {
-        binding.buttonSubmit.isEnabled = true
-        binding.buttonSubmit.background =
-          ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_blue_corner)
+        enableSubmitButton()
       }
     }else{
-      binding.buttonSubmit.isEnabled = false
-      binding.buttonSubmit.background = ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
+      disableSubmitButton()
     }
   }
 
+  private fun validateTruckNumber(number: String): Boolean{
+    val pattern = Pattern.compile(
+      "^[a-zA-Z]{2}(((0?[1-9]{1}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}$|^[a-zA-Z]{3}[0-9]{4}$"
+    )
+    return pattern.matcher(number).matches()
+  }
+
+  private fun showInvalidBidAmountError(amount:String?=null){
+    isValidBidAmount = false
+    if(amount!=null){
+      binding.bidError.text = context.getString(string.bid_revise_error)+amount
+    }else{
+      binding.bidError.text =  "Invalid Bid Amount, Out of range"
+    }
+    binding.bidError.visibility = View.VISIBLE
+  }
+
+  private fun removeInvalidBidAmountError(){
+    isValidBidAmount = true
+    binding.bidError.visibility = View.GONE
+  }
+  private fun checkValueChangeForFRC(): Boolean{
+    return if (transactionBid != null) (transaction.isItFRContract()&&Integer.parseInt(binding.editTripCommitted.text.toString()) == transactionBid.tentativeTripCount
+              && if(transaction.isPMTIndent())amount == (transactionBid!!.bidAmount*transaction.requestedCapacityMg).toInt() else amount==transactionBid.bidAmount.toInt())
+          else false
+  }
+
+  private fun checkValueChangesForLHFTL(): Boolean{
+    return if (transactionBid != null)(transaction.isItLHContract() && if(transaction.isPMTIndent())amount == (transactionBid!!.bidAmount*transaction.requestedCapacityMg).toInt() else amount==transactionBid.bidAmount.toInt())
+          else false
+  }
+
+  private fun checkValueChangesForIntraCity(): Boolean{
+    return if (transactionBid != null)(transaction.isItIntraCityContract() &&if(transaction.isPMTIndent())amount == (transactionBid!!.bidAmount*transaction.requestedCapacityMg).toInt() else amount==transactionBid.bidAmount.toInt() && binding.editVehicleNumber.text.toString() == transactionBid.vehicleNumber && binding.spinnerPlacementDays.selectedItem.toString() == transactionBid.placementDays)
+          else false
+  }
+
+  private fun disableSubmitButton(){
+    binding.buttonSubmit.background =
+      ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_grey_boundary)
+    binding.buttonSubmit.isEnabled = false
+  }
+  private fun enableSubmitButton(){
+    binding.buttonSubmit.isEnabled = true
+    binding.buttonSubmit.background =
+      ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_blue_corner)
+  }
   private fun submit() {
     try {
         if (transactionBid == null) {
           analyticsUtil.moEngageTrackEvent(
             EVENT_SUBMIT_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
               PROPERTY_PHONE_NO,
-              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key()))
+              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID, PROPERTY_SOURCE),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(),source))
           dialogInterface.createBid(
             transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
             transaction.biddingType
-              ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString())
+              ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString()),if(binding.editVehicleNumber.text.isNullOrEmpty())null else binding.editVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.spinnerPlacementDays.selectedItem.toString() else null
           )
         } else {
           analyticsUtil.moEngageTrackEvent(
             EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
               PROPERTY_PHONE_NO,
-              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.transactionStatus?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString()))
+              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF, PROPERTY_SOURCE),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString(),source))
 
           dialogInterface.editBid(
             transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
-            amount, pmtRate, transaction.biddingType ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString())
+            amount, pmtRate, transaction.biddingType ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString()),if(binding.editVehicleNumber.text.isNullOrEmpty())null else binding.editVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.spinnerPlacementDays.selectedItem.toString() else null
           )
         }
         dismiss()
@@ -348,7 +499,9 @@ interface ContractDetailsCreateEditDialogInterface {
     pmtRate: Int,
     commercialType: String,
     position: Int = -1,
-    tentativeTripCount:Int?
+    tentativeTripCount:Int?,
+    vehicleNumber:String?,
+    placementDays:String?
   )
 
   /**
@@ -362,7 +515,9 @@ interface ContractDetailsCreateEditDialogInterface {
     pmtRate: Int,
     commercialType: String,
     position: Int = -1,
-    tentativeTripCount:Int?
+    tentativeTripCount:Int?,
+    vehicleNumber:String?,
+    placementDays:String?
   )
 
 }

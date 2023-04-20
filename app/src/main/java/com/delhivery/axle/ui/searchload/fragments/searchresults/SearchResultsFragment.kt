@@ -1,18 +1,24 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
+import android.R.layout
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
 import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -22,16 +28,15 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
-import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRequestItem
 import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRequestItem
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.isNotEmpty
+import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -62,6 +67,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var oldAmount:Double?=0.0
   var reviseInitiated:Boolean=false
   var isContract = false
+  var isIntraCity  =false
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -302,8 +308,13 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private fun setupSpinners() {
     binding.spinnerTruckType.isEnabled = false
     binding.spinnerTruckType.isClickable = false
-    binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
-  }
+    binding.spinnerStatus.isEnabled = false
+    binding.spinnerStatus.isClickable = false
+    binding.spinnerTruckDisplayName.isEnabled = false
+    binding.spinnerTruckDisplayName.isClickable = false
+    binding.spinnerTruckType.setup(R.array.array_truck_type) {  p, v -> }
+    binding.spinnerStatus.setup(R.array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
+    }
 
   /**
    * Search with query params
@@ -311,16 +322,22 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   fun search(
     origin: CityModel,
     destination: CityModel?,
-    type: String,
+    type: String?,
+    displayName: String?,
+    status: String?,
     saveToHistory: Boolean,
     requestType:String?,
     contractType:String?,
+    truckDisplayNames: ArrayList<String>,
     progress: Boolean = true
   ) {
     this.saveToHistory = saveToHistory
     /* clear and add first dummy item */
     _adapter.clearItems()
-    _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
+    if(contractType==ContractType.INTRACITY.type)
+      _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
+    else
+      _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
     if (progress)
       action(ProgressSearchLoadAction(true, if(isContract)"Searching contracts" else "Searching loads"))
@@ -332,9 +349,38 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       "Trailer" -> 3
       else -> 0
     }
+    binding.spinnerTruckDisplayName.apply {
+      setTruckDisplayAdapter(truckDisplayNames)
+    }
     binding.spinnerTruckType.setSelection(pos, true)
+    binding.spinnerStatus.setSelection(resources.getStringArray(R.array.array_status).toList().indexOf(status))
+    binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
     isContract = contractType!=null
-    viewModel.searchLoad(origin, destination, type,requestType,contractType)
+    isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
+    binding.isIntraCityContract = isIntraCity
+    viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
+  }
+
+  private fun AppCompatSpinner.setTruckDisplayAdapter(truckDisplayNames: ArrayList<String>) {
+    val truckDisplayAdapter =
+      ArrayAdapter(this.context!!, layout.simple_spinner_item, truckDisplayNames).apply {
+        setDropDownViewResource(layout.simple_spinner_dropdown_item)
+        onItemSelectedListener = object : OnItemSelectedListener {
+          override fun onItemSelected(
+            p0: AdapterView<*>?,
+            p1: View?,
+            p2: Int,
+            p3: Long
+          ) {
+            setHintColor(getItemAtPosition(p2).toString())
+          }
+
+          override fun onNothingSelected(parent: AdapterView<*>?) {
+            return
+          }
+        }
+      }
+    adapter = truckDisplayAdapter
   }
 
   override fun handleAction(
@@ -347,7 +393,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if (_item.isItContract()) {
           if (_item.transactionId != null) {
             userPrefs.setPreviousScreen(this.javaClass.name)
-            startActivity(contractDetailsIntent(_item.transactionId, context!!))
+            startActivity(contractDetailsIntent(_item.transactionId, context!!, VALUE_SEARCH_LISITING))
           } else {
             Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
           }
@@ -417,17 +463,17 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
       UNAPPROVED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_not_approved,
-            string.msg_dialog_supplier_not_approved,
-            getString(string.label_call_us), getString(string.label_mail_us),
+            R.string.title_dialog_supplier_not_approved,
+            R.string.msg_dialog_supplier_not_approved,
+            getString(R.string.label_call_us), getString(R.string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(
-            string.title_dialog_supplier_disabled,
-            string.msg_dialog_supplier_disabled,
-            getString(string.label_call_us), getString(string.label_mail_us),
+            R.string.title_dialog_supplier_disabled,
+            R.string.msg_dialog_supplier_disabled,
+            getString(R.string.label_call_us), getString(R.string.label_mail_us),
             { callHelpline() }, { sendMail() }
         )
       }
@@ -475,7 +521,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 PROPERTY_SEARCH_BODY_TYPE),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
-                binding.spinnerTruckType.selectedItem.toString())
+                if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem.toString() else binding.spinnerTruckType.selectedItem.toString())
         )
       }else{
         analyticsUtil.moEngageTrackEvent(
@@ -484,7 +530,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
-                binding.spinnerTruckType.selectedItem.toString(),
+              if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem.toString() else binding.spinnerTruckType.selectedItem.toString(),
               numResults.toString())
         )
       }
@@ -537,7 +583,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
         containerSpinner.translationY = if (pos >= 1) {
           viewHiddenIndicator.alpha = 1f
-          updateVisibility(spinnerTruckType, View.INVISIBLE)
+          if(!isIntraCity){
+            updateVisibility(spinnerTruckType, View.INVISIBLE)
+          }
           maxTranslationY
         } else {
           val childView = recyclerView.findViewHolderForAdapterPosition(0)!!.itemView
@@ -558,7 +606,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       target: View,
       factor: Float
     ) {
-      updateVisibility(view, View.VISIBLE)
+      if(!isIntraCity)
+        updateVisibility(view, View.VISIBLE)
       view.alpha = 1f - factor
       view.translationX = (target.centerX() - view.centerX()) * factor
       view.translationY = (target.centerY() - view.centerY()) * factor
@@ -576,4 +625,4 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
     }
   }
-}
+  }
