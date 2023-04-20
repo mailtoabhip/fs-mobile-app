@@ -175,6 +175,11 @@ class HomeContractsViewModel@Inject constructor(
                     if(item.key==ContractType.INTRACITY.type){
                       intraCityCount = item.count?:0
                     }
+                    if(userPrefs.demandType.contains(DemandType.Others.type)){
+                      if(item.key==ContractType.FRC.type){
+                        nonExpressCount=item.count?:0
+                      }
+                    }
                 }else{
                   if(item.key==ContractType.FRC.type){
                     nonExpressCount=item.count?:0
@@ -202,6 +207,11 @@ class HomeContractsViewModel@Inject constructor(
                 }else if(userPrefs.demandType.contains(DemandType.Intracity.type)&&userPrefs.contractDemand){
                     if(item.key==ContractType.INTRACITY.type){
                       totalActive+=item.count?:0
+                    }
+                    if(userPrefs.demandType.contains(DemandType.Others.type)){
+                      if(item.key==ContractType.FRC.type){
+                        totalActive+=item.count?:0
+                      }
                     }
                 }else{
                     if(item.key==ContractType.FRC.type){
