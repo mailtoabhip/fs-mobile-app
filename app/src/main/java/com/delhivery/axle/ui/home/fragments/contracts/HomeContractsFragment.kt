@@ -84,7 +84,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    demandType= if(userPrefs.demandType.contains(DemandType.Internal.type)){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Intracity.type)){DemandType.Intracity.type} else {DemandType.Corporate.type}
+    demandType= if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else{""}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
