@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
@@ -52,10 +53,18 @@ class SearchResultsViewModel @Inject constructor(
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, Int>>()
 
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  /* pagination params */
+  var offset=0
+  var hasMoreData=false
+
   /**
    * Search load api
    */
   fun searchLoad(
+    paginate:Boolean=false,
     origin: CityModel,
     destination: CityModel?,
     type: String?,
@@ -64,11 +73,23 @@ class SearchResultsViewModel @Inject constructor(
     requestType:String?,
     contractType:String?
   ) {
+    if(!paginate){
+      offset=0
+    }
+    else if(paginate && !hasMoreData){
+      Log.i("PAGINATE MODE","yes")
+      return
+    }
+    dataLoadingLiveData.postValue(true)
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        0, origin.orionDbCityCode, destination?.orionDbCityCode, type?.toLowerCase(),displayName,status,requestType,contractType
+        offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.toLowerCase(),displayName,status,requestType,contractType,
+      UserTripsLoadLimit
     )
         .flatMap { t ->
+          this.total=t.total
+          this.hasMoreData=t.hasNext
+          this.offset=t.offset
           this.loadPricePercent = t.loadPricePercent
           Single.zip(
             bidsRepository.bidsForLoads(t.transactions, requestType=="contract"),
@@ -113,6 +134,7 @@ class SearchResultsViewModel @Inject constructor(
             error.handle()
           }
         }
+    dataLoadingLiveData.postValue(false)
   }
 
   override fun createBid(

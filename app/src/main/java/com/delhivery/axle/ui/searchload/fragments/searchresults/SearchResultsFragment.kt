@@ -14,6 +14,7 @@ import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
@@ -68,6 +69,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var reviseInitiated:Boolean=false
   var isContract = false
   var isIntraCity  =false
+
+  private lateinit var origin: CityModel
+  private var destination: CityModel? = null
+  private var requestType: String? =  ""
+  private var contractType:String? = ""
+  private var type: String?= ""
+  private var displayName: String?= ""
+  private var status: String?=""
+  
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -89,6 +99,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = _adapter
       addOnScrollListener(_scrollListener)
+      addOnScrollListener(PaginationInterface())
     }
 
     viewModel.reviseBidLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -288,6 +299,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
     })
 
+    viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+      isLoadingData = it ?: false
+    })
+
     Transformations.map(viewModel.searchResults) {
       return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
         if (it.isNullOrEmpty()) {
@@ -331,7 +346,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     truckDisplayNames: ArrayList<String>,
     progress: Boolean = true
   ) {
-    this.saveToHistory = saveToHistory
+    saveQueryParams(origin, destination, type, displayName, status, requestType, contractType, saveToHistory)
     /* clear and add first dummy item */
     _adapter.clearItems()
     if(contractType==ContractType.INTRACITY.type)
@@ -358,7 +373,27 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     isContract = contractType!=null
     isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
     binding.isIntraCityContract = isIntraCity
-    viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
+    viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType)
+  }
+
+  private fun saveQueryParams(
+    origin: CityModel,
+    destination: CityModel?,
+    type: String?,
+    displayName: String?,
+    status: String?,
+    requestType: String?,
+    contractType: String?,
+    saveToHistory: Boolean
+  ) {
+    this.origin = origin
+    this.destination = destination
+    this.type = type
+    this.displayName = displayName
+    this.status = status
+    this.requestType = requestType
+    this.contractType = contractType
+    this.saveToHistory = saveToHistory
   }
 
   private fun AppCompatSpinner.setTruckDisplayAdapter(truckDisplayNames: ArrayList<String>) {
@@ -493,7 +528,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    */
   inner class SearchResultsObserver : Observer<MutableList<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
     override fun onChanged(t: MutableList<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
-      resetSpinnerContainer()
+      //resetSpinnerContainer()
       /* hide progress */
       action(ProgressSearchLoadAction(false))
       /* show results */
@@ -562,6 +597,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       rv.scrollToPosition(0)
       containerSpinner.translationY = 0f
     }
+  }
+
+  inner class PaginationInterface: PaginationScrollListener(UserTripsLoadLimit){
+    override fun loadMore() = viewModel.searchLoad(true, origin, destination, type,displayName, status,requestType,contractType)
+
+    override fun hasMore() = viewModel.hasMoreData
+
+    override fun isLoading() = isLoadingData
+
   }
 
   /**
