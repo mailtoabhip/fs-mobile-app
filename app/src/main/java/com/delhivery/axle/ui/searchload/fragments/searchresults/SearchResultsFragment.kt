@@ -134,6 +134,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       addOnScrollListener(PaginationInterface())
     }
 
+    binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
+      refreshData()
+    }
+
     viewModel.reviseBidLiveData.reobserve(viewLifecycleOwner, Observer {
       if (it.first) {
         val data = _adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
@@ -338,6 +343,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
     viewModel.searchResults
       .reobserve(this, SearchResultsObserver())
+  }
+
+  private fun refreshData() {
+    _adapter.resetStaticData()
+    viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType)
   }
 
   private fun setupSpinners() {

@@ -23,13 +23,16 @@
         />
     <import type="android.view.View"/>
   </data>
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:id="@+id/refresh_layout"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
   <androidx.appcompat.widget.LinearLayoutCompat
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="vertical"
       android:background="@color/colorPrimary"
       >
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_reporting_center"
         android:layout_width="wrap_content"
@@ -258,4 +261,5 @@
       </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
   </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

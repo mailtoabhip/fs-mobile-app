@@ -11,6 +11,9 @@ import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
@@ -64,4 +67,22 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     }
   }
 
+  /**
+   * Reset all data, remove all errors/transactions
+   */
+  fun resetStaticData() {
+    mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      items.filter {
+        it.type == Contracts || it.type == Warning || it.type==Request || it.type== Progress
+      }
+        .map { Pair(it, Remove) }
+        .let {
+          addAll(it)
+        }
+      add(Pair(SearchContractsProgressItem(), AddUpdate))
+    }
+      .let {
+        operation(it)
+      }
+  }
 }
