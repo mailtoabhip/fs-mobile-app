@@ -12,12 +12,20 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
+import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.home.fragments.bids.BaseHomeBidsRVAdapterViewHolder
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
+import com.delhivery.axle.ui.home.fragments.contracts.BaseHomeContractsRVAdapterViewHolder
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsProgressItem
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterInterface
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -621,6 +629,17 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
   }
 }
 
+internal class SearchContractsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) :
+  BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, SearchContractsProgressItem>(
+    binding
+  ) {
+  override fun bind(
+    item: SearchContractsProgressItem,
+    _interface: SearchLoadsRVAdapterInterface
+  ) {
+
+  }
+}
 /**
  * Search load warning item
  */

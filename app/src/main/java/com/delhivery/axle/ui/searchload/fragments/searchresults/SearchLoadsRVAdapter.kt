@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
@@ -10,10 +11,11 @@ import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.SearchSpinner
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Warning
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
 
 /**
  * RV adapter for [SearchLoadsFragment]
@@ -34,6 +36,7 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     Contracts -> ViewHomeContractsRequestItemBinding.inflate(inflater,parent,false)
     SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
+    Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater,parent,false)
     else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -42,6 +45,7 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     is ViewHomeContractsRequestItemBinding -> SearchContractsRequestItemVH(binding)
     is ViewHomeBidsSearchSpinnerItemBinding -> SearchLoadsSearchSpinnerItemVH(binding)
     is ViewWarningItemBinding -> SearchLoadsWarningItemVH(binding)
+    is ViewHomeBidsProgressItemBinding -> SearchContractsProgressItemVH(binding)
     else -> SearchLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }
 
@@ -55,6 +59,7 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
       is SearchLoadsSearchSpinnerItemVH -> holder.bind(
           item as SearchLoadsSearchSpinnerItem, _interface
       )
+      is SearchContractsProgressItemVH -> holder.bind(item as SearchContractsProgressItem, _interface)
       is SearchLoadsWarningItemVH -> holder.bind(item as SearchLoadsWarningItem, _interface)
     }
   }
