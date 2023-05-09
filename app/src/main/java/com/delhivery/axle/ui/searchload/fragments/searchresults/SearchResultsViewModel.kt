@@ -144,7 +144,6 @@ class SearchResultsViewModel @Inject constructor(
               }
             }.let { searchResults.postValue(it) }
           } else {
-            Log.d("HERE",paginateCount.toString())
             mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply{
               if(!paginate){
                 if(requestType=="load")

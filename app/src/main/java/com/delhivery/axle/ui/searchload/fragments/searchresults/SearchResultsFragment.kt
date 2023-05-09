@@ -338,7 +338,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
     viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner) {
       isLoadingData = it == true
-      Log.d("LOADING STATE",isLoadingData.toString())
     }
 
     viewModel.searchResults
