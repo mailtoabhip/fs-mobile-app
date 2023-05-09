@@ -1,6 +1,5 @@
 package com.delhivery.axle.api.repository
 
-import android.text.BoringLayout
 import com.delhivery.axle.api.repository.ContractStatus.BiddingClosed
 import com.delhivery.axle.api.repository.ContractStatus.Cancelled
 import com.delhivery.axle.api.repository.ContractStatus.CollectingBids
@@ -13,7 +12,6 @@ import com.delhivery.axle.api.request.ReccomdationRequest
 import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -75,7 +73,7 @@ class TransactionsRepository @Inject constructor(
     limit: Int
   ) = transactionService.transactions(
       offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
-    contractsMap[contractStatus]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
+    contractsMap[contractStatus]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load" || (requestType=="contract" && contractType==ContractType.INTRACITY.type)) true else null, if(requestType=="load") "fixed,spot" else "contract",
     contractType,if(requestType=="load") null else true,limit
   ).convertResponse()
 
