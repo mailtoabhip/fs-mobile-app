@@ -73,8 +73,8 @@ class TransactionsRepository @Inject constructor(
     limit: Int
   ) = transactionService.transactions(
       offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
-    contractsMap[contractStatus]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load" || (requestType=="contract" && contractType==ContractType.INTRACITY.type)) true else null, if(requestType=="load") "fixed,spot" else "contract",
-    contractType,if(requestType=="load") null else true,limit
+    contractsMap[contractStatus]?.statusId, if(requestType==RequestType.Load.type) "yes" else null,if (requestType==RequestType.Load.type) true else null, if(requestType==RequestType.Load.type) "fixed,spot" else "contract",
+    contractType,if(requestType==RequestType.Load.type) null else true,limit
   ).convertResponse()
 
   /**
@@ -120,6 +120,7 @@ enum class ContractType(val type: String) {
 
 enum class RequestType(val type: String) {
   Contract("contract"),
+  Load("Type"),
   Spot("spot"),
   Fixed("fixed")
 }
