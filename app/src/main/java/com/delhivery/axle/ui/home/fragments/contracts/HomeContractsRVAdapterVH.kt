@@ -17,6 +17,7 @@ import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
+import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
@@ -444,8 +445,8 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 /**
  * Progress inline view holder
  */
-internal class HomeContractsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding) :
-  BaseHomeContractsRVAdapterViewHolder<ViewHomeLoadsProgressItemBinding, HomeContractsProgressItem>(
+internal class HomeContractsProgressItemVH(binding: ViewHomeContractsProgressItemBinding) :
+  BaseHomeContractsRVAdapterViewHolder<ViewHomeContractsProgressItemBinding, HomeContractsProgressItem>(
     binding
   ) {
   override fun bind(

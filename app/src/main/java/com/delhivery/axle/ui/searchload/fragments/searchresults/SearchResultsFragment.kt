@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.R.layout
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -345,7 +344,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   }
 
   private fun refreshData() {
-    _adapter.resetStaticData()
+    _adapter.resetStaticData(requestType?:"load")
     viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType)
   }
 

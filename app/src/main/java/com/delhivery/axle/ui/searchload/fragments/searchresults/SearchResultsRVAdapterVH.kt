@@ -14,6 +14,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
+import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
@@ -629,12 +630,24 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
   }
 }
 
-internal class SearchContractsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) :
-  BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, SearchContractsProgressItem>(
+internal class SearchContractsProgressItemVH(binding: ViewHomeContractsProgressItemBinding) :
+  BaseSearchResultsRVAdapterViewHolder<ViewHomeContractsProgressItemBinding, SearchContractsProgressItem>(
     binding
   ) {
   override fun bind(
     item: SearchContractsProgressItem,
+    _interface: SearchLoadsRVAdapterInterface
+  ) {
+
+  }
+}
+
+internal class SearchLoadsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) :
+  BaseSearchResultsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, SearchLoadsProgressItem>(
+    binding
+  ) {
+  override fun bind(
+    item: SearchLoadsProgressItem,
     _interface: SearchLoadsRVAdapterInterface
   ) {
 

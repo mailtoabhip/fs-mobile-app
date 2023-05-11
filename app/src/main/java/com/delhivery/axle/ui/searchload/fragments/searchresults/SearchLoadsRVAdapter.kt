@@ -6,6 +6,7 @@ import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
+import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
@@ -14,8 +15,9 @@ import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.ContractProgress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Progress
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.LoadProgress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.SearchSpinner
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Warning
@@ -39,7 +41,8 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     Contracts -> ViewHomeContractsRequestItemBinding.inflate(inflater,parent,false)
     SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
-    Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater,parent,false)
+    ContractProgress -> ViewHomeContractsProgressItemBinding.inflate(inflater,parent,false)
+    LoadProgress -> ViewHomeBidsProgressItemBinding.inflate(inflater,parent,false)
     else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -48,7 +51,8 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     is ViewHomeContractsRequestItemBinding -> SearchContractsRequestItemVH(binding)
     is ViewHomeBidsSearchSpinnerItemBinding -> SearchLoadsSearchSpinnerItemVH(binding)
     is ViewWarningItemBinding -> SearchLoadsWarningItemVH(binding)
-    is ViewHomeBidsProgressItemBinding -> SearchContractsProgressItemVH(binding)
+    is ViewHomeContractsProgressItemBinding -> SearchContractsProgressItemVH(binding)
+    is ViewHomeBidsProgressItemBinding -> SearchLoadsProgressItemVH(binding)
     else -> SearchLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }
 
@@ -64,22 +68,27 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
       )
       is SearchContractsProgressItemVH -> holder.bind(item as SearchContractsProgressItem, _interface)
       is SearchLoadsWarningItemVH -> holder.bind(item as SearchLoadsWarningItem, _interface)
+
     }
   }
 
   /**
    * Reset all data, remove all errors/transactions
    */
-  fun resetStaticData() {
+  fun resetStaticData(requestType: String) {
     mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      if(requestType=="load")
+        add(Pair(SearchLoadsProgressItem(), AddUpdate))
+      else
+        add(Pair(SearchContractsProgressItem(), AddUpdate))
       items.filter {
-        it.type == Contracts || it.type == Warning || it.type==Request || it.type== Progress
+        it.type == Contracts || it.type == Warning || it.type==Request || it.type== LoadProgress|| it.type==ContractProgress
       }
         .map { Pair(it, Remove) }
         .let {
           addAll(it)
         }
-      add(Pair(SearchContractsProgressItem(), AddUpdate))
+
     }
       .let {
         operation(it)

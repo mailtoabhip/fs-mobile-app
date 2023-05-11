@@ -5,8 +5,9 @@ import com.delhivery.axle.data.home.bids.HomeBidsProgressItemData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
 import com.delhivery.axle.data.home.bids.HomeBidsWarningItemData
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.ContractProgress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Progress
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.LoadProgress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Request
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.SearchSpinner
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Warning
@@ -19,7 +20,8 @@ enum class SearchResultsRVAdapterItemType(val typeId: Int) {
   Contracts(1),
   SearchSpinner(2),
   Warning(3),
-  Progress(4);
+  LoadProgress(4),
+  ContractProgress(5);
 
   companion object {
     /**
@@ -50,7 +52,15 @@ class SearchLoadsRequestItem(data: HomeBidsRequestItemData) :
  */
 class SearchContractsProgressItem(
   data: HomeBidsProgressItemData = HomeBidsProgressItemData()
-) : BaseSearchLoadsRVAdapterItem<HomeBidsProgressItemData>(Progress, data)
+) : BaseSearchLoadsRVAdapterItem<HomeBidsProgressItemData>(ContractProgress, data)
+
+/**
+ * Inline progress item
+ */
+class SearchLoadsProgressItem(
+  data: HomeBidsProgressItemData = HomeBidsProgressItemData()
+) : BaseSearchLoadsRVAdapterItem<HomeBidsProgressItemData>(LoadProgress, data)
+
 /**
  * Search contracts item
  */

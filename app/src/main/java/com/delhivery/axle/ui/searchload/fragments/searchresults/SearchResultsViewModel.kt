@@ -85,7 +85,11 @@ class SearchResultsViewModel @Inject constructor(
     }
     if(paginate){
       paginateCount++
-      Pair(SearchContractsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
+      if(requestType=="load")
+        Pair(SearchLoadsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
+      else
+        Pair(SearchContractsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
+
     }
 
     dataLoadingLiveData.postValue(true)
@@ -111,14 +115,15 @@ class SearchResultsViewModel @Inject constructor(
         .subscribe { _tRes, error ->
           if (!error && _tRes!=null) {
             mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply{
-              add(Pair(SearchContractsProgressItem(), Remove))
+              if(requestType=="load")
+              add(Pair(SearchLoadsProgressItem(), Remove))
+              else add(Pair(SearchContractsProgressItem(), Remove))
               val loads = _tRes.first
               val bids = _tRes.second
               total=loads.size
               bidsCount = bids.size
               for (load in loads.toMutableList()) {
                 try {
-
                   val lowestBid = _tRes.third.filter { b ->
                     b.transactionId.safeEquals(load.transactionId)
                   }[0]
@@ -141,6 +146,12 @@ class SearchResultsViewModel @Inject constructor(
                 if(load.isItContract())
                   add(Pair(SearchContractsRequestItem(load),Add))
                 else add(Pair(SearchLoadsRequestItem(load),Add))
+              }
+              if(loads.size==0){
+              if(requestType=="load")
+                add(Pair(SearchLoadWarningItem_NoLoad, Add))
+              else
+                add(Pair(SearchContractWarningItem_NoLoad, Add))
               }
             }.let { searchResults.postValue(it) }
           } else {

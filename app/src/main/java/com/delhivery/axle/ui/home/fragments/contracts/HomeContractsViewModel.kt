@@ -121,7 +121,7 @@ class HomeContractsViewModel@Inject constructor(
       }
     }
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit,if(originCityList.isNotEmpty()&& demandType==DemandType.Intracity.type)originCityList?.joinToString(separator = ",")else null)
+        5,if(originCityList.isNotEmpty()&& demandType==DemandType.Intracity.type)originCityList?.joinToString(separator = ",")else null)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
