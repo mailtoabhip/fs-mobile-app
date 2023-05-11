@@ -120,7 +120,7 @@ enum class ContractType(val type: String) {
 
 enum class RequestType(val type: String) {
   Contract("contract"),
-  Load("Type"),
+  Load("load"),
   Spot("spot"),
   Fixed("fixed")
 }
