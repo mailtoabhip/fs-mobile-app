@@ -191,20 +191,7 @@ internal class SearchLoadsSearchSpinnerItemVH(binding: ViewHomeBidsSearchSpinner
     item: SearchLoadsSearchSpinnerItem,
     _interface: SearchLoadsRVAdapterInterface
   ) {
-    if(item.data.visibility==View.VISIBLE){
-      binding.tvStatus.visibility=View.INVISIBLE
-      binding.tvTruckType.visibility=View.INVISIBLE
-      binding.spinnerStatus.visibility=View.INVISIBLE
-      binding.spinnerTruckDisplayName.visibility=View.INVISIBLE
-      binding.spinnerTruckType.visibility=View.GONE
-    }
-    else{
-      binding.tvStatus.visibility=View.GONE
-      binding.tvTruckType.visibility=View.GONE
-      binding.spinnerStatus.visibility=View.GONE
-      binding.spinnerTruckDisplayName.visibility=View.GONE
-      binding.spinnerTruckType.visibility=View.INVISIBLE
-    }
+    binding.isIntracity=item.data.isIntracity
   }
 }
 
@@ -222,14 +209,9 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
   ) {
     binding.request = item.data
     if (item.data.contractType == INTRACITY_CONTRACT_TYPE) {
-      hideDestinationAndConnectionTypeViews()
-      displayVehicleRunningInfo()
       binding.viewKmsPerMonth.text=item.data.intracityKms.plus(" Kms/Month")
       binding.viewDaysPerMonth.text=item.data.intracityDays.plus(" days/Month")
       binding.viewHoursPerDay.text=item.data.intracityHours.plus("h/day")
-    } else {
-      showDestinationAndConnnectionTypeViews()
-      hideVehicleRunningInfo()
     }
     //Transaction Cancelled
     if (item.data.transactionStatus == "cancelled") {
@@ -591,43 +573,6 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     }
   }
 
-  private fun displayVehicleRunningInfo() {
-    binding.hubIcon.visibility = View.VISIBLE
-    binding.vehicleRunningTime.visibility = View.VISIBLE
-    binding.truckTypeImage2.visibility = View.VISIBLE
-    binding.truckTypeText2.visibility=View.VISIBLE
-  }
-
-  private fun hideVehicleRunningInfo() {
-    binding.hubIcon.visibility = View.GONE
-    binding.vehicleRunningTime.visibility = View.GONE
-    binding.truckTypeImage2.visibility = View.GONE
-    binding.truckTypeText2.visibility = View.GONE
-  }
-
-  private fun showDestinationAndConnnectionTypeViews() {
-    binding.tvStops.visibility = View.VISIBLE
-    binding.forwardArrow.visibility = View.VISIBLE
-    binding.tvHubDestinationCity.visibility = View.VISIBLE
-    binding.tvHubDestinationState.visibility = View.VISIBLE
-    binding.connectionTypeImage.visibility = View.VISIBLE
-    binding.connectionTypeText.visibility = View.VISIBLE
-    binding.vehicleNumber.visibility = View.VISIBLE
-    binding.truckTypeImage.visibility = View.VISIBLE
-    binding.truckTypeText.visibility = View.VISIBLE
-  }
-
-  private fun hideDestinationAndConnectionTypeViews() {
-    binding.tvStops.visibility = View.GONE
-    binding.forwardArrow.visibility = View.GONE
-    binding.tvHubDestinationCity.visibility = View.GONE
-    binding.tvHubDestinationState.visibility = View.GONE
-    binding.connectionTypeImage.visibility = View.GONE
-    binding.connectionTypeText.visibility = View.GONE
-    binding.vehicleNumber.visibility = View.GONE
-    binding.truckTypeText.visibility=View.GONE
-    binding.truckTypeImage.visibility=View.GONE
-  }
 }
 
 internal class SearchContractsProgressItemVH(binding: ViewHomeContractsProgressItemBinding) :

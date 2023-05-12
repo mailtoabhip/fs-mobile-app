@@ -4,7 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
-
+  <data>
+    <variable
+        name="isIntracity"
+        type="Boolean"
+        />
+    <import type="android.view.View" />
+  </data>
   <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/container_spinner"
       android:layout_width="match_parent"
@@ -25,7 +31,7 @@
         android:layout_margin="@dimen/size_8dp"
         android:background="@drawable/bg_search_load_spinner"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:visibility="invisible"
+        android:visibility="@{isIntracity?View.GONE:View.INVISIBLE}"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         bind:shadow="@{ @dimen/size_2dp }"
@@ -40,7 +46,7 @@
         android:textColor="@color/black"
         android:textFontWeight="500"
         android:textSize="@dimen/text_14sp"
-        android:visibility="gone"
+        android:visibility="@{isIntracity?View.INVISIBLE:View.GONE}"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -56,7 +62,7 @@
         android:paddingStart="@dimen/size_12dp"
         android:paddingTop="@dimen/size_8dp"
         android:textSize="@dimen/text_16sp"
-        android:visibility="gone"
+        android:visibility="@{isIntracity?View.INVISIBLE:View.GONE}"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_truck_type"
         />
@@ -70,7 +76,7 @@
         android:textColor="@color/black"
         android:textFontWeight="500"
         android:textSize="@dimen/text_14sp"
-        android:visibility="gone"
+        android:visibility="@{isIntracity?View.INVISIBLE:View.GONE}"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spinner_truck_display_name"
         />
@@ -85,7 +91,7 @@
         android:paddingStart="@dimen/size_12dp"
         android:paddingTop="@dimen/size_8dp"
         android:textSize="@dimen/text_16sp"
-        android:visibility="gone"
+        android:visibility="@{isIntracity?View.INVISIBLE:View.GONE}"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_status"
         />

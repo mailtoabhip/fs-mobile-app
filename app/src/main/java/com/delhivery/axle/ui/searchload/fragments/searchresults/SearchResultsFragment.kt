@@ -378,7 +378,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     /* clear and add first dummy item */
     _adapter.clearItems()
     if(contractType==ContractType.INTRACITY.type)
-      _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
+      _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(true)),Add)
     else
       _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
