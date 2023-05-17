@@ -43,7 +43,7 @@ class AuthenticationRepository @Inject constructor(
       }
       .onErrorReturn {
         /* handle error if needed */
-        Pair(false, "Invalid phone number")
+        Pair(false, it.errorResponseBody()?.errorBody?.errorMessage.toString())
       }
 
   /**

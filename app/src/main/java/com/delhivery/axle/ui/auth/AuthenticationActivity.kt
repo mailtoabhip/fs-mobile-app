@@ -332,9 +332,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   inner class ErrorObserver : Observer<Pair<AuthenticationUIError, String?>> {
     override fun onChanged(it: Pair<AuthenticationUIError, String?>?) {
       it?.let { error ->
-        /* show error message in snackbar if not null || empty */
+        /* show error message in dialog if not null || empty */
         if (error.second.isNotNullOrEmpty()) {
-          uiUtils.showSnackbar(error.second!!)
+          dialogUtils.showErrorDialog(error.second!!,3L)
         }
         /* handle each error state */
         when (error.first) {
