@@ -98,7 +98,8 @@ interface TransactionService {
     @Query("limit") limit: Int,
     @Query("demand_types") vendorType: String ?,
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
-    @Query("origin_city_list") originCityList: String ?=null
+    @Query("origin_city_list") originCityList: String ?=null,
+    @Query("apply_100km_logic") nearby100kmcities: Boolean? = null
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
