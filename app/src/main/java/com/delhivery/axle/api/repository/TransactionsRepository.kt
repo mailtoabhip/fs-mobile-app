@@ -58,7 +58,7 @@ class TransactionsRepository @Inject constructor(
    * Get contracts summary count
    */
   fun fetchContractsSummaryCount(originCityList:String?) =
-    transactionService.contractsCountSummary("yes",originCityList
+    transactionService.contractsCountSummary("yes",originCityList,true
     ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions

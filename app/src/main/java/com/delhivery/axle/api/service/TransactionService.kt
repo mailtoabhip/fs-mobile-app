@@ -108,7 +108,8 @@ interface TransactionService {
   @GET("/transactions/loadboard/contracts")
   fun contractsCountSummary(
     @Query("only_contract_counts") onlyCount: String?,
-    @Query("origin_city_list") originCityList: String ?=null
+    @Query("origin_city_list") originCityList: String ?=null,
+    @Query("apply_100km_logic") nearby100kmcities: Boolean ?=null
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**
