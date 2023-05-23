@@ -48,7 +48,8 @@ class TransactionsRepository @Inject constructor(
    */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,
+       if(demand_type==DemandType.Intracity.type) true else null
     ).convertResponse()
 
 
