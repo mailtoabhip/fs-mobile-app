@@ -48,9 +48,8 @@ class TransactionsRepository @Inject constructor(
    */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,
-       if(demand_type==DemandType.Intracity.type) true else null
-    ).convertResponse()
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities).
+    convertResponse()
 
 
   /**
@@ -74,7 +73,7 @@ class TransactionsRepository @Inject constructor(
     limit: Int
   ) = transactionService.transactions(
       offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
-    contractsMap[contractStatus]?.statusId, if(requestType==RequestType.Load.type) "yes" else null,true, if(requestType==RequestType.Load.type) "fixed,spot" else "contract",
+    contractsMap[contractStatus]?.statusId, if(requestType==RequestType.Load.type) "yes" else null,if(requestType==RequestType.Load.type) true else null, if(requestType==RequestType.Load.type) "fixed,spot" else "contract",
     contractType,if(requestType==RequestType.Load.type) null else true,limit
   ).convertResponse()
 

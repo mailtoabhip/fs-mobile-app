@@ -99,7 +99,6 @@ interface TransactionService {
     @Query("demand_types") vendorType: String ?,
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
-    @Query("apply_100km_logic") nearby100kmcities: Boolean? = null
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -110,7 +109,6 @@ interface TransactionService {
     @Query("only_contract_counts") onlyCount: String?,
     @Query("sp_id") userId: String,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
-    @Query("apply_100km_logic") nearby100kmcities: Boolean ?=null
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**
