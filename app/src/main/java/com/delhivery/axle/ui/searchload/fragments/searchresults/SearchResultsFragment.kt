@@ -404,8 +404,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType)
   }
 
-  /*
-   Save the query params to be used during pagination
+  /**
+   * Save the query params to be used during pagination
    */
   private fun saveQueryParams(
     origin: CityModel,
