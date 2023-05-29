@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.UpdateUserRequest
@@ -47,7 +48,13 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+      onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          viewModel.updateUserStatusLiveData.postValue(null)
+          startActivity(accountModeIntent(this@AccountRoleActivity, viewModel.modeLiveData.value))
+          finish()
+        }
+      })
         getUserMode()
 
         /* observe and update ui state */
@@ -302,10 +309,10 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
         }
     }
 
-    override fun onBackPressed() {
+   /* override fun onBackPressed() {
         super.onBackPressed()
         viewModel.updateUserStatusLiveData.postValue(null)
-        startActivity(accountModeIntent(this, viewModel.modeLiveData.value))}
+        startActivity(accountModeIntent(this, viewModel.modeLiveData.value))}*/
 }
 
 /**

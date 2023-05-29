@@ -16,6 +16,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
@@ -137,6 +138,17 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,2)
+                navigationUtils.navigateKyc(this@AddressActivity,true,bundle)
+                finish()
+            }
+        })
+
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
 
@@ -269,14 +281,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     }
 
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,2)
-        navigationUtils.navigateKyc(this,true,bundle)
-    }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
         compositeDisposable += requestPermission(

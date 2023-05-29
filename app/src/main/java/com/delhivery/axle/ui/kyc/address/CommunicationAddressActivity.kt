@@ -13,6 +13,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
@@ -106,6 +107,17 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,2)
+                navigationUtils.navigateKyc(this@CommunicationAddressActivity,true,bundle)
+                finish()
+            }
+        })
+
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
         /* Address Proof */
@@ -531,14 +543,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             intent,
             REQCODE_FILE_ATTACHMENTS
         )
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,2)
-        navigationUtils.navigateKyc(this,true,bundle)
     }
 
     private fun uploadImage(

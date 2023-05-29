@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
@@ -87,6 +88,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   protected val compositeDisposable: CompositeDisposable by lazy { CompositeDisposable() }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
     super.onCreate(savedInstanceState)
     bindContentView(layoutId())
 
@@ -239,7 +241,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   override fun onOptionsItemSelected(item: MenuItem): Boolean =
     when (item.itemId) {
       android.R.id.home -> {
-        onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
         true
       }
       else -> super.onOptionsItemSelected(item)

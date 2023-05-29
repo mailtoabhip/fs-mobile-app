@@ -15,6 +15,7 @@ import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -95,6 +96,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.tripType = intent?.getStringExtra(IntentExtraTripTypeKey)?: ""
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
 
   }
 
@@ -665,10 +673,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  override fun onBackPressed() {
+  /*override fun onBackPressed() {
     super.onBackPressed()
     userPrefs.setPreviousScreen(this.javaClass.name)
-  }
+  }*/
 }
 
 /* intent keys */

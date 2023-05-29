@@ -113,7 +113,7 @@ class LocationUtils @Inject constructor(
   fun getLocationAddress() = getLocation().flatMap { _loc ->
     val geoAddr = Geocoder(activity, Locale.getDefault())
         .getFromLocation(_loc.latitude, _loc.longitude, 1)
-        .firstOrNull()
+        ?.firstOrNull()
     Single.just(Pair(_loc, geoAddr))
   }
 

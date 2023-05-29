@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -94,6 +95,17 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,0)
+                navigationUtils.navigateKyc(this@GstVerificationActivity,false,bundle)
+                finish()
+            }
+        })
+
         startTime = System.currentTimeMillis()
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
 
@@ -248,16 +260,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         binding.btnVerifyGst.isEnabled =true
     }
 
-
-
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,0)
-        navigationUtils.navigateKyc(this,false,bundle)
-    }
 
     override fun onAWSSuccess(
             path: String

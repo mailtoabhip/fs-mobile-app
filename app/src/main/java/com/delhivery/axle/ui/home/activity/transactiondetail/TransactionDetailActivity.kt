@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.activity.transactiondetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.transactions.TransactionsItemData
@@ -65,6 +66,13 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
     setSupportActionBar(binding.toolbar)
     title = viewModel.transaction.transactionHeading()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
 
     viewModel.transactionStateLiveData.observe(this, TransactionObserver())
     viewModel.transactionStateLiveData.postValue(TransactionStateLoading())
@@ -185,11 +193,6 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
         }
       }
     }
-  }
-
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    super.onBackPressed()
   }
 
 }

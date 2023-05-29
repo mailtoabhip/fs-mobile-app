@@ -556,7 +556,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     /* search bar expanded/collapse callbacks */
     searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
-      override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+      override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
         // Capture event
@@ -568,7 +568,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         return true
       }
 
-      override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+      override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
         uiUtils.toggleKeyboard()
         binding.refreshLayout.isEnabled = true
         adapter.cancelFilter()

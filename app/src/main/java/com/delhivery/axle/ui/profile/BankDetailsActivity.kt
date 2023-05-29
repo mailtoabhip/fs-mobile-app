@@ -9,6 +9,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.Observer
@@ -86,6 +87,14 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Payment Details"
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
+
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
             if (userPrefs.ownedTruck.toInt() <= 10) {
                 binding.uploadDoc1.visibility = View.VISIBLE
@@ -187,10 +196,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
 }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        navigationUtils.navigate(MyProfileActivity::class.java,true)
-    }
     override fun onAWSSuccess(
         path: String
     ) {

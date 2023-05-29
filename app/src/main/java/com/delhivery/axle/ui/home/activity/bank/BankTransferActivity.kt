@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -37,7 +38,12 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
     setSupportActionBar(binding.toolbar)
     title = "Transfer to bank account"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
     viewModel.walletLiveData.observe(this, Observer {
       binding.wallet = it
       binding.bank = viewModel.bankname
@@ -75,11 +81,6 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
       setResult(Activity.RESULT_OK)
     }
     super.finish()
-  }
-
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    super.onBackPressed()
   }
 
   private fun openTransactions() {

@@ -1,9 +1,11 @@
 package com.delhivery.axle.ui.splash
 
+import android.app.Activity
+import android.app.ProgressDialog.show
 import android.content.Intent
+import android.content.IntentSender
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -11,6 +13,9 @@ import android.provider.Settings.Secure
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
@@ -25,29 +30,29 @@ import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
-import com.delhivery.axle.utils.EVENT_ADD_TRUCK_SUBMIT
 import com.delhivery.axle.utils.EVENT_APP_OPEN
-import com.delhivery.axle.utils.EVENT_HOME_SEARCH_INITIATE
 import com.delhivery.axle.utils.EVENT_UPDATE_APP
 import com.delhivery.axle.utils.EVENT_UPDATE_CANCEL
 import com.delhivery.axle.utils.PROPERTY_CURRENT_VERSION
 import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
 import com.delhivery.axle.utils.PROPERTY_LATEST_VERSION
-import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
-import com.delhivery.axle.ui.splash.SplashPostState.*
-import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -57,7 +62,7 @@ import javax.inject.Inject
 /**
  * Splash screen
  */
-class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
+class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   init {
     StatusBarColor = Color.parseColor("#181818")
   }
@@ -70,14 +75,33 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   var currentCode :Int =0
   var type :String = ""
   var tid :String  = ""
+  lateinit var splashScreen: SplashScreen
   lateinit var isAuthenticated :SplashPostState
   var ifUpdateFalse=false
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
+  private val APP_UPDATE_REQUEST_CODE = 1991
 
+  private val appUpdateManager: AppUpdateManager by lazy {
+    this.let { AppUpdateManagerFactory.create(it) }
+  }
+
+  private val appUpdatedListener: InstallStateUpdatedListener by lazy {
+    object : InstallStateUpdatedListener {
+      override fun onStateUpdate(installState: InstallState) {
+        when {
+          installState.installStatus() == InstallStatus.DOWNLOADED -> popupSnackbarForCompleteUpdate()
+          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager?.unregisterListener(this)
+          else -> Log.d("InstallUpdatedListener", installState.installStatus()?.toString()?:"")
+        }
+      }
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
+
     //Capture event
     val cal = Calendar.getInstance()
     val currentHourIn24Format = cal[Calendar.HOUR_OF_DAY]
@@ -139,7 +163,84 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
               Log.d("dynamicLinkFromSplash", "getDynamicLink:onFailure")
             }
   }
+  private fun checkForAppUpdate(forceUpdate:Boolean) {
+    // Returns an intent object that you use to check for an update.
+    val appUpdateInfoTask = appUpdateManager.appUpdateInfo
 
+
+    // Checks that the platform will allow the specified type of update.
+    appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+      if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+        // Request the update.
+        try {
+          val installType = when {
+            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) && !forceUpdate -> AppUpdateType.FLEXIBLE
+            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) && forceUpdate -> AppUpdateType.IMMEDIATE
+            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) -> AppUpdateType.IMMEDIATE
+            else -> null
+          }
+          if (installType == AppUpdateType.FLEXIBLE) appUpdateManager.registerListener(appUpdatedListener)
+
+          if (installType != null) {
+              appUpdateManager.startUpdateFlowForResult(
+                appUpdateInfo,
+                installType,
+                this,
+                APP_UPDATE_REQUEST_CODE)
+
+          }
+        } catch (e: IntentSender.SendIntentException) {
+          e.printStackTrace()
+        }
+      }
+    }
+  }
+
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == APP_UPDATE_REQUEST_CODE) {
+      if (resultCode != Activity.RESULT_OK) {
+        Toast.makeText(this, "App Update failed, please try again on the next app launch", Toast.LENGTH_SHORT).show() }
+      }
+    }
+
+
+  private fun popupSnackbarForCompleteUpdate() {
+    val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
+    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
+    snackbar.show()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    appUpdateManager
+      .appUpdateInfo
+      .addOnSuccessListener { appUpdateInfo ->
+
+        // If the update is downloaded but not installed,
+        // notify the user to complete the update.
+        if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+          popupSnackbarForCompleteUpdate()
+        }
+
+        //Check if Immediate update is required
+        try {
+          if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+            // If an in-app update is already running, resume the update.
+
+              appUpdateManager.startUpdateFlowForResult(
+                appUpdateInfo,
+                AppUpdateType.IMMEDIATE,
+                this,
+                APP_UPDATE_REQUEST_CODE)
+
+          }
+        } catch (e: IntentSender.SendIntentException) {
+          e.printStackTrace()
+        }
+      }
+  }
   /**
    * Splash animation chain
    */
@@ -149,7 +250,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       checkForUpdatedVersion { it ->
         when (it) {
           true -> {
-            dialogUtils.showBasicConfirmDialog(
+            checkForAppUpdate(true)
+          /*  dialogUtils.showBasicConfirmDialog(
                 R.string.title_dialog_update,
                 R.string.msg_dialog_update,
                 positiveAction = "UPDATE",
@@ -172,9 +274,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                   it.dismiss()
                   finish()
                 }
-            )
+            )*/
           }
           false -> {
+            checkForAppUpdate(false)
+            if(userPrefs.hasLoggedIn)
+              splashScreen.setKeepOnScreenCondition { true }
             ifUpdateFalse=true
             if(ifUpdateFalse && userPrefs.hasLoggedIn){
               binding.btnGetStarted.visibility = View.GONE

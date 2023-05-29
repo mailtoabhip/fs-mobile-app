@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.RadioButton
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
@@ -65,6 +66,13 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Profile Details"
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
 
         viewModel.businessName.value = viewModel.userPrefs.companyName
         viewModel.userName.value = viewModel.userPrefs.userName
@@ -179,11 +187,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     override fun sendDocForVerification(uploadArray: ArrayList<Pair<String, String>>) {
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.setPreviousScreen(this.javaClass.name)
     }
 
     private fun loadImage(

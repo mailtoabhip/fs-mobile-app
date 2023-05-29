@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -82,11 +83,28 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* observe errors and update ui */
     viewModel.errorLiveData.observe(this, ErrorObserver())
 
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        when (binding.state) {
+          PhoneNo -> {
+            onBackPressedDispatcher.onBackPressed()
+            finish()
+          }
+          OTP -> viewModel.state = PhoneNo
+          Password -> viewModel.state = PhoneNo
+          LoginProgress -> {/* do nothing when loading */
+          }
+          else -> {
+          }
+        }
+
+      }
+    })
     /*move to back screen*/
     binding.btnChangeNumber.setOnClickListener {
       when (binding.state) {
         PhoneNo -> {
-          super.onBackPressed()
+          onBackPressedDispatcher.onBackPressed()
         }
         OTP -> viewModel.state = PhoneNo
         LoginProgress -> {/* do nothing when loading */
@@ -188,19 +206,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     viewModel.markNotificationRead(notificationId)
   }
 
-  override fun onBackPressed() {
-    when (binding.state) {
-      PhoneNo -> {
-        super.onBackPressed()
-      }
-      OTP -> viewModel.state = PhoneNo
-      Password -> viewModel.state = PhoneNo
-      LoginProgress -> {/* do nothing when loading */
-      }
-      else -> {
-      }
-    }
-  }
 
   override fun otpSubmitted(otp: CharArray) {
     binding.btnVerifyOtp.isEnabled = true

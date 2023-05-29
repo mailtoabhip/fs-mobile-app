@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.databinding.ActivityAccountActionBinding
@@ -40,6 +41,13 @@ class AccountActionActivity  : BaseActivity<ActivityAccountActionBinding, Accoun
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                viewModel.updateUserStatusLiveData.postValue(null)
+                navigationUtils.navigate(AuthenticationActivity::class.java, true)
+                finish()
+            }
+        })
         //Post loads selected
         binding.radioPostloads.setOnCheckedChangeListener { buttonView, isChecked ->
         clearRadioState()
@@ -105,11 +113,11 @@ class AccountActionActivity  : BaseActivity<ActivityAccountActionBinding, Accoun
         binding.posttrucksLayout.isSelected = false
     }
 
-    override fun onBackPressed() {
+/*    override fun onBackPressed() {
         super.onBackPressed()
         viewModel.updateUserStatusLiveData.postValue(null)
         navigationUtils.navigate(AuthenticationActivity::class.java, true)
-    }
+    }*/
 
     private fun setPostLoad(){
         clearBackground()

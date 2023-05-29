@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.DatePicker
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
@@ -97,6 +98,12 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     setSupportActionBar(binding.toolbar)
     title = "Dispatch Details"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
     if (viewModel.trip != null) {
       viewModel.transactionIds.add(viewModel.trip!!.transactionId)
       binding.textTrackingNumber.setText(viewModel.trip!!.podDispatchAwbNumber)
@@ -246,10 +253,7 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
         }
 
   }
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    super.onBackPressed()
-  }
+
   private fun dispatchTakePictureIntent() {
     val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 

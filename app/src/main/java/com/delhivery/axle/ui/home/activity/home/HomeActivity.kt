@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.activity.OnBackPressedCallback
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -25,7 +27,7 @@ import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.ui.splash.SplashActivity
+import com.delhivery.axle.ui.splash.StartRoutingActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.trucks.TruckActivity
@@ -69,6 +71,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   }
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        finish()
+      }
+    })
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     if (transactions.isNotEmpty())
@@ -94,9 +101,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromNotificationContract= false
     viewModel.getUserDetails()
   }
-  override fun onBackPressed() {
-    super.onBackPressed()
-  }
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     viewModel.userUpdateLiveData.observe(this, Observer {
@@ -567,8 +572,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         when(pos){
           0->
             if(count==1){
-              if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
-                userPrefs.previousNavigationTab= SplashActivity::class.java.name
+              if(userPrefs.userPreviousScreen==StartRoutingActivity::class.java.name){
+                userPrefs.previousNavigationTab= StartRoutingActivity::class.java.name
               } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
                 userPrefs.previousNavigationTab= VendorPolicyActivity::class.java.name
               }else{

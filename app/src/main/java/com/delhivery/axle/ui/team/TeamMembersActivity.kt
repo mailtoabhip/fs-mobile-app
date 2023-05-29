@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
@@ -60,7 +61,18 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
     setSupportActionBar(binding.toolbar)
     title = "My Team Members"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        if(userCreate){
+          val intent = Intent("custom-event-name")
+          val num: String = "0"
+          intent.putExtra("message", num)
+          LocalBroadcastManager.getInstance(this@TeamMembersActivity).sendBroadcast(intent)
+          finish()
+        }
+        finish()
+      }
+    })
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -138,17 +150,6 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
         binding.addTeamMemberButton.visibility = View.VISIBLE
       }
     })
-  }
-
-  override fun onBackPressed() {
-    super.onBackPressed()
-    if(userCreate){
-      val intent = Intent("custom-event-name")
-          val num: String = "0"
-          intent.putExtra("message", num)
-          LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-          finish()
-    }
   }
 
   private fun refreshData() {

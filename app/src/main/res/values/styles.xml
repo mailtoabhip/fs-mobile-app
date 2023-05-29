@@ -9,6 +9,13 @@
     <item name="android:windowLightStatusBar">true</item>
   </style>
 
+  <style name="CustomSplashScreenTheme" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/white</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_img</item>
+    <item name="windowSplashScreenAnimationDuration">10</item>
+    <item name="postSplashScreenTheme">@style/AppTheme</item>
+  </style>
+
   <!-- Action button -->
   <style name="ActionButton">
     <item name="android:layout_height">wrap_content</item>

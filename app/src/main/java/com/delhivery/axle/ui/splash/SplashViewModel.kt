@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.splash
 
-import android.view.View
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.splash.SplashPostState.*
@@ -9,7 +8,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 /**
- * View model for [SplashActivity]]
+ * View model for [StartRoutingActivity]]
  */
 class SplashViewModel @Inject constructor(
   private val authenticationRepository: AuthenticationRepository,

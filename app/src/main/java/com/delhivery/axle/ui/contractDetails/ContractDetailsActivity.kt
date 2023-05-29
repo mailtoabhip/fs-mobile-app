@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -82,7 +83,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
 
     binding.backArrow.setOnClickListener {
-      onBackPressed()
+      onBackPressedDispatcher.onBackPressed()
     }
   }
 
@@ -128,6 +129,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
     refreshData()
   }
+
 
   var countDownTimer: CountDownTimer? = null
   // timer for under 1 hrs slot

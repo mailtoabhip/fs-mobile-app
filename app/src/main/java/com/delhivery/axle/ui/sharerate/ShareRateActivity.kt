@@ -397,7 +397,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                 dialog.setCancelable(false)
 
                 bindingDialog.buttonCancel.setOnClickListener {
-                    onBackPressed()
+                   onBackPressedDispatcher.onBackPressed()
                     dialog.dismiss()
                 }
 

@@ -8,6 +8,7 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
 import androidx.work.WorkManager
@@ -62,7 +63,12 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
-
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
         analyticsUtil.trackEvent(
             EVENT_VIEW_MY_PROFILE,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
@@ -388,13 +394,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             }
         }
     }
-
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.setPreviousScreen(this.javaClass.name)
-    }
-
+    
     /**
      * Confirm and logout
      */

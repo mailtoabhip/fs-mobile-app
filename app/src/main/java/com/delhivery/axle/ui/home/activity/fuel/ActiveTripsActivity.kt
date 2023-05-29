@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
@@ -60,6 +61,12 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
     title = "Select Active Trip for fuel"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
     viewModel.dataLoadingLiveData.observe(this, Observer {
       isLoadingData = it ?: false
     })
@@ -122,10 +129,7 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
       }
     }
   }
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    super.onBackPressed()
-  }
+
   override fun finish() {
     if (cardCreated) {
       setResult(Activity.RESULT_OK)

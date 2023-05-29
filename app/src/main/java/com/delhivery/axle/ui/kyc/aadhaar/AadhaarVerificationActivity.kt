@@ -15,6 +15,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
@@ -114,6 +115,17 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,0)
+                navigationUtils.navigateKyc(this@AadhaarVerificationActivity,false,bundle)
+                finish()
+            }
+        })
+
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
 
@@ -223,14 +235,6 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
     override fun getRequestAadhaarOtp() {
        viewModel.getRequestAadhaarOtp(true)
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,0)
-        navigationUtils.navigateKyc(this,false,bundle)
     }
 
     override fun setAccountRoleSelection(selected: String) {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.databinding.ActivityHelpSupportBinding
@@ -27,6 +28,13 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Help & Support"
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
 
         binding.paymentTerms.setOnClickListener {
             when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/paymentterms")) {
@@ -59,8 +67,4 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.setPreviousScreen(this.javaClass.name)
-    }
 }
