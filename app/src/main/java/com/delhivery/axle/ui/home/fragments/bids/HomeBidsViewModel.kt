@@ -138,6 +138,8 @@ class HomeBidsViewModel @Inject constructor(
     compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
       .flatMap { _res ->
         total = _res.first
+        offset = _res.third
+        hasMoreData = _res.fourth
         bidsCountLiveData.postValue(total)
         if (!paginate && _res.first == 0) {
           Single.error(NoBidsFoundException())
@@ -155,8 +157,6 @@ class HomeBidsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _res, error ->
           if (!error) {
-            offset += _res.second.offset
-            hasMoreData = _res.second.hasNext
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
