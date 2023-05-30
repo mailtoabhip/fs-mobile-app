@@ -83,7 +83,7 @@ class BidsViewModel @Inject constructor(
 
     if (!paginate) {
       offset = 0
-    } else if (paginate && (total == offset)) {
+    } else if (paginate && !hasMoreData) {
       return
     }
 
@@ -118,6 +118,8 @@ class BidsViewModel @Inject constructor(
     compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract,onlyFrcBids)
         .flatMap { _res ->
           total = _res.first
+          offset = _res.third
+          hasMoreData = _res.fourth
           bidsCountLiveData.postValue(total)
           if (!paginate && _res.first == 0) {
             Single.error(NoBidsFoundException())
@@ -136,8 +138,6 @@ class BidsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error) {
-            offset += _res.second.offset
-            hasMoreData = _res.second.hasNext
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
