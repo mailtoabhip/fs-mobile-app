@@ -225,8 +225,12 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           "dmt"
         else ""
         val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
-          _item.transactionBid!!.childTransactionId else _item.key()
+        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
+          if(_item.transactionBid?.childTransactionId!=null)
+            _item.transactionBid!!.childTransactionId else _item.key()
+        }else{
+          _item.key()
+        }
         if(id!=null)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)

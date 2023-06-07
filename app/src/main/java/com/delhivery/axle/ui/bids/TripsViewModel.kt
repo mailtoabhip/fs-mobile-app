@@ -244,8 +244,7 @@ class TripsViewModel @Inject constructor(
           offset += t.trips.size
           hasMoreData = t.hasNext
           total = t.total
-          if(!isSettledFilter)
-            tripsCount=total
+
           val jsonObject = JsonObject()
           jsonObject.addProperty("vendor_id", userRepository.userId())
           jsonObject.addProperty("transaction_ids", t.trips.map { it.transactionId }.joinToString(",") { it })
@@ -328,7 +327,7 @@ class TripsViewModel @Inject constructor(
                       balancePendingTotal += trip.payment!!.paymentAmount ?: 0.0
                     }
                     add(Pair(HomeTripsItem(trip), Add))
-                    //tripsCount++
+                    tripsCount++
                     currentTripsCount++
                   }
                 }

@@ -199,10 +199,6 @@ class HomeBidsViewModel @Inject constructor(
                   } catch (e: Exception) {
                     transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
                   }
-                  if(transaction.isDMTIndent() && (transaction.bidStatus().status == "Confirmed" ||transaction.bidStatus().status == "Lost"||
-                            transaction.bidStatus().status =="Cancelled") && transaction.transactionBid!!.childTransactionId ==null){
-                    continue
-                  }
                   add(Pair(HomeBidsRequestItem(transaction), Add))
                 }
               }
