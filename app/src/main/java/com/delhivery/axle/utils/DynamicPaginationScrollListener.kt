@@ -2,8 +2,8 @@ package com.delhivery.axle.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-/*
-Pagination scroll listener where the number of items per page is not fixed
+/**
+ * Pagination scroll listener for the cases where the number of items per page is not fixed
  */
 abstract class DynamicPaginationScrollListener: RecyclerView.OnScrollListener() {
   override fun onScrolled(
