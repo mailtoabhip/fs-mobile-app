@@ -1,19 +1,26 @@
 package com.delhivery.axle.ui.splash
 
+import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
 import android.app.ProgressDialog.show
 import android.content.Intent
 import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.provider.Settings
 import android.provider.Settings.Secure
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.delhivery.axle.R
@@ -32,6 +39,7 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
@@ -101,7 +109,8 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   override fun onCreate(savedInstanceState: Bundle?) {
     splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
-
+    // Keep the splash screen visible for this Activity
+    splashScreen.setKeepOnScreenCondition { true }
     //Capture event
     val cal = Calendar.getInstance()
     val currentHourIn24Format = cal[Calendar.HOUR_OF_DAY]
@@ -127,7 +136,19 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
 
 
   }
-
+  private val requestPermissionLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { isGranted: Boolean ->
+    if (isGranted) {
+      postAnimate(isAuthenticated)
+    } else {
+      // Explain to the user that the feature is unavailable because the
+      // features requires a permission that the user has denied. At the
+      // same time, respect the user's decision. Don't link to system
+      // settings in an effort to convince the user to change their
+      // decision.
+    }
+  }
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -139,6 +160,37 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     binding.btnGetStarted.visibility = View.GONE
     binding.btnGetStarted.setOnClickListener {
       if(ifUpdateFalse) {
+        if (VERSION.SDK_INT >= VERSION_CODES.M) {
+          when {
+            ContextCompat.checkSelfPermission(
+              this, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED -> {
+              postAnimate(isAuthenticated)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+             /* Snackbar.make(
+                findViewById(R.id.parent_layout),
+                "Notification blocked",
+                Snackbar.LENGTH_LONG
+              ).setAction("Settings") {
+                // Responds to click on the action
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val uri: Uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
+              }.show()*/
+            }
+            else -> {
+              // The registered ActivityResultCallback gets the result of this request
+              requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS
+              )
+            }
+          }
+        }
+        postAnimate(isAuthenticated)
+      }else{
         postAnimate(isAuthenticated)
       }
     }
@@ -250,41 +302,17 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
       checkForUpdatedVersion { it ->
         when (it) {
           true -> {
+            splashScreen.setKeepOnScreenCondition { false}
             checkForAppUpdate(true)
-          /*  dialogUtils.showBasicConfirmDialog(
-                R.string.title_dialog_update,
-                R.string.msg_dialog_update,
-                positiveAction = "UPDATE",
-                negativeAction = "CANCEL",
-                positiveClickListener = {
-                  analyticsUtil.trackEvent(
-                          EVENT_UPDATE_APP,
-                          mutableListOf(PROPERTY_USER_ID , PROPERTY_CURRENT_VERSION , PROPERTY_LATEST_VERSION),
-                          mutableListOf(userPrefs.userId(), currentCode.toString() , latestCode.toString())
-                  )
-                  it.dismiss()
-                  openPlayStore()
-                },
-                negativeClickListener = {
-                  analyticsUtil.trackEvent(
-                          EVENT_UPDATE_CANCEL,
-                          mutableListOf(PROPERTY_USER_ID , PROPERTY_CURRENT_VERSION , PROPERTY_LATEST_VERSION),
-                          mutableListOf(userPrefs.userId(), currentCode.toString() , latestCode.toString() )
-                  )
-                  it.dismiss()
-                  finish()
-                }
-            )*/
           }
           false -> {
             checkForAppUpdate(false)
-            if(userPrefs.hasLoggedIn)
-              splashScreen.setKeepOnScreenCondition { true }
             ifUpdateFalse=true
             if(ifUpdateFalse && userPrefs.hasLoggedIn){
               binding.btnGetStarted.visibility = View.GONE
               postAnimate(isAuthenticated)
             }else{
+              splashScreen.setKeepOnScreenCondition { false }
               binding.btnGetStarted.visibility = View.VISIBLE
             }
           }
@@ -403,7 +431,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     } else {
       when (state) {
         Auth -> AuthenticationActivity::class
-        Home -> HomeActivity::class
+        Home -> VendorPolicyActivity::class
         AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()
