@@ -1,11 +1,20 @@
 package com.delhivery.axle.ui.home.activity.home
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -37,6 +46,14 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
@@ -69,6 +86,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
     HomeFragmentsAdapter(supportFragmentManager)
   }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
@@ -134,7 +152,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       binding.toolbarTitle.text = title
       FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-
     }
     binding.viewpager.disableScroll(true)
 
@@ -165,6 +182,38 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
       }
     })
+
+      if (VERSION.SDK_INT >= VERSION_CODES.M) {
+     when {
+       ContextCompat.checkSelfPermission(
+         this, Manifest.permission.POST_NOTIFICATIONS
+       ) == PackageManager.PERMISSION_GRANTED -> {
+
+       }
+       shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+          Snackbar.make(
+            binding.root,
+            "Notification blocked",
+            Snackbar.LENGTH_LONG
+          ).setAction("Settings") {
+            // Responds to click on the action
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val uri: Uri = Uri.fromParts("package", packageName, null)
+            intent.data = uri
+            startActivity(intent)
+          }.show()
+       }
+       else -> {
+         // The registered ActivityResultCallback gets the result of this request
+        /* requestPermissionLauncher.launch(
+           Manifest.permission.POST_NOTIFICATIONS
+         )*/
+       }
+     }
+   }
+
+    checkForAppUpdate(false)
   }
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
@@ -527,6 +576,45 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     }
   }
+
+  override fun onResume() {
+    super.onResume()
+    appUpdateManager
+      .appUpdateInfo
+      .addOnSuccessListener { appUpdateInfo ->
+
+        // If the update is downloaded but not installed,
+        // notify the user to complete the update.
+        if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+          popupSnackbarForCompleteUpdate()
+        }
+
+        //Check if Immediate update is required
+        try {
+          if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+            // If an in-app update is already running, resume the update.
+
+            appUpdateManager.startUpdateFlowForResult(
+              appUpdateInfo,
+              AppUpdateType.IMMEDIATE,
+              this,
+              APP_UPDATE_REQUEST_CODE)
+
+          }
+        } catch (e: IntentSender.SendIntentException) {
+          e.printStackTrace()
+        }
+      }
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == APP_UPDATE_REQUEST_CODE) {
+      if (resultCode != Activity.RESULT_OK) {
+        Toast.makeText(this, "App Update failed, please try again on the next app launch", Toast.LENGTH_SHORT).show() }
+    }
+  }
+
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(

@@ -1,10 +1,12 @@
 package com.delhivery.axle.ui.base
 
 import android.Manifest
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatDelegate
@@ -31,6 +33,14 @@ import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.extensions.disposeAndClear
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -81,11 +91,34 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   var notificationFrom: String = ""
   var pricingOfferId: String = ""
 
+   val APP_UPDATE_REQUEST_CODE = 1991
 
   private lateinit var permissionResultSubject: PublishSubject<Boolean>
 
   /* Make sure to add all disposables to compositeDisposables to avoid memory leaks and crashes */
   protected val compositeDisposable: CompositeDisposable by lazy { CompositeDisposable() }
+
+  protected val appUpdateManager: AppUpdateManager by lazy {
+    this.let { AppUpdateManagerFactory.create(it) }
+  }
+
+  protected val appUpdatedListener: InstallStateUpdatedListener by lazy {
+    object : InstallStateUpdatedListener {
+      override fun onStateUpdate(installState: InstallState) {
+        when {
+          installState.installStatus() == InstallStatus.DOWNLOADED -> popupSnackbarForCompleteUpdate()
+          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager?.unregisterListener(this)
+          else -> Log.d("InstallUpdatedListener", installState.installStatus()?.toString()?:"")
+        }
+      }
+    }
+  }
+
+   fun popupSnackbarForCompleteUpdate() {
+    val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
+    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
+    snackbar.show()
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -234,6 +267,39 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
         uiUtils.showSnackbar("Sorry...You don't have any mail app installed")
       }
       else -> {
+      }
+    }
+  }
+
+  fun checkForAppUpdate(forceUpdate:Boolean) {
+    // Returns an intent object that you use to check for an update.
+    val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+
+    // Checks that the platform will allow the specified type of update.
+    appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+      if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+        // Request the update.
+        try {
+          val installType = when {
+            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) && !forceUpdate -> AppUpdateType.FLEXIBLE
+            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) && forceUpdate -> AppUpdateType.IMMEDIATE
+            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) -> AppUpdateType.IMMEDIATE
+            else -> null
+          }
+          if (installType == AppUpdateType.FLEXIBLE) appUpdateManager.registerListener(appUpdatedListener)
+
+          if (installType != null) {
+            appUpdateManager.startUpdateFlowForResult(
+              appUpdateInfo,
+              installType,
+              this,
+              APP_UPDATE_REQUEST_CODE)
+
+          }
+        } catch (e: IntentSender.SendIntentException) {
+          e.printStackTrace()
+        }
       }
     }
   }

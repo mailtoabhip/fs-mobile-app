@@ -1343,7 +1343,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val previousNavigationTab = "previous_navigation_tab"
     const val currentNavigationTab = "current_navigation_tab"
     const val contractDemand= "contract_demand"
-
+    const val AndroidLatestVersionCode= "android_latest_version_code"
 
   }
 }

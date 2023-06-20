@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
@@ -52,6 +53,8 @@ import com.delhivery.axle.utils.PROPERTY_LATEST_VERSION
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -88,23 +91,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   var ifUpdateFalse=false
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
-  private val APP_UPDATE_REQUEST_CODE = 1991
-
-  private val appUpdateManager: AppUpdateManager by lazy {
-    this.let { AppUpdateManagerFactory.create(it) }
-  }
-
-  private val appUpdatedListener: InstallStateUpdatedListener by lazy {
-    object : InstallStateUpdatedListener {
-      override fun onStateUpdate(installState: InstallState) {
-        when {
-          installState.installStatus() == InstallStatus.DOWNLOADED -> popupSnackbarForCompleteUpdate()
-          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager?.unregisterListener(this)
-          else -> Log.d("InstallUpdatedListener", installState.installStatus()?.toString()?:"")
-        }
-      }
-    }
-  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     splashScreen = installSplashScreen()
@@ -136,19 +122,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
 
 
   }
-  private val requestPermissionLauncher = registerForActivityResult(
-    ActivityResultContracts.RequestPermission()
-  ) { isGranted: Boolean ->
-    if (isGranted) {
-      postAnimate(isAuthenticated)
-    } else {
-      // Explain to the user that the feature is unavailable because the
-      // features requires a permission that the user has denied. At the
-      // same time, respect the user's decision. Don't link to system
-      // settings in an effort to convince the user to change their
-      // decision.
-    }
-  }
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -157,40 +131,31 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
     animate()
     checkForDynamicLinks()
+    if(!userPrefs.hasLoggedIn) {
+      compositeDisposable += requestPermission(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+
+          } else {
+            Snackbar.make(
+              binding.root,
+              "Please enable notification",
+              Snackbar.LENGTH_LONG
+            ).setAction("Settings") {
+              // Responds to click on the action
+              val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+              intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+              val uri: Uri = Uri.fromParts("package", packageName, null)
+              intent.data = uri
+              startActivity(intent)
+            }.show()
+          }
+        }
+    }
     binding.btnGetStarted.visibility = View.GONE
     binding.btnGetStarted.setOnClickListener {
       if(ifUpdateFalse) {
-        if (VERSION.SDK_INT >= VERSION_CODES.M) {
-          when {
-            ContextCompat.checkSelfPermission(
-              this, Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED -> {
-              postAnimate(isAuthenticated)
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
-             /* Snackbar.make(
-                findViewById(R.id.parent_layout),
-                "Notification blocked",
-                Snackbar.LENGTH_LONG
-              ).setAction("Settings") {
-                // Responds to click on the action
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                val uri: Uri = Uri.fromParts("package", packageName, null)
-                intent.data = uri
-                startActivity(intent)
-              }.show()*/
-            }
-            else -> {
-              // The registered ActivityResultCallback gets the result of this request
-              requestPermissionLauncher.launch(
-                Manifest.permission.POST_NOTIFICATIONS
-              )
-            }
-          }
-        }
-        postAnimate(isAuthenticated)
-      }else{
         postAnimate(isAuthenticated)
       }
     }
@@ -215,39 +180,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
               Log.d("dynamicLinkFromSplash", "getDynamicLink:onFailure")
             }
   }
-  private fun checkForAppUpdate(forceUpdate:Boolean) {
-    // Returns an intent object that you use to check for an update.
-    val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-
-
-    // Checks that the platform will allow the specified type of update.
-    appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-      if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-        // Request the update.
-        try {
-          val installType = when {
-            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) && !forceUpdate -> AppUpdateType.FLEXIBLE
-            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE) && forceUpdate -> AppUpdateType.IMMEDIATE
-            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) -> AppUpdateType.IMMEDIATE
-            else -> null
-          }
-          if (installType == AppUpdateType.FLEXIBLE) appUpdateManager.registerListener(appUpdatedListener)
-
-          if (installType != null) {
-              appUpdateManager.startUpdateFlowForResult(
-                appUpdateInfo,
-                installType,
-                this,
-                APP_UPDATE_REQUEST_CODE)
-
-          }
-        } catch (e: IntentSender.SendIntentException) {
-          e.printStackTrace()
-        }
-      }
-    }
-  }
-
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
@@ -257,12 +189,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
       }
     }
 
-
-  private fun popupSnackbarForCompleteUpdate() {
-    val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
-    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
-    snackbar.show()
-  }
 
   override fun onResume() {
     super.onResume()
@@ -306,7 +232,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             checkForAppUpdate(true)
           }
           false -> {
-            checkForAppUpdate(false)
             ifUpdateFalse=true
             if(ifUpdateFalse && userPrefs.hasLoggedIn){
               binding.btnGetStarted.visibility = View.GONE
@@ -431,7 +356,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     } else {
       when (state) {
         Auth -> AuthenticationActivity::class
-        Home -> VendorPolicyActivity::class
+        Home -> HomeActivity::class
         AccountDetails -> AccountDetailsActivity::class
       }.let {
         val bundle = Bundle()

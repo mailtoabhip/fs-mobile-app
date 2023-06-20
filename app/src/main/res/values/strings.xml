@@ -61,6 +61,7 @@
   <string name="msg_file_upload_successful">File Uploaded Successfully</string>
   <string name="msg_pick_image_intent_text">Pick Image</string>
   <string name="msg_call_permission">Please provide permission to call</string>
+  <string name="msg_notification_permission">Please provide permission to get notification</string>
   <string name="storage_permission">Please provide storage permission</string>
   <string name="storage_camera_permission">Please provide storage and camera permission</string>
   <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
