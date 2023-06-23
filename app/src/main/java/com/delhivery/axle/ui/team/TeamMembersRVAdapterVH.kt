@@ -99,7 +99,7 @@ class TeamMembersSubUserItemVH(binding: ViewTeamMemberSubuserItemBinding) :
     if(item.data.userName.isNotNullOrEmpty()) {
       binding.logoTeamMember.text = item.data.userName?.get(0)?.toUpperCase().toString()
     }
-    binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, adapterPosition, _interface)
+    binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, bindingAdapterPosition, _interface)
     //binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
 //    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)
   }

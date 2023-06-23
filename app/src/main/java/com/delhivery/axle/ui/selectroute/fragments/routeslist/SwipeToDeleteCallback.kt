@@ -51,7 +51,7 @@ class SwipeToDeleteCallback @Inject constructor(
     p0: ViewHolder,
     p1: Int
   ) {
-    val position = p0.adapterPosition
+    val position = p0.bindingAdapterPosition
     _adapter.deleteItem(position)
   }
 

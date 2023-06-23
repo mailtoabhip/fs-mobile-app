@@ -236,8 +236,8 @@ class DmtBidsSummaryItemVH(binding: ViewBidCreateEditItemBinding) :
                 }
             }
         })
-        binding.expandButton.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
-        binding.deleteItem.clickToAction(DELETE_ITEM,item,adapterPosition,_interface)
+        binding.expandButton.clickToAction(EXPAND_CARD,item, bindingAdapterPosition, _interface)
+        binding.deleteItem.clickToAction(DELETE_ITEM,item,bindingAdapterPosition,_interface)
 
     }
 }
@@ -258,7 +258,7 @@ internal class DmtBidSummaryTimeOutItemVH(binding: ViewTimeOutItemBinding) :
         binding.title = item.data.title
         binding.subTitle = item.data.subtitle
         binding.actionLabel = item.data.actionLabel
-        binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+        binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
     }
 
 }

@@ -85,7 +85,7 @@ class HomeTripsItemVH(binding: ViewHomeTripsRequestItemBinding) :
     _interface: HomeTripsRVAdapterInterface
   ) {
     binding.trip = item.data
-    binding.llChangePaymentMode.clickToAction(HomeAdvancePendingPaymentMode, item, adapterPosition, _interface )
+    binding.llChangePaymentMode.clickToAction(HomeAdvancePendingPaymentMode, item, bindingAdapterPosition, _interface )
   }
 }
 

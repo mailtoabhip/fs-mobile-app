@@ -80,7 +80,7 @@ class UserRoutesItemVH(binding: ViewUserRoutesItemBinding) :
     binding.route = item.data
     binding.layRoutes.clickToAction(RoutesAction_ViewDetails, item, _interface)
     //binding.iconDeleteRoute.clickToAction(RoutesAction_DeleteRoute, item, _interface)
-    binding.iconOptionsRoute.clickToAction(RoutesAction_ViewOptions, item, adapterPosition, _interface)
+    binding.iconOptionsRoute.clickToAction(RoutesAction_ViewOptions, item, bindingAdapterPosition, _interface)
   }
 }
 

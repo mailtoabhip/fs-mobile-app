@@ -88,8 +88,8 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         }else{
             binding.actionOptions.visibility = View.VISIBLE
         }
-        binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,adapterPosition, _interface)
-        binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, adapterPosition,_interface)
+        binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,bindingAdapterPosition, _interface)
+        binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, bindingAdapterPosition,_interface)
         val res = item.data.resOffer
         if(item.data.resOffer?.first?.first==null){
            _interface.getTotalOffers(item.data)

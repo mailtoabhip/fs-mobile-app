@@ -60,7 +60,7 @@ class YourRewardsItemVH(binding: ViewYourRewardsItemBinding) :
   ) {
     binding.request = item.data
     binding.fullViewLl.clickToAction(
-      YourRewardsItemDataAction_ViewDetails,item, adapterPosition, _interface
+      YourRewardsItemDataAction_ViewDetails,item, bindingAdapterPosition, _interface
     )
     if(item.data.verificationState?.toLowerCase().equals("pending")){
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
@@ -73,7 +73,7 @@ class YourRewardsItemVH(binding: ViewYourRewardsItemBinding) :
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
     }
     binding.downloadIcon.clickToAction(
-      YourRewardsItemDataAction_DownloadProof,item, adapterPosition, _interface
+      YourRewardsItemDataAction_DownloadProof,item, bindingAdapterPosition, _interface
     )
 
   }
@@ -127,6 +127,6 @@ internal class YourRewardsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
-    binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+    binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
   }
 }
