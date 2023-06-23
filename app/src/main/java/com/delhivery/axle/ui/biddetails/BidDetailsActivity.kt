@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.os.Looper
 import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
@@ -989,7 +990,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
 
                 if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
-                  val mHandler = Handler()
+                  val mHandler = Handler(Looper.myLooper()!!)
                   var mRunnable: Runnable = Runnable { }
                   mRunnable = object : Runnable {
                     override fun run() {

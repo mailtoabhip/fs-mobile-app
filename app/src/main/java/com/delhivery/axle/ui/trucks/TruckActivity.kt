@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -274,7 +275,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         dialog.setContentView(bindingDialog.root)
 
         dialog.show()
-        Handler().postDelayed({
+        Handler(Looper.myLooper()!!).postDelayed({
             dialog.dismiss()
             setResult(REQCODE_ADD_TRUCK, Intent().apply {
                 putExtra("Added", "Truck Added")

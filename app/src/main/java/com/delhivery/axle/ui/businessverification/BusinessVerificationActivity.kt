@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
@@ -606,7 +607,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
         dialog.show()
-        Handler().postDelayed({
+        Handler(Looper.myLooper()!!).postDelayed({
             dialog.dismiss()
             //change flow as per config
             navigationUtils.navigate(HomeActivity::class.java, true)

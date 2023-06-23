@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
@@ -437,7 +438,7 @@ class NavigationUtils @Inject constructor(
             dialog.show()
        userPrefs.setPreviousScreen(VendorPolicyActivity::class.java.name)
         if(!activity.isFinishing)
-            Handler().postDelayed({
+            Handler(Looper.myLooper()!!).postDelayed({
                 dialog.dismiss()
                 this.navigate(HomeActivity::class.java, true)
             }, 2000)

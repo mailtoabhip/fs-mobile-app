@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.searchload.fragments.searchload
 import android.R.layout
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -282,7 +283,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
 
     /* delay and search for better UX */
-      Handler().postDelayed({
+      Handler(Looper.myLooper()!!).postDelayed({
         action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory))
       }, 200)
   }
