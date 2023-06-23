@@ -772,7 +772,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             REQCODE_SELECT_CITY -> {
                 if (data != null) {
                     val type = data.getStringExtra(CityType)
-                    val city = data.getSerializableExtra("City") as CityModel
+                    val city = data.getSerializable("City",CityModel::class.java)
                     if (type == "origin") {
                         viewModel.origin = city
                         binding.editOrigin.setText(city.cityName().trim())

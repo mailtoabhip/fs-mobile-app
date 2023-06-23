@@ -9,15 +9,14 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.DialogBottomEditTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -40,7 +39,7 @@ class EditTruckDialog @Inject constructor(
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val city = intent.getStringExtra(CityType)
-            val data = intent.getSerializableExtra("City") as CityModel
+            val data = intent.getSerializable("City",CityModel::class.java)
             if (city != null && data !=null) {
                 if(city =="origin"){
                     truckCity = data

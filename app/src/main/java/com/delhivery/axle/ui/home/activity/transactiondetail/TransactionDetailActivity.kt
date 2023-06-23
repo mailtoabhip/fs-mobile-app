@@ -30,6 +30,7 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelD
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelRevertCredit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoading
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -54,8 +55,7 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
       throw IllegalArgumentException("Required data $ARGS_TRANSACTION_DATA not found")
     }
 
-    viewModel.transaction =
-      (intent.getSerializableExtra(ARGS_TRANSACTION_DATA) as? TransactionsItemData)!!
+    viewModel.transaction = intent.getSerializable(ARGS_TRANSACTION_DATA, TransactionsItemData::class.java)
     binding.transaction = viewModel.transaction
   }
 

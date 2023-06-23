@@ -5,7 +5,6 @@ import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.DialogBottomActivateTruckBinding
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ class ActivateTruckDialog @Inject constructor(
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val city = intent.getStringExtra(CityType)
-            val data = intent.getSerializableExtra("City") as CityModel
+            val data = intent.getSerializable("City",CityModel::class.java)
             if (city != null && data !=null) {
                 if(city =="origin"){
                     truckCity = data

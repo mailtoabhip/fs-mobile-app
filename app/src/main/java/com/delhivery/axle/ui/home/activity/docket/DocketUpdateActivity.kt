@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.DatePicker
@@ -38,6 +37,7 @@ import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.extensions.getFileName
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.toDate
@@ -88,7 +88,7 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
       viewModel.transactionIds =
         intent.getStringArrayListExtra(TransactionIdsIntentKey) ?: mutableListOf()
     if (intent.hasExtra(TripDataIntentKey)) {
-      viewModel.trip = intent.getSerializableExtra(TripDataIntentKey) as HomeTripsItemData
+      viewModel.trip = intent.getSerializable(TripDataIntentKey,HomeTripsItemData::class.java)
     }
   }
 

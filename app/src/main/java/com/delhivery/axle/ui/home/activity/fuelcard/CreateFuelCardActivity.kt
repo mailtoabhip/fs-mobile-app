@@ -13,6 +13,7 @@ import com.delhivery.axle.databinding.ActivityCreateFuelCardBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 import kotlin.math.min
@@ -38,7 +39,7 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       throw IllegalArgumentException("Required data $ARGS_TRIP_DATA not found")
     }
 
-    viewModel.trip = intent.getSerializableExtra(ARGS_TRIP_DATA) as HomeTripsItemData
+    viewModel.trip = intent.getSerializable(ARGS_TRIP_DATA,HomeTripsItemData::class.java)
     viewModel.activeNumbers =
       intent?.getStringArrayListExtra(ARGS_ACTIVE_NUM)?.toMutableList() ?: mutableListOf()
   }

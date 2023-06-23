@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -15,19 +14,15 @@ import android.view.Window
 import android.widget.ArrayAdapter
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.databinding.ActivityTruckBinding
 import com.delhivery.axle.databinding.DialogAddTruckSuccessBinding
 import com.delhivery.axle.databinding.DialogBottomTruckValueBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.prefs.APPROVED
-import com.delhivery.axle.utils.prefs.DISABLED
-import com.delhivery.axle.utils.prefs.UNAPPROVED
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -465,7 +460,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             REQCODE_SELECT_CITY ->{
                 if(data != null) {
                     val type = data.getStringExtra(CityType)
-                    val city = data.getSerializableExtra("City") as CityModel
+                    val city = data.getSerializable("City",CityModel::class.java)
                     if(type =="origin") {
                         viewModel.truckCity = city
                         binding.textCurrentCity.text = city.cityName().trim()

@@ -15,13 +15,13 @@ import com.delhivery.axle.ui.searchcitystate.searchCityIntent
 import com.delhivery.axle.ui.searchcitystate.searchOriginCityIntent
 import com.delhivery.axle.ui.searchcitystate.selectedCityStates
 import com.delhivery.axle.utils.EVENT_SUBMITTED_ROUTES_TRUCKS
-import com.delhivery.axle.utils.EVENT_SUBMIT_GST
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_TTL
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.StepKey
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -189,7 +189,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                 REQCODE_SELECT_CITY -> {
                     if(data != null) {
                         val type = data.getStringExtra(CityType)
-                        val city = data.getSerializableExtra("City") as CityModel
+                        val city = data.getSerializable("City", CityModel::class.java)
                         if(type =="origin") {
                             viewModel.selectedOrigin = city
                             binding.editOrigin.setText(city.cityName().trim())
@@ -202,7 +202,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                     if(data != null) {
                         val type = data.getStringExtra(CityType)
                         val cities: ArrayList<CityModel> =
-                            data.getSerializableExtra("City") as ArrayList<CityModel>
+                            data.getSerializable("City",ArrayList<CityModel>().javaClass)
                         val citiesNames = ArrayList<String>()
                         if(type =="destination") {
                             for(item in cities){
