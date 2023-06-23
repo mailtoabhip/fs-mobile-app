@@ -196,10 +196,10 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
    */
   fun toggleKeyboard(hide: Boolean = true) {
     val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    (activity.findViewById(android.R.id.content) as View?)?.windowToken?.let {
+    (activity.findViewById(android.R.id.content) as View?)?.let {
       when (hide) {
-        true -> imm.hideSoftInputFromWindow(it, 0)
-        false -> imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        true -> imm.hideSoftInputFromWindow(it.windowToken, 0)
+        false -> imm.showSoftInput(it, 0)
       }
     }
   }
