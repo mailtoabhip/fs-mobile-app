@@ -123,7 +123,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
         .setConstraints(constraints)
         .build()
 
-      WorkManager.getInstance().enqueueUniquePeriodicWork(
+      WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
         RefreshTokenWorker.WORK_NAME,
         ExistingPeriodicWorkPolicy.REPLACE,
         repeatingRequest)

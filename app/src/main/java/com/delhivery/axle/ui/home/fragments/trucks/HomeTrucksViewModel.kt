@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +20,7 @@ import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.OffersEntity
+import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
@@ -42,6 +45,7 @@ import kotlin.collections.ArrayList
  */
 
 class HomeTrucksViewModel @Inject constructor(
+    private val application: Application,
     private val inventoryRepository: InventoryRepository,
     private val truckRepository: TruckRepository,
     private val userRepository: UserRepository,
@@ -86,7 +90,7 @@ class HomeTrucksViewModel @Inject constructor(
     val TAG_SYNC_DATA = "TAG_SYNC_DATA"
 
     init {
-        mWorkManager = WorkManager.getInstance()
+        mWorkManager = WorkManager.getInstance(application.applicationContext)
         mSavedWorkInfo = mWorkManager?.getWorkInfosByTagLiveData(TAG_SYNC_DATA);
     }
 

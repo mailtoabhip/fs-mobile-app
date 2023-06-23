@@ -107,7 +107,7 @@ class RefreshAuthTokenService : Service(){
                     }
                     stopForeground(true)
                     stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
-                    WorkManager.getInstance().cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+                    WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
                 } catch (e: Exception){
                     e.printStackTrace()
                 }
@@ -127,7 +127,7 @@ class RefreshAuthTokenService : Service(){
         if (userPrefs.jwtToken == null) {
             stopForeground(true)
             stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
-            WorkManager.getInstance().cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+            WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
         }
         else {
             val restartServiceIntent = Intent(applicationContext, this.javaClass)
