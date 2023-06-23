@@ -1,11 +1,15 @@
 package com.delhivery.axle.network
 
+import android.accounts.AccountManagerCallback
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
 
@@ -100,15 +104,49 @@ import androidx.lifecycle.MutableLiveData
  * @param context Context
  */
 class ConnectionLiveData constructor(private val context: Context) : MutableLiveData<Boolean>() {
+
+  private var connectivityManager: ConnectivityManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+  private lateinit var connectivityManagerCallback: ConnectivityManager.NetworkCallback
+
   override fun onActive() {
     super.onActive()
-
     //register connection change receiver
-    IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).let {
-      context.registerReceiver(networkReceiver, it)
+    if(Build.VERSION.SDK_INT >= 28)
+      connectivityManager.registerDefaultNetworkCallback(getConnectivityManagerCallback())
+    else
+    {
+      IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).let {
+        context.registerReceiver(networkReceiver, it)
+      }
     }
   }
 
+  override fun onInactive() {
+    super.onInactive()
+    if(Build.VERSION.SDK_INT >= 28)
+      connectivityManager.unregisterNetworkCallback(connectivityManagerCallback)
+    else
+      context.unregisterReceiver(networkReceiver)
+  }
+  private fun getConnectivityManagerCallback() : ConnectivityManager.NetworkCallback{
+    connectivityManagerCallback = object : ConnectivityManager.NetworkCallback(){
+      override fun onCapabilitiesChanged(
+        network: Network,
+        networkCapabilities: NetworkCapabilities
+      ) {
+        networkCapabilities.let {
+          if(it.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && it.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED))
+            postValue(true)
+        }
+      }
+
+      override fun onLost(network: Network) {
+        postValue(false)
+      }
+    }
+    return connectivityManagerCallback
+  }
   /**
    * Listen to any network change state
    */
@@ -127,9 +165,6 @@ class ConnectionLiveData constructor(private val context: Context) : MutableLive
    * @return [Boolean] current connection state
    */
   fun isConnected(): Boolean {
-    val connectivityManager = context.getSystemService(android.content.Context.CONNECTIVITY_SERVICE)
-            as ConnectivityManager
-
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       val networkCapabilities = connectivityManager.activeNetwork ?: return false
       val activeNetwork =
