@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -92,7 +93,17 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     setSupportActionBar(binding.toolbar)
     title = ""
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        if (currentFragmentType?.prevFragment(flowType) != null && !addRouteOnLogin) {
+          navigate(currentFragmentType!!.prevFragment(flowType)!!)
+        } else {
+          navigationUtils.navigate(HomeActivity::class.java, true)
+          finish()
+        }
+      }
 
+    })
     /* start with origin city fragment */
     navigate(SelectRouteFragmentType.initFragment(flowType))
 
@@ -279,14 +290,14 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     }
   }
 
-  override fun onBackPressed() {
+  /*override fun onBackPressed() {
     if (currentFragmentType?.prevFragment(flowType) != null && !addRouteOnLogin) {
       navigate(currentFragmentType!!.prevFragment(flowType)!!)
     } else {
       super.onBackPressed()
       navigationUtils.navigate(HomeActivity::class.java, true)
     }
-  }
+  }*/
 }
 
 /* Search load fragment tag */

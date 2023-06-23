@@ -6,6 +6,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityBasicDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.data.CityModel
@@ -55,7 +56,12 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 1)
         startTime = System.currentTimeMillis()
-
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                finish()
+                finishAffinity()
+            }
+        })
         binding.checkBoxOpenBody.setOnClickListener {
 
             if( binding.imgOpenTruck.isSelected){
@@ -224,10 +230,10 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         binding.btnSubmitDetails.isEnabled = !binding.editDestination.text.isNullOrEmpty() && !binding.editOrigin.text.isNullOrEmpty()&&(binding.checkBoxContainer.isSelected||binding.checkBoxOpenBody.isSelected||binding.checkBoxTrailer.isSelected)
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         super.onBackPressed()
         finish()
         finishAffinity()
-    }
+    }*/
 }
 

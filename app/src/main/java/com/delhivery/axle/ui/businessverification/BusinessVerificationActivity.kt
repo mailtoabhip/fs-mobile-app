@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.RadioGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -152,6 +153,15 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }else{
             binding.businessError.visibility=View.GONE
         }
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,1)
+                navigationUtils.navigateKyc(this@BusinessVerificationActivity,true,bundle)
+                finish()
+            }
+        })
         showUploadedDoc()
     }
 
@@ -444,13 +454,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
         bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)
-    }
+    }*/
     override fun onAWSSuccess(
         path: String
     ) {
