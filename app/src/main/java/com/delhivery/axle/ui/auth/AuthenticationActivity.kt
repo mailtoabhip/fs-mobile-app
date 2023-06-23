@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -145,10 +146,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                   if (timeLeft > 0) {
                     val f: NumberFormat = DecimalFormat("00")
                     binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
-                    binding.btnResendOtp.setTextColor(resources.getColor(R.color.color_hint))
+                    binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext,R.color.color_hint))
                   } else if (timeLeft == 0L) {
                     binding.btnResendOtp.text = getString(string.label_resend_otp_done)
-                    binding.btnResendOtp.setTextColor(resources.getColor(R.color.colorAccent))
+                    binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
                   } else {
                     viewModel.otpStatusLiveData.postValue(false)
                   }

@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.profile.raterewards.fragments.rewards
 
+import android.content.Context
 import android.graphics.Typeface
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_DownloadProof
@@ -64,12 +66,12 @@ class YourRewardsItemVH(binding: ViewYourRewardsItemBinding) :
     )
     if(item.data.verificationState?.toLowerCase().equals("pending")){
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
-      binding.statusText.setBackground(context.resources.getDrawable(R.drawable.bg_all_round_corner_light_orange))
+      binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_orange))
     }else if(item.data.verificationState?.toLowerCase().equals("verified")){
-      binding.statusText.setBackground(context.resources.getDrawable(R.drawable.bg_all_round_corner_light_green_12))
+      binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_green_12))
       binding.rewardsValue.setTypeface(null, Typeface.BOLD)
     }else {
-      binding.statusText.setBackground(context.resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
+      binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_pink_12))
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
     }
     binding.downloadIcon.clickToAction(

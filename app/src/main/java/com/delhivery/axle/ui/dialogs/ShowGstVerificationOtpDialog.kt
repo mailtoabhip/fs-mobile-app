@@ -10,6 +10,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
@@ -112,10 +114,10 @@ class ShowGstVerificationOtpDialog @Inject constructor(
                     if (timeLeft > 0) {
                         val f: NumberFormat = DecimalFormat("00")
                         binding.btnResendOtp.text = "${context.getString(R.string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
-                        binding.btnResendOtp.setTextColor(context.resources.getColor(R.color.color_hint))
+                        binding.btnResendOtp.setTextColor(ContextCompat.getColor(context, R.color.color_hint))
                     } else if (timeLeft == 0L) {
                         binding.btnResendOtp.text = context.getString(R.string.label_resend_otp_done)
-                        binding.btnResendOtp.setTextColor(context.resources.getColor(R.color.colorAccent))
+                        binding.btnResendOtp.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
                         binding.btnResendOtp.setOnClickListener {
                             viewModel.getRequestOtp(false)
                             timerToResend()

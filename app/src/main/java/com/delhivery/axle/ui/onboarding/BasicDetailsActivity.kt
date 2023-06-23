@@ -6,6 +6,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityBasicDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.ui.searchcitystate.CityType
@@ -60,12 +61,12 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
             if( binding.imgOpenTruck.isSelected){
                 binding.imgOpenTruck.isSelected = false
                 binding.checkBoxOpenBody.isSelected =false
-                binding.txtOpenBody.setTextColor(this.resources.getColor(R.color.heading_black))
+                binding.txtOpenBody.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
                 viewModel.selectedTrucks.remove("open")
             }else{
                 binding.imgOpenTruck.isSelected = true
                 binding.checkBoxOpenBody.isSelected =true
-                binding.txtOpenBody.setTextColor(this.resources.getColor(R.color.dark_blue))
+                binding.txtOpenBody.setTextColor(ContextCompat.getColor(this, R.color.dark_blue))
                 viewModel.selectedTrucks.add("open")
             }
             enableSubmit()
@@ -74,12 +75,12 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
             if( binding.imgContainer.isSelected){
                 binding.imgContainer.isSelected = false
                 binding.checkBoxContainer.isSelected =false
-                binding.txtContainer.setTextColor(this.resources.getColor(R.color.heading_black))
+                binding.txtContainer.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
                 viewModel.selectedTrucks.remove("closed")
             }else{
                 binding.imgContainer.isSelected = true
                 binding.checkBoxContainer.isSelected =true
-                binding.txtContainer.setTextColor(this.resources.getColor(R.color.dark_blue))
+                binding.txtContainer.setTextColor(ContextCompat.getColor(this, R.color.dark_blue))
                 viewModel.selectedTrucks.add("closed")
             }
             enableSubmit()
@@ -88,12 +89,12 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
             if( binding.imgTrailer.isSelected){
                 binding.imgTrailer.isSelected = false
                 binding.checkBoxTrailer.isSelected =false
-                binding.txtTrailer.setTextColor(this.resources.getColor(R.color.heading_black))
+                binding.txtTrailer.setTextColor(ContextCompat.getColor(this, R.color.heading_black))
                 viewModel.selectedTrucks.remove("trailer")
             }else{
                 binding.imgTrailer.isSelected = true
                 binding.checkBoxTrailer.isSelected =true
-                binding.txtTrailer.setTextColor(this.resources.getColor(R.color.dark_blue))
+                binding.txtTrailer.setTextColor(ContextCompat.getColor(this, R.color.dark_blue))
                 viewModel.selectedTrucks.add("trailer")
             }
             enableSubmit()

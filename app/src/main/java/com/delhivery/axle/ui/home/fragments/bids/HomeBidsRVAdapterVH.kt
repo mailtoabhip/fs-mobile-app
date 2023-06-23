@@ -110,22 +110,22 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
 
     if(item.data.bidStatus().statusKey.toLowerCase().equals("open")){
-      binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_active))
+      binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_active))
       binding.textBidStatus.text = context.resources.getString(R.string.label_active)
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
       if(item.data.transactionBid?.clientConfirmationPending == false){
-        binding.textBidStatus.setTextColor(context.resources.getColor(R.color.pending))
+        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.pending))
         binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
       }else{
-        binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_confirmed))
+        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
         binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
       }
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
       binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
-      binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
+      binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
       binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
-      binding.textBidStatus.setTextColor(context.resources.getColor(R.color.status_lost))
+      binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
     }
 
     val res = item.data.resOffer
@@ -146,13 +146,13 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
   ) {
     binding.request = item.data
     if(item.data.bidStatus().statusKey.toLowerCase().equals("open")){
-      binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.bid_under_review))
+      binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_under_review))
       binding.tvBidStatus.text = context.resources.getString(R.string.label_under_review)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_under_review_icon, 0, 0, 0)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_under_review)
       binding.tvBidStatus.compoundDrawablePadding =8
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
-        binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.bid_placed_green))
+        binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
         binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_won)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_won)
       binding.tvBidStatus.compoundDrawablePadding =8
@@ -160,7 +160,7 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
       binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_lost)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
-      binding.tvBidStatus.setTextColor(context.resources.getColor(R.color.destructive_red))
+      binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.destructive_red))
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_lost_red)
       binding.tvBidStatus.compoundDrawablePadding =8
     }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {

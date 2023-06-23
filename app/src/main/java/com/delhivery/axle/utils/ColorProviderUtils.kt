@@ -96,4 +96,5 @@ object ColorProviderUtils {
       else -> R.color.status_lost
     }
   }
+
 }
