@@ -105,7 +105,10 @@ class RefreshAuthTokenService : Service(){
                             userPrefs.jwtToken = jwtToken
                         }
                     }
-                    stopForeground(true)
+                    if(Build.VERSION.SDK_INT >= 28)
+                        stopForeground(STOP_FOREGROUND_REMOVE)
+                    else
+                        stopForeground(true)
                     stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
                     WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
                 } catch (e: Exception){
@@ -125,7 +128,10 @@ class RefreshAuthTokenService : Service(){
 
     fun restartService() {
         if (userPrefs.jwtToken == null) {
-            stopForeground(true)
+            if(Build.VERSION.SDK_INT >= 28)
+                stopForeground(STOP_FOREGROUND_REMOVE)
+            else
+                stopForeground(true)
             stopService(Intent(applicationContext,RefreshAuthTokenService::class.java))
             WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
         }
