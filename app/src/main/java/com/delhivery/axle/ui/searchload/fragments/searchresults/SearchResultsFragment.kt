@@ -279,7 +279,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           reviseInitiated=false
         }
         if(it.second.truckUUID != null) {
-          BulkBidDetailsCreateEditDialog(context!!, it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
+          BulkBidDetailsCreateEditDialog(requireContext(), it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
             pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
         }
         else{

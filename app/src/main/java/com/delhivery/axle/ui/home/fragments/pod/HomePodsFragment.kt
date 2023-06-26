@@ -342,7 +342,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   private fun openFile(file: File) {
     try {
       require(context != null)
-      val uri = FileProvider.getUriForFile(context!!, "${context!!.packageName}.provider", file)
+      val uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
       val intent = Intent(Intent.ACTION_VIEW)
       if (file.toString().contains(".pdf")) {
         intent.setDataAndType(uri, "application/pdf")

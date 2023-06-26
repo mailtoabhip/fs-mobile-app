@@ -446,7 +446,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksWarningAction_NoTrucks -> {
-                context?.let { startActivityForResult(truckIntent(context!!, source = VALUE_ADD_TRUCK_PAGE), REQCODE_ADD_TRUCK) }
+                context?.let { startActivityForResult(truckIntent(requireContext(), source = VALUE_ADD_TRUCK_PAGE), REQCODE_ADD_TRUCK) }
             }
 
             HomeTrucksTimeOutAction -> {
@@ -508,7 +508,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
             HomeTrucksRequestAction_ActivateTruck -> {
                 context?.let {
-                    ActivateTruckDialog(context!!, item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
+                    ActivateTruckDialog(requireContext(), item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
                 }
             }
         }
@@ -516,7 +516,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
 
     private fun showAddTruckDialog(items: List<TruckFrequentItem>, source: String) {
-        val dialog = Dialog(context!!)
+        val dialog = Dialog(requireContext())
         val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -527,7 +527,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             val itemBinding = createTruckFrequentItem(bindingDialog)
             itemBinding.data = item
             itemBinding.root.setOnClickListener{
-                context?.let { startActivityForResult(truckIntent(context!!, item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap, item.sourcedAs, source = source), REQCODE_ADD_TRUCK) }
+                context?.let { startActivityForResult(truckIntent(requireContext(), item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap, item.sourcedAs, source = source), REQCODE_ADD_TRUCK) }
                 dialog.dismiss()
             }
 
@@ -538,7 +538,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
 
         bindingDialog.addTruckLayout.setOnClickListener{
-            context?.let { startActivityForResult(truckIntent(context!!, source = source), REQCODE_ADD_TRUCK) }
+            context?.let { startActivityForResult(truckIntent(requireContext(), source = source), REQCODE_ADD_TRUCK) }
             dialog.dismiss()
         }
 
@@ -551,7 +551,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
 
     private fun showOptionsDialog(data: HomeTrucksRequestItemData, position: Int) {
-        val dialog = Dialog(context!!)
+        val dialog = Dialog(requireContext())
         val bindingDialog= DialogBottomTruckOptionsBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -572,7 +572,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_INVENTORY_UUID),
                     mutableListOf(data.inventoryId)
             )
-            context?.let {  EditTruckDialog(context!!, data, viewModel, userPrefs, analyticsUtil, uiUtils, position).show()}
+            context?.let {  EditTruckDialog(requireContext(), data, viewModel, userPrefs, analyticsUtil, uiUtils, position).show()}
             dialog.dismiss()
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
