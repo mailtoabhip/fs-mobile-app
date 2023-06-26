@@ -106,8 +106,7 @@ interface BidService {
     @Query("contract_bids") contractBids: Boolean?,
     @Query("bid_statuses") status: String? = null,
     @Query("confirmation_pending") confirmationPending: Boolean?,
-    @Query("only_frc_bids") onlyFRCBids: Boolean?=null,
-    @Query("paginated_response") paginate: Boolean?=true
+    @Query("only_frc_bids") onlyFRCBids: Boolean?=null
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
