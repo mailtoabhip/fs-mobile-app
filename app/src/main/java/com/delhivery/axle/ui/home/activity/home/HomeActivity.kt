@@ -45,7 +45,7 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -60,14 +60,14 @@ import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
 import com.moengage.core.internal.MoEConstants
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 /**
  * Home screen
  */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
-  OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
+  OnItemSelectedListener, FirebaseInAppMessagingClickListener {
   override fun getViewModelClass() = HomeViewModel::class.java
   override fun layoutId() = R.layout.activity_home
   override fun requireConnection() = true
@@ -156,7 +156,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     binding.viewpager.disableScroll(true)
 
     /* set navigation item selection listener */
-    binding.bottomNav.setOnNavigationItemSelectedListener(this)
+    binding.bottomNav.setOnItemSelectedListener(this)
 
     /* by default observe first fragment */
     observeFragmentLiveData()
@@ -655,74 +655,82 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
-      .let{ pos ->
-        count++
-        when(pos){
-          0->
-            if(count==1){
-              if(userPrefs.userPreviousScreen==StartRoutingActivity::class.java.name){
-                userPrefs.previousNavigationTab= StartRoutingActivity::class.java.name
-              } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
-                userPrefs.previousNavigationTab= VendorPolicyActivity::class.java.name
-              }else{
-                userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              }
-              userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+    .let{ pos ->
+      count++
+      when (pos) {
+        0 ->
+          if (count == 1) {
+            if (userPrefs.userPreviousScreen == StartRoutingActivity::class.java.name) {
+              userPrefs.previousNavigationTab = StartRoutingActivity::class.java.name
+            } else if (userPrefs.userPreviousScreen == VendorPolicyActivity::class.java.name) {
+              userPrefs.previousNavigationTab = VendorPolicyActivity::class.java.name
+            } else {
+              userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            }
+            userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_HOME,
-                mutableListOf(PROPERTY_ORDER_COUNT),
-                mutableListOf(userPrefs.loadCount))
-            }
-          1->
-            if(count==1){
-              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
-              analyticsUtil.moEngageTrackEvent(
+              mutableListOf(PROPERTY_ORDER_COUNT),
+              mutableListOf(userPrefs.loadCount)
+            )
+          }
+        1 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+            analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_BIDS,
-                mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
-                    PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
-                mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
+              mutableListOf(
+                PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
+                PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT
+              ),
+              mutableListOf(
+                userPrefs.totalBidCount,
+                userPrefs.activeBidCount,
+                userPrefs.confirmedBidCount,
+                userPrefs.lostBidCount
+              )
             )
 
-            }
-          2->
-            if(count==1){
-              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+          }
+        2 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
 
-              analyticsUtil.moEngageTrackEvent(
+            analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_PODS
             )
-            }
-          3->
-            if(count==1){
-              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
-              analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_MY_TRIPS,
-                mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
-                mutableListOf(userPrefs.awaitingArrivalCount)
-            )
-            }
-        }
-        if(count==2){
-          count=0
-        }
-        binding.viewpager.apply {
-          uiUtils.toggleKeyboard()
-          if (pos != -1 && currentItem != pos) {
-            this@HomeActivity.title = HomeFragmentType.pos(pos)
-                ?.fragment?.title
-            setCurrentItem(pos, true)
           }
-          binding.toolbarTitle.text = title
-        }
-        pos != -1
+        3 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_TRIPS,
+              mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
+              mutableListOf(userPrefs.awaitingArrivalCount)
+            )
+          }
       }
+      if (count == 2) {
+        count = 0
+      }
+      binding.viewpager.apply {
+        uiUtils.toggleKeyboard()
+        if (pos != -1 && currentItem != pos) {
+          this@HomeActivity.title = HomeFragmentType.pos(pos)
+            ?.fragment?.title
+          setCurrentItem(pos, true)
+        }
+        binding.toolbarTitle.text = title
+      }
+      pos != -1
+    }
 
   override fun messageClicked(p0: InAppMessage, p1: Action) {
     val url: String? = p1.actionUrl
