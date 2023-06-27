@@ -98,7 +98,7 @@ interface TransactionService {
     @Query("limit") limit: Int,
     @Query("demand_types") vendorType: String ?,
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
-    @Query("origin_city_list") originCityList: String ?=null
+    @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -107,7 +107,8 @@ interface TransactionService {
   @GET("/transactions/loadboard/contracts")
   fun contractsCountSummary(
     @Query("only_contract_counts") onlyCount: String?,
-    @Query("origin_city_list") originCityList: String ?=null
+    @Query("sp_id") userId: String,
+    @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**

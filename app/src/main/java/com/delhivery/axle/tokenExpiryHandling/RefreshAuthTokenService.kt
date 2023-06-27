@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.KotlinApp.Companion.CHANNEL_ID
 import com.delhivery.axle.R
+import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -88,6 +89,7 @@ class RefreshAuthTokenService : Service(){
         val request = Request.Builder()
             .url(url)
             .addHeader("Authorization", "Bearer " + userPrefs.jwtToken)
+            .addHeader("X-APP-ID", UrlConfig.AppID.url())
             .build()
 
         client.newCall(request).enqueue(object : Callback {

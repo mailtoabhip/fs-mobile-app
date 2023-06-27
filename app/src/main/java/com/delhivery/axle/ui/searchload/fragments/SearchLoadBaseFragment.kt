@@ -10,6 +10,7 @@ import com.delhivery.axle.ui.searchload.SearchLoadActivity
  */
 abstract class SearchLoadBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<B, VM>() {
 
+  var isLoadingData=true
   /**
    * Post new action to activity
    */

@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -130,6 +131,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_required") var nepRequired:Boolean? =  false ,
   @SerializedName("origin_longitude")val longitude:String?,
   @SerializedName("origin_latitude")val latitude:String?,
+  @SerializedName("demand_type")val demandType:String?,
   @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -497,12 +499,23 @@ data class HomeBidsRequestItemData(
 
   /**
    * Get truck details/type
+   * Don't show MT for demand_type = Intracity for Load and LH/Intracity contracts
    */
   fun truckDetail() = if (isDMTIndent()) {
     truckType!!.capitalize() ?: ""
   } else {
       truckSpecification?.let {
-        it.truckDispName
+        if(requestType==RequestType.Contract.type){
+          if(contractType==ContractType.FRC.type){
+            it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+          }else{
+            it.truckDispName
+          }
+        } else if (demandType==DemandType.Intracity.type){
+          it.truckDispName
+        }else{
+          it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+        }
       }
   }
 

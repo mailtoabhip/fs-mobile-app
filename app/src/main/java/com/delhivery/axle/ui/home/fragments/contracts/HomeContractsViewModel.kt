@@ -114,14 +114,8 @@ class HomeContractsViewModel@Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    val originCityList= ArrayList<String>()
-    if(userPrefs.getLanesPreference()!=null ){
-      for(item in userPrefs.getLanesPreference()!!){
-        originCityList?.add(item?.origin?.orion_db_city_code?:"")
-      }
-    }
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit,if(originCityList.isNotEmpty()&& demandType==DemandType.Intracity.type)originCityList?.joinToString(separator = ",")else null)
+        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
@@ -130,7 +124,7 @@ class HomeContractsViewModel@Inject constructor(
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true),
           bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-          transactionsRepository.fetchContractsSummaryCount(if(originCityList.isNotEmpty())originCityList?.joinToString(separator = ",")else null),
+          transactionsRepository.fetchContractsSummaryCount(),
           Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse,
               Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse>> { t1, t2,t3 ->
             Quintuple(t1.first, t1.second, t2.second,t3,_res)

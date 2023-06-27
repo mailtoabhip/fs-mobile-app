@@ -4,7 +4,7 @@ import android.view.View
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeBidsSearchSpinnerItemData(
-  val visibility: Int = View.INVISIBLE
+  val isIntracity: Boolean = false
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeBidsSearchSpinnerItemDataKey
 }
