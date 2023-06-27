@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.R.layout
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -10,10 +9,10 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
@@ -28,11 +27,44 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
-import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS
+import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS
+import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS
+import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS
+import com.delhivery.axle.utils.EVENT_SEARCH_LOAD
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_INITIATE
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_INITIATED
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_SUBMITTED
+import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_SUBMIT
+import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
+import com.delhivery.axle.utils.PROPERTY_BID_COUNT
+import com.delhivery.axle.utils.PROPERTY_DESTINATION
+import com.delhivery.axle.utils.PROPERTY_NUM_RESULTS
+import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_ORDER_RANK
+import com.delhivery.axle.utils.PROPERTY_ORIGIN
+import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
+import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
+import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.PROPERTY_TRUCK_TYPE
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_NEW
+import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
+import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
 import com.delhivery.axle.utils.extensions.isNotEmpty
@@ -68,6 +100,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   var reviseInitiated:Boolean=false
   var isContract = false
   var isIntraCity  =false
+
+  private lateinit var origin: CityModel
+  private var destination: CityModel? = null
+  private var requestType: String? =  ""
+  private var contractType:String? = ""
+  private var type: String?= ""
+  private var displayName: String?= ""
+  private var status: String?=""
+  
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
   }
@@ -89,6 +130,12 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = _adapter
       addOnScrollListener(_scrollListener)
+      addOnScrollListener(PaginationInterface())
+    }
+
+    binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
+      refreshData()
     }
 
     viewModel.reviseBidLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -288,21 +335,17 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
     })
 
-    Transformations.map(viewModel.searchResults) {
-      return@map mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-        if (it.isNullOrEmpty()) {
-          if(isContract){
-            add(Pair(SearchContractWarningItem_NoLoad, Add))
-          } else{
-            add(Pair(SearchLoadWarningItem_NoLoad, Add))
-          }
-
-        } else {
-          it.forEach { _item -> if(_item.isItContract())add(Pair(SearchContractsRequestItem(_item), Add)) else add(Pair(SearchLoadsRequestItem(_item), Add)) }
-        }
-      }
+    viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner) {
+      isLoadingData = it == true
     }
-        .observe(this, SearchResultsObserver())
+
+    viewModel.searchResults
+      .reobserve(this, SearchResultsObserver())
+  }
+
+  private fun refreshData() {
+    _adapter.resetStaticData(requestType?:"load")
+    viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType)
   }
 
   private fun setupSpinners() {
@@ -331,11 +374,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     truckDisplayNames: ArrayList<String>,
     progress: Boolean = true
   ) {
-    this.saveToHistory = saveToHistory
+    saveQueryParams(origin, destination, type, displayName, status, requestType, contractType, saveToHistory)
     /* clear and add first dummy item */
     _adapter.clearItems()
     if(contractType==ContractType.INTRACITY.type)
-      _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(View.VISIBLE)),Add)
+      _adapter.operation(SearchLoadsSearchSpinnerItem(data= HomeBidsSearchSpinnerItemData(true)),Add)
     else
       _adapter.operation(SearchLoadsSearchSpinnerItem(), Add)
     /* show progress if needed */
@@ -358,7 +401,30 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     isContract = contractType!=null
     isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
     binding.isIntraCityContract = isIntraCity
-    viewModel.searchLoad(origin, destination, type,displayName, status,requestType,contractType)
+    viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType)
+  }
+
+  /**
+   * Save the query params to be used during pagination
+   */
+  private fun saveQueryParams(
+    origin: CityModel,
+    destination: CityModel?,
+    type: String?,
+    displayName: String?,
+    status: String?,
+    requestType: String?,
+    contractType: String?,
+    saveToHistory: Boolean
+  ) {
+    this.origin = origin
+    this.destination = destination
+    this.type = type
+    this.displayName = displayName
+    this.status = status
+    this.requestType = requestType
+    this.contractType = contractType
+    this.saveToHistory = saveToHistory
   }
 
   private fun AppCompatSpinner.setTruckDisplayAdapter(truckDisplayNames: ArrayList<String>) {
@@ -491,11 +557,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   /**
    * Search results observer
    */
-  inner class SearchResultsObserver : Observer<MutableList<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
-    override fun onChanged(t: MutableList<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
-      resetSpinnerContainer()
+  inner class SearchResultsObserver : Observer<List<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
+    override fun onChanged(t: List<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
+      //resetSpinnerContainer()
       /* hide progress */
-      action(ProgressSearchLoadAction(false))
+        action(ProgressSearchLoadAction(false))
       /* show results */
       val event: String = when (saveToHistory) {
         true -> {
@@ -562,6 +628,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       rv.scrollToPosition(0)
       containerSpinner.translationY = 0f
     }
+  }
+
+  inner class PaginationInterface: PaginationScrollListener(UserTripsLoadLimit){
+    override fun loadMore()=viewModel.searchLoad(true, origin, destination, type, displayName, status, requestType, contractType)
+
+    override fun hasMore() = viewModel.hasMoreData
+
+    override fun isLoading() = isLoadingData
+
   }
 
   /**

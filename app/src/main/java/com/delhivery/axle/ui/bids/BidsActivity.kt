@@ -185,8 +185,13 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
           else ""
 
           val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-          val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
-            _item.transactionBid!!.childTransactionId else _item.key()
+          val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
+            if(_item.transactionBid?.childTransactionId!=null)
+              _item.transactionBid!!.childTransactionId else _item.key()
+          }else{
+            _item.key()
+          }
+
           if(id!=null) {
             userPrefs.setPreviousScreen( this.javaClass.name)
             startActivity(bidDetailsIntent(id, this, dmtStatus, true, active))
@@ -313,7 +318,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   inner class PaginationInterface : PaginationScrollListener(10) {
     override fun loadMore() = viewModel.fetchBids(true)
 
-    override fun hasMore() = viewModel.offset < viewModel.total
+    override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData
   }

@@ -5,7 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class TransactionBidsResponseBody(
   @SerializedName("items") val bids: List<TransactionBid>,
-  @SerializedName("total") val totalBids: Int
+  @SerializedName("total") val totalBids: Int,
+  @SerializedName("offset") val offset: Int,
+  @SerializedName("has_next") val hasNext: Boolean
 )
 
 data class CreateTransactionBidResponse(

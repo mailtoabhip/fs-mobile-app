@@ -1,6 +1,5 @@
 package com.delhivery.axle.api.repository
 
-import android.text.BoringLayout
 import com.delhivery.axle.api.repository.ContractStatus.BiddingClosed
 import com.delhivery.axle.api.repository.ContractStatus.Cancelled
 import com.delhivery.axle.api.repository.ContractStatus.CollectingBids
@@ -13,7 +12,6 @@ import com.delhivery.axle.api.request.ReccomdationRequest
 import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -48,17 +46,17 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,originCityList:String?) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,originCityList
-    ).convertResponse()
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities).
+    convertResponse()
 
 
   /**
    * Get contracts summary count
    */
-  fun fetchContractsSummaryCount(originCityList:String?) =
-    transactionService.contractsCountSummary("yes",originCityList
+  fun fetchContractsSummaryCount() =
+    transactionService.contractsCountSummary("yes", userRepository.userId()
     ).convertResponse()
   /**
    * Search [TransactionStatus.Requested] transactions
@@ -71,11 +69,12 @@ class TransactionsRepository @Inject constructor(
     truckDisplayName: String?,
     contractStatus: String?,
     requestType:String?,
-    contractType:String?
+    contractType:String?,
+    limit: Int
   ) = transactionService.transactions(
       offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
-    contractsMap[contractStatus]?.statusId, if(requestType=="load") "yes" else null,if (requestType=="load") true else null, if(requestType=="load") "fixed,spot" else "contract",
-    contractType,if(requestType=="load") null else true
+    contractsMap[contractStatus]?.statusId, if(requestType==RequestType.Load.type) "yes" else null,if(requestType==RequestType.Load.type) true else null, if(requestType==RequestType.Load.type) "fixed,spot" else "contract",
+    contractType,if(requestType==RequestType.Load.type) null else true,limit
   ).convertResponse()
 
   /**
@@ -121,6 +120,7 @@ enum class ContractType(val type: String) {
 
 enum class RequestType(val type: String) {
   Contract("contract"),
+  Load("load"),
   Spot("spot"),
   Fixed("fixed")
 }

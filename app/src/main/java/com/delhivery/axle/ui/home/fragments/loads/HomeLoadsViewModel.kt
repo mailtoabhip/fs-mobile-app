@@ -375,12 +375,6 @@ class HomeLoadsViewModel @Inject constructor(
               }
             }
                 .let {
-                  if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
-                    if(userLoadsData.value!=null && userLoadsData.value!!.size>0){
-                      it.addAll(userLoadsData.value!!)}
-
-
-                  }
                   userLoadsDataFetch.postValue(it) }
 
           } else {
@@ -388,13 +382,18 @@ class HomeLoadsViewModel @Inject constructor(
               /* remove progress item */
               add(Pair(HomeLoadsProgressItem(), Remove))
               /* add api time out item */
-              add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
+              if(total==0)
+                add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
+              add(Pair(HomeLoadsMoreInfoItem(),Remove))
+              add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+              hasMoreData=false
             }
                 .let {
                   if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
                     if(userLoadsData.value!=null && userLoadsData.value!!.size>0){
                     it.addAll(userLoadsData.value!!)}
                   }
+
                   userLoadsDataFetch.postValue(it) }
           }
 
