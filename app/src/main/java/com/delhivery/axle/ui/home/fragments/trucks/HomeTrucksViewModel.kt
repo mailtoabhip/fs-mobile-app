@@ -45,7 +45,6 @@ import kotlin.collections.ArrayList
  */
 
 class HomeTrucksViewModel @Inject constructor(
-    private val application: Application,
     private val inventoryRepository: InventoryRepository,
     private val truckRepository: TruckRepository,
     private val userRepository: UserRepository,
@@ -54,6 +53,7 @@ class HomeTrucksViewModel @Inject constructor(
     val userPrefs: UserPrefs
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
+    //private lateinit var application: Application
     var bodyTypeFilter = mutableListOf<Pair<String, String>>()
     var availabilityFilter = mutableListOf<Pair<String, String>>()
     var sizeFilter: String?= null
@@ -90,7 +90,7 @@ class HomeTrucksViewModel @Inject constructor(
     val TAG_SYNC_DATA = "TAG_SYNC_DATA"
 
     init {
-        mWorkManager = WorkManager.getInstance(application.applicationContext)
+        mWorkManager = WorkManager.getInstance()
         mSavedWorkInfo = mWorkManager?.getWorkInfosByTagLiveData(TAG_SYNC_DATA);
     }
 
