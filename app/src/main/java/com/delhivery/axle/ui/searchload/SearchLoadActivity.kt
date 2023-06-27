@@ -68,7 +68,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
         userPrefs.setPreviousScreen(this.javaClass.name)
         when (currentFragmentType) {
           ResultsFragment -> navigate(LoadFragment)
-          else -> onBackPressedDispatcher.onBackPressed()
+          else -> {}
         }
         finish()
       }

@@ -596,7 +596,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         // If the update is downloaded but not installed,
         // notify the user to complete the update.
         if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-          popupSnackbarForCompleteUpdate()
+          Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
+            .setAction("RESTART") { appUpdateManager.completeUpdate() }.setAnchorView(binding.bottomNav)
+            .show()
         }
 
         //Check if Immediate update is required

@@ -88,7 +88,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       override fun handleOnBackPressed() {
         when (binding.state) {
           PhoneNo -> {
-            onBackPressedDispatcher.onBackPressed()
             finish()
           }
           OTP -> viewModel.state = PhoneNo
