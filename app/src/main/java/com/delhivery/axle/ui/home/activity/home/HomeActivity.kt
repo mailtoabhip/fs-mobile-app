@@ -214,7 +214,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
    }
     if(userPrefs.recommendedUpdate){
       Snackbar.make(
-        binding.snackbarViewholder,
+        binding.root,
         "App update version available",
         Snackbar.LENGTH_LONG
       ).setAction("Update") {
