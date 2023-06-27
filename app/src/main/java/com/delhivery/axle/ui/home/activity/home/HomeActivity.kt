@@ -212,8 +212,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
        }
      }
    }
+    if(userPrefs.recommendedUpdate){
+      Snackbar.make(
+        binding.root,
+        "App update version available",
+        Snackbar.LENGTH_LONG
+      ).setAction("Update") {
+        // Responds to click on the action
+        checkForAppUpdate(false)
+      }.show()
 
-    checkForAppUpdate(false)
+    }
   }
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
