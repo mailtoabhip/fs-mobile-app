@@ -21,7 +21,7 @@ import javax.inject.Inject
  */
 class KotlinApp : DaggerApplication() {
   override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
-    DaggerAppComponent.builder().create(this)
+    DaggerAppComponent.factory().create(this)
 
   @Inject
   lateinit var workerFactory: DaggerWorkerFactory

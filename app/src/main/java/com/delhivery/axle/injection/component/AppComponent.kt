@@ -17,6 +17,9 @@ import javax.inject.Singleton
       ActivityBindingModule::class, NetworkModule::class, ServiceModule::class]
 )
 interface AppComponent : AndroidInjector<KotlinApp> {
-  @Component.Builder
-  abstract class Builder : AndroidInjector.Builder<KotlinApp>()
+  /*@Component.Builder
+  abstract class Builder : AndroidInjector.Builder<KotlinApp>()*/
+
+  @Component.Factory
+  abstract class Factory: AndroidInjector.Factory<KotlinApp>
 }
