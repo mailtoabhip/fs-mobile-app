@@ -294,7 +294,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   private fun initObservers() {
     /* observe live data for search history */
     viewModel.searchLoadHistoryLiveData(requestType,contractType)
-        ?.observe(this, SearchLoadHistoryObserver())
+        ?.observe(viewLifecycleOwner, SearchLoadHistoryObserver())
   }
 
   /**

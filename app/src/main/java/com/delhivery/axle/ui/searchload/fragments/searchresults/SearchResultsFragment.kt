@@ -143,12 +143,12 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         val data = _adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
         reviseInitiated=true
         BidDetailsCreateEditDialog(
-          context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "search_screen"
+          requireContext(), data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "search_screen"
         ).show()
       }
     })
 
-    viewModel.bidsActionLiveData.observe(this, Observer {
+    viewModel.bidsActionLiveData.observe(viewLifecycleOwner, Observer {
       uiUtils.toggleKeyboard()
           .apply {
             when {
@@ -282,7 +282,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         }
 
         BidConfirmReviseDialog(
-          context!!, it.second, viewModel, it.first
+          requireContext(), it.second, viewModel, it.first
         ).show()
       }
     })
@@ -459,7 +459,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if (_item.isItContract()) {
           if (_item.transactionId != null) {
             userPrefs.setPreviousScreen(this.javaClass.name)
-            startActivity(contractDetailsIntent(_item.transactionId, context!!, VALUE_SEARCH_LISITING))
+            startActivity(contractDetailsIntent(_item.transactionId, requireContext(), VALUE_SEARCH_LISITING))
           } else {
             Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
           }
@@ -520,7 +520,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                   reviseInitiated=true
                 }
                 BidDetailsCreateEditDialog(
-                  context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
+                  requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
                 ).show()
               }
             }
