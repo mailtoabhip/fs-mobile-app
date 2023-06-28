@@ -39,7 +39,7 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
       throw IllegalArgumentException("Required data $ARGS_TRIP_DATA not found")
     }
 
-    viewModel.trip = intent.getSerializable(ARGS_TRIP_DATA,HomeTripsItemData::class.java)
+    viewModel.trip = intent.getSerializable(ARGS_TRIP_DATA,HomeTripsItemData::class.java)!!
     viewModel.activeNumbers =
       intent?.getStringArrayListExtra(ARGS_ACTIVE_NUM)?.toMutableList() ?: mutableListOf()
   }

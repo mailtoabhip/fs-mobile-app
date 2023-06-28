@@ -34,7 +34,7 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
     binding.editOriginCity.setText("")
 
     /* observe event data */
-    viewModel.eventLiveData.observe(this, EventObserver())
+    viewModel.eventLiveData.observe(viewLifecycleOwner, EventObserver())
 
     /* listen for  */
     autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {

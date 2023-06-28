@@ -55,7 +55,7 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
       throw IllegalArgumentException("Required data $ARGS_TRANSACTION_DATA not found")
     }
 
-    viewModel.transaction = intent.getSerializable(ARGS_TRANSACTION_DATA, TransactionsItemData::class.java)
+    viewModel.transaction = intent.getSerializable(ARGS_TRANSACTION_DATA, TransactionsItemData::class.java)!!
     binding.transaction = viewModel.transaction
   }
 

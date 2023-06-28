@@ -138,7 +138,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
     binding.btnSave.animate()
         .translationY(
             PositionAnimExpectation.dpToPx(
-                this@SelectRouteDetailFragment.context!!, 72f
+                this@SelectRouteDetailFragment.requireContext(), 72f
             )
         )
         .setInterpolator(AccelerateInterpolator(2f))
@@ -152,7 +152,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
       binding.btnSave.animate()
           .translationY(
               -PositionAnimExpectation.dpToPx(
-                  this@SelectRouteDetailFragment.context!!, 0f
+                this@SelectRouteDetailFragment.requireContext(), 0f
               )
           )
           .setInterpolator(DecelerateInterpolator(2f))

@@ -196,7 +196,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                 REQCODE_SELECT_CITY -> {
                     if(data != null) {
                         val type = data.getStringExtra(CityType)
-                        val city = data.getSerializable("City", CityModel::class.java)
+                        val city = data.getSerializable("City", CityModel::class.java)!!
                         if(type =="origin") {
                             viewModel.selectedOrigin = city
                             binding.editOrigin.setText(city.cityName().trim())
@@ -209,7 +209,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                     if(data != null) {
                         val type = data.getStringExtra(CityType)
                         val cities: ArrayList<CityModel> =
-                            data.getSerializable("City",ArrayList<CityModel>().javaClass)
+                            data.getSerializable("City",ArrayList<CityModel>().javaClass)!!
                         val citiesNames = ArrayList<String>()
                         if(type =="destination") {
                             for(item in cities){
