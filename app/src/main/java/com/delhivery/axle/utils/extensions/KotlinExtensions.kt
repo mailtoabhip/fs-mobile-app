@@ -93,6 +93,9 @@ fun ContentResolver.getFileName(uri: Uri): String {
     return subject
   }
 
+/**
+ * Wrapper function to get Serializable objects from Intent object
+ */
 fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): T? {
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     getSerializableExtra(key, m_class)
@@ -100,6 +103,9 @@ fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): 
     getSerializableExtra(key) as T
 }
 
+/**
+ * Wrapper function to get Serializable objects from Bundle object
+ */
 fun <T: Serializable?> Bundle.getSerializableExtra(key: String, m_class: Class<T>): T?{
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     this.getSerializable(key,m_class)
