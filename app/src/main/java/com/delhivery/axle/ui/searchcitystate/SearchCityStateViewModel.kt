@@ -84,8 +84,10 @@ class SearchCityStateViewModel @Inject constructor(
                             if(cityType=="destination"){
                             var statePresent = false
                             for(state in states ){
-                                if (state.city.toLowerCase(Locale.ROOT).startsWith(prefix = query.toLowerCase(
-                                        Locale.ROOT))) {
+                                if (state.city.lowercase(Locale.ROOT).startsWith(prefix = query.lowercase(
+                                        Locale.ROOT
+                                    )
+                                    )) {
                                     statePresent = true
                                     add(Pair(SearchDataItem(state), DataRVAdapterOperationType.Add))
                                 }
@@ -103,7 +105,7 @@ class SearchCityStateViewModel @Inject constructor(
                             }
                             if(cityType=="destination"){
                             for(state in states ){
-                                if (state.city.toLowerCase(Locale.ROOT).startsWith(prefix = query.toLowerCase(
+                                if (state.city.lowercase(Locale.ROOT).startsWith(prefix = query.lowercase(
                                         Locale.ROOT
                                     )
                                     )
@@ -123,8 +125,8 @@ class SearchCityStateViewModel @Inject constructor(
                     mutableListOf<Pair<BaseCityStateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         if(cityType=="destination") {
                             for (state in states) {
-                                if (state.city.toLowerCase(Locale.ROOT).startsWith(
-                                        prefix = query.toLowerCase(
+                                if (state.city.lowercase(Locale.ROOT).startsWith(
+                                        prefix = query.lowercase(
                                             Locale.ROOT
                                         )
                                     )

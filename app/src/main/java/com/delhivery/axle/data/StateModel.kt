@@ -26,12 +26,12 @@ data class StateModel(
   fun stateString() = "${state}(${stateId})"
 
   override fun equals(other: Any?): Boolean {
-    return (other as StateModel).state.toLowerCase()
-        .equals(state.toLowerCase())
+    return (other as StateModel).state.lowercase()
+        .equals(state.lowercase())
   }
 
   override fun hashCode(): Int {
-    return state.toLowerCase()
+    return state.lowercase()
         .hashCode()
   }
 }

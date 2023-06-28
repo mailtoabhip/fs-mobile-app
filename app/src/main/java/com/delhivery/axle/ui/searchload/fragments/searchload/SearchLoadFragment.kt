@@ -248,7 +248,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         binding.editReportingCenter.errorAnimate()
         return
       }
-      if(truckDisplayName!!.toLowerCase().contains("select")) {
+      if(truckDisplayName!!.lowercase().contains("select")) {
         binding.spinnerTruckDisplayName.errorVibrate()
         return
       }
@@ -261,7 +261,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         return
       }
 
-      if (truckType!!.toLowerCase().contains("choose")) {
+      if (truckType!!.lowercase().contains("choose")) {
         binding.spinnerTruckType.errorVibrate()
         return
       }

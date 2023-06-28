@@ -52,7 +52,7 @@ class BidsRepository @Inject constructor(
 
         val userBid :TransactionBid?
         it.bids.forEach { it1 ->
-          when (it1.biddingType.toLowerCase()) {
+          when (it1.biddingType.lowercase()) {
             "pmt" -> hasPMT = true
             "ftl" -> hasFTL = true
           }

@@ -109,10 +109,10 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     binding.textMoreBids.underline = true
     binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
 
-    if(item.data.bidStatus().statusKey.toLowerCase().equals("open")){
+    if(item.data.bidStatus().statusKey.lowercase().equals("open")){
       binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_active))
       binding.textBidStatus.text = context.resources.getString(R.string.label_active)
-    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
+    }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
       if(item.data.transactionBid?.clientConfirmationPending == false){
         binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.pending))
         binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
@@ -120,10 +120,10 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
         binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
         binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
       }
-    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
+    }else if(item.data.bidStatus().statusKey.lowercase().equals("rejected")) {
       binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
       binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
-    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
+    }else if(item.data.bidStatus().statusKey.lowercase().equals("cancelled")) {
       binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
       binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
     }
@@ -145,25 +145,25 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
     binding.request = item.data
-    if(item.data.bidStatus().statusKey.toLowerCase().equals("open")){
+    if(item.data.bidStatus().statusKey.lowercase().equals("open")){
       binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_under_review))
       binding.tvBidStatus.text = context.resources.getString(R.string.label_under_review)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_under_review_icon, 0, 0, 0)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_under_review)
       binding.tvBidStatus.compoundDrawablePadding =8
-    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("accepted")){
+    }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
         binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
         binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_won)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_won)
       binding.tvBidStatus.compoundDrawablePadding =8
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up_green, 0, 0, 0)
-    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("rejected")) {
+    }else if(item.data.bidStatus().statusKey.lowercase().equals("rejected")) {
       binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_lost)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
       binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.destructive_red))
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_lost_red)
       binding.tvBidStatus.compoundDrawablePadding =8
-    }else if(item.data.bidStatus().statusKey.toLowerCase().equals("cancelled")) {
+    }else if(item.data.bidStatus().statusKey.lowercase().equals("cancelled")) {
       binding.tvBidStatus.text = context.resources.getString(R.string.cancelled)
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_cancel_bid, 0, 0, 0)
       binding.tvBidStatus.setTextColor(ContextCompat.getColor(context,R.color.heading_black))

@@ -450,7 +450,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.nonExpressBidReceived.text = state.bidsCount.toString()+ " Bids Received"
                 binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
-                if(data.biddingType?.toLowerCase()=="pmt"){
+                if(data.biddingType?.lowercase()=="pmt"){
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
                         }else{
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
@@ -480,7 +480,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     if(data.isItLHContract()|| data.isItIntraCityContract()){
                       binding.bidPmtFtl.text =getString(string.your_bid)
                     }else{
-                      if(data.biddingType?.toLowerCase()=="pmt"){
+                      if(data.biddingType?.lowercase()=="pmt"){
                         binding.bidPmtFtl.text = getString(string.your_pmt_rate)
                       }else{
                         binding.bidPmtFtl.text = getString(string.your_ftl_rate)

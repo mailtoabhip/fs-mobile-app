@@ -496,7 +496,7 @@ data class HomeBidsRequestItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getStatusColor(bidStatus().status.toLowerCase())
+    ColorProviderUtils.getStatusColor(bidStatus().status.lowercase())
 
   /**
    * Get truck details/type
@@ -676,7 +676,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if indent type(pmt/ftl)
    */
-  fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+  fun isPMTIndent() = biddingType?.lowercase() == "pmt"
 
   /**
    * @return true if request type(dmt)

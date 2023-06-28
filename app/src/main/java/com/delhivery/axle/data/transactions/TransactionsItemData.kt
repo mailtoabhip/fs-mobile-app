@@ -122,7 +122,7 @@ data class TransactionsItemData(
     else -> "Amount debited"
   }
 
-  private fun isCredit() = type.toLowerCase().contains("credit")
+  private fun isCredit() = type.lowercase().contains("credit")
 
   /**
    * @return transaction status

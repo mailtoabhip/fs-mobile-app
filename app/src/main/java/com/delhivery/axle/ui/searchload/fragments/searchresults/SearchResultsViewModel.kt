@@ -95,7 +95,7 @@ class SearchResultsViewModel @Inject constructor(
     dataLoadingLiveData.postValue(true)
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.toLowerCase(),displayName,status,requestType,contractType,
+        offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.lowercase(),displayName,status,requestType,contractType,
       UserTripsLoadLimit
     )
         .flatMap { t ->

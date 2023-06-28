@@ -258,9 +258,9 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
+            if(userPrefs.pancard.toCharArray().get(3).lowercase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
-            }else if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
+            }else if(userPrefs.pancard.toCharArray().get(3).lowercase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
                 intent = Intent(context, GstVerificationActivity::class.java)
             }else{
                 if(userPrefs.isGstsByPanNotRegistered) {
