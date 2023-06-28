@@ -275,7 +275,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     } else {
                         viewModel.getBankName(
                             accountNum = viewModel.accountText.value!!,
-                            ifsc = viewModel.ifscText.value?.toUpperCase()!!
+                            ifsc = viewModel.ifscText.value?.uppercase()!!
                         )
                     }
                 }

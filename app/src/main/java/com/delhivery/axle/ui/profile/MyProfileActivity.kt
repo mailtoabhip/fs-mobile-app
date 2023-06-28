@@ -75,7 +75,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
-            binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
+            binding.profile.text = userPrefs.companyName[0].uppercaseChar().toString()
         }
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
@@ -476,7 +476,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                                         isFirstResource: Boolean
                                 ): Boolean {
                                     binding.card1.visibility = View.GONE
-                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().toUpperCase()
+                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
                                     binding.profile.visibility = View.VISIBLE
                                     return false
                                 }

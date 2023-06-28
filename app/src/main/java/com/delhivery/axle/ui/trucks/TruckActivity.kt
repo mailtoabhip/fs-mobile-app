@@ -363,7 +363,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
                 mutableListOf(userPrefs.userId(),viewModel.addTruckSourceIntent)
             )
             uiUtils.showProgress("Adding truck")
-            viewModel.addNewTruck(sourcedAs.toUpperCase())
+            viewModel.addNewTruck(sourcedAs.uppercase())
         }
 
     }

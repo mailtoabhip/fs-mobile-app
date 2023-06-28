@@ -90,7 +90,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
 
         viewModel.businessName.observe(this, androidx.lifecycle.Observer {
             if (it.isNotNullOrEmpty()) {
-                binding.profile.text = it[0].toUpperCase().toString()
+                binding.profile.text = it[0].uppercaseChar().toString()
             }
             enableSubmitButton()
         })
@@ -210,7 +210,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                                         isFirstResource: Boolean
                                 ): Boolean {
                                     binding.card1.visibility = View.GONE
-                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().toUpperCase()
+                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
                                     binding.profile.visibility = View.VISIBLE
                                     return false
                                 }

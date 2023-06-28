@@ -46,6 +46,7 @@ import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -298,7 +299,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             }
             binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
             binding.routeDetails.intraCityTvState.text = t.originState
-            binding.routeDetails.intraCityTvCity.text = t.originCity?.capitalize()
+            binding.routeDetails.intraCityTvCity.text = capitalize(t.originCity)
             binding.routeDetails.intraCityTvHubCity.text = t.origin
             binding.routeDetails.intraCityTvMapView.setOnClickListener{
               try {

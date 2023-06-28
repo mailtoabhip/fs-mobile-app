@@ -3,6 +3,7 @@ package com.delhivery.axle.api.response
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 
@@ -22,7 +23,7 @@ data class ChargesResponse(
         @SerializedName("days") val days: Int
 ) {
   fun getChargeTitle(): String {
-    return chargeHeadRef.replace("_", " ").capitalize()
+    return capitalize(chargeHeadRef.replace("_", " "))!!
   }
 }
 

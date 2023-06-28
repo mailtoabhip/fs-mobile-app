@@ -130,7 +130,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         setSupportActionBar(binding.toolbar)
         title = "Home"
         if(!userPrefs.userName.isEmpty()) {
-          binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+          binding.profile.text = userPrefs.userName[0].uppercase().toString()
         }
         supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.toolbarTitle.text = title
