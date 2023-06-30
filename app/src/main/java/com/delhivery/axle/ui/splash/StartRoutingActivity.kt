@@ -181,44 +181,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             }
   }
 
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == APP_UPDATE_REQUEST_CODE) {
-      if (resultCode != Activity.RESULT_OK) {
-        Toast.makeText(this, "App Update failed, please try again on the next app launch", Toast.LENGTH_SHORT).show() }
-      }
-    }
-
-
-  override fun onResume() {
-    super.onResume()
-    appUpdateManager
-      .appUpdateInfo
-      .addOnSuccessListener { appUpdateInfo ->
-
-        // If the update is downloaded but not installed,
-        // notify the user to complete the update.
-        if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-          popupSnackbarForCompleteUpdate()
-        }
-
-        //Check if Immediate update is required
-        try {
-          if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-            // If an in-app update is already running, resume the update.
-
-              appUpdateManager.startUpdateFlowForResult(
-                appUpdateInfo,
-                AppUpdateType.IMMEDIATE,
-                this,
-                APP_UPDATE_REQUEST_CODE)
-
-          }
-        } catch (e: IntentSender.SendIntentException) {
-          e.printStackTrace()
-        }
-      }
-  }
   /**
    * Splash animation chain
    */

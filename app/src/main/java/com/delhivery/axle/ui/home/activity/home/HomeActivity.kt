@@ -205,10 +205,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }.show()
        }
        else -> {
-         // The registered ActivityResultCallback gets the result of this request
-        /* requestPermissionLauncher.launch(
-           Manifest.permission.POST_NOTIFICATIONS
-         )*/
        }
      }
    }
@@ -225,6 +221,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     }
   }
+
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
@@ -587,46 +584,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
 
-  override fun onResume() {
-    super.onResume()
-    appUpdateManager
-      .appUpdateInfo
-      .addOnSuccessListener { appUpdateInfo ->
-
-        // If the update is downloaded but not installed,
-        // notify the user to complete the update.
-        if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-          Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
-            .setAction("RESTART") { appUpdateManager.completeUpdate() }.setAnchorView(binding.bottomNav)
-            .show()
-        }
-
-        //Check if Immediate update is required
-        try {
-          if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-            // If an in-app update is already running, resume the update.
-
-            appUpdateManager.startUpdateFlowForResult(
-              appUpdateInfo,
-              AppUpdateType.IMMEDIATE,
-              this,
-              APP_UPDATE_REQUEST_CODE)
-
-          }
-        } catch (e: IntentSender.SendIntentException) {
-          e.printStackTrace()
-        }
-      }
-  }
-
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == APP_UPDATE_REQUEST_CODE) {
-      if (resultCode != Activity.RESULT_OK) {
-        Toast.makeText(this, "App Update failed, please try again on the next app launch", Toast.LENGTH_SHORT).show() }
-    }
-  }
-
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(
@@ -757,6 +714,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     userPrefs.setPreviousScreen(this.javaClass.name)
     startActivity(userTripsIntent(this, "payment_view", 0))
   }
+
 }
 /**
  * Provides title from all fragments to activity
