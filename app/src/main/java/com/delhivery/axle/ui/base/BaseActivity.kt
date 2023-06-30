@@ -182,7 +182,6 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
   override fun onResume() {
     super.onResume()
-    popupSnackbarForCompleteUpdate()
     appUpdateManager
       .appUpdateInfo
       .addOnSuccessListener { appUpdateInfo ->
