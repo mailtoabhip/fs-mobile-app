@@ -59,7 +59,12 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
-import com.moengage.core.internal.MoEConstants
+import com.moengage.core.internal.USER_ATTRIBUTE_UNIQUE_ID
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_FIRST_NAME
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_LAST_NAME
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_MOBILE
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_NAME
+import com.moengage.pushbase.MoEPushHelper
 import java.util.Date
 import javax.inject.Inject
 
@@ -183,12 +188,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
     })
 
-      if (VERSION.SDK_INT >= VERSION_CODES.M) {
+      if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
      when {
        ContextCompat.checkSelfPermission(
          this, Manifest.permission.POST_NOTIFICATIONS
        ) == PackageManager.PERMISSION_GRANTED -> {
-
+         MoEPushHelper.getInstance()
+           .pushPermissionResponse(applicationContext, true)
        }
        shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
           Snackbar.make(
@@ -205,6 +211,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }.show()
        }
        else -> {
+         MoEPushHelper.getInstance()
+           .pushPermissionResponse(applicationContext, false)
        }
      }
    }
@@ -526,11 +534,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     userPrefs.userId().let {
       analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+      analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
     }
 
     userPrefs.phoneNumber?.let {
-      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+      analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
       analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
     }
     userPrefs.cityName?.let {
@@ -570,13 +578,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       if(userPrefs.userName.isNotNullOrEmpty()){
         try {
           analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME, it)
-          analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME, it)
+          analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_NAME, it)
           analyticsUtil.moEngageUserAttribute(
-            MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,
+            USER_ATTRIBUTE_USER_FIRST_NAME,
             it.split(" ").get(0)
           )
           analyticsUtil.moEngageUserAttribute(
-            MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,
+            USER_ATTRIBUTE_USER_LAST_NAME,
             it.split(" ").get(1)
           )
         }catch (e:Exception){}
@@ -715,6 +723,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     startActivity(userTripsIntent(this, "payment_view", 0))
   }
 
+  override fun popupSnackbarForCompleteUpdate() {
+    val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
+    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }.anchorView = binding.bottomNav
+    snackbar.show()
+  }
 }
 /**
  * Provides title from all fragments to activity

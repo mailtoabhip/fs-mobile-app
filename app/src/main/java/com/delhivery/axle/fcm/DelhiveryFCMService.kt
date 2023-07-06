@@ -181,12 +181,13 @@ class DelhiveryFCMService : FirebaseMessagingService() {
           .setSound(soundUri)
 
       with(NotificationManagerCompat.from(this)) {
-        if (ActivityCompat.checkSelfPermission(
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
             this@DelhiveryFCMService,
             permission.POST_NOTIFICATIONS
-          ) == PackageManager.PERMISSION_GRANTED
+          ) == PackageManager.PERMISSION_GRANTED)
+          ||Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
         )
-        notify(notificationId.hashCode(), notificationBuilder.build())
+         notify(notificationId.hashCode(), notificationBuilder.build())
       }
     }
   }

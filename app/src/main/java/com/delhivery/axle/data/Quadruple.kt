@@ -1,4 +1,4 @@
-package com.delhivery.axle
+package com.delhivery.axle.data
 
 /**
  * Holder for four items

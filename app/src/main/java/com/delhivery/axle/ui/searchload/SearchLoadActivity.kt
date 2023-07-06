@@ -68,9 +68,9 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
         userPrefs.setPreviousScreen(this.javaClass.name)
         when (currentFragmentType) {
           ResultsFragment -> navigate(LoadFragment)
-          else -> {}
+          else -> { finish() }
         }
-        finish()
+
       }
     })
 
@@ -135,13 +135,6 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
       }
   }
 
-/*  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    when (currentFragmentType) {
-      ResultsFragment -> navigate(LoadFragment)
-      else -> super.onBackPressed()
-    }
-  }*/
 }
 
 fun searchLoadContractsIntent(

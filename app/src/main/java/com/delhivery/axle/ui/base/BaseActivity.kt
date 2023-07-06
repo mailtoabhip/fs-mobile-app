@@ -112,14 +112,14 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
       override fun onStateUpdate(installState: InstallState) {
         when {
           installState.installStatus() == InstallStatus.DOWNLOADED -> popupSnackbarForCompleteUpdate()
-          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager?.unregisterListener(this)
-          else -> Log.d("InstallUpdatedListener", installState.installStatus()?.toString()?:"")
+          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager.unregisterListener(this)
+          else -> Log.d("InstallUpdatedListener", installState.installStatus().toString())
         }
       }
     }
   }
 
-  fun popupSnackbarForCompleteUpdate() {
+   open fun popupSnackbarForCompleteUpdate() {
     val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
     snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
     snackbar.show()
