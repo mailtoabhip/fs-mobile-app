@@ -219,7 +219,7 @@
               android:background="@color/transparent_white"
               android:visibility="visible"
               app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@+id/paymentInfo"
+              app:layout_constraintTop_toBottomOf="@+id/clRemarks"
               />
           <androidx.appcompat.widget.AppCompatImageView
               android:id="@+id/seperator2"
@@ -533,19 +533,80 @@
                 app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
                 app:layout_constraintTop_toBottomOf="@id/operatingHrPerDay"
                 />
-
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/permitRequirementIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/size_8dp"
+                android:visibility="@{transaction.isIntraCityContract()}"
+                app:layout_constraintBottom_toBottomOf="@id/permitRequirementLabel"
+                app:layout_constraintEnd_toStartOf="@id/permitRequirementText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/permitRequirementText"
+                app:srcCompat="@{transaction.nepDrawable()}"
+                tools:visibility="visible"
+                />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/permitRequirementText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_10dp"
+                android:layout_marginTop="@dimen/size_18dp"
                 android:text="@{transaction.vehiclePermitRequiredText()}"
                 android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_16sp"
+                android:visibility="@{transaction.isIntraCityContract()}"
+                app:layout_constraintStart_toEndOf="@+id/permitRequirementIcon"
+                app:layout_constraintTop_toBottomOf="@id/operationalDaysText"
+                tools:text="Not Required"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/permitRequirementLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_entry_permit_label"
+                android:textColor="@color/color_hint"
                 android:textSize="@dimen/text_12sp"
                 android:visibility="@{transaction.isIntraCityContract()}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/operatingHrPerDayText"
-                tools:text="\u2022 No Entry Permit Required"
+                app:layout_constraintStart_toEndOf="@+id/permitRequirementIcon"
+                app:layout_constraintTop_toBottomOf="@id/permitRequirementText"
+                tools:text="No Entry Permit"
+                />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/vehicleUsageIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/size_8dp"
+                android:visibility="@{transaction.isIntraCityContract()}"
+                app:layout_constraintBottom_toBottomOf="@id/VehicleUsageLabel"
+                app:layout_constraintEnd_toStartOf="@id/vehicleUsageType"
+                app:layout_constraintTop_toTopOf="@id/vehicleUsageType"
+                app:srcCompat="@{transaction.vehicleUsageDrawable()}"
+                tools:visibility="visible"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/vehicleUsageType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_18dp"
+                android:text="@{transaction.contractUsage}"
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_16sp"
+                android:visibility="@{transaction.isIntraCityContract()}"
+                app:layout_constraintStart_toStartOf="@+id/operatingHrPerDayText"
+                app:layout_constraintTop_toBottomOf="@id/operationalDaysText"
+                tools:text="LM"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/VehicleUsageLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/usage_label"
+                android:textColor="@color/color_hint"
+                android:paddingEnd="@dimen/size_16dp"
+                android:textSize="@dimen/text_12sp"
+                android:visibility="@{transaction.isIntraCityContract()}"
+                app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
+                app:layout_constraintTop_toBottomOf="@id/vehicleUsageType"
                 />
           </androidx.constraintlayout.widget.ConstraintLayout>
           <androidx.constraintlayout.widget.ConstraintLayout
@@ -766,6 +827,53 @@
                 />
 
           </androidx.constraintlayout.widget.ConstraintLayout>
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/seperator5"
+              android:layout_width="match_parent"
+              android:layout_height="5dp"
+              android:layout_margin="@dimen/size_16dp"
+              android:visibility="@{transaction.isIntraCityContractWithRemarks()}"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/paymentInfo"
+              app:srcCompat="@drawable/dotted"
+              />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clRemarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_16dp"
+            android:visibility="@{transaction.isIntraCityContractWithRemarks()}"
+            app:layout_constraintStart_toStartOf="@id/seperator5"
+            app:layout_constraintTop_toBottomOf="@id/seperator5"
+            tools:visibility="visible"
+            >
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/remarkLabel"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/remark_label"
+              android:textColor="@color/background_dark_grey"
+              android:textSize="@dimen/text_16sp"
+              android:textStyle="bold"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/remarkDetails"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/size_8dp"
+              android:text="@{transaction.contractRemarks}"
+              android:textSize="@dimen/text_14sp"
+              android:textColor="@color/heading_black"
+              android:paddingEnd="@dimen/size_10dp"
+              android:paddingStart="@dimen/size_8dp"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@id/remarkLabel"
+              />
+        </androidx.constraintlayout.widget.ConstraintLayout>
           <androidx.recyclerview.widget.RecyclerView
               android:id="@+id/rvPaymentSlabs"
               android:layout_width="match_parent"

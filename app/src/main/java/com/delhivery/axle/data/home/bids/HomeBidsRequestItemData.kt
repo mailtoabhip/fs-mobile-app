@@ -133,6 +133,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("origin_latitude")val latitude:String?,
   @SerializedName("demand_type")val demandType:String?,
   @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
+  @SerializedName("contract_remarks")val contractRemarks:String?,
+  @SerializedName("contract_usage")val contractUsage:String?,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -450,6 +452,18 @@ data class HomeBidsRequestItemData(
    */
   @DrawableRes
   fun vehicleOperationDrawableKmPerMonth() = DrawableProviderUtils.vehicleOperationDrawableKmPerMonth(if (transactionStatus=="cancelled"){"cancel"}else{"open"}, contractType)
+
+  /**
+   * @return vehicleUsageDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun vehicleUsageDrawable() = DrawableProviderUtils.vehicleUsageDrawable(if (transactionStatus==TransactionStatus.Cancelled.statusId){"cancel"}else{"open"})
+
+  /**
+   * @return nepDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun nepDrawable() = DrawableProviderUtils.nepDrawable(if (transactionStatus==TransactionStatus.Cancelled.statusId){"cancel"}else{"open"})
 
   /**
    * @return vehicleOperationDrawablePerHrs basis[indent tyoe]
@@ -1185,6 +1199,12 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isIntraCityContractWithRemarks() = if (contractType == ContractType.INTRACITY.type && contractRemarks.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
   fun isIntraCityContractWithBid() = if (contractType == ContractType.INTRACITY.type && transactionBid!=null) {
     View.VISIBLE
   } else {
@@ -1290,7 +1310,7 @@ data class HomeBidsRequestItemData(
   }
   fun vehiclePermitRequiredText():String=
    if(nepRequired!=null) {
-     if (nepRequired!!) "\u2022\u0020 No Entry Permit Required" else "\u2022\u0020 No Entry Permit Not Required "
+     if (nepRequired!!) "Required " else "Not required "
    }else{
      ""
    }
