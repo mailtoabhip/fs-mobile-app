@@ -753,6 +753,9 @@
   <string name="payment_slabs_details"><![CDATA[Monthly payout per slab is determined by vehicle type & location, and is calculated by addition of monthly average km rate for that vehicle type per slab increment.]]></string>
   <string name="hide_slabs">Hide full slabs list</string>
   <string name="bid_revise_error">Please ensure that the revised bid amount is in multiples of ₹</string>
+  <string name="remark_label">Remark</string>
+  <string name="usage_label">Usage</string>
+  <string name="no_entry_permit_label">No Entry Permit</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

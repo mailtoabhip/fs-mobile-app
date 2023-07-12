@@ -212,6 +212,19 @@ object DrawableProviderUtils {
       R.drawable.icon_calender
     }
 
+  @DrawableRes
+  fun vehicleUsageDrawable(status: String?) = when (status) {
+    "cancel" -> R.drawable.ic_usage_grey
+    "open" -> R.drawable.ic_usage
+    else -> R.drawable.ic_usage
+  }
+
+  @DrawableRes
+  fun nepDrawable(status: String?) = when (status) {
+    "cancel" -> R.drawable.ic_nep_grey
+    "open" -> R.drawable.ic_nep
+    else -> R.drawable.ic_nep
+  }
 
   @DrawableRes
   fun vehicleOperationDrawablePerHrs(status: String?) = when (status) {
