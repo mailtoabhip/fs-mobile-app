@@ -64,6 +64,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   @Inject lateinit var userPrefs: UserPrefs
   var routesArray:ArrayList<HaltCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
+  var reportingCentersArray:ArrayList<HaltCenters> = ArrayList()
   var source= VALUE_APP_FLOW
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

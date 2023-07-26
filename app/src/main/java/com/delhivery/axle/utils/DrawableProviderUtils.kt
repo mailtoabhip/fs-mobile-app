@@ -2,6 +2,7 @@ package com.delhivery.axle.utils
 
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.data.home.trips.PODStatus.REJECT
 import com.delhivery.axle.data.home.trips.PODStatus.REVIEW
@@ -238,6 +239,13 @@ object DrawableProviderUtils {
     "cancel" -> R.drawable.ic_icon_trip_grey
     "open" -> R.drawable.ic_icon_trip
     else -> R.drawable.ic_icon_trip
+  }
+
+  @DrawableRes
+  fun intracityContractType(containerType: String?) = when (containerType) {
+    ContractType.INTRACITY.type -> R.drawable.ic_place
+    ContractType.INTRACITY_ADHOC.type -> R.drawable.ic_multiple_location
+    else -> R.drawable.ic_place
   }
 
 

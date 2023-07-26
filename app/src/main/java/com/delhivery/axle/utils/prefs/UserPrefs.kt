@@ -1138,7 +1138,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     } else {
       user.supplierDetails?.parentDetails?.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     }
-    demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
+    demandType = "Intracity,Internal"
     userPerformance = user.supplierDetails?.overallPerformance ?: ""
     vendorEntity = user.supplierDetails?.vendorEntity ?: ""
     parentId = if (user.isParent()) {
@@ -1195,7 +1195,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     subStatus = user.supplierDetails?.subStatus?:""
     creationDate = user.supplierDetails?.creationDate?:""
     isKycVeriifed = user.supplierDetails?.isKycVerified?:false
-    contractDemand = user.supplierDetails?.contractDemand?:false
+    contractDemand = true
   }
 
 

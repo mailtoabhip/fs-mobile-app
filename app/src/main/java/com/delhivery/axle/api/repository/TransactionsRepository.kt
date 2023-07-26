@@ -46,9 +46,9 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,contractType: String?=null) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities).
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,contractType).
     convertResponse()
 
 
@@ -115,7 +115,8 @@ enum class TransactionStatus(val statusId: String) {
 enum class ContractType(val type: String) {
   LH_FTL("LH_FTL"),
   FRC("FRC"),
-  INTRACITY("INTRACITY")
+  INTRACITY("INTRACITY"),
+  INTRACITY_ADHOC("INTRACITY_ADHOC")
 }
 
 enum class RequestType(val type: String) {

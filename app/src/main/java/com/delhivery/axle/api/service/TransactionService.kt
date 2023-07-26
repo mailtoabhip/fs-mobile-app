@@ -99,6 +99,7 @@ interface TransactionService {
     @Query("demand_types") vendorType: String ?,
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
+    @Query("contract_type") contractType: String?=null
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
@@ -29,7 +30,6 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -319,7 +319,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun tripContractRoute(): String {
-    if(contractType==ContractType.INTRACITY.type){
+    if(contractType==ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type){
       return StringUtils.capitalize(origin)?:""
     }else{
       val stopBuilder = StringBuilder()
@@ -476,6 +476,12 @@ data class HomeBidsRequestItemData(
    */
   @DrawableRes
   fun tripCloseOpenDrawable() = DrawableProviderUtils.tripOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
+
+  /**
+   * @return intracityContractType basis[contract type]
+   */
+  @DrawableRes
+  fun intracityContractTypeDrawable() = DrawableProviderUtils.intracityContractType(contractType)
 
   /**
    * @return truck_type with placed capacity
@@ -1193,13 +1199,13 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-  fun isIntraCityContract() = if (contractType == ContractType.INTRACITY.type) {
+  fun isIntraCityContract() = if (contractType == ContractType.INTRACITY.type || contractType == ContractType.INTRACITY_ADHOC.type) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
-  fun isIntraCityContractWithRemarks() = if (contractType == ContractType.INTRACITY.type && contractRemarks.isNotNullOrEmpty()) {
+  fun isIntraCityContractWithRemarks() = if ((contractType == ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type) && contractRemarks.isNotNullOrEmpty()) {
     View.VISIBLE
   } else {
     View.GONE
@@ -1223,7 +1229,7 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-  fun isLHIntraCityVehicleVisible() = if ((contractType == ContractType.LH_FTL.type && vehicleCountPerRoute != null) || contractType==ContractType.INTRACITY.type) {
+  fun isLHIntraCityVehicleVisible() = if ((contractType == ContractType.LH_FTL.type && vehicleCountPerRoute != null) || contractType==ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type) {
     View.VISIBLE
   } else {
     View.GONE
@@ -1235,14 +1241,14 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-  fun isLHIntraCityVehicleRouteVisible() = if ((contractType == ContractType.LH_FTL.type && operatingDays!=null)|| contractType==ContractType.INTRACITY.type) {
+  fun isLHIntraCityVehicleRouteVisible() = if ((contractType == ContractType.LH_FTL.type && operatingDays!=null)|| contractType==ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
   fun totalVehicleCountOperationDays():String=
-    if(contractType==ContractType.INTRACITY.type){
+    if(contractType==ContractType.INTRACITY.type|| contractType==ContractType.INTRACITY_ADHOC.type){
       vehicleOperatingDaysPerMonth()
     }else{
       if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
@@ -1270,8 +1276,9 @@ data class HomeBidsRequestItemData(
   fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
   fun intracityExtraDayRate()="₹ "+ intracityExtraDayRate
 
+  fun intracityContractType()=if(contractType==ContractType.INTRACITY.type){"Fixed"}else if(contractType==ContractType.INTRACITY_ADHOC.type){"Flexible"} else{""}
 
-  fun paymentSlabsVisibility() = if (contractType==ContractType.INTRACITY.type) {
+  fun paymentSlabsVisibility() = if (contractType==ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type) {
     if(transactionStatus==TransactionStatus.Cancelled.statusId){
       View.GONE
     }else{
@@ -1285,7 +1292,7 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-  fun isPaymentSlabsVisible():Boolean = if (contractType==ContractType.INTRACITY.type) {
+  fun isPaymentSlabsVisible():Boolean = if (contractType==ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type) {
     if(transactionStatus==TransactionStatus.Cancelled.statusId){
      false
     }else{
@@ -1295,7 +1302,7 @@ data class HomeBidsRequestItemData(
     false
   }
 
-  fun routeVehicleMarginVisibility()=if (contractType==ContractType.INTRACITY.type) {
+  fun routeVehicleMarginVisibility()=if (contractType==ContractType.INTRACITY.type || contractType==ContractType.INTRACITY_ADHOC.type) {
     if(transactionStatus==TransactionStatus.Cancelled.statusId){
       View.VISIBLE
     }else{

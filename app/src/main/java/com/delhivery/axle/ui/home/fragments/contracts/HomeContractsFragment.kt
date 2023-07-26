@@ -55,6 +55,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   var visible = false
   var demandType: String = ""
+  var contractType:String? = null
   var pos = 0
 
 
@@ -149,7 +150,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType)
+    viewModel.fetchUserTransactions(false, demandType,contractType)
   }
 
   override fun handleAction(
@@ -182,14 +183,32 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       }
       HomeContractsFilterExpress -> {
         demandType = DemandType.Internal.type
+        contractType = null
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
         demandType = DemandType.Corporate.type
+        contractType = null
         refreshData()
       }
       HomeContractsFilterIntracity -> {
         demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type+","+ContractType.INTRACITY_ADHOC.type
+        refreshData()
+      }
+      HomeContractsIntracityFilterFixed -> {
+        demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type
+        refreshData()
+      }
+      HomeContractsIntracityFilterFlexible -> {
+        demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY_ADHOC.type
+        refreshData()
+      }
+      HomeContractsIntracityFilterAll -> {
+        demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type+","+ContractType.INTRACITY_ADHOC.type
         refreshData()
       }
       HomeContractsFilterInfo -> {

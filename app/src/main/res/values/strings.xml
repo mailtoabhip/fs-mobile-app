@@ -182,6 +182,8 @@
   <string name="action_express">Delhivery Line Haul</string>
   <string name="action_non_express">Customer Intercity</string>
   <string name="action_intracity">Delhivery Fleet</string>
+  <string name="action_flexible_intracity">Flexible</string>
+  <string name="action_fixed_intracity">Fixed</string>
   <string name="action_ok">Ok</string>
 
 
@@ -756,6 +758,7 @@
   <string name="remark_label">Remark</string>
   <string name="usage_label">Usage</string>
   <string name="no_entry_permit_label">No Entry Permit</string>
+  <string name="all">All</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
