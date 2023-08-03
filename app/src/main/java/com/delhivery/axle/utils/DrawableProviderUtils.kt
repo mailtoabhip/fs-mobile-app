@@ -242,11 +242,7 @@ object DrawableProviderUtils {
   }
 
   @DrawableRes
-  fun intracityContractType(containerType: String?) = when (containerType) {
-    ContractType.INTRACITY.type -> R.drawable.ic_place
-    ContractType.INTRACITY_ADHOC.type -> R.drawable.ic_multiple_location
-    else -> R.drawable.ic_place
-  }
-
+  fun intracityContractType(contractType: String?, isFlexible: Boolean?) = if(isFlexible==true && contractType==ContractType.INTRACITY.type)
+   R.drawable.ic_multiple_location else R.drawable.ic_place
 
 }

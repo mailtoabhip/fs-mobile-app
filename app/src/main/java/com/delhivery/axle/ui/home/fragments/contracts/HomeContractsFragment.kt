@@ -56,6 +56,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   var visible = false
   var demandType: String = ""
   var contractType:String? = null
+  var isflexible:Boolean? = null
+  var isNewAppVersion:Boolean? = null
   var pos = 0
 
 
@@ -150,7 +152,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType,contractType)
+    viewModel.fetchUserTransactions(false, demandType,contractType,isflexible,isNewAppVersion)
   }
 
   override fun handleAction(
@@ -184,31 +186,43 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsFilterExpress -> {
         demandType = DemandType.Internal.type
         contractType = null
+        isflexible = null
+        isNewAppVersion= null
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
         demandType = DemandType.Corporate.type
         contractType = null
+        isflexible = null
+        isNewAppVersion= null
         refreshData()
       }
       HomeContractsFilterIntracity -> {
         demandType = DemandType.Intracity.type
-        contractType = ContractType.INTRACITY.type+","+ContractType.INTRACITY_ADHOC.type
+        contractType = ContractType.INTRACITY.type
+        isNewAppVersion= true
+        isflexible = null
         refreshData()
       }
       HomeContractsIntracityFilterFixed -> {
         demandType = DemandType.Intracity.type
         contractType = ContractType.INTRACITY.type
+        isflexible = false
+        isNewAppVersion = true
         refreshData()
       }
       HomeContractsIntracityFilterFlexible -> {
         demandType = DemandType.Intracity.type
-        contractType = ContractType.INTRACITY_ADHOC.type
+        contractType = ContractType.INTRACITY.type
+        isflexible = true
+        isNewAppVersion = true
         refreshData()
       }
       HomeContractsIntracityFilterAll -> {
         demandType = DemandType.Intracity.type
-        contractType = ContractType.INTRACITY.type+","+ContractType.INTRACITY_ADHOC.type
+        contractType = ContractType.INTRACITY.type
+        isflexible = null
+        isNewAppVersion = true
         refreshData()
       }
       HomeContractsFilterInfo -> {
@@ -227,6 +241,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       bindingDialog.rule3.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule4.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_fixed_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule5.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_flexible_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
       dialog.setContentView(bindingDialog.root)
       dialog.show()

@@ -67,7 +67,6 @@
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"
                 android:layout_margin="@dimen/size_8dp"
-                android:textColor="@color/background_dark_grey"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:visibility="gone"
@@ -175,15 +174,17 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/intraCityRouteInfo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{route}"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"
                 android:layout_margin="@dimen/size_8dp"
+                android:paddingEnd="@dimen/size_10dp"
                 android:textColor="@color/background_dark_grey"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="visible"
+                tools:text="Mumbai MIDC"
                 android:visibility="@{request.isIntraCityContract()}"/>
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/intraCityVehicleInfo"

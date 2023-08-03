@@ -153,6 +153,12 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   private fun setupSearchScreen() {
     if(contractType== ContractType.INTRACITY.type){
       binding.editReportingCenter.setText("")
+      binding.checkBoxFixedIntracity.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkBoxFixedIntracity.isChecked = isChecked
+      }
+      binding.checkBoxFlexibleIntracity.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkBoxFlexibleIntracity.isChecked = isChecked
+      }
       binding.spinnerStatus.apply{
         setup(R.array.array_status){ p, v ->
           if(p==0) setHintColor(v)
@@ -162,7 +168,12 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         origin = it
       }
       binding.btnSearch.setOnClickListener{
-        searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString())
+        if(binding.checkBoxFixedIntracity.isChecked|| binding.checkBoxFlexibleIntracity.isChecked){
+          searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString(),if(binding.checkBoxFlexibleIntracity.isChecked&&binding.checkBoxFixedIntracity.isChecked)null else if (binding.checkBoxFixedIntracity.isChecked)false else if (binding.checkBoxFlexibleIntracity.isChecked) true else null, true)
+        }else{
+          uiUtils.showToast("Please select contract type")
+        }
+
       }
     }
     else{
@@ -178,7 +189,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       /* truck type */
       binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
       binding.btnAction.setOnClickListener{
-        searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString(),null,null)
+          searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString(),null,null)
         }
     }
 
@@ -238,7 +249,9 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     destination: CityModel? = null,
     truckType: String?,
     truckDisplayName: String?,
-    contractStatus: String?
+    contractStatus: String?,
+    isFlexible: Boolean?=null,
+    isNewAppVersion:Boolean?=null
   ) {
     uiUtils.toggleKeyboard(true)
     if(contractType== ContractType.INTRACITY.type){
@@ -283,7 +296,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
       Handler().postDelayed({
-        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory))
+        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory,isFlexible,isNewAppVersion))
       }, 200)
   }
 

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.bids.TransactionBid
@@ -120,6 +121,12 @@ class ContractDetailsCreateEditDialog @Inject constructor(
     /* set binding params */
     binding.apply {
       request = transaction
+      if(transaction.isItIntraCityContract()&& transaction.isFlexible){
+        val moreCenters =transaction.getMoreCentersCount()
+        binding.intraCityRouteInfo.text = if(moreCenters>0){HtmlCompat.fromHtml(context.getString(R.string.msg_more,transaction.reportingCenters(),moreCenters), HtmlCompat.FROM_HTML_MODE_LEGACY)}else transaction.reportingCenters()
+      }else if(transaction.isItIntraCityContract()){
+        binding.intraCityRouteInfo.text = transaction.tripContractRoute()
+      }
       route = transaction.tripContractRoute()
         transactionBid?.bidAmount?.let {
           isValidBidAmount= true

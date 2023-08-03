@@ -92,7 +92,7 @@ class HomeContractsViewModel@Inject constructor(
    * Fetch user [Requested] transactions
    */
   fun fetchUserTransactions(
-    paginate: Boolean = false, demandType: String,contractType: String?=null) {
+    paginate: Boolean = false, demandType: String,contractType: String?=null,isFlexible:Boolean?=null,isNewVersion:Boolean?=null){
     if (!paginate ) {
       offset = 0
       allActiveFetched = false
@@ -116,7 +116,7 @@ class HomeContractsViewModel@Inject constructor(
     dataLoadingLiveData.postValue(true)
 
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,contractType)
+        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,contractType,isFlexible,isNewVersion)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
@@ -218,7 +218,13 @@ class HomeContractsViewModel@Inject constructor(
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
              // Handle filter for intracity contract type
               if(demandType==DemandType.Intracity.type){
-                add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(contractType?:"")), AddUpdate))
+                var intracityContractType = ""
+                intracityContractType = if(contractType==ContractType.INTRACITY.type && isFlexible==true){
+                  "Flexible"
+                }else if(contractType==ContractType.INTRACITY.type && isFlexible==false){
+                  "Fixed"
+                }else "All"
+                add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
               }
               loadsCountLiveData.postValue(totalActive)
              if (_tRes.fifth.transactions.isEmpty()) {

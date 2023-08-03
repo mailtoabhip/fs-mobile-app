@@ -24,6 +24,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.PaymentSlabs
+import com.delhivery.axle.data.home.bids.SecondaryReportingCenters
 import com.delhivery.axle.databinding.ActivityContractDetailsBinding
 import com.delhivery.axle.databinding.DialogContractsBidSuccessBinding
 import com.delhivery.axle.injection.module.GlideApp
@@ -63,8 +64,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   @Inject lateinit var userPrefs: UserPrefs
   var routesArray:ArrayList<HaltCenters> = ArrayList()
+  var secondaryReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
-  var reportingCentersArray:ArrayList<HaltCenters> = ArrayList()
   var source= VALUE_APP_FLOW
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -250,7 +251,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           binding.transaction = _transaction
           binding.routeDetails.nonExpRouteDetails.visibility = t.isFRCContract()
           binding.routeDetails.routeDetails.visibility =  t.isLHContract()
-          binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityContract()
+          binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityFixedContract()
+          binding.routeDetails.intraCityAdHocRouteDetails.visibility =  t.isIntraCityFlexibleContract()
 
           binding.vehicleDetails.visibility = View.VISIBLE
 
@@ -287,7 +289,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.routeDetails.nonExpTvState2.text = t.destinationState
             binding.routeDetails.nonExpTimeInterval1.text  =
               t.tentativeTripCount?.let { Integer.toString(it) } +" Trips in "+ t.contractValidity+" weeks"
-          }else if(t.isItIntraCityContract()){
+          }else if(t.isItIntraCityContract() && !t.isFlexible){
             if(t.transactionStatus== TransactionStatus.Cancelled.statusId){
               binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
               binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_time_grey))
@@ -323,6 +325,16 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.routeDetails.rvContracts.apply {
               layoutManager = LinearLayoutManager(applicationContext)
               adapter = contractsRouteDetailsAdapter
+            }
+          }
+          if(_transaction.secondaryReportingCenters!=null && _transaction.secondaryReportingCenters!!.isNotEmpty()) {
+            for (item in _transaction.secondaryReportingCenters!!) {
+              secondaryReportingCentersArray.add(item)
+            }
+            val contractsIntracityAdHocRCAdapter  = ContractsIntracityAdHocRCAdapter(secondaryReportingCentersArray,_transaction,this@ContractDetailsActivity)
+            binding.routeDetails.rvIntracityAdHocContracts.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = contractsIntracityAdHocRCAdapter
             }
           }
           binding.seperator.visibility = View.VISIBLE
@@ -748,6 +760,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
     routesArray.clear()
+    secondaryReportingCentersArray.clear()
   }
 
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){

@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.os.CountDownTimer
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
@@ -94,6 +95,29 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.request = item.data
+    if(item.data.isItIntraCityContract()){
+      if(item.data.isFlexible){
+        val moreCenters =item.data.getMoreCentersCount()
+        binding.tvIntracityHubOriginCity.text = if(moreCenters>0){
+          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),moreCenters), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
+        binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_multiple_location,
+          0,
+          0,
+          0
+        )
+      }else{
+        binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_place,
+          0,
+          0,
+          0
+        )
+        binding.tvIntracityHubOriginCity.text =item.data.originCityName()
+      }
+    }else{
+      binding.tvHubOriginCity.text = item.data.originCityName()
+    }
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
       binding.userBidInfo.visibility= View.GONE
@@ -552,7 +576,7 @@ internal class HomeContractsIntracityFilterItemVH(binding: ViewHomeContractsIntr
     _interface: HomeContractsRVAdapterInterface
   ) {
     when (item.data.filterType) {
-      ContractType.INTRACITY.type+","+ContractType.INTRACITY_ADHOC.type-> {
+      "All"-> {
         binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         binding.flexibleIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.flexibleIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_multiple_location,0,0,0)
@@ -562,7 +586,7 @@ internal class HomeContractsIntracityFilterItemVH(binding: ViewHomeContractsIntr
         binding.flexibleIntracityToggle.isSelected=false
         binding.fixedIntracityToggle.isSelected=false
       }
-      ContractType.INTRACITY_ADHOC.type-> {
+      "Flexible"-> {
         binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.flexibleIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         binding.flexibleIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_multiple_location_blue,0,0,0)
@@ -572,7 +596,7 @@ internal class HomeContractsIntracityFilterItemVH(binding: ViewHomeContractsIntr
         binding.flexibleIntracityToggle.isSelected=true
         binding.fixedIntracityToggle.isSelected=false
       }
-      ContractType.INTRACITY.type-> {
+     "Fixed"-> {
         binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.fixedIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         binding.fixedIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_blue,0,0,0)
