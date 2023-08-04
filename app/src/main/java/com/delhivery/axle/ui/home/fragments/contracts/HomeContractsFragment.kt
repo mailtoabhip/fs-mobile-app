@@ -197,6 +197,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsFilterIntracity -> {
         demandType = DemandType.Intracity.type
         contractType = ContractType.INTRACITY.type
+        includeFlexibleContract = true
         isflexible = null
         refreshData()
       }

@@ -305,7 +305,7 @@
           app:layout_constraintTop_toTopOf="parent"
           />
       <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/rvIntracityAdHocContracts"
+          android:id="@+id/rvIntracityFlexibleContracts"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           app:layout_constraintStart_toStartOf="parent"

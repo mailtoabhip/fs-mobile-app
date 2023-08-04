@@ -331,7 +331,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               secondaryReportingCentersArray.add(item)
             }
             val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(secondaryReportingCentersArray,_transaction,this@ContractDetailsActivity)
-            binding.routeDetails.rvIntracityAdHocContracts.apply {
+            binding.routeDetails.rvIntracityFlexibleContracts.apply {
               layoutManager = LinearLayoutManager(applicationContext)
               adapter = contractIntracityFlexibleRCAdapter
             }

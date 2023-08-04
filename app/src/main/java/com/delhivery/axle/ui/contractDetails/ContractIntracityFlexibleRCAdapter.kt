@@ -27,7 +27,7 @@ class ContractIntracityFlexibleRCAdapter (private val dataList: List<SecondaryRe
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.view_intracity_adhoc_reporting_centers, parent, false))
+    return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.view_intracity_flexible_reporting_centers, parent, false))
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
