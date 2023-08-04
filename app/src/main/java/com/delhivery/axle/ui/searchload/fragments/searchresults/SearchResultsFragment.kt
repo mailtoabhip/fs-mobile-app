@@ -109,7 +109,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private var displayName: String?= ""
   private var status: String?=""
   private var isFlexible: Boolean?= null
-  private var isNewAppVersion: Boolean?= null
+  private var includeFlexibleContracts: Boolean?= null
 
   private val _adapter by lazy {
     SearchLoadsRVAdapter(this)
@@ -347,7 +347,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   private fun refreshData() {
     _adapter.resetStaticData(requestType?:"load")
-    viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType, isFlexible =isFlexible,isNewAppVersion=isNewAppVersion)
+    viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType, isFlexible =isFlexible,includeFlexibleContracts=includeFlexibleContracts)
   }
 
   private fun setupSpinners() {
@@ -376,9 +376,9 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     truckDisplayNames: ArrayList<String>,
     progress: Boolean = true,
     isFlexible:Boolean? = null,
-    isNewAppVersion:Boolean?=null
+    includeFlexibleContracts:Boolean?=null
   ) {
-    saveQueryParams(origin, destination, type, displayName, status, requestType, contractType, saveToHistory,isFlexible,isNewAppVersion)
+    saveQueryParams(origin, destination, type, displayName, status, requestType, contractType, saveToHistory,isFlexible,includeFlexibleContracts)
     /* clear and add first dummy item */
     _adapter.clearItems()
     if(contractType==ContractType.INTRACITY.type)
@@ -405,7 +405,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     isContract = contractType!=null
     isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
     binding.isIntraCityContract = isIntraCity
-    viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType,isFlexible,isNewAppVersion)
+    viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType,isFlexible,includeFlexibleContracts)
   }
 
   /**
@@ -421,7 +421,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     contractType: String?,
     saveToHistory: Boolean,
     isFlexible:Boolean?,
-    isNewAppVersion: Boolean?
+    includeFlexibleContracts: Boolean?
   ) {
     this.origin = origin
     this.destination = destination
@@ -432,7 +432,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     this.contractType = contractType
     this.saveToHistory = saveToHistory
     this.isFlexible = isFlexible
-    this.isNewAppVersion = isNewAppVersion
+    this.includeFlexibleContracts = includeFlexibleContracts
   }
 
   private fun AppCompatSpinner.setTruckDisplayAdapter(truckDisplayNames: ArrayList<String>) {
@@ -639,7 +639,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   }
 
   inner class PaginationInterface: PaginationScrollListener(UserTripsLoadLimit){
-    override fun loadMore()=viewModel.searchLoad(true, origin, destination, type, displayName, status, requestType, contractType,isFlexible,isNewAppVersion)
+    override fun loadMore()=viewModel.searchLoad(true, origin, destination, type, displayName, status, requestType, contractType,isFlexible,includeFlexibleContracts)
 
     override fun hasMore() = viewModel.hasMoreData
 

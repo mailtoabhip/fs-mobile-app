@@ -22,7 +22,6 @@ import com.delhivery.axle.ui.searchload.fragments.SearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.EVENT_SEARCH_ERROR
-import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
@@ -251,7 +250,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     truckDisplayName: String?,
     contractStatus: String?,
     isFlexible: Boolean?=null,
-    isNewAppVersion:Boolean?=null
+    includeFlexibleContracts:Boolean?=null
   ) {
     uiUtils.toggleKeyboard(true)
     if(contractType== ContractType.INTRACITY.type){
@@ -296,7 +295,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* delay and search for better UX */
       Handler().postDelayed({
-        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory,isFlexible,isNewAppVersion))
+        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory,isFlexible,includeFlexibleContracts))
       }, 200)
   }
 

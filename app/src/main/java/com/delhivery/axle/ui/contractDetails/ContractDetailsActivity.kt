@@ -51,7 +51,6 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -331,10 +330,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             for (item in _transaction.secondaryReportingCenters!!) {
               secondaryReportingCentersArray.add(item)
             }
-            val contractsIntracityAdHocRCAdapter  = ContractsIntracityAdHocRCAdapter(secondaryReportingCentersArray,_transaction,this@ContractDetailsActivity)
+            val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(secondaryReportingCentersArray,_transaction,this@ContractDetailsActivity)
             binding.routeDetails.rvIntracityAdHocContracts.apply {
               layoutManager = LinearLayoutManager(applicationContext)
-              adapter = contractsIntracityAdHocRCAdapter
+              adapter = contractIntracityFlexibleRCAdapter
             }
           }
           binding.seperator.visibility = View.VISIBLE

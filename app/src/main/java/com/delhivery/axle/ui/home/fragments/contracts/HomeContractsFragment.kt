@@ -14,15 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.*
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
@@ -57,7 +54,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   var demandType: String = ""
   var contractType:String? = null
   var isflexible:Boolean? = null
-  var isNewAppVersion:Boolean? = null
+  var includeFlexibleContract:Boolean? = null
   var pos = 0
 
 
@@ -152,7 +149,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType,contractType,isflexible,isNewAppVersion)
+    viewModel.fetchUserTransactions(false, demandType,contractType,isflexible,includeFlexibleContract)
   }
 
   override fun handleAction(
@@ -187,20 +184,19 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         demandType = DemandType.Internal.type
         contractType = null
         isflexible = null
-        isNewAppVersion= null
+        includeFlexibleContract= null
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
         demandType = DemandType.Corporate.type
         contractType = null
         isflexible = null
-        isNewAppVersion= null
+        includeFlexibleContract= null
         refreshData()
       }
       HomeContractsFilterIntracity -> {
         demandType = DemandType.Intracity.type
         contractType = ContractType.INTRACITY.type
-        isNewAppVersion= true
         isflexible = null
         refreshData()
       }
@@ -208,21 +204,21 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         demandType = DemandType.Intracity.type
         contractType = ContractType.INTRACITY.type
         isflexible = false
-        isNewAppVersion = true
+        includeFlexibleContract = true
         refreshData()
       }
       HomeContractsIntracityFilterFlexible -> {
         demandType = DemandType.Intracity.type
         contractType = ContractType.INTRACITY.type
         isflexible = true
-        isNewAppVersion = true
+        includeFlexibleContract = true
         refreshData()
       }
       HomeContractsIntracityFilterAll -> {
         demandType = DemandType.Intracity.type
         contractType = ContractType.INTRACITY.type
         isflexible = null
-        isNewAppVersion = true
+        includeFlexibleContract = true
         refreshData()
       }
       HomeContractsFilterInfo -> {
@@ -316,7 +312,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, contractType, isflexible, includeFlexibleContract)
 
     override fun hasMore() = viewModel.hasMoreData
 

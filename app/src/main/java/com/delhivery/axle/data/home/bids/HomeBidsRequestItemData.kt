@@ -558,13 +558,6 @@ data class HomeBidsRequestItemData(
     return reportingCenters.toString()
   }
 
-  fun getMoreCentersCount(): Int=
-    if(secondaryReportingCenters!=null && secondaryReportingCenters.size> 2){
-      secondaryReportingCenters.size-2
-    }else{
-      0
-    }
-
   /**
    * Trip display name for toolbar title
    */
@@ -1497,10 +1490,7 @@ data class HaltCenters(
  * Secondary reporting centers
  */
 data class SecondaryReportingCenters(
-  @SerializedName("origin") val origin: String?,
   @SerializedName("origin_center_name") val originCenterName: String?,
-  @SerializedName("origin_center_code")val originCenterCode:String?,
-  @SerializedName("origin_city_uuid")val originCityUuid:String?,
   @SerializedName("origin_city")val originCity:String?,
   @SerializedName("origin_state")val originState:String?,
   @SerializedName("longitude")val longitude:String?,

@@ -42,5 +42,5 @@ class SearchLoadAction(
   val truckDisplayNames: ArrayList<String>,
   val saveToHistory: Boolean = false,
   val isFlexible:Boolean?=null,
-  val isNewVersion:Boolean?=null
+  val includeFlexibleContracts:Boolean?=null
 ) : BaseSearchLoadFragmentAction(Search)

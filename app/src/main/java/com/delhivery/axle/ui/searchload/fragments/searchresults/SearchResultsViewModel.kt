@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
-import android.text.BoringLayout
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
@@ -78,7 +77,7 @@ class SearchResultsViewModel @Inject constructor(
     requestType:String?,
     contractType:String?,
     isFlexible:Boolean?=null,
-    isNewAppVersion:Boolean?=null
+    includeFlexibleContracts:Boolean?=null
   ) {
     if(!paginate){
       offset=0
@@ -99,7 +98,7 @@ class SearchResultsViewModel @Inject constructor(
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
         offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.toLowerCase(),displayName,status,requestType,contractType,
-      UserTripsLoadLimit,isFlexible,isNewAppVersion
+      UserTripsLoadLimit,isFlexible,includeFlexibleContracts
     )
         .flatMap { t ->
           this.total=t.total

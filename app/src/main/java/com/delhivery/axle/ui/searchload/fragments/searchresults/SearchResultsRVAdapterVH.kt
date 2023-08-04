@@ -211,9 +211,8 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     binding.request = item.data
     if(item.data.isItIntraCityContract()){
       if(item.data.isFlexible){
-        val moreCenters =item.data.getMoreCentersCount()
-        binding.tvIntracityHubOriginCity.text = if(moreCenters>0){
-          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),moreCenters), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
+        binding.tvIntracityHubOriginCity.text = if(item.data.secondaryReportingCenters!=null&&item.data.secondaryReportingCenters.size>2){
+          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),item.data.secondaryReportingCenters.size-2), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
         binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
           R.drawable.ic_multiple_location,
           0,

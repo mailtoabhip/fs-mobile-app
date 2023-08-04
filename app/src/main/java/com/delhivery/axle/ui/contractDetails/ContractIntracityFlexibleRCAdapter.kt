@@ -13,18 +13,17 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.TransactionStatus
-import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SecondaryReportingCenters
 
-class ContractsIntracityAdHocRCAdapter (private val dataList: List<SecondaryReportingCenters>,private val transaction: HomeBidsRequestItemData?,private val context: Context) : RecyclerView.Adapter<ContractsIntracityAdHocRCAdapter.ViewHolder>() {
+class ContractIntracityFlexibleRCAdapter (private val dataList: List<SecondaryReportingCenters>,private val transaction: HomeBidsRequestItemData?,private val context: Context) : RecyclerView.Adapter<ContractIntracityFlexibleRCAdapter.ViewHolder>() {
 
   inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    var intraCityAdHocTvHubCity: TextView = view.findViewById(R.id.intraCityAdHocTvHubCity) as TextView
-    var intraCityAdHocTvCity: TextView = view.findViewById(R.id.intraCityAdHocTvCity) as TextView
-    var intraCityAdHocTvState: TextView = view.findViewById(R.id.intraCityAdHocTvState) as TextView
-    var intraCityAdHocTvMapView: TextView = view.findViewById(R.id.intraCityAdHocTvMapView) as TextView
-    var intraCityAdHocHubIcon : ImageView = view .findViewById(R.id.intraCityAdHocHubIcon) as ImageView
+    var intraCityFlexibleTvHubCity: TextView = view.findViewById(R.id.intraCityFlexibleTvHubCity) as TextView
+    var intraCityFlexibleTvCity: TextView = view.findViewById(R.id.intraCityFlexibleTvCity) as TextView
+    var intraCityFlexibleTvState: TextView = view.findViewById(R.id.intraCityFlexibleTvState) as TextView
+    var intraCityFlexibleTvMapView: TextView = view.findViewById(R.id.intraCityFlexibleTvMapView) as TextView
+    var intraCityFlexibleHubIcon : ImageView = view .findViewById(R.id.intraCityFlexibleHubIcon) as ImageView
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,12 +32,12 @@ class ContractsIntracityAdHocRCAdapter (private val dataList: List<SecondaryRepo
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-    holder.intraCityAdHocTvHubCity.text = dataList[position].originCenterName
-    holder.intraCityAdHocTvCity.text = dataList[position].originCity
-    holder.intraCityAdHocTvState.text = dataList[position].originState
+    holder.intraCityFlexibleTvHubCity.text = dataList[position].originCenterName
+    holder.intraCityFlexibleTvCity.text = dataList[position].originCity
+    holder.intraCityFlexibleTvState.text = dataList[position].originState
     val lat = dataList[position].latitude
     val long = dataList[position].longitude
-    holder.intraCityAdHocTvMapView.setOnClickListener {
+    holder.intraCityFlexibleTvMapView.setOnClickListener {
       try {
         val gmmIntentUri = Uri.parse("geo:0,0?q=$lat,$long"+"(" + (dataList[position].originCenterName?.split("(")?.get(0) ?: dataList[position].originCenterName )?.replace("_"," ")+ ")")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -50,21 +49,21 @@ class ContractsIntracityAdHocRCAdapter (private val dataList: List<SecondaryRepo
     }
 
     if(transaction?.transactionStatus==TransactionStatus.Cancelled.statusId){
-      holder.intraCityAdHocHubIcon.setImageDrawable(
+      holder.intraCityFlexibleHubIcon.setImageDrawable(
         ContextCompat.getDrawable(
           context,
           R.drawable.ic_black_hub
         )
       )
-      holder.intraCityAdHocTvMapView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+      holder.intraCityFlexibleTvMapView.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
     }else{
-      holder.intraCityAdHocHubIcon.setImageDrawable(
+      holder.intraCityFlexibleHubIcon.setImageDrawable(
         ContextCompat.getDrawable(
           context,
           R.drawable.ic_hub_route
         )
       )
-      holder.intraCityAdHocTvMapView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+      holder.intraCityFlexibleTvMapView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
     }
   }
   override fun getItemCount(): Int {

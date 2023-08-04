@@ -122,8 +122,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
     binding.apply {
       request = transaction
       if(transaction.isItIntraCityContract()&& transaction.isFlexible){
-        val moreCenters =transaction.getMoreCentersCount()
-        binding.intraCityRouteInfo.text = if(moreCenters>0){HtmlCompat.fromHtml(context.getString(R.string.msg_more,transaction.reportingCenters(),moreCenters), HtmlCompat.FROM_HTML_MODE_LEGACY)}else transaction.reportingCenters()
+        binding.intraCityRouteInfo.text = if(transaction.secondaryReportingCenters!=null&&transaction.secondaryReportingCenters.size>2){HtmlCompat.fromHtml(context.getString(R.string.msg_more,transaction.reportingCenters(),transaction.secondaryReportingCenters.size-2), HtmlCompat.FROM_HTML_MODE_LEGACY)}else transaction.reportingCenters()
       }else if(transaction.isItIntraCityContract()){
         binding.intraCityRouteInfo.text = transaction.tripContractRoute()
       }

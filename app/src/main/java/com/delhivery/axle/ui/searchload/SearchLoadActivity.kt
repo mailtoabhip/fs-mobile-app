@@ -118,7 +118,7 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               truckDisplayNames,
               false,
               isFlexible,
-              isNewVersion
+              includeFlexibleContracts
             )
           }
         }

@@ -46,9 +46,9 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,contractType: String?=null,isFlexible:Boolean?=null,isNewVersion:Boolean?=null) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,contractType,isFlexible,isNewVersion).
+      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,isFlexible,includeFlexibleContracts).
     convertResponse()
 
 
@@ -72,11 +72,11 @@ class TransactionsRepository @Inject constructor(
     contractType:String?,
     limit: Int,
     isFlexible: Boolean?=null,
-    isNewVersion: Boolean?=null
+    includeFlexibleContracts: Boolean?=null
   ) = transactionService.transactions(
       offset, if(contractType!=ContractType.INTRACITY.type) Requested.statusId + "," + InEnquiry.statusId else null, source, destination, truckType, truckDisplayName,
     contractsMap[contractStatus]?.statusId, if(requestType==RequestType.Load.type) "yes" else null,if(requestType==RequestType.Load.type) true else null, if(requestType==RequestType.Load.type) "fixed,spot" else "contract",
-    contractType,if(requestType==RequestType.Load.type) null else true,limit,isFlexible,isNewVersion
+    contractType,if(requestType==RequestType.Load.type) null else true,limit,isFlexible,includeFlexibleContracts
   ).convertResponse()
 
   /**
@@ -117,7 +117,7 @@ enum class TransactionStatus(val statusId: String) {
 enum class ContractType(val type: String) {
   LH_FTL("LH_FTL"),
   FRC("FRC"),
-  INTRACITY("INTRACITY"),
+  INTRACITY("INTRACITY")
 }
 
 enum class RequestType(val type: String) {

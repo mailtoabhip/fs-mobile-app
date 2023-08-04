@@ -92,7 +92,7 @@ class HomeContractsViewModel@Inject constructor(
    * Fetch user [Requested] transactions
    */
   fun fetchUserTransactions(
-    paginate: Boolean = false, demandType: String,contractType: String?=null,isFlexible:Boolean?=null,isNewVersion:Boolean?=null){
+    paginate: Boolean = false, demandType: String,contractType: String?=null,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null){
     if (!paginate ) {
       offset = 0
       allActiveFetched = false
@@ -116,7 +116,7 @@ class HomeContractsViewModel@Inject constructor(
     dataLoadingLiveData.postValue(true)
 
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,contractType,isFlexible,isNewVersion)
+        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
