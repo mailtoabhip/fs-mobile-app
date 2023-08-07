@@ -63,7 +63,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   @Inject lateinit var userPrefs: UserPrefs
   var routesArray:ArrayList<HaltCenters> = ArrayList()
-  var secondaryReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
+  var flexibleReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
   var source= VALUE_APP_FLOW
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -326,11 +326,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               adapter = contractsRouteDetailsAdapter
             }
           }
-          if(_transaction.secondaryReportingCenters!=null && _transaction.secondaryReportingCenters!!.isNotEmpty()) {
+          if(_transaction.secondaryReportingCenters!=null) {
+            val originReportingCenters = SecondaryReportingCenters(_transaction.origin,_transaction.originCityName(),_transaction.originState,_transaction.longitude,_transaction.latitude)
+            flexibleReportingCentersArray.add(originReportingCenters)
             for (item in _transaction.secondaryReportingCenters!!) {
-              secondaryReportingCentersArray.add(item)
+              flexibleReportingCentersArray.add(item)
             }
-            val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(secondaryReportingCentersArray,_transaction,this@ContractDetailsActivity)
+            val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(flexibleReportingCentersArray,_transaction,this@ContractDetailsActivity)
             binding.routeDetails.rvIntracityFlexibleContracts.apply {
               layoutManager = LinearLayoutManager(applicationContext)
               adapter = contractIntracityFlexibleRCAdapter
@@ -759,7 +761,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
     routesArray.clear()
-    secondaryReportingCentersArray.clear()
+    flexibleReportingCentersArray.clear()
   }
 
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){

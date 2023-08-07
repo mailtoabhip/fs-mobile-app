@@ -238,7 +238,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return formatted origin city name
    */
-  fun originCityName() = if(contractType==ContractType.INTRACITY.type && isFlexible==true && secondaryReportingCenters!=null && secondaryReportingCenters.isNotEmpty())reportingCenters() else StringUtils.capitalize(origin) ?: ""
+  fun originCityName() = StringUtils.capitalize(origin) ?: ""
 
   /**
    * @return formatted destination city name
@@ -543,18 +543,11 @@ data class HomeBidsRequestItemData(
 
   fun reportingCenters(): String{
     val reportingCenters = StringBuilder()
-    if(secondaryReportingCenters?.isNotEmpty() == true)
-    if(secondaryReportingCenters!!.size>2){
-      reportingCenters.append(secondaryReportingCenters[0].originCenterName)
+       reportingCenters.append(origin)
+    if(secondaryReportingCenters?.isNotEmpty() == true){
       reportingCenters.append(", ")
-      reportingCenters.append(secondaryReportingCenters[1].originCenterName+ " ")
-    }else if(secondaryReportingCenters.size==2){
       reportingCenters.append(secondaryReportingCenters[0].originCenterName)
-      reportingCenters.append(", ")
-      reportingCenters.append(secondaryReportingCenters[1].originCenterName)
-    }else{
-      reportingCenters.append(secondaryReportingCenters[0].originCenterName)
-    }
+  }
     return reportingCenters.toString()
   }
 
