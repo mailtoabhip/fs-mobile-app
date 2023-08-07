@@ -285,6 +285,12 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             } catch (e: Exception) {
               0
             }
+            val recommendedVersionCode: Int = try {
+              remoteConfig.getString("recommended_update_version_code")
+                .toInt()
+            } catch (e: Exception) {
+              0
+            }
 
             try {
               viewModel.savePMTValidation(
@@ -333,7 +339,9 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             //get device and app level details
             analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_ID,androidId)
             analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_VERSION,pInfo.versionName+"("+currentCode.toString()+")")
-
+            viewModel.recommendedUpdate(
+              recommendedVersionCode>currentVersionCode
+            )
             completedAction(playStoreVersionCode > currentVersionCode)
           } else {
             completedAction(false)
