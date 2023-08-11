@@ -405,6 +405,14 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     isContract = contractType!=null
     isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
     binding.isIntraCityContract = isIntraCity
+    if(isFlexible==null && isIntraCity){
+      binding.checkBoxFixedIntracity.isChecked = true
+      binding.checkBoxFlexibleIntracity.isChecked =true
+    }else{
+      binding.checkBoxFixedIntracity.isChecked = isFlexible==false
+      binding.checkBoxFlexibleIntracity.isChecked =isFlexible==true
+    }
+
     viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType,isFlexible,includeFlexibleContracts)
   }
 

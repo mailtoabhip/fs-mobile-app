@@ -393,6 +393,7 @@ const val PROPERTY_VENDOR_ID = "vendor_id"
 const val PROPERTY_FIELD_EDITED = "field_edited"
 const val PROPERTY_PREVIOUS_SOURCE = "previous_source"
 const val PROPERTY_CONTRACT_TYPE = "contract_type"
+const val PROPERTY_IS_FLEXIBLE= "is_flexible"
 const val PROPERTY_BID_AMOUNT_DIFF = "bid_amount_diff"
 
 

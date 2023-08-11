@@ -40,6 +40,7 @@ import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
 import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
+import com.delhivery.axle.utils.PROPERTY_IS_FLEXIBLE
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE
@@ -261,11 +262,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             mutableListOf(
               PROPERTY_USER_ID,
               PROPERTY_PHONE_NO, PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE,
-              PROPERTY_SOURCE
+              PROPERTY_SOURCE, PROPERTY_IS_FLEXIBLE
             ),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
               _transaction.uuid ?: " ",_transaction.contractEventStatusText(),
-              _transaction.contractType?:"",source
+              _transaction.contractType?:"",source,_transaction.isFlexible.toString()
             )
           )
           // for FRC contract
