@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.text.TextUtils
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
@@ -208,6 +209,28 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
+    if(item.data.isItIntraCityContract()){
+      if(item.data.isFlexible){
+        binding.tvIntracityHubOriginCity.text = if(item.data.secondaryReportingCenters!=null&&item.data.secondaryReportingCenters.size>1){
+          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),item.data.secondaryReportingCenters.size-1), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
+        binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_multiple_location,
+          0,
+          0,
+          0
+        )
+      }else{
+        binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_place,
+          0,
+          0,
+          0
+        )
+        binding.tvIntracityHubOriginCity.text =item.data.originCityName()
+      }
+    }else{
+      binding.tvHubOriginCity.text = item.data.originCityName()
+    }
     if (item.data.contractType == INTRACITY_CONTRACT_TYPE) {
       binding.viewKmsPerMonth.text=item.data.intracityKms.plus(" Kms/Month")
       binding.viewDaysPerMonth.text=item.data.intracityDays.plus(" days/Month")

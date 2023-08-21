@@ -61,6 +61,7 @@
   <color name="sub_details_grey">#6B7586</color>
   <color name="light_line_grey">#E4E4E4</color>
   <color name="multi_select_hint"> #525B7A</color>
+  <color name="light_blue_chip">#F0F5FF</color>
   <color name="dark_blue">#3F61CD</color>
   <color name="light_blue">#ECF0FF</color>
   <color name="truck_banner_background">#4DFFF1CF</color>
@@ -90,6 +91,7 @@
   <color name="bid_hint">#A3AAC2</color>
   <color name="bid_under_review">#7C3AED</color>
   <color name="bid_under_review_bg">#F5F3FF</color>
+  <color name="grey_500">#666666</color>
 
 
 </resources>

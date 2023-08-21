@@ -248,7 +248,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_status"
             />
-
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/check_box_fixed_intracity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:clickable="false"
+            style="@style/CheckBoxStyle"
+            android:visibility="@{isIntraCityContract?View.VISIBLE : View.GONE}"
+            android:textColor="@color/heading_black"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_status"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/action_fixed_intracity"
+            />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/check_box_flexible_intracity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            style="@style/CheckBoxStyle"
+            android:clickable="false"
+            android:visibility="@{isIntraCityContract?View.VISIBLE : View.GONE}"
+            android:textColor="@color/heading_black"
+            android:layout_marginTop="@dimen/size_16dp"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_status"
+            app:layout_constraintStart_toEndOf="@+id/check_box_fixed_intracity"
+            android:text="@string/action_flexible_intracity"
+            />
         <View
             android:id="@+id/view_hidden_indicator"
             android:layout_width="@dimen/size_64dp"

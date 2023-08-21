@@ -11,6 +11,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Filters
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.IntracityFilters
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Warning
@@ -39,6 +40,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeContractsFilterItemBinding.inflate(inflater, parent, false)
+    IntracityFilters-> ViewHomeContractsIntracityFilterItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeContractsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -48,6 +50,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     is ViewWarningItemBinding -> HomeContractsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)
     is ViewHomeContractsFilterItemBinding -> HomeContractsFilterItemVH(binding)
+    is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding)
     else -> HomeContractsRequestItemVH(binding as ViewHomeContractsRequestItemBinding)
   }
 
@@ -62,6 +65,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
       is HomeContractsWarningItemVH -> holder.bind(item as HomeContractsWarningItem, _interface)
       is HomeContractsTimeOutItemVH -> holder.bind(item as HomeContractsTimeoutItem, _interface)
       is HomeContractsFilterItemVH -> holder.bind(item as HomeContractsFilterItem, _interface)
+      is HomeContractsIntracityFilterItemVH -> holder.bind(item as HomeContractsIntracityFilterItem, _interface)
     }
   }
 
@@ -91,7 +95,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     mutableListOf<Pair<BaseHomeContractsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeContractsProgressItem(), AddUpdate))
       items.filter {
-        it.type == Contracts || it.type == Warning || it.type == Timeout || it.type ==Filters ||  it.type == Search
+        it.type == Contracts || it.type == Warning || it.type == Timeout || it.type ==Filters ||  it.type == Search || it.type == IntracityFilters
       }
         .map { Pair(it, Remove) }
         .let {

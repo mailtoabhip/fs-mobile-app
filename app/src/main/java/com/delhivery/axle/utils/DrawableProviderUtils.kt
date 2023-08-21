@@ -2,6 +2,7 @@ package com.delhivery.axle.utils
 
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.data.home.trips.PODStatus.REJECT
 import com.delhivery.axle.data.home.trips.PODStatus.REVIEW
@@ -240,5 +241,8 @@ object DrawableProviderUtils {
     else -> R.drawable.ic_icon_trip
   }
 
+  @DrawableRes
+  fun intracityContractType(contractType: String?, isFlexible: Boolean?) = if(isFlexible==true && contractType==ContractType.INTRACITY.type)
+   R.drawable.ic_multiple_location else R.drawable.ic_place
 
 }

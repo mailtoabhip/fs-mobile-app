@@ -40,5 +40,7 @@ class SearchLoadAction(
   val requestType:String?,
   val contractType:String?,
   val truckDisplayNames: ArrayList<String>,
-  val saveToHistory: Boolean = false
+  val saveToHistory: Boolean = false,
+  val isFlexible:Boolean?=null,
+  val includeFlexibleContracts:Boolean?=null
 ) : BaseSearchLoadFragmentAction(Search)

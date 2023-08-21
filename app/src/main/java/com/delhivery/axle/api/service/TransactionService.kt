@@ -35,7 +35,9 @@ interface TransactionService {
     @Query("request_types") requestType:String?,
     @Query("contract_type") contractType:String?,
     @Query("active_contract") activeContract:Boolean?,
-    @Query("limit") limit: Int= 100
+    @Query("limit") limit: Int= 100,
+    @Query("is_flexible") isFlexible:Boolean?=null,
+    @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -99,6 +101,8 @@ interface TransactionService {
     @Query("demand_types") vendorType: String ?,
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
+    @Query("is_flexible") isFlexible: Boolean?=null,
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -109,6 +113,7 @@ interface TransactionService {
     @Query("only_contract_counts") onlyCount: String?,
     @Query("sp_id") userId: String,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**
@@ -117,5 +122,6 @@ interface TransactionService {
   @GET("/transactions/loadboard/contracts")
   fun getTruckDisplayNames(
     @Query("only_display_names") displayNames: String="yes",
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true
   ): Single<BaseResponse<TruckDisplayNamesResponse>>
 }

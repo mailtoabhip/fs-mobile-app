@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
@@ -29,7 +30,6 @@ import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -135,6 +135,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
   @SerializedName("contract_remarks")val contractRemarks:String?,
   @SerializedName("contract_usage")val contractUsage:String?,
+  @SerializedName("secondary_reporting_centers")val secondaryReportingCenters:List<SecondaryReportingCenters>?=null,
+  @SerializedName("is_flexible")val isFlexible:Boolean=false,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -478,6 +480,12 @@ data class HomeBidsRequestItemData(
   fun tripCloseOpenDrawable() = DrawableProviderUtils.tripOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
 
   /**
+   * @return intracityContractType basis[contract type]
+   */
+  @DrawableRes
+  fun intracityContractTypeDrawable() = DrawableProviderUtils.intracityContractType(contractType,isFlexible)
+
+  /**
    * @return truck_type with placed capacity
    */
   fun truckTypeWithCapacity() =
@@ -531,6 +539,16 @@ data class HomeBidsRequestItemData(
           it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
         }
       }
+  }
+
+  fun reportingCenters(): String{
+    val reportingCenters = StringBuilder()
+       reportingCenters.append(origin)
+    if(secondaryReportingCenters?.isNotEmpty() == true){
+      reportingCenters.append(", ")
+      reportingCenters.append(secondaryReportingCenters[0].originCenterName)
+  }
+    return reportingCenters.toString()
   }
 
   /**
@@ -1199,6 +1217,18 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isIntraCityFlexibleContract() = if (contractType == ContractType.INTRACITY.type && isFlexible==true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isIntraCityFixedContract() = if (contractType == ContractType.INTRACITY.type && isFlexible==false) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
   fun isIntraCityContractWithRemarks() = if (contractType == ContractType.INTRACITY.type && contractRemarks.isNotNullOrEmpty()) {
     View.VISIBLE
   } else {
@@ -1270,6 +1300,7 @@ data class HomeBidsRequestItemData(
   fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
   fun intracityExtraDayRate()="₹ "+ intracityExtraDayRate
 
+  fun intracityContractType()=if(contractType==ContractType.INTRACITY.type && isFlexible==false){"Fixed"}else if(contractType==ContractType.INTRACITY.type && isFlexible==true){"Flexible"} else{""}
 
   fun paymentSlabsVisibility() = if (contractType==ContractType.INTRACITY.type) {
     if(transactionStatus==TransactionStatus.Cancelled.statusId){
@@ -1449,6 +1480,18 @@ data class HaltCenters(
 )
 
 /**
+ * Secondary reporting centers
+ */
+data class SecondaryReportingCenters(
+  @SerializedName("origin_center_name") val originCenterName: String?,
+  @SerializedName("origin_city")val originCity:String?,
+  @SerializedName("origin_state")val originState:String?,
+  @SerializedName("longitude")val longitude:String?,
+  @SerializedName("latitude")val latitude:String?
+
+)
+
+/**
  * Monthly Payout detail
  */
 data class PaymentSlabs(
@@ -1456,6 +1499,7 @@ data class PaymentSlabs(
   @SerializedName("payout") val monthlyPayout: String?,
 
 )
+
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"

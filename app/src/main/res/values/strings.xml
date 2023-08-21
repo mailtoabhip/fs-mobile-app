@@ -79,6 +79,9 @@
   <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
   <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
   <string name="msg_privacy_policy"> Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
+  <string name="msg_more"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d more </font>]]> </string>
+  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d More Centers </font>]]> </string>
+
 
   <!--Hints (hint_)-->
   <string name="hint_hello_world">Hint Hello World</string>
@@ -182,6 +185,8 @@
   <string name="action_express">Delhivery Line Haul</string>
   <string name="action_non_express">Customer Intercity</string>
   <string name="action_intracity">Delhivery Fleet</string>
+  <string name="action_flexible_intracity">Flexible</string>
+  <string name="action_fixed_intracity">Fixed</string>
   <string name="action_ok">Ok</string>
 
 
@@ -652,6 +657,8 @@
   <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Customer Intercity - </font>contract for movement of Customer load between different cities.]]></string>
   <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Line Haul - </font> contract for movement of Delhivery load between different cities.]]></string>
   <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Fleet - </font> contract for movement of Delhivery load within the same city.]]></string>
+  <string name="dlv_intracity_fixed_info"><![CDATA[1. <font color=\'#5B80F7\'>Fixed - </font> Single reporting centre with single reporting time.]]></string>
+  <string name="dlv_intracity_flexible_info"><![CDATA[2. <font color=\'#5B80F7\'>Flexible - </font> Multiple reporting centres with Adhoc timing.]]></string>
   <string name="collecting_bids">Collecting Bids</string>
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
@@ -703,7 +710,7 @@
   <string name="departure">Departure</string>
   <string name="arrival">Arrival</string>
   <string name="route_details">Route Details</string>
-  <string name="reporting_center">Reporting Center</string>
+  <string name="reporting_center">Reporting City</string>
   <string name="route_schedule">Route Schedule</string>
   <string name="only_bid_if_you_match_vehicle_type_amp_total_vehicles"><![CDATA[Only bid if you match vehicle type & total vehicles]]></string>
   <string name="ensure_vehicle_reaches_as_per_given_schedule">Ensure vehicle reaches as per given schedule</string>
@@ -741,8 +748,8 @@
   <string name="status">Status</string>
   <string name="truck_type">Type</string>
   <string name="vehicle_type">Vehicle Type</string>
-  <string name="enter_reporting_center">Enter Reporting Center</string>
-  <string name="select_reporting_center">Select Reporting Center</string>
+  <string name="enter_reporting_center">Enter Reporting City</string>
+  <string name="select_reporting_center">Select Reporting City</string>
   <string name="add_bid_only">Add bid only if you can match the vehicle type</string>
   <string name="ensure_the_vehicle_registration">Ensure the vehicle registration number is correct</string>
   <string name="ensure_the_same_vehicle_reports">Ensure the same vehicle reports at the center on time</string>
@@ -756,6 +763,7 @@
   <string name="remark_label">Remark</string>
   <string name="usage_label">Usage</string>
   <string name="no_entry_permit_label">No Entry Permit</string>
+  <string name="all">All</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
