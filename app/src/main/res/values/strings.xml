@@ -710,7 +710,7 @@
   <string name="departure">Departure</string>
   <string name="arrival">Arrival</string>
   <string name="route_details">Route Details</string>
-  <string name="reporting_center">Reporting Center</string>
+  <string name="reporting_center">Reporting City</string>
   <string name="route_schedule">Route Schedule</string>
   <string name="only_bid_if_you_match_vehicle_type_amp_total_vehicles"><![CDATA[Only bid if you match vehicle type & total vehicles]]></string>
   <string name="ensure_vehicle_reaches_as_per_given_schedule">Ensure vehicle reaches as per given schedule</string>
@@ -748,8 +748,8 @@
   <string name="status">Status</string>
   <string name="truck_type">Type</string>
   <string name="vehicle_type">Vehicle Type</string>
-  <string name="enter_reporting_center">Enter Reporting Center</string>
-  <string name="select_reporting_center">Select Reporting Center</string>
+  <string name="enter_reporting_center">Enter Reporting City</string>
+  <string name="select_reporting_center">Select Reporting City</string>
   <string name="add_bid_only">Add bid only if you can match the vehicle type</string>
   <string name="ensure_the_vehicle_registration">Ensure the vehicle registration number is correct</string>
   <string name="ensure_the_same_vehicle_reports">Ensure the same vehicle reports at the center on time</string>
