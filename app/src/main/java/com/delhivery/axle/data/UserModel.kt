@@ -49,7 +49,6 @@ data class UserModel(
         @SerializedName("is_gsts_by_pan_not_registered") var isGstsByPanNotRegistered: Boolean?,
         @SerializedName("is_trucking_business_doc_uploaded") var isTruckingDocumentUploaded: Boolean?,
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
-        @SerializedName("identity_doc_url") var identity_doc_url: List<String>? = mutableListOf(),
         @SerializedName("is_bank_details_rejected") var isBankDetailsRejected: Boolean?,
         @SerializedName("is_address_same_as_gst") var isAddressSameAsGST: Boolean?
 
@@ -146,7 +145,7 @@ data class SupplierModel(
         @SerializedName("is_deleted") var isDeleted: Boolean = false,
         @SerializedName("test_user") var testUser: Boolean = false,
         @SerializedName("designation") var designation: String?,
-        @SerializedName("parent_details") var parentDetails: UserModel?,
+        @SerializedName("parent_details") var parentDetails: SupplierModel?,
         @SerializedName("overall_performance") var overallPerformance: String? = "",
         @SerializedName("demand_type") var demandType : List<String>,
         @SerializedName("entity") var vendorEntity: String? = "",
