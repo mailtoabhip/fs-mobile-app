@@ -145,7 +145,7 @@ data class SupplierModel(
         @SerializedName("is_deleted") var isDeleted: Boolean = false,
         @SerializedName("test_user") var testUser: Boolean = false,
         @SerializedName("designation") var designation: String?,
-        @SerializedName("parent_details") var parentDetails: SupplierModel?,
+        @SerializedName("parent_details") var parentDetails: UserModel?,
         @SerializedName("overall_performance") var overallPerformance: String? = "",
         @SerializedName("demand_type") var demandType : List<String>,
         @SerializedName("entity") var vendorEntity: String? = "",

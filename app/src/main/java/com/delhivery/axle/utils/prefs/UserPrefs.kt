@@ -1136,7 +1136,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     truckTypes = if (user.isParent()) {
       user.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     } else {
-      user.supplierDetails?.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
+      user.supplierDetails?.parentDetails?.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     }
     demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
     userPerformance = user.supplierDetails?.overallPerformance ?: ""
