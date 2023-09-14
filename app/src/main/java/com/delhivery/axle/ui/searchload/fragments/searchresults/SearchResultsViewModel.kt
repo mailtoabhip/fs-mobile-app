@@ -75,7 +75,9 @@ class SearchResultsViewModel @Inject constructor(
     displayName: String?,
     status: String?,
     requestType:String?,
-    contractType:String?
+    contractType:String?,
+    isFlexible:Boolean?=null,
+    includeFlexibleContracts:Boolean?=null
   ) {
     if(!paginate){
       offset=0
@@ -96,7 +98,7 @@ class SearchResultsViewModel @Inject constructor(
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
         offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.lowercase(),displayName,status,requestType,contractType,
-      UserTripsLoadLimit
+      UserTripsLoadLimit,isFlexible,includeFlexibleContracts
     )
         .flatMap { t ->
           this.total=t.total

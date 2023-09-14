@@ -15,8 +15,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
     targetSdkVersion 33
-    versionCode 103
-    versionName "1.103"
+    versionCode 107
+    versionName "1.107"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -27,6 +27,9 @@ android {
       minifyEnabled true
       shrinkResources true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      ndk {
+        debugSymbolLevel= "FULL"
+      }
     }
   }
   flavorDimensions "vanilla"

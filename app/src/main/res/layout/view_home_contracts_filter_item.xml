@@ -16,7 +16,6 @@
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-      android:layout_marginTop="@dimen/size_10dp"
       android:layout_marginBottom="@dimen/size_12dp">
   <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/nonExpressToggle"

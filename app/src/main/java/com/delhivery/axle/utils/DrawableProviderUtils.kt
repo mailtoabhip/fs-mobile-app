@@ -2,6 +2,7 @@ package com.delhivery.axle.utils
 
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.data.home.trips.PODStatus.REJECT
 import com.delhivery.axle.data.home.trips.PODStatus.REVIEW
@@ -212,6 +213,19 @@ object DrawableProviderUtils {
       R.drawable.icon_calender
     }
 
+  @DrawableRes
+  fun vehicleUsageDrawable(status: String?) = when (status) {
+    "cancel" -> R.drawable.ic_usage_grey
+    "open" -> R.drawable.ic_usage
+    else -> R.drawable.ic_usage
+  }
+
+  @DrawableRes
+  fun nepDrawable(status: String?) = when (status) {
+    "cancel" -> R.drawable.ic_nep_grey
+    "open" -> R.drawable.ic_nep
+    else -> R.drawable.ic_nep
+  }
 
   @DrawableRes
   fun vehicleOperationDrawablePerHrs(status: String?) = when (status) {
@@ -227,5 +241,8 @@ object DrawableProviderUtils {
     else -> R.drawable.ic_icon_trip
   }
 
+  @DrawableRes
+  fun intracityContractType(contractType: String?, isFlexible: Boolean?) = if(isFlexible==true && contractType==ContractType.INTRACITY.type)
+   R.drawable.ic_multiple_location else R.drawable.ic_place
 
 }
