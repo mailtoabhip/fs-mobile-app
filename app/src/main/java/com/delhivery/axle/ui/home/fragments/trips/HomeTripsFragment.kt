@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -286,7 +287,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   }
 
   private fun requestPermission() {
-    compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+     compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         .onBackground()
         .subscribe { granted, error ->
           if (error == null && granted) {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -676,9 +677,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
                 arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CAMERA
-                )
+                ).apply {
+                  if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                    plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
         )
                 .onBackground()
                 .subscribe { granted, error ->

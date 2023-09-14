@@ -1,11 +1,11 @@
 package com.delhivery.axle.ui.tripdetails
 
-import android.Manifest.permission.CAMERA
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -318,7 +318,12 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   }
 
   private fun requestImageCapturePermissions(isCamera: Boolean) {
-    compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE, CAMERA))
+    compositeDisposable += requestPermission(
+      arrayOf(Manifest.permission.CAMERA).apply {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+          plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+      }
+    )
         .onBackground()
         .subscribe { granted, error ->
           if (error == null && granted) {

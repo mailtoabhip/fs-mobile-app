@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.ParcelFileDescriptor
@@ -123,7 +124,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     private fun downloadLogo(item: String) {
-        compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+          compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onBackground()
                 .subscribe { granted, error ->
                     if (error == null && granted) {

@@ -80,7 +80,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
         binding.logoutLayout.setOnClickListener {
-            WorkManager.getInstance().cancelAllWorkByTag(TAG_SYNC_DATA)
+            WorkManager.getInstance(applicationContext).cancelAllWorkByTag(TAG_SYNC_DATA)
             confirmLogout()
         }
 

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -242,6 +243,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     }
 
     private fun downloadLogo(item: String) {
+      if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
         compositeDisposable += requestPermission(
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         )
@@ -273,9 +275,11 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
             arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
-            )
+            ).apply {
+              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         )
             .onBackground()
             .subscribe { granted, error ->

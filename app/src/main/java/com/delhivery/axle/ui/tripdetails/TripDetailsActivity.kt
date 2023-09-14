@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.SpannableString
@@ -587,7 +588,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
         uiUtils.showSnackbar("Storage permission required to download POD")
       } else {
-        requestStoragePermission()
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+          requestStoragePermission()
       }
     }
   }

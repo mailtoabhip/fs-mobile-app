@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -139,7 +140,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun downloadLogo() {
-        compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+          compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 .onBackground()
                 .subscribe { granted, error ->
                     if (error == null && granted) {

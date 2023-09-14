@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.profile.raterewards.fragments.rewards
 
 import android.Manifest
 import android.app.DatePickerDialog.OnDateSetListener
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -129,7 +130,8 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
   }
 
   private fun downloadProofDoc(item: String) {
-    compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+     compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
       .onBackground()
       .subscribe { granted, error ->
         if (error == null && granted) {

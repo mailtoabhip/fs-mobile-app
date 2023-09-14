@@ -4,6 +4,7 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
@@ -185,7 +186,8 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         if (data.podUrl.isNullOrEmpty()) {
           startActivityForResult(uploadImageIntent(this, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD)
         } else {
-          compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
+          if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+            compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
               .onBackground()
               .subscribe { granted, error ->
                 if (error == null && granted) {

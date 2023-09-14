@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.pod
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
@@ -230,6 +231,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
             }
           }
           else -> {
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
             compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onBackground()
                 .subscribe { granted, error ->
