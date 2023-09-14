@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.getSerializable
+import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -45,9 +46,8 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    if( intent?.extras?.getSerializable(SelectedRouteIntentExtra)!=null)
-      selectedData = intent?.extras?.getSerializable(SelectedRouteIntentExtra) as RouteModel
+    if( intent?.extras?.getSerializableExtra(SelectedRouteIntentExtra, RouteModel::class.java)!=null)
+      selectedData = intent?.extras?.getSerializableExtra(SelectedRouteIntentExtra, RouteModel::class.java)
     /* flow type */
     try {
       flowType = intent?.getIntExtra(
@@ -150,7 +150,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
       REQCODE_SELECT_CITY -> {
         if(data != null) {
           val type = data.getStringExtra(CityType)
-          val city = data.getSerializable("City",CityModel::class.java)
+          val city = data.getSerializable("City",CityModel::class.java)!!
           if(type =="origin") {
             viewModel.selectedOrigin = city
             changedOriginData = true
@@ -164,7 +164,7 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
         if(data != null) {
           val type = data.getStringExtra(CityType)
           val cities: ArrayList<CityModel> =
-            data.getSerializable("City", ArrayList<CityModel>().javaClass)
+            data.getSerializable("City", ArrayList<CityModel>().javaClass)!!
           val citiesNames = ArrayList<String>()
           if(type =="destination") {
             for(item in cities){

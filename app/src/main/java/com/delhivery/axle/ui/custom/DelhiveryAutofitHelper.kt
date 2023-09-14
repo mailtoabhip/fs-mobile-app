@@ -514,7 +514,15 @@ class DelhiveryAutofitHelper private constructor(
       )
 
       if (maxLines != 1) {
-        layout = StaticLayout(
+
+        layout = if(Build.VERSION.SDK_INT >= 23)
+          StaticLayout.Builder.obtain(text, 0, text.length, paint, targetWidth.toInt())
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0.0f, 1.0f)
+            .setIncludePad(true)
+            .build()
+        else
+          StaticLayout(
             text, paint, targetWidth.toInt(), Layout.Alignment.ALIGN_NORMAL,
             1.0f, 0.0f, true
         )

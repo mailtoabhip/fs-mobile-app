@@ -64,10 +64,10 @@ class YourRewardsItemVH(binding: ViewYourRewardsItemBinding) :
     binding.fullViewLl.clickToAction(
       YourRewardsItemDataAction_ViewDetails,item, bindingAdapterPosition, _interface
     )
-    if(item.data.verificationState?.toLowerCase().equals("pending")){
+    if(item.data.verificationState?.lowercase().equals("pending")){
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
       binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_orange))
-    }else if(item.data.verificationState?.toLowerCase().equals("verified")){
+    }else if(item.data.verificationState?.lowercase().equals("verified")){
       binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_green_12))
       binding.rewardsValue.setTypeface(null, Typeface.BOLD)
     }else {

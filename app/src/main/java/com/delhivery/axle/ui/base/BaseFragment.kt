@@ -88,17 +88,17 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     super.onViewCreated(view, savedInstanceState)
 
     /* Observe on toast live data and show toast */
-    viewModel.toastLiveData.observe(this, Observer {
+    viewModel.toastLiveData.observe(viewLifecycleOwner, Observer {
       it?.let { uiUtils.showToast(it) }
     })
 
     /* Observe on snackbar live data and show snackbar */
-    viewModel.snackbarLiveData.observe(this, Observer {
+    viewModel.snackbarLiveData.observe(viewLifecycleOwner, Observer {
       it?.let { uiUtils.showSnackbar(it) }
     })
 
     /* Observe on progress live data and show/hide progress */
-    viewModel.progressLiveData.observe(this, Observer {
+    viewModel.progressLiveData.observe(viewLifecycleOwner, Observer {
       if (!hasInlineProgress) {
         if (it == true) uiUtils.showProgress()
         else uiUtils.hideProgress()
@@ -106,7 +106,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     })
 
     /* handle exception */
-    viewModel.exceptionLiveData.observe(this, Observer {
+    viewModel.exceptionLiveData.observe(viewLifecycleOwner, Observer {
       it?.let { throwable -> errorUtils.handle(throwable) }
     })
   }

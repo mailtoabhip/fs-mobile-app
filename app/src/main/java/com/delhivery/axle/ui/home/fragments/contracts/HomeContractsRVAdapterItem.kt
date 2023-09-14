@@ -3,12 +3,14 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
+import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsProgressItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsTimeOutItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsWarningItemData
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Filters
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.IntracityFilters
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRVAdapterItemType.Warning
@@ -23,7 +25,8 @@ enum class HomeContractsRVAdapterItemType(val typeId: Int) {
   Progress(2),
   Warning(3),
   Timeout(4),
-  Filters(5);
+  Filters(5),
+  IntracityFilters(6);
 
   companion object {
     /**
@@ -84,3 +87,12 @@ class HomeContractsFilterItem(
     "", 0,0,0,"",false
   )
 ) : BaseHomeContractsRVAdapterItem<HomeContractsFilterItemData>(Filters, data)
+
+/**
+ * Filter intracity item
+ */
+class HomeContractsIntracityFilterItem(
+  data: HomeContractsIntracityFilterItemData = HomeContractsIntracityFilterItemData(
+    ""
+  )
+) : BaseHomeContractsRVAdapterItem<HomeContractsIntracityFilterItemData>(IntracityFilters, data)

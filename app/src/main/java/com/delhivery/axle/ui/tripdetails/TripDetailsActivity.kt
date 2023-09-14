@@ -482,7 +482,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  private fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
+  private fun String.capitalizeWords(): String = split(" ").map { StringUtils.capitalize(it) }.joinToString(" ")
 
   private fun redirectToLRsTrip(transactionId: String){
     startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
@@ -610,7 +610,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       TripPaymentSummaryItemAction -> {
         val data = item.data as TripPaymentSummaryItemData
         if(!data.expanded){
-          when(data.title.toUpperCase()){
+          when(data.title.uppercase()){
             "CHARGES" -> {
               analyticsUtil.trackEvent(
                       EVENT_VIEW_CHARGES,

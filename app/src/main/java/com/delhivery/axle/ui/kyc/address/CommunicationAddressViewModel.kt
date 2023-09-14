@@ -66,7 +66,7 @@ BaseViewModel() {
                     documentProofType.equals("RC copy")->"rc_copy"
             else -> null
         }
-        addressType= addressType.toLowerCase()
+        addressType= addressType.lowercase()
 
             compositeDisposable += loadboardRepository.addAddress(
                 phoneNum,

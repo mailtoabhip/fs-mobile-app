@@ -36,6 +36,7 @@ import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.moengage.core.MoECoreHelper
 import java.lang.Exception
 
 /**
@@ -168,7 +169,7 @@ class NavigationUtils @Inject constructor(
   fun logout(message: String, intention: String = "notFromUser") {
     authRepository.logout(intention)
     uiUtils.showToast(message)
-
+    MoECoreHelper.logoutUser(activity)
     val intent = Intent(activity, AuthenticationActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     activity.startActivity(intent)
@@ -258,9 +259,9 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
+            if(userPrefs.pancard.toCharArray().get(3).lowercase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
-            }else if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
+            }else if(userPrefs.pancard.toCharArray().get(3).lowercase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
                 intent = Intent(context, GstVerificationActivity::class.java)
             }else{
                 if(userPrefs.isGstsByPanNotRegistered) {

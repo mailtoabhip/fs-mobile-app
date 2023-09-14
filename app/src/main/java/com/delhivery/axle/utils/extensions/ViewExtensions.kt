@@ -131,7 +131,7 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
  * Show the first item in a spinner as hint by setting its color to gray
  */
 fun Spinner.setHintColor(selectedText: String?){
-  if(selectedText!!.toLowerCase().contains("select") && selectedView!=null)
+  if(selectedText!!.lowercase().contains("select") && selectedView!=null)
     (selectedView as TextView).setTextColor(Color.GRAY)
   else if(selectedView!=null)
     (selectedView as TextView).setTextColor(Color.BLACK)

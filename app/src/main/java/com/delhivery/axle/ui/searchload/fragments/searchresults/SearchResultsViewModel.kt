@@ -5,15 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.TruckRepository
+import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.*
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialogInterface
 import com.delhivery.axle.ui.biddetails.BulkBidsCreateEditInterface
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
+import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
+import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -38,7 +43,7 @@ class SearchResultsViewModel @Inject constructor(
   var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
 
   /* search results live data */
-  var searchResults = MutableLiveData<List<HomeBidsRequestItemData>>()
+  var searchResults = MutableLiveData<List<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
   var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
   var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
 
@@ -51,24 +56,54 @@ class SearchResultsViewModel @Inject constructor(
 
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, Int>>()
+  var paginateCount=0
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  /* pagination params */
+  var offset=0
+  var hasMoreData=false
 
   /**
    * Search load api
    */
   fun searchLoad(
+    paginate:Boolean=false,
     origin: CityModel,
     destination: CityModel?,
     type: String?,
     displayName: String?,
     status: String?,
     requestType:String?,
-    contractType:String?
+    contractType:String?,
+    isFlexible:Boolean?=null,
+    includeFlexibleContracts:Boolean?=null
   ) {
+    if(!paginate){
+      offset=0
+    }
+    else if(paginate && !hasMoreData){
+      return
+    }
+    if(paginate){
+      paginateCount++
+      if(requestType=="load")
+        Pair(SearchLoadsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
+      else
+        Pair(SearchContractsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
+
+    }
+
+    dataLoadingLiveData.postValue(true)
     /* dummy data */
     compositeDisposable += transactionsRepository.searchTransactions(
-        0, origin.orionDbCityCode, destination?.orionDbCityCode, type?.toLowerCase(),displayName,status,requestType,contractType
+        offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.lowercase(),displayName,status,requestType,contractType,
+      UserTripsLoadLimit,isFlexible,includeFlexibleContracts
     )
         .flatMap { t ->
+          this.total=t.total
+          this.hasMoreData=t.hasNext
+          this.offset=t.offset
           this.loadPricePercent = t.loadPricePercent
           Single.zip(
             bidsRepository.bidsForLoads(t.transactions, requestType=="contract"),
@@ -80,38 +115,59 @@ class SearchResultsViewModel @Inject constructor(
         }
         .onBackground()
         .subscribe { _tRes, error ->
-          if (!error) {
-            val loads = _tRes.first
-            val bids = _tRes.second
-            total=loads.size
-            bidsCount = bids.size
-            for (load in loads.toMutableList()) {
-              try {
-                val lowestBid = _tRes.third.filter { b ->
-                  b.transactionId.safeEquals(load.transactionId)
-                }[0]
-                load.lowestBid = lowestBid.minBid
-                load.numBids = lowestBid.numBids
-                load.loadPricePercent = loadPricePercent
-                load.transactionBid =
-                  bids.filter { b ->
+          if (!error && _tRes!=null) {
+            mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply{
+              if(requestType=="load")
+              add(Pair(SearchLoadsProgressItem(), Remove))
+              else add(Pair(SearchContractsProgressItem(), Remove))
+              val loads = _tRes.first
+              val bids = _tRes.second
+              total=loads.size
+              bidsCount = bids.size
+              for (load in loads.toMutableList()) {
+                try {
+                  val lowestBid = _tRes.third.filter { b ->
                     b.transactionId.safeEquals(load.transactionId)
                   }[0]
-                if (load.isDMTIndent()) {
-                  load.bulkTransactionBids =
+                  load.lowestBid = lowestBid.minBid
+                  load.numBids = lowestBid.numBids
+                  load.loadPricePercent = loadPricePercent
+                  load.transactionBid =
                     bids.filter { b ->
                       b.transactionId.safeEquals(load.transactionId)
-                    }
+                    }[0]
+                  if (load.isDMTIndent()) {
+                    load.bulkTransactionBids =
+                      bids.filter { b ->
+                        b.transactionId.safeEquals(load.transactionId)
+                      }
+                  }
+                } catch (e: Exception) {
+                  load.transactionId?.let { Log.d("No Bid found for: ", it) }
                 }
-              } catch (e: Exception) {
-                load.transactionId?.let { Log.d("No Bid found for: ", it) }
+                if(load.isItContract())
+                  add(Pair(SearchContractsRequestItem(load),Add))
+                else add(Pair(SearchLoadsRequestItem(load),Add))
               }
-            }
-            searchResults.postValue(loads)
+              if(loads.size==0){
+              if(requestType=="load")
+                add(Pair(SearchLoadWarningItem_NoLoad, Add))
+              else
+                add(Pair(SearchContractWarningItem_NoLoad, Add))
+              }
+            }.let { searchResults.postValue(it) }
           } else {
-            searchResults.postValue(null)
+            mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply{
+              if(!paginate){
+                if(requestType=="load")
+                  add(Pair(SearchLoadWarningItem_NoLoad, Add))
+                else
+                  add(Pair(SearchContractWarningItem_NoLoad, Add))
+              }
+            }.let{ searchResults.postValue(it)}
             error.handle()
           }
+          dataLoadingLiveData.postValue(false)
         }
   }
 

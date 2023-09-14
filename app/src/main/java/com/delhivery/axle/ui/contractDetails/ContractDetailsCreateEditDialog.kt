@@ -14,8 +14,10 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidCreateEditBinding
@@ -31,6 +33,7 @@ import com.delhivery.axle.utils.EVENT_SUBMIT_CONTRACT_BID
 import com.delhivery.axle.utils.PROPERTY_BID_AMOUNT_DIFF
 import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
 import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_IS_FLEXIBLE
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_OVERALL_PERFORMANCE
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
@@ -120,6 +123,11 @@ class ContractDetailsCreateEditDialog @Inject constructor(
     /* set binding params */
     binding.apply {
       request = transaction
+      if(transaction.isItIntraCityContract()&& transaction.isFlexible){
+        binding.intraCityRouteInfo.text = if(transaction.secondaryReportingCenters!=null&&transaction.secondaryReportingCenters.size>1){HtmlCompat.fromHtml(context.getString(R.string.msg_more,transaction.reportingCenters(),transaction.secondaryReportingCenters.size-1), HtmlCompat.FROM_HTML_MODE_LEGACY)}else transaction.reportingCenters()
+      }else if(transaction.isItIntraCityContract()){
+        binding.intraCityRouteInfo.text = transaction.tripContractRoute()
+      }
       route = transaction.tripContractRoute()
         transactionBid?.bidAmount?.let {
           isValidBidAmount= true
@@ -457,22 +465,25 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private fun submit() {
     try {
         if (transactionBid == null) {
-          analyticsUtil.moEngageTrackEvent(
-            EVENT_SUBMIT_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
-              PROPERTY_PHONE_NO,
-              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID, PROPERTY_SOURCE),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(),source))
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_SUBMIT_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
+                PROPERTY_PHONE_NO,
+                PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID, PROPERTY_SOURCE,
+                PROPERTY_IS_FLEXIBLE),
+              mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(),source,transaction.isFlexible.toString()))
+
           dialogInterface.createBid(
             transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
             transaction.biddingType
               ?: "FTL", position,if(binding.editTripCommitted.text.isNullOrEmpty())null else Integer.parseInt(binding.editTripCommitted.text.toString()),if(binding.editVehicleNumber.text.isNullOrEmpty())null else binding.editVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.spinnerPlacementDays.selectedItem.toString() else null
           )
         } else {
-          analyticsUtil.moEngageTrackEvent(
-            EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
-              PROPERTY_PHONE_NO,
-              PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF, PROPERTY_SOURCE),
-            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString(),source))
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
+                PROPERTY_PHONE_NO,
+                PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF, PROPERTY_SOURCE,
+                PROPERTY_IS_FLEXIBLE),
+              mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(), (amount-transactionBid?.bidAmount!!).toString(),source,transaction.isFlexible.toString()))
 
           dialogInterface.editBid(
             transaction.isPMTIndent(), transaction.key(), transactionBid.key(),

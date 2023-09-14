@@ -21,7 +21,7 @@ import javax.inject.Inject
  */
 class KotlinApp : DaggerApplication() {
   override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
-    DaggerAppComponent.builder().create(this)
+    DaggerAppComponent.factory().create(this)
 
   @Inject
   lateinit var workerFactory: DaggerWorkerFactory
@@ -41,10 +41,14 @@ class KotlinApp : DaggerApplication() {
 
   private fun setupMoEngage() {
     val isSdkEnabled = !(BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat")
-    val moEngage = MoEngage.Builder(this, "965N4GFJCV9UF6OBEPETGZR3").setDataCenter(DataCenter.DATA_CENTER_3)
-        .configureNotificationMetaData(NotificationConfig(R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.color.colorPrimary, null, true, isBuildingBackStackEnabled = false, isLargeIconDisplayEnabled = true))
+    val moEngage = MoEngage.Builder(this, "965N4GFJCV9UF6OBEPETGZR3",DataCenter.DATA_CENTER_3)
+        .configureNotificationMetaData(NotificationConfig(R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.color.colorPrimary,
+          isMultipleNotificationInDrawerEnabled = true,
+          isBuildingBackStackEnabled = false,
+          isLargeIconDisplayEnabled = true
+        ))
         .configureFcm(FcmConfig(false)) .build()
-    MoEngage.initialise(moEngage,true)
+    MoEngage.initialiseDefaultInstance(moEngage)
   }
   private fun createNotificationChannel() {
     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){

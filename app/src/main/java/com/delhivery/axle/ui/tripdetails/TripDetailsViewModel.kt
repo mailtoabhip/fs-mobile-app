@@ -43,6 +43,7 @@ import com.delhivery.axle.ui.team.TeamMemberAdminUserItem
 import com.delhivery.axle.ui.team.TeamMemberSubUserItem
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -415,7 +416,7 @@ class TripDetailsViewModel @Inject constructor(
                             } else {
                               charge.dnType ?: ""
                             }
-                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: ${subHeading.capitalize()} of ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
+                            deductionSummaryList.add(TripPaymentSummaryDetailItemData("Recovered against: ${capitalize(subHeading)} of ${charge.vehicleNumber} (${time}) (UTR: ${charge.utrNumber})",
                                 charge.appliedAmount, "", true, charge.transactionId, VALUE_FUTURE_ADJUSTMENT))
                           } else {
 
@@ -430,7 +431,7 @@ class TripDetailsViewModel @Inject constructor(
                             paymentSettled = true
                             settledTime = transferTime
                           }
-                          var event = charge.head.capitalize()
+                          var event = capitalize(charge.head)!!
                           when (charge.head) {
                             "loading" -> {
                               event = "Advance"
@@ -525,7 +526,7 @@ class TripDetailsViewModel @Inject constructor(
           if (!error && _res != null) {
             if (_res.isNotEmpty()) {
               for (recovery in _res) {
-                val recoveryType = recovery.dnType.capitalize()
+                val recoveryType = capitalize(recovery.dnType)
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {
@@ -574,7 +575,7 @@ class TripDetailsViewModel @Inject constructor(
           if (!error && _res != null) {
             if (_res.responseData != null) {
               for (recovery in _res.responseData) {
-                val recoveryType = recovery.Type.capitalize()
+                val recoveryType = capitalize(recovery.Type)
                 recovery.recoveryData?.let {
                   for (data in recovery.recoveryData) {
                     if (data.recoveryTripId != transactionId) {

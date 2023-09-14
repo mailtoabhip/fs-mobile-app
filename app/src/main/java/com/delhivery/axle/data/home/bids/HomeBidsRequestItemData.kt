@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
@@ -25,10 +27,10 @@ import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -130,7 +132,12 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_required") var nepRequired:Boolean? =  false ,
   @SerializedName("origin_longitude")val longitude:String?,
   @SerializedName("origin_latitude")val latitude:String?,
+  @SerializedName("demand_type")val demandType:String?,
   @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
+  @SerializedName("contract_remarks")val contractRemarks:String?,
+  @SerializedName("contract_usage")val contractUsage:String?,
+  @SerializedName("secondary_reporting_centers")val secondaryReportingCenters:List<SecondaryReportingCenters>?=null,
+  @SerializedName("is_flexible")val isFlexible:Boolean=false,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -220,7 +227,7 @@ data class HomeBidsRequestItemData(
   fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
 
 
-  fun setTruckTypeText() = truckType!!.capitalize() ?: ""
+  fun setTruckTypeText() = capitalize(truckType!!) ?: ""
 
   fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 
@@ -450,6 +457,18 @@ data class HomeBidsRequestItemData(
   fun vehicleOperationDrawableKmPerMonth() = DrawableProviderUtils.vehicleOperationDrawableKmPerMonth(if (transactionStatus=="cancelled"){"cancel"}else{"open"}, contractType)
 
   /**
+   * @return vehicleUsageDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun vehicleUsageDrawable() = DrawableProviderUtils.vehicleUsageDrawable(if (transactionStatus==TransactionStatus.Cancelled.statusId){"cancel"}else{"open"})
+
+  /**
+   * @return nepDrawable basis[indent tyoe]
+   */
+  @DrawableRes
+  fun nepDrawable() = DrawableProviderUtils.nepDrawable(if (transactionStatus==TransactionStatus.Cancelled.statusId){"cancel"}else{"open"})
+
+  /**
    * @return vehicleOperationDrawablePerHrs basis[indent tyoe]
    */
   @DrawableRes
@@ -460,6 +479,12 @@ data class HomeBidsRequestItemData(
    */
   @DrawableRes
   fun tripCloseOpenDrawable() = DrawableProviderUtils.tripOpenCancelDrawableRes(if (transactionStatus=="cancelled"){"cancel"}else{"open"})
+
+  /**
+   * @return intracityContractType basis[contract type]
+   */
+  @DrawableRes
+  fun intracityContractTypeDrawable() = DrawableProviderUtils.intracityContractType(contractType,isFlexible)
 
   /**
    * @return truck_type with placed capacity
@@ -493,24 +518,45 @@ data class HomeBidsRequestItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getStatusColor(bidStatus().status.toLowerCase())
+    ColorProviderUtils.getStatusColor(bidStatus().status.lowercase())
 
   /**
    * Get truck details/type
+   * Don't show MT for demand_type = Intracity for Load and LH/Intracity contracts
    */
   fun truckDetail() = if (isDMTIndent()) {
-    truckType!!.capitalize() ?: ""
+    capitalize(truckType!!) ?: ""
   } else {
       truckSpecification?.let {
-        it.truckDispName
+        if(requestType==RequestType.Contract.type){
+          if(contractType==ContractType.FRC.type){
+            it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+          }else{
+            it.truckDispName
+          }
+        } else if (demandType==DemandType.Intracity.type){
+          it.truckDispName
+        }else{
+          it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"
+        }
       }
+  }
+
+  fun reportingCenters(): String{
+    val reportingCenters = StringBuilder()
+       reportingCenters.append(origin)
+    if(secondaryReportingCenters?.isNotEmpty() == true){
+      reportingCenters.append(", ")
+      reportingCenters.append(secondaryReportingCenters[0].originCenterName)
+  }
+    return reportingCenters.toString()
   }
 
   /**
    * Trip display name for toolbar title
    */
   fun tripDisplayName() =
-    "${originState.capitalize()} - ${destinationState.capitalize()}"
+    "${capitalize(originState)} - ${capitalize(destinationState)}"
 //    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
 //    when (tripType) {
 //      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
@@ -662,7 +708,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if indent type(pmt/ftl)
    */
-  fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+  fun isPMTIndent() = biddingType?.lowercase() == "pmt"
 
   /**
    * @return true if request type(dmt)
@@ -1172,6 +1218,24 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isIntraCityFlexibleContract() = if (contractType == ContractType.INTRACITY.type && isFlexible==true) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isIntraCityFixedContract() = if (contractType == ContractType.INTRACITY.type && isFlexible==false) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isIntraCityContractWithRemarks() = if (contractType == ContractType.INTRACITY.type && contractRemarks.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
   fun isIntraCityContractWithBid() = if (contractType == ContractType.INTRACITY.type && transactionBid!=null) {
     View.VISIBLE
   } else {
@@ -1237,6 +1301,7 @@ data class HomeBidsRequestItemData(
   fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
   fun intracityExtraDayRate()="₹ "+ intracityExtraDayRate
 
+  fun intracityContractType()=if(contractType==ContractType.INTRACITY.type && isFlexible==false){"Fixed"}else if(contractType==ContractType.INTRACITY.type && isFlexible==true){"Flexible"} else{""}
 
   fun paymentSlabsVisibility() = if (contractType==ContractType.INTRACITY.type) {
     if(transactionStatus==TransactionStatus.Cancelled.statusId){
@@ -1277,7 +1342,7 @@ data class HomeBidsRequestItemData(
   }
   fun vehiclePermitRequiredText():String=
    if(nepRequired!=null) {
-     if (nepRequired!!) "\u2022\u0020 No Entry Permit Required" else "\u2022\u0020 No Entry Permit Not Required "
+     if (nepRequired!!) "Required " else "Not required "
    }else{
      ""
    }
@@ -1416,6 +1481,18 @@ data class HaltCenters(
 )
 
 /**
+ * Secondary reporting centers
+ */
+data class SecondaryReportingCenters(
+  @SerializedName("origin_center_name") val originCenterName: String?,
+  @SerializedName("origin_city")val originCity:String?,
+  @SerializedName("origin_state")val originState:String?,
+  @SerializedName("longitude")val longitude:String?,
+  @SerializedName("latitude")val latitude:String?
+
+)
+
+/**
  * Monthly Payout detail
  */
 data class PaymentSlabs(
@@ -1423,6 +1500,7 @@ data class PaymentSlabs(
   @SerializedName("payout") val monthlyPayout: String?,
 
 )
+
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"

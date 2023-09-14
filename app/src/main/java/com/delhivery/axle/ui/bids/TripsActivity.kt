@@ -771,7 +771,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(UserSearchLimit) {
+  inner class PaginationInterface : DynamicPaginationScrollListener() {
     override fun loadMore() = viewModel.fetchTrips(true)
 
     override fun hasMore() = viewModel.offset < viewModel.total

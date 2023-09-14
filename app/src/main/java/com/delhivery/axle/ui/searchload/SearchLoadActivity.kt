@@ -68,9 +68,9 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
         userPrefs.setPreviousScreen(this.javaClass.name)
         when (currentFragmentType) {
           ResultsFragment -> navigate(LoadFragment)
-          else -> onBackPressedDispatcher.onBackPressed()
+          else -> { finish() }
         }
-        finish()
+
       }
     })
 
@@ -128,20 +128,15 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
               requestType,
               contractType,
               truckDisplayNames,
-              false
+              false,
+              isFlexible,
+              includeFlexibleContracts
             )
           }
         }
       }
   }
 
-/*  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    when (currentFragmentType) {
-      ResultsFragment -> navigate(LoadFragment)
-      else -> super.onBackPressed()
-    }
-  }*/
 }
 
 fun searchLoadContractsIntent(

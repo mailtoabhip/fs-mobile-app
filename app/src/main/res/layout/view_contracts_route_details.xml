@@ -156,7 +156,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
       <androidx.appcompat.widget.AppCompatTextView
@@ -169,6 +169,22 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           android:textStyle="bold"/>
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/fixedIntracityTv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:text="@string/action_fixed_intracity"
+          android:paddingTop="@dimen/size_6dp"
+          android:drawableStart="@drawable/ic_place"
+          android:drawablePadding="@dimen/size_8dp"
+          android:layout_marginStart="@dimen/size_8dp"
+          android:paddingBottom="@dimen/size_6dp"
+          android:paddingStart="@dimen/size_10dp"
+          android:paddingEnd="@dimen/size_12dp"
+          android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+          app:layout_constraintTop_toTopOf="parent"
+          />
       <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/intraCityHubIcon"
           android:layout_width="wrap_content"
@@ -252,6 +268,48 @@
           android:text="@string/reporting_time"
           android:textColor="@color/color_hint"
           tools:text="Reporting Time"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/intraCityAdHocRouteDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/intraCityAdHocRouteScheduleLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@color/background_dark_grey"
+          android:text="@string/reporting_center"
+          android:textSize="@dimen/text_16sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          android:textStyle="bold"/>
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/flexibleIntracityTv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:text="@string/action_flexible_intracity"
+          android:paddingTop="@dimen/size_6dp"
+          android:drawableStart="@drawable/ic_multiple_location"
+          android:drawablePadding="8dp"
+          android:layout_marginStart="@dimen/size_8dp"
+          android:paddingBottom="@dimen/size_6dp"
+          android:paddingStart="@dimen/size_10dp"
+          android:paddingEnd="@dimen/size_12dp"
+          android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rvIntracityFlexibleContracts"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/intraCityAdHocRouteScheduleLabel"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.constraintlayout.widget.ConstraintLayout>

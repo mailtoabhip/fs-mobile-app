@@ -113,7 +113,7 @@ class ShareRateViewModel @Inject constructor(
                                 userPrefs.parentName,
                                 null,
                                 priceUnit,
-                                proofType?.toLowerCase()?.replace(" ", "_"),
+                                proofType?.lowercase()?.replace(" ", "_"),
                                 documentProofUrl,
                                 userPrefs.phoneNumber?.replace("+91", "")
                         )

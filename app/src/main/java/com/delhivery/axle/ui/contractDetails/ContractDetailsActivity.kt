@@ -25,6 +25,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.PaymentSlabs
+import com.delhivery.axle.data.home.bids.SecondaryReportingCenters
 import com.delhivery.axle.databinding.ActivityContractDetailsBinding
 import com.delhivery.axle.databinding.DialogContractsBidSuccessBinding
 import com.delhivery.axle.injection.module.GlideApp
@@ -40,18 +41,19 @@ import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
 import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
+import com.delhivery.axle.utils.PROPERTY_IS_FLEXIBLE
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -64,6 +66,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   @Inject lateinit var userPrefs: UserPrefs
   var routesArray:ArrayList<HaltCenters> = ArrayList()
+  var flexibleReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
   var source= VALUE_APP_FLOW
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -251,7 +254,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           binding.transaction = _transaction
           binding.routeDetails.nonExpRouteDetails.visibility = t.isFRCContract()
           binding.routeDetails.routeDetails.visibility =  t.isLHContract()
-          binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityContract()
+          binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityFixedContract()
+          binding.routeDetails.intraCityAdHocRouteDetails.visibility =  t.isIntraCityFlexibleContract()
 
           binding.vehicleDetails.visibility = View.VISIBLE
 
@@ -261,11 +265,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             mutableListOf(
               PROPERTY_USER_ID,
               PROPERTY_PHONE_NO, PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE,
-              PROPERTY_SOURCE
+              PROPERTY_SOURCE, PROPERTY_IS_FLEXIBLE
             ),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
               _transaction.uuid ?: " ",_transaction.contractEventStatusText(),
-              _transaction.contractType?:"",source
+              _transaction.contractType?:"",source,_transaction.isFlexible.toString()
             )
           )
           // for FRC contract
@@ -288,7 +292,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.routeDetails.nonExpTvState2.text = t.destinationState
             binding.routeDetails.nonExpTimeInterval1.text  =
               t.tentativeTripCount?.let { Integer.toString(it) } +" Trips in "+ t.contractValidity+" weeks"
-          }else if(t.isItIntraCityContract()){
+          }else if(t.isItIntraCityContract() && !t.isFlexible){
             if(t.transactionStatus== TransactionStatus.Cancelled.statusId){
               binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
               binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_time_grey))
@@ -298,7 +302,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             }
             binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
             binding.routeDetails.intraCityTvState.text = t.originState
-            binding.routeDetails.intraCityTvCity.text = t.originCity?.capitalize()
+            binding.routeDetails.intraCityTvCity.text = capitalize(t.originCity)
             binding.routeDetails.intraCityTvHubCity.text = t.origin
             binding.routeDetails.intraCityTvMapView.setOnClickListener{
               try {
@@ -324,6 +328,18 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.routeDetails.rvContracts.apply {
               layoutManager = LinearLayoutManager(applicationContext)
               adapter = contractsRouteDetailsAdapter
+            }
+          }
+          if(_transaction.secondaryReportingCenters!=null) {
+            val originReportingCenters = SecondaryReportingCenters(_transaction.origin,_transaction.originCityName(),_transaction.originState,_transaction.longitude,_transaction.latitude)
+            flexibleReportingCentersArray.add(originReportingCenters)
+            for (item in _transaction.secondaryReportingCenters!!) {
+              flexibleReportingCentersArray.add(item)
+            }
+            val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(flexibleReportingCentersArray,_transaction,this@ContractDetailsActivity)
+            binding.routeDetails.rvIntracityFlexibleContracts.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = contractIntracityFlexibleRCAdapter
             }
           }
           binding.seperator.visibility = View.VISIBLE
@@ -449,7 +465,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.nonExpressBidReceived.text = state.bidsCount.toString()+ " Bids Received"
                 binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
-                if(data.biddingType?.toLowerCase()=="pmt"){
+                if(data.biddingType?.lowercase()=="pmt"){
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
                         }else{
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
@@ -479,7 +495,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     if(data.isItLHContract()|| data.isItIntraCityContract()){
                       binding.bidPmtFtl.text =getString(string.your_bid)
                     }else{
-                      if(data.biddingType?.toLowerCase()=="pmt"){
+                      if(data.biddingType?.lowercase()=="pmt"){
                         binding.bidPmtFtl.text = getString(string.your_pmt_rate)
                       }else{
                         binding.bidPmtFtl.text = getString(string.your_ftl_rate)
@@ -749,6 +765,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     viewModel.fetchTransactionDetails()
     binding.executePendingBindings()
     routesArray.clear()
+    flexibleReportingCentersArray.clear()
   }
 
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){

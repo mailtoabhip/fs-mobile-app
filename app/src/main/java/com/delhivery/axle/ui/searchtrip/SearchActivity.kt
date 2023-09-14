@@ -72,7 +72,6 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
           adapter.resetStaticData()
           viewModel.total = 0
         } else {
-          onBackPressedDispatcher.onBackPressed()
         }
         finish()
       }

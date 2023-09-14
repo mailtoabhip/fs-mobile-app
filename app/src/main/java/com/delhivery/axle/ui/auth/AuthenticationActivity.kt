@@ -38,7 +38,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.moengage.core.internal.MoEConstants
+import com.moengage.core.internal.USER_ATTRIBUTE_UNIQUE_ID
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_MOBILE
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.text.DecimalFormat
@@ -88,7 +89,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       override fun handleOnBackPressed() {
         when (binding.state) {
           PhoneNo -> {
-            onBackPressedDispatcher.onBackPressed()
             finish()
           }
           OTP -> viewModel.state = PhoneNo
@@ -302,10 +302,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             userPrefs.userId().let {
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
             }
             userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
             uiUtils.showProgress("Loading...")
@@ -314,10 +314,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           Disabled -> {
             userPrefs.userId().let {
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
             }
             userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
             uiUtils.hideDelhiveryProgress()
@@ -338,9 +338,9 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   inner class ErrorObserver : Observer<Pair<AuthenticationUIError, String?>> {
     override fun onChanged(it: Pair<AuthenticationUIError, String?>?) {
       it?.let { error ->
-        /* show error message in snackbar if not null || empty */
+        /* show error message in dialog if not null || empty */
         if (error.second.isNotNullOrEmpty()) {
-          uiUtils.showSnackbar(error.second!!)
+          dialogUtils.showErrorDialog(error.second!!,3L)
         }
         /* handle each error state */
         when (error.first) {

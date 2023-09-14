@@ -154,15 +154,15 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
 
         when {
-            userPrefs.cinNumber.isNotNullOrEmpty() && userPrefs.identityDocUrl.toLowerCase().contains("cin")-> {
+            userPrefs.cinNumber.isNotNullOrEmpty() && userPrefs.identityDocUrl.lowercase().contains("cin")-> {
                 clickedCin(true)
                 viewModel.cinNumber = userPrefs.cinNumber
             }
-            userPrefs.udyogNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.toLowerCase().contains("udyog")-> {
+            userPrefs.udyogNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.lowercase().contains("udyog")-> {
                 clickedUdyog(true)
                 viewModel.udyogNumber = userPrefs.udyogNumber
             }
-            userPrefs.shopNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.toLowerCase().contains("shop") -> {
+            userPrefs.shopNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.lowercase().contains("shop") -> {
                 clickedShopNumber(true)
                 viewModel.shopNumber = userPrefs.shopNumber
             }

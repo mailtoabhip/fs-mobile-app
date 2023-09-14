@@ -81,7 +81,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       refreshData()
     }
 
-    viewModel.offerLiveData.observe(this, Observer {
+    viewModel.offerLiveData.observe(viewLifecycleOwner, Observer {
       adapter.notifyDataSetChanged()
     })
 
@@ -176,7 +176,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(userPrefs.userId(), viewModel.activeBids)
         )
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(context!!, ActiveBid), REQCODE_NO_ROUTES)
+        startActivityForResult(userBidsIntent(requireContext(), ActiveBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsHeaderAction_ConfirmedBids -> {
@@ -187,7 +187,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
         )
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(context!!, ConfirmedBid), REQCODE_NO_ROUTES)
+        startActivityForResult(userBidsIntent(requireContext(), ConfirmedBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsHeaderAction_LostBids -> {
@@ -198,7 +198,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(userPrefs.userId(), viewModel.lostBids)
         )
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(context!!, LostBid), REQCODE_NO_ROUTES)
+        startActivityForResult(userBidsIntent(requireContext(), LostBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsHeaderAction_ContractBids -> {
@@ -209,7 +209,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           mutableListOf(userPrefs.userId(), viewModel.lostBids)
         )*/
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(context!!, ContractBid), REQCODE_NO_ROUTES)
+        startActivityForResult(userBidsIntent(requireContext(), ContractBid), REQCODE_NO_ROUTES)
       }
 
       HomeBidsRequestAction_ViewDetails -> {
@@ -225,8 +225,12 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           "dmt"
         else ""
         val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled"))
-          _item.transactionBid!!.childTransactionId else _item.key()
+        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
+          if(_item.transactionBid?.childTransactionId!=null)
+            _item.transactionBid!!.childTransactionId else _item.key()
+        }else{
+          _item.key()
+        }
         if(id!=null)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
@@ -296,7 +300,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
       //  binding.transaction?.let {
           BulkBidDetailsDialog(
-            context!!, transaction!!,transaction.bulkTransactionBids,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+            requireContext(), transaction!!,transaction.bulkTransactionBids,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
           ).show()
       //  }
   }
@@ -358,7 +362,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
   inner class PaginationInterface : PaginationScrollListener(10) {
     override fun loadMore() = viewModel.fetchBids(true)
 
-    override fun hasMore() = viewModel.offset < viewModel.total
+    override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData
   }

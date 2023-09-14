@@ -1,5 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +20,7 @@ import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.OffersEntity
+import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
@@ -50,6 +53,7 @@ class HomeTrucksViewModel @Inject constructor(
     val userPrefs: UserPrefs
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
+    //private lateinit var application: Application
     var bodyTypeFilter = mutableListOf<Pair<String, String>>()
     var availabilityFilter = mutableListOf<Pair<String, String>>()
     var sizeFilter: String?= null

@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.base
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -8,12 +10,14 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.setMargins
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
@@ -21,6 +25,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.delhivery.axle.BR
+import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.network.ConnectionLiveData
 import com.delhivery.axle.utils.AnalyticsUtil
@@ -107,14 +112,14 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
       override fun onStateUpdate(installState: InstallState) {
         when {
           installState.installStatus() == InstallStatus.DOWNLOADED -> popupSnackbarForCompleteUpdate()
-          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager?.unregisterListener(this)
-          else -> Log.d("InstallUpdatedListener", installState.installStatus()?.toString()?:"")
+          installState.installStatus() == InstallStatus.INSTALLED -> appUpdateManager.unregisterListener(this)
+          else -> Log.d("InstallUpdatedListener", installState.installStatus().toString())
         }
       }
     }
   }
 
-   fun popupSnackbarForCompleteUpdate() {
+   open fun popupSnackbarForCompleteUpdate() {
     val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
     snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
     snackbar.show()
@@ -173,6 +178,44 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     })
 
     /* ... other Ui observers */
+  }
+
+  override fun onResume() {
+    super.onResume()
+    appUpdateManager
+      .appUpdateInfo
+      .addOnSuccessListener { appUpdateInfo ->
+
+        // If the update is downloaded but not installed,
+        // notify the user to complete the update.
+        if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+         popupSnackbarForCompleteUpdate()
+        }
+
+        //Check if Immediate update is required
+        try {
+          if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+            // If an in-app update is already running, resume the update.
+
+            appUpdateManager.startUpdateFlowForResult(
+              appUpdateInfo,
+              AppUpdateType.IMMEDIATE,
+              this,
+              APP_UPDATE_REQUEST_CODE)
+
+          }
+        } catch (e: IntentSender.SendIntentException) {
+          e.printStackTrace()
+        }
+      }
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == APP_UPDATE_REQUEST_CODE) {
+      if (resultCode != Activity.RESULT_OK) {
+        Toast.makeText(this, "App Update failed, please try again on the next app launch", Toast.LENGTH_SHORT).show() }
+    }
   }
 
   /** Hide **/

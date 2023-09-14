@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.widget.EditText
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.adapter.BaseFilterableDataRVAdapter
@@ -25,7 +26,7 @@ import io.reactivex.disposables.CompositeDisposable
 class DelhiveryAnimatedSearchBar(
   context: Context,
   attrs: AttributeSet? = null
-) : EditText(context, attrs) {
+) : AppCompatEditText(context, attrs) {
 
   init {
     background = null

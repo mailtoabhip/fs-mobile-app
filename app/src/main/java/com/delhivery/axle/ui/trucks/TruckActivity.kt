@@ -363,7 +363,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
                 mutableListOf(userPrefs.userId(),viewModel.addTruckSourceIntent)
             )
             uiUtils.showProgress("Adding truck")
-            viewModel.addNewTruck(sourcedAs.toUpperCase())
+            viewModel.addNewTruck(sourcedAs.uppercase())
         }
 
     }
@@ -461,7 +461,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             REQCODE_SELECT_CITY ->{
                 if(data != null) {
                     val type = data.getStringExtra(CityType)
-                    val city = data.getSerializable("City",CityModel::class.java)
+                    val city = data.getSerializable("City",CityModel::class.java)!!
                     if(type =="origin") {
                         viewModel.truckCity = city
                         binding.textCurrentCity.text = city.cityName().trim()

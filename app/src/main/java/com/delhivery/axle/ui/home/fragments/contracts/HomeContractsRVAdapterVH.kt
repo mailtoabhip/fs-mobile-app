@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.contracts
 import android.os.CountDownTimer
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
@@ -16,7 +17,12 @@ import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
+import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterAll
+import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFixed
+import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFlexible
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
+import com.delhivery.axle.databinding.ViewHomeContractsIntracityFilterItemBinding
+import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
@@ -89,6 +95,28 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.request = item.data
+    if(item.data.isItIntraCityContract()){
+      if(item.data.isFlexible){
+        binding.tvIntracityHubOriginCity.text = if(item.data.secondaryReportingCenters!=null&&item.data.secondaryReportingCenters.size>1){
+          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),item.data.secondaryReportingCenters.size-1), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
+        binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_multiple_location,
+          0,
+          0,
+          0
+        )
+      }else{
+        binding.intracityContractTypeChip.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_place,
+          0,
+          0,
+          0
+        )
+        binding.tvIntracityHubOriginCity.text =item.data.originCityName()
+      }
+    }else{
+      binding.tvHubOriginCity.text = item.data.originCityName()
+    }
     //Transaction Cancelled
     if(item.data.transactionStatus=="cancelled"){
       binding.userBidInfo.visibility= View.GONE
@@ -444,8 +472,8 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 /**
  * Progress inline view holder
  */
-internal class HomeContractsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding) :
-  BaseHomeContractsRVAdapterViewHolder<ViewHomeLoadsProgressItemBinding, HomeContractsProgressItem>(
+internal class HomeContractsProgressItemVH(binding: ViewHomeContractsProgressItemBinding) :
+  BaseHomeContractsRVAdapterViewHolder<ViewHomeContractsProgressItemBinding, HomeContractsProgressItem>(
     binding
   ) {
   override fun bind(
@@ -537,6 +565,53 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
   }
 }
 
+/**
+ * Loads intracity filter view holder
+ */
+internal class HomeContractsIntracityFilterItemVH(binding: ViewHomeContractsIntracityFilterItemBinding) :
+  BaseHomeContractsRVAdapterViewHolder<ViewHomeContractsIntracityFilterItemBinding, HomeContractsIntracityFilterItem>(binding) {
+  override fun bind(
+    item: HomeContractsIntracityFilterItem,
+    _interface: HomeContractsRVAdapterInterface
+  ) {
+    when (item.data.filterType) {
+      "All"-> {
+        binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.flexibleIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.flexibleIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_multiple_location,0,0,0)
+        binding.fixedIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place,0,0,0)
+        binding.fixedIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.allIntracityToggle.isSelected=true
+        binding.flexibleIntracityToggle.isSelected=false
+        binding.fixedIntracityToggle.isSelected=false
+      }
+      "Flexible"-> {
+        binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.flexibleIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.flexibleIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_multiple_location_blue,0,0,0)
+        binding.fixedIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place,0,0,0)
+        binding.fixedIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.allIntracityToggle.isSelected=false
+        binding.flexibleIntracityToggle.isSelected=true
+        binding.fixedIntracityToggle.isSelected=false
+      }
+     "Fixed"-> {
+        binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.fixedIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+        binding.fixedIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_blue,0,0,0)
+        binding.flexibleIntracityToggle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_multiple_location,0,0,0)
+        binding.flexibleIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+        binding.allIntracityToggle.isSelected=false
+        binding.fixedIntracityToggle.isSelected = true
+        binding.flexibleIntracityToggle.isSelected=false
+      }
+    }
+    binding.fixedIntracityToggle.clickToAction(HomeContractsIntracityFilterFixed, item, _interface)
+    binding.flexibleIntracityToggle.clickToAction(HomeContractsIntracityFilterFlexible, item, _interface)
+    binding.allIntracityToggle.clickToAction(HomeContractsIntracityFilterAll, item, _interface)
+
+  }
+}
 /**
  * Loads timeout view holder
  */

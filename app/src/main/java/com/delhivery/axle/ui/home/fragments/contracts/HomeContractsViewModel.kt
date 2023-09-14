@@ -17,6 +17,7 @@ import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
+import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -91,7 +92,7 @@ class HomeContractsViewModel@Inject constructor(
    * Fetch user [Requested] transactions
    */
   fun fetchUserTransactions(
-    paginate: Boolean = false, demandType: String) {
+    paginate: Boolean = false, demandType: String,contractType: String?=null,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null){
     if (!paginate ) {
       offset = 0
       allActiveFetched = false
@@ -114,14 +115,8 @@ class HomeContractsViewModel@Inject constructor(
 
     dataLoadingLiveData.postValue(true)
 
-    val originCityList= ArrayList<String>()
-    if(userPrefs.getLanesPreference()!=null ){
-      for(item in userPrefs.getLanesPreference()!!){
-        originCityList?.add(item?.origin?.orion_db_city_code?:"")
-      }
-    }
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit,if(originCityList.isNotEmpty()&& demandType==DemandType.Intracity.type)originCityList?.joinToString(separator = ",")else null)
+        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts)
       .flatMap  { _res ->
         total = _res.total
         offset = _res.offset
@@ -130,7 +125,7 @@ class HomeContractsViewModel@Inject constructor(
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true),
           bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-          transactionsRepository.fetchContractsSummaryCount(if(originCityList.isNotEmpty())originCityList?.joinToString(separator = ",")else null),
+          transactionsRepository.fetchContractsSummaryCount(),
           Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse,
               Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse>> { t1, t2,t3 ->
             Quintuple(t1.first, t1.second, t2.second,t3,_res)
@@ -221,7 +216,16 @@ class HomeContractsViewModel@Inject constructor(
               }
 
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
-
+             // Handle filter for intracity contract type
+              if(demandType==DemandType.Intracity.type){
+                var intracityContractType = ""
+                intracityContractType = if(contractType==ContractType.INTRACITY.type && isFlexible==true){
+                  "Flexible"
+                }else if(contractType==ContractType.INTRACITY.type && isFlexible==false){
+                  "Fixed"
+                }else "All"
+                add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
+              }
               loadsCountLiveData.postValue(totalActive)
              if (_tRes.fifth.transactions.isEmpty()) {
                add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))

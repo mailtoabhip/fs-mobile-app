@@ -14,15 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.*
-import com.delhivery.axle.data.home.loads.HomeLoadsFilterAction
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
@@ -55,6 +52,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   var visible = false
   var demandType: String = ""
+  var contractType:String? = null
+  var isflexible:Boolean? = null
+  var includeFlexibleContract:Boolean? = null
   var pos = 0
 
 
@@ -149,7 +149,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType)
+    viewModel.fetchUserTransactions(false, demandType,contractType,isflexible,includeFlexibleContract)
   }
 
   override fun handleAction(
@@ -182,14 +182,44 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       }
       HomeContractsFilterExpress -> {
         demandType = DemandType.Internal.type
+        contractType = null
+        isflexible = null
+        includeFlexibleContract= null
         refreshData()
       }
       HomeContractsFilterNonExpress -> {
         demandType = DemandType.Corporate.type
+        contractType = null
+        isflexible = null
+        includeFlexibleContract= null
         refreshData()
       }
       HomeContractsFilterIntracity -> {
         demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type
+        includeFlexibleContract = true
+        isflexible = null
+        refreshData()
+      }
+      HomeContractsIntracityFilterFixed -> {
+        demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type
+        isflexible = false
+        includeFlexibleContract = true
+        refreshData()
+      }
+      HomeContractsIntracityFilterFlexible -> {
+        demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type
+        isflexible = true
+        includeFlexibleContract = true
+        refreshData()
+      }
+      HomeContractsIntracityFilterAll -> {
+        demandType = DemandType.Intracity.type
+        contractType = ContractType.INTRACITY.type
+        isflexible = null
+        includeFlexibleContract = true
         refreshData()
       }
       HomeContractsFilterInfo -> {
@@ -200,14 +230,16 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   private fun infoDialog() {
     if(activity!=null) {
-      val dialog = Dialog(activity!!)
-      val bindingDialog = DialogContractsTypeInfoBinding.inflate(activity!!.layoutInflater)
+      val dialog = Dialog(requireActivity())
+      val bindingDialog = DialogContractsTypeInfoBinding.inflate(requireActivity().layoutInflater)
       bindingDialog.buttonCancel.setOnClickListener {
         dialog.cancel()
       }
       bindingDialog.rule1.text =   HtmlCompat.fromHtml(getString(R.string.non_express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       bindingDialog.rule2.text =   HtmlCompat.fromHtml(getString(R.string.express_load_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       bindingDialog.rule3.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule4.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_fixed_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
+      bindingDialog.rule5.text =   HtmlCompat.fromHtml(getString(R.string.dlv_intracity_flexible_info), HtmlCompat.FROM_HTML_MODE_LEGACY)
       dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
       dialog.setContentView(bindingDialog.root)
       dialog.show()
@@ -281,7 +313,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, contractType, isflexible, includeFlexibleContract)
 
     override fun hasMore() = viewModel.hasMoreData
 

@@ -29,6 +29,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -492,7 +493,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
 
             if (binding.transaction?.pickupLocationCity.isNotNullOrEmpty()) {
-              uData.append(binding.transaction?.pickupLocationCity?.capitalize())
+              uData.append(capitalize(binding.transaction?.pickupLocationCity!!))
             }
 
             if (uData.toString().isNotNullOrEmpty()) {
@@ -506,9 +507,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaDestination.card1.visibility = View.VISIBLE
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.pickup1?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup1)
             } else {
-              citNam = binding.transaction?.pickup1City?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup1City)
             }
             binding.textViaDestination.city1.text = citNam
 
@@ -535,9 +536,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.pickup2?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup2)
             } else {
-              citNam = binding.transaction?.pickup2City?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup2City)
             }
             binding.textViaDestination.city2.text = citNam
 
@@ -569,9 +570,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.stop1?.capitalize()
+              citNam = capitalize(binding.transaction?.stop1!!)
             } else {
-              citNam = binding.transaction?.stop1City?.capitalize()
+              citNam = capitalize(binding.transaction?.stop1City!!)
             }
             binding.textViaDestination.city3.text = citNam
 
@@ -603,9 +604,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.stop2?.capitalize()
+              citNam = capitalize(binding.transaction?.stop2!!)
             } else {
-              citNam = binding.transaction?.stop2City?.capitalize()
+              citNam = capitalize(binding.transaction?.stop2City!!)
             }
             binding.textViaDestination.city4.text = citNam
 
@@ -648,7 +649,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
 
             if (binding.transaction?.dropLocationCity.isNotNullOrEmpty()) {
-              uData.append(binding.transaction?.dropLocationCity?.capitalize())
+              uData.append(capitalize(binding.transaction?.dropLocationCity!!))
             }
 
             if (uData.toString().isNotNullOrEmpty()) {

@@ -6,9 +6,8 @@ import android.util.Property
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.moe.pushlibrary.MoEHelper
 import com.moengage.core.Properties
-import com.moengage.core.internal.MoEConstants.USER_ATTRIBUTE_USER_MOBILE
+import com.moengage.core.analytics.MoEAnalyticsHelper
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 /**
@@ -33,14 +32,6 @@ class AnalyticsUtil @Inject constructor(
   private fun getAnalyticsObject(): FirebaseAnalytics? {
     return try {
       FirebaseAnalytics.getInstance(activity.applicationContext)
-    } catch (e: Exception) {
-      null
-    }
-  }
-
-  private fun getMoEngageObject(): MoEHelper? {
-    return try {
-      MoEHelper.getInstance(activity.applicationContext)
     } catch (e: Exception) {
       null
     }
@@ -72,8 +63,6 @@ class AnalyticsUtil @Inject constructor(
     values: List<String> = mutableListOf()
   ) {
     Log.i(MOENGAGE_TAG, event)
-    val analytics = getMoEngageObject()
-    if (analytics != null) {
       val properties = Properties()
       for ((index, attribute) in attributes.withIndex()) {
         Log.i(MOENGAGE_TAG, attribute + ":" + values[index])
@@ -81,8 +70,7 @@ class AnalyticsUtil @Inject constructor(
       }
       properties.addAttribute(PROPERTY_PREVIOUS_SOURCE,userPrefs.userPreviousScreen)
       Log.i(MOENGAGE_TAG, PROPERTY_PREVIOUS_SOURCE + ":" + userPrefs.userPreviousScreen)
-      analytics.trackEvent(event, properties)
-    }
+    MoEAnalyticsHelper.trackEvent(activity.applicationContext, event, properties)
   }
 
   fun moEngageUserAttribute(
@@ -90,10 +78,7 @@ class AnalyticsUtil @Inject constructor(
     value: String
   ) {
     Log.i(MOENGAGE_TAG, userAttribute)
-    val analytics = getMoEngageObject()
-    if (analytics != null) {
-      analytics.setUserAttribute(userAttribute, value)
-    }
+      MoEAnalyticsHelper.setUserAttribute(activity.applicationContext,userAttribute, value)
   }
 }
 const val EVENT_PLACE_BID = "bid_place"
@@ -393,6 +378,7 @@ const val PROPERTY_VENDOR_ID = "vendor_id"
 const val PROPERTY_FIELD_EDITED = "field_edited"
 const val PROPERTY_PREVIOUS_SOURCE = "previous_source"
 const val PROPERTY_CONTRACT_TYPE = "contract_type"
+const val PROPERTY_IS_FLEXIBLE= "is_flexible"
 const val PROPERTY_BID_AMOUNT_DIFF = "bid_amount_diff"
 
 

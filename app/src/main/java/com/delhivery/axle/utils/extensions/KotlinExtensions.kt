@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.OpenableColumns
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -92,11 +93,22 @@ fun ContentResolver.getFileName(uri: Uri): String {
     return subject
   }
 
-fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): T {
+/**
+ * Wrapper function to get Serializable objects from Intent object
+ */
+fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): T? {
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-    this.getSerializableExtra(key, m_class)!!
+    getSerializableExtra(key, m_class)
   else
-    this.getSerializableExtra(key) as T
+    getSerializableExtra(key) as T
 }
 
+/**
+ * Wrapper function to get Serializable objects from Bundle object
+ */
+fun <T: Serializable?> Bundle.getSerializableExtra(key: String, m_class: Class<T>): T?{
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    this.getSerializable(key,m_class)
+  else getSerializable(key) as T
+}
 

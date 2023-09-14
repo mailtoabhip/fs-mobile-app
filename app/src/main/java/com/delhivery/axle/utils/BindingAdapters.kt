@@ -12,6 +12,8 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.delhivery.axle.utils.extensions.hasResource
 
 object BindingAdapters {
@@ -57,7 +59,7 @@ object BindingAdapters {
     textView: TextView,
     html: String
   ) {
-    textView.text = Html.fromHtml(html)
+    textView.text = HtmlCompat.fromHtml(html,FROM_HTML_MODE_LEGACY)
   }
 
   @JvmStatic

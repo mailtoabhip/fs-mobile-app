@@ -278,7 +278,7 @@ data class HomeTripsItemData(
   /**
    * @return formatted load
    */
-  fun load() = when (weightUsed?.toLowerCase()) {
+  fun load() = when (weightUsed?.lowercase()) {
     "bill_on_max_weight" -> volumetricWeight?.let {
       "EQW Weight: ${StringUtils.formatAmount(volumetricWeight)}MT"
     }
@@ -378,7 +378,7 @@ data class HomeTripsItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getTripStatusColor(paymentStatus().toLowerCase())
+    ColorProviderUtils.getTripStatusColor(paymentStatus().lowercase())
 
   /**
    * Required at text color as per promise date
@@ -416,7 +416,7 @@ data class HomeTripsItemData(
   /**
    * @return true if indent type(pmt/ftl)
    */
-  fun isPMTIndent() = truckSpecification?.sourcedAs?.toLowerCase() == "pmt"
+  fun isPMTIndent() = truckSpecification?.sourcedAs?.lowercase() == "pmt"
 
   /**
    * @return formatted lr number

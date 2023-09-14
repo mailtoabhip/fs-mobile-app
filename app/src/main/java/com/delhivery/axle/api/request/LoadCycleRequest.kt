@@ -53,7 +53,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     operationTripStatus?.let { if (it.isNotEmpty()) jsonObject.addProperty("trip_status", it) }
     vehicleNumber?.let {
       if (it.isNotEmpty()) jsonObject.addProperty(
-          "vehicle_number", it.toUpperCase()
+          "vehicle_number", it.uppercase()
       )
     }
     lr?.let { if (it.isNotEmpty()) jsonObject.addProperty("LR", it) }

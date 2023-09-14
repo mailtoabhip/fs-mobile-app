@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
@@ -82,7 +83,16 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         setSupportActionBar(binding.toolbar)
         title = if(viewModel.cityType == "origin") "Origin Location" else "Destination Location"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                selectedCityStates.clear()
+                for(item in oldSelectedCityStates){
+                    selectedCityStates.add(item)
+                }
+                finish()
+            }
 
+        })
         binding.rvCityItems.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@SearchCityStateActivity.adapter
@@ -175,13 +185,13 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
          }
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         selectedCityStates.clear()
         for(item in oldSelectedCityStates){
            selectedCityStates.add(item)
         }
         super.onBackPressed()
-    }
+    }*/
 
     override fun handleAction(
         actionId: String,

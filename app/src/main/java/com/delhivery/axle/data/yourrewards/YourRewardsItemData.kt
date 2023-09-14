@@ -96,7 +96,7 @@ data class YourRewardsItemData(
     return stopBuilder.toString()
   }
 
-  fun truckDetails():String = truckDisplayName+" ("+truckCapacity+"MT)"+" / "+vehicleNumber?.toUpperCase()
+  fun truckDetails():String = truckDisplayName+" ("+truckCapacity+"MT)"+" / "+vehicleNumber?.uppercase()
 
   fun isApproved(): Int = if(verificationState=="verified") View.VISIBLE else View.GONE
 

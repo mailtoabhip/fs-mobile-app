@@ -1,5 +1,6 @@
 package com.delhivery.axle.fcm
 
+import android.Manifest.permission
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,12 +9,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
 import androidx.core.app.NotificationManagerCompat
@@ -178,7 +181,13 @@ class DelhiveryFCMService : FirebaseMessagingService() {
           .setSound(soundUri)
 
       with(NotificationManagerCompat.from(this)) {
-        notify(notificationId.hashCode(), notificationBuilder.build())
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
+            this@DelhiveryFCMService,
+            permission.POST_NOTIFICATIONS
+          ) == PackageManager.PERMISSION_GRANTED)
+          ||Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+        )
+         notify(notificationId.hashCode(), notificationBuilder.build())
       }
     }
   }

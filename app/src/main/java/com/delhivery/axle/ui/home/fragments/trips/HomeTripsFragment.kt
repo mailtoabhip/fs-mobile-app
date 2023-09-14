@@ -95,7 +95,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     })
 
     viewModel.emailLoadingLiveData.observe(viewLifecycleOwner, Observer {
-      LedgerSuccessDialog(context!!).show()
+      LedgerSuccessDialog(requireContext()).show()
     })
 
     binding.refreshLayout.setOnRefreshListener {
@@ -105,24 +105,24 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
 
     binding.downloadContainer.setOnClickListener {
-      DownloadLedgerDialog(context!!, viewModel,analyticsUtil,userPrefs).show()
+      DownloadLedgerDialog(requireContext(), viewModel,analyticsUtil,userPrefs).show()
     }
 
     binding.labelViewAllTrips.setOnClickListener {
       userPrefs.setPreviousScreen(this.javaClass.name)
-      startActivity(userTripsIntent(context!!, "all", 0))
+      startActivity(userTripsIntent(requireContext(), "all", 0))
       userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingArirval.setOnClickListener {
       userPrefs.setPreviousScreen(this.javaClass.name)
-      startActivity(userTripsIntent(context!!, "trips_view", 0))
+      startActivity(userTripsIntent(requireContext(), "trips_view", 0))
       userPrefs.startTime = Date().time
     }
 
     binding.viewInTransit.setOnClickListener {
       userPrefs.setPreviousScreen(this.javaClass.name)
-      startActivity(userTripsIntent(context!!, "trips_view", 1))
+      startActivity(userTripsIntent(requireContext(), "trips_view", 1))
       userPrefs.startTime = Date().time
     }
 
@@ -138,13 +138,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.viewAwaitingLoading.setOnClickListener {
       userPrefs.setPreviousScreen(this.javaClass.name)
-      startActivity(userTripsIntent(context!!, "trips_view", 2))
+      startActivity(userTripsIntent(requireContext(), "trips_view", 2))
       userPrefs.startTime = Date().time
     }
 
     binding.viewAwaitingUnloading.setOnClickListener {
       userPrefs.setPreviousScreen(this.javaClass.name)
-      startActivity(userTripsIntent(context!!, "trips_view", 3))
+      startActivity(userTripsIntent(requireContext(), "trips_view", 3))
       userPrefs.startTime = Date().time
     }
 
@@ -156,14 +156,14 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       )
       context?.let {
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(consolidatedPageIntent(context!!))
+        startActivity(consolidatedPageIntent(requireContext()))
       }
     }
 
     binding.advanceCard.setOnClickListener {
       context?.let {
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(userTripsIntent(context!!, "payment_view", 0))
+        startActivity(userTripsIntent(requireContext(), "payment_view", 0))
         userPrefs.startTime = Date().time
       }
     }
@@ -171,7 +171,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.balanceCard.setOnClickListener {
       context?.let {
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(userTripsIntent(context!!, "payment_view", 1))
+        startActivity(userTripsIntent(requireContext(), "payment_view", 1))
         userPrefs.startTime = Date().time
       }
     }
@@ -179,7 +179,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.recoveryCard.setOnClickListener {
       context?.let {
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(userTripsIntent(context!!, "payment_view", 2))
+        startActivity(userTripsIntent(requireContext(), "payment_view", 2))
         userPrefs.startTime = Date().time
       }
     }
@@ -187,7 +187,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.editStickySearch.setOnClickListener {
       context?.let {
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(searchOngoingTripIntent(context!!))
+        startActivity(searchOngoingTripIntent(requireContext()))
       }
     }
 

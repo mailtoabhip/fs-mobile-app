@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.selectroutewelcome
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
@@ -71,7 +72,10 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
     /* not needed as of now */
   }
 
-  override fun onActivityResult(
+  val resultLauncher = registerForActivityResult(StartActivityForResult()){ result ->
+    
+  }
+  /*override fun onActivityResult(
     requestCode: Int,
     resultCode: Int,
     data: Intent?
@@ -82,5 +86,6 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
           HomeActivity::class.java, true
       )
     }
-  }
+  }*/
+
 }

@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.databinding.library.BuildConfig
@@ -116,6 +117,20 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(userPrefs.ifscCode.isNotNullOrEmpty()){
             viewModel.ifscText.value=userPrefs.ifscCode
         }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                if(userPrefs.retryVerification){
+                    navigationUtils.navigate(MyProfileActivity::class.java, true)
+                }else {
+                    val bundle = Bundle()
+                    bundle.putInt(StepKey,3)
+                    navigationUtils.navigateKyc(this@PaymentDetailsActivity,true,bundle)
+                }
+                finish()
+            }
+
+        })
+
         showUploadedDoc()
     }
 
@@ -261,7 +276,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     } else {
                         viewModel.getBankName(
                             accountNum = viewModel.accountText.value!!,
-                            ifsc = viewModel.ifscText.value?.toUpperCase()!!
+                            ifsc = viewModel.ifscText.value?.uppercase()!!
                         )
                     }
                 }
@@ -442,7 +457,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         super.onBackPressed()
         if(userPrefs.retryVerification){
             navigationUtils.navigate(MyProfileActivity::class.java, true)
@@ -451,7 +466,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             bundle.putInt(StepKey,3)
             navigationUtils.navigateKyc(this,true,bundle)
         }
-    }
+    }*/
 
     fun enableSubmitButton(){
         Log.d("Enabke",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString()+nameDec.toString())
