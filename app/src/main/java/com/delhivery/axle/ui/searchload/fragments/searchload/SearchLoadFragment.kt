@@ -331,7 +331,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }
       /* title as per search results */
       if(contractType!=ContractType.INTRACITY.type)
-      binding.textHistoryTitle.visible(!t.isNullOrEmpty())
+        binding.textHistoryTitle.visible(!t.isNullOrEmpty())
     }
   }
 

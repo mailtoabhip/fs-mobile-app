@@ -130,7 +130,6 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
   }
 
   private fun downloadProofDoc(item: String) {
-    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
      compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
       .onBackground()
       .subscribe { granted, error ->

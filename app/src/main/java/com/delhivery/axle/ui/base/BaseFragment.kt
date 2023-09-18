@@ -163,10 +163,11 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
    * @return Single<Boolean> with result
    */
   fun requestPermission(permission: String): Single<Boolean> {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+      || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permission == Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    {
       return Single.just(true)
     }
-
     permissionResultSubject = PublishSubject.create()
 
     activity?.let {

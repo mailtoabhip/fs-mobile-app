@@ -140,7 +140,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun downloadLogo() {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
           compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 .onBackground()
                 .subscribe { granted, error ->

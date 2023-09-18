@@ -185,7 +185,6 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         if (data.podUrl.isNullOrEmpty()) {
           startActivityForResult(uploadImageIntent(this, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD)
         } else {
-          if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
             compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
               .onBackground()
               .subscribe { granted, error ->
