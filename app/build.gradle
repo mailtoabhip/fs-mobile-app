@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-  compileSdkVersion 33
+  compileSdk 33
   signingConfigs {
     release {
       keyAlias 'axle_delhivery'
@@ -15,8 +15,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
     targetSdkVersion 33
-    versionCode 107
-    versionName "1.107"
+    versionCode 108
+    versionName "1.108"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -32,7 +32,7 @@ android {
       }
     }
   }
-  flavorDimensions "vanilla"
+  flavorDimensions+= "vanilla"
   productFlavors {
     development {
       dimension "vanilla"
