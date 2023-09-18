@@ -384,7 +384,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun requestStoragePermission() {
     val storagePermission =
       ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+    if (storagePermission != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
       ActivityCompat.requestPermissions(
           this,
           arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -588,7 +588,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
         uiUtils.showSnackbar("Storage permission required to download POD")
       } else {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
           requestStoragePermission()
       }
     }

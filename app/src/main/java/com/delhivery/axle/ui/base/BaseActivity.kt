@@ -387,6 +387,8 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
     var permissionCode = PackageManager.PERMISSION_DENIED
     for (permission in permissions) {
+      if(permission == Manifest.permission.WRITE_EXTERNAL_STORAGE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        continue
       permissionCode = ContextCompat.checkSelfPermission(this, permission)
       if (permissionCode == PackageManager.PERMISSION_DENIED) {
         break
