@@ -124,6 +124,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     private fun downloadLogo(item: String) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
           compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onBackground()
                 .subscribe { granted, error ->

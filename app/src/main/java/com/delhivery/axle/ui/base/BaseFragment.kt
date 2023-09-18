@@ -166,10 +166,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
       return Single.just(true)
     }
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permission == Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    {
-      return Single.just(true)
-    }
+
     permissionResultSubject = PublishSubject.create()
 
     activity?.let {
