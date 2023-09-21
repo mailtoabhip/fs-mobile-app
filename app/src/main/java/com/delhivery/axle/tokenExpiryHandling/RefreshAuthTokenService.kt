@@ -10,6 +10,7 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.KotlinApp.Companion.CHANNEL_ID
 import com.delhivery.axle.R
 import com.delhivery.axle.config.UrlConfig
+import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -34,6 +35,9 @@ class RefreshAuthTokenService : Service(){
 
     @Inject
     lateinit var userPrefs: UserPrefs
+
+    @Inject
+    lateinit var networkInterceptor: DelhiveryNetworkInterceptor
 
     override fun onCreate() {
         AndroidInjection.inject(this)
@@ -105,6 +109,7 @@ class RefreshAuthTokenService : Service(){
                         val jwtToken = json.optString("jwt")
                         if (jwtToken.isNotNullOrEmpty()){
                             userPrefs.jwtToken = jwtToken
+                            networkInterceptor.updateJWT(jwtToken)
                         }
                     }
                     if(Build.VERSION.SDK_INT >= 28)
