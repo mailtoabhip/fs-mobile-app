@@ -6,6 +6,7 @@ import com.delhivery.axle.SyncOfferData.MyWorker
 import com.delhivery.axle.injection.module.DaggerWorkerFactory.ChildWorkerFactory
 import com.delhivery.axle.injection.scope.ViewModelScope
 import com.delhivery.axle.injection.scope.WorkerKey
+import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
 import com.delhivery.axle.ui.accountaction.AccountActionViewModel
 import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
 import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
@@ -424,4 +425,10 @@ abstract class ViewModelFactoryModule {
   @WorkerKey(MyWorker::class)
   abstract fun bindTopArtistsUpdateWorker(factory: MyWorker.Factory):
           ChildWorkerFactory
+
+  @Binds
+  @IntoMap
+  @WorkerKey(RefreshTokenWorker::class)
+  abstract fun bindRefreshTokenWorker(factory: RefreshTokenWorker.Factory):
+      ChildWorkerFactory
 }
