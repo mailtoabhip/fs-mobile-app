@@ -59,13 +59,13 @@ class NetworkModule {
    */
   @Provides
   @Singleton
-  fun provideOkHttpClient(chuckerInterceptor: ChuckerInterceptor, networkInterceptor: DelhiveryNetworkInterceptor): OkHttpClient = OkHttpClient.Builder()
+  fun provideOkHttpClient(chuckerInterceptor: ChuckerInterceptor, authInterceptor: DelhiveryNetworkInterceptor): OkHttpClient = OkHttpClient.Builder()
       .connectTimeout(30, SECONDS)
       .readTimeout(30, SECONDS)
       .writeTimeout(15, SECONDS)
       .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
       .addInterceptor(chuckerInterceptor)
-      .addInterceptor(networkInterceptor)
+      .addInterceptor(authInterceptor)
       .build()
 
   /**
