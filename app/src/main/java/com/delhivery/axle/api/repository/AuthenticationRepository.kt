@@ -25,12 +25,13 @@ import javax.inject.Singleton
 class AuthenticationRepository @Inject constructor(
   private val umsService: UMSService,
   private val loadBoardService: LoadBoardService,
-  private val userPrefs: UserPrefs
+  private val userPrefs: UserPrefs,
+  private val networkInterceptor: DelhiveryNetworkInterceptor
 ) : BaseRepository() {
 
   init {
     /* Update JWT token from prefs to Network Interceptor */
-    DelhiveryNetworkInterceptor.instance.updateJWT(userPrefs.jwtToken)
+    networkInterceptor.updateJWT(userPrefs.jwtToken)
   }
 
   /**
@@ -83,7 +84,7 @@ class AuthenticationRepository @Inject constructor(
    */
   private fun handleJWTToken(jwtToken: String) {
     userPrefs.jwtToken = jwtToken
-    DelhiveryNetworkInterceptor.instance.updateJWT(jwtToken)
+    networkInterceptor.updateJWT(jwtToken)
   }
 
   /**
@@ -93,7 +94,7 @@ class AuthenticationRepository @Inject constructor(
     if(intent== "notFromUser"){
       //analyticsUtil.trackEvent(EVENT_AUTO_LOGOUT)
     }
-    DelhiveryNetworkInterceptor.instance.updateJWT(null)
+    networkInterceptor.updateJWT(null)
     userPrefs.clearPrefs()
     /* delete user pref db's and other user-related cache */
   }

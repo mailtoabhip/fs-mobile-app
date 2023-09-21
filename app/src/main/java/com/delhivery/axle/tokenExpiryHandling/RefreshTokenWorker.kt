@@ -17,6 +17,7 @@ import com.delhivery.axle.api.repository.PriceRepository
 import com.delhivery.axle.config.UrlConfig.AppID
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.injection.module.DaggerWorkerFactory
+import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.Call
@@ -29,7 +30,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class RefreshTokenWorker(appContext: Context, params: WorkerParameters,var userPrefs: UserPrefs, var okHttpClient: OkHttpClient) :
+class RefreshTokenWorker(appContext: Context, params: WorkerParameters,var userPrefs: UserPrefs, var okHttpClient: OkHttpClient,var authInterceptor: DelhiveryNetworkInterceptor) :
     CoroutineWorker(appContext, params) {
     companion object {
         const val WORK_NAME = "RefreshTokenWorker"
@@ -95,6 +96,7 @@ class RefreshTokenWorker(appContext: Context, params: WorkerParameters,var userP
             val jwtToken = json.optString("jwt")
             if (jwtToken.isNotNullOrEmpty()){
               userPrefs.jwtToken = jwtToken
+              authInterceptor.updateJWT(jwtToken)
             }
           }
           WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
@@ -107,10 +109,11 @@ class RefreshTokenWorker(appContext: Context, params: WorkerParameters,var userP
 
   class Factory @Inject constructor(
     val userPrefs: UserPrefs,
-    val okHttpClient: OkHttpClient
+    val okHttpClient: OkHttpClient,
+    val authInterceptor: DelhiveryNetworkInterceptor
   ) : DaggerWorkerFactory.ChildWorkerFactory {
 
     override fun create(appContext: Context, params: WorkerParameters): ListenableWorker =
-      RefreshTokenWorker(appContext, params,userPrefs, okHttpClient)
+      RefreshTokenWorker(appContext, params,userPrefs, okHttpClient, authInterceptor  )
   }
 }
