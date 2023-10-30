@@ -59,14 +59,14 @@ class AdminMemberDialog @Inject constructor(
             if(isChecked){
                 binding.dieselReliance.isEnabled = true
                 binding.dieselIocl.isEnabled= true
-                binding.cardLayout?.visibility = View.VISIBLE
+                binding.adminDieselReferenceSwitch?.visibility = View.VISIBLE
             }
             else{
                 binding.dieselReliance.isEnabled = false
                 binding.dieselIocl.isEnabled= false
                 binding.dieselReliance.isChecked = false
                 binding.dieselIocl.isChecked = false
-                binding.cardLayout?.visibility = View.GONE
+                binding.adminDieselReferenceSwitch?.visibility = View.GONE
             }
         })
 

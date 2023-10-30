@@ -173,7 +173,7 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:id="@+id/cardLayout"
+            android:id="@+id/cardLayout2"
             android:visibility="gone"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/size_24dp"

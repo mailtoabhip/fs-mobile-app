@@ -176,7 +176,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         )
         reviseInitiated=true
         BidDetailsCreateEditDialog(
-                context!!, data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "load_screen"
+                requireContext(), data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "load_screen"
         ).show()
       }
     })
@@ -346,7 +346,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
 
         BidConfirmReviseDialog(
-                context!!, it.second, viewModel, it.first
+                requireContext(), it.second, viewModel, it.first
         ).show()
       }
       adapter.notifyItemChanged(it.first)
@@ -404,7 +404,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         if (it.second.truckUUID != null) {
           try {
             BulkBidDetailsCreateEditDialog(
-                    context!!,
+                    requireContext(),
                     it.second,
                     it.second.bulkTransactionBids,
                     it.first,
@@ -671,7 +671,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   }
 
   private fun showAddTruckDialog(items: List<TruckFrequentItem>, source: String) {
-    val dialog = Dialog(context!!)
+    val dialog = Dialog(requireContext())
     val bindingDialog= DialogBottomTruckAddBinding.inflate(layoutInflater)
 
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -682,7 +682,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       val itemBinding = createTruckFrequentItem(bindingDialog)
       itemBinding.data = item
       itemBinding.root.setOnClickListener{
-        context?.let { startActivityForResult(truckIntent(context!!, item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap, item.sourcedAs, source = source), REQCODE_ADD_TRUCK) }
+        context?.let { startActivityForResult(truckIntent(requireContext(), item.truckType, item.truckSize, item.capacity, item.minCap, item.maxCap, item.sourcedAs, source = source), REQCODE_ADD_TRUCK) }
         dialog.dismiss()
       }
 
@@ -694,7 +694,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     bindingDialog.addTruckLayout.setOnClickListener{
       userPrefs.setPreviousScreen(this.javaClass.name)
-      context?.let { startActivityForResult(truckIntent(context!!, source = source), REQCODE_ADD_TRUCK) }
+      context?.let { startActivityForResult(truckIntent(requireContext(), source = source), REQCODE_ADD_TRUCK) }
       dialog.dismiss()
     }
 
@@ -801,7 +801,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   reviseInitiated=true
                 }
                 BidDetailsCreateEditDialog(
-                        context!!, it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs, "load_screen"
+                        requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs, "load_screen"
                 ).show()
               }
             }
@@ -857,7 +857,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     binding.routesBanner.animate()
         .translationY(
                 PositionAnimExpectation.dpToPx(
-                        this@HomeLoadsFragment.context!!, binding.routesBanner.height.toFloat()
+                        this@HomeLoadsFragment.requireContext(), binding.routesBanner.height.toFloat()
                 )
         )
         .setInterpolator(AccelerateInterpolator(2f))
@@ -869,7 +869,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     binding.routesBanner.animate()
         .translationY(
                 -PositionAnimExpectation.dpToPx(
-                        this@HomeLoadsFragment.context!!, 0f
+                        this@HomeLoadsFragment.requireContext(), 0f
                 )
         )
         .setInterpolator(DecelerateInterpolator(2f))

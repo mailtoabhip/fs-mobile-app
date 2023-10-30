@@ -1,6 +1,7 @@
 package com.delhivery.axle.injection.module
 
 import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.delhivery.axle.api.service.*
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.injection.qualifier.ApplicationContext
@@ -46,6 +47,11 @@ class NetworkModule {
   fun provideGson(): Gson = GsonBuilder().setLenient()
       .create()
 
+  @Provides
+  @Singleton
+  fun provideChuckerInterceptor(@ApplicationContext context: Context): ChuckerInterceptor =
+    ChuckerInterceptor.Builder(context).build()
+
   /**
    * Provide Http(OKHttp) client
    *
@@ -53,12 +59,13 @@ class NetworkModule {
    */
   @Provides
   @Singleton
-  fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+  fun provideOkHttpClient(chuckerInterceptor: ChuckerInterceptor, authInterceptor: DelhiveryNetworkInterceptor): OkHttpClient = OkHttpClient.Builder()
       .connectTimeout(30, SECONDS)
       .readTimeout(30, SECONDS)
       .writeTimeout(15, SECONDS)
       .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-      .addInterceptor(DelhiveryNetworkInterceptor.instance)
+      .addInterceptor(chuckerInterceptor)
+      .addInterceptor(authInterceptor)
       .build()
 
   /**

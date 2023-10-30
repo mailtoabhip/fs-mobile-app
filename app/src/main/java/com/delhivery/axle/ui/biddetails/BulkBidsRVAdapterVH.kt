@@ -89,8 +89,8 @@ class BulkBidsSummaryItemVH(binding: ViewBidDetailItemBinding) :
               }
         }
     }
-        binding.expandableLayout.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
-        binding.expandButton.clickToAction(EXPAND_CARD,item, adapterPosition, _interface)
+        binding.expandableLayout.clickToAction(EXPAND_CARD,item, bindingAdapterPosition, _interface)
+        binding.expandButton.clickToAction(EXPAND_CARD,item, bindingAdapterPosition, _interface)
     }
 }
 
@@ -113,7 +113,7 @@ internal class BulkBidSummaryTimeOutItemVH(binding: ViewTimeOutItemBinding) :
         binding.title = item.data.title
         binding.subTitle = item.data.subtitle
         binding.actionLabel = item.data.actionLabel
-        binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+        binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
     }
 
 }

@@ -1,17 +1,30 @@
 package com.delhivery.axle.ui.splash
 
+import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.Activity
+import android.app.ProgressDialog.show
 import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.provider.Settings
 import android.provider.Settings.Secure
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.delhivery.axle.R
+import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
@@ -25,29 +38,32 @@ import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
-import com.delhivery.axle.utils.EVENT_ADD_TRUCK_SUBMIT
 import com.delhivery.axle.utils.EVENT_APP_OPEN
-import com.delhivery.axle.utils.EVENT_HOME_SEARCH_INITIATE
 import com.delhivery.axle.utils.EVENT_UPDATE_APP
 import com.delhivery.axle.utils.EVENT_UPDATE_CANCEL
 import com.delhivery.axle.utils.PROPERTY_CURRENT_VERSION
 import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
 import com.delhivery.axle.utils.PROPERTY_LATEST_VERSION
-import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
-import com.delhivery.axle.ui.splash.SplashPostState.*
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -57,7 +73,7 @@ import javax.inject.Inject
 /**
  * Splash screen
  */
-class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
+class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   init {
     StatusBarColor = Color.parseColor("#181818")
   }
@@ -70,14 +86,17 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   var currentCode :Int =0
   var type :String = ""
   var tid :String  = ""
+  lateinit var splashScreen: SplashScreen
   lateinit var isAuthenticated :SplashPostState
   var ifUpdateFalse=false
   override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
-
   override fun onCreate(savedInstanceState: Bundle?) {
+    splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
+    // Keep the splash screen visible for this Activity
+    splashScreen.setKeepOnScreenCondition { true }
     //Capture event
     val cal = Calendar.getInstance()
     val currentHourIn24Format = cal[Calendar.HOUR_OF_DAY]
@@ -112,6 +131,28 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
     animate()
     checkForDynamicLinks()
+    if(!userPrefs.hasLoggedIn) {
+      compositeDisposable += requestPermission(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+        .onBackground()
+        .subscribe { granted, error ->
+          if (error == null && granted) {
+
+          } else {
+            Snackbar.make(
+              binding.root,
+              "Please enable notification",
+              Snackbar.LENGTH_LONG
+            ).setAction("Settings") {
+              // Responds to click on the action
+              val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+              intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+              val uri: Uri = Uri.fromParts("package", packageName, null)
+              intent.data = uri
+              startActivity(intent)
+            }.show()
+          }
+        }
+    }
     binding.btnGetStarted.visibility = View.GONE
     binding.btnGetStarted.setOnClickListener {
       if(ifUpdateFalse) {
@@ -149,30 +190,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
       checkForUpdatedVersion { it ->
         when (it) {
           true -> {
-            dialogUtils.showBasicConfirmDialog(
-                R.string.title_dialog_update,
-                R.string.msg_dialog_update,
-                positiveAction = "UPDATE",
-                negativeAction = "CANCEL",
-                positiveClickListener = {
-                  analyticsUtil.trackEvent(
-                          EVENT_UPDATE_APP,
-                          mutableListOf(PROPERTY_USER_ID , PROPERTY_CURRENT_VERSION , PROPERTY_LATEST_VERSION),
-                          mutableListOf(userPrefs.userId(), currentCode.toString() , latestCode.toString())
-                  )
-                  it.dismiss()
-                  openPlayStore()
-                },
-                negativeClickListener = {
-                  analyticsUtil.trackEvent(
-                          EVENT_UPDATE_CANCEL,
-                          mutableListOf(PROPERTY_USER_ID , PROPERTY_CURRENT_VERSION , PROPERTY_LATEST_VERSION),
-                          mutableListOf(userPrefs.userId(), currentCode.toString() , latestCode.toString() )
-                  )
-                  it.dismiss()
-                  finish()
-                }
-            )
+            splashScreen.setKeepOnScreenCondition { false}
+            checkForAppUpdate(true)
           }
           false -> {
             ifUpdateFalse=true
@@ -180,6 +199,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
               binding.btnGetStarted.visibility = View.GONE
               postAnimate(isAuthenticated)
             }else{
+              splashScreen.setKeepOnScreenCondition { false }
               binding.btnGetStarted.visibility = View.VISIBLE
             }
           }
@@ -224,6 +244,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
               remoteConfig.activate()
               remoteConfig.getString("android_latest_version_code")
                   .toInt()
+            } catch (e: Exception) {
+              0
+            }
+            val recommendedVersionCode: Int = try {
+              remoteConfig.getString("recommended_update_version_code")
+                .toInt()
             } catch (e: Exception) {
               0
             }
@@ -275,7 +301,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             //get device and app level details
             analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_ID,androidId)
             analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_VERSION,pInfo.versionName+"("+currentCode.toString()+")")
-
+            viewModel.recommendedUpdate(
+              recommendedVersionCode>currentVersionCode
+            )
             completedAction(playStoreVersionCode > currentVersionCode)
           } else {
             completedAction(false)

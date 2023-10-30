@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -43,17 +44,18 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                     TotalStepsKey)!!)
             }
+      onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          userPrefs.retryVerificationOnBack=true
+          if(userPrefs.retryVerification){
+            navigationUtils.navigate(MyProfileActivity::class.java, true)
+          }else {
+            navigationUtils.navigate(BasicDetailsActivity::class.java, true)
+          }
+          finish()
+        }
+      })
 
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-      if(userPrefs.retryVerification){
-        navigationUtils.navigate(MyProfileActivity::class.java, true)
-      }else {
-        navigationUtils.navigate(BasicDetailsActivity::class.java, true)
-      }
     }
 
     fun trackEvent(ttl:String){

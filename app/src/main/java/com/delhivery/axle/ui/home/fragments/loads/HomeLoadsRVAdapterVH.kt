@@ -115,7 +115,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
             }
 
             override fun onFinish() {
-              _interface.deleteItem(item, adapterPosition)
+              _interface.deleteItem(item, bindingAdapterPosition)
             }
           }.start()
         }else{
@@ -157,8 +157,8 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
       }
 
     }
-    binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface)
-    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, adapterPosition, _interface
+    binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
     )
   }
 

@@ -78,7 +78,7 @@ class TeamMembersAdminUserItemVH(binding: ViewTeamMemberAdminItemBinding) :
   ) {
     binding.user = item.data
     if(item.data.userName.isNotNullOrEmpty()) {
-      binding.logoTeamMember.text = item.data.userName?.get(0)?.toUpperCase().toString()
+      binding.logoTeamMember.text = item.data.userName?.get(0)?.uppercase().toString()
     }
     binding.adminCardContainer.clickToAction(ViewAdminMember, item, _interface)
   }
@@ -97,9 +97,9 @@ class TeamMembersSubUserItemVH(binding: ViewTeamMemberSubuserItemBinding) :
   ) {
     binding.user = item.data
     if(item.data.userName.isNotNullOrEmpty()) {
-      binding.logoTeamMember.text = item.data.userName?.get(0)?.toUpperCase().toString()
+      binding.logoTeamMember.text = item.data.userName?.get(0)?.uppercase().toString()
     }
-    binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, adapterPosition, _interface)
+    binding.iconOptionsTeamMember.clickToAction(TeamMemberAction_options, item, bindingAdapterPosition, _interface)
     //binding.iconEditUser.clickToAction(EditTeamMemberAction_Edit, item, _interface)
 //    binding.iconRemoveUser.clickToAction(DeleteTeamMemberAction_Delete, item, _interface)
   }

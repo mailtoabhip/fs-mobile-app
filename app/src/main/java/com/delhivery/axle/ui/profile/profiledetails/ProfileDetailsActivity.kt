@@ -5,12 +5,14 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.RadioButton
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
@@ -66,6 +68,13 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Profile Details"
 
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
+
         viewModel.businessName.value = viewModel.userPrefs.companyName
         viewModel.userName.value = viewModel.userPrefs.userName
         uiUtils.toggleKeyboard()
@@ -82,7 +91,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
 
         viewModel.businessName.observe(this, androidx.lifecycle.Observer {
             if (it.isNotNullOrEmpty()) {
-                binding.profile.text = it[0].toUpperCase().toString()
+                binding.profile.text = it[0].uppercaseChar().toString()
             }
             enableSubmitButton()
         })
@@ -131,7 +140,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun downloadLogo() {
-        compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+          compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 .onBackground()
                 .subscribe { granted, error ->
                     if (error == null && granted) {
@@ -181,11 +190,6 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     override fun sendDocForVerification(uploadArray: ArrayList<Pair<String, String>>) {
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.setPreviousScreen(this.javaClass.name)
-    }
-
     private fun loadImage(
             path: String?,
             view: AppCompatImageView
@@ -207,7 +211,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                                         isFirstResource: Boolean
                                 ): Boolean {
                                     binding.card1.visibility = View.GONE
-                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().toUpperCase()
+                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
                                     binding.profile.visibility = View.VISIBLE
                                     return false
                                 }

@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.profile.kycdetails
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityProfileKycDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -31,6 +32,14 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigationUtils.navigate(MyProfileActivity::class.java,true)
+                finish()
+            }
+        })
+
         title =  "KYC Details"
         pagerAdapter = ProfileKYCFragmentsAdapter(supportFragmentManager)
 
@@ -51,11 +60,5 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
         }
 
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        navigationUtils.navigate(MyProfileActivity::class.java,true)
-    }
-
 
 }

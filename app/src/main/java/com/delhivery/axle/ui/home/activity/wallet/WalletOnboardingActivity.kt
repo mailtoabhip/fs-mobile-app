@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityWalletOnboardingBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -31,6 +32,13 @@ class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, W
     title = "Axle Wallet Flow"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
+
     binding.cbUnderstand.setOnCheckedChangeListener { v, selected ->
       v.post {
         binding.btnActivate.isEnabled = selected
@@ -44,10 +52,6 @@ class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, W
     }
   }
 
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    super.onBackPressed()
-  }
 }
 
 /**

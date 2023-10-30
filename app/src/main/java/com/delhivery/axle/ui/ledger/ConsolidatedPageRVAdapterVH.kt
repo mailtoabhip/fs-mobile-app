@@ -80,7 +80,7 @@ class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBindin
         }
 
 
-        binding.root.clickToAction(ConsolidatedLedgerItemAction, item, adapterPosition, _interface)
+        binding.root.clickToAction(ConsolidatedLedgerItemAction, item, bindingAdapterPosition, _interface)
     }
 }
 
@@ -93,7 +93,7 @@ BaseConsolidatedPageRVAdapterViewHolder<ViewWarningItemBinding, ConsolidatedPage
         binding.title = item.data.title
         binding.subTitle = item.data.subtitle
         binding.actionLabel = item.data.actionLabel
-        binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+        binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
     }
 }
 
@@ -107,7 +107,7 @@ internal class ConsolidatedPageTimeOutItemVH(binding: ViewTimeOutItemBinding) :
         binding.title = item.data.title
         binding.subTitle = item.data.subtitle
         binding.actionLabel = item.data.actionLabel
-        binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+        binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
     }
 }
 
@@ -118,7 +118,7 @@ internal class ConsolidatedPageSearchItemVH(binding: ViewHomeSearchItemBinding) 
         BaseConsolidatedPageRVAdapterViewHolder<ViewHomeSearchItemBinding, ConsolidatedPageSearchItem>(binding) {
     override fun bind(item: ConsolidatedPageSearchItem, _interface: ConsolidatedPageRVAdapterInterface) {
         binding.editQuery.hint = "Search by UTR Number"
-        binding.editQuery.clickToAction(HomeTripsSearchAction_Search, item, adapterPosition, _interface)
+        binding.editQuery.clickToAction(HomeTripsSearchAction_Search, item, bindingAdapterPosition, _interface)
     }
 }
 

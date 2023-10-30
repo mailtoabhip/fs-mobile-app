@@ -4,9 +4,11 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -24,6 +26,8 @@ import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
+import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
+import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
 import com.delhivery.axle.utils.AWSUtils
@@ -61,6 +65,17 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
     setSupportActionBar(binding.toolbar)
     title = "Search Trips"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        if (viewModel.total > 0) {
+          adapter.resetStaticData()
+          viewModel.total = 0
+        } else {
+        }
+        finish()
+      }
+    })
 
     binding.rvSearch.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
@@ -170,7 +185,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         if (data.podUrl.isNullOrEmpty()) {
           startActivityForResult(uploadImageIntent(this, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD)
         } else {
-          compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
+            compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
               .onBackground()
               .subscribe { granted, error ->
                 if (error == null && granted) {
@@ -239,14 +254,14 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
     return null
   }
 
-  override fun onBackPressed() {
+/*  override fun onBackPressed() {
     if (viewModel.total > 0) {
       adapter.resetStaticData()
       viewModel.total = 0
     } else {
       super.onBackPressed()
     }
-  }
+  }*/
 
   override fun onActivityResult(
     requestCode: Int,

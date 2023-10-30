@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -13,6 +14,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
@@ -106,6 +108,17 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,2)
+                navigationUtils.navigateKyc(this@CommunicationAddressActivity,true,bundle)
+                finish()
+            }
+        })
+
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
         /* Address Proof */
@@ -348,9 +361,11 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
             arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
-            )
+            ).apply {
+              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         )
             .onBackground()
             .subscribe { granted, error ->
@@ -531,14 +546,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             intent,
             REQCODE_FILE_ATTACHMENTS
         )
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,2)
-        navigationUtils.navigateKyc(this,true,bundle)
     }
 
     private fun uploadImage(

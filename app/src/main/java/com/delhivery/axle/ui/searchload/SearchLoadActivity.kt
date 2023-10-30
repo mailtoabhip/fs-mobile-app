@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.searchload
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySearchLoadBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -61,6 +62,17 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
     }
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        when (currentFragmentType) {
+          ResultsFragment -> navigate(LoadFragment)
+          else -> { finish() }
+        }
+
+      }
+    })
 
     /* start with load fragment */
     navigate(LoadFragment)
@@ -125,13 +137,6 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
       }
   }
 
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    when (currentFragmentType) {
-      ResultsFragment -> navigate(LoadFragment)
-      else -> super.onBackPressed()
-    }
-  }
 }
 
 fun searchLoadContractsIntent(

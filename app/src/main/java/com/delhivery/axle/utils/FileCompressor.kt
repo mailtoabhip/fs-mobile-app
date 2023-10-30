@@ -3,7 +3,7 @@ package com.delhivery.axle.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
+import androidx.exifinterface.media.ExifInterface
 import dagger.android.support.DaggerAppCompatActivity
 import java.io.File
 import java.io.FileOutputStream

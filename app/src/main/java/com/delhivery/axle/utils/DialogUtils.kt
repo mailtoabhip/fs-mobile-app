@@ -18,6 +18,8 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.delhivery.axle.R
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -133,7 +135,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
 
     val dialog = AlertDialog.Builder(activity)
         .setTitle(title)
-        .setMessage(Html.fromHtml(message))
+        .setMessage(HtmlCompat.fromHtml(message!!,FROM_HTML_MODE_LEGACY))
         .setPositiveButton(positiveBtnText, positiveClickListener)
         .setNegativeButton(negativeBtnText, negativeClickListener)
         .create()

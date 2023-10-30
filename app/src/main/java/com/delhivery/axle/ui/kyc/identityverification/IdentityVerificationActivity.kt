@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -14,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -31,6 +33,8 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
@@ -124,6 +128,16 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
         setSupportActionBar(binding.progressStepLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,0)
+                navigationUtils.navigateKyc(this@IdentityVerificationActivity,true,bundle)
+                finish()
+            }
+        })
         navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
 
@@ -140,15 +154,15 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
 
         when {
-            userPrefs.cinNumber.isNotNullOrEmpty() && userPrefs.identityDocUrl.toLowerCase().contains("cin")-> {
+            userPrefs.cinNumber.isNotNullOrEmpty() && userPrefs.identityDocUrl.lowercase().contains("cin")-> {
                 clickedCin(true)
                 viewModel.cinNumber = userPrefs.cinNumber
             }
-            userPrefs.udyogNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.toLowerCase().contains("udyog")-> {
+            userPrefs.udyogNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.lowercase().contains("udyog")-> {
                 clickedUdyog(true)
                 viewModel.udyogNumber = userPrefs.udyogNumber
             }
-            userPrefs.shopNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.toLowerCase().contains("shop") -> {
+            userPrefs.shopNumber.isNotNullOrEmpty() &&userPrefs.identityDocUrl.lowercase().contains("shop") -> {
                 clickedShopNumber(true)
                 viewModel.shopNumber = userPrefs.shopNumber
             }
@@ -297,9 +311,11 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
             arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
-            )
+            ).apply {
+              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         )
             .onBackground()
             .subscribe { granted, error ->
@@ -415,13 +431,6 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.retryVerificationOnBack=true
-        val bundle = Bundle()
-        bundle.putInt(StepKey,0)
-        navigationUtils.navigateKyc(this,true,bundle)
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

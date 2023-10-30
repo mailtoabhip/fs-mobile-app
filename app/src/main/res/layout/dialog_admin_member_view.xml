@@ -131,7 +131,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:id="@+id/cardLayout"
             android:paddingTop="@dimen/size_24dp"
             android:paddingBottom="@dimen/size_10dp"
             android:orientation="vertical">

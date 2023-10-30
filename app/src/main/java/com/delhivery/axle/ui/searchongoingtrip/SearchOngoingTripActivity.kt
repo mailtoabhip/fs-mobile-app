@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.UserSearchLimit
@@ -50,7 +51,12 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     setSupportActionBar(binding.toolbar)
     title = "Search Ongoing Trips"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
     binding.rvOngoingTripSearch.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = this@SearchOngoingTripActivity.adapter
@@ -151,10 +157,10 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     }
   }
 
-  override fun onBackPressed() {
+  /*override fun onBackPressed() {
     super.onBackPressed()
     userPrefs.setPreviousScreen(this.javaClass.name)
-  }
+  }*/
 
 }
 

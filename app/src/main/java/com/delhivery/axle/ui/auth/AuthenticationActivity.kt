@@ -8,6 +8,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -36,7 +38,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.moengage.core.internal.MoEConstants
+import com.moengage.core.internal.USER_ATTRIBUTE_UNIQUE_ID
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_MOBILE
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.text.DecimalFormat
@@ -82,11 +85,27 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* observe errors and update ui */
     viewModel.errorLiveData.observe(this, ErrorObserver())
 
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        when (binding.state) {
+          PhoneNo -> {
+            finish()
+          }
+          OTP -> viewModel.state = PhoneNo
+          Password -> viewModel.state = PhoneNo
+          LoginProgress -> {/* do nothing when loading */
+          }
+          else -> {
+          }
+        }
+
+      }
+    })
     /*move to back screen*/
     binding.btnChangeNumber.setOnClickListener {
       when (binding.state) {
         PhoneNo -> {
-          super.onBackPressed()
+          onBackPressedDispatcher.onBackPressed()
         }
         OTP -> viewModel.state = PhoneNo
         LoginProgress -> {/* do nothing when loading */
@@ -127,10 +146,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                   if (timeLeft > 0) {
                     val f: NumberFormat = DecimalFormat("00")
                     binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
-                    binding.btnResendOtp.setTextColor(resources.getColor(R.color.color_hint))
+                    binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext,R.color.color_hint))
                   } else if (timeLeft == 0L) {
                     binding.btnResendOtp.text = getString(string.label_resend_otp_done)
-                    binding.btnResendOtp.setTextColor(resources.getColor(R.color.colorAccent))
+                    binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
                   } else {
                     viewModel.otpStatusLiveData.postValue(false)
                   }
@@ -188,19 +207,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     viewModel.markNotificationRead(notificationId)
   }
 
-  override fun onBackPressed() {
-    when (binding.state) {
-      PhoneNo -> {
-        super.onBackPressed()
-      }
-      OTP -> viewModel.state = PhoneNo
-      Password -> viewModel.state = PhoneNo
-      LoginProgress -> {/* do nothing when loading */
-      }
-      else -> {
-      }
-    }
-  }
 
   override fun otpSubmitted(otp: CharArray) {
     binding.btnVerifyOtp.isEnabled = true
@@ -296,10 +302,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             userPrefs.userId().let {
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
             }
             userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
             uiUtils.showProgress("Loading...")
@@ -308,10 +314,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           Disabled -> {
             userPrefs.userId().let {
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
             }
             userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
             uiUtils.hideDelhiveryProgress()

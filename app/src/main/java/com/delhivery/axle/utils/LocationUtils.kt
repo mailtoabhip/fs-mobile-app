@@ -23,10 +23,12 @@ import com.delhivery.axle.utils.LocationFlowState.PermissionRationaleRequired
 import com.delhivery.axle.utils.LocationFlowState.PermissionRequired
 import com.delhivery.axle.utils.LocationFlowState.SettingDisabled
 import com.delhivery.axle.utils.prefs.GlobalPrefs
+import com.google.android.gms.location.LocationCallback
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.exceptions.Exceptions
 import java.util.Locale
+import java.util.function.Consumer
 import javax.inject.Inject
 
 @SuppressLint("LogNotTimber")
@@ -113,7 +115,7 @@ class LocationUtils @Inject constructor(
   fun getLocationAddress() = getLocation().flatMap { _loc ->
     val geoAddr = Geocoder(activity, Locale.getDefault())
         .getFromLocation(_loc.latitude, _loc.longitude, 1)
-        .firstOrNull()
+        ?.firstOrNull()
     Single.just(Pair(_loc, geoAddr))
   }
 
@@ -197,7 +199,15 @@ class LocationUtils @Inject constructor(
   @SuppressLint("MissingPermission")
   private fun requestLocationUpdateOnce(): Single<Location> {
     return Single.create<Location> {
-      locationManager.requestSingleUpdate(
+      if (Build.VERSION.SDK_INT >= 30) {
+        locationManager.getCurrentLocation(LocationManager.NETWORK_PROVIDER, null, activity.mainExecutor, object: Consumer<Location>{
+          override fun accept(location: Location) {
+            Log.d(LOG_TAG, "onLocationChanged(location: ${location.toString()})")
+            location.let { it1 -> it.onSuccess(it1) }
+          }
+        })
+      } else {
+        locationManager.requestSingleUpdate(
           LocationManager.NETWORK_PROVIDER,
           object : LocationListener {
             override fun onLocationChanged(location: Location) {
@@ -211,7 +221,7 @@ class LocationUtils @Inject constructor(
               extras: Bundle?
             ) {
               Log.d(
-                  LOG_TAG, "onStatusChanged(provider: $provider, status: $status, extras: $extras)"
+                LOG_TAG, "onStatusChanged(provider: $provider, status: $status, extras: $extras)"
               )
             }
 
@@ -223,7 +233,8 @@ class LocationUtils @Inject constructor(
               Log.d(LOG_TAG, "onProviderDisabled(provider: $provider)")
             }
           }, Looper.getMainLooper()
-      )
+        )
+      }
     }
   }
 }

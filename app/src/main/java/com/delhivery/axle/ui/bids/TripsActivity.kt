@@ -15,6 +15,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.SearchRequest
@@ -556,7 +557,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
     /* search bar expanded/collapse callbacks */
     searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
-      override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+      override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
         // Capture event
@@ -568,7 +569,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         return true
       }
 
-      override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+      override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
         uiUtils.toggleKeyboard()
         binding.refreshLayout.isEnabled = true
         adapter.cancelFilter()
@@ -595,17 +596,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
 
-            binding.idArrival.setTextColor(resources.getColor(R.color.white))
-            binding.textArrival.setTextColor(resources.getColor(R.color.white))
+            binding.idArrival.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textArrival.setTextColor(ContextCompat.getColor(this, R.color.white))
 
-            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
-            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.idInTransit.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textInTransit.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
-            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.idAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
-            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.idAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.black))
 
           }
           Companion.byTypeId(1) -> {
@@ -616,17 +617,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
 
-            binding.idArrival.setTextColor(resources.getColor(R.color.black))
-            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+            binding.idArrival.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textArrival.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idInTransit.setTextColor(resources.getColor(R.color.white))
-            binding.textInTransit.setTextColor(resources.getColor(R.color.white))
+            binding.idInTransit.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textInTransit.setTextColor(ContextCompat.getColor(this, R.color.white))
 
-            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
-            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.idAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
-            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.idAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.black))
 
             viewModel.filterList = listOf("All", "Delayed")
             viewModel.filterKey = "loaded_after"
@@ -640,17 +641,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
             binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
 
-            binding.idArrival.setTextColor(resources.getColor(R.color.black))
-            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+            binding.idArrival.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textArrival.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
-            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.idInTransit.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textInTransit.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.white))
-            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.white))
+            binding.idAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.white))
 
-            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
-            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.black))
+            binding.idAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.black))
 
             viewModel.filterList = listOf("Less than 1 day", "1 day +", "2 days +", "3 days +")
             viewModel.filterKey = "arrived_ageing"
@@ -664,17 +665,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewAwaitingLoading.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewAwaitingUnloading.setBackgroundResource(R.drawable.bg_all_4_corner_white)
 
-            binding.idArrival.setTextColor(resources.getColor(R.color.black))
-            binding.textArrival.setTextColor(resources.getColor(R.color.black))
+            binding.idArrival.setTextColor(ContextCompat.getColor(this, (R.color.black)))
+            binding.textArrival.setTextColor(ContextCompat.getColor(this, (R.color.black)))
 
-            binding.idInTransit.setTextColor(resources.getColor(R.color.black))
-            binding.textInTransit.setTextColor(resources.getColor(R.color.black))
+            binding.idInTransit.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textInTransit.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idAwaitingLoading.setTextColor(resources.getColor(R.color.black))
-            binding.textAwaitingLoading.setTextColor(resources.getColor(R.color.black))
+            binding.idAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAwaitingLoading.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.idAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
-            binding.textAwaitingUnloading.setTextColor(resources.getColor(R.color.white))
+            binding.idAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textAwaitingUnloading.setTextColor(ContextCompat.getColor(this, R.color.white))
 
             viewModel.filterList = listOf("Less than 1 day", "1 day +", "2 days +", "3 days +")
             viewModel.filterKey = "reached_ageing"
@@ -697,17 +698,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
 
-            binding.id1.setTextColor(resources.getColor(R.color.white))
-            binding.textAdvancePending.setTextColor(resources.getColor(R.color.white))
-            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.white))
+            binding.id1.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textAdvancePending.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textAdvancePendingCount.setTextColor(ContextCompat.getColor(this, R.color.white))
 
-            binding.id2.setTextColor(resources.getColor(R.color.black))
-            binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
-            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.black))
+            binding.id2.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textBalancePending.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textBalancePendingCount.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.id3.setTextColor(resources.getColor(R.color.black))
-            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
-            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
+            binding.id3.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textRecoveryPending.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textRecoveryPendingCount.setTextColor(ContextCompat.getColor(this, R.color.black))
 
           }
           ViewPaymentType.byTypeId(1) -> {
@@ -717,17 +718,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewBalancePending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
             binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
 
-            binding.id1.setTextColor(resources.getColor(R.color.black))
-            binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
-            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.black))
+            binding.id1.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAdvancePending.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAdvancePendingCount.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.id2.setTextColor(resources.getColor(R.color.white))
-            binding.textBalancePending.setTextColor(resources.getColor(R.color.white))
-            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.white))
+            binding.id2.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textBalancePending.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textBalancePendingCount.setTextColor(ContextCompat.getColor(this, R.color.white))
 
-            binding.id3.setTextColor(resources.getColor(R.color.black))
-            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.black))
-            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.black))
+            binding.id3.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textRecoveryPending.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textRecoveryPendingCount.setTextColor(ContextCompat.getColor(this, R.color.black))
 
             viewModel.filterList = listOf("All", "Trips with POD issue")
             viewModel.filterKey = "trips_with_issue"
@@ -740,17 +741,17 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
             binding.viewBalancePending.setBackgroundResource(R.drawable.bg_white_all_corner_black)
             binding.viewRecoveryPending.setBackgroundResource(R.drawable.bg_all_4_corner_white)
 
-            binding.id1.setTextColor(resources.getColor(R.color.black))
-            binding.textAdvancePending.setTextColor(resources.getColor(R.color.black))
-            binding.textAdvancePendingCount.setTextColor(resources.getColor(R.color.black))
+            binding.id1.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAdvancePending.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textAdvancePendingCount.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.id2.setTextColor(resources.getColor(R.color.black))
-            binding.textBalancePending.setTextColor(resources.getColor(R.color.black))
-            binding.textBalancePendingCount.setTextColor(resources.getColor(R.color.black))
+            binding.id2.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textBalancePending.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.textBalancePendingCount.setTextColor(ContextCompat.getColor(this, R.color.black))
 
-            binding.id3.setTextColor(resources.getColor(R.color.white))
-            binding.textRecoveryPending.setTextColor(resources.getColor(R.color.white))
-            binding.textRecoveryPendingCount.setTextColor(resources.getColor(R.color.white))
+            binding.id3.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textRecoveryPending.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.textRecoveryPendingCount.setTextColor(ContextCompat.getColor(this, R.color.white))
 
           }
         }

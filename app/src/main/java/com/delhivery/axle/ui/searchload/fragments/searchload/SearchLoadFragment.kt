@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.searchload.fragments.searchload
 import android.R.layout
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -259,7 +260,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         binding.editReportingCenter.errorAnimate()
         return
       }
-      if(truckDisplayName!!.toLowerCase().contains("select")) {
+      if(truckDisplayName!!.lowercase().contains("select")) {
         binding.spinnerTruckDisplayName.errorVibrate()
         return
       }
@@ -272,7 +273,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         return
       }
 
-      if (truckType!!.toLowerCase().contains("choose")) {
+      if (truckType!!.lowercase().contains("choose")) {
         binding.spinnerTruckType.errorVibrate()
         return
       }
@@ -294,7 +295,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
 
     /* delay and search for better UX */
-      Handler().postDelayed({
+      Handler(Looper.myLooper()!!).postDelayed({
         action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory,isFlexible,includeFlexibleContracts))
       }, 200)
   }
@@ -305,7 +306,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   private fun initObservers() {
     /* observe live data for search history */
     viewModel.searchLoadHistoryLiveData(requestType,contractType)
-        ?.observe(this, SearchLoadHistoryObserver())
+        ?.observe(viewLifecycleOwner, SearchLoadHistoryObserver())
   }
 
   /**
@@ -330,7 +331,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }
       /* title as per search results */
       if(contractType!=ContractType.INTRACITY.type)
-      binding.textHistoryTitle.visible(!t.isNullOrEmpty())
+        binding.textHistoryTitle.visible(!t.isNullOrEmpty())
     }
   }
 

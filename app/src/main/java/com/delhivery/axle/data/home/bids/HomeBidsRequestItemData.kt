@@ -27,6 +27,7 @@ import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
@@ -226,7 +227,7 @@ data class HomeBidsRequestItemData(
   fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
 
 
-  fun setTruckTypeText() = truckType!!.capitalize() ?: ""
+  fun setTruckTypeText() = capitalize(truckType!!) ?: ""
 
   fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 
@@ -517,14 +518,14 @@ data class HomeBidsRequestItemData(
    */
   @ColorRes
   fun requiredTextColor() =
-    ColorProviderUtils.getStatusColor(bidStatus().status.toLowerCase())
+    ColorProviderUtils.getStatusColor(bidStatus().status.lowercase())
 
   /**
    * Get truck details/type
    * Don't show MT for demand_type = Intracity for Load and LH/Intracity contracts
    */
   fun truckDetail() = if (isDMTIndent()) {
-    truckType!!.capitalize() ?: ""
+    capitalize(truckType!!) ?: ""
   } else {
       truckSpecification?.let {
         if(requestType==RequestType.Contract.type){
@@ -555,7 +556,7 @@ data class HomeBidsRequestItemData(
    * Trip display name for toolbar title
    */
   fun tripDisplayName() =
-    "${originState.capitalize()} - ${destinationState.capitalize()}"
+    "${capitalize(originState)} - ${capitalize(destinationState)}"
 //    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
 //    when (tripType) {
 //      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
@@ -707,7 +708,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if indent type(pmt/ftl)
    */
-  fun isPMTIndent() = biddingType?.toLowerCase() == "pmt"
+  fun isPMTIndent() = biddingType?.lowercase() == "pmt"
 
   /**
    * @return true if request type(dmt)

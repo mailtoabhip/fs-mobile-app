@@ -57,12 +57,12 @@ internal class HomePodHeaderItemVH(binding: ViewHomePodsHeaderItemBinding) :
     item: HomePodHeaderItem,
     _interface: HomePodRVAdapterInterface
   ) {
-    binding.viewEpod.clickToAction(HomePodHeaderAction_Epod, item, adapterPosition, _interface)
+    binding.viewEpod.clickToAction(HomePodHeaderAction_Epod, item, bindingAdapterPosition, _interface)
     binding.viewPhysicalPod.clickToAction(
-        HomePodHeaderAction_Physical, item, adapterPosition, _interface
+        HomePodHeaderAction_Physical, item, bindingAdapterPosition, _interface
     )
     binding.viewDispatched.clickToAction(
-        HomePodHeaderAction_Dispactched, item, adapterPosition, _interface
+        HomePodHeaderAction_Dispactched, item, bindingAdapterPosition, _interface
     )
   }
 }
@@ -77,7 +77,7 @@ internal class HomePodSearchItemVH(binding: ViewHomeSearchItemBinding) :
     _interface: HomePodRVAdapterInterface
   ) {
     binding.editQuery.hint = "Vehicle/LR Number"
-    binding.editQuery.clickToAction(HomePodSearchAction_Search, item, adapterPosition, _interface)
+    binding.editQuery.clickToAction(HomePodSearchAction_Search, item, bindingAdapterPosition, _interface)
   }
 }
 
@@ -92,19 +92,19 @@ class HomePodItemVH(binding: ViewPodItemBinding) :
   ) {
     binding.trip = item.data
     binding.root.clickToAction(
-        HomeTripsRequestAction_ViewDetails, item, adapterPosition, _interface
+        HomeTripsRequestAction_ViewDetails, item, bindingAdapterPosition, _interface
     )
 
     binding.btnEpod.clickToAction(
-        HomeTripsRequestAction_UploadEpod, item, adapterPosition, _interface
+        HomeTripsRequestAction_UploadEpod, item, bindingAdapterPosition, _interface
     )
 
     binding.btnCourier.clickToAction(
-        HomeTripsRequestAction_UploadTracking, item, adapterPosition, _interface
+        HomeTripsRequestAction_UploadTracking, item, bindingAdapterPosition, _interface
     )
 
     binding.containerSelector.clickToAction(
-        HomeTripsRequestAction_UploadTracking, item, adapterPosition, _interface
+        HomeTripsRequestAction_UploadTracking, item, bindingAdapterPosition, _interface
     )
   }
 }
@@ -121,7 +121,7 @@ internal class HomePodWarningItemVH(binding: ViewWarningItemBinding) :
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
-    binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+    binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
   }
 }
 
@@ -137,7 +137,7 @@ internal class HomePodTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
-    binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+    binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
   }
 }
 

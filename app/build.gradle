@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-  compileSdkVersion 32
+  compileSdk 33
   signingConfigs {
     release {
       keyAlias 'axle_delhivery'
@@ -13,10 +13,10 @@ android {
   }
   defaultConfig {
     applicationId "com.delhivery.axle"
-    minSdkVersion 19
-    targetSdkVersion 32
-    versionCode 107
-    versionName "1.107"
+    minSdkVersion 21
+    targetSdkVersion 33
+    versionCode 108
+    versionName "1.108"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -32,7 +32,7 @@ android {
       }
     }
   }
-  flavorDimensions "vanilla"
+  flavorDimensions+= "vanilla"
   productFlavors {
     development {
       dimension "vanilla"
@@ -101,9 +101,10 @@ android {
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   //Android support libs
-  implementation 'androidx.appcompat:appcompat:1.1.0'
+  implementation 'androidx.appcompat:appcompat:1.6.1'
+  implementation "androidx.core:core-splashscreen:1.0.1"
   implementation 'androidx.recyclerview:recyclerview:1.2.1'
-  implementation 'com.google.android.material:material:1.0.0'
+  implementation 'com.google.android.material:material:1.5.0'
   implementation 'androidx.cardview:cardview:1.0.0'
   //constraint layout
   implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -173,6 +174,22 @@ dependencies {
   implementation("androidx.lifecycle:lifecycle-process:2.2.0")
   implementation "androidx.work:work-runtime-ktx:2.7.1"
 
+  implementation 'com.google.android.play:core:1.10.3'
+
+  // Chucker
+  debugImplementation ("com.github.chuckerteam.chucker:library:3.5.2") {
+    exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel'
+    exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'
+  }
+
+  uatImplementation ("com.github.chuckerteam.chucker:library:3.5.2" ){
+    exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel'
+    exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'
+  }
+  productionImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+
+  // LeakCanary
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

@@ -4,11 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.Observer
@@ -86,6 +88,14 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Payment Details"
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
+
         if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
             if (userPrefs.ownedTruck.toInt() <= 10) {
                 binding.uploadDoc1.visibility = View.VISIBLE
@@ -187,10 +197,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
 }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        navigationUtils.navigate(MyProfileActivity::class.java,true)
-    }
     override fun onAWSSuccess(
         path: String
     ) {
@@ -237,6 +243,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     }
 
     private fun downloadLogo(item: String) {
+      if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
         compositeDisposable += requestPermission(
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         )
@@ -268,9 +275,11 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
             arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
-            )
+            ).apply {
+              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         )
             .onBackground()
             .subscribe { granted, error ->

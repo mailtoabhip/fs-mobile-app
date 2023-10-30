@@ -6,6 +6,7 @@ import android.app.DownloadManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
@@ -202,7 +203,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         })
 
         viewModel.downloadPressed.observe(this, androidx.lifecycle.Observer {
-            if (it) {
+            if (it && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 requestStoragePermission()
             }
         })

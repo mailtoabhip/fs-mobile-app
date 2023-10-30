@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.InsetDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -397,7 +398,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                 dialog.setCancelable(false)
 
                 bindingDialog.buttonCancel.setOnClickListener {
-                    onBackPressed()
+                   onBackPressedDispatcher.onBackPressed()
                     dialog.dismiss()
                 }
 
@@ -676,9 +677,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
                 arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CAMERA
-                )
+                ).apply {
+                  if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                    plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
         )
                 .onBackground()
                 .subscribe { granted, error ->
@@ -772,7 +775,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             REQCODE_SELECT_CITY -> {
                 if (data != null) {
                     val type = data.getStringExtra(CityType)
-                    val city = data.getSerializableExtra("City") as CityModel
+                    val city = data.getSerializable("City",CityModel::class.java)!!
                     if (type == "origin") {
                         viewModel.origin = city
                         binding.editOrigin.setText(city.cityName().trim())

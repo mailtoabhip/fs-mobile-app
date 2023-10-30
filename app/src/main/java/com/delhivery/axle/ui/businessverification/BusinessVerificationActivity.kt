@@ -9,9 +9,11 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
@@ -19,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.RadioGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -151,6 +154,15 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }else{
             binding.businessError.visibility=View.GONE
         }
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                userPrefs.retryVerificationOnBack=true
+                val bundle = Bundle()
+                bundle.putInt(StepKey,1)
+                navigationUtils.navigateKyc(this@BusinessVerificationActivity,true,bundle)
+                finish()
+            }
+        })
         showUploadedDoc()
     }
 
@@ -443,13 +455,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         super.onBackPressed()
         userPrefs.retryVerificationOnBack=true
         val bundle = Bundle()
         bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)
-    }
+    }*/
     override fun onAWSSuccess(
         path: String
     ) {
@@ -491,9 +503,11 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
             arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
-            )
+            ).apply {
+              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
         )
             .onBackground()
             .subscribe { granted, error ->
@@ -606,7 +620,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
         dialog.show()
-        Handler().postDelayed({
+        Handler(Looper.myLooper()!!).postDelayed({
             dialog.dismiss()
             //change flow as per config
             navigationUtils.navigate(HomeActivity::class.java, true)

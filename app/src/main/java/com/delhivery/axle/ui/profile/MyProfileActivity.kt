@@ -8,6 +8,7 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
 import androidx.work.WorkManager
@@ -62,19 +63,24 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
-
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
         analyticsUtil.trackEvent(
             EVENT_VIEW_MY_PROFILE,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
-            binding.profile.text = userPrefs.companyName[0].toUpperCase().toString()
+            binding.profile.text = userPrefs.companyName[0].uppercaseChar().toString()
         }
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
         binding.logoutLayout.setOnClickListener {
-            WorkManager.getInstance().cancelAllWorkByTag(TAG_SYNC_DATA)
+            WorkManager.getInstance(applicationContext).cancelAllWorkByTag(TAG_SYNC_DATA)
             confirmLogout()
         }
 
@@ -388,13 +394,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             }
         }
     }
-
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        userPrefs.setPreviousScreen(this.javaClass.name)
-    }
-
+    
     /**
      * Confirm and logout
      */
@@ -476,7 +476,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                                         isFirstResource: Boolean
                                 ): Boolean {
                                     binding.card1.visibility = View.GONE
-                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().toUpperCase()
+                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
                                     binding.profile.visibility = View.VISIBLE
                                     return false
                                 }

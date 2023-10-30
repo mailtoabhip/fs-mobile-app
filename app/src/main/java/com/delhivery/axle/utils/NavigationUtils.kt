@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.content.ContextCompat
 import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.injection.scope.ActivityScope
@@ -34,6 +36,7 @@ import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.moengage.core.MoECoreHelper
 import java.lang.Exception
 
 /**
@@ -166,7 +169,7 @@ class NavigationUtils @Inject constructor(
   fun logout(message: String, intention: String = "notFromUser") {
     authRepository.logout(intention)
     uiUtils.showToast(message)
-
+    MoECoreHelper.logoutUser(activity)
     val intent = Intent(activity, AuthenticationActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     activity.startActivity(intent)
@@ -256,9 +259,9 @@ class NavigationUtils @Inject constructor(
         if(kycSteps.get(extras.getInt(StepKey))=="pan") {
           intent = Intent(context, PanVerificationActivity::class.java)
         }else  if(kycSteps.get(extras.getInt(StepKey))=="gst/aadhaar"){
-            if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
+            if(userPrefs.pancard.toCharArray().get(3).lowercase().toString().equals("p") &&  userPrefs.isGstsByPanNotRegistered){
               intent= Intent(context, AadhaarVerificationActivity::class.java)
-            }else if(userPrefs.pancard.toCharArray().get(3).toLowerCase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
+            }else if(userPrefs.pancard.toCharArray().get(3).lowercase().toString().equals("p") &&  !userPrefs.isGstsByPanNotRegistered){
                 intent = Intent(context, GstVerificationActivity::class.java)
             }else{
                 if(userPrefs.isGstsByPanNotRegistered) {
@@ -390,34 +393,34 @@ class NavigationUtils @Inject constructor(
 
        when (step) {
            1 -> {
-               progressStepLayout.step1.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_current_step))
-               progressStepLayout.step2.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_incomplete_step))
-               progressStepLayout.step3.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_incomplete_step))
-               progressStepLayout.line1.background = activity.resources.getDrawable(R.color.colorAccent)
-               progressStepLayout.line2.background = activity.resources.getDrawable(R.color.light_line_grey)
-               progressStepLayout.routeTxt.setTextColor(activity.resources.getColor(R.color.colorAccent))
-               progressStepLayout.kycTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
-               progressStepLayout.paymentTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+               progressStepLayout.step1.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_current_step))
+               progressStepLayout.step2.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_incomplete_step))
+               progressStepLayout.step3.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_incomplete_step))
+               progressStepLayout.line1.background = ContextCompat.getDrawable(activity, R.color.colorAccent)
+               progressStepLayout.line2.background = ContextCompat.getDrawable(activity, R.color.light_line_grey)
+               progressStepLayout.routeTxt.setTextColor(ContextCompat.getColor(activity as Context,R.color.colorAccent))
+               progressStepLayout.kycTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.heading_black))
+               progressStepLayout.paymentTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.heading_black))
            }
            2 -> {
-               progressStepLayout.step1.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_completed_step))
-               progressStepLayout.step2.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_current_step))
-               progressStepLayout.step3.setImageDrawable (activity.resources.getDrawable(R.drawable.ic_incomplete_step))
-               progressStepLayout.line1.background = activity.resources.getDrawable(R.color.colorAccent)
-               progressStepLayout.line2.background = activity.resources.getDrawable(R.color.light_line_grey)
-               progressStepLayout.routeTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
-               progressStepLayout.kycTxt.setTextColor(activity.resources.getColor(R.color.colorAccent))
-               progressStepLayout.paymentTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
+               progressStepLayout.step1.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_completed_step))
+               progressStepLayout.step2.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_current_step))
+               progressStepLayout.step3.setImageDrawable (ContextCompat.getDrawable(activity, R.drawable.ic_incomplete_step))
+               progressStepLayout.line1.background = ContextCompat.getDrawable(activity, R.color.colorAccent)
+               progressStepLayout.line2.background = ContextCompat.getDrawable(activity, R.color.light_line_grey)
+               progressStepLayout.routeTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.heading_black))
+               progressStepLayout.kycTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.colorAccent))
+               progressStepLayout.paymentTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.heading_black))
            }
            3 -> {
-               progressStepLayout.step1.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_completed_step))
-               progressStepLayout.step2.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_completed_step))
-               progressStepLayout.step3.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_current_step))
-               progressStepLayout.line1.background = activity.resources.getDrawable(R.color.colorAccent)
-               progressStepLayout.line2.background = activity.resources.getDrawable(R.color.colorAccent)
-               progressStepLayout.routeTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
-               progressStepLayout.kycTxt.setTextColor(activity.resources.getColor(R.color.heading_black))
-               progressStepLayout.paymentTxt.setTextColor(activity.resources.getColor(R.color.colorAccent))
+               progressStepLayout.step1.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_completed_step))
+               progressStepLayout.step2.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_completed_step))
+               progressStepLayout.step3.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_current_step))
+               progressStepLayout.line1.background = ContextCompat.getDrawable(activity, R.color.colorAccent)
+               progressStepLayout.line2.background = ContextCompat.getDrawable(activity, R.color.colorAccent)
+               progressStepLayout.routeTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.heading_black))
+               progressStepLayout.kycTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.heading_black))
+               progressStepLayout.paymentTxt.setTextColor(ContextCompat.getColor(activity as Context, R.color.colorAccent))
            }
        }
    }
@@ -437,7 +440,7 @@ class NavigationUtils @Inject constructor(
             dialog.show()
        userPrefs.setPreviousScreen(VendorPolicyActivity::class.java.name)
         if(!activity.isFinishing)
-            Handler().postDelayed({
+            Handler(Looper.myLooper()!!).postDelayed({
                 dialog.dismiss()
                 this.navigate(HomeActivity::class.java, true)
             }, 2000)

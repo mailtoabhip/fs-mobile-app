@@ -3,21 +3,20 @@ package com.delhivery.axle.network
 import android.util.Log
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.Interceptor
 import okhttp3.Request
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Singleton Delhivery Network Interceptor as per requirements
  */
-class DelhiveryNetworkInterceptor private constructor() : Interceptor {
-  companion object {
-    /* public singleton lazy instance */
-    val instance: DelhiveryNetworkInterceptor by lazy {
-      DelhiveryNetworkInterceptor()
-    }
-  }
 
-  private var jwtToken: String? = null
+@Singleton
+class DelhiveryNetworkInterceptor @Inject constructor(var userPrefs: UserPrefs) : Interceptor {
+
+  private var jwtToken: String? = userPrefs.jwtToken
 
   /**
    * Update jwt token

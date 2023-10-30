@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.SpannableString
@@ -15,6 +16,7 @@ import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -95,6 +97,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     /* set transaction id */
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.tripType = intent?.getStringExtra(IntentExtraTripTypeKey)?: ""
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
 
   }
 
@@ -375,7 +384,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun requestStoragePermission() {
     val storagePermission =
       ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU && storagePermission != PackageManager.PERMISSION_GRANTED) {
       ActivityCompat.requestPermissions(
           this,
           arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -473,7 +482,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  private fun String.capitalizeWords(): String = split(" ").map { it.capitalize() }.joinToString(" ")
+  private fun String.capitalizeWords(): String = split(" ").map { StringUtils.capitalize(it) }.joinToString(" ")
 
   private fun redirectToLRsTrip(transactionId: String){
     startActivity(tripDetailsIntent(transactionId, this, viewModel.tripType))
@@ -579,7 +588,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
         uiUtils.showSnackbar("Storage permission required to download POD")
       } else {
-        requestStoragePermission()
+          requestStoragePermission()
       }
     }
   }
@@ -600,7 +609,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       TripPaymentSummaryItemAction -> {
         val data = item.data as TripPaymentSummaryItemData
         if(!data.expanded){
-          when(data.title.toUpperCase()){
+          when(data.title.uppercase()){
             "CHARGES" -> {
               analyticsUtil.trackEvent(
                       EVENT_VIEW_CHARGES,
@@ -665,10 +674,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  override fun onBackPressed() {
+  /*override fun onBackPressed() {
     super.onBackPressed()
     userPrefs.setPreviousScreen(this.javaClass.name)
-  }
+  }*/
 }
 
 /* intent keys */

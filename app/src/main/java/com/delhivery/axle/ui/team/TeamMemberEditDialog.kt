@@ -80,7 +80,7 @@ class TeamMembersEditDialog @Inject constructor(
             number = userNumber
             editMemberDieselReferenceSwitch.isChecked = dieselCardPreference
             if(editMemberDieselReferenceSwitch.isChecked){
-                binding.cardLayout.visibility = View.VISIBLE
+                binding.cardLayout2.visibility = View.VISIBLE
             }
             dieselReliance.isEnabled = false
             dieselIocl.isEnabled =false
@@ -173,7 +173,7 @@ class TeamMembersEditDialog @Inject constructor(
             if(isChecked){
                 binding.dieselReliance.isEnabled = true
                 binding.dieselIocl.isEnabled= true
-                binding.cardLayout.visibility = View.VISIBLE
+                binding.cardLayout2.visibility = View.VISIBLE
                 binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)
             }
             else{
@@ -181,7 +181,7 @@ class TeamMembersEditDialog @Inject constructor(
                 binding.dieselIocl.isEnabled= false
                 binding.dieselReliance.isChecked = false
                 binding.dieselIocl.isChecked = false
-                binding.cardLayout.visibility = View.GONE
+                binding.cardLayout2.visibility = View.GONE
                 binding.btnConfirm.isEnabled = !(binding.editName.text?.length==0)
             }
         })

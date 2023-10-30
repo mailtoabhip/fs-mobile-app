@@ -58,7 +58,7 @@ class TripPaymentSummaryItemVH(binding: ViewTripPaymentSummaryItemBinding) :
     binding.title = item.data.title
     binding.amount = item.data.totalAmount()
     binding.item = item.data
-    binding.root.clickToAction(TripPaymentSummaryItemAction, item, adapterPosition, _interface)
+    binding.root.clickToAction(TripPaymentSummaryItemAction, item, bindingAdapterPosition, _interface)
   }
 }
 
@@ -85,7 +85,7 @@ class TripPaymentDetailSummaryItemVH(binding: ViewTripPaymentSummaryDetailItemBi
       )
       binding.textTitle.text = text
     }
-    binding.textTitle.clickToAction(TripPaymentSummaryDetailItemAction, item, adapterPosition, _interface)
+    binding.textTitle.clickToAction(TripPaymentSummaryDetailItemAction, item, bindingAdapterPosition, _interface)
   }
 }
 
@@ -110,6 +110,6 @@ internal class TripPaymentSummaryTimeOutItemVH(binding: ViewTimeOutItemBinding) 
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
-    binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+    binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
   }
 }

@@ -291,7 +291,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
     /* search bar expanded/collapse callbacks */
     searchItem?.setOnActionExpandListener(object : OnActionExpandListener {
-      override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+      override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
         // Capture event
@@ -303,7 +303,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
         return true
       }
 
-      override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+      override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
         uiUtils.toggleKeyboard()
         binding.refreshLayout.isEnabled = true
         adapter.cancelFilter()

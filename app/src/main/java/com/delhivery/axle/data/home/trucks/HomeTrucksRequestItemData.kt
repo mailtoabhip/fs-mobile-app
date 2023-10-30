@@ -5,6 +5,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.not
 import com.google.gson.annotations.SerializedName
 import java.util.*
@@ -50,13 +51,13 @@ data class HomeTrucksRequestItemData(
 
     fun truckNumber() = vehicleNumber
 
-    fun ownership() = (((ownership?.split("_"))?.toTypedArray())?.joinToString(" "))?.capitalize()
+    fun ownership() = capitalize((((ownership?.split("_"))?.toTypedArray())?.joinToString(" ")))
 
     fun truckSizeAndCap() = truckSize()+ "-" + truckCapacity()
 
-    fun originCity() = currentCityName?.capitalize()
+    fun originCity() = capitalize(currentCityName)
 
-    fun destinationCity() = unloadingDestination?.capitalize()
+    fun destinationCity() = capitalize(unloadingDestination)
 
 
     fun truckName(): String {

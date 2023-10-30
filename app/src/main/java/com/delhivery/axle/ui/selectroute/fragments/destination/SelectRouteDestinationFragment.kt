@@ -144,7 +144,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
     binding.actionContainer.animate()
         .translationY(
             PositionAnimExpectation.dpToPx(
-                this@SelectRouteDestinationFragment.context!!,
+              this@SelectRouteDestinationFragment.requireContext(),
                 binding.actionContainer.height.toFloat()
             )
         )
@@ -159,7 +159,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
       binding.actionContainer.animate()
           .translationY(
               -PositionAnimExpectation.dpToPx(
-                  this@SelectRouteDestinationFragment.context!!, 0f
+                  this@SelectRouteDestinationFragment.requireContext(), 0f
               )
           )
           .setInterpolator(DecelerateInterpolator(2f))

@@ -3,6 +3,8 @@ package com.delhivery.axle.ui.paymentdetails
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
@@ -29,7 +31,12 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
 
-
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
+                finish()
+            }
+        })
         binding.vendorPolicyLink.setOnClickListener {
             val browserIntent =
                 Intent(Intent.ACTION_VIEW, Uri.parse("https://orion.delhivery.com/#/paymentterms"))
@@ -55,10 +62,10 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
     }
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
         super.onBackPressed()
         navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
-    }
+    }*/
 
     override fun getViewModelClass() = PaymentDetailsViewModel::class.java
 

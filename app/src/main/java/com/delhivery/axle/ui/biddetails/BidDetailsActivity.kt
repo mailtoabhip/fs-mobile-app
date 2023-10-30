@@ -5,14 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.os.Looper
 import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -26,6 +29,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
@@ -79,6 +83,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     } catch (e: Exception) {
       finish()
     }
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
     viewModel.restrictEventTrigger = true
     /* set transaction id */
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
@@ -207,8 +217,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
       if (it) {
         binding.status.visibility = View.VISIBLE
         binding.status.text = resources.getString(R.string.label_pending)
-        binding.status.setBackgroundColor(resources.getColor(R.color.pending_bg))
-        binding.status.setTextColor(resources.getColor(R.color.pending_status))
+        binding.status.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.pending_bg))
+        binding.status.setTextColor(ContextCompat.getColor(applicationContext, R.color.pending_status))
       }
     })
     viewModel.truckGetLiveData.observe(this, Observer {
@@ -483,7 +493,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
 
             if (binding.transaction?.pickupLocationCity.isNotNullOrEmpty()) {
-              uData.append(binding.transaction?.pickupLocationCity?.capitalize())
+              uData.append(capitalize(binding.transaction?.pickupLocationCity!!))
             }
 
             if (uData.toString().isNotNullOrEmpty()) {
@@ -497,9 +507,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaDestination.card1.visibility = View.VISIBLE
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.pickup1?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup1)
             } else {
-              citNam = binding.transaction?.pickup1City?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup1City)
             }
             binding.textViaDestination.city1.text = citNam
 
@@ -526,9 +536,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.pickup2?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup2)
             } else {
-              citNam = binding.transaction?.pickup2City?.capitalize()
+              citNam = capitalize(binding.transaction?.pickup2City)
             }
             binding.textViaDestination.city2.text = citNam
 
@@ -560,9 +570,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.stop1?.capitalize()
+              citNam = capitalize(binding.transaction?.stop1!!)
             } else {
-              citNam = binding.transaction?.stop1City?.capitalize()
+              citNam = capitalize(binding.transaction?.stop1City!!)
             }
             binding.textViaDestination.city3.text = citNam
 
@@ -594,9 +604,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = binding.transaction?.stop2?.capitalize()
+              citNam = capitalize(binding.transaction?.stop2!!)
             } else {
-              citNam = binding.transaction?.stop2City?.capitalize()
+              citNam = capitalize(binding.transaction?.stop2City!!)
             }
             binding.textViaDestination.city4.text = citNam
 
@@ -639,7 +649,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             }
 
             if (binding.transaction?.dropLocationCity.isNotNullOrEmpty()) {
-              uData.append(binding.transaction?.dropLocationCity?.capitalize())
+              uData.append(capitalize(binding.transaction?.dropLocationCity!!))
             }
 
             if (uData.toString().isNotNullOrEmpty()) {
@@ -825,54 +835,54 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   if (lowestTBid?.bidAmount != null) {
                     if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
                       binding.tvCorr.setBackground(
-                        resources.getDrawable(
+                        ContextCompat.getDrawable(this@BidDetailsActivity,
                           R.drawable.bg_all_round_corner_light_green_12
                         )
                       )
                       binding.imgCorr.visibility = View.VISIBLE
                       binding.tvCorr.text = "Your bid is the lowest"
                       binding.tvCorr.setTextColor(
-                        resources.getColor(R.color.bid_placed_green)
+                        ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green)
                       )
                       binding.llBidStatus.background =  ContextCompat.getDrawable(this@BidDetailsActivity,
                         R.drawable.bg_all_round_corner_light_green_12
                       )
                     } else {
                       binding.tvCorr.setBackground(
-                        resources.getDrawable(
+                        ContextCompat.getDrawable(this@BidDetailsActivity,
                           R.drawable.bg_all_round_corner_light_pink_12
                         )
                       )
                       binding.llBidStatus.background = null
                       binding.imgCorr.visibility = View.GONE
                       binding.tvCorr.text = binding.transaction?.lowestbidText()
-                      binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
+                      binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity as Context, R.color.bid_placed_red))
                     }
                   } else {
                     binding.tvCorr.setBackground(
-                      resources.getDrawable(
+                      ContextCompat.getDrawable(this@BidDetailsActivity,
                         R.drawable.bg_all_round_corner_light_pink_12
                       )
                     )
                     binding.llBidStatus.background = null
                     binding.imgCorr.visibility = View.GONE
                     binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
-                    binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
+                    binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_red))
                   }
                 } else if (userBid?.bidAmount != null && state.bidsCount != null && state.bidsCount == 1 && binding.transaction?.guidancePrice != null) {
                   if (userBid.bidAmount.compareTo(binding.transaction?.guidancePrice!!) > 0) {
                     binding.tvCorr.setBackground(
-                      resources.getDrawable(
+                      ContextCompat.getDrawable(this@BidDetailsActivity,
                         R.drawable.bg_all_round_corner_light_pink_12
                       )
                     )
                     binding.llBidStatus.background = null
                     binding.imgCorr.visibility = View.GONE
                     binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
-                    binding.tvCorr.setTextColor(resources.getColor(R.color.bid_placed_red))
+                    binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_red))
                   } else {
                     binding.tvCorr.setBackground(
-                      resources.getDrawable(
+                      ContextCompat.getDrawable(this@BidDetailsActivity,
                         R.drawable.bg_all_round_corner_light_green_12
                       )
                     )
@@ -882,7 +892,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                     binding.imgCorr.visibility = View.VISIBLE
                     binding.tvCorr.text = "Your bid is the lowest"
                     binding.tvCorr.setTextColor(
-                      resources.getColor(R.color.bid_placed_green)
+                      ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green)
                     )
                   }
                 }
@@ -981,7 +991,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
 
                 if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
-                  val mHandler = Handler()
+                  val mHandler = Handler(Looper.myLooper()!!)
                   var mRunnable: Runnable = Runnable { }
                   mRunnable = object : Runnable {
                     override fun run() {
@@ -1040,8 +1050,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 })
                 binding.status.visibility = View.VISIBLE
                 binding.status.text = resources.getString(R.string.label_active)
-                binding.status.setBackgroundColor(resources.getColor(R.color.status_active))
-                binding.status.setTextColor(resources.getColor(R.color.status_active))
+                binding.status.setBackgroundColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_active))
+                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_active))
               }
           }
           is BidDetailsUserBidState_LoadingBids -> {
@@ -1073,17 +1083,17 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
                 if (data.clientConfirmationPending == false) {
                   binding.status.text = resources.getString(R.string.label_pending)
-                  binding.status.setTextColor(resources.getColor(R.color.pending))
+                  binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.pending))
                   binding.bottomLay.visibility = View.GONE
                 } else {
                   binding.status.text = resources.getString(R.string.label_confirm)
                   binding.buttonConfirm.text = "View Trip"
                   binding.status.setBackground(
-                    resources.getDrawable(
+                    ContextCompat.getDrawable(this@BidDetailsActivity,
                       R.drawable.bg_all_round_corner_light_green_12
                     )
                   )
-                  binding.status.setTextColor(resources.getColor(R.color.bid_placed_green))
+                  binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green))
                   binding.bidLay.visibility = View.GONE
                   binding.numLay.visibility = View.GONE
                   binding.bottomLay.visibility = View.VISIBLE
@@ -1126,8 +1136,8 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
                 binding.textTargetPriceLabel.text = "Your Bid"
                 binding.priceLay.visibility = View.VISIBLE
-                binding.status.setBackgroundColor(resources.getColor(R.color.status_lost_bg))
-                binding.status.setTextColor(resources.getColor(R.color.status_lost_bid))
+                binding.status.setBackgroundColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost_bg))
+                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost_bid))
                 binding.bottomLay.visibility = View.GONE
               }
           }
@@ -1160,7 +1170,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
                 binding.textTargetPriceLabel.text = "Your Bid"
                 binding.priceLay.visibility = View.VISIBLE
-                binding.status.setTextColor(resources.getColor(R.color.status_lost))
+                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost))
                 binding.bottomLay.visibility = View.GONE
               }
           }
@@ -1306,10 +1316,10 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     }
   }
 
-  override fun onBackPressed() {
+/*  override fun onBackPressed() {
     userPrefs.setPreviousScreen(this.javaClass.name)
     super.onBackPressed()
-  }
+  }*/
 
   /**
    * Create/edit bid dialog

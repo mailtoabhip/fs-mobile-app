@@ -54,7 +54,7 @@ import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteFragmentsBindingModule
 import com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.ui.splash.SplashActivity
+import com.delhivery.axle.ui.splash.StartRoutingActivity
 import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
@@ -79,7 +79,7 @@ abstract class ActivityBindingModule {
   /* Splash/Launch activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsSplashActivityModule::class])
-  internal abstract fun bindSplashActivity(): SplashActivity
+  internal abstract fun bindSplashActivity(): StartRoutingActivity
 
   /* Authentication/Login activity */
   @ActivityScope
@@ -348,7 +348,7 @@ abstract class ActivityBindingModule {
  *
  */
 @Module
-internal abstract class AbsSplashActivityModule : ActivityModule<SplashActivity>()
+internal abstract class AbsSplashActivityModule : ActivityModule<StartRoutingActivity>()
 
 @Module
 internal abstract class AbsAuthenticationActivityModule : ActivityModule<AuthenticationActivity>()

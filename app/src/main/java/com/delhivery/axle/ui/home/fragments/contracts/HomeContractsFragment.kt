@@ -230,8 +230,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
   private fun infoDialog() {
     if(activity!=null) {
-      val dialog = Dialog(activity!!)
-      val bindingDialog = DialogContractsTypeInfoBinding.inflate(activity!!.layoutInflater)
+      val dialog = Dialog(requireActivity())
+      val bindingDialog = DialogContractsTypeInfoBinding.inflate(requireActivity().layoutInflater)
       bindingDialog.buttonCancel.setOnClickListener {
         dialog.cancel()
       }

@@ -1,9 +1,20 @@
 package com.delhivery.axle.ui.home.activity.home
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -25,7 +36,7 @@ import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.ui.splash.SplashActivity
+import com.delhivery.axle.ui.splash.StartRoutingActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.trucks.TruckActivity
@@ -34,21 +45,34 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.CampaignMetadata
 import com.google.firebase.inappmessaging.model.InAppMessage
-import com.moengage.core.internal.MoEConstants
-import java.util.*
+import com.moengage.core.internal.USER_ATTRIBUTE_UNIQUE_ID
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_FIRST_NAME
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_LAST_NAME
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_MOBILE
+import com.moengage.core.internal.USER_ATTRIBUTE_USER_NAME
+import com.moengage.pushbase.MoEPushHelper
+import java.util.Date
 import javax.inject.Inject
 
 /**
  * Home screen
  */
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
-  OnNavigationItemSelectedListener, FirebaseInAppMessagingClickListener {
+  OnItemSelectedListener, FirebaseInAppMessagingClickListener {
   override fun getViewModelClass() = HomeViewModel::class.java
   override fun layoutId() = R.layout.activity_home
   override fun requireConnection() = true
@@ -67,8 +91,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   private val pagerAdapter: HomeFragmentsAdapter by lazy {
     HomeFragmentsAdapter(supportFragmentManager)
   }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        finish()
+      }
+    })
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
     if (transactions.isNotEmpty())
@@ -94,9 +124,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     fromNotificationContract= false
     viewModel.getUserDetails()
   }
-  override fun onBackPressed() {
-    super.onBackPressed()
-  }
+
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     viewModel.userUpdateLiveData.observe(this, Observer {
@@ -107,7 +135,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         setSupportActionBar(binding.toolbar)
         title = "Home"
         if(!userPrefs.userName.isEmpty()) {
-          binding.profile.text = userPrefs.userName[0].toUpperCase().toString()
+          binding.profile.text = userPrefs.userName[0].uppercase().toString()
         }
         supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.toolbarTitle.text = title
@@ -129,12 +157,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       binding.toolbarTitle.text = title
       FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-
     }
     binding.viewpager.disableScroll(true)
 
     /* set navigation item selection listener */
-    binding.bottomNav.setOnNavigationItemSelectedListener(this)
+    binding.bottomNav.setOnItemSelectedListener(this)
 
     /* by default observe first fragment */
     observeFragmentLiveData()
@@ -160,7 +187,49 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
       }
     })
+
+      if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+     when {
+       ContextCompat.checkSelfPermission(
+         this, Manifest.permission.POST_NOTIFICATIONS
+       ) == PackageManager.PERMISSION_GRANTED -> {
+         MoEPushHelper.getInstance()
+           .pushPermissionResponse(applicationContext, true)
+       }
+       shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+          Snackbar.make(
+            binding.root,
+            "Notification blocked",
+            Snackbar.LENGTH_LONG
+          ).setAction("Settings") {
+            // Responds to click on the action
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val uri: Uri = Uri.fromParts("package", packageName, null)
+            intent.data = uri
+            startActivity(intent)
+          }.show()
+       }
+       else -> {
+         MoEPushHelper.getInstance()
+           .pushPermissionResponse(applicationContext, false)
+       }
+     }
+   }
+    if(userPrefs.recommendedUpdate){
+      Snackbar.make(
+        binding.root,
+        "App update version available",
+        Snackbar.LENGTH_LONG
+      ).setAction("Update") {
+        // Responds to click on the action
+        checkForAppUpdate(false)
+      }.setAnchorView(binding.bottomNav)
+        .show()
+
+    }
   }
+
   private fun processDeepLink() {
     Log.d("noti", "$dplink_type $dplink_tid")
     if (dplink_type != "") {
@@ -465,11 +534,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
     userPrefs.userId().let {
       analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_UNIQUE_ID,it)
+      analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
     }
 
     userPrefs.phoneNumber?.let {
-      analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_MOBILE,it)
+      analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
       analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
     }
     userPrefs.cityName?.let {
@@ -509,19 +578,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       if(userPrefs.userName.isNotNullOrEmpty()){
         try {
           analyticsUtil.moEngageUserAttribute(USER_PROPERTY_NAME, it)
-          analyticsUtil.moEngageUserAttribute(MoEConstants.USER_ATTRIBUTE_USER_NAME, it)
+          analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_NAME, it)
           analyticsUtil.moEngageUserAttribute(
-            MoEConstants.USER_ATTRIBUTE_USER_FIRST_NAME,
+            USER_ATTRIBUTE_USER_FIRST_NAME,
             it.split(" ").get(0)
           )
           analyticsUtil.moEngageUserAttribute(
-            MoEConstants.USER_ATTRIBUTE_USER_LAST_NAME,
+            USER_ATTRIBUTE_USER_LAST_NAME,
             it.split(" ").get(1)
           )
         }catch (e:Exception){}
       }
     }
   }
+
   override fun markNotificationRead() {
     super.markNotificationRead()
     analyticsUtil.trackEvent(
@@ -562,74 +632,82 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     }
   }
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
-      .let{ pos ->
-        count++
-        when(pos){
-          0->
-            if(count==1){
-              if(userPrefs.userPreviousScreen==SplashActivity::class.java.name){
-                userPrefs.previousNavigationTab= SplashActivity::class.java.name
-              } else if(userPrefs.userPreviousScreen==VendorPolicyActivity::class.java.name){
-                userPrefs.previousNavigationTab= VendorPolicyActivity::class.java.name
-              }else{
-                userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              }
-              userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+    .let{ pos ->
+      count++
+      when (pos) {
+        0 ->
+          if (count == 1) {
+            if (userPrefs.userPreviousScreen == StartRoutingActivity::class.java.name) {
+              userPrefs.previousNavigationTab = StartRoutingActivity::class.java.name
+            } else if (userPrefs.userPreviousScreen == VendorPolicyActivity::class.java.name) {
+              userPrefs.previousNavigationTab = VendorPolicyActivity::class.java.name
+            } else {
+              userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            }
+            userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_HOME,
-                mutableListOf(PROPERTY_ORDER_COUNT),
-                mutableListOf(userPrefs.loadCount))
-            }
-          1->
-            if(count==1){
-              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
-              analyticsUtil.moEngageTrackEvent(
+              mutableListOf(PROPERTY_ORDER_COUNT),
+              mutableListOf(userPrefs.loadCount)
+            )
+          }
+        1 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+            analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_BIDS,
-                mutableListOf(PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
-                    PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT),
-                mutableListOf(userPrefs.totalBidCount,userPrefs.activeBidCount,userPrefs.confirmedBidCount,userPrefs.lostBidCount)
+              mutableListOf(
+                PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
+                PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT
+              ),
+              mutableListOf(
+                userPrefs.totalBidCount,
+                userPrefs.activeBidCount,
+                userPrefs.confirmedBidCount,
+                userPrefs.lostBidCount
+              )
             )
 
-            }
-          2->
-            if(count==1){
-              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+          }
+        2 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
 
-              analyticsUtil.moEngageTrackEvent(
+            analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_PODS
             )
-            }
-          3->
-            if(count==1){
-              userPrefs.previousNavigationTab= userPrefs.currentNavigationTab
-              userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
-              userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
-              analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_MY_TRIPS,
-                mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
-                mutableListOf(userPrefs.awaitingArrivalCount)
-            )
-            }
-        }
-        if(count==2){
-          count=0
-        }
-        binding.viewpager.apply {
-          uiUtils.toggleKeyboard()
-          if (pos != -1 && currentItem != pos) {
-            this@HomeActivity.title = HomeFragmentType.pos(pos)
-                ?.fragment?.title
-            setCurrentItem(pos, true)
           }
-          binding.toolbarTitle.text = title
-        }
-        pos != -1
+        3 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_TRIPS,
+              mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
+              mutableListOf(userPrefs.awaitingArrivalCount)
+            )
+          }
       }
+      if (count == 2) {
+        count = 0
+      }
+      binding.viewpager.apply {
+        uiUtils.toggleKeyboard()
+        if (pos != -1 && currentItem != pos) {
+          this@HomeActivity.title = HomeFragmentType.pos(pos)
+            ?.fragment?.title
+          setCurrentItem(pos, true)
+        }
+        binding.toolbarTitle.text = title
+      }
+      pos != -1
+    }
 
   override fun messageClicked(p0: InAppMessage, p1: Action) {
     val url: String? = p1.actionUrl
@@ -643,6 +721,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     )
     userPrefs.setPreviousScreen(this.javaClass.name)
     startActivity(userTripsIntent(this, "payment_view", 0))
+  }
+
+  override fun popupSnackbarForCompleteUpdate() {
+    val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
+    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }.anchorView = binding.bottomNav
+    snackbar.show()
   }
 }
 /**

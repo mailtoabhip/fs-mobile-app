@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.profile.raterewards.fragments.rewards
 
+import android.content.Context
 import android.graphics.Typeface
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_DownloadProof
@@ -60,20 +62,20 @@ class YourRewardsItemVH(binding: ViewYourRewardsItemBinding) :
   ) {
     binding.request = item.data
     binding.fullViewLl.clickToAction(
-      YourRewardsItemDataAction_ViewDetails,item, adapterPosition, _interface
+      YourRewardsItemDataAction_ViewDetails,item, bindingAdapterPosition, _interface
     )
-    if(item.data.verificationState?.toLowerCase().equals("pending")){
+    if(item.data.verificationState?.lowercase().equals("pending")){
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
-      binding.statusText.setBackground(context.resources.getDrawable(R.drawable.bg_all_round_corner_light_orange))
-    }else if(item.data.verificationState?.toLowerCase().equals("verified")){
-      binding.statusText.setBackground(context.resources.getDrawable(R.drawable.bg_all_round_corner_light_green_12))
+      binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_orange))
+    }else if(item.data.verificationState?.lowercase().equals("verified")){
+      binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_green_12))
       binding.rewardsValue.setTypeface(null, Typeface.BOLD)
     }else {
-      binding.statusText.setBackground(context.resources.getDrawable(R.drawable.bg_all_round_corner_light_pink_12))
+      binding.statusText.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_pink_12))
       binding.rewardsValue.setTypeface(null, Typeface.NORMAL)
     }
     binding.downloadIcon.clickToAction(
-      YourRewardsItemDataAction_DownloadProof,item, adapterPosition, _interface
+      YourRewardsItemDataAction_DownloadProof,item, bindingAdapterPosition, _interface
     )
 
   }
@@ -127,6 +129,6 @@ internal class YourRewardsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
     binding.actionLabel = item.data.actionLabel
-    binding.btnAction.clickToAction(item.data.actionId, item, adapterPosition, _interface)
+    binding.btnAction.clickToAction(item.data.actionId, item, bindingAdapterPosition, _interface)
   }
 }

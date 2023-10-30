@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.activity.transactiondetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.transactions.TransactionsItemData
@@ -29,6 +30,7 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelD
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelRevertCredit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoading
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
+import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -53,8 +55,7 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
       throw IllegalArgumentException("Required data $ARGS_TRANSACTION_DATA not found")
     }
 
-    viewModel.transaction =
-      (intent.getSerializableExtra(ARGS_TRANSACTION_DATA) as? TransactionsItemData)!!
+    viewModel.transaction = intent.getSerializable(ARGS_TRANSACTION_DATA, TransactionsItemData::class.java)!!
     binding.transaction = viewModel.transaction
   }
 
@@ -65,6 +66,13 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
     setSupportActionBar(binding.toolbar)
     title = viewModel.transaction.transactionHeading()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        finish()
+      }
+    })
 
     viewModel.transactionStateLiveData.observe(this, TransactionObserver())
     viewModel.transactionStateLiveData.postValue(TransactionStateLoading())
@@ -185,11 +193,6 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
         }
       }
     }
-  }
-
-  override fun onBackPressed() {
-    userPrefs.setPreviousScreen(this.javaClass.name)
-    super.onBackPressed()
   }
 
 }

@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".KotlinApp"
         android:allowBackup="true"
@@ -24,7 +26,7 @@
         android:screenOrientation="portrait"
         android:fullBackupContent="@xml/backup_descriptor"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/CustomSplashScreenTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
@@ -80,7 +82,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.splash.StartRoutingActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>

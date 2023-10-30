@@ -1,10 +1,10 @@
 package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.Quadruple
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.BidSummaryResponse
 import com.delhivery.axle.api.service.BidService
+import com.delhivery.axle.data.Quadruple
 import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -52,7 +52,7 @@ class BidsRepository @Inject constructor(
 
         val userBid :TransactionBid?
         it.bids.forEach { it1 ->
-          when (it1.biddingType.toLowerCase()) {
+          when (it1.biddingType.lowercase()) {
             "pmt" -> hasPMT = true
             "ftl" -> hasFTL = true
           }

@@ -1,18 +1,14 @@
 package com.delhivery.axle.utils.extensions
 
 import android.content.ContentResolver
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.provider.OpenableColumns
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
 import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
-
-
-
+import java.io.Serializable
 
 /**
  * Check if string is not null and not blank either
@@ -97,4 +93,22 @@ fun ContentResolver.getFileName(uri: Uri): String {
     return subject
   }
 
+/**
+ * Wrapper function to get Serializable objects from Intent object
+ */
+fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): T? {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    getSerializableExtra(key, m_class)
+  else
+    getSerializableExtra(key) as T
+}
+
+/**
+ * Wrapper function to get Serializable objects from Bundle object
+ */
+fun <T: Serializable?> Bundle.getSerializableExtra(key: String, m_class: Class<T>): T?{
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    this.getSerializable(key,m_class)
+  else getSerializable(key) as T
+}
 

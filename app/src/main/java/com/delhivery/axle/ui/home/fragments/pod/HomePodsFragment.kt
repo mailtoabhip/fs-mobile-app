@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.home.fragments.pod
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
@@ -342,7 +343,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   private fun openFile(file: File) {
     try {
       require(context != null)
-      val uri = FileProvider.getUriForFile(context!!, "${context!!.packageName}.provider", file)
+      val uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
       val intent = Intent(Intent.ACTION_VIEW)
       if (file.toString().contains(".pdf")) {
         intent.setDataAndType(uri, "application/pdf")

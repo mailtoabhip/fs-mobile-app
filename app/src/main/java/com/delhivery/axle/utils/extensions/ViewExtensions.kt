@@ -1,8 +1,10 @@
 package com.delhivery.axle.utils.extensions
 
 import android.app.Activity
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Build
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -16,6 +18,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import androidx.annotation.ColorRes
 import com.delhivery.axle.R
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
@@ -128,7 +131,7 @@ fun Spinner.setup(@ArrayRes resId: Int, selected: (pos: Int, value: String?) -> 
  * Show the first item in a spinner as hint by setting its color to gray
  */
 fun Spinner.setHintColor(selectedText: String?){
-  if(selectedText!!.toLowerCase().contains("select") && selectedView!=null)
+  if(selectedText!!.lowercase().contains("select") && selectedView!=null)
     (selectedView as TextView).setTextColor(Color.GRAY)
   else if(selectedView!=null)
     (selectedView as TextView).setTextColor(Color.BLACK)

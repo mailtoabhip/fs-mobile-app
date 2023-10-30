@@ -50,6 +50,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.widget.TextView.BufferType
+import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R.string
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.utils.extensions.focusClick
@@ -77,6 +78,11 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
         setSupportActionBar(binding.toolbar)
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -148,9 +154,9 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                 && viewModel.termsCheck.value == true)
     }
 
-    override fun onBackPressed() {
+  /*  override fun onBackPressed() {
         super.onBackPressed()
-    }
+    }*/
 
     override fun updateLocationFlowState(flowState: LocationFlowState) {
           if(flowState.equals(LocationFlowState.PermissionGranted)){

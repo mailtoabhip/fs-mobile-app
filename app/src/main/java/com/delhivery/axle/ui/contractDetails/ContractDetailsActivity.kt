@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,6 +48,7 @@ import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
@@ -84,7 +86,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
 
     binding.backArrow.setOnClickListener {
-      onBackPressed()
+      onBackPressedDispatcher.onBackPressed()
     }
   }
 
@@ -130,6 +132,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
     refreshData()
   }
+
 
   var countDownTimer: CountDownTimer? = null
   // timer for under 1 hrs slot
@@ -299,7 +302,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             }
             binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
             binding.routeDetails.intraCityTvState.text = t.originState
-            binding.routeDetails.intraCityTvCity.text = t.originCity?.capitalize()
+            binding.routeDetails.intraCityTvCity.text = capitalize(t.originCity)
             binding.routeDetails.intraCityTvHubCity.text = t.origin
             binding.routeDetails.intraCityTvMapView.setOnClickListener{
               try {
@@ -462,7 +465,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.nonExpressBidReceived.text = state.bidsCount.toString()+ " Bids Received"
                 binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
                 binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
-                if(data.biddingType?.toLowerCase()=="pmt"){
+                if(data.biddingType?.lowercase()=="pmt"){
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
                         }else{
                        binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
@@ -492,7 +495,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                     if(data.isItLHContract()|| data.isItIntraCityContract()){
                       binding.bidPmtFtl.text =getString(string.your_bid)
                     }else{
-                      if(data.biddingType?.toLowerCase()=="pmt"){
+                      if(data.biddingType?.lowercase()=="pmt"){
                         binding.bidPmtFtl.text = getString(string.your_pmt_rate)
                       }else{
                         binding.bidPmtFtl.text = getString(string.your_ftl_rate)

@@ -1,7 +1,6 @@
 package com.delhivery.axle.utils.prefs
 
 import android.content.Context
-import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.RouteMappingModel
@@ -789,6 +788,11 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.contractDemand, false)
 
+  var recommendedUpdate: Boolean
+    set(value) = editor.putBoolean(PrefKeys.RecommendedUpdate, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.RecommendedUpdate, false)
+
   var userPreviousScreen: String
     set(value) = editor.putString(PrefKeys.userPreviousScreen,value)
       .apply()
@@ -1037,6 +1041,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     editor.remove(PrefKeys.MoengageFCMTokenGenerated)
       .apply()
     editor.remove(PrefKeys.contractDemand)
+      .apply()
+    editor.remove(PrefKeys.RecommendedUpdate)
       .apply()
     editor.commit()
   }
@@ -1343,8 +1349,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val previousNavigationTab = "previous_navigation_tab"
     const val currentNavigationTab = "current_navigation_tab"
     const val contractDemand= "contract_demand"
-
-
+    const val RecommendedUpdate= "recommended_update"
   }
 }
 

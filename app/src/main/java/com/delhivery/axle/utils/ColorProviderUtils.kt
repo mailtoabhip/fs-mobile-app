@@ -29,7 +29,7 @@ object ColorProviderUtils {
   @ColorRes
   fun getStatusColor(
     status: String
-  ) = when (status.toLowerCase()) {
+  ) = when (status.lowercase()) {
     "active" -> R.color.status_active
     "confirmed" -> R.color.status_confirmed
     else -> R.color.status_lost
@@ -41,7 +41,7 @@ object ColorProviderUtils {
   @ColorRes
   fun getTripStatusColor(
     status: String
-  ) = when (status.toLowerCase()) {
+  ) = when (status.lowercase()) {
     PaymentStatus.AdvancePending.statusKey, PaymentStatus.BalancePending.statusKey, PaymentStatus.RecoveryPending.statusKey -> R.color.pending
     "intransit" -> R.color.status_active
     else -> R.color.status_confirmed
@@ -62,7 +62,7 @@ object ColorProviderUtils {
   @ColorRes
   fun getTransactionAmountColor(
     status: String
-  ) = if (status.toLowerCase().contains("debit")) {
+  ) = if (status.lowercase().contains("debit")) {
     R.color.status_lost
   } else {
     R.color.status_confirmed
@@ -74,7 +74,7 @@ object ColorProviderUtils {
   @ColorRes
   fun getTransactionStatusColor(
     status: String
-  ) = when (status.toLowerCase()) {
+  ) = when (status.lowercase()) {
     "processing", "pending" -> R.color.status_active
     "failed", "rejected" -> R.color.status_lost
     else -> R.color.status_confirmed
@@ -96,4 +96,5 @@ object ColorProviderUtils {
       else -> R.color.status_lost
     }
   }
+
 }

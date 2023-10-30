@@ -1,8 +1,10 @@
 package com.delhivery.axle.ui.profile.kycdetails.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
+import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentYourKycDetailsBinding
 import com.delhivery.axle.utils.NavigationUtils
@@ -63,8 +65,8 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             if (userPrefs.panRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied) {
                 binding.panLay.isSelected = true
                 binding.errorPan.visibility = View.VISIBLE
-                binding.imageKycDetailPanVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
-                binding.textKycPanNumberProfile.setTextColor(resources.getColor(R.color.error_red))
+                binding.imageKycDetailPanVerified.setImageDrawable(ContextCompat.getDrawable(activity as Context,R.drawable.ic_vector_error))
+                binding.textKycPanNumberProfile.setTextColor(ContextCompat.getColor(activity as Context, R.color.error_red))
                 if (userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification")) {
                     binding.errorPan.text = "Document under verification"
                 } else {
@@ -73,8 +75,8 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             } else {
                 binding.panLay.isSelected = false
                 binding.errorPan.visibility = View.GONE
-                binding.imageKycDetailPanVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_circle_check))
-                binding.textKycPanNumberProfile.setTextColor(resources.getColor(R.color.faded_black))
+                binding.imageKycDetailPanVerified.setImageDrawable(ContextCompat.getDrawable(activity as Context,R.drawable.ic_vector_circle_check))
+                binding.textKycPanNumberProfile.setTextColor(ContextCompat.getColor(activity as Context, R.color.faded_black))
             }
         } else {
             binding.labelPan.visibility = View.GONE
@@ -189,8 +191,8 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             if(userPrefs.rcRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied){
                 binding.truckRcLay.isSelected = true
                 binding.errorTruck.visibility = View.VISIBLE
-                binding.imageRc.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
-                binding.textRc.setTextColor(resources.getColor(R.color.error_red))
+                binding.imageRc.setImageDrawable(ContextCompat.getDrawable(activity as Context,R.drawable.ic_vector_error))
+                binding.textRc.setTextColor(ContextCompat.getColor(activity as Context, R.color.error_red))
                 if(userPrefs.rcRejectReason.replace(" ", "").equals("Documentunderverification")){
                     binding.errorTruck.text = "Document under verification"
                 }else {
@@ -199,8 +201,8 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             }else{
                 binding.truckRcLay.isSelected = false
                 binding.errorTruck.visibility = View.GONE
-                binding.imageRc.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_circle_check))
-                binding.textRc.setTextColor(resources.getColor(R.color.faded_black))
+                binding.imageRc.setImageDrawable(ContextCompat.getDrawable(activity as Context,R.drawable.ic_vector_circle_check))
+                binding.textRc.setTextColor(ContextCompat.getColor(activity as Context, R.color.faded_black))
             }
 
             if (userPrefs.businessType.equals("rc")) {
@@ -241,8 +243,8 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
         if(userPrefs.addressRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied){
             binding.addressLay.isSelected = true
             binding.errorAddress.visibility = View.VISIBLE
-            binding.imageKycDetailAddressVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
-            binding.textKycAddressProfile.setTextColor(resources.getColor(R.color.error_red))
+            binding.imageKycDetailAddressVerified.setImageDrawable(ContextCompat.getDrawable(activity as Context, R.drawable.ic_vector_error))
+            binding.textKycAddressProfile.setTextColor(ContextCompat.getColor(activity as Context, R.color.error_red))
             if(userPrefs.addressRejectReason.replace(" ", "").equals("Documentunderverification")){
                 binding.errorAddress.text = "Document under verification"
             }else {
@@ -251,8 +253,8 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
         }else{
             binding.addressLay.isSelected = false
             binding.errorAddress.visibility = View.GONE
-            binding.imageKycDetailAddressVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_circle_check))
-            binding.textKycAddressProfile.setTextColor(resources.getColor(R.color.faded_black))
+            binding.imageKycDetailAddressVerified.setImageDrawable(ContextCompat.getDrawable(activity as Context, R.drawable.ic_vector_circle_check))
+            binding.textKycAddressProfile.setTextColor(ContextCompat.getColor(activity as Context, R.color.faded_black))
         }
     }
 
@@ -262,14 +264,14 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
         if(userPrefs.identityRejectReason.isNotNullOrEmpty() && !userPrefs.isUserVerfied){
             binding.gstLay.isSelected = true
             binding.errorGst.visibility = View.VISIBLE
-            binding.imageKycDetailGstVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_error))
-            binding.textKycGstNumberProfile.setTextColor(resources.getColor(R.color.error_red))
+            binding.imageKycDetailGstVerified.setImageDrawable(ContextCompat.getDrawable(activity as Context, R.drawable.ic_vector_error))
+            binding.textKycGstNumberProfile.setTextColor(ContextCompat.getColor(activity as Context, R.color.error_red))
             binding.errorGst.text = message
         }else{
             binding.gstLay.isSelected = false
             binding.errorGst.visibility = View.GONE
-            binding.imageKycDetailGstVerified.setImageDrawable(resources.getDrawable(R.drawable.ic_vector_circle_check))
-            binding.textKycGstNumberProfile.setTextColor(resources.getColor(R.color.faded_black))
+            binding.imageKycDetailGstVerified.setImageDrawable(ContextCompat.getDrawable(activity as Context, R.drawable.ic_vector_circle_check))
+            binding.textKycGstNumberProfile.setTextColor(ContextCompat.getColor(activity as Context, R.color.faded_black))
         }
     }
 }

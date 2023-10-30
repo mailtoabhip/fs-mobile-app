@@ -21,19 +21,19 @@ fun View.errorVibrate(start: Boolean = true): ObjectAnimator = resources.getDime
           .apply {
             if (this@errorVibrate is DelhiveryOTPViewEditText) {
               addListener(object : AnimatorListener {
-                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {}
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                   /* error disabled */
                   this@errorVibrate.error = false
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                   /* error disabled */
                   this@errorVibrate.error = false
                 }
 
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                   /* error enabled */
                   this@errorVibrate.error = true
                 }
@@ -61,16 +61,16 @@ fun View.fadeAnim(
       }
       interpolator = FastOutSlowInInterpolator()
       addListener(object : AnimatorListener {
-        override fun onAnimationRepeat(animation: Animator?) {}
+        override fun onAnimationRepeat(animation: Animator) {}
 
-        override fun onAnimationEnd(animation: Animator?) {}
+        override fun onAnimationEnd(animation: Animator) {}
 
-        override fun onAnimationCancel(animation: Animator?) {
+        override fun onAnimationCancel(animation: Animator) {
           /* reset view alpha to 1 */
           please { animate(this@fadeAnim) toBe { visible() } }.start()
         }
 
-        override fun onAnimationStart(animation: Animator?) {}
+        override fun onAnimationStart(animation: Animator) {}
       })
       if (start) {
         start()
