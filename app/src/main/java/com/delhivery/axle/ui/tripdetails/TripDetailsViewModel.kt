@@ -431,7 +431,7 @@ class TripDetailsViewModel @Inject constructor(
                             paymentSettled = true
                             settledTime = transferTime
                           }
-                          var event = capitalize(charge.head)!!
+                          var event = capitalize(charge.head)?:""
                           when (charge.head) {
                             "loading" -> {
                               event = "Advance"

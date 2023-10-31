@@ -570,9 +570,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = capitalize(binding.transaction?.stop1!!)
+              citNam = capitalize(binding.transaction?.stop1)
             } else {
-              citNam = capitalize(binding.transaction?.stop1City!!)
+              citNam = capitalize(binding.transaction?.stop1City)
             }
             binding.textViaDestination.city3.text = citNam
 
@@ -604,9 +604,9 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
 
             var citNam: String? = null
             if (binding.transaction?.isDmt == true) {
-              citNam = capitalize(binding.transaction?.stop2!!)
+              citNam = capitalize(binding.transaction?.stop2)
             } else {
-              citNam = capitalize(binding.transaction?.stop2City!!)
+              citNam = capitalize(binding.transaction?.stop2City)
             }
             binding.textViaDestination.city4.text = citNam
 
