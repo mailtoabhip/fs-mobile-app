@@ -12,6 +12,7 @@ import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,8 +36,8 @@ class InventoryRepository @Inject constructor(
 
     fun getOriginDestinationCluster(originCityId: String, destinationCityId: String): Single<Pair<String, String>> =
         Single.zip(
-            cityService.getClusterID(originCityId).convertResponse(),
-            cityService.getClusterID(destinationCityId).convertResponse(),
+            cityService.getClusterID(originCityId).convertResponse().subscribeOn(Schedulers.io()),
+            cityService.getClusterID(destinationCityId).convertResponse().subscribeOn(Schedulers.io()),
             BiFunction<ClusterResponse, ClusterResponse,
                     Pair<String, String>> { t1, t2 ->
                 Pair( if(t1.clusters.isNotEmpty()){
