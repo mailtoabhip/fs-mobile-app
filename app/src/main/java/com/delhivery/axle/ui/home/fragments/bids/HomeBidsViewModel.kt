@@ -36,6 +36,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.reactivex.Single
 import io.reactivex.functions.Function3
+import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -145,9 +146,9 @@ class HomeBidsViewModel @Inject constructor(
           Single.error(NoBidsFoundException())
         } else {
           Single.zip(
-            transactionsRepository.bulkTransactions(_res.second),
-            bidsRepository.bulkLowestBidsForTransactions(_res.second),
-            bidsRepository.bidsForBulkLoads(_res.second),
+            transactionsRepository.bulkTransactions(_res.second).subscribeOn(Schedulers.io()),
+            bidsRepository.bulkLowestBidsForTransactions(_res.second).subscribeOn(Schedulers.io()),
+            bidsRepository.bidsForBulkLoads(_res.second).subscribeOn(Schedulers.io()),
             Function3<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,Pair<List<TransactionBid>, List<TransactionBid>>,
                     Quintuple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>, List<TransactionBid>,List<TransactionBid>>> { t1, t2,t3 ->
               Quintuple(t1.first, t1.second, t2,t3.first,t3.second)

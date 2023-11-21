@@ -31,6 +31,7 @@ import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import io.reactivex.functions.Function3
+import io.reactivex.schedulers.Schedulers
 
 import javax.inject.Inject
 
@@ -123,9 +124,9 @@ class HomeContractsViewModel@Inject constructor(
         hasMoreData = _res.hasNext
         allActiveFetched = _res.allActiveFetched?:false
         Single.zip(
-          bidsRepository.bidsForLoads(_res.transactions,true),
-          bidsRepository.bulkLowestBidsForLoads(_res.transactions),
-          transactionsRepository.fetchContractsSummaryCount(),
+          bidsRepository.bidsForLoads(_res.transactions,true).subscribeOn(Schedulers.io()),
+          bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
+          transactionsRepository.fetchContractsSummaryCount().subscribeOn(Schedulers.io()),
           Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse,
               Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse>> { t1, t2,t3 ->
             Quintuple(t1.first, t1.second, t2.second,t3,_res)
