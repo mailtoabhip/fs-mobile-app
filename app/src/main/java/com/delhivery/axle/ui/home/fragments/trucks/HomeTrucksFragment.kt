@@ -415,7 +415,8 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         viewModel.paginateCount = 0
         adapter.resetStaticData()
         if(!filter) {
-            binding.editStickySearch.setText("")
+            if(!binding.editStickySearch.text.isNullOrEmpty())
+              binding.editStickySearch.setText("")
             viewModel.searchPrefix = ""
             viewModel.searchFlag = false
             viewModel.bodyTypeFilter = mutableListOf()
