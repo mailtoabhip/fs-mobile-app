@@ -241,7 +241,6 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             if (date2.compareTo(date1) > 0) {
               val mills: Long = date2.getTime() - date1.getTime()
               stopCounter()
-              Handler(Looper.getMainLooper()).post {
                 countDownTimer = object : CountDownTimer(mills, 1000) {
                   override fun onTick(millisUntilFinished: Long) {
                     try {
@@ -310,7 +309,6 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
                     }
                   }
                 }.start()
-              }
             } else {
               //Awaiting Results after bidding closed
               binding.tvBidStatus.setTextColor(
