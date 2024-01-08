@@ -26,6 +26,7 @@ import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
@@ -106,8 +107,8 @@ class SearchResultsViewModel @Inject constructor(
           this.offset=t.offset
           this.loadPricePercent = t.loadPricePercent
           Single.zip(
-            bidsRepository.bidsForLoads(t.transactions, requestType=="contract"),
-            bidsRepository.bulkLowestBidsForLoads(t.transactions),
+            bidsRepository.bidsForLoads(t.transactions, requestType=="contract").subscribeOn(Schedulers.io()),
+            bidsRepository.bulkLowestBidsForLoads(t.transactions).subscribeOn(Schedulers.io()),
             BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
                 Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
               Triple(t1.first, t1.second, t2.second)

@@ -13,6 +13,7 @@ import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,8 +29,8 @@ class TripsRepository @Inject constructor(
    */
   fun tripAndTransactionDetails(transactionId: String): Single<Pair<HomeBidsRequestItemData, HomeTripsItemData>> =
     Single.zip(
-        transactionService.transactionDetails(transactionId).convertResponse(),
-        tripsService.trip(transactionId).convertResponse(),
+        transactionService.transactionDetails(transactionId).convertResponse().subscribeOn(Schedulers.io()),
+        tripsService.trip(transactionId).convertResponse().subscribeOn(Schedulers.io()),
         BiFunction<HomeBidsRequestItemData, HomeTripsItemData,
             Pair<HomeBidsRequestItemData, HomeTripsItemData>> { t1, t2 ->
           Pair(t1, t2)
