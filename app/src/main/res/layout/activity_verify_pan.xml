@@ -170,6 +170,22 @@
                     android:layout_marginTop="@dimen/size_32dp"
                     android:text="@string/action_save_proceed"
                     />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/text_pan_not_linked_to_aadhaar"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_16dp"
+                  android:text="@string/pan_not_linked_to_aadhaar"
+                  android:textColor="@color/error_red"
+                  android:visibility="visible"
+                  android:fontFamily="sans-serif"
+                  android:textSize="@dimen/text_12sp"
+                  bind:layout_constraintEnd_toEndOf="parent"
+                  bind:layout_constraintStart_toStartOf="parent"
+                  bind:layout_constraintTop_toBottomOf="@id/btn_verify_pan"
+                  android:textAlignment="center"
+                  />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>

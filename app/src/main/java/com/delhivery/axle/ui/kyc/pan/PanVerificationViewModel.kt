@@ -10,9 +10,6 @@ import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
-import com.delhivery.axle.ui.kyc.gst.GstDataItem
-import com.delhivery.axle.ui.kyc.gst.GstItem_TimeOut
-import com.delhivery.axle.ui.kyc.gst.GstProgressItem
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -83,7 +80,11 @@ class PanVerificationViewModel@Inject constructor(
                         if(errorBody.data!=null){
                           if(errorBody.data.isNotEmpty() && errorBody.data[0].isDuplicatePan!!){
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
-                          }else{
+                          }
+                          else if(errorBody.errorMessage.isNotEmpty() && isPanLinkedToAadhaar(errorBody.errorMessage)){
+                              errorLiveData.postValue(Pair(AuthenticationUIError.PANisNotLinkedToAaadhaar,"PAN not linked to Aadhaar"))
+                          }
+                          else{
                             error.handle()
                             errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                           }
@@ -172,6 +173,11 @@ class PanVerificationViewModel@Inject constructor(
         val m: Matcher = p.matcher(panCardNo)
         return m.matches()
     }
+
+    fun isPanLinkedToAadhaar(errorMessage: String): Boolean {
+      return errorMessage.equals("PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com")
+    }
+
 }
 
 /**
@@ -179,5 +185,6 @@ class PanVerificationViewModel@Inject constructor(
  */
 enum class AuthenticationUIError {
     None,
-    InvalidPANNumber
+    InvalidPANNumber,
+    PANisNotLinkedToAaadhaar
 }

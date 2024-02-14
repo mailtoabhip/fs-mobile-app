@@ -90,7 +90,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 binding.imgCorrect.visibility = View.GONE
                 binding.editPan.error= false
               binding.textPanError.visibility=View.GONE
-
+              binding.textPanNotLinkedToAadhaar.visibility=View.GONE
             }
 
             lengthAction(10) {
@@ -173,6 +173,10 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                         AuthenticationUIError.InvalidPANNumber -> {   //Invalid pan number functionality
                             uiUtils.showToast(error.second!!)
                             binding.editPan.errorVibrate()
+                        }
+
+                        AuthenticationUIError.PANisNotLinkedToAaadhaar -> {
+                           binding.textPanNotLinkedToAadhaar.visibility = View.VISIBLE
                         }
 
                         AuthenticationUIError.None -> {/* nothing */
