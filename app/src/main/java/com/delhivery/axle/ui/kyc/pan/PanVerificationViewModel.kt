@@ -35,6 +35,7 @@ class PanVerificationViewModel@Inject constructor(
     /* error live data */
     var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
     var duplicatePanErrorLiveData = MutableLiveData<String?>()
+    var panNotLinkedToAadhaarErrorLiveData = MutableLiveData<String?>()
 
 
     var panCardNumber=""
@@ -78,11 +79,12 @@ class PanVerificationViewModel@Inject constructor(
                     when (errorBody.errorCode()) {
                       400-> {
                         if(errorBody.data!=null){
-                          if(errorBody.data.isNotEmpty() && errorBody.data[0].isDuplicatePan!!){
+                          if(errorBody.data.isNotEmpty()) {
+                            if (errorBody.data[0].isDuplicatePan == true) {
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
-                          }
-                          else if(errorBody.errorMessage.isNotEmpty() && isPanLinkedToAadhaar(errorBody.errorMessage)){
-                              errorLiveData.postValue(Pair(AuthenticationUIError.PANisNotLinkedToAaadhaar,null))
+                            } else if (errorBody.data.isNotEmpty() && isPanLinkedToAadhaar(errorBody.data[0].message)) {
+                              panNotLinkedToAadhaarErrorLiveData.postValue(R.string.pan_not_linked_to_aadhaar.toString())
+                            }
                           }
                           else{
                             error.handle()
@@ -174,7 +176,7 @@ class PanVerificationViewModel@Inject constructor(
         return m.matches()
     }
 
-    fun isPanLinkedToAadhaar(errorMessage: String): Boolean {
+    private fun isPanLinkedToAadhaar(errorMessage: String?): Boolean {
       return errorMessage.equals("PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com")
     }
 
@@ -186,5 +188,4 @@ class PanVerificationViewModel@Inject constructor(
 enum class AuthenticationUIError {
     None,
     InvalidPANNumber,
-    PANisNotLinkedToAaadhaar
 }

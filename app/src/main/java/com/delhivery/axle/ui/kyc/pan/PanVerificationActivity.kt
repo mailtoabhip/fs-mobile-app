@@ -116,6 +116,14 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         binding.textPanName.text =  getString(R.string.hint_for_quick_processing)
         binding.editPan.error= true
       })
+
+      viewModel.panNotLinkedToAadhaarErrorLiveData.observe(this) {
+        binding.panVerifyProgress.visibility=View.GONE
+        binding.editPan.isEnabled=true
+        binding.btnVerifyPan.isEnabled=false
+        binding.imgCorrect.visibility=View.VISIBLE
+        binding.textPanNotLinkedToAadhaar.visibility=View.VISIBLE
+      }
       binding.textPanError.setOnClickListener{
         val intent = Intent(Intent.ACTION_DIAL)
         intent.data = Uri.parse("tel:01246719699")
@@ -173,10 +181,6 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                         AuthenticationUIError.InvalidPANNumber -> {   //Invalid pan number functionality
                             uiUtils.showToast(error.second!!)
                             binding.editPan.errorVibrate()
-                        }
-
-                        AuthenticationUIError.PANisNotLinkedToAaadhaar -> {
-                           binding.textPanNotLinkedToAadhaar.visibility = View.VISIBLE
                         }
 
                         AuthenticationUIError.None -> {/* nothing */
