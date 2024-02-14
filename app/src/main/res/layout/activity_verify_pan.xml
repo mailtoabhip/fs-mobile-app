@@ -178,7 +178,7 @@
                   android:layout_marginTop="@dimen/size_16dp"
                   android:text="@string/pan_not_linked_to_aadhaar"
                   android:textColor="@color/error_red"
-                  android:visibility="visible"
+                  android:visibility="gone"
                   android:fontFamily="sans-serif"
                   android:textSize="@dimen/text_12sp"
                   bind:layout_constraintEnd_toEndOf="parent"

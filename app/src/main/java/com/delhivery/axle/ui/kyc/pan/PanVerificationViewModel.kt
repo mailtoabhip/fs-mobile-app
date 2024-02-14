@@ -82,7 +82,7 @@ class PanVerificationViewModel@Inject constructor(
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
                           }
                           else if(errorBody.errorMessage.isNotEmpty() && isPanLinkedToAadhaar(errorBody.errorMessage)){
-                              errorLiveData.postValue(Pair(AuthenticationUIError.PANisNotLinkedToAaadhaar,"PAN not linked to Aadhaar"))
+                              errorLiveData.postValue(Pair(AuthenticationUIError.PANisNotLinkedToAaadhaar,null))
                           }
                           else{
                             error.handle()
