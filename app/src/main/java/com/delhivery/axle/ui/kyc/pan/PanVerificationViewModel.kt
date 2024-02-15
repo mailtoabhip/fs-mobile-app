@@ -187,5 +187,5 @@ class PanVerificationViewModel@Inject constructor(
  */
 enum class AuthenticationUIError {
     None,
-    InvalidPANNumber,
+    InvalidPANNumber
 }
