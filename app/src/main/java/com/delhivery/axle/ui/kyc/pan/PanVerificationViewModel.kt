@@ -82,7 +82,7 @@ class PanVerificationViewModel@Inject constructor(
                           if(errorBody.data.isNotEmpty()) {
                             if (errorBody.data[0].isDuplicatePan == true) {
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
-                            } else if (errorBody.data.isNotEmpty() && isPanLinkedToAadhaar(errorBody.data[0].message)) {
+                            } else if (errorBody.data.isNotEmpty() && errorBody.data[0].linkingStatus == false) {
                               panNotLinkedToAadhaarErrorLiveData.postValue(R.string.pan_not_linked_to_aadhaar.toString())
                             }
                           }
@@ -174,10 +174,6 @@ class PanVerificationViewModel@Inject constructor(
         val p: Pattern = Pattern.compile(panValidationRegex)
         val m: Matcher = p.matcher(panCardNo)
         return m.matches()
-    }
-
-    private fun isPanLinkedToAadhaar(errorMessage: String?): Boolean {
-      return errorMessage.equals("PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com")
     }
 
 }

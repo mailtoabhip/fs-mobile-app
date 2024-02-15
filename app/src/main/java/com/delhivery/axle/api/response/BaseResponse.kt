@@ -60,6 +60,7 @@ data class BaseErrorResponse(
 data class ObjectErrorData(
   @SerializedName("is_duplicate_pan") val isDuplicatePan: Boolean?,
   @SerializedName("account_exists") val accountExists: Boolean?,
+  @SerializedName("linking_status") val linkingStatus: Boolean?,
   @SerializedName("message") val message: String?
 )
 
