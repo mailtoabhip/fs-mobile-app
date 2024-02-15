@@ -82,7 +82,7 @@ class PanVerificationViewModel@Inject constructor(
                           if(errorBody.data.isNotEmpty()) {
                             if (errorBody.data[0].isDuplicatePan == true) {
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
-                            } else if (errorBody.data.isNotEmpty() && errorBody.data[0].linkingStatus == false) {
+                            } else if (errorBody.data[0].linkingStatus == false) {
                               panNotLinkedToAadhaarErrorLiveData.postValue(R.string.pan_not_linked_to_aadhaar.toString())
                             }
                           }
