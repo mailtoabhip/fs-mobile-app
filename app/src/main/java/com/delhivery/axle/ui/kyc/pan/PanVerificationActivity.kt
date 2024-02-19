@@ -121,7 +121,8 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
         binding.panVerifyProgress.visibility=View.GONE
         binding.editPan.isEnabled=true
         binding.btnVerifyPan.isEnabled=false
-        binding.textPanNotLinkedToAadhaar.text = it
+        binding.textPanName.text = getString(R.string.msg_verified_pan_name,it.second)
+        binding.textPanNotLinkedToAadhaar.text = it.first
         binding.imgCorrect.visibility=View.VISIBLE
         binding.textPanNotLinkedToAadhaar.visibility=View.VISIBLE
       }

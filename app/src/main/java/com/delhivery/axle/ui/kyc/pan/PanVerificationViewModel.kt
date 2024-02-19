@@ -35,7 +35,7 @@ class PanVerificationViewModel@Inject constructor(
     /* error live data */
     var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
     var duplicatePanErrorLiveData = MutableLiveData<String?>()
-    var panNotLinkedToAadhaarErrorLiveData = MutableLiveData<String?>()
+    var panNotLinkedToAadhaarErrorLiveData = MutableLiveData<Pair<String?,String?>>()
 
 
     var panCardNumber=""
@@ -83,7 +83,7 @@ class PanVerificationViewModel@Inject constructor(
                             if (errorBody.data[0].isDuplicatePan == true) {
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
                             } else if (errorBody.data[0].linkingStatus == false) {
-                              panNotLinkedToAadhaarErrorLiveData.postValue(errorBody.data[0].message)
+                              panNotLinkedToAadhaarErrorLiveData.postValue(Pair(errorBody.data[0].message,errorBody.data[0].panHolderName))
                             }
                             else{
                               error.handle()
