@@ -90,12 +90,15 @@ class PanVerificationViewModel@Inject constructor(
                               errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                             }
                           }
+                          else if(errorBody.errorMessage.isNotNullOrEmpty()){
+                            Throwable(errorBody.errorMessage).handle()
+                          }
                           else{
                             error.handle()
                             errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                           }
                         }
-                        else if(errorBody.errorMessage == "PAN and Aadhaar linkage check failure. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com"){
+                        else if(errorBody.errorMessage.isNotNullOrEmpty()){
                           Throwable(errorBody.errorMessage).handle()
                         }
                         else {
