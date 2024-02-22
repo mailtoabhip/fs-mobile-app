@@ -10,6 +10,7 @@ import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
+import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -92,6 +93,7 @@ class PanVerificationViewModel@Inject constructor(
                           }
                           else if(errorBody.errorMessage.isNotNullOrEmpty()){
                             Throwable(errorBody.errorMessage).handle()
+                            errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                           }
                           else{
                             error.handle()
@@ -100,6 +102,7 @@ class PanVerificationViewModel@Inject constructor(
                         }
                         else if(errorBody.errorMessage.isNotNullOrEmpty()){
                           Throwable(errorBody.errorMessage).handle()
+                          errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                         }
                         else {
                           error.handle()
