@@ -93,7 +93,7 @@ class PanVerificationViewModel@Inject constructor(
                           }
                           else if(errorBody.errorMessage.isNotNullOrEmpty()){
                             Throwable(errorBody.errorMessage).handle()
-                            errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
+                            errorLiveData.postValue(Pair(AuthenticationUIError.None, ""))
                           }
                           else{
                             error.handle()
@@ -102,7 +102,7 @@ class PanVerificationViewModel@Inject constructor(
                         }
                         else if(errorBody.errorMessage.isNotNullOrEmpty()){
                           Throwable(errorBody.errorMessage).handle()
-                          errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
+                          errorLiveData.postValue(Pair(AuthenticationUIError.None, ""))
                         }
                         else {
                           error.handle()
