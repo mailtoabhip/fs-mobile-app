@@ -10,9 +10,7 @@ import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
-import com.delhivery.axle.ui.kyc.gst.GstDataItem
-import com.delhivery.axle.ui.kyc.gst.GstItem_TimeOut
-import com.delhivery.axle.ui.kyc.gst.GstProgressItem
+import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -38,6 +36,7 @@ class PanVerificationViewModel@Inject constructor(
     /* error live data */
     var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
     var duplicatePanErrorLiveData = MutableLiveData<String?>()
+    var panNotLinkedToAadhaarErrorLiveData = MutableLiveData<Pair<String?,String?>>()
 
 
     var panCardNumber=""
@@ -81,13 +80,31 @@ class PanVerificationViewModel@Inject constructor(
                     when (errorBody.errorCode()) {
                       400-> {
                         if(errorBody.data!=null){
-                          if(errorBody.data.isNotEmpty() && errorBody.data[0].isDuplicatePan!!){
+                          if(errorBody.data.isNotEmpty()) {
+                            if (errorBody.data[0].isDuplicatePan == true) {
                               duplicatePanErrorLiveData.postValue(R.string.error_duplicate_pan.toString())
-                          }else{
+                            } else if (errorBody.data[0].linkingStatus == false) {
+                              panNotLinkedToAadhaarErrorLiveData.postValue(Pair(errorBody.data[0].message,errorBody.data[0].panHolderName))
+                            }
+                            else{
+                              error.handle()
+                              errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
+                            }
+                          }
+                          else if(errorBody.errorMessage.isNotNullOrEmpty()){
+                            Throwable(errorBody.errorMessage).handle()
+                            errorLiveData.postValue(Pair(AuthenticationUIError.None, ""))
+                          }
+                          else{
                             error.handle()
                             errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                           }
-                        }else{
+                        }
+                        else if(errorBody.errorMessage.isNotNullOrEmpty()){
+                          Throwable(errorBody.errorMessage).handle()
+                          errorLiveData.postValue(Pair(AuthenticationUIError.None, ""))
+                        }
+                        else {
                           error.handle()
                           errorLiveData.postValue(Pair(AuthenticationUIError.InvalidPANNumber, "Invalid Pan Number"))
                         }
@@ -172,6 +189,7 @@ class PanVerificationViewModel@Inject constructor(
         val m: Matcher = p.matcher(panCardNo)
         return m.matches()
     }
+
 }
 
 /**
