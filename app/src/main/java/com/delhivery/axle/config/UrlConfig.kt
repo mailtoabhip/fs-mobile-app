@@ -21,12 +21,12 @@ enum class UrlConfig(
      "https://orion-contract-api-uat.delhivery.com/"
    ),
   BidService(
-      "https://orion-bid-api.delhivery.com",
+      "https://orion-bid-api-mum.delhivery.com",
       "https://orion-bid-api-dev.delhivery.com",
       "https://orion-bid-api-uat.delhivery.com"
   ),
   UserService(
-      "https://orion-user-api.delhivery.com",
+      "https://orion-user-api-mum.delhivery.com",
       "https://orion-user-api-dev.delhivery.com",
       "https://orion-user-api-uat.delhivery.com"
   ),
@@ -86,7 +86,7 @@ enum class UrlConfig(
       "https://orion-uat.delhivery.com"
   ),
   LoadCycleService(
-      "https://orion-load-fullcycle-api.delhivery.com",
+      "https://orion-load-fullcycle-api-mum.delhivery.com",
       "https://orion-load-fullcycle-api-dev.delhivery.com",
       "https://orion-load-fullcycle-api-uat.delhivery.com"
   ),
@@ -101,12 +101,12 @@ enum class UrlConfig(
       "https://orion-utility-api-uat.delhivery.com"
   ),
   OMCService(
-      "https://orion-omc-channel.delhivery.com",
+      "https://orion-omc-channel-mum.delhivery.com",
       "https://orion-omc-dev.delhivery.com",
       "https://orion-omc-uat.delhivery.com"
   ),
   InventoryService(
-      "https://orion-inventory-api-v2.delhivery.com",
+      "https://orion-inventory-api-v2-mum.delhivery.com",
       "https://zxfddco9gg.execute-api.ap-southeast-1.amazonaws.com/dev/",
       "https://orion-uat-inventory.delhivery.com"
 
@@ -117,7 +117,7 @@ enum class UrlConfig(
           "https://orion-user-onboarding-api-uat.delhivery.com"
   ),
   PriceService(
-          "https://orion-contract-api.delhivery.com/",
+          "https://orion-contract-api-mum.delhivery.com/",
           "https://orion-contract-api-dev.delhivery.com/",
           "https://orion-contract-api-uat.delhivery.com/"
   ),
