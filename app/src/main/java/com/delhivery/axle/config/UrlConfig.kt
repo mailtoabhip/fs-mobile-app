@@ -56,7 +56,7 @@ enum class UrlConfig(
       "https://orion-city-api-uat.delhivery.com"
   ),
   WarehouseService(
-      "https://orion-warehouse-api.delhivery.com",
+      "https://orion-warehouse-api-mum.delhivery.com",
       "https://orion-warehouse-api-dev.delhivery.com",
       "https://orion-warehouse-api-uat.delhivery.com"
   ),
