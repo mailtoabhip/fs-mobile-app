@@ -46,7 +46,7 @@ enum class UrlConfig(
       "https://orion-payment-api-uat.delhivery.com"
   ),
   PayableService(
-          "https://93n0m304c4.execute-api.ap-southeast-1.amazonaws.com/prod/",
+          "https://orion-payable-service-api.delhivery.com",
           "https://orion-payable-dev.delhivery.com",
           "https://orion-payable-uat.delhivery.com"
   ),
