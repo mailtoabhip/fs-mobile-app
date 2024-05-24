@@ -29,6 +29,8 @@ import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
+import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.auth.AuthenticationUIState.AccountDetails
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
@@ -333,7 +335,11 @@ class NavigationUtils @Inject constructor(
 
       if(!userPrefs.isUserVerfied){
         userPrefs.setPreviousScreen(activity.javaClass.name)
-        if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
+        if (userPrefs.isLoadBoardSupplier && userPrefs.isLoadBoardClient && (userPrefs.userName.isNullOrEmpty() || userPrefs.companyName.isNullOrEmpty())) {
+          userPrefs.hasLoggedIn = false
+          val intent = Intent(activity, AccountDetailsActivity::class.java)
+          this.navigate(intent,true,null)
+        }else if(userPrefs.getLanesPreference().isNullOrEmpty()&& userPrefs.truckTypes.isNullOrEmpty()){
           val intent = Intent(activity, BasicDetailsActivity::class.java)
           this.navigate(intent,true,null)
         }else if(userPrefs.pancard.isNullOrEmpty()) {

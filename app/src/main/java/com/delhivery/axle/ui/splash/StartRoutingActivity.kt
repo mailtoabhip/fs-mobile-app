@@ -36,11 +36,13 @@ import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.fcm.ARGS_VEHICLE_NUMBER
 import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
+import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home

@@ -793,6 +793,16 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.RecommendedUpdate, false)
 
+  var requestedDeletion: Boolean
+    set(value) = editor.putBoolean(PrefKeys.RequestedDeletion, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.RequestedDeletion, false)
+
+  var returningFromDeletion: Boolean
+    set(value) = editor.putBoolean(PrefKeys.ReturningFromDeletion, value)
+      .apply()
+    get() = prefs.getBoolean(PrefKeys.ReturningFromDeletion, false)
+
   var userPreviousScreen: String
     set(value) = editor.putString(PrefKeys.userPreviousScreen,value)
       .apply()
@@ -1044,6 +1054,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.RecommendedUpdate)
       .apply()
+    editor.remove(PrefKeys.RequestedDeletion)
+      .apply()
+    editor.remove(PrefKeys.ReturningFromDeletion)
+      .apply()
     editor.commit()
   }
 
@@ -1125,7 +1139,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             if (user.getTDSSubtractor() == 99) user.getTDSSubtractor() + 0.25 else user.getTDSSubtractor() + 0.5
     bankName = user.supplierDetails?.bank ?: ""
     companyName = user.businessName ?: ""
-    phoneNumber = user.phoneNumber
+    phoneNumber = if(user.phoneNumber.isNotNullOrEmpty())user.phoneNumber else phoneNumber
     ifscCode = user.supplierDetails?.ifscCode ?: ""
     pancard = user.supplierDetails?.panNumber ?: ""
     accNumber = user.accNumber()
@@ -1202,6 +1216,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     creationDate = user.supplierDetails?.creationDate?:""
     isKycVeriifed = user.supplierDetails?.isKycVerified?:false
     contractDemand = user.supplierDetails?.contractDemand?:false
+    requestedDeletion = user.requestedDeletion?:false
+    returningFromDeletion = if(requestedDeletion) true else returningFromDeletion
   }
 
 
@@ -1350,6 +1366,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val currentNavigationTab = "current_navigation_tab"
     const val contractDemand= "contract_demand"
     const val RecommendedUpdate= "recommended_update"
+    const val RequestedDeletion= "requested_deletion"
+    const val ReturningFromDeletion= "returningFromDeletion"
   }
 }
 
