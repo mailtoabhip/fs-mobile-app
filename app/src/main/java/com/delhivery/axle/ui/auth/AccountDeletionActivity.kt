@@ -21,5 +21,10 @@ class AccountDeletionActivity : BaseActivity<ActivityDeletionAccountBinding, Aut
     binding.callVendorDesk.setOnClickListener {
       callHelpline()
     }
+
+    binding.logout.setOnClickListener {
+      viewModel.logout()
+      navigationUtils.logout("Successfully logged out","fromUser")
+    }
   }
 }
