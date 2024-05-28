@@ -106,4 +106,10 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
         operation(it)
       }
   }
+
+  override fun onViewRecycled(holder: BaseViewHolder<*>) {
+    super.onViewRecycled(holder)
+    if(holder is HomeContractsRequestItemVH)
+      holder.stopCounter()
+  }
 }
