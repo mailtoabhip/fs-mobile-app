@@ -191,4 +191,7 @@ class AuthenticationViewModel @Inject constructor(
         }
   }
 
+  fun logout() {
+    userPrefs.clearPrefs()
+  }
 }

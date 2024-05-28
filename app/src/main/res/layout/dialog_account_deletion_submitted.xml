@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:paddingTop="@dimen/size_64dp"
+      android:paddingBottom="@dimen/size_64dp"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/size_16dp"
+        android:background="@drawable/ic_green_circle"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_white_tick" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Account Deletion Requested Successfully"
+        android:textColor="@color/black"
+        android:layout_marginTop="@dimen/size_6dp"
+        android:textSize="@dimen/text_16sp"
+        android:textStyle="bold" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title_sub_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Processing deletion request usually takes 2-3 business days. Please reach out to vendor desk."
+        android:textColor="@color/sub_heading_black"
+        android:layout_marginTop="@dimen/size_6dp"
+        android:layout_marginLeft="@dimen/size_6dp"
+        android:layout_marginRight="@dimen/size_6dp"
+        android:textAlignment="center"
+        android:paddingStart="@dimen/size_8dp"
+        android:paddingEnd="@dimen/size_8dp"
+        android:textSize="@dimen/text_14sp" />
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

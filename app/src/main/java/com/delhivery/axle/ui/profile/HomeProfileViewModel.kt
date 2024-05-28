@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.KYCDetailResponse
 import com.delhivery.axle.api.response.MonthlyEarning
@@ -33,6 +34,9 @@ class HomeProfileViewModel @Inject constructor(
   var verificationStatus = MutableLiveData<String>()
 
   var kycDetailData = MutableLiveData<Pair<KYCDetailResponse, String>>()
+
+  var accountDeleteLiveData = MutableLiveData<Boolean>(false)
+
   var podAddress:String=userPrefs.podAddress?:""
 
   /* states */
@@ -161,6 +165,18 @@ class HomeProfileViewModel @Inject constructor(
             error.handle()
           }
         }
+  }
+
+  fun deleteAccountRequest() {
+    compositeDisposable += loadboardRepository.updateUser(UpdateUserRequest(phoneNumber = userPrefs.phoneNumber!!, requestedDeletion = true))
+      .progress()
+      .onBackground()
+      .subscribe { _res, error ->
+        if (!error) {
+          accountDeleteLiveData.postValue(true)
+        } else
+          error.handle()
+      }
   }
 
 }

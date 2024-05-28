@@ -1,13 +1,18 @@
 package com.delhivery.axle.ui.profile
 
 import android.Manifest
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.Window
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
@@ -21,9 +26,14 @@ import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityMyProfileBinding
+import com.delhivery.axle.databinding.DialogAccountDeletionSubmittedBinding
+import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.injection.module.GlideApp
+import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
@@ -84,6 +94,23 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             confirmLogout()
         }
 
+        binding.deleteLayout.setOnClickListener {
+            confirmDelete()
+        }
+
+        viewModel.accountDeleteLiveData.observe(this) {
+            if (it) {
+                analyticsUtil.moEngageTrackEvent(EVENT_USER_DELETE_ACCOUNT)
+                analyticsUtil.trackEvent(
+                    EVENT_USER_DELETE_ACCOUNT,
+                    mutableListOf(PROPERTY_USER_ID , PROPERTY_TIME_SINCE_LAST_LOGIN),
+                    mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))
+                )
+                userPrefs.requestedDeletion = true
+                userPrefs.returningFromDeletion = true
+                showAccountDeletionRequestDialog()
+            }
+        }
         viewModel.getUserLiveData.observe(this, Observer {
             if(it){
                 setVerficationStatus()
@@ -371,6 +398,22 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             }
         }
     }
+    private fun showAccountDeletionRequestDialog() {
+        val dialog = Dialog(this)
+        val bindingDialog= DialogAccountDeletionSubmittedBinding.inflate(this.layoutInflater)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+        dialog.setCancelable(false)
+        if(!this.isFinishing)
+            dialog.show()
+        if(!this.isFinishing)
+            Handler(Looper.myLooper()!!).postDelayed({
+                dialog.dismiss()
+                viewModel.logout()
+                navigationUtils.logout("Successfully logged out","fromUser")
+            }, 3000)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -414,6 +457,19 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     viewModel.logout()
                     navigationUtils.logout("Successfully logged out","fromUser")
                 }
+        )
+    }
+
+    private fun confirmDelete() {
+        dialogUtils.showBasicConfirmDialog(
+            R.string.title_dialog_delete,
+            R.string.msg_delete_account,
+            positiveAction = "Delete",
+            negativeAction = "BACK",
+            positiveClickListener = {
+                it.dismiss()
+                viewModel.deleteAccountRequest()
+            }
         )
     }
 

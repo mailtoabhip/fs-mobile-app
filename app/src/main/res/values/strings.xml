@@ -42,6 +42,7 @@
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+  <string name="msg_delete_account"> Are you sure you want to delete your account? \n </string>
   <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
   <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
   <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
@@ -498,6 +499,7 @@
   <string name="label_pod">POD Address</string>
   <string name="label_help">Help &amp; Support</string>
   <string name="label_logout">Log Out</string>
+  <string name="label_delete">Delete Account</string>
   <string name="label_ratings">Business Ratings</string>
   <string name="label_kyc_pending">KYC verification pending!</string>
   <string name="label_kyc_failed">KYC verification failed!</string>
@@ -766,6 +768,7 @@
   <string name="usage_label">Usage</string>
   <string name="no_entry_permit_label">No Entry Permit</string>
   <string name="all">All</string>
+  <string name="account_deletion">You have requested account data deletion, please reach out to Vendor Desk</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

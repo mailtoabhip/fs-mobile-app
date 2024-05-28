@@ -79,7 +79,8 @@ class DelhiveryFCMService : FirebaseMessagingService() {
     super.onMessageReceived(remoteMessage)
     Log.d("prefs","started")
     if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)){
-      MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+      if(!userPrefs.requestedDeletion)
+          MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
       }else{
       remoteMessage.let { sendNotification(it) }
       }
@@ -132,64 +133,65 @@ class DelhiveryFCMService : FirebaseMessagingService() {
         repeatingRequest)
     }
 
-    remoteMessage.notification?.let {
-      val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-      val intent = Intent(this, HomeActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        putExtra(ARGS_NOTIFICATION_ID, notificationId)
-        putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
-        putExtra(ARGS_TRANSACTION_IDS, transactions)
-        putExtra(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
-        putExtra(ARGS_VEHICLE_NUMBER, vehicleNumber)
-        putExtra(ARGS_PRICING_ID, pricingId)
-        putExtra(ARGS_PRICING_SORT_KEY, pricingSortKey)
-        putExtra(ARGS_NOTIFICATION_FROM, notificationFrom)
-        putExtra(ARGS_OFFER_ID, offerId)
+    if(!userPrefs.requestedDeletion)
+        remoteMessage.notification?.let {
+          val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+          val intent = Intent(this, HomeActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(ARGS_NOTIFICATION_ID, notificationId)
+            putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
+            putExtra(ARGS_TRANSACTION_IDS, transactions)
+            putExtra(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
+            putExtra(ARGS_VEHICLE_NUMBER, vehicleNumber)
+            putExtra(ARGS_PRICING_ID, pricingId)
+            putExtra(ARGS_PRICING_SORT_KEY, pricingSortKey)
+            putExtra(ARGS_NOTIFICATION_FROM, notificationFrom)
+            putExtra(ARGS_OFFER_ID, offerId)
 
 
-      }
+          }
 
-      val pendingIntent =
-        PendingIntent.getActivity(
-          this, 0, intent, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
-          else PendingIntent.FLAG_ONE_SHOT
-        )
+          val pendingIntent =
+            PendingIntent.getActivity(
+              this, 0, intent, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+              else PendingIntent.FLAG_ONE_SHOT
+            )
 
 
-      /*Dismiss Notification*/
-      val intentDismissNotification = Intent("NOTIFICATION_DELETED_ACTION").apply {
-        putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
-      }
-      val pendingIntentDismiss  =
-        PendingIntent.getBroadcast(this , 0, intentDismissNotification , if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
-        else PendingIntent.FLAG_ONE_SHOT)
+          /*Dismiss Notification*/
+          val intentDismissNotification = Intent("NOTIFICATION_DELETED_ACTION").apply {
+            putExtra(ARGS_NOTIFICATION_TYPE, notificationType)
+          }
+          val pendingIntentDismiss  =
+            PendingIntent.getBroadcast(this , 0, intentDismissNotification , if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+            else PendingIntent.FLAG_ONE_SHOT)
 
-      registerReceiver(receiver, IntentFilter("NOTIFICATION_DELETED_ACTION"))
+          registerReceiver(receiver, IntentFilter("NOTIFICATION_DELETED_ACTION"))
 
-      val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
-      notificationBuilder.setAutoCancel(true)
-          .setDefaults(Notification.DEFAULT_ALL)
-          .setWhen(System.currentTimeMillis())
-          .setLargeIcon(largeIcon)
-          .setSmallIcon(R.drawable.ic_notification)
-          .setContentTitle(it.title)
-          .setContentText(it.body)
-          .setStyle(NotificationCompat.BigTextStyle().bigText(it.body))
-          .setContentIntent(pendingIntent)
-          .setDeleteIntent(pendingIntentDismiss)
-          .setAutoCancel(true)
-          .setSound(soundUri)
+          val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+          notificationBuilder.setAutoCancel(true)
+              .setDefaults(Notification.DEFAULT_ALL)
+              .setWhen(System.currentTimeMillis())
+              .setLargeIcon(largeIcon)
+              .setSmallIcon(R.drawable.ic_notification)
+              .setContentTitle(it.title)
+              .setContentText(it.body)
+              .setStyle(NotificationCompat.BigTextStyle().bigText(it.body))
+              .setContentIntent(pendingIntent)
+              .setDeleteIntent(pendingIntentDismiss)
+              .setAutoCancel(true)
+              .setSound(soundUri)
 
-      with(NotificationManagerCompat.from(this)) {
-        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
-            this@DelhiveryFCMService,
-            permission.POST_NOTIFICATIONS
-          ) == PackageManager.PERMISSION_GRANTED)
-          ||Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
-        )
-         notify(notificationId.hashCode(), notificationBuilder.build())
-      }
-    }
+          with(NotificationManagerCompat.from(this)) {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
+                this@DelhiveryFCMService,
+                permission.POST_NOTIFICATIONS
+              ) == PackageManager.PERMISSION_GRANTED)
+              ||Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+            )
+             notify(notificationId.hashCode(), notificationBuilder.build())
+          }
+        }
   }
 
   @RequiresApi(VERSION_CODES.O)
