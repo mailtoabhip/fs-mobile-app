@@ -150,5 +150,4 @@ class LoadboardRepository @Inject constructor(
 
     fun getBankName(bankValidationRequest: BankValidationRequest) = loadboardService.getBankName(bankValidationRequest = bankValidationRequest).convertResponse()
 
-
 }

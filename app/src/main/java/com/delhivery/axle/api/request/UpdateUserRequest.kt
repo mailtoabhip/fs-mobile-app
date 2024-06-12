@@ -30,7 +30,8 @@ data class UpdateUserRequest (
     @SerializedName("account_holder_name") val accountHolderName:String? =null,
     @SerializedName("name_declaration") val nameDeclaration:String? =null,
     @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?=null,
-    @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?=null
+    @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?=null,
+    @SerializedName("requested_deletion") var requestedDeletion: Boolean?=null
 
 
 )

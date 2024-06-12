@@ -50,7 +50,8 @@ data class UserModel(
         @SerializedName("is_trucking_business_doc_uploaded") var isTruckingDocumentUploaded: Boolean?,
         @SerializedName("no_of_verification_issues") var noOfVerificationIssues: String?,
         @SerializedName("is_bank_details_rejected") var isBankDetailsRejected: Boolean?,
-        @SerializedName("is_address_same_as_gst") var isAddressSameAsGST: Boolean?
+        @SerializedName("is_address_same_as_gst") var isAddressSameAsGST: Boolean?,
+        @SerializedName("requested_deletion") var requestedDeletion: Boolean?=false
 
     ) : BaseKeyTypeModel<String>(), Serializable {
 

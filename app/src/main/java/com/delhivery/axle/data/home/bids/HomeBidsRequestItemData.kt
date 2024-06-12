@@ -1096,7 +1096,7 @@ data class HomeBidsRequestItemData(
           val hours = (mills / (1000 * 60 * 60)).toInt()
           val mins = (mills / (1000 * 60)).toInt() % 60
           val secs = ((mills / 1000).toInt() % 60).toLong()
-          if (hours < 1 && mins > 0) {
+          if (hours < 1 && (mins > 0 || secs > 0)) {
             return true
           }
 

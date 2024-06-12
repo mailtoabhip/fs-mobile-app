@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityHomeBinding
 import com.delhivery.axle.fcm.*
+import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
@@ -128,63 +129,70 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     viewModel.userUpdateLiveData.observe(this, Observer {
-      if(it){
-        setUserAttributes()
-        navigationUtils.navigateOnboardingSteps(true)
-        /* setup toolbar */
-        setSupportActionBar(binding.toolbar)
-        title = "Home"
-        if(!userPrefs.userName.isEmpty()) {
-          binding.profile.text = userPrefs.userName[0].uppercase().toString()
-        }
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        binding.toolbarTitle.text = title
-        /* setup view pager */
-        binding.viewpager.apply {
-          offscreenPageLimit = HomeFragmentType.count()
-          processDeepLink()
-          adapter = pagerAdapter
-          /* update ui on page changed */
-          onPageSelected { p ->
-            HomeFragmentType.pos(p)
-              ?.let {
-                uiUtils.toggleKeyboard()
-                this@HomeActivity.title = HomeFragmentType.pos(p)
-                  ?.fragment?.title
-              binding.bottomNav.selectedItemId = it.menuId
-              observeFragmentLiveData(p)
+      if(it) {
+        if (userPrefs.requestedDeletion) {
+          navigationUtils.navigate(AccountDeletionActivity::class.java,true)
+        }else if(userPrefs.returningFromDeletion){
+          userPrefs.clearPrefs()
+          navigationUtils.logout("Please login to create account","fromUser")
+        } else {
+          setUserAttributes()
+          navigationUtils.navigateOnboardingSteps(true)
+          /* setup toolbar */
+          setSupportActionBar(binding.toolbar)
+          title = "Home"
+          if (!userPrefs.userName.isEmpty()) {
+            binding.profile.text = userPrefs.userName[0].uppercase().toString()
+          }
+          supportActionBar?.setDisplayShowTitleEnabled(false)
+          binding.toolbarTitle.text = title
+          /* setup view pager */
+          binding.viewpager.apply {
+            offscreenPageLimit = HomeFragmentType.count()
+            processDeepLink()
+            adapter = pagerAdapter
+            /* update ui on page changed */
+            onPageSelected { p ->
+              HomeFragmentType.pos(p)
+                ?.let {
+                  uiUtils.toggleKeyboard()
+                  this@HomeActivity.title = HomeFragmentType.pos(p)
+                    ?.fragment?.title
+                  binding.bottomNav.selectedItemId = it.menuId
+                  observeFragmentLiveData(p)
+                }
             }
-      }
-      binding.toolbarTitle.text = title
-      FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
-    }
-    binding.viewpager.disableScroll(true)
+            binding.toolbarTitle.text = title
+            FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
+          }
+          binding.viewpager.disableScroll(true)
 
-    /* set navigation item selection listener */
-    binding.bottomNav.setOnItemSelectedListener(this)
+          /* set navigation item selection listener */
+          binding.bottomNav.setOnItemSelectedListener(this)
 
-    /* by default observe first fragment */
-    observeFragmentLiveData()
+          /* by default observe first fragment */
+          observeFragmentLiveData()
 
-    if (notificationId.isNotEmpty()) {
-      processNotification()
-    }
+          if (notificationId.isNotEmpty()) {
+            processNotification()
+          }
 
-    if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_NAVIGATION_PODS
-      )
-      userPrefs.setPreviousScreen(this.javaClass.name)
-      fragmentAction(NavigateHomeFragmentAction(PodFragment))
-    }
+          if (fragmentType.isNotNullOrEmpty() && fragmentType == "pod") {
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_PODS
+            )
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            fragmentAction(NavigateHomeFragmentAction(PodFragment))
+          }
 
-    binding.profile.setOnClickListener {
-      userPrefs.setPreviousScreen(this.javaClass.name)
-      analyticsUtil.moEngageTrackEvent(
-        EVENT_NAVIGATION_MY_PROFILE
-      )
-      navigationUtils.navigate(MyProfileActivity::class.java)
-    }
+          binding.profile.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_NAVIGATION_MY_PROFILE
+            )
+            navigationUtils.navigate(MyProfileActivity::class.java)
+          }
+        }
       }
     })
 

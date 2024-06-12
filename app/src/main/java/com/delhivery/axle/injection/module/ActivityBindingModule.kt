@@ -7,6 +7,7 @@ import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.accountaction.AccountActionActivity
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.accountrole.AccountRoleActivity
+import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
@@ -221,6 +222,10 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsInvalidModule::class])
   internal abstract fun bindModule(): InvalidActivity
 
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAccountDeletionModule::class])
+  internal abstract fun bindDeletionModule(): AccountDeletionActivity
+
   /* HelpSupport activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsHelpSupportModule::class])
@@ -434,6 +439,8 @@ internal abstract class AbsAddTruckPathwayActivityModule : ActivityModule<AddTru
 @Module
 internal abstract class AbsInvalidModule : ActivityModule<InvalidActivity>()
 
+@Module
+internal abstract class AbsAccountDeletionModule : ActivityModule<AccountDeletionActivity>()
 
 @Module
 internal abstract class AbsHelpSupportModule : ActivityModule<HelpSupportActivity>()

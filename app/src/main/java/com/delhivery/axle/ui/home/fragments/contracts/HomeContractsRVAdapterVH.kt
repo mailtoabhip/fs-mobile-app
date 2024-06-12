@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
@@ -230,8 +232,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             context,
             R.drawable.bg_all_rounded_lost_red
           )
-          synchronized(this) {
-
+          //synchronized(this) {
 
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             format.setTimeZone(TimeZone.getTimeZone("IST"));
@@ -239,75 +240,75 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             val date2: Date = format.parse(item.data.contractBiddingEndTime)
             if (date2.compareTo(date1) > 0) {
               val mills: Long = date2.getTime() - date1.getTime()
-              countDownTimer?.cancel()
-              countDownTimer = object : CountDownTimer(mills, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                  try {
-                    val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
-                    val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
-                    val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
-                    val format = "%1$02d"
-                    val hrs = String.format(format, hours)
-                    val ms = String.format(format, mins)
-                    val sec = String.format(format, secs)
-                    val diff = ms + "m $sec" + "s"
-                    if (hours == 0 && binding.tvBidStatus.text=="Live Bidding") {
-                      binding.tvBidTime.visibility = View.VISIBLE
-                      binding.tvBidTime.setText("Closes in $diff")
+              stopCounter()
+                countDownTimer = object : CountDownTimer(mills, 1000) {
+                  override fun onTick(millisUntilFinished: Long) {
+                    try {
+                      val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+                      val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+                      val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
+                      val format = "%1$02d"
+                      val hrs = String.format(format, hours)
+                      val ms = String.format(format, mins)
+                      val sec = String.format(format, secs)
+                      val diff = ms + "m $sec" + "s"
+                      if (hours == 0 && binding.tvBidStatus.text=="Live Bidding") {
+                        binding.tvBidTime.visibility = View.VISIBLE
+                        binding.tvBidTime.setText("Closes in $diff")
+                      }
+
+                    } catch (e: Exception) {
+                      e.printStackTrace()
                     }
-
-                  } catch (e: Exception) {
-                    e.printStackTrace()
                   }
-                }
 
-                override fun onFinish() {
-                  // Awaiting results after closing live bidding
-                  binding.tvBidStatus.text = "Bidding Closed"
-                  binding.tvBidStatus.setTextColor(
-                    ContextCompat.getColor(
-                      context,
-                      R.color.dark_blue
-                    )
-                  )
-                  binding.statusImage.setImageDrawable(
-                    ContextCompat.getDrawable(
-                      context,
-                      R.drawable.ic_awaiting_bid
-                    )
-                  )
-                  binding.clBidStatus.background = ContextCompat.getDrawable(
-                    context,
-                    R.drawable.bg_all_rounded_under_review
-                  )
-                  binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
-                  // setting the user bid amount and status
-                  if (item.data.transactionBid != null) {
-                    binding.userBidStatus.text =
-                      "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
-                    binding.userBidInfo.text = "Your Bid"
-                    binding.userBidInfo.setTextColor(
+                  override fun onFinish() {
+                    // Awaiting results after closing live bidding
+                    binding.tvBidStatus.text = "Bidding Closed"
+                    binding.tvBidStatus.setTextColor(
                       ContextCompat.getColor(
                         context,
-                        R.color.heading_black
+                        R.color.dark_blue
                       )
                     )
-                    binding.userBidInfo.background = null
-                    binding.userBidInfo.visibility = View.VISIBLE
-                    binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
-                      0,
-                      0,
-                      0,
-                      0
+                    binding.statusImage.setImageDrawable(
+                      ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_awaiting_bid
+                      )
                     )
-                  } else {
-                    // No user Bid
-                    binding.userBidStatus.text = context.getString(string.you_did_not_bid)
-                    binding.userBidInfo.visibility = View.GONE
+                    binding.clBidStatus.background = ContextCompat.getDrawable(
+                      context,
+                      R.drawable.bg_all_rounded_under_review
+                    )
+                    binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
+                    // setting the user bid amount and status
+                    if (item.data.transactionBid != null) {
+                      binding.userBidStatus.text =
+                        "₹" + StringUtils.formatAmount(item.data?.transactionBid?.bidAmount!!)
+                      binding.userBidInfo.text = "Your Bid"
+                      binding.userBidInfo.setTextColor(
+                        ContextCompat.getColor(
+                          context,
+                          R.color.heading_black
+                        )
+                      )
+                      binding.userBidInfo.background = null
+                      binding.userBidInfo.visibility = View.VISIBLE
+                      binding.userBidInfo.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        0,
+                        0
+                      )
+                    } else {
+                      // No user Bid
+                      binding.userBidStatus.text = context.getString(string.you_did_not_bid)
+                      binding.userBidInfo.visibility = View.GONE
 
+                    }
                   }
-                }
-              }.start()
+                }.start()
             } else {
               //Awaiting Results after bidding closed
               binding.tvBidStatus.setTextColor(
@@ -328,7 +329,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
               )
               binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
             }
-          }
+          //}
         } else {
           // open bidding but not live bidding
           binding.tvBidStatus.setTextColor(
@@ -467,6 +468,11 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 
     }
   }
+
+   fun stopCounter() {
+    countDownTimer?.cancel()
+  }
+
 }
 
 /**
