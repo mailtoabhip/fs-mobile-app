@@ -18,8 +18,8 @@ enum class AWSConfig(
 ) {
 
   Target("347095250728", "086341552770", "086341552770"),
-  Bucket("orion-service-prod", "orion-service", "orion-uat"),
-  ServerRegion("ap-southeast-1", "ap-southeast-1", "us-east-1");
+  Bucket("orion-service-prod-mum", "orion-service", "orion-uat"),
+  ServerRegion("ap-south-1", "ap-southeast-1", "us-east-1");
 
   fun value() =
     when (BuildConfig.FLAVOR) {
