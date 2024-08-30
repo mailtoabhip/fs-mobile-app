@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.OMCRequest
@@ -98,7 +99,7 @@ class ChangePaymentModeDialog @Inject constructor(
         binding = DialogChangePaymentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-      LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver,filter)
+      ContextCompat.registerReceiver(context,mMessageReceiver,filter,ContextCompat.RECEIVER_NOT_EXPORTED)
 
 
         fuelUserSpinnerOptions.addAll(fuelUserSpinnerOptionsList)

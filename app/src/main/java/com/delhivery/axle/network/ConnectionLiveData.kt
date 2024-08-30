@@ -11,6 +11,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 
 /**
@@ -117,7 +118,7 @@ class ConnectionLiveData constructor(private val context: Context) : MutableLive
     else
     {
       IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).let {
-        context.registerReceiver(networkReceiver, it)
+        ContextCompat.registerReceiver(context,networkReceiver, it,ContextCompat.RECEIVER_NOT_EXPORTED)
       }
     }
   }

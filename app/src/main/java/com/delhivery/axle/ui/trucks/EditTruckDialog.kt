@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
@@ -68,7 +69,7 @@ class EditTruckDialog @Inject constructor(
         window!!.setGravity(Gravity.BOTTOM)
 
         //set Broadcast receiver
-        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
+        ContextCompat.registerReceiver(context,mMessageReceiver, IntentFilter("get_selected_city"),ContextCompat.RECEIVER_NOT_EXPORTED)
 
         //Set Previous values
         binding.request = data

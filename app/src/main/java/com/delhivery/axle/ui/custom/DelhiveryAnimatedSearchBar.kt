@@ -75,8 +75,8 @@ class DelhiveryAnimatedSearchBar(
   private var compositeDisposable = CompositeDisposable()
 
   @SuppressLint("DrawAllocation")
-  override fun onDraw(canvas: Canvas?) {
-    canvas?.apply {
+  override fun onDraw(canvas: Canvas) {
+    canvas.apply {
       val animatedPadding = padding * animationRatio
       val primaryBgRect = RectF(
           animatedPadding,

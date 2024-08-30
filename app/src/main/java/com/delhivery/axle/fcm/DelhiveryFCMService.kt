@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -166,7 +167,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
             PendingIntent.getBroadcast(this , 0, intentDismissNotification , if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
             else PendingIntent.FLAG_ONE_SHOT)
 
-          registerReceiver(receiver, IntentFilter("NOTIFICATION_DELETED_ACTION"))
+          ContextCompat.registerReceiver(this,receiver, IntentFilter("NOTIFICATION_DELETED_ACTION"),ContextCompat.RECEIVER_NOT_EXPORTED)
 
           val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
           notificationBuilder.setAutoCancel(true)

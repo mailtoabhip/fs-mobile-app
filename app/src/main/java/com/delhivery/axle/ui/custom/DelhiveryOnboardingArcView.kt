@@ -60,7 +60,7 @@ class DelhiveryOnboardingArcView(
     }
   }
 
-  override fun onDraw(canvas: Canvas?) {
+  override fun onDraw(canvas: Canvas) {
     canvas?.apply {
       drawCircle(width / 2f, height * direction.factor, arcRadius, arcPaint)
     }
