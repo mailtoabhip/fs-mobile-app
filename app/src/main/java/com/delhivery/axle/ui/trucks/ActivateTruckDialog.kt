@@ -66,7 +66,7 @@ class ActivateTruckDialog @Inject constructor(
         setContentView(binding.root)
 
         //set Broadcast receiver
-        ContextCompat.registerReceiver(context,mMessageReceiver, IntentFilter("get_selected_city"),ContextCompat.RECEIVER_NOT_EXPORTED)
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
 
         window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
