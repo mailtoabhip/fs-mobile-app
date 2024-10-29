@@ -42,9 +42,9 @@ class DelhiveryShimmerLayout(
 
   private var factor = 0.0f
 
-  override fun dispatchDraw(canvas: Canvas?) {
+  override fun dispatchDraw(canvas: Canvas) {
     super.dispatchDraw(canvas)
-    canvas?.apply {
+    canvas.apply {
       save()
       rotate(ShimmerTiltAngle, width / 2f, height / 2f)
       val x = width * factor

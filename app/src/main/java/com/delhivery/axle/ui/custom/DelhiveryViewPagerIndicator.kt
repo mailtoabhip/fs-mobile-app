@@ -58,7 +58,7 @@ class DelhiveryViewPagerIndicator(
     color = ActiveDotColor
   }
 
-  override fun onDraw(canvas: Canvas?) {
+  override fun onDraw(canvas: Canvas) {
     if (pageCount <= 0) return
 
     canvas?.apply {

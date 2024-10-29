@@ -61,7 +61,7 @@ class DelhiveryProgressView(
         }
   }
 
-  override fun onDraw(canvas: Canvas?) {
+  override fun onDraw(canvas: Canvas) {
     canvas?.apply {
       /* Draw orbit */
       orbitPaint.apply {

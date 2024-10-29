@@ -4,6 +4,7 @@ import android.R.layout
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -112,6 +113,13 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     }
 
     setupSearchScreen()
+  }
+
+  override fun onResume() {
+    binding.editOriginCity.setText("")
+    binding.editDestinationCity.setText("")
+    binding.editReportingCenter.setText("")
+    super.onResume()
   }
 
   private fun toggleVisibility(toggle: Boolean) {

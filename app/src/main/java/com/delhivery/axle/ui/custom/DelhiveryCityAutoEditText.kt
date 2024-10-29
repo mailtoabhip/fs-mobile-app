@@ -48,11 +48,11 @@ class DelhiveryCityAutoEditText(
   private var progress = false
   private var error = false
 
-  override fun onDraw(canvas: Canvas?) {
+  override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
 
     if (progress) {
-      canvas?.apply {
+      canvas.apply {
         val pos = factor.toInt()
         val transFactor = factor % 1
         for (i in 0 until DotsCount) {

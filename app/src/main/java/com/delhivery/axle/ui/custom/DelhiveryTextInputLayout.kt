@@ -34,7 +34,7 @@ class DelhiveryTextInputLayout(
     }
   }
 
-  override fun onDraw(canvas: Canvas?) {
+  override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
     editText?.removeTextChangedListener(this)
     editText?.addTextChangedListener(this)

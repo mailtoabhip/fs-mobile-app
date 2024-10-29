@@ -74,7 +74,7 @@ class DelhiveryFabCardMenu(
     invalidate()
   }
 
-  override fun dispatchDraw(canvas: Canvas?) {
+  override fun dispatchDraw(canvas: Canvas) {
     if (canvas == null || anchorView == null) {
       return
     }
