@@ -1,10 +1,12 @@
 package com.delhivery.axle.utils.extensions
 
 import android.app.Activity
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
+import android.util.TypedValue
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -186,3 +188,9 @@ inline var TextView.underline: Boolean
     else paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
   }
   get() = paintFlags and Paint.UNDERLINE_TEXT_FLAG == Paint.UNDERLINE_TEXT_FLAG
+
+fun Context.dpToPx(context: Context, dp: Float): Float {
+  return TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics
+  )
+}

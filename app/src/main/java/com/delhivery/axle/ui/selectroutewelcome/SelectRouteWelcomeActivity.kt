@@ -1,10 +1,13 @@
 package com.delhivery.axle.ui.selectroutewelcome
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.databinding.ActivitySelectRouteWelcomeBinding
 import com.delhivery.axle.ui.base.BaseLocationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
@@ -12,7 +15,6 @@ import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.LocationFlowState
 import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
-import com.github.florent37.kotlin.pleaseanimate.please
 
 class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelcomeBinding, SelectRouteWelcomeViewModel>() {
 
@@ -49,23 +51,14 @@ class SelectRouteWelcomeActivity : BaseLocationActivity<ActivitySelectRouteWelco
   }
 
   private fun animate() {
-    please {
-      animate(binding.imageHeader) toBe {
-        visible()
-        aboveOf(binding.headerBaselineView)
-      }
-    }.thenCouldYou {
-      animate(binding.textWelcomeUser) toBe {
-        visible()
-      }
-      animate(binding.textGladToOnboard) toBe {
-        visible()
-      }
-      animate(binding.containerActions) toBe {
-        visible()
-      }
-    }
-        .start()
+    val alphaAnimator1 = ObjectAnimator.ofFloat(binding.imageHeader, "alpha", 0f,   1f)
+    val alphaAnimator2 = ObjectAnimator.ofFloat(binding.textWelcomeUser, "alpha", 0f, 1f)
+    val alphaAnimator3 = ObjectAnimator.ofFloat(binding.textGladToOnboard, "alpha", 0f, 1f)
+    val alphaAnimator4 = ObjectAnimator.ofFloat(binding.containerActions, "alpha", 0f, 1f)
+
+    val animatorSet = AnimatorSet()
+    animatorSet.playTogether(alphaAnimator1,alphaAnimator2,alphaAnimator3,alphaAnimator4)
+    animatorSet.start()
   }
 
   override fun updateLocationFlowState(flowState: LocationFlowState) {

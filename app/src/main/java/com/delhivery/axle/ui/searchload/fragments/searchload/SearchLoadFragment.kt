@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.searchload.fragments.searchload
 
 import android.R.layout
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -28,7 +30,6 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.setHintColor
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.extensions.visible
-import com.github.florent37.kotlin.pleaseanimate.please
 import javax.inject.Inject
 
 /**
@@ -93,23 +94,15 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     toggleVisibility(false)
     binding.arcView.animate(RevealOpen) {
-      please {
-        animate(binding.containerHistory) toBe {
-          if(contractType!=ContractType.INTRACITY.type)
-          visible()
-        }
-        animate(binding.textHistoryTitle) toBe {
-          if(contractType!=ContractType.INTRACITY.type)
-            visible()
-        }
-        animate(binding.containerSearchLoadHeaderForm) toBe {
-          visible()
-        }
-        animate(binding.warningItem).toBe {
-          invisible()
-        }
-      }.setStartDelay(300)
-          .start()
+
+      val alphaAnimator1 = ObjectAnimator.ofFloat(binding.containerHistory, "alpha", 0f,   if(contractType!=ContractType.INTRACITY.type) 1f else 0f)
+      val alphaAnimator2 = ObjectAnimator.ofFloat(binding.textHistoryTitle, "alpha", 0f,  if(contractType!=ContractType.INTRACITY.type) 1f else 0f)
+      val alphaAnimator3 = ObjectAnimator.ofFloat(binding.containerSearchLoadHeaderForm, "alpha", 0f, 1f)
+      val alphaAnimator4 = ObjectAnimator.ofFloat(binding.warningItem, "alpha", 0f, 0f)
+
+      val animatorSet = AnimatorSet()
+      animatorSet.playTogether(alphaAnimator1,alphaAnimator2,alphaAnimator3,alphaAnimator4)
+      animatorSet.start()
     }
 
     setupSearchScreen()
@@ -203,24 +196,16 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
     /* reverse origin/destination cities */
     binding.imgForward.setOnClickListener {
-      please {
-        animate(it) toBe {
-          toBeRotated(180f)
-        }
-      }.thenCouldYou {
-        please {
-          animate(it) toBe {
-            originalRotation()
-          }
-        }.withEndAction {
-          val origin = binding.editOriginCity.text.toString()
-          binding.editOriginCity.setText(binding.editDestinationCity.text.toString())
-          binding.editDestinationCity.setText(origin)
-        }
-            .setStartDelay(300)
-            .start()
-      }
-          .start()
+
+      val animator1 = ObjectAnimator.ofFloat(it, "rotation", 0f, 180f)
+      val animator2 = ObjectAnimator.ofFloat(it, "rotation", 180f, 0f)
+
+      val animatorSet = AnimatorSet()
+      animatorSet.playTogether(animator1,animator2)
+      animatorSet.start()
+      val origin = binding.editOriginCity.text.toString()
+      binding.editOriginCity.setText(binding.editDestinationCity.text.toString())
+      binding.editDestinationCity.setText(origin)
     }
 
     /* init */

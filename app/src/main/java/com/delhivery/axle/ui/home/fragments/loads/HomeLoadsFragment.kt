@@ -46,6 +46,7 @@ import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.dpToPx
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
@@ -53,7 +54,6 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
@@ -856,7 +856,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   fun hide() {
     binding.routesBanner.animate()
         .translationY(
-                PositionAnimExpectation.dpToPx(
+                requireContext().dpToPx(
                         this@HomeLoadsFragment.requireContext(), binding.routesBanner.height.toFloat()
                 )
         )
@@ -868,7 +868,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   fun show() {
     binding.routesBanner.animate()
         .translationY(
-                -PositionAnimExpectation.dpToPx(
+                -requireContext().dpToPx(
                         this@HomeLoadsFragment.requireContext(), 0f
                 )
         )

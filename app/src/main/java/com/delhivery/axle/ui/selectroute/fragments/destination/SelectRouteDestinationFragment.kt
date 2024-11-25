@@ -16,7 +16,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.selectroute.fragments.DestinationSelectedAction
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteBaseFragment
 import com.delhivery.axle.ui.selectroute.fragments.detail.DestinationsRVAdapter
-import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import com.delhivery.axle.utils.extensions.dpToPx
 import com.google.android.material.snackbar.Snackbar
 
 class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRouteDestinationBinding, SelectRouteDestinationViewModel>(),
@@ -143,7 +143,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
     visible = false
     binding.actionContainer.animate()
         .translationY(
-            PositionAnimExpectation.dpToPx(
+            requireContext().dpToPx(
               this@SelectRouteDestinationFragment.requireContext(),
                 binding.actionContainer.height.toFloat()
             )
@@ -158,7 +158,7 @@ class SelectRouteDestinationFragment : SelectRouteBaseFragment<FragmentSelectRou
       visible = true
       binding.actionContainer.animate()
           .translationY(
-              -PositionAnimExpectation.dpToPx(
+              -requireContext().dpToPx(
                   this@SelectRouteDestinationFragment.requireContext(), 0f
               )
           )

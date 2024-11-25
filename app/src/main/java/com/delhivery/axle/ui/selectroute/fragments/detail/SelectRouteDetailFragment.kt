@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.selectroute.fragments.detail
 
+import android.content.Context
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -19,7 +21,7 @@ import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
 import com.delhivery.axle.ui.selectroute.fragments.RouteEditOriginAction
 import com.delhivery.axle.ui.selectroute.fragments.RouteUpdateAction
 import com.delhivery.axle.ui.selectroute.fragments.SelectRouteBaseFragment
-import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
+import com.delhivery.axle.utils.extensions.dpToPx
 
 /**
  * Created by saurabh
@@ -137,7 +139,7 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
   fun hide() {
     binding.btnSave.animate()
         .translationY(
-            PositionAnimExpectation.dpToPx(
+            requireContext().dpToPx(
                 this@SelectRouteDetailFragment.requireContext(), 72f
             )
         )
@@ -145,13 +147,12 @@ class SelectRouteDetailFragment : SelectRouteBaseFragment<FragmentSelectRouteDet
         .setDuration(100L)
         .start()
   }
-
   fun show() {
     if (!selectedStates.isEmpty()) {
       visible = true
       binding.btnSave.animate()
           .translationY(
-              -PositionAnimExpectation.dpToPx(
+              -requireContext().dpToPx(
                 this@SelectRouteDetailFragment.requireContext(), 0f
               )
           )
