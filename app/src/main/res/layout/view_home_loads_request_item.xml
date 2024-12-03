@@ -26,10 +26,11 @@
       app:cardElevation="@dimen/size_2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:id="@+id/main"
+        android:id="@+id/nonIntracityLayout"
         android:focusable="false"
         >
 
@@ -490,5 +491,9 @@
       </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        android:id="@+id/layoutIntracity"
+        layout="@layout/view_home_adhoc_intracity_load_request_item"/>
   </androidx.cardview.widget.CardView>
+
 </layout>

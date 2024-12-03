@@ -73,6 +73,23 @@ object DateUtils {
     return ISTDateString
   }
 
+  fun getUtcToIstFormatTimeOnly(utcTime: String?): String? {
+    var ISTDateString = ""
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    val pattern = "hh:mm a"
+    val formatter: SimpleDateFormat
+    formatter = SimpleDateFormat(pattern)
+    try {
+      val ISTDate = sdf.parse(utcTime)
+      formatter.timeZone = TimeZone.getTimeZone("Asia/Kolkata")
+      ISTDateString = formatter.format(ISTDate)
+    } catch (e: java.lang.Exception) {
+      e.printStackTrace()
+    }
+    return ISTDateString
+  }
+
 
   /**
    * @return Formatted ISO date to [format] in UTC

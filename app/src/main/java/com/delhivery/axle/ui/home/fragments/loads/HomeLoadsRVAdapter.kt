@@ -41,13 +41,13 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     parent: ViewGroup,
     viewType: Int
   ) = when (HomeLoadsRVAdapterItemType.byTypeId(viewType)) {
-    Search -> ViewHomeLoadsSearchItemBinding.inflate(inflater, parent, false)
+    Search -> ViewHomeLoadsSearchPlaceholderItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Info -> ViewHomeLoadsInfoItemBinding.inflate(inflater, parent, false)
     MoreInfo -> ViewHomeLoadsMoreInfoItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
-    Filters -> ViewHomeLoadsFilterItemBinding.inflate(inflater, parent, false)
+    Filters -> ViewHomeLoadFilterTypesItemBinding.inflate(inflater, parent, false)
     Count -> ViewHomeSummaryItemBinding.inflate(inflater, parent, false)
     Banners -> ViewHomeLoadsTruckBannerItemBinding.inflate(inflater, parent, false)
    Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
@@ -56,13 +56,13 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeLoadsSearchItemBinding -> HomeLoadsSearchItemVH(binding)
+    is ViewHomeLoadsSearchPlaceholderItemBinding -> HomeLoadsSearchItemVH(binding)
     is ViewHomeLoadsProgressItemBinding -> HomeLoadsProgressItemVH(binding)
     is ViewWarningItemBinding -> HomeLoadsWarningItemVH(binding)
     is ViewHomeLoadsInfoItemBinding -> HomeLoadsInfoItemVH(binding)
     is ViewHomeLoadsMoreInfoItemBinding -> HomeLoadsMoreInfoItemVH(binding)
     is ViewTimeOutItemBinding -> HomeLoadsTimeOutItemVH(binding)
-    is ViewHomeLoadsFilterItemBinding -> HomeLoadsFilterItemVH(binding)
+    is ViewHomeLoadFilterTypesItemBinding -> HomeLoadsFilterItemVH(binding)
     is ViewHomeSummaryItemBinding -> HomeLoadsMoreInfoItemVH.HomeLoadsSummaryItemVH(binding)
     is ViewHomeLoadsTruckBannerItemBinding->HomeLoadsAddTruckItemVH(binding)
     is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)

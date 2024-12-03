@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.request.AcceptTransactionBidRequest
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
@@ -71,4 +72,9 @@ interface TripService {
     @Body request: JsonObject
   ): Single<BaseResponse<List<TripPaymentResponse>>>
 
+
+  @POST("/create_and_accept_adhoc_bid")
+  fun acceptTripBid(
+    @Body request: AcceptTransactionBidRequest
+  ): Single<BaseResponse<Any>>
 }

@@ -116,9 +116,10 @@ class HomeLoadsMoreInfoItem(
  */
 class HomeLoadsFilterItem(
   data: HomeLoadsFilterItemData = HomeLoadsFilterItemData(
-      false
+    "", 0,0,0,""
   )
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsFilterItemData>(Filters, data)
+
 
 /**
  * Summary Item

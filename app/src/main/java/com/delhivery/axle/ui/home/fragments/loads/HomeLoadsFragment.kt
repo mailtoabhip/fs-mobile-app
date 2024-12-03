@@ -6,11 +6,13 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
@@ -18,10 +20,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -32,6 +37,7 @@ import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
@@ -54,6 +60,7 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.moengage.android.Constants
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
@@ -79,6 +86,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   var currSize:Int? = null
   var itemDeleted:Boolean = false
   var reviseInitiated:Boolean=false
+  var selectedLoadFilter: String = ""
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -111,22 +119,37 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
-
+   // setupLoadFilter()
     /* setup recycler view */
+    val enableIntracityLoad = demandType.contains(DemandType.Intracity.type)
+    val enableIntercityLoad = demandType.contains(DemandType.Internal.type)
+    if (enableIntracityLoad){
+      selectedLoadFilter = DemandType.Intracity.type
+    }else if(enableIntercityLoad){
+      selectedLoadFilter = DemandType.Internal.type
+    }else{
+      selectedLoadFilter = DemandType.Others.type
+    }
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
-      addOnScrollListener(HomeLoadsRVScrollListener(binding.editStickySearch))
+    //  addOnScrollListener(HomeLoadsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
     binding.rvLoads.setItemAnimator(null);
 
-    binding.editStickySearch.setOnClickListener {
-      handleAction(
-              HomeTripsSearchAction_Search, HomeLoadsSearchItem()
-      )
-    }
+//    binding.layoutSearch.editStickySearch.setOnClickListener {
+//      handleAction(
+//             HomeLoadsSearchAction_Search, HomeLoadsSearchItem()
+//      )
+//    }
+//    binding.layoutSearch.spinnerTruckDisplayName.text= "Selected VT: "+userPrefs.truckTypes?.split(",")?.joinToString(", ")
+//    binding.layoutSearch.spinnerTruckDisplayName.setOnClickListener {
+//      handleAction(HomeLoadsVehicleFilterAction,HomeLoadsFilterItem() )
+//
+//    }
+
 
     binding.routesBanner.setOnClickListener {
       context?.let {
@@ -288,6 +311,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
     })
 
+    viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it!=null){
+        //val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        refreshData()
+        //adapter.notifyItemChanged(it.first)
+      }
+    })
+
     viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
       if (it.first == 10) {
         Toast.makeText(context, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
@@ -426,8 +457,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
   }
 
-
-
   override fun onResume() {
     super.onResume()
     viewModel.paginateCount = 0
@@ -467,7 +496,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType, isInternal)
+    viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
   }
 
   override fun handleAction(
@@ -489,6 +518,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
+        if(data.demandType!="E2E_LH")
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
@@ -536,24 +566,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         refreshData()
       }
 
-      HomeLoadsFilterAction -> {
-        //Capture Event
-        analyticsUtil.trackEvent(
-                EVENT_FILTER_EXPRESS_LOADS,
-                mutableListOf(PROPERTY_USER_ID),
-                mutableListOf(userPrefs.userId())
-        )
-
-        if (isInternal) {
-          isInternal = false
-          demandType = userPrefs.demandType
-        } else {
-          isInternal = true
-          demandType = "Internal"
-        }
-        refreshData()
-      }
-
       HomeLoadsVehicleFilterAction -> {
         showVehicleFilterDialog()
       }
@@ -588,7 +600,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
         val exclude_truck_str = exclude_truck_types.joinToString(separator = ",") { it }
         viewModel.filterVehicleType = null
-        viewModel.fetchUserTransactions(false, demandType, isInternal, true, exclude_truck_str)
+        viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter, true, exclude_truck_str)
       }
 
       HomeLoadsPriorityAction -> {
@@ -667,6 +679,18 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           }
         }
       }
+      HomeLoadDlvIntracity ->{
+        selectedLoadFilter = DemandType.Intracity.type
+        refreshData()
+      }
+      HomeLoadDlvIntercity ->{
+        selectedLoadFilter = DemandType.Internal.type
+        refreshData()
+      }
+      HomeLoadNonDlv ->{
+        selectedLoadFilter = DemandType.Others.type
+        refreshData()
+      }
     }
   }
 
@@ -709,7 +733,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     lateinit var dialog: AlertDialog
 
     // Initialize an array of vehicles
-    val arrayVehicle = arrayOf("open", "closed", "trailer", "all")
+    val arrayVehicle = arrayOf("open", "closed", "trailer")
 
     val arrayChecked = booleanArrayOf(false, false, false, false)
 
@@ -754,6 +778,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       viewModel.vehicleStr = filterVehicleTypes.joinToString(separator = ",") {it}
       viewModel.filterVehicleType = true
+     // binding.layoutSearch.spinnerTruckDisplayName.text = "Selected VT: "+filterVehicleTypes.joinToString(separator = ", ")
       refreshData()
     }
 
@@ -804,6 +829,24 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                         requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs, "load_screen"
                 ).show()
               }
+            }
+          }
+          HomeBidsRequestAction_AcceptBid -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs).show()
+
+          }
+          HomeBidsRequestAction_NavigationMap -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            try {
+              val gmmIntentUri = Uri.parse("geo:0,0?q=${data.latitude},${data.longitude}"+"(" + data.origin+ ")")
+              val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+              mapIntent.setPackage("com.google.android.apps.maps")
+              startActivity(mapIntent)
+            } catch (e: Exception) {
+              Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
             }
           }
         }
@@ -985,7 +1028,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, selectedLoadFilter)
 
     override fun hasMore() = viewModel.hasMoreData
 

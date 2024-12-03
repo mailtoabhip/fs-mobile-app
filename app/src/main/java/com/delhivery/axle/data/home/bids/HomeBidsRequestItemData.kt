@@ -153,6 +153,11 @@ data class HomeBidsRequestItemData(
   } else {
     0.0
   }
+  fun formatedTargetPrice() = if (targetPrice?:0.0 > 0) {
+    "₹ ${targetPrice!!.toInt()}"
+  } else {
+    "₹ 0"
+  }
 
   /**
    * if trip is Multidrop
@@ -502,6 +507,8 @@ data class HomeBidsRequestItemData(
    */
   fun requiredAt() = _requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat) }
 
+  fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
+
   /**
    * Required at background as per designs
    */
@@ -541,6 +548,11 @@ data class HomeBidsRequestItemData(
         }
       }
   }
+
+  fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
+  fun reportingCityWithPinCode()= originCity +" - "+loadingLocationPincode
+
+  fun additionalKMsRates()= "${intracityExtraKmRate()} per extra KM | ${intracityExtraHourRate()} per extra hour"
 
   fun reportingCenters(): String{
     val reportingCenters = StringBuilder()
@@ -1293,6 +1305,9 @@ data class HomeBidsRequestItemData(
 
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
 
+  fun adhocIntracityKms()= "$intracityKms Kms"
+  fun adhocIntracityhrs()= "- $intracityHours hrs"
+
   fun intracityHours() = intracityHours+"h/day"
   fun intracityDays() = "$intracityDays days/month"
   fun intracityKms() = "~$intracityKms Kms/month"
@@ -1507,4 +1522,8 @@ const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
+const val HomeBidsRequestAction_AcceptBid = "accept_bid"
+const val HomeBidsRequestAction_NavigationMap = "navigate_map"
+
+
 
