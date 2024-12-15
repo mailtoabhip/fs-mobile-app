@@ -14,7 +14,7 @@
             android:id="@+id/cl_transaction_info"
             app:layout_constraintTop_toBottomOf="@+id/title"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatImageView
@@ -22,6 +22,7 @@
                 android:src="@drawable/ic_delhivery_load"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/size_3dp"
                 android:background="@color/bg_grey"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

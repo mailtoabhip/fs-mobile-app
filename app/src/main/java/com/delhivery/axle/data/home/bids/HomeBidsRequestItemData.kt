@@ -94,7 +94,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("drop_location_address") val dropLocationAddress: String?,
   @SerializedName("pickup_location_city") val pickupLocationCity: String?,
   @SerializedName("drop_location_city") val dropLocationCity: String?,
-  @SerializedName("pickup_location_pincode ") val loadingLocationPincode: String?,
+  @SerializedName("pickup_location_pincode") val loadingLocationPincode: String?,
+  @SerializedName("pickup_location_coordinates") val pickupLocationCoordinates: PickUpCoordinate?,
   @SerializedName("drop_location_pincode") val unloadingLocationPincode: String?,
   @SerializedName("intermediary_pickup_stop1_address") val pickup1Address: String?,
   @SerializedName("intermediary_pickup_stop1_pincode") val pickup1AddressPin: String?,
@@ -138,6 +139,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("contract_usage")val contractUsage:String?,
   @SerializedName("secondary_reporting_centers")val secondaryReportingCenters:List<SecondaryReportingCenters>?=null,
   @SerializedName("is_flexible")val isFlexible:Boolean=false,
+  @SerializedName("requirement_duration")val requirementDuration:Int?=null,
+  @SerializedName("sub_request_type")val subRequestType:String?=null,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -550,7 +553,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
-  fun reportingCityWithPinCode()= originCity +" - "+loadingLocationPincode
+  fun reportingCityWithPinCode()= originCityName() +" - "+loadingLocationPincode
 
   fun additionalKMsRates()= "${intracityExtraKmRate()} per extra KM | ${intracityExtraHourRate()} per extra hour"
 
@@ -569,6 +572,10 @@ data class HomeBidsRequestItemData(
    */
   fun tripDisplayName() =
     "${capitalize(originState)} - ${capitalize(destinationState)}"
+
+  fun tripIntracityDisplayName() =
+    "${capitalize(origin)}|${distance.toInt()} KM | ${requirementDuration} Hr"
+
 //    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
 //    when (tripType) {
 //      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
@@ -1305,8 +1312,8 @@ data class HomeBidsRequestItemData(
 
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
 
-  fun adhocIntracityKms()= "$intracityKms Kms"
-  fun adhocIntracityhrs()= "- $intracityHours hrs"
+  fun adhocIntracityKms()= "${distance.toInt()} Kms"
+  fun adhocIntracityhrs()= "- $requirementDuration hrs"
 
   fun intracityHours() = intracityHours+"h/day"
   fun intracityDays() = "$intracityDays days/month"
@@ -1515,6 +1522,12 @@ data class PaymentSlabs(
   @SerializedName("payout") val monthlyPayout: String?,
 
 )
+
+data class PickUpCoordinate(
+  @SerializedName("lat") val lat: String?,
+  @SerializedName("lon") val lon: String?,
+
+  )
 
 
 /* actions */

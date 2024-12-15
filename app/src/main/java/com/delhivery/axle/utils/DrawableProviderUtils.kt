@@ -142,7 +142,9 @@ object DrawableProviderUtils {
    * Resource for showing current trip status
    */
   @DrawableRes
-  fun tripStatusRes(flag: Boolean) = if (flag) {
+  fun tripStatusRes(flag: Boolean,isIntracity:Boolean) = if (flag && isIntracity) {
+    R.drawable.ic_current_status
+  }else if(flag){
     R.drawable.ic_check_circle_green
   } else {
     R.drawable.ic_rounded_circle_black

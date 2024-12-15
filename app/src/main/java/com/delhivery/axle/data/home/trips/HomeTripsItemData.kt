@@ -4,6 +4,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.InTransit
@@ -79,6 +80,7 @@ data class HomeTripsItemData(
   @SerializedName("is_ap_recon_pending") val isApReconPending: Boolean? = false,
   @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
   @SerializedName("entity") val entity: String?,
+  @SerializedName("sub_request_type")val subRequestType:String?,
   var payment: TripPaymentResponse? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -106,6 +108,9 @@ data class HomeTripsItemData(
    */
   fun formattedDriverDetails() = "Driver: ${driverDetails?.driverPhoneNo}"
 
+  fun driverName() = driverDetails?.driverName
+
+  fun driverPhone() ="+91 ${driverDetails?.driverPhoneNo}"
   /**
    * Trip Status [TripStatus]
    */
@@ -871,19 +876,20 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun truckArrivedRes() = if (updateInfo!!.truckArrivedInfo != null) {
-        DrawableProviderUtils.tripStatusRes(true)
+        DrawableProviderUtils.tripStatusRes(true,isIntracity())
   } else {
-    DrawableProviderUtils.tripStatusRes(false)
+    DrawableProviderUtils.tripStatusRes(false,isIntracity())
   }
 
+  fun isIntracity() = subRequestType==DemandType.Intracity.type
   /**
    * truck loaded icon resource
    */
   @DrawableRes
   fun truckLoadedRes() = if (updateInfo!!.loadedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true)
+    DrawableProviderUtils.tripStatusRes(true,isIntracity())
   } else {
-    DrawableProviderUtils.tripStatusRes(false)
+    DrawableProviderUtils.tripStatusRes(false,isIntracity())
   }
 
   /**
@@ -891,9 +897,9 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun truckReachedRes() = if (updateInfo!!.truckReachedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true)
+    DrawableProviderUtils.tripStatusRes(true,isIntracity())
   } else {
-    DrawableProviderUtils.tripStatusRes(false)
+    DrawableProviderUtils.tripStatusRes(false,isIntracity())
   }
 
   /**
@@ -901,9 +907,9 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun truckUnloadedRes() = if (updateInfo!!.truckUnloadedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true)
+    DrawableProviderUtils.tripStatusRes(true,isIntracity())
   } else {
-    DrawableProviderUtils.tripStatusRes(false)
+    DrawableProviderUtils.tripStatusRes(false,isIntracity())
   }
 
   /**
@@ -911,16 +917,16 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun podUploadedRes() = if (updateInfo!!.tripCompletedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true)
+    DrawableProviderUtils.tripStatusRes(true,isIntracity())
   } else {
-    DrawableProviderUtils.tripStatusRes(false)
+    DrawableProviderUtils.tripStatusRes(false,isIntracity())
   }
 
   /**
    * trip settled icon resource
    */
   @DrawableRes
-  fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled)
+  fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled,isIntracity())
 
   /**
    * pickup/destination icon resource
@@ -988,7 +994,7 @@ const val HomeAdvancePendingPaymentMode = "change_payment_mode"
 /**
  * Trip Driver details
  */
-data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: String?) :
+data class TripDriverDetails(@SerializedName("phone_number") val driverPhoneNo: String?,@SerializedName("name") val driverName: String?) :
     Serializable {
 
   /**

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
@@ -32,6 +33,7 @@ import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.Calendar
@@ -221,24 +223,29 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
 
-        val dmtStatus = if(_item.isDMTIndent())
-          "dmt"
-        else ""
-        val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-        val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
-          if(_item.transactionBid?.childTransactionId!=null)
-            _item.transactionBid!!.childTransactionId else _item.key()
-        }else{
-          _item.key()
-        }
-        if(id!=null)
-        context?.let {
-          userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
-        }
-        else{
-          Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()
-        }
+          val dmtStatus = if(_item.isDMTIndent())
+            "dmt"
+          else ""
+          val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
+          val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
+            if(_item.transactionBid?.childTransactionId!=null)
+              _item.transactionBid!!.childTransactionId else _item.key()
+          }else{
+            _item.key()
+          }
+          if(id!=null)
+            context?.let {
+              userPrefs.setPreviousScreen(this.javaClass.name)
+              if(_item.subRequestType==DemandType.Intracity.type){
+                startActivity(tripDetailsIntent(_item.key(), it))
+              }else{
+                startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
+              }
+            }
+          else{
+            Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()
+          }
+
       }
 
       HomeBidsRequestAction_ViewOtherDetails -> {

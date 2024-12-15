@@ -95,7 +95,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
           _interface: HomeLoadsRVAdapterInterface
   ) {
 
-    if(item.data.demandType == "E2E_LH"){
+    if(item.data.demandType == DemandType.Intracity.type){
         binding.layoutIntracity.request = item.data
         binding.layoutIntracity.layoutTransaction.request= item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
@@ -216,7 +216,7 @@ internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchPlaceholderItem
   ) {
     binding.editStickySearch.clickToAction(HomeLoadsSearchAction_Search,item,_interface)
     binding.spinnerTruckDisplayName.clickToAction(HomeLoadsVehicleFilterAction,item,_interface)
-    binding.spinnerTruckDisplayName.text = "Selected: "+item.data.query
+    binding.spinnerTruckDisplayName.text = "Selected: "+item.data.query?.split(",")?.joinToString(", ")
   }
 }
 
@@ -297,10 +297,9 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
       binding.dlvIntercityToggle.text =   "${context.getString(R.string.action_dlv_intercity)} (${item.data.dlvIntercityCount})"
       binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
-      val enableIntracityLoad = item.data.userDemandType.contains(DemandType.Intracity.type)
-      val enableIntercityLoad = item.data.userDemandType.contains(DemandType.Internal.type)
-      binding.dlvIntracityToggle.visibility = if (enableIntracityLoad)View.VISIBLE else View.GONE
-      binding.dlvIntercityToggle.visibility = if (enableIntercityLoad)View.VISIBLE else View.GONE
+      binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
+      binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
+
       when (item.data.filterType) {
           DemandType.Intracity.type-> {
               binding.dlvIntracityToggle.isSelected = true

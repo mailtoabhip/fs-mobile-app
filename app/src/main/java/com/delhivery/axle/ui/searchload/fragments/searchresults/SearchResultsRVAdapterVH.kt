@@ -9,9 +9,12 @@ import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
@@ -98,6 +101,17 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     item: SearchLoadsRequestItem,
     _interface: SearchLoadsRVAdapterInterface
   ) {
+    if(item.data.subRequestType == DemandType.Intracity.type){
+      binding.layoutIntracity.request = item.data
+      binding.layoutIntracity.layoutTransaction.request= item.data
+      binding.layoutIntracity.root.visibility = View.VISIBLE
+      binding.nonIntracityLayout.visibility = View.GONE
+      binding.layoutIntracity.navigateText.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
+      binding.layoutIntracity.btnAccept.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+
+    } else {
+      binding.layoutIntracity.root.visibility = View.GONE
+      binding.nonIntracityLayout.visibility = View.VISIBLE
     binding.request = item.data
     if(item.data.isDMTIndent()){
       binding.timerLayout.visibility = View.GONE
@@ -178,6 +192,7 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     binding.viewBidInfo.clickToAction(
         HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
     )
+  }
   }
 }
 

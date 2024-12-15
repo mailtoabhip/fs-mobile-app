@@ -21,8 +21,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import androidx.transition.Visibility
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
 import com.delhivery.axle.data.AwaitingPODUpload
@@ -104,11 +106,14 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         finish()
       }
     })
-
+    binding.backArrow.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
+
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
@@ -206,25 +211,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
 
     binding.callDriverText.setOnClickListener {
-      compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
-          .onBackground()
-          .subscribe { granted, error ->
-            if (error == null && granted) {
-              when (viewModel.tripDetail.driverDetails?.driverPhoneNo?.let { it1 ->
-                contactUtils.callDriver(
-                    it1
-                )
-              }) {
-                false -> {
-                  uiUtils.showSnackbar("Unable to place call")
-                }
-                else -> {
-                }
-              }
-            } else {
-              uiUtils.showSnackbar(getString(string.msg_call_permission))
-            }
-          }
+       callDriver()
+    }
+
+    binding.clAdhocintracity.callDriver.setOnClickListener {
+      callDriver()
     }
 
     binding.actionChangePaymentMode.setOnClickListener {
@@ -266,10 +257,29 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         }
       }
     })
-
     refreshData()
   }
-
+   fun callDriver(){
+     compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
+       .onBackground()
+       .subscribe { granted, error ->
+         if (error == null && granted) {
+           when (viewModel.tripDetail.driverDetails?.driverPhoneNo?.let { it1 ->
+             contactUtils.callDriver(
+               it1
+             )
+           }) {
+             false -> {
+               uiUtils.showSnackbar("Unable to place call")
+             }
+             else -> {
+             }
+           }
+         } else {
+           uiUtils.showSnackbar(getString(string.msg_call_permission))
+         }
+       }
+   }
   override fun onDestroy() {
     super.onDestroy()
   }
@@ -298,27 +308,44 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.refreshing = false
       if (t != null) {
         binding.error = false
+        if (t.first.subRequestType == DemandType.Intracity.type) {
+         binding.toolbar.visibility = View.GONE
+          binding.intracityTitle.visibility = View.VISIBLE
+          binding.llTripDetails.visibility = View.GONE
+          binding.clAdhocintracity.root.visibility = View.VISIBLE
+          binding.clAdhocintracity.tripDetails = t.second
+          binding.clAdhocintracity.request = t.first
+          binding.clAdhocintracity.layoutTransaction.request = t.first
+
+        } else {
+          binding.toolbar.visibility = View.VISIBLE
+          binding.intracityTitle.visibility = View.GONE
+          binding.clAdhocintracity.root.visibility = View.GONE
+          binding.llTripDetails.visibility = View.VISIBLE
         title = t.first.tripDisplayName()
+        }
         binding.transaction = t.first
         binding.tripDetails = t.second
         viewModel.bidDetail = t.second.bidDetails
+
         if ((viewModel.tripDetail.tripStatus != "truck_confirmed") &&
-            (viewModel.tripDetail.tripStatus != "truck_arrived")) {
+          (viewModel.tripDetail.tripStatus != "truck_arrived")
+        ) {
           binding.rvPmtSummary.visibility = View.VISIBLE
           viewModel.paymentBucketType = "all"
         }
-        if(t.second.entity!="OSCPL"){
+        if (t.second.entity != "OSCPL") {
           viewModel.fetchWarehouseDetails()
         }
 
-        if(binding.transaction?.indentOrigin.equals("LH")){
-          if(!binding.transaction?.indentHaltCenters.isNullOrEmpty()){
-            for(code in binding.transaction?.indentHaltCenters!!){
+        if (binding.transaction?.indentOrigin.equals("LH")) {
+          if (!binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
+            for (code in binding.transaction?.indentHaltCenters!!) {
               viewModel.fetchIndentCenters(code.haltCenterCode)
             }
           }
-        }else{
-           val stopBuilder = StringBuilder()
+        } else {
+          val stopBuilder = StringBuilder()
 
           if (!TextUtils.isEmpty(binding.transaction?.pickup1City)) {
             binding.textViaLabel.visibility = View.VISIBLE
@@ -328,7 +355,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           if (!TextUtils.isEmpty(binding.transaction?.pickup2City)) {
             binding.textViaLabel.visibility = View.VISIBLE
             binding.textViaDestination.visibility = View.VISIBLE
-            stopBuilder.append(", ").append(StringUtils.capitalize(binding.transaction?.pickup2City))
+            stopBuilder.append(", ")
+              .append(StringUtils.capitalize(binding.transaction?.pickup2City))
           }
           if (!TextUtils.isEmpty(binding.transaction?.stop1City)) {
             binding.textViaLabel.visibility = View.VISIBLE

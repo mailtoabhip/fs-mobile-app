@@ -1,6 +1,8 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.R.layout
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -12,8 +14,11 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -21,6 +26,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
 import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
@@ -168,6 +174,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               }
             }
           }
+    })
+
+
+    viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it!=null){
+        //val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        refreshData()
+        //adapter.notifyItemChanged(it.first)
+      }
     })
 
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -491,6 +506,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
+        if(_item.demandType!=DemandType.Internal.type)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(_item.key(), it, if (_item.isDMTIndent()) "dmt" else ""))
@@ -539,6 +555,24 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                   requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
                 ).show()
               }
+            }
+          }
+          HomeBidsRequestAction_AcceptBid -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs).show()
+
+          }
+          HomeBidsRequestAction_NavigationMap -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            try {
+              val gmmIntentUri = Uri.parse("geo:0,0?q=${data.pickupLocationCoordinates?.lon},${data.pickupLocationCoordinates?.lon}"+"(" + data.origin+ ")")
+              val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+              mapIntent.setPackage("com.google.android.apps.maps")
+              startActivity(mapIntent)
+            } catch (e: Exception) {
+              Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
             }
           }
         }

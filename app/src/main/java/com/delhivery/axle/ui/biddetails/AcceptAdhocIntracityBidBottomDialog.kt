@@ -17,6 +17,13 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBottomAcceptIntracityAdhocBidBinding
 import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NAME
+import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NUMBER
+import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_SUBMIT
+import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_VEHICLE_NUMBER
+import com.delhivery.axle.utils.PROPERTY_DRIVER_NAME
+import com.delhivery.axle.utils.PROPERTY_DRIVER_NUMBER
+import com.delhivery.axle.utils.PROPERTY_VEHICLE_NUMBER
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -196,11 +203,19 @@ private var userPrefs: UserPrefs,
 
     private fun submit() {
         try {
+            analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_DRIVER_NAME, mutableListOf(PROPERTY_DRIVER_NAME),
+                mutableListOf(binding.editTextDriverName.text.toString()))
+            analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_DRIVER_NUMBER, mutableListOf(PROPERTY_DRIVER_NUMBER),
+                mutableListOf(binding.editTextDriverNumber.text.toString()))
+            analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_VEHICLE_NUMBER, mutableListOf(PROPERTY_VEHICLE_NUMBER),
+                mutableListOf(binding.editTextVehicleNumber.text.toString()))
+              analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_SUBMIT, mutableListOf(PROPERTY_DRIVER_NAME, PROPERTY_DRIVER_NUMBER, PROPERTY_VEHICLE_NUMBER),
+                  mutableListOf(binding.editTextDriverName.text.toString(),binding.editTextDriverNumber.text.toString(), binding.editTextVehicleNumber.text.toString()))
                 dialogInterface.acceptBid(
                     position,
                     transaction.key(), userPrefs.userId(),userPrefs.userName,transaction.targetPrice!!.toInt(),
                     transaction.biddingType
-                        ?: "FTL", binding.editTextVehicleNumber.text.toString(),binding.editTextDriverName.text.toString(),binding.editTextDriverNumber.text.toString())
+                        ?: "FTL", binding.editTextVehicleNumber.text.toString(),binding.editTextDriverNumber.text.toString(),binding.editTextDriverName.text.toString())
 
             dismiss()
 

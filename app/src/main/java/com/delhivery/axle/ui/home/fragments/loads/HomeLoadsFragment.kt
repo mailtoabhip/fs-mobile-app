@@ -119,17 +119,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
-   // setupLoadFilter()
+    setupLoadFilter()
+
     /* setup recycler view */
-    val enableIntracityLoad = demandType.contains(DemandType.Intracity.type)
-    val enableIntercityLoad = demandType.contains(DemandType.Internal.type)
-    if (enableIntracityLoad){
-      selectedLoadFilter = DemandType.Intracity.type
-    }else if(enableIntercityLoad){
-      selectedLoadFilter = DemandType.Internal.type
-    }else{
-      selectedLoadFilter = DemandType.Others.type
-    }
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
@@ -457,6 +449,24 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
   }
 
+  private fun setupLoadFilter() {
+    val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)
+    val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type)
+    if (enableIntracityLoad){
+      selectedLoadFilter = DemandType.Intracity.type
+      demandType = DemandType.Intracity.type
+    }else if(enableIntercityLoad){
+      selectedLoadFilter = DemandType.Internal.type
+      demandType = DemandType.Internal.type
+    }else{
+      selectedLoadFilter = DemandType.Others.type
+      demandType = userPrefs.demandType
+        .split(",")
+        .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+        .joinToString(",")
+    }
+  }
+
   override fun onResume() {
     super.onResume()
     viewModel.paginateCount = 0
@@ -518,7 +528,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        if(data.demandType!="E2E_LH")
+        if(data.subRequestType!==DemandType.Intracity.type)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
@@ -526,6 +536,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsSearchAction_Search -> {
         context?.let {
+          analyticsUtil.moEngageTrackEvent(EVENT_LOAD_SEARCH_CLICKED)
           analyticsUtil.moEngageTrackEvent( EVENT_HOME_SEARCH_INITIATE,
             mutableListOf(PROPERTY_ORDER_COUNT),
             mutableListOf(viewModel.total.toString()))
@@ -680,15 +691,36 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
       HomeLoadDlvIntracity ->{
+        analyticsUtil.trackEvent(
+          EVENT_LOAD_INTRACITY_CLICKED,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
         selectedLoadFilter = DemandType.Intracity.type
+        demandType = DemandType.Intracity.type
         refreshData()
       }
       HomeLoadDlvIntercity ->{
+        analyticsUtil.trackEvent(
+          EVENT_LOAD_INTERCITY_CLICKED,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
         selectedLoadFilter = DemandType.Internal.type
+        demandType = DemandType.Internal.type
         refreshData()
       }
       HomeLoadNonDlv ->{
+        analyticsUtil.trackEvent(
+          EVENT_NON_DELHIVERY_LOAD_CLICKED,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
         selectedLoadFilter = DemandType.Others.type
+        demandType = userPrefs.demandType
+          .split(",")
+          .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+          .joinToString(",")
         refreshData()
       }
     }
@@ -778,7 +810,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       viewModel.vehicleStr = filterVehicleTypes.joinToString(separator = ",") {it}
       viewModel.filterVehicleType = true
-     // binding.layoutSearch.spinnerTruckDisplayName.text = "Selected VT: "+filterVehicleTypes.joinToString(separator = ", ")
+      analyticsUtil.trackEvent(
+        EVENT_LOAD_VEHICLE_TYPE_CLICKED,
+        mutableListOf(PROPERTY_VEHICLE_TYPE),
+        mutableListOf(viewModel.vehicleStr?:"No Vehicle Type")
+      )
       refreshData()
     }
 
@@ -834,14 +870,28 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           HomeBidsRequestAction_AcceptBid -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_LOAD_INTRACITY_ACCEPT_CLICKED,
+              mutableListOf(PROPERTY_ORDER_ID),
+              mutableListOf(
+                data.transactionId.toString()
+              )
+            )
             AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs).show()
 
           }
           HomeBidsRequestAction_NavigationMap -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_LOAD_INTRACITY_NAVIGATE_CLICKED,
+              mutableListOf(PROPERTY_ORDER_ID),
+              mutableListOf(
+                data.transactionId.toString()
+              )
+            )
             try {
-              val gmmIntentUri = Uri.parse("geo:0,0?q=${data.latitude},${data.longitude}"+"(" + data.origin+ ")")
+              val gmmIntentUri = Uri.parse("geo:0,0?q=${data.pickupLocationCoordinates?.lat},${data.pickupLocationCoordinates?.lon}"+"(" + data.origin+ ")")
               val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
               mapIntent.setPackage("com.google.android.apps.maps")
               startActivity(mapIntent)
