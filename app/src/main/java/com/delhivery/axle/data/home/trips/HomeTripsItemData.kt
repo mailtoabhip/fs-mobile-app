@@ -10,6 +10,7 @@ import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.InTransit
 import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.fuelcards.FuelCardData
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.TripStatus.*
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.ViewPaymentType
@@ -881,7 +882,7 @@ data class HomeTripsItemData(
     DrawableProviderUtils.tripStatusRes(false,isIntracity())
   }
 
-  fun isIntracity() = subRequestType==DemandType.Intracity.type
+  fun isIntracity() = subRequestType==SUB_REQUEST_TYPE_INTRACITY
   /**
    * truck loaded icon resource
    */

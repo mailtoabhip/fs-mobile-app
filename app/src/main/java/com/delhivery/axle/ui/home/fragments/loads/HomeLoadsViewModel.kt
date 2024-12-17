@@ -202,7 +202,7 @@ class HomeLoadsViewModel @Inject constructor(
                     .split(",")
                     .filterNot { it == DemandType.Intracity.type}
                     .joinToString(","),
-                vehicleTypes,
+                userPrefs.truckTypes,
                 excludeTruckTypes,
                 filterVehicleType,
                 true, splitViewCount = true
@@ -236,9 +236,7 @@ class HomeLoadsViewModel @Inject constructor(
                             Log.e("Errpr",e.toString())
                         }
 
-                        if (total == 0 && !infoSearch && (filterVehicleType == false)) {
-                            add(Pair(HomeLoadsWarningItem_NoLoads, Add))
-                        } else {
+
                             add(
                                 Pair(
                                     HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)),
@@ -259,7 +257,6 @@ class HomeLoadsViewModel @Inject constructor(
                                 )
                             )
                             if (!paginate) {
-//                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                                 add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                             }
                                 if (total >= 0)
@@ -270,7 +267,9 @@ class HomeLoadsViewModel @Inject constructor(
                                         )
                                     )
 
-
+                        if (total == 0 ) {
+                            add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+                        }
                             for ((index, load) in loads.toMutableList().withIndex()) {
                                 try {
                                     load.transactionId?.let { txnIds.add(it) }
@@ -285,7 +284,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 add(Pair(HomeLoadsInfoItem(), AddUpdate))
                             }
                             add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-                        }
+
                     }.let { userLoadsData.postValue(it) }
 
                 }
@@ -334,9 +333,6 @@ class HomeLoadsViewModel @Inject constructor(
                             val loads = _tRes.first
                             val bids = _tRes.second
 
-                            if (total == 0 && !infoSearch && (filterVehicleType == false)) {
-                                add(Pair(HomeLoadsWarningItem_NoLoads, Add))
-                            } else {
                                 var nonDlvCount = 0
                                 var intercityCount = 0
 
@@ -354,7 +350,6 @@ class HomeLoadsViewModel @Inject constructor(
                                 }catch (e:Exception){
                                  Log.e("Errpr",e.toString())
                                 }
-                                Log.e("Count", intercityCount.toString()+"::"+nonDlvCount.toString())
                                 var count = 0
                                 if(selectedFilter==DemandType.Internal.type){
                                     count = intercityCount
@@ -385,20 +380,9 @@ class HomeLoadsViewModel @Inject constructor(
                                     )
                                 )
                                 if (!paginate) {
-//                                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                                 }
-//                                if (totalFetchTitle > total) {
-//                                    add(
-//                                        Pair(
-//                                            HomeLoadsSummaryItem(
-//                                                HomeLoadsSummaryItemData(
-//                                                    totalFetchTitle
-//                                                )
-//                                            ), AddUpdate
-//                                        )
-//                                    )
-//                                } else {
+
                                     if (total >= 0)
                                         add(
                                             Pair(
@@ -406,8 +390,9 @@ class HomeLoadsViewModel @Inject constructor(
                                                 AddUpdate
                                             )
                                         )
-                           //     }
-
+                            if (total == 0 ) {
+                                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+                            }
                                 for ((index, load) in loads.toMutableList().withIndex()) {
                                     try {
                                         load.transactionId?.let { txnIds.add(it) }
@@ -441,14 +426,9 @@ class HomeLoadsViewModel @Inject constructor(
                                     add(Pair(HomeLoadsInfoItem(), AddUpdate))
                                 }
                                 add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-                            }
+
                         }.let { userLoadsData.postValue(it) }
 
-                      /*  if (!fecthToCalled) {
-                            fetchSupplierTransactions(
-                                total > 0, selectedFilter, demandType, infoSearch, excludeTruckTypes
-                            )
-                        }*/
                     }
                     else {
                         fetchSupplierTransactions(
@@ -533,9 +513,7 @@ class HomeLoadsViewModel @Inject constructor(
               val loads = _tRes.first
               val bids = _tRes.second
 
-              if (total == 0 && !infoSearch && (filterVehicleType == false)) {
-                  add(Pair(HomeLoadsWarningItem_NoLoads, Add))
-                } else {
+
                     var intercityCount =0
                     var nonDlvCount = 0
                     if(demandType==DemandType.Internal.type){
@@ -550,6 +528,9 @@ class HomeLoadsViewModel @Inject constructor(
                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
                 add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
+                if (total == 0) {
+                    add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+                }
                   for ((index, load) in loads.toMutableList().withIndex()) {
                       try {
                           val lowestBid = _tRes.third.filter { b ->
@@ -589,7 +570,7 @@ class HomeLoadsViewModel @Inject constructor(
                   }
 
 
-              }
+
             }
                 .let {
                   userLoadsDataFetch.postValue(it) }

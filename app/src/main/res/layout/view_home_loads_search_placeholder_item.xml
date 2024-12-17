@@ -13,7 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_height="@dimen/size_38dp"
         android:background="@drawable/bg_search_white_load_spinner"
-        android:paddingBottom="@dimen/size_12dp"
+        android:paddingBottom="@dimen/size_8dp"
         android:paddingTop="@dimen/size_8dp"
         android:textSize="@dimen/text_16sp"
         android:textColor="@color/heading_black"

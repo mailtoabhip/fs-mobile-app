@@ -32,6 +32,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@color/light_grey_bg"
+        android:shadowColor="#3b000000"
+        android:elevation="@dimen/size_2dp"
+        android:shadowDy="2"
+        android:shadowRadius="16"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <include

@@ -236,7 +236,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
           if(id!=null)
             context?.let {
               userPrefs.setPreviousScreen(this.javaClass.name)
-              if(_item.subRequestType==DemandType.Intracity.type){
+              if(_item.subRequestType==SUB_REQUEST_TYPE_INTRACITY){
                 startActivity(tripDetailsIntent(_item.key(), it))
               }else{
                 startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))

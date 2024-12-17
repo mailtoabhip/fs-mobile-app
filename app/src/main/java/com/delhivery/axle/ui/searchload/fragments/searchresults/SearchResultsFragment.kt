@@ -23,6 +23,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
@@ -506,7 +507,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
-        if(_item.demandType!=DemandType.Internal.type)
+        if(_item.subRequestType!= SUB_REQUEST_TYPE_INTRACITY)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(_item.key(), it, if (_item.isDMTIndent()) "dmt" else ""))

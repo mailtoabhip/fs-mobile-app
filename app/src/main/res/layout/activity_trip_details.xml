@@ -51,13 +51,18 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
+        android:visibility="gone"
         android:background="@android:color/white"
         bind:shadow="@{ @dimen/size_4dp }"
         />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/intracityTitle"
         android:layout_width="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
+        android:shadowColor="#3b000000"
+        android:shadowDy="2"
+        android:shadowRadius="16"
+        android:elevation="@dimen/size_2dp"
         android:layout_height="@dimen/height_toolbar"
         android:background="@color/white">
     <androidx.appcompat.widget.AppCompatImageView

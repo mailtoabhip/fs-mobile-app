@@ -16,6 +16,7 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterAll
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFixed
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFlexible
@@ -95,7 +96,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
           _interface: HomeLoadsRVAdapterInterface
   ) {
 
-    if(item.data.demandType == DemandType.Intracity.type){
+    if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
         binding.layoutIntracity.request = item.data
         binding.layoutIntracity.layoutTransaction.request= item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
@@ -216,7 +217,7 @@ internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchPlaceholderItem
   ) {
     binding.editStickySearch.clickToAction(HomeLoadsSearchAction_Search,item,_interface)
     binding.spinnerTruckDisplayName.clickToAction(HomeLoadsVehicleFilterAction,item,_interface)
-    binding.spinnerTruckDisplayName.text = "Selected: "+item.data.query?.split(",")?.joinToString(", ")
+    binding.spinnerTruckDisplayName.text = "Vehicle Type"+if(item.data.query?.split(",")?.size==0)"" else " : " + item.data.query?.split(",")?.joinToString(", ")
   }
 }
 

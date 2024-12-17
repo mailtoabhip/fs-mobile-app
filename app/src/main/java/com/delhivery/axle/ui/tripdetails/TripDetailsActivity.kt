@@ -32,6 +32,7 @@ import com.delhivery.axle.data.BalancePaid
 import com.delhivery.axle.data.PODUploaded
 import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
 import com.delhivery.axle.data.home.trips.TripStatus
@@ -308,7 +309,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.refreshing = false
       if (t != null) {
         binding.error = false
-        if (t.first.subRequestType == DemandType.Intracity.type) {
+        if (t.first.subRequestType == SUB_REQUEST_TYPE_INTRACITY) {
          binding.toolbar.visibility = View.GONE
           binding.intracityTitle.visibility = View.VISIBLE
           binding.llTripDetails.visibility = View.GONE

@@ -49,7 +49,7 @@ class TransactionsRepository @Inject constructor(
   fun fetchIntracityRecommTransactions(offset: Int, demand_type: String?=null, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, onlyCount:Boolean?=null) =
     recommendationService.recommendationIntracityTransactions(
       ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset,
-        null, null, onlyCount = onlyCount)
+        null, vehicle_type, onlyCount = onlyCount)
     ).convertResponse()
 
   /**

@@ -16,6 +16,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
@@ -101,7 +102,7 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
     item: SearchLoadsRequestItem,
     _interface: SearchLoadsRVAdapterInterface
   ) {
-    if(item.data.subRequestType == DemandType.Intracity.type){
+    if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
       binding.layoutIntracity.request = item.data
       binding.layoutIntracity.layoutTransaction.request= item.data
       binding.layoutIntracity.root.visibility = View.VISIBLE

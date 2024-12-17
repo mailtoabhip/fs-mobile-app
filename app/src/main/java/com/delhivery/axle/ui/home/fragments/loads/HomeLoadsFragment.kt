@@ -30,6 +30,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.home.trucks.TruckFrequentItem
@@ -305,9 +306,12 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it!=null){
-        //val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        uiUtils.showToast("Bid Accepted Successfully")
         refreshData()
-        //adapter.notifyItemChanged(it.first)
+
+      }else{
+        uiUtils.showToast("Error in bid acceptance")
+
       }
     })
 
@@ -528,7 +532,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
-        if(data.subRequestType!==DemandType.Intracity.type)
+        if(data.subRequestType!=SUB_REQUEST_TYPE_INTRACITY)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }

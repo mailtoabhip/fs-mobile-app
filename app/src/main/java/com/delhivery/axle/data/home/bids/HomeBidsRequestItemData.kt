@@ -1529,6 +1529,8 @@ data class PickUpCoordinate(
 
   )
 
+const val SUB_REQUEST_TYPE_INTRACITY = "intracity"
+
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
@@ -1537,6 +1539,7 @@ const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
 const val HomeBidsRequestAction_AcceptBid = "accept_bid"
 const val HomeBidsRequestAction_NavigationMap = "navigate_map"
+
 
 
 
