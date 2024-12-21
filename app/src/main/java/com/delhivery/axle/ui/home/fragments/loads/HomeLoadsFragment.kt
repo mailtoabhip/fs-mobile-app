@@ -8,11 +8,9 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
@@ -22,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
@@ -32,7 +29,6 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
-import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.home.trucks.TruckFrequentItem
 import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
@@ -48,7 +44,7 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
-import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -56,12 +52,10 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.dpToPx
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.moengage.android.Constants
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
@@ -76,7 +70,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var fcmUtils: FCMUtils
   @Inject lateinit var userPrefs: UserPrefs
-
   private val MINIMUM = 25
   var scrollDist = 0
   var visible = false
@@ -126,22 +119,10 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
-    //  addOnScrollListener(HomeLoadsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
     binding.rvLoads.setItemAnimator(null);
-
-//    binding.layoutSearch.editStickySearch.setOnClickListener {
-//      handleAction(
-//             HomeLoadsSearchAction_Search, HomeLoadsSearchItem()
-//      )
-//    }
-//    binding.layoutSearch.spinnerTruckDisplayName.text= "Selected VT: "+userPrefs.truckTypes?.split(",")?.joinToString(", ")
-//    binding.layoutSearch.spinnerTruckDisplayName.setOnClickListener {
-//      handleAction(HomeLoadsVehicleFilterAction,HomeLoadsFilterItem() )
-//
-//    }
 
 
     binding.routesBanner.setOnClickListener {
@@ -306,11 +287,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it!=null){
-        uiUtils.showToast("Bid Accepted Successfully")
+        uiUtils.showToast("Indent accepted successfully!")
         refreshData()
-
-      }else{
-        uiUtils.showToast("Error in bid acceptance")
 
       }
     })
@@ -881,7 +859,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 data.transactionId.toString()
               )
             )
-            AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs).show()
+
+            AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs,viewModel,
+              _instance,null,uiUtils).show()
 
           }
           HomeBidsRequestAction_NavigationMap -> {

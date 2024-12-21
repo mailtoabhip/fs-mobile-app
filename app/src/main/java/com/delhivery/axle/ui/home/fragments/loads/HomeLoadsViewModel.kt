@@ -877,7 +877,6 @@ class HomeLoadsViewModel @Inject constructor(
     ) {
         tripsRepository.acceptTripBid(transactionId,supplierId,supplierName,bidAmount,commercialType,vehicleNumber,driverPhone,driverName)
             .onBackground()
-            .progress()
             .subscribe { _res, error ->
                 if (!error && _res != null) {
                     acceptBidLiveData.postValue(Pair(position, _res))
@@ -892,3 +891,7 @@ class HomeLoadsViewModel @Inject constructor(
 
 
 private const val BidsUpdateDelay = 1L
+
+interface CloseDialog{
+    fun dismissDialog()
+}

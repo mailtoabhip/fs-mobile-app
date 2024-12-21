@@ -418,7 +418,6 @@ class SearchResultsViewModel @Inject constructor(
     ) {
         tripsRepository.acceptTripBid(transactionId,supplierId,supplierName,bidAmount,commercialType,vehicleNumber,driverPhone,driverName)
             .onBackground()
-            .progress()
             .subscribe { _res, error ->
                 if (!error && _res != null) {
                     acceptBidLiveData.postValue(Pair(position, _res))

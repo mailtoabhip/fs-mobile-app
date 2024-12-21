@@ -12,10 +12,17 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBottomAcceptIntracityAdhocBidBinding
+import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment.Companion._instance
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NAME
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NUMBER
@@ -24,17 +31,23 @@ import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_VEHICLE_NUMBER
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NAME
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NUMBER
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_NUMBER
+import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.regex.Pattern
 import javax.inject.Inject
 
+
 class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
-context: Context,
-private val position:Int,
-private val transaction: HomeBidsRequestItemData,
-private val dialogInterface: AcceptAdhocIntracityBidBottomDialogInterface,
-private val analyticsUtil: AnalyticsUtil,
-private var userPrefs: UserPrefs,
+    context: Context,
+    private val position: Int,
+    private val transaction: HomeBidsRequestItemData,
+    private val dialogInterface: AcceptAdhocIntracityBidBottomDialogInterface,
+    private val analyticsUtil: AnalyticsUtil,
+    private var userPrefs: UserPrefs,
+    private var viewModel: BaseViewModel,
+    private var homeFragInstance: HomeLoadsFragment?,
+    private val searchFragInstance: SearchResultsFragment?,
+    private var uiUtils: UiUtils
 ) : AlertDialog(context) {
 
     /* dialog binding */
@@ -57,13 +70,50 @@ private var userPrefs: UserPrefs,
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
-
+        binding.progress.visibility = View.GONE
         binding.close.setOnClickListener {
             dismiss()
         }
 
         binding.btnSubmit.setOnClickListener{
-           submit()
+            submit()
+        }
+        val fragInstance = if(homeFragInstance!=null){
+            _instance
+        }else SearchResultsFragment._instance
+
+        if(viewModel is SearchResultsViewModel){
+            (viewModel as SearchResultsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
+                if(it!=null){
+                    binding.btnSubmit.isEnabled = true
+                    binding.progress.visibility = View.GONE
+                    dismiss()
+                    // uiUtils.showToast("Bid Accepted Successfully")
+                    //refreshData()
+
+                }else{
+                    binding.btnSubmit.isEnabled = true
+                    binding.progress.visibility = View.GONE
+
+
+                }
+            })
+        }else{
+            (viewModel as HomeLoadsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
+                if(it!=null){
+                    binding.btnSubmit.isEnabled = true
+                    binding.progress.visibility = View.GONE
+                    dismiss()
+                    // uiUtils.showToast("Bid Accepted Successfully")
+                    //refreshData()
+
+                }else{
+                    binding.btnSubmit.isEnabled = true
+                    binding.progress.visibility = View.GONE
+
+
+                }
+            })
         }
 
         binding.editTextVehicleNumber?.addTextChangedListener(object : TextWatcher {
@@ -202,7 +252,10 @@ private var userPrefs: UserPrefs,
     }
 
     private fun submit() {
-        try {
+        try {  binding.btnSubmit.isEnabled = true
+            binding.progress.visibility = View.GONE
+            binding.btnSubmit.isEnabled = false
+            binding.progress.visibility = View.VISIBLE
             analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_DRIVER_NAME, mutableListOf(PROPERTY_DRIVER_NAME),
                 mutableListOf(binding.editTextDriverName.text.toString()))
             analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_DRIVER_NUMBER, mutableListOf(PROPERTY_DRIVER_NUMBER),
@@ -217,12 +270,16 @@ private var userPrefs: UserPrefs,
                     transaction.biddingType
                         ?: "FTL", binding.editTextVehicleNumber.text.toString(),binding.editTextDriverNumber.text.toString(),binding.editTextDriverName.text.toString())
 
-            dismiss()
+           //dismiss()
 
         } catch (e: IllegalArgumentException) {
             Log.e("AcceptAdhocBid", e.toString())
         }
     }
+
+//    override fun dismissDialog(alertDialog:AcceptAdhocIntracityBidBottomDialog) {
+//        alertDialog.dismiss()
+//    }
 }
 
 interface AcceptAdhocIntracityBidBottomDialogInterface {
@@ -241,5 +298,6 @@ interface AcceptAdhocIntracityBidBottomDialogInterface {
         driverPhone:String,
         driverName: String
     )
+
 
 }

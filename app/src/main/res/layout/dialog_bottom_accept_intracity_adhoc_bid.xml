@@ -17,6 +17,16 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_top_round_corner_pure_white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:elevation="@dimen/size_16dp"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge"
+       />
 <androidx.appcompat.widget.AppCompatTextView
     android:id="@+id/title"
     app:layout_constraintTop_toTopOf="parent"

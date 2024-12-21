@@ -4,6 +4,7 @@ import android.R.layout
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -14,7 +15,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
-import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
@@ -35,6 +35,7 @@ import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.DialogUtils
@@ -70,6 +71,7 @@ import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
 import com.delhivery.axle.utils.extensions.centerX
@@ -180,9 +182,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
     viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it!=null){
-        //val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        uiUtils.showToast("Indent accepted successfully!")
         refreshData()
-        //adapter.notifyItemChanged(it.first)
       }
     })
 
@@ -561,7 +562,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           HomeBidsRequestAction_AcceptBid -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData
-            AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs).show()
+            AcceptAdhocIntracityBidBottomDialog(
+              requireContext(),
+              position,
+              data,
+              viewModel,
+              analyticsUtil,
+              userPrefs,
+              viewModel,
+              null,
+              SearchResultsFragment._instance,
+              uiUtils
+            ).show()
 
           }
           HomeBidsRequestAction_NavigationMap -> {

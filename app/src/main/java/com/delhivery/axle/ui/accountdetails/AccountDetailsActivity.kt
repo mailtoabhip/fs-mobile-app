@@ -189,7 +189,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                     }
 
                     AuthenticationUIState.LoadRequest -> {
-                        uiUtils.showProgress()
+                      //  uiUtils.showProgress()
                         val intent = Intent(this@AccountDetailsActivity, HomeActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
