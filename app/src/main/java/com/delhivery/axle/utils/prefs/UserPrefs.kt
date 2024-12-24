@@ -803,7 +803,13 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getBoolean(PrefKeys.ReturningFromDeletion, false)
 
-  var userPreviousScreen: String
+  var lastLoggedInUserId: String
+      set(value) = editor.putString(PrefKeys.LastLoggedInUserId, value)
+            .apply()
+      get() = prefs.getString(PrefKeys.LastLoggedInUserId, "") ?: ""
+
+
+    var userPreviousScreen: String
     set(value) = editor.putString(PrefKeys.userPreviousScreen,value)
       .apply()
     get() = prefs.getString(PrefKeys.userPreviousScreen, "") ?: ""
@@ -1156,7 +1162,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     truckTypes = if (user.isParent()) {
       user.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
     } else {
-      user.supplierDetails?.parentDetails?.supplierDetails?.truckTypes?.joinToString(separator = ",") {it}
+      user.supplierDetails?.parentDetails?.truckTypes?.joinToString(separator = ",") {it}
     }
     demandType = user.supplierDetails?.demandType?.joinToString(separator = ",") {it}.toString()
     userPerformance = user.supplierDetails?.overallPerformance ?: ""
@@ -1368,6 +1374,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val RecommendedUpdate= "recommended_update"
     const val RequestedDeletion= "requested_deletion"
     const val ReturningFromDeletion= "returningFromDeletion"
+    const val LastLoggedInUserId= "last_logged_in_userID"
   }
 }
 

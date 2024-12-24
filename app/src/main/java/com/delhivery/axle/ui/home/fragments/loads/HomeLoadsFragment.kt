@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -363,19 +364,29 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     if (viewModel.isFCMTokenGenerated()) {
       userPrefs.moengageFcmTokenGenerated = true
-      fcmUtils.generateToken {
-        if (it.isNotNullOrEmpty()) {
-          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
-          viewModel.updateFCMToken(it)
+      if(userPrefs.lastLoggedInUserId != userPrefs.userId()) {
+        fcmUtils.generateToken {
+          if (it.isNotNullOrEmpty()) {
+            Log.i("fcm_token_generated", it)
+            activity?.let { it1 ->
+              MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext, it)
+            }
+            viewModel.updateFCMToken(it)
+          }
         }
       }
     }
 
     if (!viewModel.isMoengageFCMTokenGenerated()) {
-      fcmUtils.generateToken {
-        if (it.isNotNullOrEmpty()) {
-          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
-          viewModel.updateFCMToken(it)
+      if(userPrefs.lastLoggedInUserId != userPrefs.userId()) {
+        fcmUtils.generateToken {
+          if (it.isNotNullOrEmpty()) {
+            Log.i("fcm_token_generated", it)
+            activity?.let { it1 ->
+              MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext, it)
+            }
+            viewModel.updateFCMToken(it)
+          }
         }
       }
     }

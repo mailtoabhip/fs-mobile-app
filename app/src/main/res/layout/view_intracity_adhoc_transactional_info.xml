@@ -31,7 +31,7 @@
             android:id="@+id/target_price_div"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_hint"
+            android:textColor="@color/faded_black"
             android:text="|"
             android:textStyle="bold"
             android:textSize="@dimen/text_16sp"
@@ -42,7 +42,8 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/totalKm"
             tools:hint="100 KM -"
-            android:textColor="@color/color_hint"
+            android:textColor="@color/faded_black"
+            android:textStyle="bold"
             android:textSize="@dimen/text_12sp"
             android:paddingTop="@dimen/size_12dp"
             android:paddingStart="@dimen/size_2dp"
@@ -55,7 +56,8 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/totalDuration"
             tools:hint=" 8 hr"
-            android:textColor="@color/color_hint"
+            android:textStyle="bold"
+            android:textColor="@color/faded_black"
             android:textSize="@dimen/text_12sp"
             android:paddingStart="@dimen/size_1dp"
             android:paddingTop="@dimen/size_12dp"

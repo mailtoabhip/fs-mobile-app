@@ -94,6 +94,7 @@ class AuthenticationRepository @Inject constructor(
     if(intent== "notFromUser"){
       //analyticsUtil.trackEvent(EVENT_AUTO_LOGOUT)
     }
+    userPrefs.lastLoggedInUserId = userPrefs.userId()
     networkInterceptor.updateJWT(null)
     userPrefs.clearPrefs()
     /* delete user pref db's and other user-related cache */

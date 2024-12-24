@@ -59,9 +59,6 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window?.clearFlags(
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-        )
         binding = DialogBottomAcceptIntracityAdhocBidBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.request = transaction
@@ -70,11 +67,12 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
+        setCanceledOnTouchOutside(false)
         binding.progress.visibility = View.GONE
+        binding.progressMsg.visibility = View.GONE
         binding.close.setOnClickListener {
             dismiss()
         }
-
         binding.btnSubmit.setOnClickListener{
             submit()
         }
@@ -85,15 +83,18 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         if(viewModel is SearchResultsViewModel){
             (viewModel as SearchResultsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
                 if(it!=null){
-                    binding.btnSubmit.isEnabled = true
+                    disableClicks(true)
+                    enableSubmit()
                     binding.progress.visibility = View.GONE
+                    binding.progressMsg.visibility = View.GONE
                     dismiss()
-                    // uiUtils.showToast("Bid Accepted Successfully")
-                    //refreshData()
+
 
                 }else{
-                    binding.btnSubmit.isEnabled = true
+                    disableClicks(true)
+                    enableSubmit()
                     binding.progress.visibility = View.GONE
+                    binding.progressMsg.visibility = View.GONE
 
 
                 }
@@ -101,15 +102,18 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         }else{
             (viewModel as HomeLoadsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
                 if(it!=null){
-                    binding.btnSubmit.isEnabled = true
+                    disableClicks(true)
+                    enableSubmit()
                     binding.progress.visibility = View.GONE
+                    binding.progressMsg.visibility = View.GONE
                     dismiss()
-                    // uiUtils.showToast("Bid Accepted Successfully")
-                    //refreshData()
+
 
                 }else{
-                    binding.btnSubmit.isEnabled = true
+                    disableClicks(true)
+                    enableSubmit()
                     binding.progress.visibility = View.GONE
+                    binding.progressMsg.visibility = View.GONE
 
 
                 }
@@ -214,7 +218,7 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
                             binding.driverNumberError.visibility = View.GONE
                         } else {
                             binding.driverNumberError.visibility = View.VISIBLE
-                            binding.driverNumberError.text ="Please enter valid driver number"
+                            binding.driverNumberError.text ="Please enter a valid driver number"
                             isValidDriverNumber = false
 
                         }
@@ -252,10 +256,13 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
     }
 
     private fun submit() {
-        try {  binding.btnSubmit.isEnabled = true
-            binding.progress.visibility = View.GONE
+        try {
+            disableClicks(false)
+//            window?.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             binding.btnSubmit.isEnabled = false
             binding.progress.visibility = View.VISIBLE
+            binding.progressMsg.visibility = View.VISIBLE
             analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_DRIVER_NAME, mutableListOf(PROPERTY_DRIVER_NAME),
                 mutableListOf(binding.editTextDriverName.text.toString()))
             analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_DRIVER_NUMBER, mutableListOf(PROPERTY_DRIVER_NUMBER),
@@ -280,6 +287,13 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
 //    override fun dismissDialog(alertDialog:AcceptAdhocIntracityBidBottomDialog) {
 //        alertDialog.dismiss()
 //    }
+
+    fun disableClicks(enabled:Boolean){
+        binding.close.isEnabled = enabled
+        binding.editTextDriverName.isEnabled = enabled
+        binding.editTextDriverNumber.isEnabled = enabled
+        binding.editTextVehicleNumber.isEnabled = enabled
+    }
 }
 
 interface AcceptAdhocIntracityBidBottomDialogInterface {

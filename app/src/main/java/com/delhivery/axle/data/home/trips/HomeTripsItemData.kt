@@ -877,20 +877,19 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun truckArrivedRes() = if (updateInfo!!.truckArrivedInfo != null) {
-        DrawableProviderUtils.tripStatusRes(true,isIntracity())
+        DrawableProviderUtils.tripStatusRes(true)
   } else {
-    DrawableProviderUtils.tripStatusRes(false,isIntracity())
+    DrawableProviderUtils.tripStatusRes(false)
   }
 
-  fun isIntracity() = subRequestType==SUB_REQUEST_TYPE_INTRACITY
   /**
    * truck loaded icon resource
    */
   @DrawableRes
   fun truckLoadedRes() = if (updateInfo!!.loadedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true,isIntracity())
+    DrawableProviderUtils.tripStatusRes(true)
   } else {
-    DrawableProviderUtils.tripStatusRes(false,isIntracity())
+    DrawableProviderUtils.tripStatusRes(false)
   }
 
   /**
@@ -898,9 +897,9 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun truckReachedRes() = if (updateInfo!!.truckReachedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true,isIntracity())
+    DrawableProviderUtils.tripStatusRes(true)
   } else {
-    DrawableProviderUtils.tripStatusRes(false,isIntracity())
+    DrawableProviderUtils.tripStatusRes(false)
   }
 
   /**
@@ -908,9 +907,9 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun truckUnloadedRes() = if (updateInfo!!.truckUnloadedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true,isIntracity())
+    DrawableProviderUtils.tripStatusRes(true)
   } else {
-    DrawableProviderUtils.tripStatusRes(false,isIntracity())
+    DrawableProviderUtils.tripStatusRes(false)
   }
 
   /**
@@ -918,16 +917,16 @@ data class HomeTripsItemData(
    */
   @DrawableRes
   fun podUploadedRes() = if (updateInfo!!.tripCompletedInfo != null) {
-    DrawableProviderUtils.tripStatusRes(true,isIntracity())
+    DrawableProviderUtils.tripStatusRes(true)
   } else {
-    DrawableProviderUtils.tripStatusRes(false,isIntracity())
+    DrawableProviderUtils.tripStatusRes(false)
   }
 
   /**
    * trip settled icon resource
    */
   @DrawableRes
-  fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled,isIntracity())
+  fun tripSettledRes(tripSettled: Boolean = false) = DrawableProviderUtils.tripStatusRes(tripSettled)
 
   /**
    * pickup/destination icon resource
