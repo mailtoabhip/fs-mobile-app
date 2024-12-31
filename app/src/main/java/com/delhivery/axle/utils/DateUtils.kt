@@ -77,7 +77,7 @@ object DateUtils {
     var ISTDateString = ""
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     sdf.timeZone = TimeZone.getTimeZone("UTC")
-    val pattern = "hh:mm a"
+    val pattern = "h:mm a"
     val formatter: SimpleDateFormat
     formatter = SimpleDateFormat(pattern)
     try {

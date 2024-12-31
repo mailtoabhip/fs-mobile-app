@@ -107,7 +107,8 @@ class SearchLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
       binding.layoutIntracity.layoutTransaction.request= item.data
       binding.layoutIntracity.root.visibility = View.VISIBLE
       binding.nonIntracityLayout.visibility = View.GONE
-      binding.layoutIntracity.navigateText.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
+      binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
+      binding.layoutIntracity.layoutTransaction.navigate.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
       binding.layoutIntracity.btnAccept.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
 
     } else {

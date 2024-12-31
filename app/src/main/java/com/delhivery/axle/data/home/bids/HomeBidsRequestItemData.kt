@@ -157,9 +157,9 @@ data class HomeBidsRequestItemData(
     0.0
   }
   fun formatedTargetPrice() = if (targetPrice?:0.0 > 0) {
-    "₹ ${targetPrice!!.toInt()}"
+    "₹${targetPrice!!.toInt()}"
   } else {
-    "₹ 0"
+    "₹0"
   }
 
   /**
@@ -1313,7 +1313,7 @@ data class HomeBidsRequestItemData(
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
 
   fun adhocIntracityKms()= "${distance.toInt()} Kms"
-  fun adhocIntracityhrs()= "- $requirementDuration hrs"
+  fun adhocIntracityhrs()= " - $requirementDuration hrs"
 
   fun intracityHours() = intracityHours+"h/day"
   fun intracityDays() = "$intracityDays days/month"

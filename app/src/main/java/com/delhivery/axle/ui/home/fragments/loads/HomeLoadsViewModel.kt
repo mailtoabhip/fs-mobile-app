@@ -280,9 +280,11 @@ class HomeLoadsViewModel @Inject constructor(
                                 add(Pair(HomeLoadsRequestItem(load), Add))
                             }
 
-                            if (!hasMoreData && !hasOrionLoadOnce && more_default_loads && totalFetchTitle < total) {
+                            if (!hasMoreData && !hasOrionLoadOnce && more_default_loads ) {
+                                add(Pair(HomeLoadsInfoItem(), Remove))
                                 add(Pair(HomeLoadsInfoItem(), AddUpdate))
                             }
+                            add(Pair(HomeLoadsMoreInfoItem(), Remove))
                             add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
 
                     }.let { userLoadsData.postValue(it) }

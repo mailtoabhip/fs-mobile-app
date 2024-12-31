@@ -367,7 +367,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       if(userPrefs.lastLoggedInUserId != userPrefs.userId()) {
         fcmUtils.generateToken {
           if (it.isNotNullOrEmpty()) {
-            Log.i("fcm_token_generated", it)
             activity?.let { it1 ->
               MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext, it)
             }
@@ -381,7 +380,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       if(userPrefs.lastLoggedInUserId != userPrefs.userId()) {
         fcmUtils.generateToken {
           if (it.isNotNullOrEmpty()) {
-            Log.i("fcm_token_generated", it)
             activity?.let { it1 ->
               MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext, it)
             }
