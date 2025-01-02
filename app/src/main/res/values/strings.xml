@@ -17,6 +17,8 @@
   <string name="title_account_setup">Account Setup</string>
   <string name="title_enter_route_details">Enter route details</string>
   <string name="title_contracts_details">Contract Details</string>
+  <string name="title_submit_details">Submit Details</string>
+
 
   <!--Messages (msg_)-->
   <string name="msg_hello_world">Message Hello World</string>
@@ -189,7 +191,12 @@
   <string name="action_intracity">Delhivery Fleet</string>
   <string name="action_flexible_intracity">Flexible</string>
   <string name="action_fixed_intracity">Fixed</string>
+  <string name="action_dlv_intracity">DLV Intracity</string>
+  <string name="action_dlv_intercity">DLV Intercity</string>
+  <string name="action_non_delhivery">Non Delhivery</string>
   <string name="action_ok">Ok</string>
+  <string name="action_accept">Accept for %s</string>
+
 
 
   <!--Label (label_)-->
@@ -769,6 +776,10 @@
   <string name="no_entry_permit_label">No Entry Permit</string>
   <string name="all">All</string>
   <string name="account_deletion">You have requested account data deletion, please reach out to Vendor Desk</string>
+  <string name="acceptance_declaration">Upon acceptance of the load, the vehicle must arrive at least 30 minutes prior to the reporting time; failure to do so will incur a penalty</string>
+  <string name="label_driver_number">Driver Number</string>
+  <string name="label_driver_name">Driver Name</string>
+
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

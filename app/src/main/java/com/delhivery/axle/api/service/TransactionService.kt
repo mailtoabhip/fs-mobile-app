@@ -37,7 +37,8 @@ interface TransactionService {
     @Query("active_contract") activeContract:Boolean?,
     @Query("limit") limit: Int= 100,
     @Query("is_flexible") isFlexible:Boolean?=null,
-    @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null
+    @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null,
+    @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

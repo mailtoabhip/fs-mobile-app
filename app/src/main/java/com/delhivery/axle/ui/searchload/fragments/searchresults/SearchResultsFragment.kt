@@ -1,7 +1,10 @@
 package com.delhivery.axle.ui.searchload.fragments.searchresults
 
 import android.R.layout
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -14,13 +17,17 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.HomeBidsSearchSpinnerItemData
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
@@ -28,6 +35,7 @@ import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.DialogUtils
@@ -63,6 +71,7 @@ import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
 import com.delhivery.axle.utils.extensions.centerX
@@ -168,6 +177,14 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               }
             }
           }
+    })
+
+
+    viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it!=null){
+        uiUtils.showToast("Indent accepted successfully!")
+        refreshData()
+      }
     })
 
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -491,6 +508,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
+        if(_item.subRequestType!= SUB_REQUEST_TYPE_INTRACITY)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(_item.key(), it, if (_item.isDMTIndent()) "dmt" else ""))
@@ -539,6 +557,35 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                   requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
                 ).show()
               }
+            }
+          }
+          HomeBidsRequestAction_AcceptBid -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            AcceptAdhocIntracityBidBottomDialog(
+              requireContext(),
+              position,
+              data,
+              viewModel,
+              analyticsUtil,
+              userPrefs,
+              viewModel,
+              null,
+              SearchResultsFragment._instance,
+              uiUtils
+            ).show()
+
+          }
+          HomeBidsRequestAction_NavigationMap -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            try {
+              val gmmIntentUri = Uri.parse("geo:0,0?q=${data.pickupLocationCoordinates?.lon},${data.pickupLocationCoordinates?.lon}"+"(" + data.origin+ ")")
+              val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+              mapIntent.setPackage("com.google.android.apps.maps")
+              startActivity(mapIntent)
+            } catch (e: Exception) {
+              Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
             }
           }
         }

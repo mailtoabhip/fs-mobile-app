@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -18,20 +19,23 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
-import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.home.trucks.TruckFrequentItem
 import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
@@ -41,19 +45,18 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
-import com.delhivery.axle.ui.searchload.SearchLoadActivity
+import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.extensions.dpToPx
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.github.florent37.kotlin.pleaseanimate.core.position.PositionAnimExpectation
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
@@ -68,7 +71,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var fcmUtils: FCMUtils
   @Inject lateinit var userPrefs: UserPrefs
-
   private val MINIMUM = 25
   var scrollDist = 0
   var visible = false
@@ -79,6 +81,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   var currSize:Int? = null
   var itemDeleted:Boolean = false
   var reviseInitiated:Boolean=false
+  var selectedLoadFilter: String = ""
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -111,22 +114,17 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       binding.refreshLayout.isRefreshing = false
       refreshData()
     }
+    setupLoadFilter()
 
     /* setup recycler view */
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeLoadsFragment.adapter
-      addOnScrollListener(HomeLoadsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
     binding.rvLoads.setItemAnimator(null);
 
-    binding.editStickySearch.setOnClickListener {
-      handleAction(
-              HomeTripsSearchAction_Search, HomeLoadsSearchItem()
-      )
-    }
 
     binding.routesBanner.setOnClickListener {
       context?.let {
@@ -288,6 +286,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
     })
 
+    viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it!=null){
+        uiUtils.showToast("Indent accepted successfully!")
+        refreshData()
+
+      }
+    })
+
     viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
       if (it.first == 10) {
         Toast.makeText(context, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
@@ -358,19 +364,27 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     if (viewModel.isFCMTokenGenerated()) {
       userPrefs.moengageFcmTokenGenerated = true
-      fcmUtils.generateToken {
-        if (it.isNotNullOrEmpty()) {
-          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
-          viewModel.updateFCMToken(it)
+      if(userPrefs.lastLoggedInUserId != userPrefs.userId()) {
+        fcmUtils.generateToken {
+          if (it.isNotNullOrEmpty()) {
+            activity?.let { it1 ->
+              MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext, it)
+            }
+            viewModel.updateFCMToken(it)
+          }
         }
       }
     }
 
     if (!viewModel.isMoengageFCMTokenGenerated()) {
-      fcmUtils.generateToken {
-        if (it.isNotNullOrEmpty()) {
-          activity?.let { it1 -> MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext,it) }
-          viewModel.updateFCMToken(it)
+      if(userPrefs.lastLoggedInUserId != userPrefs.userId()) {
+        fcmUtils.generateToken {
+          if (it.isNotNullOrEmpty()) {
+            activity?.let { it1 ->
+              MoEFireBaseHelper.getInstance().passPushToken(it1.applicationContext, it)
+            }
+            viewModel.updateFCMToken(it)
+          }
         }
       }
     }
@@ -426,7 +440,23 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
   }
 
-
+  private fun setupLoadFilter() {
+    val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)
+    val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type)
+    if (enableIntracityLoad){
+      selectedLoadFilter = DemandType.Intracity.type
+      demandType = DemandType.Intracity.type
+    }else if(enableIntercityLoad){
+      selectedLoadFilter = DemandType.Internal.type
+      demandType = DemandType.Internal.type
+    }else{
+      selectedLoadFilter = DemandType.Others.type
+      demandType = userPrefs.demandType
+        .split(",")
+        .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+        .joinToString(",")
+    }
+  }
 
   override fun onResume() {
     super.onResume()
@@ -467,7 +497,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType, isInternal)
+    viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
   }
 
   override fun handleAction(
@@ -489,6 +519,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
+        if(data.subRequestType!=SUB_REQUEST_TYPE_INTRACITY)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
@@ -496,6 +527,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsSearchAction_Search -> {
         context?.let {
+          analyticsUtil.moEngageTrackEvent(EVENT_LOAD_SEARCH_CLICKED)
           analyticsUtil.moEngageTrackEvent( EVENT_HOME_SEARCH_INITIATE,
             mutableListOf(PROPERTY_ORDER_COUNT),
             mutableListOf(viewModel.total.toString()))
@@ -536,24 +568,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         refreshData()
       }
 
-      HomeLoadsFilterAction -> {
-        //Capture Event
-        analyticsUtil.trackEvent(
-                EVENT_FILTER_EXPRESS_LOADS,
-                mutableListOf(PROPERTY_USER_ID),
-                mutableListOf(userPrefs.userId())
-        )
-
-        if (isInternal) {
-          isInternal = false
-          demandType = userPrefs.demandType
-        } else {
-          isInternal = true
-          demandType = "Internal"
-        }
-        refreshData()
-      }
-
       HomeLoadsVehicleFilterAction -> {
         showVehicleFilterDialog()
       }
@@ -588,7 +602,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
         val exclude_truck_str = exclude_truck_types.joinToString(separator = ",") { it }
         viewModel.filterVehicleType = null
-        viewModel.fetchUserTransactions(false, demandType, isInternal, true, exclude_truck_str)
+        viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter, true, exclude_truck_str)
       }
 
       HomeLoadsPriorityAction -> {
@@ -667,6 +681,39 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           }
         }
       }
+      HomeLoadDlvIntracity ->{
+        analyticsUtil.trackEvent(
+          EVENT_LOAD_INTRACITY_CLICKED,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
+        selectedLoadFilter = DemandType.Intracity.type
+        demandType = DemandType.Intracity.type
+        refreshData()
+      }
+      HomeLoadDlvIntercity ->{
+        analyticsUtil.trackEvent(
+          EVENT_LOAD_INTERCITY_CLICKED,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
+        selectedLoadFilter = DemandType.Internal.type
+        demandType = DemandType.Internal.type
+        refreshData()
+      }
+      HomeLoadNonDlv ->{
+        analyticsUtil.trackEvent(
+          EVENT_NON_DELHIVERY_LOAD_CLICKED,
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
+        selectedLoadFilter = DemandType.Others.type
+        demandType = userPrefs.demandType
+          .split(",")
+          .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+          .joinToString(",")
+        refreshData()
+      }
     }
   }
 
@@ -709,7 +756,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     lateinit var dialog: AlertDialog
 
     // Initialize an array of vehicles
-    val arrayVehicle = arrayOf("open", "closed", "trailer", "all")
+    val arrayVehicle = arrayOf("open", "closed", "trailer")
 
     val arrayChecked = booleanArrayOf(false, false, false, false)
 
@@ -754,6 +801,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       viewModel.vehicleStr = filterVehicleTypes.joinToString(separator = ",") {it}
       viewModel.filterVehicleType = true
+      analyticsUtil.trackEvent(
+        EVENT_LOAD_VEHICLE_TYPE_CLICKED,
+        mutableListOf(PROPERTY_VEHICLE_TYPE),
+        mutableListOf(viewModel.vehicleStr?:"No Vehicle Type")
+      )
       refreshData()
     }
 
@@ -806,6 +858,40 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
               }
             }
           }
+          HomeBidsRequestAction_AcceptBid -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_LOAD_INTRACITY_ACCEPT_CLICKED,
+              mutableListOf(PROPERTY_ORDER_ID),
+              mutableListOf(
+                data.transactionId.toString()
+              )
+            )
+
+            AcceptAdhocIntracityBidBottomDialog(requireContext(),position,data,viewModel,analyticsUtil, userPrefs,viewModel,
+              _instance,null,uiUtils).show()
+
+          }
+          HomeBidsRequestAction_NavigationMap -> {
+            pos = position
+            val data = item.data as HomeBidsRequestItemData
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_LOAD_INTRACITY_NAVIGATE_CLICKED,
+              mutableListOf(PROPERTY_ORDER_ID),
+              mutableListOf(
+                data.transactionId.toString()
+              )
+            )
+            try {
+              val gmmIntentUri = Uri.parse("geo:0,0?q=${data.pickupLocationCoordinates?.lat},${data.pickupLocationCoordinates?.lon}"+"(" + data.origin+ ")")
+              val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+              mapIntent.setPackage("com.google.android.apps.maps")
+              startActivity(mapIntent)
+            } catch (e: Exception) {
+              Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
+            }
+          }
         }
       }
       UNAPPROVED -> {
@@ -856,7 +942,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   fun hide() {
     binding.routesBanner.animate()
         .translationY(
-                PositionAnimExpectation.dpToPx(
+                requireContext().dpToPx(
                         this@HomeLoadsFragment.requireContext(), binding.routesBanner.height.toFloat()
                 )
         )
@@ -868,7 +954,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   fun show() {
     binding.routesBanner.animate()
         .translationY(
-                -PositionAnimExpectation.dpToPx(
+                -requireContext().dpToPx(
                         this@HomeLoadsFragment.requireContext(), 0f
                 )
         )
@@ -985,7 +1071,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, isInternal)
+    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, selectedLoadFilter)
 
     override fun hasMore() = viewModel.hasMoreData
 

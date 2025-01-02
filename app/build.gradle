@@ -15,8 +15,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
     targetSdkVersion 34
-    versionCode 117
-    versionName "1.117"
+    versionCode 118
+    versionName "1.118"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -140,8 +140,6 @@ dependencies {
   implementation 'androidx.room:room-runtime:2.1.0'
   kapt 'androidx.room:room-compiler:2.1.0'
   implementation 'androidx.room:room-rxjava2:2.1.0'
-  //Kotlin please animate - animation library
-  implementation 'com.github.florent37:kotlinpleaseanimate:1.0.2'
   //Glide
   implementation "com.github.bumptech.glide:glide:$glideVersion"
   kapt "com.github.bumptech.glide:compiler:$glideVersion"
@@ -168,7 +166,7 @@ dependencies {
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
   implementation "androidx.room:room-ktx:2.3.0"
   implementation "com.google.android.gms:play-services-location:19.0.1"
-  implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+  implementation 'com.github.barteksc:pdfium-android:1.9.0'
   implementation "com.moengage:moe-android-sdk:$moengageSdkVersion"
   implementation("androidx.core:core:1.3.1")
   implementation("androidx.lifecycle:lifecycle-process:2.2.0")

@@ -37,18 +37,27 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false) =
+  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, splitViewCount:Boolean?=null) =
          recommendationService.recommendationTransactions(
-           ReccomdationRequest( userRepository.userId(),UserTripsLoadLimit,offset,
-             demand_type, vehicle_type)
+           ReccomdationRequest( userPrefs.parentId,UserTripsLoadLimit,offset,
+             demand_type, vehicle_type, splitViewCount = splitViewCount )
           ).convertResponse()
+
+  /**
+   * Get user intracity transactions
+   */
+  fun fetchIntracityRecommTransactions(offset: Int, demand_type: String?=null, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, onlyCount:Boolean?=null) =
+    recommendationService.recommendationIntracityTransactions(
+      ReccomdationRequest(userPrefs.parentId,UserTripsLoadLimit,offset,
+        null, vehicle_type, onlyCount = onlyCount)
+    ).convertResponse()
 
   /**
    * Get contracts transactions
    */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null) =
     transactionService.contractsTransactions(
-      userRepository.userId(), offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,isFlexible,includeFlexibleContracts).
+      userPrefs.parentId, offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,isFlexible,includeFlexibleContracts).
     convertResponse()
 
 

@@ -19,7 +19,6 @@ data class CreateTransactionBidRequest(
   @SerializedName("tentative_trip_count") val tentativeTripCount:Int?,
   @SerializedName("vehicle_number") val vehicleNumber:String?,
   @SerializedName("placement_days") val placementDays:String?
-
 ) {
 
   companion object {
@@ -109,6 +108,46 @@ data class UpdateTransactionBidRequest(
               expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays
       )
   }
+
 }
+
+data class AcceptTransactionBidRequest(
+  @SerializedName("action_code") val actionCode: String= "SUP",
+  @SerializedName("action_sub_code") val actionSubCode: String= "CNF",
+  @SerializedName("transaction_id") val transactionId: String,
+  @SerializedName("supplier_id") val supplierId: String,
+  @SerializedName("supplier_name") val supplierName: String,
+  @SerializedName("bidding_type") val commercialType: String,
+  @SerializedName("bid_price") val bidAmount: Int,
+  @SerializedName("originator") val originator: String = "axle-app",
+  @SerializedName("vehicle_no") val vehicleNumber:String,
+  @SerializedName("driver_phone") val driverPhone:String,
+  @SerializedName("driver_name") val driverName:String,
+
+  ) {
+
+  companion object {
+    /**
+     * @return [CreateTransactionBidRequest]
+     */
+    fun getRequest(
+      transactionId: String,
+      supplierId: String,
+      supplierName: String,
+      bidAmount: Int,
+      commercialType: String,
+      vehicleNumber: String,
+      driverPhone:String,
+      driverName: String
+    ) =
+      AcceptTransactionBidRequest(
+        transactionId = transactionId, supplierId = supplierId, supplierName = supplierName,
+        bidAmount = bidAmount,
+        commercialType = commercialType, vehicleNumber = vehicleNumber, driverName = driverName, driverPhone = driverPhone
+      )
+  }
+}
+
+
 
 

@@ -13,6 +13,7 @@ data class TransactionsResponse(
   @SerializedName("active_count") val activeCount: Int?=0,
   @SerializedName("result") val transactions: List<HomeBidsRequestItemData>,
   @SerializedName("all_active_fetched") val allActiveFetched: Boolean?,
+  @SerializedName("load_counts") val loadCounts:LoadCounts?
 )
 
 /**

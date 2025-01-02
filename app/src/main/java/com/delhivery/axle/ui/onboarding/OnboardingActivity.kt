@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.onboarding
 
+import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -12,11 +13,10 @@ import com.delhivery.axle.databinding.ViewOnboardingBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.custom.AnimationType.RevealOpen
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.EVENT_SKIP_TUTORIAL
 import com.delhivery.axle.utils.EVENT_VIEW_TUTORIAL
-import com.github.florent37.kotlin.pleaseanimate.please
+
 
 /**
  * First time user onboarding screen
@@ -58,11 +58,8 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
 
     /* arc view animate reveal */
   /* make views visible */
-      please {
-        animate(binding.viewpager) toBe {
-          visible()
-        }
-      }.start()
+    val animator = ObjectAnimator.ofFloat(binding.viewpager, "alpha", 0f, 1f)
+    animator.start()
 
     if (notificationId.isNotEmpty()) {
       markNotificationRead()

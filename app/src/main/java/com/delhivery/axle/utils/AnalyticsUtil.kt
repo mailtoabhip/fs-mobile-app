@@ -355,6 +355,22 @@ const val EVENT_EDIT_TRUCK_SUBMIT = "edit_truck_submit"
 const val EVENT_REQUEST_FOR_LOAD_SUBMIT = "request_for_load_submit"
 const val EVENT_COMMUNICATION_SENT = "communication_sent"
 const val EVENT_COMMUNICATION_CLICKED = "communication_clicked"
+const val EVENT_HOME_CLICKED = "home_click"
+const val EVENT_LOAD_INTRACITY_CLICKED= "Load_Intra_click"
+const val EVENT_LOAD_INTERCITY_CLICKED = "Load_Inter_click"
+const val EVENT_NON_DELHIVERY_LOAD_CLICKED = "Load_nonDLV_click"
+const val EVENT_LOAD_SEARCH_CLICKED = "Load_search"
+const val EVENT_LOAD_VEHICLE_TYPE_CLICKED = "load_VT"
+const val EVENT_LOAD_INTRACITY_NAVIGATE_CLICKED = "intra_navigate"
+const val EVENT_LOAD_INTRACITY_ACCEPT_CLICKED = "intra_accept"
+const val EVENT_LOAD_INTRACITY_VEHICLE_NUMBER = "load_intra_VNum"
+const val EVENT_LOAD_INTRACITY_DRIVER_NAME = "load_intra_DrName"
+const val EVENT_LOAD_INTRACITY_DRIVER_NUMBER = "load_intra_DrNum"
+const val EVENT_LOAD_INTRACITY_SUBMIT= "load_intra_submit"
+
+
+
+
 
 const val PROPERTY_ORDER_ID = "order_id"
 const val PROPERTY_ORDER_RANK = "order_rank"
@@ -381,6 +397,12 @@ const val PROPERTY_PREVIOUS_SOURCE = "previous_source"
 const val PROPERTY_CONTRACT_TYPE = "contract_type"
 const val PROPERTY_IS_FLEXIBLE= "is_flexible"
 const val PROPERTY_BID_AMOUNT_DIFF = "bid_amount_diff"
+const val PROPERTY_VEHICLE_TYPE = "vehicle_type"
+const val PROPERTY_DRIVER_NAME = "driver_name"
+const val PROPERTY_DRIVER_NUMBER = "driver_number"
+const val PROPERTY_VEHICLE_NUMBER = "vehicle_number"
+
+
 
 
 

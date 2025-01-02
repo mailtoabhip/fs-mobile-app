@@ -22,7 +22,7 @@ interface BidService {
    * List transaction bids
    */
   @GET("bids")
-  fun transactionBids(@Query("transaction_id") transactionId: String, @Query("contract_bids") contractBids:Boolean? )
+  fun transactionBids(@Query("transaction_id") transactionId: String, @Query("contract_bids") contractBids:Boolean?,@Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true )
       : Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -72,7 +72,8 @@ interface BidService {
     @Query("supplier_id") userId: String,
     @Query("offset") offset: Int,
     @Query("limit") limit: Int,
-    @Query("bid_status") status: String
+    @Query("bid_status") status: String,
+    @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -106,7 +107,8 @@ interface BidService {
     @Query("contract_bids") contractBids: Boolean?,
     @Query("bid_statuses") status: String? = null,
     @Query("confirmation_pending") confirmationPending: Boolean?,
-    @Query("only_frc_bids") onlyFRCBids: Boolean?=null
+    @Query("only_frc_bids") onlyFRCBids: Boolean?=null,
+    @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -114,7 +116,8 @@ interface BidService {
    */
   @GET("/bids/summary")
   fun userBidsSummary(
-    @Query("supplier_id") userId: String
+    @Query("supplier_id") userId: String,
+    @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true
   ): Single<BaseResponse<BidSummaryResponse>>
 
   /**

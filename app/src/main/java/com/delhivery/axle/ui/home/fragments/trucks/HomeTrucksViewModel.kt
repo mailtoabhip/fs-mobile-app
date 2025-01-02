@@ -163,7 +163,6 @@ class HomeTrucksViewModel @Inject constructor(
 
         compositeDisposable += inventoryRepository.getInventories(jsonObject)
             .onBackground()
-            .progress()
             .subscribe{ _res, error ->
                 if(!error && _res != null) {
                     offset += _res.trucks.size

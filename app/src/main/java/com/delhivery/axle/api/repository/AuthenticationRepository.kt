@@ -92,6 +92,7 @@ class AuthenticationRepository @Inject constructor(
    */
   fun logout(intent :String = "notFromUser") {
     if(intent== "notFromUser"){
+      userPrefs.lastLoggedInUserId = userPrefs.userId()
       //analyticsUtil.trackEvent(EVENT_AUTO_LOGOUT)
     }
     networkInterceptor.updateJWT(null)

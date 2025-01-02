@@ -116,6 +116,8 @@ class HomeProfileViewModel @Inject constructor(
   }
 
   fun logout() {
+    userPrefs.lastLoggedInUserId = userPrefs.userId()
+    Log.i("LoggedInUser", userPrefs.lastLoggedInUserId)
     userPrefs.clearPrefs()
   }
 

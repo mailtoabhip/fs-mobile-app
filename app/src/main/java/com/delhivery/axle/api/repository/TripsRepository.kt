@@ -1,8 +1,11 @@
 package com.delhivery.axle.api.repository
 
+import com.delhivery.axle.api.request.AcceptTransactionBidRequest
+import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.PodRequest
 import com.delhivery.axle.api.request.UpdateDispatchRequest
+import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.api.response.TripSummaryResponse
 import com.delhivery.axle.api.service.TransactionService
@@ -73,6 +76,22 @@ class TripsRepository @Inject constructor(
     tripsService.fetchTripsPayments(request)
         .convertResponse()
         .map { Pair(trips, it) }
+
+  fun acceptTripBid(
+    transactionId: String,
+    supplierId: String,
+    supplierName: String,
+    bidAmount: Int,
+    commercialType: String,
+    vehicleNumber: String,
+    driverPhone:String,
+    driverName: String
+  ) = AcceptTransactionBidRequest.getRequest(
+     transactionId, supplierId,
+    supplierName,
+    bidAmount, commercialType,vehicleNumber,driverPhone,driverName
+  ).let { tripsService.acceptTripBid(it) }
+
 
 
 }

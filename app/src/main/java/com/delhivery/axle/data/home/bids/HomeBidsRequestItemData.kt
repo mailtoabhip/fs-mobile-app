@@ -94,7 +94,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("drop_location_address") val dropLocationAddress: String?,
   @SerializedName("pickup_location_city") val pickupLocationCity: String?,
   @SerializedName("drop_location_city") val dropLocationCity: String?,
-  @SerializedName("pickup_location_pincode ") val loadingLocationPincode: String?,
+  @SerializedName("pickup_location_pincode") val loadingLocationPincode: String?,
+  @SerializedName("pickup_location_coordinates") val pickupLocationCoordinates: PickUpCoordinate?,
   @SerializedName("drop_location_pincode") val unloadingLocationPincode: String?,
   @SerializedName("intermediary_pickup_stop1_address") val pickup1Address: String?,
   @SerializedName("intermediary_pickup_stop1_pincode") val pickup1AddressPin: String?,
@@ -138,6 +139,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("contract_usage")val contractUsage:String?,
   @SerializedName("secondary_reporting_centers")val secondaryReportingCenters:List<SecondaryReportingCenters>?=null,
   @SerializedName("is_flexible")val isFlexible:Boolean=false,
+  @SerializedName("requirement_duration")val requirementDuration:Int?=null,
+  @SerializedName("sub_request_type")val subRequestType:String?=null,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -152,6 +155,11 @@ data class HomeBidsRequestItemData(
     targetPrice?:0.0 * loadPricePercent / 100
   } else {
     0.0
+  }
+  fun formatedTargetPrice() = if (targetPrice?:0.0 > 0) {
+    "₹${targetPrice!!.toInt()}"
+  } else {
+    "₹0"
   }
 
   /**
@@ -502,6 +510,8 @@ data class HomeBidsRequestItemData(
    */
   fun requiredAt() = _requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat) }
 
+  fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
+
   /**
    * Required at background as per designs
    */
@@ -542,6 +552,11 @@ data class HomeBidsRequestItemData(
       }
   }
 
+  fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
+  fun reportingCityWithPinCode()= originCityName() +" - "+loadingLocationPincode
+
+  fun additionalKMsRates()= "${intracityExtraKmRate()} per extra KM | ${intracityExtraHourRate()} per extra hour"
+
   fun reportingCenters(): String{
     val reportingCenters = StringBuilder()
        reportingCenters.append(origin)
@@ -557,6 +572,10 @@ data class HomeBidsRequestItemData(
    */
   fun tripDisplayName() =
     "${capitalize(originState)} - ${capitalize(destinationState)}"
+
+  fun tripIntracityDisplayName() =
+    "${capitalize(origin)}|${distance.toInt()} KM | ${requirementDuration} Hr"
+
 //    "${StateModel.idFromName(originState)} - ${StateModel.idFromName(destinationState)}"
 //    when (tripType) {
 //      AdvancePending -> "${StateModel.idFromName(originState)} - ${StateModel.idFromName(
@@ -1293,6 +1312,9 @@ data class HomeBidsRequestItemData(
 
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
 
+  fun adhocIntracityKms()= "${distance.toInt()} Kms"
+  fun adhocIntracityhrs()= " - $requirementDuration hrs"
+
   fun intracityHours() = intracityHours+"h/day"
   fun intracityDays() = "$intracityDays days/month"
   fun intracityKms() = "~$intracityKms Kms/month"
@@ -1501,10 +1523,23 @@ data class PaymentSlabs(
 
 )
 
+data class PickUpCoordinate(
+  @SerializedName("lat") val lat: String?,
+  @SerializedName("lon") val lon: String?,
+
+  )
+
+const val SUB_REQUEST_TYPE_INTRACITY = "intracity"
+
 
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
+const val HomeBidsRequestAction_AcceptBid = "accept_bid"
+const val HomeBidsRequestAction_NavigationMap = "navigate_map"
+
+
+
 

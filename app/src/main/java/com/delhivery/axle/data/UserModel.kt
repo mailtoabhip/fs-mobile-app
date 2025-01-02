@@ -17,6 +17,7 @@ data class UserRespone(
 )
 data class UserModel(
         @SerializedName("supplier_details") var supplierDetails: SupplierModel?,
+        @SerializedName("truck_types") var truckTypes: List<String>?,
         @SerializedName("client_details") var clientDetails: ClientModel?,
         @SerializedName("uuid") var userId: String,
         @SerializedName("is_sp_enabled") var isSpEnabled: Boolean = false,

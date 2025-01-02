@@ -95,7 +95,6 @@ class HomeTripsViewModel @Inject constructor(
   fun fetchTripsSummary() {
     compositeDisposable += tripsRepository.userTripsSummary()
         .onBackground()
-        .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
 

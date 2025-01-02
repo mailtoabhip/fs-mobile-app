@@ -655,6 +655,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
             userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
+              EVENT_HOME_CLICKED
+            )
+            analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_HOME,
               mutableListOf(PROPERTY_ORDER_COUNT),
               mutableListOf(userPrefs.loadCount)

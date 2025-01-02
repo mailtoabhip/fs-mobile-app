@@ -8,7 +8,6 @@ import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
-import com.github.florent37.kotlin.pleaseanimate.please
 
 /**
  * Show error vibration with error state for [DelhiveryOTPViewEditText]
@@ -67,7 +66,8 @@ fun View.fadeAnim(
 
         override fun onAnimationCancel(animation: Animator) {
           /* reset view alpha to 1 */
-          please { animate(this@fadeAnim) toBe { visible() } }.start()
+          val animator = ObjectAnimator.ofFloat(this@fadeAnim, "alpha", 0f, 1f)
+          animator.start()
         }
 
         override fun onAnimationStart(animation: Animator) {}

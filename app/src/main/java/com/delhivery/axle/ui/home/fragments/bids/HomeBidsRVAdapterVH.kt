@@ -5,6 +5,7 @@ import androidx.databinding.ViewDataBinding
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
@@ -102,36 +103,45 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.request = item.data
-    Log.i("bulkTransactionBids",item.data.bulkTransactionBids?.size.toString())
-    binding.moreBidsRecieved = (item.data.bulkTransactionBids?.size?:0) -1
-   // binding.moreBidsRecieved = 2
-    binding.textMoreBids.underline = true
-    binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
+    if(item.data.subRequestType== SUB_REQUEST_TYPE_INTRACITY){
+      binding.clIntercityBids.visibility = View.GONE
+      binding.clIntracityBids.visibility = View.VISIBLE
+      binding.layoutTransaction.request = item.data
+    }else{
+      binding.clIntercityBids.visibility = View.VISIBLE
+      binding.clIntracityBids.visibility = View.GONE
+      binding.request = item.data
+      Log.i("bulkTransactionBids",item.data.bulkTransactionBids?.size.toString())
+      binding.moreBidsRecieved = (item.data.bulkTransactionBids?.size?:0) -1
+      // binding.moreBidsRecieved = 2
+      binding.textMoreBids.underline = true
+      binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
 
-    if(item.data.bidStatus().statusKey.lowercase().equals("open")){
-      binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_active))
-      binding.textBidStatus.text = context.resources.getString(R.string.label_active)
-    }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
-      if(item.data.transactionBid?.clientConfirmationPending == false){
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.pending))
-        binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
-      }else{
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
-        binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
+      if(item.data.bidStatus().statusKey.lowercase().equals("open")){
+        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_active))
+        binding.textBidStatus.text = context.resources.getString(R.string.label_active)
+      }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
+        if(item.data.transactionBid?.clientConfirmationPending == false){
+          binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.pending))
+          binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
+        }else{
+          binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
+          binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
+        }
+      }else if(item.data.bidStatus().statusKey.lowercase().equals("rejected")) {
+        binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
+        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
+      }else if(item.data.bidStatus().statusKey.lowercase().equals("cancelled")) {
+        binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
+        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
       }
-    }else if(item.data.bidStatus().statusKey.lowercase().equals("rejected")) {
-      binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
-      binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
-    }else if(item.data.bidStatus().statusKey.lowercase().equals("cancelled")) {
-      binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
-      binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
+
+      val res = item.data.resOffer
+      if(item.data.resOffer?.first?.first==null){
+        _interface.getTotalOffers(item.data)
+      }
     }
 
-    val res = item.data.resOffer
-    if(item.data.resOffer?.first?.first==null){
-      _interface.getTotalOffers(item.data)
-    }
   }
 }
 
