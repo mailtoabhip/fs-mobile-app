@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:id="@+id/layout_transaction"
-            layout="@layout/view_intracity_adhoc_transactional_info"/>
+            layout="@layout/view_intracity_adhoc_trip_info"/>
 
         <View
             android:id="@+id/divider"

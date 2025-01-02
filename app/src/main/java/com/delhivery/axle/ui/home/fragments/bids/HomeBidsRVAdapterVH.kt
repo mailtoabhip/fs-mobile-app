@@ -103,7 +103,7 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    if(item.data.demandType==DemandType.Intracity.type){
+    if(item.data.subRequestType== SUB_REQUEST_TYPE_INTRACITY){
       binding.clIntercityBids.visibility = View.GONE
       binding.clIntracityBids.visibility = View.VISIBLE
       binding.layoutTransaction.request = item.data
