@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.lifecycle.Observer
-import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBottomAcceptIntracityAdhocBidBinding
@@ -68,6 +67,8 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         window!!.attributes.windowAnimations = R.style.DialogAnimation
         window!!.setGravity(Gravity.BOTTOM)
         setCanceledOnTouchOutside(false)
+
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         binding.progress.visibility = View.GONE
         binding.progressMsg.visibility = View.GONE
         binding.close.setOnClickListener {
