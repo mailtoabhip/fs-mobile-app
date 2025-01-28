@@ -108,6 +108,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>?, Pair<String?, String?>?, Triple<String?, String?,String?>?>? =Triple(Pair(null, null), Pair(null, null), Triple(null, null,null)),
   @SerializedName("origin_city_code") var originCityCode: String? =null,
   @SerializedName("origin_city") var originCity: String? =null,
+  @SerializedName("origin_center_name") var originCenterName: String?=null,
   @SerializedName("destination_city_code") var destinationCityCode: String? =null,
   @SerializedName("additional_remarks") var additionalRemarks: String? = null,
   @SerializedName("order_creation_remarks") var orderCreationRemarks: String? =null,
@@ -553,8 +554,8 @@ data class HomeBidsRequestItemData(
   }
 
   fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
-  fun reportingCityWithPinCode()= originCityName() +" - "+loadingLocationPincode
 
+  fun originCentreName()= StringUtils.capitalize(originCenterName)?:" "
   fun additionalKMsRates()= "${intracityExtraKmRate()} per extra KM | ${intracityExtraHourRate()} per extra hour"
 
   fun reportingCenters(): String{
