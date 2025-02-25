@@ -142,6 +142,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("is_flexible")val isFlexible:Boolean=false,
   @SerializedName("requirement_duration")val requirementDuration:Int?=null,
   @SerializedName("sub_request_type")val subRequestType:String?=null,
+  @SerializedName("nep_states")val nepState:String?=null,
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -954,6 +955,12 @@ data class HomeBidsRequestItemData(
     } else{
       "$elapsedMinutes minutes"
     }
+  }
+
+  fun isNEPrequired() = if (nepState != null) {
+    View.VISIBLE
+  } else {
+    View.GONE
   }
 
   /**

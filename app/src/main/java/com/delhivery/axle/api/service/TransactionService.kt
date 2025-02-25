@@ -38,7 +38,8 @@ interface TransactionService {
     @Query("limit") limit: Int= 100,
     @Query("is_flexible") isFlexible:Boolean?=null,
     @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null,
-    @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true
+    @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true,
+    @Query("exclude_union_area")excludeUnionArea:Boolean= true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -55,7 +56,9 @@ interface TransactionService {
     @Query("exclude_truck_types") excludeTruckTypes: String? = null,
     @Query("filter_vehicle_type") filterVehicleType: Boolean?= null,
     @Query("bidding_going_on") biddingGoingOn: Boolean?= false,
-    @Query("exclude_trip_ids") excludeTripIds: String? = null
+    @Query("exclude_trip_ids") excludeTripIds: String? = null,
+    @Query("exclude_union_area")excludeUnionArea:Boolean= true
+
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

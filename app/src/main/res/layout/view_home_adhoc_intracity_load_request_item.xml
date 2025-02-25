@@ -17,8 +17,39 @@
             android:layout_marginBottom="@dimen/size_12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <include
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llNep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_grey"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:visibility="@{request.isNEPrequired()}"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:paddingBottom="@dimen/size_4dp"
+                    android:src="@drawable/warning_icon"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/nepRequired"
+                    android:text="@{@string/entry_permit_for_required(request.nepState)}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_12sp"
+                    tools:hint="Entry permit for Haryana required"
+                    android:fontFamily="sans-serif-medium"
+                    android:padding="@dimen/size_4dp"
+                   />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <include
+                app:layout_constraintTop_toBottomOf="@+id/llNep"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
