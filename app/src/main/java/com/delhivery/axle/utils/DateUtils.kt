@@ -7,6 +7,9 @@ import com.delhivery.axle.utils.extensions.toCalendar
 import com.google.gson.internal.bind.util.ISO8601Utils
 import java.text.ParsePosition
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -21,17 +24,17 @@ object DateUtils {
    * @return Calendar with specified date
    */
   fun calendarFromDate(
-    year: Int, @IntRange(from = 1, to = 12) month: Int, @IntRange(
-        from = 1, to = 31
-    ) dayOfMonth: Int
+          year: Int, @IntRange(from = 1, to = 12) month: Int, @IntRange(
+                  from = 1, to = 31
+          ) dayOfMonth: Int
   ): Calendar {
     return Calendar.getInstance()
-        .let {
-          it[Calendar.YEAR] = year
-          it[Calendar.MONTH] = month
-          it[Calendar.DAY_OF_MONTH] = dayOfMonth
-          return@let it
-        }
+            .let {
+              it[Calendar.YEAR] = year
+              it[Calendar.MONTH] = month
+              it[Calendar.DAY_OF_MONTH] = dayOfMonth
+              return@let it
+            }
   }
 
   /**
@@ -43,8 +46,8 @@ object DateUtils {
    * @return formatted Date
    */
   fun formatDate(
-    date: Date,
-    format: String
+          date: Date,
+          format: String
   ): String {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
@@ -90,13 +93,28 @@ object DateUtils {
     return ISTDateString
   }
 
+  fun getIstFormatTimeOnly(istTime: Date): String? {
+    var ISTDateString = ""
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    val pattern = "h:mm a"
+    val formatter: SimpleDateFormat
+    formatter = SimpleDateFormat(pattern)
+    try {
+      formatter.timeZone = TimeZone.getTimeZone("Asia/Kolkata")
+      ISTDateString = formatter.format(istTime)
+    } catch (e: java.lang.Exception) {
+      e.printStackTrace()
+    }
+    return ISTDateString
+  }
+
 
   /**
    * @return Formatted ISO date to [format] in UTC
    */
   fun formatISODateToUTC(
-    date: String,
-    format: String
+          date: String,
+          format: String
   ): String {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
@@ -112,8 +130,8 @@ object DateUtils {
    * @return Format ISO date to [format]
    */
   fun formatISODate(
-    date: String,
-    format: String
+          date: String,
+          format: String
   ): String {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
@@ -133,8 +151,8 @@ object DateUtils {
    * @return [Date] parsed date, if parse error is thrown then current Date is returned
    */
   fun parseDate(
-    date: String,
-    format: String
+          date: String,
+          format: String
   ): Date {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
@@ -145,7 +163,7 @@ object DateUtils {
     }
   }
 
-  fun timeDiff( startTime :Long , endTime : Long =Date().time) :String{
+  fun timeDiff(startTime: Long, endTime: Long = Date().time): String {
     var milli: Long = endTime - startTime
     val secondsInMilli: Long = 1000
     val minutesInMilli = secondsInMilli * 60
@@ -158,18 +176,18 @@ object DateUtils {
     val elapsedHrs = milli / hoursInMilli
     milli %= hoursInMilli
 
-    val elapsedMinutes  = milli / minutesInMilli
+    val elapsedMinutes = milli / minutesInMilli
     milli %= minutesInMilli
 
-    val elapsedSec = milli /secondsInMilli
+    val elapsedSec = milli / secondsInMilli
 
     return if (elapsedDays.toInt() != 0) {
       "$elapsedDays days, $elapsedHrs hrs"
-    } else if (elapsedHrs.toInt() !=0){
+    } else if (elapsedHrs.toInt() != 0) {
       "$elapsedHrs hrs, $elapsedMinutes minutes"
-    } else if(elapsedMinutes.toInt() != 0){
+    } else if (elapsedMinutes.toInt() != 0) {
       "$elapsedMinutes minutes, $elapsedSec sec"
-    } else{
+    } else {
       "$elapsedSec sec"
     }
   }
@@ -186,16 +204,16 @@ object DateUtils {
    * @return days diff of [date] string from today
    */
   fun daysDiffStr(
-    date: String,
-    format: String
+          date: String,
+          format: String
   ) = daysDiffStr(parseDate(date, format))
 
   private fun daysDiffStr(
-    requiredOn: Date
+          requiredOn: Date
   ): String {
     val diff = daysDiff(requiredOn)
     return when {
-      diff <= 0 && diff>-1 -> "Today"
+      diff <= 0 && diff > -1 -> "Today"
       diff == 1 -> "Tomorrow"
       else -> formatDate(requiredOn, "dd MMM")
     }
@@ -205,10 +223,41 @@ object DateUtils {
    * Days diff as string with time
    */
   fun daysDiffWithTimeStr(
-    date: String,
-    format: String
+          date: String,
+          format: String
   ): String {
     return daysDiffStr(parseDate(date, format))
+  }
+
+  fun daysDiffWithDateTimeStr(
+          date: String,
+          format: String
+  ): String {
+    return daysDiffWithTimeStr(parseDateIst(date, format))
+  }
+
+  fun parseDateIst(
+          date: String,
+          format: String
+  ): Date {
+    return try {
+      val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
+      dateFormatter.parse(date)!!
+    } catch (e: Exception) {
+      Log.i("Exception", e.toString())
+      Date()
+    }
+  }
+
+  fun daysDiffWithTimeStr(
+          requiredOn: Date
+  ): String {
+    val diff = daysDiff(requiredOn)
+    return when {
+      diff <= 0 && diff > -1 -> "Today, ${getIstFormatTimeOnly(requiredOn)}"
+      diff == 1 -> "Tomorrow, ${getIstFormatTimeOnly(requiredOn)}"
+      else -> formatDate(requiredOn, "dd MMM 'T' hh:mm a")
+    }
   }
 
   /**
@@ -217,7 +266,7 @@ object DateUtils {
   fun convertToRelativeTimeStamp(actionTime: String? = ""): String {
     return if (actionTime.isNotNullOrEmpty()) {
       (System.currentTimeMillis() - parseDate(
-          actionTime!!, DatePatterns.OrionDateFormat
+              actionTime!!, DatePatterns.OrionDateFormat
       ).time).let { msDiff ->
         val days = TimeUnit.MILLISECONDS.toDays(msDiff)
         val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
@@ -227,9 +276,10 @@ object DateUtils {
           days > 0 -> when {
             days <= 3 -> "$days day ago"
             else -> formatDate(
-                parseDate(actionTime, DatePatterns.OrionDateFormat), DatePatterns.SimpleDateFormat
+                    parseDate(actionTime, DatePatterns.OrionDateFormat), DatePatterns.SimpleDateFormat
             )
           }
+
           hours > 0 -> "$hours hr $mins min ago"
           mins > 0 -> "$mins min $secs s ago"
           else -> "Just now"
@@ -246,7 +296,7 @@ object DateUtils {
   fun convertToRelativeTimeStampTrip(actionTime: String? = ""): String {
     return if (actionTime.isNotNullOrEmpty()) {
       (System.currentTimeMillis() - parseDate(
-          actionTime!!, DatePatterns.OrionDateFormat
+              actionTime!!, DatePatterns.OrionDateFormat
       ).time).let { msDiff ->
         val days = TimeUnit.MILLISECONDS.toDays(msDiff)
         val hours = TimeUnit.MILLISECONDS.toHours(msDiff - TimeUnit.DAYS.toMillis(days))
@@ -258,6 +308,7 @@ object DateUtils {
             days in 2..3 -> "$days days"
             else -> "3 days+"
           }
+
           else -> "Less than 1 day"
         }
       }
@@ -266,8 +317,8 @@ object DateUtils {
     }
   }
 
-  fun getMonth(month: Int): String{
-    when(month){
+  fun getMonth(month: Int): String {
+    when (month) {
       1 -> return "Jan"
       2 -> return "Feb"
       3 -> return "Mar"
@@ -284,41 +335,39 @@ object DateUtils {
     return ""
   }
 
-  fun presentDay():String{
-    val sdf =  SimpleDateFormat("dd MMM");
-    val resultdate =  Date();
+  fun presentDay(): String {
+    val sdf = SimpleDateFormat("dd MMM");
+    val resultdate = Date();
     return sdf.format(resultdate)
   }
 
-  fun tomorrowDate():String{
+  fun tomorrowDate(): String {
     var dt = Date()
     val c = Calendar.getInstance()
     c.time = dt
     c.add(Calendar.DATE, 1)
     dt = c.time
-    val sdf =  SimpleDateFormat("dd MMM");
+    val sdf = SimpleDateFormat("dd MMM");
     return sdf.format(dt)
   }
 
-  fun presentTime():String{
+  fun presentTime(): String {
     var dt = Date()
     val c = Calendar.getInstance()
     c.time = dt
     dt = c.time
-    val sdf =  SimpleDateFormat("hh:mm a")
+    val sdf = SimpleDateFormat("hh:mm a")
     return sdf.format(dt)
   }
 
-  fun presentTimeInSlashFormat():String{
+  fun presentTimeInSlashFormat(): String {
     var dt = Date()
     val c = Calendar.getInstance()
     c.time = dt
     dt = c.time
-    val sdf =  SimpleDateFormat("dd/MM/yyyy")
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
     return sdf.format(dt)
   }
-
-
 
 
   fun getUtcToIstFormatTimeSlash(utcTime: String?): String? {
@@ -338,7 +387,7 @@ object DateUtils {
     return ISTDateString
   }
 
-  fun getUtcToIstFormatDateWithSuffix(utcTime: String?):String{
+  fun getUtcToIstFormatDateWithSuffix(utcTime: String?): String {
     var istDateString = ""
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     sdf.timeZone = TimeZone.getTimeZone("UTC")
@@ -349,17 +398,19 @@ object DateUtils {
       val ISTDate = sdf.parse(utcTime)
       formatter.timeZone = TimeZone.getTimeZone("Asia/Kolkata")
       istDateString = formatter.format(ISTDate)
-      var dateString =  istDateString.split(" ").get(0)
+      var dateString = istDateString.split(" ").get(0)
       var suffix = getDayOfMonthSuffix(dateString.toInt())
       dateString += suffix
-      istDateString = dateString+" "+istDateString.split(" ").get(1)+ " "+istDateString.split(" ").get(2)
+      istDateString =
+              dateString + " " + istDateString.split(" ").get(1) + " " + istDateString.split(" ").get(2)
 
     } catch (e: java.lang.Exception) {
       e.printStackTrace()
     }
     return istDateString
   }
-  fun getISToUtcFormatDate(istTime: String?):String{
+
+  fun getISToUtcFormatDate(istTime: String?): String {
     var utctDateString = ""
     val sdf = SimpleDateFormat("dd/MM/yyyy")
     val pattern = "yyyy-MM-dd"
@@ -385,23 +436,58 @@ object DateUtils {
     }
   }
 
-  fun getFormattedTimeIn12Hrs(time:String):String{
+  fun getFormattedTimeIn12Hrs(time: String): String {
     val split = time.split(":")
-    return if(split.size==3){
-      if(split[0].toInt()<12){
-        split[0]+":"+split[1] +" AM"
-      }else if(split[0].toInt()==12){
-        split[0]+":"+split[1] +" PM"
-      } else if(split[0].toInt()==24){
-        (split[0].toInt()-12).toString()+":"+split[1] +" AM"
-      }else{
-        if(split[0].toInt()-12<10) "0"+(split[0].toInt()-12).toString()+":"+split[1] +" PM" else (split[0].toInt()-12).toString()+":"+split[1] +" PM"
+    return if (split.size == 3) {
+      if (split[0].toInt() < 12) {
+        split[0] + ":" + split[1] + " AM"
+      } else if (split[0].toInt() == 12) {
+        split[0] + ":" + split[1] + " PM"
+      } else if (split[0].toInt() == 24) {
+        (split[0].toInt() - 12).toString() + ":" + split[1] + " AM"
+      } else {
+        if (split[0].toInt() - 12 < 10) "0" + (split[0].toInt() - 12).toString() + ":" + split[1] + " PM" else (split[0].toInt() - 12).toString() + ":" + split[1] + " PM"
       }
-    }else{
+    } else {
       ""
     }
   }
 
+  fun getTimeDiff(date: String): String {
+    try {
+      val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+
+      val targetDate: Date? = dateFormat.parse(date)
+
+      val targetCalendar = Calendar.getInstance()
+      targetCalendar.time = targetDate
+
+      val currentMillis = System.currentTimeMillis()
+
+      val targetMillis = targetCalendar.timeInMillis
+
+      val durationMillis = targetMillis - currentMillis
+
+      val days = durationMillis / (1000 * 60 * 60 * 24)
+      val hours = (durationMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      val minutes = (durationMillis % (1000 * 60 * 60)) / (1000 * 60)
+      return when {
+        days <= 0 -> when {
+          hours <= 1 -> "0-2"
+          hours in 2..3 -> "2-4"
+          hours in 4..5 -> "4-6"
+          hours in 5..11 -> "6-12"
+          hours in 12..18 -> "12-18"
+          else -> ""
+        }
+
+        else -> ""
+      }
+    } catch (e: Exception) {
+      ""
+    }
+    return ""
+  }
 }
 
 /**

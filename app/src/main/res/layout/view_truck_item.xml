@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.appcompat.widget.AppCompatTextView
+    android:id="@+id/tvVehicleNumber"
+    android:drawableStart="@drawable/ic_search_truck"
+    android:drawablePadding="@dimen/size_8dp"
+    android:padding="@dimen/size_12dp"
+    android:text="MH45KH7865"
+    android:textStyle="bold"
+    android:background="@color/white"
+    android:textColor="@color/heading_black"
+    android:textSize="@dimen/text_16sp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

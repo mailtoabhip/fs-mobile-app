@@ -1,10 +1,15 @@
 package com.delhivery.axle.utils
 
 import android.widget.Toast
+import com.delhivery.axle.api.response.TruckDisplayNameItem
 import com.delhivery.axle.api.service.CityService
+import com.delhivery.axle.api.service.InventoryService
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
+import com.delhivery.axle.data.home.trucks.names
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+import com.delhivery.axle.ui.custom.DelhiveryTrucksAutoEditText
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -22,6 +27,7 @@ import javax.inject.Inject
 @ActivityScope
 class AutoCompleteUtils @Inject constructor(
   private val cityService: CityService,
+  private val inventoryService: InventoryService,
   private val activity: DaggerAppCompatActivity
 ) {
 
@@ -60,6 +66,19 @@ class AutoCompleteUtils @Inject constructor(
           it.printStackTrace()
         })
   }
+
+    fun autoCompleteTruck(
+            editText: DelhiveryTrucksAutoEditText,
+            action: (String) -> Unit
+    ) {
+        val d = RxTextView.textChanges(editText)
+                .filter { it.length >= 2 }
+                .subscribe({
+                    resetNetworkTruckSuggestions(it.toString(), editText, action)
+                }, {
+                    it.printStackTrace()
+                })
+    }
 
   fun skipFirstAutoCompleteCity(
     editText: DelhiveryCityAutoEditText,
@@ -143,6 +162,52 @@ class AutoCompleteUtils @Inject constructor(
           }
     }
   }
+
+    private fun resetNetworkTruckSuggestions(
+            query: String,
+            editText: DelhiveryTrucksAutoEditText,
+            action: (String) -> Unit
+    ) {
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("supplier_id", userPrefs.parentId)
+
+        jsonObject.addProperty("offset", 0)
+        jsonObject.addProperty("limit", 10)
+        jsonObject.addProperty("vehicle_prefix",query)
+
+        disposable?.dispose()
+        if(userPrefs.jwtToken != null) {
+            disposable = inventoryService.getInventories(jsonObject)
+                    .onBackground()
+                    .doOnSubscribe {
+                        editText.progress()
+                        editText.dismissDropDown()
+                    }
+                    .doFinally {
+                        try{
+                            editText.progress(false)
+                            editText.showDropDown()
+                        }catch (e:Exception){
+
+                        }
+                    }
+                    .subscribe { _res, _err ->
+                        if (!_err && _res != null) {
+                            _res.responseData?.let { res ->
+                                val arrayList = ArrayList<String>()
+                                for(item in res.trucks.names())
+                                    arrayList.add(item)
+                                arrayList.add("Add New Truck")
+                                editText.setItems(arrayList) {
+                                    disposable?.dispose()
+                                    action(it)
+                                }
+                            }
+                        }
+                    }
+        }
+    }
+
 
   fun clearDisposable() {
     disposable?.dispose()

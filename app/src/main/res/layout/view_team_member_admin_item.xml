@@ -47,7 +47,7 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          android:background="@drawable/dark_blue_circle" />
+          android:background="@drawable/dark_red_circle" />
 
       <androidx.appcompat.widget.LinearLayoutCompat
           app:layout_constraintTop_toTopOf="parent"

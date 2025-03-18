@@ -126,6 +126,11 @@ enum class UrlConfig(
           "https://orion-recommendation-api-dev.delhivery.com",
           "https://orion-recommendation-api-uat.delhivery.com"
   ),
+  TPSService(
+        "https://tps-bk.delhivery.com",
+        "https://tps-bk-dev.delhivery.com",
+        "https://tps-bk-dev.delhivery.com"
+    ),
   AppID(
   "83", "371", "371"
   );

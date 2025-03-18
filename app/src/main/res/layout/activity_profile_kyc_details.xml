@@ -19,7 +19,7 @@
             android:id="@+id/kycTabLayout"
             android:layout_width="match_parent"
             bind:tabTextAppearance="@style/CustomTextAppearanceTab"
-            bind:tabIndicatorColor="@color/switch_blue"
+            bind:tabIndicatorColor="@color/switch_red"
             android:background="@color/white"
             android:tabStripEnabled="true"
             bind:tabBackground="@color/white"

@@ -371,6 +371,7 @@
   <string name="label_change_payment_mode">Change Payment Mode</string>
   <string name="label_with_sign_value">₹ %1$d</string>
   <string name="label_home">Home</string>
+  <string name="label_placements">Placements</string>
   <string name="nav_label_trucks">My Trucks</string>
   <string name="nav_label_contracts">Contracts</string>
   <string name="label_unloading_locations">Drop Location</string>
@@ -574,6 +575,7 @@
   <string name="city_hint">City</string>
   <string name="address_proof_hint">Choose Proof Documents</string>
   <string name="allowed_char_address">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 </string>
+  <string name="allowed_char_name">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ </string>
 
 
   <string name="address_proof_attachment">Address proof attachment</string>
@@ -779,10 +781,11 @@
   <string name="acceptance_declaration">Upon acceptance of the load, the vehicle must arrive at least 30 minutes prior to the reporting time; failure to do so will incur a penalty</string>
   <string name="label_driver_number">Driver Number</string>
   <string name="label_driver_name">Driver Name</string>
+    <string name="your_placement_details_are_updated">Your placement details are updated</string>
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
 
 
-  <string-array name="array_truck_type">
+    <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>
     <item>Open</item>
@@ -844,6 +847,14 @@
     <item>Broker</item>
     <item>Fleet Owner</item>
     <item>Transporter</item>
+  </string-array>
+
+  <string-array name="array_duration">
+    <item>0–2 Hours</item>
+    <item>2–4 Hours</item>
+    <item>4–6 Hours</item>
+    <item>6–12 Hours</item>
+    <item>12–18 Hours</item>
   </string-array>
 
 </resources>

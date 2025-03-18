@@ -289,6 +289,9 @@
 
         <activity android:name=".ui.auth.AccountDeletionActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.placementdetails.PlacementDetailsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

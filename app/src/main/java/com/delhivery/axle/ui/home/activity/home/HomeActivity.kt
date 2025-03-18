@@ -1,9 +1,7 @@
 package com.delhivery.axle.ui.home.activity.home
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build.VERSION
@@ -12,7 +10,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -48,13 +45,6 @@ import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.InstallState
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.model.Action
@@ -68,6 +58,7 @@ import com.moengage.core.internal.USER_ATTRIBUTE_USER_NAME
 import com.moengage.pushbase.MoEPushHelper
 import java.util.Date
 import javax.inject.Inject
+
 
 /**
  * Home screen
@@ -481,6 +472,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     menuInflater.inflate(R.menu.menu_call, menu)
     return true
   }
+  override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+    super.onPrepareOptionsMenu(menu)
+      menu.findItem(R.id.nav_call).isVisible = true
+      menu.findItem(R.id.nav_filter).isVisible = false
+   // menu.findItem(R.id.nav_filter).isVisible = false
+    return true
+  }
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.nav_call -> {
@@ -751,10 +749,11 @@ enum class FragmentName(
   val frgName: String
 ) {
   HomeFragment(0, "home_screen"),
-  BidsFragment(1, "bids_screen"),
-  TripsFragment(3, "trips_screen" ),
-  ProfileFragment(4, "profile_screen"),
-  PODFragment(2, "pod_screen"),
+  PlacementsFragment(1, "placement_screen"),
+  BidsFragment(2, "bids_screen"),
+  TripsFragment(4, "trips_screen" ),
+  ProfileFragment(5, "profile_screen"),
+  PODFragment(3, "pod_screen"),
   Unknown(-1, "unknown");
   companion object {
     /**

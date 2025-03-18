@@ -113,6 +113,18 @@ class NetworkModule {
   )
 
   /**
+   * TPS service
+   */
+  @Provides
+  @Singleton
+  fun provideTPSService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.TPSService).create(
+    TPSService::class.java
+  )
+
+  /**
    * Provide [UserService]
    */
   @Provides

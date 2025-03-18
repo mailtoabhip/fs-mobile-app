@@ -81,7 +81,7 @@
             android:textColor="@color/white"
             tools:text="Action"
             android:textAllCaps="false"
-            android:background="@drawable/bg_allround_corner_blue"
+            android:background="@drawable/bg_allround_corner_red"
             />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

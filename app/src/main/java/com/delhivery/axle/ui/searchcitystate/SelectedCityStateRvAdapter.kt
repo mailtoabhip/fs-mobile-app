@@ -6,7 +6,6 @@ import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 
 class SelectedCityStateRvAdapter(private val _interface: SearchCityStateRVAdapterInterface) :
     BaseDataRVAdapter<BaseCityStateRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(

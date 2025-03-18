@@ -41,7 +41,7 @@
           android:layout_marginEnd="@dimen/size_48dp"
           android:layout_marginStart="@dimen/size_16dp"
           android:textColor="@color/white"
-          android:background="@drawable/dark_blue_circle" />
+          android:background="@drawable/dark_red_circle" />
 
     </androidx.appcompat.widget.Toolbar>
 

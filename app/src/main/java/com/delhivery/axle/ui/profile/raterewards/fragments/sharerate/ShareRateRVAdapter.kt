@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.profile.raterewards.fragments.sharerate
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewRouteProgressItemBinding
 import com.delhivery.axle.databinding.ViewShareRateItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding

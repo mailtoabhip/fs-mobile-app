@@ -25,7 +25,7 @@
         android:paddingBottom="@dimen/size_4dp"
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp"
-        android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+        android:background="@drawable/bg_all_round_corner_red_solid_selector"
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/all"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
       android:paddingEnd="@dimen/size_12dp"
       android:drawablePadding="8dp"
       android:drawableStart="@drawable/ic_multiple_location"
-      android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+      android:background="@drawable/bg_all_round_corner_red_solid_selector"
       app:layout_constraintStart_toEndOf="@id/allIntracityToggle"
       android:text="@string/action_flexible_intracity"
       app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +59,7 @@
         android:paddingBottom="@dimen/size_4dp"
         android:paddingStart="@dimen/size_10dp"
         android:paddingEnd="@dimen/size_12dp"
-        android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+        android:background="@drawable/bg_all_round_corner_red_solid_selector"
         app:layout_constraintTop_toTopOf="parent"
         />
 

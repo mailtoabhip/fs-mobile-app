@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsTypeItemData"
+            />
+
+        <import type="android.view.View" />
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <androidx.appcompat.widget.AppCompatTextView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/placementType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/heading_black"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="@dimen/text_16sp"
+        android:textStyle="bold"
+        android:text="@{request.placementType}"
+        android:padding="@dimen/size_8dp"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

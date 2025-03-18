@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
 import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
@@ -28,6 +29,7 @@ import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsViewModel
@@ -319,6 +321,16 @@ interface ViewModelInjector {
    * Injects [ContractDetailsViewModel]
    */
   fun inject(viewModel: ContractDetailsViewModel)
+
+  /**
+   * Injects [HomePlacementsViewmodel]
+   */
+  fun inject(viewModel: HomePlacementsViewModel)
+
+  /**
+   * Injects [PlacementDetailsViewModel]
+   */
+  fun inject(viewModel: PlacementDetailsViewModel)
 
   @Component.Builder
   interface Builder {

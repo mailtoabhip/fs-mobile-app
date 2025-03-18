@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="colorPrimary">#FFFFFF</color>
-  <color name="colorPrimaryDark">#F9F9F9</color>
-  <color name="colorAccent">#5B80F7</color>
+  <color name="colorPrimaryDark">#FAF7F7</color>
+  <color name="colorAccent">#ED4136</color>
 
   <color name="colorDelhiveryRed">#ED4136</color>
   <color name="colorBackground">#F2F2F2</color>
+  <color name="light_red_background">#FEF2F2</color>
+
 
   <color name="colorShimmerPrimary">#F1F1F1</color>
   <color name="colorShimmerSecondary">#F3F3F3</color>
@@ -50,7 +52,7 @@
   <color name="blue">#388BCE</color>
   <color name="payment_red">#dbaeb0</color>
   <color name="faded_black">#525B7A</color>
-  <color name="switch_blue">#5B80F7</color>
+  <color name="switch_red">#ED4136</color>
   <color name="bg_grey">#E0E3EB</color>
   <color name="blue_bg">#ededff</color>
   <color name="info_bg">#525B7A</color>
@@ -68,7 +70,8 @@
   <color name="truck_load_banner_background">#FFFAF0</color>
   <color name="dark_light_blue"> #D2D9F4</color>
   <color name="lighter_blue"> #FAFCFF</color>
-
+  <color name="custom_red">#FAF7F7</color>
+  <color name="custom_grey_bg">#E5E3E3</color>
   <color name="custom_grey">#E5E5E5</color>
     <color name="custom_dark_grey">#991C1C1C</color>
 
@@ -78,7 +81,7 @@
   <color name="light_orange">#FFF7ED</color>
   <color name="reward_confirmed">#116C55</color>
 
-  <color name="reward_status_active">#5B80F7</color>
+  <color name="reward_status_active">#ED4136</color>
   <color name="reward_status_confirmed">#059669</color>
   <color name="reward_status_lost">#DC2626</color>
 
@@ -94,5 +97,8 @@
   <color name="grey_500">#666666</color>
   <color name="light_grey_bg">#F9F9FB</color>
 
-
+  <color name="custom_blue">#5B80F7</color>
+  <color name="light_red_bg">#FFF6F6</color>
+  <color name="light_orange_color">#EA580C</color>
+  <color name="placement_grey_bg">#F8F9FC</color>
 </resources>

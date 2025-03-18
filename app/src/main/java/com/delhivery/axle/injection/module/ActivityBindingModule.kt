@@ -38,6 +38,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
@@ -341,6 +342,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsContractDetailsActivityModule::class])
   internal abstract fun bindContractDetailsActivity(): ContractDetailsActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPlacementDetailsActivityModule::class])
+  internal abstract fun bindPlacementDetailsActivity(): PlacementDetailsActivity
 }
 
 
@@ -513,6 +518,9 @@ internal abstract class AbsShareRateGetRewardsActivityModule : ActivityModule<Sh
 
 @Module
 internal abstract class AbsContractDetailsActivityModule : ActivityModule<ContractDetailsActivity>()
+
+@Module
+internal abstract class AbsPlacementDetailsActivityModule : ActivityModule<PlacementDetailsActivity>()
 
 /**
  * Activity Binds Module

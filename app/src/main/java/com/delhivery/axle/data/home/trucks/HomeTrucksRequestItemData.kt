@@ -5,7 +5,10 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.google.gson.annotations.SerializedName
 import java.util.*
@@ -138,4 +141,9 @@ data class TruckFrequentItem(
     fun truckCapacity(): String = "$capacity MT"
 
     fun truckSize(): String = truckSize
+
 }
+fun List<HomeTrucksRequestItemData>.names() =
+        mapIndexed { _, truckModel ->
+            return@mapIndexed truckModel.vehicleNumber
+        }

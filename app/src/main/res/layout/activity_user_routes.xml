@@ -62,7 +62,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_margin="@dimen/size_16dp"
-          android:background="@drawable/bg_allround_corner_blue"
+          android:background="@drawable/bg_allround_corner_red"
           android:text="Add New Route"
           android:textAllCaps="false"
           android:textSize="@dimen/text_16sp"

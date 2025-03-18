@@ -305,6 +305,8 @@ const val VALUE_ADD_TRUCK_TOP_BANNER = "add_truck_top_banner"
 const val VALUE_ADD_TRUCK_SCROLL_BANNER = "add_truck_scroll_banner"
 const val VALUE_ADD_TRUCK_PAGE = "add_truck_page"
 const val VALUE_ADD_TRUCK_ONBOARDING_PAGE = "add_truck_onboarding_page"
+const val VALUE_ADD_TRUCK_PLACEMENT = "add_truck_from_placement"
+
 
 //MoEngage Attributes and Events
 const val EVENT_LOGIN = "login"

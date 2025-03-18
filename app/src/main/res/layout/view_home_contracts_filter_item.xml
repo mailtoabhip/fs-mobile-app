@@ -25,7 +25,7 @@
       android:paddingBottom="@dimen/size_6dp"
       android:paddingStart="@dimen/size_10dp"
       android:paddingEnd="@dimen/size_10dp"
-      android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+      android:background="@drawable/bg_all_round_corner_red_solid_selector"
       app:layout_constraintStart_toStartOf="parent"
       android:text="@string/action_non_express"
       app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
         android:paddingBottom="@dimen/size_6dp"
         android:paddingStart="@dimen/size_10dp"
         android:paddingEnd="@dimen/size_10dp"
-        android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+        android:background="@drawable/bg_all_round_corner_red_solid_selector"
         app:layout_constraintTop_toTopOf="parent"
         />
     <androidx.appcompat.widget.AppCompatTextView
@@ -53,7 +53,7 @@
         android:paddingBottom="@dimen/size_6dp"
         android:paddingStart="@dimen/size_10dp"
         android:paddingEnd="@dimen/size_10dp"
-        android:background="@drawable/bg_all_round_corner_blue_solid_selector"
+        android:background="@drawable/bg_all_round_corner_red_solid_selector"
         app:layout_constraintStart_toEndOf="@id/expressToggle"
         android:text="@string/action_intracity"
         app:layout_constraintTop_toTopOf="parent"

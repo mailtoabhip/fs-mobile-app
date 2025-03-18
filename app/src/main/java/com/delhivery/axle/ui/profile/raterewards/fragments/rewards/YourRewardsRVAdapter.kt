@@ -3,9 +3,7 @@ package com.delhivery.axle.ui.profile.raterewards.fragments.rewards
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.delhivery.axle.databinding.ViewProgressItemBinding
 import com.delhivery.axle.databinding.ViewRewardsProgressItemBinding
-import com.delhivery.axle.databinding.ViewRouteProgressItemBinding
 import com.delhivery.axle.databinding.ViewYourRewardsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding

@@ -83,7 +83,7 @@ class ContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>,priva
             R.drawable.ic_hub_route
           )
         )
-        holder.tvMapView.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
+        holder.tvMapView.setTextColor(ContextCompat.getColor(context,R.color.dark_blue))
       }
     }
     override fun getItemCount(): Int {

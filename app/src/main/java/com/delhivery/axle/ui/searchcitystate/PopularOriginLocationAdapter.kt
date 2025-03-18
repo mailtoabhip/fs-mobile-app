@@ -7,7 +7,6 @@ import com.delhivery.axle.databinding.ViewHomeTripsRequestItemBinding
 import com.delhivery.axle.databinding.ViewSearchCityItemBinding
 import com.delhivery.axle.databinding.ViewSearchCityProgressItemBinding
 import com.delhivery.axle.databinding.ViewSearchCityStateItemBinding
-import com.delhivery.axle.databinding.ViewSelectedCitiesItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 

@@ -182,6 +182,7 @@
         android:layout_marginTop="@dimen/size_8dp"
         android:layout_marginLeft="@dimen/size_16dp"
         android:layout_marginRight="@dimen/size_16dp"
+        android:digits="@string/allowed_char_name"
         android:textSize="@dimen/text_16sp"
         android:inputType="text"
         android:layout_width="match_parent"

@@ -1,11 +1,13 @@
 package com.delhivery.axle.api.response
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import okhttp3.MediaType
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import retrofit2.Response
+import java.util.Objects
 
 /**
  * Base Response for all APIs with data key
@@ -85,6 +87,10 @@ data class PaymentErrorResponseBody(
   @SerializedName("error") val errorBody: PaymentBaseErrorResponse
 )
 
+data class TPSErrorBody(
+        @SerializedName("message") val messageBody: Any?
+)
+
 data class PaymentBaseErrorResponse(
   @SerializedName("message") val errorMessage: String,
   @SerializedName("code") private val _code: Int?,
@@ -97,4 +103,19 @@ data class PaymentBaseErrorResponse(
    */
   fun errorCode() = _errorCode
   fun code() = _code
+}
+
+data class TPSBaseResponse<M : Any>(
+  @SerializedName("data") val responseData: M?,
+  @SerializedName("message") val message: Any?,
+) {
+  /**
+   * Convert to [HttpException] when success is false
+   */
+  fun toHttpException(): HttpException {
+    val responseBody = ResponseBody.create(MediaType.parse("application/json"), Gson().toJson(this))
+    Log.i("response", responseBody.toString())
+    val response = Response.error<Any>(400, responseBody)
+    return HttpException(response)
+  }
 }
