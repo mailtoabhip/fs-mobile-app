@@ -783,6 +783,7 @@
   <string name="label_driver_name">Driver Name</string>
     <string name="your_placement_details_are_updated">Your placement details are updated</string>
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
+  <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
 
 
     <string-array name="array_truck_type">
