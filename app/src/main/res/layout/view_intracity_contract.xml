@@ -46,8 +46,23 @@
         android:textSize="@dimen/text_14sp"
         tool:text="982900389920"
         android:text="@{request.contractCode}"
-        android:padding="@dimen/size_8dp"
+        android:paddingTop="@dimen/size_8dp"
+        android:paddingLeft="@dimen/size_8dp"
+        android:paddingRight="@dimen/size_8dp"
         />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/contractType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/pending_status"
+                android:text="@{request.loadType()}"
+                android:textSize="@dimen/text_12sp"
+                android:paddingStart="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_2dp"
+                tool:text="Intracity Contract"
+                app:layout_constraintTop_toBottomOf="@+id/contractId"
+                app:layout_constraintStart_toStartOf="parent"
+                />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/reportingTime"
                 android:layout_width="wrap_content"
