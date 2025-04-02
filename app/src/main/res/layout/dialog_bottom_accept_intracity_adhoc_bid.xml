@@ -7,7 +7,10 @@
             name="request"
             type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
             />
-
+        <variable
+            name="dialog"
+            type= "Boolean"
+            />
         <import type="android.view.View" />
     </data>
     <ScrollView
@@ -53,6 +56,7 @@
      android:background="@color/light_blue"
      android:layout_width="match_parent"
      android:layout_height="wrap_content">
+
     <androidx.appcompat.widget.AppCompatTextView
      android:id="@+id/nepRequired"
      android:paddingEnd="@dimen/size_16dp"
@@ -73,8 +77,35 @@
      app:layout_constraintStart_toStartOf="parent"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"/>
-     <include
+     <androidx.appcompat.widget.AppCompatTextView
+         android:id="@+id/fmsTicketID"
+         android:layout_marginStart="@dimen/size_16dp"
+         android:textColor="@color/faded_black"
+         android:textSize="@dimen/text_16sp"
+         android:layout_marginTop="@dimen/size_10dp"
+         android:fontFamily="sans-serif-medium"
+         android:textStyle="bold"
+         android:drawablePadding="@dimen/size_4dp"
+         android:text="@{request.formattedFmsTicketId()}"
+         tools:hint="Ticket ID: 1872722"
+         android:visibility="@{request.isTicketVisibility(dialog)}"
          app:layout_constraintTop_toBottomOf="@+id/nepRequired"
+         app:layout_constraintStart_toStartOf="parent"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"/>
+     <View
+         android:id="@+id/divider1"
+         app:layout_constraintTop_toBottomOf="@+id/fmsTicketID"
+         app:layout_constraintStart_toStartOf="parent"
+         android:layout_marginTop="@dimen/size_10dp"
+         android:visibility="@{request.isTicketVisibility(dialog)}"
+         android:background="@color/bg_grey"
+         android:layout_marginLeft="@dimen/size_16dp"
+         android:layout_marginRight="@dimen/size_16dp"
+         android:layout_width="match_parent"
+         android:layout_height="@dimen/size_2dp"/>
+     <include
+         app:layout_constraintTop_toBottomOf="@+id/divider1"
          app:layout_constraintStart_toStartOf="parent"
          android:layout_height="wrap_content"
          android:layout_width="match_parent"

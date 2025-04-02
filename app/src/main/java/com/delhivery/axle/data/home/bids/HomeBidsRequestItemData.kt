@@ -143,6 +143,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("requirement_duration")val requirementDuration:Int?=null,
   @SerializedName("sub_request_type")val subRequestType:String?=null,
   @SerializedName("nep_states")val nepState:String?=null,
+  @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
+  @SerializedName("intracity_lob")val intracityLob:String?=null,
+
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -162,6 +165,34 @@ data class HomeBidsRequestItemData(
     "₹${targetPrice!!.toInt()}"
   } else {
     "₹0"
+  }
+
+  fun formattedFmsTicketId() = if (fmsTicketId!=null) {
+    "Ticket ID: ${fmsTicketId}"
+  } else {
+    null
+  }
+
+  fun formattedVehicleLob() = if (intracityLob!=null) {
+    when (intracityLob) {
+        "Pickup", "B2B FM" -> {
+          "First-mile pickups"
+        }
+        "Delivery" -> {
+          "Last-mile delivery"
+        }
+        "Returns" -> {
+          "Seller returns"
+        }
+        "Carting" -> {
+          "Carting"
+        }
+        else -> {
+          null
+        }
+    }
+  } else {
+    null
   }
 
   /**
@@ -958,6 +989,18 @@ data class HomeBidsRequestItemData(
   }
 
   fun isNEPrequired() = if (nepState != null) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isLobVisibility(isDialog:Boolean) = if (formattedVehicleLob()!=null && isDialog) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isTicketVisibility(isDialog:Boolean) = if (fmsTicketId!=null && isDialog) {
     View.VISIBLE
   } else {
     View.GONE

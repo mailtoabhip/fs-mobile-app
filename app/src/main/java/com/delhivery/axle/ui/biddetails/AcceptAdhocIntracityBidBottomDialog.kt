@@ -61,7 +61,9 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         binding = DialogBottomAcceptIntracityAdhocBidBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.request = transaction
+        binding.dialog = true
         binding.layoutTransaction.request = transaction
+        binding.layoutTransaction.dialog = true
         window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window!!.attributes.windowAnimations = R.style.DialogAnimation
