@@ -169,14 +169,14 @@ class HomePlacementsViewModel @Inject constructor(
         private fun segregateLoadType(load:HomePlacementsItemData){
 
                 if(load.status=="Expected" || load.status=="Marked-in"){
-                        if((load.vehicleNumber==null || load.driverName==null|| load.driverPhone==null )&& load.loadType=="ftlRegular"){
+                        if((load.vehicleNumber==null || load.driverName==null|| load.driverPhone==null )){
                                 missingDetailsExpectedPlacementList.add(load)
                         }
                                 expectedPlacementList.add(load)
 
                 }
                 if (load.status=="Delayed"){
-                        if((load.vehicleNumber==null || load.driverName==null|| load.driverPhone==null)&& load.loadType=="ftlRegular"){
+                        if((load.vehicleNumber==null || load.driverName==null|| load.driverPhone==null)){
                                 missingDetailsDelayedPlacementList.add(load)
                         }
                                 delayedPlacementList.add(load)
