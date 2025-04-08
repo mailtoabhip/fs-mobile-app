@@ -31,6 +31,17 @@ import com.delhivery.axle.ui.placementdetails.FilterDurationAdapter
 import com.delhivery.axle.ui.placementdetails.FilterItemOnClickListener
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DELAYED_TAB
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DETAIL_MISSING
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_TAB
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
+import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -122,7 +133,24 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
         when (actionId) {
             HomePlacementRequested_ViewDetails -> {
                 val data = item.data as HomePlacementsItemData
-
+                val missingDetails = data.vehicleNumber==null || data.driverName==null || data.driverPhone==null
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO,
+                                PROPERTY_DEMAND_TYPE,
+                                PROPERTY_EXPECTED_TIME,
+                                PROPERTY_MISSING_FLAG
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:"",
+                                data.loadType?:"",
+                                data.reportingTime?:"",
+                                missingDetails.toString()
+                        )
+                )
                 context?.let {
                     userPrefs.setPreviousScreen(this.javaClass.name)
                     startActivity(placementDetailsIntent(data, it))
@@ -130,14 +158,48 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
             }
             HomePlacementsFilterDelay ->{
                 placementType = PlacementTypes.Delayed.name
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_PLACEMENT_DELAYED_TAB,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:""
+                        )
+                )
                 refreshData()
             }
             HomePlacementsFilterExpected ->{
+
                 placementType = PlacementTypes.Expected.name
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_PLACEMENT_EXPECTED_TAB,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:""
+                        )
+                )
                 refreshData()
             }
             HomePlacementsFilterMissing ->{
                 placementType = PlacementTypes.MissingDetails.name
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_PLACEMENT_DETAIL_MISSING,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:""
+                        )
+                )
                 refreshData()
             }
             HomePlacementsTimeoutItemAction ->{
@@ -173,6 +235,17 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_filter -> {
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_PLACEMENT_FILTER,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:""
+                        )
+                )
                 showDurationFilter()
                 true
             }

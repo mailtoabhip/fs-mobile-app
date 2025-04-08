@@ -29,18 +29,35 @@ import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.AutoCompleteUtils
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_ADD_DETAILS_ATTEMPTED
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_ADD_DETAILS_SUCCESS
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EDIT_DETAILS_ATTEMPTED
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EDIT_DETAILS_SUCCESS
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NAME
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NUMBER
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_SUBMIT
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_VEHICLE_NUMBER
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NAME
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NUMBER
+import com.delhivery.axle.utils.PROPERTY_DRIVER_PHONE
+import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
+import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_TIMESTAMP
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PROPERTY_VEHICLE_NO
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_NUMBER
 import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PAGE
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getSerializableExtra
+import com.delhivery.axle.utils.prefs.UserPrefs
+import java.time.LocalDateTime
+import java.util.Date
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -52,6 +69,8 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
     private var isValidDriverName = false
     @Inject
     lateinit var autoCompleteUtils: AutoCompleteUtils
+    @Inject
+    lateinit var userPrefs: UserPrefs
     override fun getViewModelClass()= PlacementDetailsViewModel::class.java
 
     override fun layoutId(): Int= R.layout.activity_placements_details
@@ -172,6 +191,7 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
         viewModel.updateVehicleDetails.observe(this, Observer {
          if(it){
              uiUtils.hideProgress()
+             pushMoengageEvent(true)
              showSuccessEditDialog()
          }else{
              uiUtils.hideProgress()
@@ -323,6 +343,7 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
             }
             try {
                 uiUtils.showProgress()
+                pushMoengageEvent(false)
                 val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.editTextVehicleNumber.text.toString(), binding.editTextDriverName.text.toString(), binding.editTextDriverNumber.text.toString(), contractType, vehicleType, viewModel.homePlacementsItemData.vehicleType!!, viewModel.homePlacementsItemData.transporterSupplierId!!, viewModel.homePlacementsItemData.contractId, viewModel.homePlacementsItemData.transporterId!!, action, viewModel.homePlacementsItemData.reportingTime!!, viewModel.homePlacementsItemData.originCenterCode!!, viewModel.homePlacementsItemData.vehicleNumber, viewModel.homePlacementsItemData.vehicleId, viewModel.homePlacementsItemData.driverName, viewModel.homePlacementsItemData.driverPhone,viewModel.homePlacementsItemData.transactionId)
                 viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
             }catch (e:Exception){
@@ -336,6 +357,44 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
     }
     }
 
+    private fun pushMoengageEvent(success:Boolean){
+        var eventName = ""
+        if(viewModel.homePlacementsItemData.vehicleNumber !=null) {
+            eventName = if(success){
+                EVENT_HOME_PLACEMENT_EDIT_DETAILS_SUCCESS
+            }else{
+                EVENT_HOME_PLACEMENT_EDIT_DETAILS_ATTEMPTED
+            }
+        }else{
+            eventName = if(success){
+                EVENT_HOME_PLACEMENT_ADD_DETAILS_SUCCESS
+            }else{
+                EVENT_HOME_PLACEMENT_ADD_DETAILS_ATTEMPTED
+            }
+        }
+            analyticsUtil.moEngageTrackEvent(
+                    eventName,
+                    mutableListOf(
+                            PROPERTY_USER_ID,
+                            PROPERTY_PHONE_NO,
+                            PROPERTY_DEMAND_TYPE,
+                            PROPERTY_TIMESTAMP,
+                            PROPERTY_VEHICLE_NO,
+                            PROPERTY_DRIVER_PHONE,
+                            PROPERTY_DRIVER_NAME
+                    ),
+                    mutableListOf(
+                            userPrefs.userId(),
+                            userPrefs.phoneNumber?:"",
+                            viewModel.homePlacementsItemData.loadType?:"",
+                            DateUtils.presentDay()+" "+DateUtils.presentTime(),
+                            binding.editTextVehicleNumber.text.toString(),
+                            binding.editTextDriverNumber.text.toString(),
+                            binding.editTextDriverName.text.toString(),
+                    )
+            )
+
+    }
     private fun navigateToMap(){
         try {
             val gmmIntentUri = Uri.parse("geo:0,0?q=${viewModel.homePlacementsItemData.originCenterLat},${viewModel.homePlacementsItemData.originCenterLong}"+"(" + viewModel.homePlacementsItemData.originCenterName+ ")")

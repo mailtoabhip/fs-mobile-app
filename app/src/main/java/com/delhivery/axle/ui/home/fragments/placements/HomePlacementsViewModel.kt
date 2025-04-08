@@ -19,6 +19,7 @@ class HomePlacementsViewModel @Inject constructor(
         private val tpsRepository: TPSRepository
 ) : BaseViewModel(){
 
+
         var userLoadsData =
         MutableLiveData<List<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
         var userLoadsDataFetch =

@@ -27,6 +27,7 @@ import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
@@ -664,19 +665,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         1 ->
           if (count == 1) {
             userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
-            userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
+            userPrefs.currentNavigationTab = HomePlacementsFragment::class.java.name
             userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_MY_BIDS,
+                    EVENT_HOME_PLACEMENT_TAB,
               mutableListOf(
-                PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
-                PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT
+                PROPERTY_USER_ID,
+                PROPERTY_PHONE_NO
               ),
               mutableListOf(
-                userPrefs.totalBidCount,
-                userPrefs.activeBidCount,
-                userPrefs.confirmedBidCount,
-                userPrefs.lostBidCount
+                userPrefs.userId(),
+                userPrefs.phoneNumber?:""
               )
             )
 
@@ -684,22 +683,42 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         2 ->
           if (count == 1) {
             userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
-            userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+            userPrefs.currentNavigationTab = HomeBidsFragment::class.java.name
             userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
-
             analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_PODS
+                    EVENT_NAVIGATION_MY_BIDS,
+                    mutableListOf(
+                            PROPERTY_TOTAL_BIDS_COUNT, PROPERTY_ACTIVE_BIDS_COUNT,
+                            PROPERTY_CONFIRMED_BIDS_COUNT, PROPERTY_LOST_BIDS_COUNT
+                    ),
+                    mutableListOf(
+                            userPrefs.totalBidCount,
+                            userPrefs.activeBidCount,
+                            userPrefs.confirmedBidCount,
+                            userPrefs.lostBidCount
+                    )
             )
           }
         3 ->
           if (count == 1) {
             userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
+            userPrefs.currentNavigationTab = HomePodsFragment::class.java.name
+            userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
+
+            analyticsUtil.moEngageTrackEvent(
+                    EVENT_NAVIGATION_PODS
+            )
+          }
+
+        4 ->
+          if (count == 1) {
+            userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
             userPrefs.currentNavigationTab = HomeTripsFragment::class.java.name
             userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
-              EVENT_NAVIGATION_MY_TRIPS,
-              mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
-              mutableListOf(userPrefs.awaitingArrivalCount)
+                    EVENT_NAVIGATION_MY_TRIPS,
+                    mutableListOf(PROPERTY_AWAITING_ARRIVAL_COUNT),
+                    mutableListOf(userPrefs.awaitingArrivalCount)
             )
           }
       }
