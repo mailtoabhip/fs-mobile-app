@@ -2,6 +2,12 @@ package com.delhivery.axle.data.home.placements
 
 import android.view.View
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntercityAdhocRequestItem
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntercityContractsRequestItem
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntracityAdhocRequestItem
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntracityContractsRequestItem
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
@@ -82,6 +88,14 @@ data class HomePlacementsItemData(
 
     fun driverName():String? = driverName?.let { StringUtils.capitalize(driverName)}
 
+    fun loadType():String? = loadType?.let {when(loadType){
+        LoadTypes.ftlAdhoc.name->  "FTL Adhoc"
+        LoadTypes.ftlRegular.name->  "FTL Contract"
+        LoadTypes.intracityRegular.name->  "Intracity Contract"
+        LoadTypes.intracityAdhoc.name->  "Intracity Adhoc"
+
+        else -> {null}
+    } }
 }
 
 

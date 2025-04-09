@@ -134,6 +134,7 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
             isValidVehicleNumber = false
             enableSubmit()
         }
+
         viewModel.homePlacementsItemData.vehicleNumber?.let {
             isValidVehicleNumber = true
             binding.editTextVehicleNumber.setText(it)
@@ -181,7 +182,12 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
                 }
             }
         }
-
+        if (viewModel.homePlacementsItemData.status=="Marked-in"){
+            binding.editTextVehicleNumber.isEnabled = false
+            binding.editTextDriverName.isEnabled = false
+            binding.editTextDriverNumber.isEnabled = false
+            disableSubmitButton()
+        }
         viewModel.addressLiveData.observe(this, Observer {
             binding.intracityAdhoc.originCenterAddress.text = it.propertyAddressDetails?.address
             binding.intracityContract.originCenterAddress.text = it.propertyAddressDetails?.address

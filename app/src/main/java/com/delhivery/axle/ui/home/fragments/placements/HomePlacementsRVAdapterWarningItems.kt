@@ -10,7 +10,7 @@ import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsWarningItem
 
 val HomePlacementsWarningItem_NoLoads = HomePlacementsWarningItem(
     HomePlacementsWarningItemData(
-        "No Contracts found",
+        "No Placement found",
         " ",
         "REFRESH", HomePlacementsWarningAction_NoLoads
     )
