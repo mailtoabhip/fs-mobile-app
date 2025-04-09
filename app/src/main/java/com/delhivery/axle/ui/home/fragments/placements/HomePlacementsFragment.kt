@@ -36,10 +36,19 @@ import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DETAIL_MISSING
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_TAB
+import com.delhivery.axle.utils.EVENT_HOME_TOTAL_PLACEMENT
+import com.delhivery.axle.utils.PROPERTY_DELAYED_TOTAL_COUNT
 import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
+import com.delhivery.axle.utils.PROPERTY_EXPECTED_TOTAL_COUNT
+import com.delhivery.axle.utils.PROPERTY_FTL_ADHOC_COUNT
+import com.delhivery.axle.utils.PROPERTY_FTL_CONTRACT_COUNT
+import com.delhivery.axle.utils.PROPERTY_INTRACITY_ADHOC_COUNT
+import com.delhivery.axle.utils.PROPERTY_INTRACITY_CONTRACT_COUNT
 import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
+import com.delhivery.axle.utils.PROPERTY_MISSING_TOTAL_COUNT
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -104,6 +113,54 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
+        })
+        viewModel.missingDataLiveData.reobserve(viewLifecycleOwner, Observer {
+            it?.let {
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO,
+                                PROPERTY_FTL_ADHOC_COUNT,
+                                PROPERTY_FTL_CONTRACT_COUNT,
+                                PROPERTY_INTRACITY_ADHOC_COUNT,
+                                PROPERTY_INTRACITY_CONTRACT_COUNT,
+                                PROPERTY_MISSING_TOTAL_COUNT
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:"",
+                                it.first.first.toString(),
+                                it.first.second.toString(),
+                                it.first.third.toString(),
+                                it.first.fourth.toString(),
+                                it.second.toString()
+
+                        )
+                )
+            }
+        })
+        viewModel.totalPlacementLiveData.reobserve(viewLifecycleOwner, Observer {
+            it?.let {
+                analyticsUtil.moEngageTrackEvent(
+                        EVENT_HOME_TOTAL_PLACEMENT,
+                        mutableListOf(
+                                PROPERTY_USER_ID,
+                                PROPERTY_PHONE_NO,
+                                PROPERTY_DELAYED_TOTAL_COUNT,
+                                PROPERTY_MISSING_TOTAL_COUNT,
+                                PROPERTY_EXPECTED_TOTAL_COUNT
+                        ),
+                        mutableListOf(
+                                userPrefs.userId(),
+                                userPrefs.phoneNumber?:"",
+                               it.first.toString(),
+                                it.second.toString(),
+                                it.third.toString()
+
+                        )
+                )
+            }
         })
         viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items -> adapter.operation(_items) }

@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.home.fragments.placements
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.TPSRepository
+import com.delhivery.axle.data.Quadruple
 import com.delhivery.axle.data.home.placements.HomePlacementNoDelayItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsDurationItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterItemData
@@ -28,7 +29,8 @@ class HomePlacementsViewModel @Inject constructor(
         /* data loading live data */
         var dataLoadingLiveData = MutableLiveData<Boolean>()
 
-
+        var missingDataLiveData = MutableLiveData<Pair<Quadruple<Int,Int,Int,Int>,Int>>()
+        var totalPlacementLiveData = MutableLiveData<Triple<Int,Int,Int>>()
 
         private var expectedPlacementList = ArrayList<HomePlacementsItemData>()
         private var delayedPlacementList = ArrayList<HomePlacementsItemData>()
@@ -76,7 +78,37 @@ class HomePlacementsViewModel @Inject constructor(
                         loads.loadType= LoadTypes.intracityRegular.name
                         segregateLoadType(loads)
                 }
+                var ftlAdhocMissingCount =0
+                var ftlContractMissingCount =0
+                var intracityAdhocMissingCount =0
+                var intracityContractMissingCount =0
+                for(load in missingDetailsExpectedPlacementList){
+                        when(load.loadType){
+                                LoadTypes.ftlAdhoc.name->  {
+                                        ftlAdhocMissingCount++ }
+                                LoadTypes.ftlRegular.name-> {
+                                        ftlContractMissingCount++ }
+                                LoadTypes.intracityRegular.name->  {
+                                        intracityContractMissingCount++ }
+                                LoadTypes.intracityAdhoc.name->  {
+                                        intracityAdhocMissingCount++ }
 
+                        }
+                }
+                for (load in missingDetailsDelayedPlacementList){
+                        when(load.loadType){
+                                LoadTypes.ftlAdhoc.name->
+                                        ftlAdhocMissingCount++
+                                LoadTypes.ftlRegular.name->
+                                        ftlContractMissingCount++
+                                LoadTypes.intracityRegular.name->
+                                        intracityContractMissingCount++
+                                LoadTypes.intracityAdhoc.name->
+                                        intracityAdhocMissingCount++
+                        }
+                }
+                missingDataLiveData.postValue(Pair(Quadruple(ftlAdhocMissingCount,ftlContractMissingCount,intracityAdhocMissingCount,intracityContractMissingCount),missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size))
+                totalPlacementLiveData.postValue(Triple(delayedPlacementList.size,missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size,expectedPlacementList.size))
                 mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         /* remove progress item */
                         add( Pair(HomePlacementsProgressItem(), DataRVAdapterOperationType.Remove))
@@ -111,8 +143,10 @@ class HomePlacementsViewModel @Inject constructor(
                             }
                             PlacementTypes.MissingDetails.name -> {
                                     add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Details Missing")), DataRVAdapterOperationType.Add))
-                                    for(load in missingDetailsExpectedPlacementList)
+
+                                    for(load in missingDetailsExpectedPlacementList){
                                             segregateBasedOnTimeInterval(load)
+                                    }
                                     add(Pair(HomePlacementsDurationItem(
                                             HomePlacementsDurationItemData("Delayed")
                                     ), DataRVAdapterOperationType.Add))
@@ -121,12 +155,17 @@ class HomePlacementsViewModel @Inject constructor(
                                                     HomePlacementNoDelayItemData("Whohoo! No delays in placements!","No_Delay")
                                             ), DataRVAdapterOperationType.AddUpdate))
                                     }
+
                                     for (load in missingDetailsDelayedPlacementList){
                                             when(load.loadType){
-                                                    LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                                    LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                                    LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                                    LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
+                                                    LoadTypes.ftlAdhoc.name->  {
+                                                            add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))}
+                                                    LoadTypes.ftlRegular.name-> {
+                                                            add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))}
+                                                    LoadTypes.intracityRegular.name->  {
+                                                            add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))}
+                                                    LoadTypes.intracityAdhoc.name->  {
+                                                            add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))}
 
                                             }
                                     }

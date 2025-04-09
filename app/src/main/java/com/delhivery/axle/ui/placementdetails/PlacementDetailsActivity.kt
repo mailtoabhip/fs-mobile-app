@@ -194,6 +194,7 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
 
         })
 
+
         viewModel.updateVehicleDetails.observe(this, Observer {
          if(it){
              uiUtils.hideProgress()
@@ -387,7 +388,8 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
                             PROPERTY_TIMESTAMP,
                             PROPERTY_VEHICLE_NO,
                             PROPERTY_DRIVER_PHONE,
-                            PROPERTY_DRIVER_NAME
+                            PROPERTY_DRIVER_NAME,
+                            PROPERTY_EXPECTED_TIME
                     ),
                     mutableListOf(
                             userPrefs.userId(),
@@ -397,6 +399,7 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
                             binding.editTextVehicleNumber.text.toString(),
                             binding.editTextDriverNumber.text.toString(),
                             binding.editTextDriverName.text.toString(),
+                            viewModel.homePlacementsItemData.reportingTime.toString()
                     )
             )
 

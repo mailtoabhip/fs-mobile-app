@@ -269,6 +269,15 @@ const val PROPERTY_ERROR_MESSAGE = "error_message"
 const val PROPERTY_OFFER_ID = "offer_id"
 const val PROPERTY_OFFER_SOURCE = "source"
 const val PROPERTY_SP_PHONE_NUMBER = "sp_phone_number"
+const val PROPERTY_FTL_ADHOC_COUNT = "ftlAdhocMissingCount"
+const val PROPERTY_FTL_CONTRACT_COUNT = "ftlContractMissingCount"
+const val PROPERTY_INTRACITY_ADHOC_COUNT = "intracityAdhocMissingCount"
+const val PROPERTY_INTRACITY_CONTRACT_COUNT = "intracityContractMissingCount"
+const val PROPERTY_MISSING_TOTAL_COUNT = "missing_count"
+const val PROPERTY_DELAYED_TOTAL_COUNT = "delayed_count"
+const val PROPERTY_EXPECTED_TOTAL_COUNT = "expected_count"
+
+
 
 
 
@@ -381,13 +390,8 @@ const val EVENT_HOME_PLACEMENT_EDIT_DETAILS_ATTEMPTED= "edit_details_attempted"
 const val EVENT_HOME_PLACEMENT_ADD_DETAILS_SUCCESS= "add_details_success"
 const val EVENT_HOME_PLACEMENT_EDIT_DETAILS_SUCCESS= "edit_details_success"
 const val EVENT_HOME_PLACEMENT_FILTER= "placement_filter"
-
-
-
-
-
-
-
+const val EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING= "missing_details_listing"
+const val EVENT_HOME_TOTAL_PLACEMENT= "total_placements"
 
 
 
