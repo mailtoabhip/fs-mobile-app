@@ -188,6 +188,7 @@ const val EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION = "recommendation_sms_open"
 const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
 
 
+
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
 const val PROPERTY_ORIGIN = "origin"
 const val PROPERTY_DESTINATION = "destination"
@@ -268,6 +269,16 @@ const val PROPERTY_ERROR_MESSAGE = "error_message"
 const val PROPERTY_OFFER_ID = "offer_id"
 const val PROPERTY_OFFER_SOURCE = "source"
 const val PROPERTY_SP_PHONE_NUMBER = "sp_phone_number"
+const val PROPERTY_FTL_ADHOC_COUNT = "ftlAdhocMissingCount"
+const val PROPERTY_FTL_CONTRACT_COUNT = "ftlContractMissingCount"
+const val PROPERTY_INTRACITY_ADHOC_COUNT = "intracityAdhocMissingCount"
+const val PROPERTY_INTRACITY_CONTRACT_COUNT = "intracityContractMissingCount"
+const val PROPERTY_MISSING_TOTAL_COUNT = "missing_count"
+const val PROPERTY_DELAYED_TOTAL_COUNT = "delayed_count"
+const val PROPERTY_EXPECTED_TOTAL_COUNT = "expected_count"
+
+
+
 
 
 
@@ -369,8 +380,18 @@ const val EVENT_LOAD_INTRACITY_VEHICLE_NUMBER = "load_intra_VNum"
 const val EVENT_LOAD_INTRACITY_DRIVER_NAME = "load_intra_DrName"
 const val EVENT_LOAD_INTRACITY_DRIVER_NUMBER = "load_intra_DrNum"
 const val EVENT_LOAD_INTRACITY_SUBMIT= "load_intra_submit"
-
-
+const val EVENT_HOME_PLACEMENT_TAB= "placement_tab_landing"
+const val EVENT_HOME_PLACEMENT_DELAYED_TAB= "delayed_tab"
+const val EVENT_HOME_PLACEMENT_DETAIL_MISSING= "details_missing"
+const val EVENT_HOME_PLACEMENT_EXPECTED_TAB= "expected_tab"
+const val EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED= "demand_card_click"
+const val EVENT_HOME_PLACEMENT_ADD_DETAILS_ATTEMPTED= "add_details_attempted"
+const val EVENT_HOME_PLACEMENT_EDIT_DETAILS_ATTEMPTED= "edit_details_attempted"
+const val EVENT_HOME_PLACEMENT_ADD_DETAILS_SUCCESS= "add_details_success"
+const val EVENT_HOME_PLACEMENT_EDIT_DETAILS_SUCCESS= "edit_details_success"
+const val EVENT_HOME_PLACEMENT_FILTER= "placement_filter"
+const val EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING= "missing_details_listing"
+const val EVENT_HOME_TOTAL_PLACEMENT= "total_placements"
 
 
 
@@ -403,8 +424,11 @@ const val PROPERTY_VEHICLE_TYPE = "vehicle_type"
 const val PROPERTY_DRIVER_NAME = "driver_name"
 const val PROPERTY_DRIVER_NUMBER = "driver_number"
 const val PROPERTY_VEHICLE_NUMBER = "vehicle_number"
-
-
+const val PROPERTY_MISSING_FLAG = "missing_details"
+const val PROPERTY_EXPECTED_TIME = "expected_time"
+const val PROPERTY_VEHICLE_NO = "vehicle_no"
+const val PROPERTY_DRIVER_PHONE = "driver_phone"
+const val PROPERTY_TIMESTAMP = "timestamp"
 
 
 
