@@ -64,6 +64,7 @@
         android:id="@+id/editVehicleDetail"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="@{request.editIconVisibility()}"
         android:src="@drawable/edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
