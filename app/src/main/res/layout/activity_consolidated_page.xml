@@ -15,8 +15,9 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="@color/grey_bg"
         android:orientation="vertical"
+
         >
 
         <androidx.appcompat.widget.Toolbar
@@ -56,6 +57,7 @@
                         android:layout_margin="@dimen/size_4dp"
                         android:dropDownSelector="@color/colorAccent"
                         android:gravity="top"
+                        android:background="@color/white"
                         android:spinnerMode="dialog"
                         android:textColor="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,29 +67,68 @@
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
+                <View
+                    android:layout_width="match_parent"
+                    app:layout_constraintTop_toBottomOf="@id/id1"
+                    android:background="@color/grey_bg"
+                    android:id="@+id/div3"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:layout_marginEnd="@dimen/size_8dp"
+                    android:layout_height="@dimen/size_12dp"/>
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    app:layout_constraintBottom_toTopOf="@+id/refresh_layout"
-                    app:layout_constraintTop_toBottomOf="@id/id1">
+                    app:layout_constraintTop_toBottomOf="@+id/div3"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/size_6dp"
+                    android:padding="@dimen/size_8dp"
+                    android:background="@color/white"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:layout_marginEnd="@dimen/size_8dp"
+                    app:cardElevation="@dimen/size_2dp"
+                    android:id="@+id/requestStatementLayout"
+                    >
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_request_statement"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/size_4dp"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:layout_marginEnd="@dimen/size_4dp"
+                        android:layout_marginBottom="@dimen/size_4dp"
                         android:dropDownSelector="@color/colorAccent"
                         android:gravity="bottom"
-                        android:textSize="@dimen/text_14sp"
+                        android:padding="@dimen/size_8dp"
                         android:spinnerMode="dialog"
                         android:text="Request Statement"
                         android:textColor="@color/status_active"
-                        />
+                        android:textSize="@dimen/text_14sp" />
+                </androidx.cardview.widget.CardView>
+<!--                <androidx.appcompat.widget.LinearLayoutCompat-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="start"-->
+<!--                    app:layout_constraintBottom_toTopOf="@+id/refresh_layout"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/id1">-->
 
-                </androidx.appcompat.widget.LinearLayoutCompat>
+<!--                    <androidx.appcompat.widget.AppCompatTextView-->
+<!--                        android:id="@+id/text_request_statement"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_margin="@dimen/size_4dp"-->
+<!--                        android:dropDownSelector="@color/colorAccent"-->
+<!--                        android:gravity="bottom"-->
+<!--                        android:textSize="@dimen/text_14sp"-->
+<!--                        android:spinnerMode="dialog"-->
+<!--                        android:text="Request Statement"-->
+<!--                        android:textColor="@color/status_active"-->
+<!--                        />-->
+
+<!--                </androidx.appcompat.widget.LinearLayoutCompat>-->
 
 
 
@@ -95,16 +136,15 @@
                     android:id="@+id/refresh_layout"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/size_18dp"
+                    android:layout_marginTop="@dimen/size_12dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/id1"
+                    app:layout_constraintTop_toBottomOf="@+id/requestStatementLayout"
                     >
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_consolidated_ledger"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/size_6dp"
                         />
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

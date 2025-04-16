@@ -6,6 +6,7 @@ import android.text.TextPaint
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
@@ -53,8 +54,12 @@ data class ConsolidatedLedgerItemData(
         }
         i += 2
         val spannableTitle = SpannableString(title)
-        spannableTitle.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
-        spannableTitle.setSpan(ForegroundColorSpan(Color.rgb(3,79,112)), i, i+vehicleNumber!!.length, 0)
+        try {
+            spannableTitle.setSpan(UnderlineSpan(), i, i+vehicleNumber!!.length, 0)
+            spannableTitle.setSpan(ForegroundColorSpan(Color.rgb(3,79,112)), i, i+vehicleNumber!!.length, 0)
+        }catch (e:Exception){
+
+        }
         return spannableTitle
     }
 
@@ -114,18 +119,22 @@ data class ConsolidatedLedgerItemData(
     public fun isExpanded() = expanded
 
     private fun formatDate(date: String, isShort: Boolean = false): String{
-        var year = date.substring(0, 4)
-        var month = date.substring(5, 7).toInt()
-        var date = date.substring(8, 10)
+        try {
+            var year = date.substring(0, 4)
+            var month = date.substring(5, 7).toInt()
+            var date = date.substring(8, 10)
 
-        var monthString = DateFormatSymbols().months[month - 1]
+            var monthString = DateFormatSymbols().months[month - 1]
 
-        if(isShort){
-            monthString = monthString.substring(0,3)
+            if(isShort){
+                monthString = monthString.substring(0,3)
+            }
+
+            return "$date $monthString $year"
+        }catch (e:Exception){
+            Log.e("ConsolidatedLedgerItem",e.toString())
         }
-
-
-        return "$date $monthString $year"
+        return ""
     }
 
 
