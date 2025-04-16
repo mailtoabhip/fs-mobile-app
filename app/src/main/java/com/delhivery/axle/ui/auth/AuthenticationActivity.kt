@@ -217,6 +217,13 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     otpSubmitted(otp.toCharArray())
   }
 
+  fun maskPhoneNumber(phone: String): String {
+    return if (phone.length >= 6) {
+      "X".repeat(6) + phone.substring(6)
+    } else {
+      "X".repeat(phone.length)
+    }
+  }
   private fun performLogin() {
     var flag= true
     if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
@@ -272,7 +279,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             viewModel.phoneNo.let {
               if (it.length > 2) {
                 binding.textOtpSentToPhoneNo.text =
-                        getString(string.msg_otp_sent_to_phone_no, it)
+                        getString(string.msg_otp_sent_to_phone_no, maskPhoneNumber(it))
               }
             }
           }

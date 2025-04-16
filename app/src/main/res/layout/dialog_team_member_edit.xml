@@ -38,7 +38,7 @@
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
                 android:layout_marginStart="@dimen/size_6dp"
-               app:layout_constraintStart_toEndOf="@+id/btn_close"
+               app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 />
@@ -51,7 +51,7 @@
                 android:padding="@dimen/size_2dp"
                 app:srcCompat="@drawable/ic_close_black"
                 app:layout_constraintTop_toTopOf="parent"
-               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintEnd_toEndOf="parent"
                 />
 
             <View

@@ -27,7 +27,7 @@
   <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
   <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
   <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-  <string name="msg_otp_sent_to_phone_no">We have send the otp to your phone number ending with %1$s</string>
+  <string name="msg_otp_sent_to_phone_no">A 4-digit OTP has been sent to your number ending in %1$s</string>
   <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
   <string name="msg_select_route_welcome_user">Welcome\n%s</string>
   <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -204,7 +204,7 @@
   <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
   <string name="label_otp">Enter OTP</string>
   <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
-  <string name="label_phone_number">Phone number</string>
+  <string name="label_phone_number">Phone Number</string>
   <string name="label_isd_code">+91</string>
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
   <string name="label_inr">₹ %1$d</string>
@@ -425,7 +425,7 @@
 
   <!--Label (label_)-->
   <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
-  <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your mobile number for it’s verification</string>
+  <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your phone number for verification</string>
   <string name="label_resend_otp_done">Resend OTP</string>
   <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
   <string name="label_resend">Didn’t receive OTP?</string>

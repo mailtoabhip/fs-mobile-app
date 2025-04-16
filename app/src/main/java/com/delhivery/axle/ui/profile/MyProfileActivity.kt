@@ -94,10 +94,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             confirmLogout()
         }
 
-        binding.deleteLayout.setOnClickListener {
-            confirmDelete()
-        }
-
         viewModel.accountDeleteLiveData.observe(this) {
             if (it) {
                 analyticsUtil.moEngageTrackEvent(EVENT_USER_DELETE_ACCOUNT)
@@ -457,19 +453,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                     viewModel.logout()
                     navigationUtils.logout("Successfully logged out","fromUser")
                 }
-        )
-    }
-
-    private fun confirmDelete() {
-        dialogUtils.showBasicConfirmDialog(
-            R.string.title_dialog_delete,
-            R.string.msg_delete_account,
-            positiveAction = "Delete",
-            negativeAction = "BACK",
-            positiveClickListener = {
-                it.dismiss()
-                viewModel.deleteAccountRequest()
-            }
         )
     }
 
