@@ -297,7 +297,7 @@
   <string name="label_account_owner">Owner Name</string>
   <string name="label_transaction_status">Transaction Status</string>
   <string name="label_date_and_time">Time, Date</string>
-  <string name="label_mobile_number">Mobile Number</string>
+  <string name="label_mobile_number">Phone Number</string>
   <string name="label_vehicle_type">Vehicle Type</string>
   <string name="label_trip_detail">Trip Details</string>
   <string name="label_transaction_id">Transaction Id</string>

@@ -65,7 +65,7 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "My Money"
+        title = "My Earnings"
 
         val downloadIntent = intent?.getBooleanExtra(RandomKey , false)
         if(downloadIntent == true){

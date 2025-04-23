@@ -38,11 +38,10 @@
           android:textColor="@color/heading_black"
           android:textSize="@dimen/text_16sp"
           android:layout_marginStart="@dimen/size_6dp"
-          app:layout_constraintStart_toEndOf="@+id/btn_close"
+          app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintHorizontal_bias="0"
           />
-
       <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/btn_close"
           android:layout_width="wrap_content"
@@ -51,9 +50,8 @@
           android:padding="@dimen/size_2dp"
           app:srcCompat="@drawable/ic_close_black"
           app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
           />
-
       <View
           android:layout_width="match_parent"
           android:layout_marginTop="@dimen/size_12dp"
