@@ -41,7 +41,7 @@ data class HomePlacementsItemData(
     @SerializedName("distance") var distance:Float?=null,
     @SerializedName("duration") var duration:Float?=null,
     @SerializedName("transaction_id") var transactionId: String?,
-
+    @SerializedName("ticket_flexible_contract_id") var ticketFlexibleContractId: String?=null,
     var loadType:String?=null,
     var detailVisible:Boolean= false
 
@@ -73,6 +73,9 @@ data class HomePlacementsItemData(
 
     fun formattedConfirmedPrice()= "₹" + confirmedPrice?.let { StringUtils.formatAmount(it) }
 
+    fun confirmedPriceVisibility():Int {
+        return if(!isFRCAdhoc())View.VISIBLE else View.GONE
+    }
     fun distance() = "$distance KM - "
     fun duration() = "$duration Hr"
     fun detailsVisible(): Int {
@@ -96,6 +99,18 @@ data class HomePlacementsItemData(
 
         else -> {null}
     } }
+
+    fun isFRCAdhoc():Boolean{
+        if(loadType==LoadTypes.intracityAdhoc.name && ticketFlexibleContractId!=null)
+            return true
+        return false
+    }
+    fun adhocOrFrcLabel():String{
+        if(isFRCAdhoc()){
+            return "FRC Contract"
+        }
+        return "Intracity Adhoc"
+    }
 }
 
 
