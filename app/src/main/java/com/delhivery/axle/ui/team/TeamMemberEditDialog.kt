@@ -52,7 +52,7 @@ class TeamMembersEditDialog @Inject constructor(
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
         )
 
-        setCancelable(false)
+        setCancelable(true)
 
         /* dialog binding */
         binding = DialogTeamMemberEditBinding.inflate(layoutInflater)

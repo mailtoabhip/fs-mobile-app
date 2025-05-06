@@ -65,6 +65,24 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
                 binding.paymentTerms.visibility = View.VISIBLE
             }
         }
+
+        binding.deleteLayout.setOnClickListener {
+            confirmDelete()
+        }
+
+    }
+
+    private fun confirmDelete() {
+        dialogUtils.showBasicConfirmDialog(
+                R.string.title_dialog_delete,
+                R.string.msg_delete_account,
+                positiveAction = "Delete",
+                negativeAction = "BACK",
+                positiveClickListener = {
+                    it.dismiss()
+                    viewModel.deleteAccountRequest()
+                }
+        )
     }
 
 }
