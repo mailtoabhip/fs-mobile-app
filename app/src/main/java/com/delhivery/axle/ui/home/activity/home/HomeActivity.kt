@@ -141,7 +141,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           /* setup view pager */
           binding.viewpager.apply {
             offscreenPageLimit = HomeFragmentType.count()
-            processDeepLink()
+
             adapter = pagerAdapter
             /* update ui on page changed */
             onPageSelected { p ->
@@ -156,6 +156,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             }
             binding.toolbarTitle.text = title
             FirebaseInAppMessaging.getInstance().addClickListener(this@HomeActivity)
+            processDeepLink()
           }
           binding.viewpager.disableScroll(true)
 
@@ -243,6 +244,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         PAYMENT_SUMMARY_REDIRECT -> {
           startActivity(consolidatedPageIntent(this))
+        }
+        PLACEMENT_LIST -> {
+          fragmentAction(NavigateHomeFragmentAction(PlacementsFragment))
         }
         PHYSICAL_POD_PENDING_REDIRECT -> {
           userPrefs.dpLinkArg = "physicalPod"
@@ -818,6 +822,8 @@ private const val SHARE_RATE = "sharerate"
 private const val ADD_TRUCK_REDIRECT = "add_truck"
 private const val CONTRACT_LIST = "contractlst"
 private const val CONTRACT_DETAILS = "contractdtl"
+private const val PLACEMENT_LIST = "placementlist"
+
 
 
 
