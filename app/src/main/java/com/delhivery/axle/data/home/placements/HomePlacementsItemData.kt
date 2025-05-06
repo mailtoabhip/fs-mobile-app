@@ -71,6 +71,8 @@ data class HomePlacementsItemData(
 
     fun missingDriverDetails()= if ( driverName==null || driverPhone==null) View.GONE else View.VISIBLE
 
+    fun editIconVisibility()= if (status=="Marked-in") View.GONE else View.VISIBLE
+
     fun formattedConfirmedPrice()= "₹" + confirmedPrice?.let { StringUtils.formatAmount(it) }
 
     fun confirmedPriceVisibility():Int {
