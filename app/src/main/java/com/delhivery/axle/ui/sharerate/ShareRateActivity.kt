@@ -45,6 +45,8 @@ import com.delhivery.axle.ui.trucks.TruckSizeAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -107,8 +109,13 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
     var priceId:String? = null
     var priceSortKey:String? = null
 
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("ShareRateActivity_SetupTime")
+        activitySetupTrace?.start()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -336,6 +343,14 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         viewModel.delegationLiveData.observe(this, Observer {
             uploadImage(it.first, it.second)
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
    private fun setOriginDestinationTruck(){

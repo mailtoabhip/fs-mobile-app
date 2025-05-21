@@ -52,6 +52,8 @@ import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import javax.inject.Inject
 
@@ -67,7 +69,8 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     toolbarElevationLiveData = MutableLiveData()
     hasInlineProgress = true
   }
-
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
   companion object {
     /* singleton instance */
     val _instance: HomePodsFragment by lazy { HomePodsFragment() }
@@ -88,7 +91,8 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePodsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -161,6 +165,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     viewModel.dispatch = false
     refreshData()
   }
+
 
   private fun refreshData() {
     adapter.resetStaticData()
@@ -474,6 +479,10 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
         userPrefs.dpLinkArg = ""
         refreshData()
       }
+    }
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
     }
   }
 

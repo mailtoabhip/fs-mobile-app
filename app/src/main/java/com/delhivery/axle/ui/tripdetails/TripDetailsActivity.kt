@@ -61,6 +61,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import javax.inject.Inject
 
@@ -82,12 +84,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var userPrefs: UserPrefs
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   private val adapter: TripPaymentSummaryRVAdapter by lazy { TripPaymentSummaryRVAdapter(this) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("TripDetailsActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     try {
       require(
@@ -260,6 +265,15 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
     refreshData()
   }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
+
    fun callDriver(){
      compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
        .onBackground()

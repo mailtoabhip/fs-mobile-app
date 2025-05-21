@@ -20,6 +20,8 @@ import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_CREATE_FUELCARD
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -36,6 +38,9 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
 
   var isLoadingData = true
   var cardCreated = false
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+
   @Inject lateinit var userPrefs : UserPrefs
 
   private val adapter: ActiveTripsRVAdapter by lazy {
@@ -44,7 +49,8 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ActiveTripsActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     if (intent == null || !intent.hasExtra(ARGS_OPTIN_DATE)) {
       throw IllegalArgumentException("Required data $ARGS_OPTIN_DATE not found")
@@ -86,6 +92,14 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
     }
 
     refreshData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun refreshData() {

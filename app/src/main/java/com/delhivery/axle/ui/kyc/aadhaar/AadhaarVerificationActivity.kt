@@ -55,6 +55,8 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.lang.StringBuilder
 
 
@@ -75,6 +77,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
@@ -94,7 +98,8 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("AadhaarVerificationActivity_SetupTime")
+        activitySetupTrace?.start()
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
@@ -223,6 +228,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     private fun enableSubmit() {
         if(binding.editAadhaar.length()==14 && binding.aadhaarTermCondition.isChecked){
             viewModel.aadhaarPolicyAccepted = true

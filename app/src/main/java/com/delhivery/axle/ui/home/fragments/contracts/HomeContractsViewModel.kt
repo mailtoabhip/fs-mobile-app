@@ -29,6 +29,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import io.reactivex.Single
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
@@ -115,7 +117,9 @@ class HomeContractsViewModel@Inject constructor(
 
 
     dataLoadingLiveData.postValue(true)
-
+    val mainTrace = Firebase.performance.newTrace("fetch_contract_transactions")
+    val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_contract_transactions_parallel")
+    mainTrace.start()
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
         UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts)
       .flatMap  { _res ->
@@ -123,6 +127,7 @@ class HomeContractsViewModel@Inject constructor(
         offset = _res.offset
         hasMoreData = _res.hasNext
         allActiveFetched = _res.allActiveFetched?:false
+        parallelTrace.start()
         Single.zip(
           bidsRepository.bidsForLoads(_res.transactions,true).subscribeOn(Schedulers.io()),
           bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
@@ -134,6 +139,9 @@ class HomeContractsViewModel@Inject constructor(
       }
       .onBackground()
       .subscribe { _tRes, error ->
+        if(error != null) mainTrace.putAttribute("error_response_received", error.message.toString())
+        mainTrace.stop()
+        parallelTrace.stop()
         if (!error && _tRes != null) {
           mutableListOf<Pair<BaseHomeContractsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
             /* remove progress item */

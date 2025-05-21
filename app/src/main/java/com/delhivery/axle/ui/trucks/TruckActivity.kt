@@ -25,6 +25,8 @@ import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -43,6 +45,8 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
     @Inject lateinit var userPrefs: UserPrefs
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
     var capacityArr = mutableListOf<String>()
     var sourcedAs : String = ""
@@ -54,7 +58,8 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("TruckActivity_SetupTime")
+        activitySetupTrace?.start()
         /* get intent keys */
         viewModel.truckTypeIntent = intent.getStringExtra(TruckType) ?: ""
         viewModel.truckCapacityIntent = intent.getDoubleExtra(TruckCapacity,0.0) ?: 0.0
@@ -260,6 +265,13 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     private fun validateTruckNumber(number: String): Boolean{
         val pattern = Pattern.compile(
             "[a-zA-Z]{2}((([0-9]{1,2}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}\$|^[a-zA-Z]{3}[0-9]{4}"

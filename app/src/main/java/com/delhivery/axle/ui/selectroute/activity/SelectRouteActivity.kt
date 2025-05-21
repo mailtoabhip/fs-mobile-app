@@ -39,6 +39,8 @@ import com.delhivery.axle.ui.selectroute.fragments.routeslist.SelectRouteListFra
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -69,9 +71,13 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
 
   @Inject lateinit var userPrefs: UserPrefs
 
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("SelectRouteActivity_SetupTime")
+    activitySetupTrace?.start()
     addRouteOnLogin = intent?.extras?.getBoolean(SelectRouteWelcomeIntentExtra) ?: false
 
     originCityCode = intent?.extras?.getString(SelectRouteOriginCityExtra, "")
@@ -135,6 +141,14 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
     })
 
     viewModel.fetchUserRoutes()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   /**

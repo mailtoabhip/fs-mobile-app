@@ -23,6 +23,8 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
@@ -212,10 +214,14 @@ class BidDetailsViewModel @Inject constructor(
   }
 
   private fun fetchTripDetails() {
+    val parallelTrace = Firebase.performance.newTrace("trips_and_transaction_details_parallel")
+    parallelTrace.start()
     compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
+          if(error != null) parallelTrace.putAttribute("error_response_received", error.message.toString())
+          parallelTrace.stop()
           if (!error) {
             transactionBidLiveData.postValue(
                 BidDetailsUserBidState_ConfirmedBid(

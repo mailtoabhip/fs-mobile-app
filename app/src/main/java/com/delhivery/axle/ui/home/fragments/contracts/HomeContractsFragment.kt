@@ -36,6 +36,8 @@ import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBinding,HomeContractsViewModel>(),
@@ -56,7 +58,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
   var isflexible:Boolean? = null
   var includeFlexibleContract:Boolean? = null
   var pos = 0
-
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
 
 
   init {
@@ -83,7 +86,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeContractsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     demandType= if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else{""}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
@@ -133,6 +137,11 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       viewModel.fromNotification = false
       REFRESH_ON_BACK = false
     }
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
+
   }
 
   override fun onStop() {

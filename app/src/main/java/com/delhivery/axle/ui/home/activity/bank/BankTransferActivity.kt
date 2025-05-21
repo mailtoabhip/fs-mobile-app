@@ -16,6 +16,8 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -25,15 +27,19 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
 
   @Inject lateinit var userPrefs: UserPrefs
 
+
   override fun getViewModelClass() = BankTransferViewModel::class.java
 
   override fun layoutId() = R.layout.activity_bank_trasnfer
 
   override fun requireConnection() = true
 
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("BankTransferActivity_SetupTime")
+    activitySetupTrace?.start()
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Transfer to bank account"
@@ -74,6 +80,14 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
     binding.btnTransactionSummary.setOnClickListener { openTransactions() }
 
     viewModel.fetchWalletData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   override fun finish() {

@@ -8,6 +8,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityImageViewBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 
 /**
  * Created by saurabh
@@ -26,9 +28,13 @@ class ImageViewActivity : BaseActivity<ActivityImageViewBinding, ImageViewModel>
 
   override fun requireConnection() = true
 
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ImageViewActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     if (intent == null || !intent.hasExtra(ImageUrlIntentKey)) {
       throw IllegalArgumentException("Required data $ImageUrlIntentKey not found")
@@ -54,6 +60,14 @@ class ImageViewActivity : BaseActivity<ActivityImageViewBinding, ImageViewModel>
     })
 
     viewModel.fetchImage()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 }
 

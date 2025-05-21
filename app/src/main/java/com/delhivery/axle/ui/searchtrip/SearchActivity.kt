@@ -37,6 +37,8 @@ import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import javax.inject.Inject
 
@@ -58,7 +60,14 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
   private val adapter by lazy { SearchRVAdapter(this) }
 
   @Inject lateinit var awsUtils: AWSUtils
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchActivity_SetupTime")
+    activitySetupTrace?.start()
+  }
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -102,6 +111,14 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
     })
 
     adapter.resetStaticData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun searchTrips(data: SearchRequest? = null) {

@@ -40,6 +40,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
@@ -179,6 +181,9 @@ class HomeLoadsViewModel @Inject constructor(
         }
 
         dataLoadingLiveData.postValue(true)
+        val mainTrace = Firebase.performance.newTrace("fetch_recommended_transactions")
+        val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_recommended_transactions_parallel")
+        mainTrace.start()
         if(selectedFilter==DemandType.Intracity.type){
             compositeDisposable += transactionsRepository.fetchIntracityRecommTransactions(
                 offset,
@@ -327,6 +332,9 @@ class HomeLoadsViewModel @Inject constructor(
                 }
                 .onBackground()
                 .subscribe { _tRes, error ->
+                    if(error!=null) mainTrace.putAttribute("error_response_received",error.message.toString())
+                    parallelTrace.stop()
+                    mainTrace.stop()
                     if (!error && _tRes != null) {
                         mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                             /* remove progress item */

@@ -25,6 +25,8 @@ import com.delhivery.axle.databinding.DialogTeamMemberBottomOptionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.TeamMemberInterface
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.Serializable
 
 /**
@@ -41,7 +43,8 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
   }
 
   private var userCreate: Boolean = false
-
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun getViewModelClass() = TeamMembersViewModel::class.java
 
   override fun layoutId() = R.layout.activity_team_members
@@ -52,6 +55,8 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("TeamMembersActivity_SetupTime")
+    activitySetupTrace?.start()
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -150,6 +155,14 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
         binding.addTeamMemberButton.visibility = View.VISIBLE
       }
     })
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun refreshData() {

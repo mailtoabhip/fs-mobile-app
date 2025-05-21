@@ -16,6 +16,8 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBa
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -36,6 +38,8 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
   }
 
   var launch : Boolean =true
+   private var fragmentSetupTrace: Trace? = null
+   private var isFirstResume = true
 
   @Inject
   lateinit var userPrefs: UserPrefs
@@ -43,6 +47,11 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
   @Inject
   lateinit var navigationUtils:NavigationUtils
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("ShareRateFragment_SetupTime")
+    fragmentSetupTrace?.start()
+  }
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
@@ -74,6 +83,14 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
 
     refreshData()
   }
+
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
 
   override fun refreshData() {
     viewModel.count =0

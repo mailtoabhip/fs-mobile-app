@@ -26,6 +26,8 @@ import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripRVAdapter
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>() ,
@@ -44,6 +46,9 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
     var isLoadingData = true
 
     @Inject lateinit var userPrefs: UserPrefs
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+
 
     init {
         hasInlineProgress = true
@@ -53,7 +58,8 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchCity_SetupTime")
+        activitySetupTrace?.start()
         viewModel.cityType = intent.getStringExtra(CityType) ?: ""
         viewModel.fromDialog = intent.getBooleanExtra(FromDialog, false)
     }
@@ -117,6 +123,14 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
         }
 
         initObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     /**

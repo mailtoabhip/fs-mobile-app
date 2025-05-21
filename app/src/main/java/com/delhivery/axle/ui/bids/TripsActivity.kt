@@ -37,6 +37,8 @@ import com.delhivery.axle.data.home.trips.*
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.*
 import javax.inject.Inject
 
@@ -72,6 +74,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   @Inject lateinit var userPrefs :UserPrefs
   /* search menu item ref */
   private var searchItem: MenuItem? = null
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   /* rv adapter */
   private val adapter by lazy {
@@ -80,7 +84,8 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("TripsActivity_SetupTime")
+    activitySetupTrace?.start()
     try {
       require(
           !(intent == null || !intent.hasExtra(IntentExtraViewTypeKey))
@@ -422,6 +427,14 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
     }
 
     refreshData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   @SuppressLint("SetTextI18n")

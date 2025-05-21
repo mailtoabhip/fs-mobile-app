@@ -32,6 +32,8 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -135,7 +137,9 @@ class HomeBidsViewModel @Inject constructor(
         .joinToString(separator = ",") { it }
 
     dataLoadingLiveData.postValue(true)
-
+    val mainTrace = Firebase.performance.newTrace("fetch_bids_placed_by_supplier")
+    val parallelTrace = Firebase.performance.newTrace("fetch_bids_placed_and_lowest_bids_on_txns_parallel")
+    mainTrace.start()
     compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
       .flatMap { _res ->
         total = _res.first
@@ -145,6 +149,7 @@ class HomeBidsViewModel @Inject constructor(
         if (!paginate && _res.first == 0) {
           Single.error(NoBidsFoundException())
         } else {
+          parallelTrace.start()
           Single.zip(
             transactionsRepository.bulkTransactions(_res.second).subscribeOn(Schedulers.io()),
             bidsRepository.bulkLowestBidsForTransactions(_res.second).subscribeOn(Schedulers.io()),
@@ -157,6 +162,9 @@ class HomeBidsViewModel @Inject constructor(
       }
         .onBackground()
         .subscribe { _res, error ->
+          if(error != null) mainTrace.putAttribute("error_response_received",error.message.toString())
+          parallelTrace.stop()
+          mainTrace.stop()
           if (!error) {
 
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

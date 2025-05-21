@@ -57,6 +57,8 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
@@ -82,6 +84,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   var itemDeleted:Boolean = false
   var reviseInitiated:Boolean=false
   var selectedLoadFilter: String = ""
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -107,7 +111,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeLoadsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     demandType = userPrefs.demandType
 
     binding.refreshLayout.setOnRefreshListener {
@@ -466,6 +471,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       viewModel.routeUpdated = false
       viewModel.fromNotification = false
     }
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
+
   }
 
   override fun onStop() {

@@ -15,6 +15,8 @@ import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomeProfileViewModel>(),
@@ -40,12 +42,16 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
 
   override fun layoutId() = R.layout.fragment_home_profile
 
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
+
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourKYCDetailsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     binding.error = false
     binding.loading = false
     binding.executePendingBindings()
@@ -129,6 +135,14 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     }
 
     viewModel.fetchTripMeter()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun updateTripMeter(t: Map<Int, MonthlyEarning?>?) {

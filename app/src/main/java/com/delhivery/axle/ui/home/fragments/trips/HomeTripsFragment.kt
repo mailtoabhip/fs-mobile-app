@@ -30,6 +30,8 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.*
 import javax.inject.Inject
 
@@ -40,7 +42,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   var downloadID = 0.toLong()
 
   @Inject lateinit var userPrefs: UserPrefs
-
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
   override val title: CharSequence
     get() = _title
 
@@ -65,6 +68,8 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeTripsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     context?.let { ContextCompat.registerReceiver(it,onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),ContextCompat.RECEIVER_NOT_EXPORTED) }
     /**
      Track Event when trip_screen is created
@@ -194,6 +199,13 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     setText()
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
   /**
    * Progress observer
    */

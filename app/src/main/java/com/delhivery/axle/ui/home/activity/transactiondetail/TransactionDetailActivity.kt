@@ -32,6 +32,8 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoadi
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -47,9 +49,13 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
 
   override fun requireConnection() = true
 
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("TransactionDetailActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     if (intent == null || !intent.hasExtra(ARGS_TRANSACTION_DATA)) {
       throw IllegalArgumentException("Required data $ARGS_TRANSACTION_DATA not found")
@@ -79,6 +85,14 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
 
     viewModel.updateDetails()
   }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
 
   /**
    * Observes [TransactionState]

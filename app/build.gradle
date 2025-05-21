@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.firebase.firebase-perf'
 android {
   compileSdk 34
   signingConfigs {
@@ -38,18 +39,23 @@ android {
       dimension "vanilla"
       resValue "string", "app_name", "Dev Axle"
       resValue("bool", "FIREBASE_ACTIVATED", "false")
+      resValue("bool", "FIREBASE_PERFORMANCE_LOG", "true")
+
       resConfigs "en", "xxhdpi"
     }
     uat {
       dimension "vanilla"
       resValue "string", "app_name", "Stage Axle"
       resValue("bool", "FIREBASE_ACTIVATED", "false")
+      resValue("bool", "FIREBASE_PERFORMANCE_LOG", "true")
+
       resConfigs "en", "xxhdpi"
     }
     production {
       dimension "vanilla"
       resValue "string", "app_name", "Axle"
       resValue("bool", "FIREBASE_ACTIVATED", "true")
+      resValue("bool", "FIREBASE_PERFORMANCE_LOG", "false")
       signingConfig signingConfigs.release
     }
   }
@@ -185,6 +191,8 @@ dependencies {
     exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'
   }
   productionImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+
+  implementation "com.google.firebase:firebase-perf-ktx:20.5.1"
 
   // LeakCanary
 //  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'

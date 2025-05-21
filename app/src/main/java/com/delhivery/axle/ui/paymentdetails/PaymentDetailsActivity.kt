@@ -54,6 +54,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -90,10 +92,13 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     var nameDec =true
     var startTime: Long = 0
     var endTime: Long = 0
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("PaymentDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
         viewModel.accountHolderText.value= getString(R.string.hint_for_bank_validation)
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.visibility=View.VISIBLE
@@ -457,16 +462,14 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     }
 
-    /*override fun onBackPressed() {
-        super.onBackPressed()
-        if(userPrefs.retryVerification){
-            navigationUtils.navigate(MyProfileActivity::class.java, true)
-        }else {
-            val bundle = Bundle()
-            bundle.putInt(StepKey,3)
-            navigationUtils.navigateKyc(this,true,bundle)
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
         }
-    }*/
+    }
+
 
     fun enableSubmitButton(){
         Log.d("Enabke",accountName.toString()+accountNum.toString()+ifsc.toString()+docUpload.toString()+nameDec.toString())

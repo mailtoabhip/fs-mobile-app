@@ -38,6 +38,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import com.moengage.core.internal.USER_ATTRIBUTE_UNIQUE_ID
 import com.moengage.core.internal.USER_ATTRIBUTE_USER_MOBILE
 import io.reactivex.Observable
@@ -61,6 +63,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   /* dismiss timeout disposable */
   private var timeoutDisposable: Disposable? = null
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   @Inject lateinit var userPrefs: UserPrefs
 
@@ -71,6 +75,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("AuthenticationActivity_SetupTime")
+    activitySetupTrace?.start()
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -199,6 +205,14 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     if (notificationId.isNotEmpty()) {
       markNotificationRead()
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
     }
   }
 

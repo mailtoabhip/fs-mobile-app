@@ -21,6 +21,8 @@ import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -41,6 +43,8 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
     override fun requireConnection()= true
 
     var isLoadingData = true
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
     @Inject
     lateinit var userPrefs: UserPrefs
@@ -54,7 +58,8 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchOriginCityActivity_SetupTime")
+        activitySetupTrace?.start()
         viewModel.cityType = intent.getStringExtra(CityType) ?: ""
         viewModel.selectedData = intent.getStringExtra(SelectedData)?:""
     }
@@ -134,6 +139,13 @@ class SearchOriginCityActivity : BaseActivity<ActivitySearchOriginCityBinding, S
         viewModel.popularCitiesLiveData.observe(this, Observer {
             popularAdapter.operation(it)
         })
+    }
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
     override fun handleAction(
         actionId: String,

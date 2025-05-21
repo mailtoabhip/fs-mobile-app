@@ -79,6 +79,13 @@
             android:name="firebase_analytics_collection_enabled"
             android:value="@bool/FIREBASE_ACTIVATED" />
 
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="@bool/FIREBASE_PERFORMANCE_LOG" />
+        <meta-data
+            android:name="firebase_performance_collection_enabled"
+            android:value="@bool/FIREBASE_ACTIVATED" />
+
         <activity
             android:name=".ui.home.activity.home.HomeActivity"
             android:launchMode="singleTask"

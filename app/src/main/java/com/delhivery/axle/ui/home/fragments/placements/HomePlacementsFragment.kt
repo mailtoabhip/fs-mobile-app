@@ -52,6 +52,8 @@ import com.delhivery.axle.utils.PROPERTY_MISSING_TOTAL_COUNT
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 
@@ -66,6 +68,8 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
     @Inject lateinit var userPrefs: UserPrefs
     private var placementType: String = ""
     private var filterItem = ""
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
     private var currentItems = mutableListOf<BaseHomePlacementsRVAdapterItem<*>>()
     override val title: CharSequence
         get() = _title
@@ -94,7 +98,8 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
-
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsFragment_SetupTime")
+        fragmentSetupTrace?.start()
         placementType = PlacementTypes.Delayed.name
 
         binding.refreshLayout.setOnRefreshListener {
@@ -179,6 +184,10 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
         if (REFRESH_ON_BACK_PLACEMENT) {
             refreshData()
             REFRESH_ON_BACK_PLACEMENT = false
+        }
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
         }
     }
     private fun refreshData() {

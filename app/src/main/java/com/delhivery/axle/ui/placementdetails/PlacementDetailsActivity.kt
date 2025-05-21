@@ -56,6 +56,8 @@ import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.time.LocalDateTime
 import java.util.Date
 import java.util.regex.Pattern
@@ -67,6 +69,8 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
     private var isValidVehicleNumber = false
     private var isValidDriverNumber = false
     private var isValidDriverName = false
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     @Inject
     lateinit var autoCompleteUtils: AutoCompleteUtils
     @Inject
@@ -79,6 +83,8 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("PlacementDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
         try {
             require(
                 !(intent == null || !intent.hasExtra(HOME_PLACEMENT_ITEM_DATA))
@@ -283,6 +289,14 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     private fun  enableSubmit(){

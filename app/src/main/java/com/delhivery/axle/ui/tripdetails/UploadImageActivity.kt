@@ -35,6 +35,8 @@ import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -65,10 +67,13 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("UploadImageActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     try {
       require(
@@ -146,6 +151,15 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
         viewModel.uploadPod()
     }
   }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
+
 
   private fun captureImage(num: Int) {
     if (viewModel.imagePaths.isNullOrEmpty()) {
