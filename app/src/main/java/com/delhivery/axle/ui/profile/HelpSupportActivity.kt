@@ -3,12 +3,18 @@ package com.delhivery.axle.ui.profile
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.databinding.ActivityHelpSupportBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.home.FragmentName
+import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -83,6 +89,39 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
                     viewModel.deleteAccountRequest()
                 }
         )
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_call, menu)
+        return true
+    }
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.nav_call).isVisible = true
+        menu.findItem(R.id.nav_filter).isVisible = false
+        // menu.findItem(R.id.nav_filter).isVisible = false
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.nav_call -> {
+                //Capture Event
+                analyticsUtil.trackEvent(
+                    EVENT_CALL_VENDOR_DESK,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                    mutableListOf(
+                        userPrefs.userId(),
+                        this.applicationContext.javaClass.simpleName
+                    )
+                )
+                callHelpline()
+                true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
 }

@@ -329,7 +329,7 @@
   <string name="label_enter_number">Enter mobile number</string>
   <string name="label_fuel_faq">VIEW MORE DETAILS</string>
   <string name="label_pod_status">POD Status</string>
-  <string name="label_epod_pending">EPod Pending</string>
+  <string name="label_epod_pending">EPOD Pending</string>
   <string name="label_physical_pending">Physical POD Pending</string>
   <string name="label_pod_dispatched">Dispatched</string>
   <string name="label_pod_pending">POD Pending</string>
