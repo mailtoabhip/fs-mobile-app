@@ -61,7 +61,7 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourKYCDetailsFragment_SetupTime")
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourRewardsFragment_SetupTime")
     fragmentSetupTrace?.start()
     analyticsUtil.trackEvent(
             EVENT_VIEW_PAYOUT,

@@ -64,7 +64,7 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourKYCDetailsFragment_SetupTime")
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeWalletFragment_SetupTime")
     fragmentSetupTrace?.start()
     binding.active = viewModel.walletActivated
     binding.error = false

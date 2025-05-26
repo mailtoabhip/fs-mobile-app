@@ -121,6 +121,7 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".ui.auth.AuthenticationActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"

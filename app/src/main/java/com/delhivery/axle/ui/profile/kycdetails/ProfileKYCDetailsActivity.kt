@@ -34,7 +34,7 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activitySetupTrace = FirebasePerformance.getInstance().newTrace("ProfileDetailsActivity_SetupTime")
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("ProfileKYCDetailsActivity_SetupTime")
         activitySetupTrace?.start()
     }
     override fun onPostCreate(savedInstanceState: Bundle?) {

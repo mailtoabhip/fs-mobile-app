@@ -50,7 +50,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourKYCDetailsFragment_SetupTime")
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeProfileFragment_SetupTime")
     fragmentSetupTrace?.start()
     binding.error = false
     binding.loading = false

@@ -63,7 +63,7 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ManageRouteActivity_SetupTime")
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("UserRoutesActivity_SetupTime")
     activitySetupTrace?.start()
   }
 
