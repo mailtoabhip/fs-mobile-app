@@ -78,7 +78,7 @@
           android:id="@+id/status_image"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          app:srcCompat="@drawable/ic_black_money"
+          app:srcCompat="@drawable/icon_bids"
           android:paddingEnd="@dimen/size_4dp"
           android:paddingStart="@dimen/size_4dp"
           app:layout_constraintStart_toStartOf="parent"
@@ -1169,7 +1169,7 @@
               android:textColor="@color/button_text"
               android:textSize="@dimen/text_16sp"
               android:drawablePadding="@dimen/size_14dp"
-              android:drawableStart="@drawable/ic_place_bid"
+              android:drawableStart="@drawable/icon_bids_white"
               android:text="@string/place_your_bid"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 

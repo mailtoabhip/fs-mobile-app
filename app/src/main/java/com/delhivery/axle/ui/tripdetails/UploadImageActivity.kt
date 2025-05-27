@@ -88,7 +88,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    title = "Upload ePod"
+    title = "Upload ePOD"
 
     viewModel.delegationLiveData.observe(this, Observer {
       uploadImage(it.first, it.second)

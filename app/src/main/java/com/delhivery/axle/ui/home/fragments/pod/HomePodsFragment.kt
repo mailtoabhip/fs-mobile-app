@@ -58,7 +58,7 @@ import javax.inject.Inject
 class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewModel>(),
     HomePodRVAdapterInterface, ToolbarElevationChangeListener, AWSProgressInterface {
 
-  var _title: String = "Pods"
+  var _title: String = "PODs"
 
   override val title: CharSequence
     get() = _title
