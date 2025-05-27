@@ -9,6 +9,8 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityWalletOnboardingBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -17,16 +19,21 @@ import javax.inject.Inject
 class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, WalletOnboardingViewModel>() {
 
   @Inject lateinit var userPrefs : UserPrefs
-
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun getViewModelClass() = WalletOnboardingViewModel::class.java
 
   override fun layoutId() = R.layout.activity_wallet_onboarding
 
   override fun requireConnection() = true
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("WalletOnboardingActivity_SetupTime")
+    activitySetupTrace?.start()
+  }
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
     title = "Axle Wallet Flow"
@@ -49,6 +56,14 @@ class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, W
     binding.btnActivate.setOnClickListener {
       setResult(Activity.RESULT_OK)
       finish()
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
     }
   }
 

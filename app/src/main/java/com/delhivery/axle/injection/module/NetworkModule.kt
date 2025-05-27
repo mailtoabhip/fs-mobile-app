@@ -7,6 +7,7 @@ import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.network.ConnectionLiveData
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
+import com.google.firebase.perf.network.FirebasePerfOkHttpClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

@@ -14,6 +14,8 @@ import com.delhivery.axle.databinding.ActivityTransactionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.transactionDetailIntent
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -23,6 +25,9 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
     TransactionsRVAdapterInterface {
 
   @Inject lateinit var userPrefs : UserPrefs
+
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   override fun getViewModelClass() = TransactionsViewModel::class.java
 
@@ -36,7 +41,8 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("TransactionsActivity_SetupTime")
+    activitySetupTrace?.start()
     setSupportActionBar(binding.toolbar)
     title = "Transaction Summary"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -65,6 +71,14 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
     }
 
     refreshData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun refreshData() {

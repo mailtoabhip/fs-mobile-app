@@ -24,6 +24,8 @@ import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRouteViewModel>() {
@@ -37,6 +39,8 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
   var changedOriginData =false
   var startTime: Long = 0
   var endTime: Long = 0
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   override fun getViewModelClass() = ManageRouteViewModel::class.java
 
@@ -46,6 +50,8 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ManageRouteActivity_SetupTime")
+    activitySetupTrace?.start()
     if( intent?.extras?.getSerializableExtra(SelectedRouteIntentExtra, RouteModel::class.java)!=null)
       selectedData = intent?.extras?.getSerializableExtra(SelectedRouteIntentExtra, RouteModel::class.java)
     /* flow type */
@@ -144,6 +150,11 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
       binding.editDestination.setText(citiesNames.joinToString(separator = ", "))
 
     }
+    if (activitySetupTrace != null && isFirstResume) {
+          activitySetupTrace?.stop()
+          isFirstResume = false
+        }
+
   }
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     when (requestCode) {

@@ -11,6 +11,8 @@ import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
 import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class AddTruckPathwayActivity : BaseActivity<ActivityAddTruckBinding, TruckViewModel>() {
@@ -21,8 +23,13 @@ class AddTruckPathwayActivity : BaseActivity<ActivityAddTruckBinding, TruckViewM
 
     override fun requireConnection() = true
 
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("AddTruckPathwayActivity_SetupTime")
+        activitySetupTrace?.start()
 
     }
 
@@ -38,6 +45,13 @@ class AddTruckPathwayActivity : BaseActivity<ActivityAddTruckBinding, TruckViewM
                 intent = truckIntent(this@AddTruckPathwayActivity,source = VALUE_ADD_TRUCK_ONBOARDING_PAGE),
                 requestCode = REQCODE_ADD_TRUCK
             )
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
         }
     }
 

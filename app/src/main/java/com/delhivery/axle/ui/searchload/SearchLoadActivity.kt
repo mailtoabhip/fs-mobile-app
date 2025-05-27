@@ -21,6 +21,8 @@ import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
 import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
 import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -40,7 +42,14 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
 
    var intentRequestType:String? = ""
    var intentContractType:String? =" "
+   private var activitySetupTrace: Trace? = null
+   private var isFirstResume = true
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchLoadActivity_SetupTime")
+    activitySetupTrace?.start()
+  }
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -76,6 +85,14 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
 
     /* start with load fragment */
     navigate(LoadFragment)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   /**

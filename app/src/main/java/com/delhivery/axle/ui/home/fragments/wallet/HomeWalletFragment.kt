@@ -26,6 +26,8 @@ import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.REQCODE_BANK_TRANSACTION
 import com.delhivery.axle.utils.REQCODE_CREATE_ACTIVE_TRIPS
 import com.delhivery.axle.utils.REQCODE_WALLET_ONBOARDING
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -40,7 +42,8 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
   init {
     hasInlineProgress = true
   }
-
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
   companion object {
     /* singleton instance */
     val _instance: HomeWalletFragment by lazy { HomeWalletFragment() }
@@ -61,7 +64,8 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeWalletFragment_SetupTime")
+    fragmentSetupTrace?.start()
     binding.active = viewModel.walletActivated
     binding.error = false
     binding.loading = true
@@ -109,6 +113,14 @@ class HomeWalletFragment : HomeBaseFragment<FragmentHomeWalletBinding, HomeWalle
     }
 
     viewModel.fetchWalletData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun moveNext() {

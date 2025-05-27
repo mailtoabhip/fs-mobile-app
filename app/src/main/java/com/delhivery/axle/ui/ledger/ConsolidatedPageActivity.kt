@@ -30,6 +30,8 @@ import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -54,9 +56,12 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     @Inject lateinit var userPrefs: UserPrefs
 
     var downloadID = 0.toLong()
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("ConsolidatedPageActivity_SetupTime")
+        activitySetupTrace?.start()
         ContextCompat.registerReceiver(this,onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
@@ -207,6 +212,14 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
                 requestStoragePermission()
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     private fun openLedgerDialog() {

@@ -43,6 +43,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.toDate
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -75,9 +77,12 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var bitmapUtils: BitmapUtils
   @Inject lateinit var userPrefs: UserPrefs
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("DocketUpdateActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     require(
         !(intent == null || (!intent.hasExtra(TransactionIdsIntentKey) && !intent.hasExtra(
@@ -164,6 +169,14 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     }
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
+
   private fun isValid(): Boolean {
     if (viewModel.imageUrl.isNullOrEmpty()) {
       uiUtils.showSnackbar("Upload Docket image")
@@ -183,6 +196,7 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
 
     return true
   }
+
 
   private fun captureImage(
     uploadImageName: String,

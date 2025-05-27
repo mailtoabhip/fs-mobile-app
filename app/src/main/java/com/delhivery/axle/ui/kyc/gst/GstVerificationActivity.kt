@@ -42,6 +42,8 @@ import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 
 
 class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerificationViewModel>(),
@@ -71,10 +73,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var startTime: Long = 0
     var endTime: Long = 0
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("GstVerificationActivity_SetupTime")
+        activitySetupTrace?.start()
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                     TotalStepsKey)!!)
@@ -221,6 +226,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         viewModel.gstDetailData.observe(this, Observer {
             binding.btnVerifyGst.isEnabled = it!=null && it.gstNumber.isNotNullOrEmpty()
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     override fun getRequestAadhaarOtp() {

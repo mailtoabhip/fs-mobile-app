@@ -36,6 +36,8 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,10 +73,12 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
   var uploadArray: ArrayList<Pair<String, String?>> = ArrayList()
   var stopArray: ArrayList<String> = ArrayList()
   var ellp = true
-
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("BidDetailsActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     try {
       require(
@@ -129,6 +133,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
     }
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
   private fun setTimer(bidEndingTime: String) {
 
     if (!bidEndingTime.equals("null")) {

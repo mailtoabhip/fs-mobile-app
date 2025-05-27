@@ -32,6 +32,8 @@ import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -61,6 +63,15 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     lateinit var bitmapUtils: BitmapUtils
     @Inject
     lateinit var userPrefs: UserPrefs
+
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("ProfileDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
+    }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
@@ -137,6 +148,14 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             }
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     private fun downloadLogo() {

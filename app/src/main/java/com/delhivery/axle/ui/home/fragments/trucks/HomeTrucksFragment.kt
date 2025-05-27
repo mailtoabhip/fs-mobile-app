@@ -42,6 +42,8 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -80,10 +82,14 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
 
     var scrollDist = 0
     var visible = false
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeTrucksFragment_SetupTime")
+        fragmentSetupTrace?.start()
         viewModel.fetchData()
 
         viewModel.fetchTruckType()
@@ -409,6 +415,13 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
 
     private fun refreshData(filter: Boolean = false) {
         binding.addTruck.visibility = View.VISIBLE

@@ -60,6 +60,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -81,7 +83,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     var addressDeleted =false
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
     @Inject
     lateinit var imageUtils: ImageUtils
@@ -118,6 +121,8 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("AddressActivity_SetupTime")
+        activitySetupTrace?.start()
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
@@ -282,6 +287,13 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
         compositeDisposable += requestPermission(

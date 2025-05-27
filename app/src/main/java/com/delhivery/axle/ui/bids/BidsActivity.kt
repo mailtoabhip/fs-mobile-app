@@ -28,6 +28,8 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterInterface
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -52,7 +54,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
   override fun requireConnection() = true
 
   var isLoadingData = true
-
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   /* search menu item ref */
   private var searchItem: MenuItem? = null
 
@@ -63,7 +66,8 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("BidsActivity_SetupTime")
+    activitySetupTrace?.start()
     if (intent == null || !intent.hasExtra(IntentExtraBidTypeKey)) {
       throw IllegalArgumentException("$IntentExtraBidTypeKey intent key missing")
     }
@@ -131,14 +135,15 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
     viewModel.fetchBids(false)
 
-   /* viewModel.transactionBidLiveData.observe(this, Observer {
-      when (it) {
-        is BidDetailsUserBidState_BulkLoad_Edit -> {
 
-        }
-        else -> null
-      }
-    })*/
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   private fun refreshData() {

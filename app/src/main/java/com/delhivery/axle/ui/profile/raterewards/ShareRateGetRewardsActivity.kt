@@ -18,6 +18,8 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFr
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType.RewardsFragment
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 
@@ -36,6 +38,14 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
   /*  fragments pager adapter */
   private lateinit var pagerAdapter: ShareRateGetRewardsFragmentAdapter
 
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ShareRateGetRewardsActivity_SetupTime")
+    activitySetupTrace?.start()
+  }
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
@@ -54,6 +64,14 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
         ?: "") == OFFER_APPROVED
     ){
     fragmentAction((NavigateShareRateGetRewardsFragmentAction(RewardsFragment)))
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
     }
   }
 

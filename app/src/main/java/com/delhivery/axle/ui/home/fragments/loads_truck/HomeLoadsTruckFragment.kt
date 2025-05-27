@@ -34,8 +34,11 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
+import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_TAB_CLICK
 import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
     TitleProvider, UpdateTabCountAndBadgeInterface{
@@ -46,6 +49,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     var fromDeepLink = false
     var fromNotificationContract = false
     var fromContractDeepLink = false
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
     override val title: CharSequence
         get() = _title
     @Inject lateinit var userPrefs: UserPrefs
@@ -65,7 +70,8 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     private lateinit var pagerAdapter : HomeLoadsTruckFragmentsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeLoadsTruckFragment_SetupTime")
+        fragmentSetupTrace?.start()
         pagerAdapter= HomeLoadsTruckFragmentsAdapter(childFragmentManager)
 
         val activity: HomeActivity? = activity as HomeActivity?
@@ -173,7 +179,13 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     }
 
 
-
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     fun fragmentAction(action: BaseHomeFragmentAction) {
         when (action.type) {
             /* navigate to fragment action */

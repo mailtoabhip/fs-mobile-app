@@ -50,6 +50,8 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -162,10 +164,14 @@ class TripDetailsViewModel @Inject constructor(
    * Fetch trip details
    */
   fun fetchTripDetails() {
+    val parallelTrace = Firebase.performance.newTrace("trips_and_transaction_details_parallel")
+    parallelTrace.start()
     compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
         .onBackground()
         .progress()
         .subscribe { _res, error ->
+          if(error != null) parallelTrace.putAttribute("error_response_received", error.message.toString())
+          parallelTrace.stop()
           if (!error) {
             this.tripDetail = _res.second
             this.warehouse = _res.first.pickupLocation

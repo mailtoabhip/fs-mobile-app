@@ -11,6 +11,8 @@ import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentsAda
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 
@@ -27,7 +29,14 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
     /*  fragments pager adapter */
     private lateinit var pagerAdapter: ProfileKYCFragmentsAdapter
 
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("ProfileKYCDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
+    }
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -59,6 +68,14 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
 }

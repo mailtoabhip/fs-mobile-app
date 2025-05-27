@@ -54,6 +54,8 @@ import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R.string
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.utils.extensions.focusClick
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.Date
 
 class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
@@ -71,9 +73,12 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     var startTime: Long = 0
     var endTime: Long = 0
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("AccountDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -147,6 +152,10 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                 isLocationEnabled = viewModel.locationOption.value))
             }
         binding.editName.focusClick()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     fun checkEnable() {

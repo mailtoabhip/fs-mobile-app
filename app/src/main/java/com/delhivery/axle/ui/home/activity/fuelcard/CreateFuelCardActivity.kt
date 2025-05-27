@@ -15,6 +15,8 @@ import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -31,9 +33,12 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
   override fun requireConnection() = true
 
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("CreateFuelCardActivity_SetupTime")
+    activitySetupTrace?.start()
     /* validate intent */
     if (intent == null || !intent.hasExtra(ARGS_TRIP_DATA)) {
       throw IllegalArgumentException("Required data $ARGS_TRIP_DATA not found")
@@ -131,6 +136,14 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
     binding.fetching = true
     viewModel.fetchWalletData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   override fun finish() {

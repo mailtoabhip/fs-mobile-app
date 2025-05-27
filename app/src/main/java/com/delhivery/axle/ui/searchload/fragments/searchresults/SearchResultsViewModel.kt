@@ -26,6 +26,8 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
@@ -101,6 +103,9 @@ class SearchResultsViewModel @Inject constructor(
 
     dataLoadingLiveData.postValue(true)
     /* dummy data */
+    val mainTrace = Firebase.performance.newTrace("search_loads")
+    val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_search_loads_parallel")
+    mainTrace.start()
     compositeDisposable += transactionsRepository.searchTransactions(
         offset, origin.orionDbCityCode, destination?.orionDbCityCode, type?.lowercase(),displayName,status,requestType,contractType,
       UserTripsLoadLimit,isFlexible,includeFlexibleContracts
@@ -120,6 +125,9 @@ class SearchResultsViewModel @Inject constructor(
         }
         .onBackground()
         .subscribe { _tRes, error ->
+          if(error != null) mainTrace.putAttribute("error_response_received", error.message.toString())
+          parallelTrace.stop()
+          mainTrace.stop()
           if (!error && _tRes!=null) {
             mutableListOf<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply{
               if(requestType=="load")

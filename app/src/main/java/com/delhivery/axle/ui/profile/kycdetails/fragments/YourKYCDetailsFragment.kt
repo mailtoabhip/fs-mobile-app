@@ -11,6 +11,8 @@ import com.delhivery.axle.utils.NavigationUtils
 import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 
@@ -28,13 +30,16 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
     @Inject lateinit var userPrefs: UserPrefs
 
     @Inject lateinit var navigationUtils:NavigationUtils
-
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
     override fun getViewModelClass()= YourKYCDetailsViewModel::class.java
 
     override fun layoutId() = R.layout.fragment_your_kyc_details
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourKYCDetailsFragment_SetupTime")
+        fragmentSetupTrace?.start()
 
         if (userPrefs.verificationStatus.equals("failed")) {
             binding.btnRetry.visibility = View.VISIBLE
@@ -235,6 +240,14 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
             binding.errorTruck.visibility = View.GONE
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     private fun setAddressError(){

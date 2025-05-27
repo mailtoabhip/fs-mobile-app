@@ -1,12 +1,7 @@
 package com.delhivery.axle.ui.splash
 
 import android.Manifest
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.app.Activity
-import android.app.ProgressDialog.show
 import android.content.Intent
-import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build.VERSION
@@ -17,49 +12,32 @@ import android.provider.Settings.Secure
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.delhivery.axle.R
-import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
+import com.delhivery.axle.fcm.ARGS_NOTIFICATION_FROM
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
+import com.delhivery.axle.fcm.ARGS_OFFER_ID
 import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
+import com.delhivery.axle.fcm.ARGS_PRICING_ID
+import com.delhivery.axle.fcm.ARGS_PRICING_SORT_KEY
 import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.fcm.ARGS_VEHICLE_NUMBER
-import com.delhivery.axle.fcm.*
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
-import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
-import com.delhivery.axle.ui.kyc.address.AddressActivity
-import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
-import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
-import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
 import com.delhivery.axle.utils.EVENT_APP_OPEN
-import com.delhivery.axle.utils.EVENT_UPDATE_APP
-import com.delhivery.axle.utils.EVENT_UPDATE_CANCEL
-import com.delhivery.axle.utils.PROPERTY_CURRENT_VERSION
 import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
-import com.delhivery.axle.utils.PROPERTY_LATEST_VERSION
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
@@ -67,18 +45,14 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.InstallState
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import java.util.Calendar
 import javax.inject.Inject
+
 
 /**
  * Splash screen
@@ -92,6 +66,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
 
   override fun layoutId() = R.layout.activity_splash
 
+
   var latestCode :Int = 0
   var currentCode :Int =0
   var type :String = ""
@@ -99,12 +74,16 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   lateinit var splashScreen: SplashScreen
   lateinit var isAuthenticated :SplashPostState
   var ifUpdateFalse=false
-  override fun requireConnection() = false
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+    override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
   override fun onCreate(savedInstanceState: Bundle?) {
     splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("StartRoutingActivity_SetupTime")
+    activitySetupTrace?.start()
     // Keep the splash screen visible for this Activity
     splashScreen.setKeepOnScreenCondition { true }
     //Capture event
@@ -129,13 +108,11 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     pricingSortKey =  intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
     notificationFrom =  intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
     pricingOfferId =  intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
-
-
+    isFirstResume = true
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-
     /* start splash animation */
     userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
@@ -171,6 +148,13 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     }
   }
 
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
   private fun checkForDynamicLinks() {
     FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
             .addOnSuccessListener(this){

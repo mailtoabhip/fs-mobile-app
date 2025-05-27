@@ -35,6 +35,8 @@ import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -52,7 +54,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     val awsPath = "loadboard/address/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
@@ -86,6 +89,8 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("CommunicationAddressActivity_SetupTime")
+        activitySetupTrace?.start()
         if(intent?.extras!=null){
             viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                 TotalStepsKey)!!)
@@ -337,6 +342,13 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         })
  }
 
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     private fun addDataToPreference(address:String){
         val listOfAddress = mutableListOf<AddAddressModel>()
         val alternateAddressData =  AddAddressModel(userPrefs.phoneNumber, address,viewModel.documentProofType,viewModel.documentProofUrl,viewModel.addressType,false)

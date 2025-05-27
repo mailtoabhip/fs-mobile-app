@@ -44,6 +44,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import javax.inject.Inject
 
@@ -64,12 +66,16 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     @Inject lateinit var userPrefs:UserPrefs
 
     val TAG_SYNC_DATA = "TAG_SYNC_DATA"
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = false
     @Inject
     lateinit var bitmapUtils: BitmapUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("MyProfileActivity_SetupTime")
+        activitySetupTrace?.start()
+        isFirstResume = true
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
         title = "My Profile"
@@ -476,6 +482,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         viewModel.getUser()
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
             downloadLogo()
+        }
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
         }
     }
 

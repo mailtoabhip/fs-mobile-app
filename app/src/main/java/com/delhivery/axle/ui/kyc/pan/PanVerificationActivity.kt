@@ -20,6 +20,8 @@ import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerificationViewModel>() {
@@ -38,8 +40,12 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     override fun requireConnection() = false
 
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("PanVerificationActivity_SetupTime")
+        activitySetupTrace?.start()
             if(intent?.extras!=null){
                 viewModel.currentStep = navigationUtils.getNavigationStepFormat(intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!, intent?.extras?.getInt(
                     TotalStepsKey)!!)
@@ -192,6 +198,14 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             }
         )
         }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
 
     fun gstIntent(
             context: Context

@@ -42,6 +42,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -71,9 +73,12 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var startTime: Long = 0
     var endTime: Long = 0
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("IdentityVerificationActivity_SetupTime")
+        activitySetupTrace?.start()
         binding.editCinLayout.visibility= View.VISIBLE
         binding.layoutCin.isSelected=true
         binding.layoutUdyog.isSelected=false
@@ -257,6 +262,14 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
    private fun clickedCin(uploaded:Boolean){

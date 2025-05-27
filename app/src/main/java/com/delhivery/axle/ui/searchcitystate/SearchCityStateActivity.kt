@@ -26,6 +26,8 @@ import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Predicate
@@ -58,6 +60,8 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
     var isLoadingData = true
 
     @Inject lateinit var userPrefs: UserPrefs
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
 
     init {
         hasInlineProgress = true
@@ -70,7 +74,8 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
     private val popularAdapter by lazy { PopularCitiesAdapter(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchCityStateActivity_SetupTime")
+        activitySetupTrace?.start()
         viewModel.cityType = intent.getStringExtra(CityType) ?: ""
         viewModel.haveOldDestinations = intent.getBooleanExtra(HaveOldDestinations,false)
 
@@ -185,13 +190,13 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
          }
     }
 
-    /*override fun onBackPressed() {
-        selectedCityStates.clear()
-        for(item in oldSelectedCityStates){
-           selectedCityStates.add(item)
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
         }
-        super.onBackPressed()
-    }*/
+    }
 
     override fun handleAction(
         actionId: String,

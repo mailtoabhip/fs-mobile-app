@@ -22,6 +22,8 @@ import com.delhivery.axle.data.yourrewards.YourRewardsTimeOutAction
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -29,7 +31,8 @@ import java.util.Calendar
 class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsBinding, YourRewardsFragmentViewModel>(),YourRewardsAdapterInterface,OnDateSetListener,  AWSUtils.AWSProgressInterface {
 
   var isLoadingData = true
-
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
   companion object {
     /* singleton instance */
     val _instance: YourRewardsFragment by lazy { YourRewardsFragment() }
@@ -58,7 +61,8 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourRewardsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     analyticsUtil.trackEvent(
             EVENT_VIEW_PAYOUT,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
@@ -122,6 +126,14 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
     viewModel.startDate = DateUtils.getISToUtcFormatDate(RewardStartDate)
     viewModel.endDate = DateUtils.getISToUtcFormatDate(DateUtils.presentTimeInSlashFormat())
     refreshData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
   }
 
   override fun refreshData() {

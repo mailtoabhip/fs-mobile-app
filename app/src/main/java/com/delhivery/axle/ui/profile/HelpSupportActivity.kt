@@ -16,6 +16,8 @@ import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfileViewModel>() {
@@ -27,7 +29,13 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
     override fun requireConnection() = true
 
     @Inject lateinit var userPrefs:UserPrefs
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("HelpSupportActivity_SetupTime")
+        activitySetupTrace?.start()
+    }
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
@@ -77,7 +85,13 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
         }
 
     }
-
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     private fun confirmDelete() {
         dialogUtils.showBasicConfirmDialog(
                 R.string.title_dialog_delete,

@@ -36,6 +36,8 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executors
@@ -59,6 +61,9 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     hasInlineProgress = true
   }
 
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
+
   companion object {
     /* singleton instance */
     val _instance: HomeBidsFragment by lazy { HomeBidsFragment() }
@@ -76,7 +81,8 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeBidsFragment_SetupTime")
+    fragmentSetupTrace?.start()
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       /* remove user transactions and fetch again */
@@ -146,6 +152,13 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     fetchBidsData()
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
   private fun fetchBidsData() {
     viewModel.fetchBidsSummary()
     viewModel.fetchBids()

@@ -34,6 +34,8 @@ import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import com.shockwave.pdfium.PdfDocument
 import com.shockwave.pdfium.PdfiumCore
 import java.io.ByteArrayOutputStream
@@ -56,6 +58,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     var showProg:Boolean = false
     var dList:HashMap<String, DocDetailData?> = HashMap()
     var docItem:DocDetailData = DocDetailData("", null, null, null,null, null, null)
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
 
     @Inject lateinit var awsUtils:AWSUtils
 
@@ -74,7 +78,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("KycDocumentsFragment_SetupTime")
+        fragmentSetupTrace?.start()
         binding.attachmentList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@KycDocumentsFragment.docRVAdapter
@@ -121,6 +126,14 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             }
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
     }
 
     private fun downloadLogo(item: String) {

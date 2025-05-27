@@ -36,6 +36,8 @@ import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
 import com.delhivery.axle.utils.REQCODE_DELETE_ROUTES
 import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import okhttp3.Route
 
 /**
@@ -49,7 +51,8 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
   init {
     hasInlineProgress = true
   }
-
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun getViewModelClass() = UserRoutesViewModel::class.java
 
   override fun layoutId() = R.layout.activity_user_routes
@@ -60,6 +63,8 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("UserRoutesActivity_SetupTime")
+    activitySetupTrace?.start()
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -115,6 +120,13 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
     refreshData()
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
   private fun refreshData() {
     adapter.clearItems()
     viewModel.fetchUserRoutes()

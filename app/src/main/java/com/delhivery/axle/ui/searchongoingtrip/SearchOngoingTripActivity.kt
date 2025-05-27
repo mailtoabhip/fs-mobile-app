@@ -19,6 +19,8 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 /**
@@ -38,6 +40,8 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
   var isLoadingData = true
 
   @Inject lateinit var userPrefs: UserPrefs
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
 
   init {
     hasInlineProgress = true
@@ -45,6 +49,11 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
 
   private val adapter by lazy { SearchOngoingTripRVAdapter(this) }
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchOngoingTripActivity_SetupTime")
+    activitySetupTrace?.start()
+  }
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
@@ -115,6 +124,13 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     }
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
   /**
    * refresh data
    */

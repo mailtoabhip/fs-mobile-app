@@ -54,6 +54,8 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -69,9 +71,12 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   var flexibleReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
   var source= VALUE_APP_FLOW
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ContractDetailsActivity_SetupTime")
+    activitySetupTrace?.start()
     try {
       require(
         !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
@@ -133,6 +138,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     refreshData()
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
 
   var countDownTimer: CountDownTimer? = null
   // timer for under 1 hrs slot

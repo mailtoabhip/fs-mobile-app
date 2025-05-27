@@ -40,6 +40,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -56,6 +58,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
@@ -80,6 +84,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("BankDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
         viewModel.getKycDoc()
     }
 
@@ -196,6 +202,13 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
 
 }
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
 
     override fun onAWSSuccess(
         path: String

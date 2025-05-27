@@ -25,6 +25,8 @@ import com.delhivery.axle.utils.REQCODE_SELECT_CITY
 import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetailsViewModel>() {
@@ -37,7 +39,8 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
     var startTime: Long = 0
     var endTime: Long = 0
-
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
     override fun getViewModelClass() = BasicDetailsViewModel::class.java
 
     override fun layoutId() = R.layout.activity_basic_details
@@ -46,6 +49,8 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("BasicDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
 
     }
 
@@ -190,7 +195,13 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         }
 
      }
-
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             when (requestCode) {
                 REQCODE_SELECT_CITY -> {
