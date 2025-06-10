@@ -77,7 +77,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private var isValidBidAmount = false
   private var isValidTripCommit = false
   private var isValidVehicleNumber = false
-  private var isValidPlacementDays = false
+  private var isValidPlacementDays = true
 
 
   private var expectedArrivalTimePickup = ""
