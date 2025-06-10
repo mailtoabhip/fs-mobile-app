@@ -152,13 +152,12 @@
                     android:layout_marginTop="@dimen/size_4dp"
                     android:drawablePadding="@dimen/size_4dp"
                     android:lineSpacingExtra="@dimen/text_4sp"
-                    android:text="@{ transaction.requiredAt() }"
+                    android:text="@{ transaction.requiredAtWithTime() }"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text_load_details"
-                    bind:drawableResId="@{ transaction.requiredAtBg() }"
-                    tools:background="@drawable/bg_date_today"
+                    android:background="@drawable/bg_date_today"
                     tools:text="TODAY"
                     />
 
@@ -745,9 +744,10 @@
               android:id="@+id/button_confirm"
               android:layout_width="0dp"
               android:layout_weight="1"
+              android:fontFamily="sans-serif-medium"
               style="@style/ActionButton"
               android:textAllCaps="false"
-              android:text="Place Bid"
+              android:text="Place Your Bid"
               android:layout_height="50dp"
               />
         </LinearLayout>

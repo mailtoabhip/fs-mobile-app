@@ -108,9 +108,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
 
         tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")?.setIcon(R.drawable.ic_load_home_icon)
 
-        tab2?.setCustomView(R.layout.badge_tab)?.setText("My Trucks")?.setIcon(R.drawable.ic_home_truck_icon)
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts")?.setIcon(R.drawable.ic_contract_icon)
 
-        tab3?.setCustomView(R.layout.badge_tab)?.setText("Contracts")?.setIcon(R.drawable.ic_contract_icon)
+        tab3?.setCustomView(R.layout.badge_tab)?.setText("My Trucks")?.setIcon(R.drawable.ic_home_truck_icon)
 
         if(activity!!.fromDeepLink){
             binding.tabLayout.getTabAt(1)?.select()
@@ -199,11 +199,11 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     override fun dataToUpdate(type: String,showBadge: Boolean, count: Int) {
         try {
             if (showBadge && type == "contracts") {
-                if (binding.tabLayout.getTabAt(2)?.customView != null) {
-                    binding.tabLayout.getTabAt(2)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
+                if (binding.tabLayout.getTabAt(1)?.customView != null) {
+                    binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
                         "($count)"
-                    binding.tabLayout.getTabAt(2)?.customView?.findViewById<ImageView>(R.id.badge)?.visibility =
-                        View.VISIBLE
+                    binding.tabLayout.getTabAt(1)?.customView?.findViewById<ImageView>(R.id.badge)?.visibility =
+                        View.GONE
                 }
             }
         }catch (e:Exception){}

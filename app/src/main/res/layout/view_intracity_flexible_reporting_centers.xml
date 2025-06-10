@@ -48,6 +48,7 @@
       android:id="@+id/intraCityFlexibleTvMapView"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:drawableStart="@drawable/ic_navigate"
       app:layout_constraintStart_toStartOf="@id/intraCityFlexibleTvCity"
       app:layout_constraintStart_toEndOf="@+id/intraCityFlexibleHubIcon"
       app:layout_constraintTop_toBottomOf="@+id/intraCityFlexibleTvState"

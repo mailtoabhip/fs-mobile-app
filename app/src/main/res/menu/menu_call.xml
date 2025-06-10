@@ -5,8 +5,8 @@
   <item
       android:id="@+id/nav_call"
       android:icon="@drawable/ic_call"
-      android:title="@string/label_nav_helpline"
-      app:showAsAction="always" />
+      android:title="Support"
+      app:showAsAction="withText" />
   <item
       android:id="@+id/nav_filter"
       android:icon="@drawable/ic_filter"

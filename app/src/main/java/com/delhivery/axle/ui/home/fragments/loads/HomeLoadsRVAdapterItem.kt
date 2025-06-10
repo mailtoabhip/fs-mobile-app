@@ -21,7 +21,8 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Count(8),
   Banners(9),
   Priority(10),
-  ShareRate(11);
+  ShareRate(11),
+  LoadCategories(12);
 
   companion object {
     /**
@@ -80,6 +81,9 @@ class HomeLoadsSearchItem(
   data: HomeLoadsSearchItemData = HomeLoadsSearchItemData()
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsSearchItemData>(Search, data)
 
+class HomeLoadsCategoriesItem(
+  data: HomeLoadCategoriesItemData = HomeLoadCategoriesItemData()
+) : BaseHomeLoadsRVAdapterItem<HomeLoadCategoriesItemData>(LoadCategories, data)
 /**
  * Warning/action item
  */

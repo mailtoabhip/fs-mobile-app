@@ -59,7 +59,7 @@
             android:gravity="center"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/size_18dp"
-            android:background="@drawable/bg_load_action_btn"
+            android:background="@drawable/bg_action_btn"
             />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -31,7 +31,7 @@
           android:gravity="center"
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@string/label_epod_pending"
-          android:textColor="@color/white"
+          android:textColor="@color/colorAccent"
           android:textSize="@dimen/text_12sp"
           />
 
@@ -59,7 +59,7 @@
           android:gravity="center"
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@string/label_physical_pending"
-          android:textColor="@color/white"
+          android:textColor="@color/colorAccent"
           android:textSize="@dimen/text_12sp"
           />
 
@@ -87,7 +87,7 @@
           android:gravity="center"
           android:lineSpacingExtra="@dimen/text_6sp"
           android:text="@string/label_pod_dispatched"
-          android:textColor="@color/white"
+          android:textColor="@color/colorAccent"
           android:textSize="@dimen/text_12sp"
           />
 

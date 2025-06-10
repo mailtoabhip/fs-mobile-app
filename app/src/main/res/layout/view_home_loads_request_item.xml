@@ -150,12 +150,12 @@
               android:layout_marginTop="@dimen/size_4dp"
               android:lineSpacingExtra="4sp"
               android:layout_gravity="center"
-              android:text="@{request.requiredAt()}"
+              android:text="@{request.requiredAtWithTime()}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_12sp"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintTop_toBottomOf="@id/til_state"
-              bind:drawableResId="@{ request.requiredAtBg() }"
+              android:background="@drawable/bg_date_today"
               tools:text="Today"
               />
         </LinearLayout>
@@ -187,22 +187,19 @@
             app:layout_constraintStart_toEndOf="@id/img_truck_type"
             tools:text="32FTMXL"
             />
-
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_load_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@{request.loadDetails()}"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/sub_heading_black"
             android:textSize="@dimen/text_14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_truck_details"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_truck_details"
             tools:text="Agriculture/Grains"
             />
-
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_unAllocatedLoad"
@@ -226,7 +223,7 @@
             android:background="@drawable/bg_gradient_green"
             android:text="@string/low_detention_expected_detention_at_warehouse_is_8_hrs"
             android:textColor="@color/white"
-            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            android:visibility="@{request.isExpress()? View.GONE : View.GONE }"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_capacity"
             />
@@ -244,7 +241,7 @@
             android:text="Mandatory GPS"
             app:layout_constraintStart_toEndOf="@+id/text_detention"
             android:textColor="@color/white"
-            android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
+            android:visibility="@{request.isExpress()? View.GONE : View.GONE }"
             app:layout_constraintTop_toBottomOf="@id/text_capacity"
             />
 
@@ -267,15 +264,14 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-           android:paddingTop="@dimen/size_2dp"
+            android:paddingTop="@dimen/size_8dp"
             android:paddingBottom="@dimen/size_2dp"
             android:paddingStart="@dimen/size_16dp"
             android:paddingEnd="@dimen/size_16dp"
             tools:visibility="visible"
             android:id="@+id/timerLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/text_truck_details"
-            app:layout_constraintBottom_toBottomOf="@id/text_load_details"
+            app:layout_constraintTop_toBottomOf="@id/text_load_details"
             android:background="@drawable/bg_gradient_orange_16"
             android:layout_height="wrap_content">
           <androidx.appcompat.widget.AppCompatImageView
@@ -458,9 +454,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="@dimen/size_16dp"
-            android:paddingTop="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_16dp"
-            android:paddingBottom="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_12dp"
+            android:paddingBottom="@dimen/size_12dp"
             tools:visibility="gone"
             android:visibility="@{ request.bidPlaceLayoutVisibility()}">
 
@@ -470,7 +466,7 @@
               android:layout_height="wrap_content"
               android:layout_gravity="center_vertical"
               android:layout_weight="1"
-              android:background="@drawable/bg_load_action_btn"
+              android:background="@drawable/bg_action_light_red_btn"
               android:gravity="center_vertical"
               >
 
@@ -478,11 +474,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:textColor="@color/colorAccent"
                 android:maxLines="1"
                 android:text="@string/label_place_bid"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="@dimen/text_16sp"
                 />
 
           </androidx.appcompat.widget.LinearLayoutCompat>

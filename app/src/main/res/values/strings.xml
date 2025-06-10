@@ -143,7 +143,7 @@
   <string name="action_skip_select_routes">Skip, I’ll select later</string>
   <string name="action_skip">SKIP</string>
   <string name="action_search">Search</string>
-  <string name="action_place_bid">Place Bid</string>
+  <string name="action_place_bid">Place Your Bid</string>
   <string name="action_start_bidding">Start Bidding</string>
   <string name="action_delete">Delete</string>
   <string name="action_delete_address">Delete Address</string>
@@ -186,14 +186,14 @@
   <string name="action_retry_verification">Retry Verification</string>
   <string name="action_got">Got it</string>
   <string name="action_learn">Learn More</string>
-  <string name="action_express">Delhivery Line Haul</string>
-  <string name="action_non_express">Customer Intercity</string>
-  <string name="action_intracity">Delhivery Fleet</string>
-  <string name="action_flexible_intracity">Flexible</string>
-  <string name="action_fixed_intracity">Fixed</string>
-  <string name="action_dlv_intracity">DLV Intracity</string>
-  <string name="action_dlv_intercity">DLV Intercity</string>
-  <string name="action_non_delhivery">Non Delhivery</string>
+  <string name="action_express">Delhivery Intercity</string>
+  <string name="action_non_express">Non Delhivery Intercity</string>
+  <string name="action_intracity">Delhivery Intracity</string>
+  <string name="action_flexible_intracity">Flexible Reporting</string>
+  <string name="action_fixed_intracity">Fixed Reporting</string>
+  <string name="action_dlv_intracity">Delhivery Intracity</string>
+  <string name="action_dlv_intercity">Delhivery Intercity</string>
+  <string name="action_non_delhivery">Non Delhivery Intercity</string>
   <string name="action_ok">Ok</string>
   <string name="action_accept">Accept for %s</string>
 
@@ -209,9 +209,9 @@
   <string name="label_live_load_requests">Live load requests (%1$d)</string>
   <string name="label_inr">₹ %1$d</string>
   <string name="label_inr_s">₹ %1$s</string>
-  <string name="label_active_bids">Active Bids</string>
-  <string name="label_confirmed_bids">Confirmed Bids</string>
-  <string name="label_lost_bids">Lost Bids</string>
+  <string name="label_active_bids">Active Load Bids</string>
+  <string name="label_confirmed_bids">Awarded Load Bids</string>
+  <string name="label_lost_bids">Lost Load Bids</string>
   <string name="label_contract_bids">Contract Bids</string>
   <string name="label_my_bids">My Bids</string>
   <string name="label_nav_load">Load</string>
@@ -262,7 +262,7 @@
   <string name="label_your_routes">Your Routes</string>
   <string name="label_your_team">Your Team Members</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
-  <string name="label_place_bid">PLACE A BID</string>
+  <string name="label_place_bid">Place Your Bid</string>
   <string name="label_add_team_member">Add Team Member</string>
   <string name="label_bidding_ended">Bidding ended</string>
   <string name="label_destination_states">Destination States</string>
@@ -478,6 +478,7 @@
   <string name="label_payment_terms">Payment Terms</string>
   <string name="label_tc">Terms &amp; Conditions</string>
   <string name="label_privacy_policy">Privacy Policy</string>
+  <string name="label_call_support">Call Support</string>
   <string name="label_business_name">Business Name</string>
   <string name="label_my_name">My Name</string>
   <string name="label_my_occupation">My Occupation</string>
@@ -646,7 +647,7 @@
   <string name="sharing_rate_text">By sharing rates for trucks placed in the last 7 days</string>
   <string name="sharing_rate">₹500</string>
   <string name="sharing_rate_rupee">/rate </string>
-  <string name="need_priority_access_to_loads">Need Priority access to loads?</string>
+  <string name="need_priority_access_to_loads">Get Priority access to loads</string>
   <string name="earn_cash_reward">Earn cash rewards upto</string>
   <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
   <string name="our_privacy_policy_outlines">Our <a href="https://orion.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
@@ -719,7 +720,7 @@
   <string name="trip_commitment">Trip Commitment</string>
   <string name="your_vehicle_number">Your Vehicle Number</string>
   <string name="vehicle_number">Vehicle Number</string>
-  <string name="placement_days">Placement Days</string>
+  <string name="placement_days">Vehicle will be available in</string>
   <string name="departure">Departure</string>
   <string name="arrival">Arrival</string>
   <string name="route_details">Route Details</string>
@@ -735,7 +736,7 @@
   <string name="non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"><![CDATA[Non-adherence to contract will impact your performance score & may result in contract cancellation]]></string>
   <string name="bidding_cancelled">Bidding has been Cancelled</string>
   <string name="cancelled">Cancelled</string>
-  <string name="revise_your_bid">Revise Your Bid</string>
+  <string name="revise_your_bid">Revise Bid</string>
   <string name="bid_received">Bids Received</string>
   <string name="higher_than">Higher than other by"</string>
   <string name="current_lowest">Current Lowest Bid</string>
@@ -757,7 +758,7 @@
   <string name="you_did_not_bid">You did not bid</string>
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
   <string name="rules">Rules</string>
-  <string name="view_on_map">View on map</string>
+  <string name="view_on_map">Map</string>
   <string name="status">Status</string>
   <string name="truck_type">Type</string>
   <string name="vehicle_type">Vehicle Type</string>
@@ -784,9 +785,10 @@
     <string name="your_placement_details_are_updated">Your placement details are updated</string>
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
   <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
+  <string name="load_categories">Load Categories</string>
 
 
-    <string-array name="array_truck_type">
+  <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
     <item>Closed</item>
     <item>Open</item>

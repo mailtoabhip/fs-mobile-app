@@ -213,7 +213,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun delLoadVisibility() = if (indentOrigin.equals("LH")) {
-    View.VISIBLE
+    View.GONE
   } else {
     View.GONE
   }
@@ -1070,14 +1070,14 @@ data class HomeBidsRequestItemData(
           DateUtils.parseDate(
             contractBiddingEndTime!!,
             DatePatterns.OrionDateFormat
-          ), "dd MMM"
+          ), "dd MMM h:mm a"
         )
       } else {
         return "Bidding Closes on " + formatDate(
           DateUtils.parseDate(
             contractBiddingEndTime!!,
             DatePatterns.OrionDateFormat
-          ), "dd MMM"
+          ), "dd MMM h:mm a"
         )
       }
 
@@ -1115,7 +1115,7 @@ data class HomeBidsRequestItemData(
           DateUtils.parseDate(
             contractBiddingEndTime!!,
             DatePatterns.OrionDateFormat
-          ), "dd MMM"
+          ), "dd MMM h:mm a"
         )
       }else{
           ""

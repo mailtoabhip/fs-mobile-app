@@ -54,8 +54,8 @@ enum class HomeLoadsTruckFragmentType(
   val title: String
 ){
   LoadsFragment(R.id.nav_loads,0,HomeLoadsFragment._instance, "Loads"),
-  TruckFragment(R.id.nav_trucks,1, HomeTrucksFragment._instance,"My Trucks"),
-  ContractsFragment(R.id.nav_trucks,2, HomeContractsFragment._instance,"Contracts");
+  ContractsFragment(R.id.nav_trucks,1, HomeContractsFragment._instance,"Contracts"),
+  TruckFragment(R.id.nav_trucks,2, HomeTrucksFragment._instance,"My Trucks");
   companion object {
     /**
      * Get fragment position by [menuId]

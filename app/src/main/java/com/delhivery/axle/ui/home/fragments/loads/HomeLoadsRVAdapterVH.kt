@@ -286,6 +286,18 @@ internal class HomeLoadsShareRateItemVH(binding: ViewShareLayoutBannerBinding) :
   }
 }
 
+internal class HomeLoadsCategoriesItemVH(binding: ViewHomeLoadCategoriesItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadCategoriesItemBinding, HomeLoadsCategoriesItem>(
+        binding
+    ) {
+    override fun bind(
+        item: HomeLoadsCategoriesItem,
+        _interface: HomeLoadsRVAdapterInterface
+    ) {
+       binding.actionLabel = item.data.showing
+    }
+}
+
 /**
  * Loads filter view holder
  */

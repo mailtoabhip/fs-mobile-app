@@ -35,6 +35,7 @@ import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.utils.StringUtils
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 abstract class BaseHomeContractsRVAdapterViewHolder<out B: ViewDataBinding, IT: BaseHomeContractsRVAdapterItem<*>>(binding: B):BaseViewHolder<B>(binding) {
@@ -232,12 +233,13 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             context,
             R.drawable.bg_all_rounded_lost_red
           )
-          //synchronized(this) {
-
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            format.setTimeZone(TimeZone.getTimeZone("IST"));
-            val date1: Date = format.parse(format.format(Date()))
-            val date2: Date = format.parse(item.data.contractBiddingEndTime)
+          val dateFormatThreadLocal = ThreadLocal.withInitial {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
+              timeZone = TimeZone.getTimeZone("IST") // Set IST timezone
+            }
+          }.get()
+          val date1: Date = dateFormatThreadLocal.parse(dateFormatThreadLocal.format(Date()))
+          val date2: Date = dateFormatThreadLocal.parse(item.data.contractBiddingEndTime)
             if (date2.compareTo(date1) > 0) {
               val mills: Long = date2.getTime() - date1.getTime()
               stopCounter()
@@ -471,6 +473,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 
    fun stopCounter() {
     countDownTimer?.cancel()
+    countDownTimer = null
   }
 
 }

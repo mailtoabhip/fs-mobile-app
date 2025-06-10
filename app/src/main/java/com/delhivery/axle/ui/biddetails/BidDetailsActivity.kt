@@ -445,13 +445,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.unallocated =
               getString(string.unallocated_bulk_order) + (_transaction.unAllocatedVolume)?.toInt() + " MT"
           }
-          if(_transaction!!.requiredAtDraw()!=null){
+        /*  if(_transaction!!.requiredAtDraw()!=null){
           binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(
               null, null, ContextCompat.getDrawable(
               this@BidDetailsActivity, _transaction!!.requiredAtDraw()!!
           ), null
           )
-          }
+          }*/
         }
 
 
@@ -721,7 +721,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
                 binding.status.visibility = View.GONE
 
-                binding.buttonConfirm.text = "Place Bid"
+                binding.buttonConfirm.text = "Place Your Bid"
                 binding.bottomLay.visibility = View.VISIBLE
                 binding.buttonConfirm.setOnClickListener {
                   bidDialog()
@@ -761,7 +761,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   binding.lowBid.visibility = View.GONE
                 }
 
-                binding.buttonConfirm.text = "Place Bid"
+                binding.buttonConfirm.text = "Place Your Bid"
                 binding.bidLay.visibility = View.GONE
                 binding.bottomLay.visibility = View.VISIBLE
                 binding.buttonConfirm.setOnClickListener {

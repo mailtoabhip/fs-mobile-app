@@ -52,6 +52,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Banners -> ViewHomeLoadsTruckBannerItemBinding.inflate(inflater, parent, false)
    Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
     ShareRate -> ViewShareLayoutBannerBinding.inflate(inflater, parent, false)
+    LoadCategories -> ViewHomeLoadCategoriesItemBinding.inflate(inflater, parent, false)
     else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
   }
 
@@ -67,6 +68,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewHomeLoadsTruckBannerItemBinding->HomeLoadsAddTruckItemVH(binding)
     is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)
     is ViewShareLayoutBannerBinding->HomeLoadsShareRateItemVH(binding)
+    is ViewHomeLoadCategoriesItemBinding->HomeLoadsCategoriesItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
   }
 
@@ -87,6 +89,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
       is HomeLoadsAddTruckItemVH -> holder.bind(item as HomeLoadsAddTruckItem, _interface)
       is HomeLoadsTruckPriorityItemVH -> holder.bind(item as HomeLoadsTruckPriorityAccessItem, _interface)
       is HomeLoadsShareRateItemVH -> holder.bind(item as HomeLoadsShareRateItem, _interface)
+      is HomeLoadsCategoriesItemVH -> holder.bind(item as HomeLoadsCategoriesItem, _interface)
+
     }
   }
 
@@ -116,7 +120,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
       items.filter {
-        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate
+        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate || it.type==LoadCategories
       }
           .map { Pair(it, Remove) }
           .let {

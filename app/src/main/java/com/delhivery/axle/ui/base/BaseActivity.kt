@@ -28,6 +28,7 @@ import com.delhivery.axle.BR
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.network.ConnectionLiveData
+import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.Config.AxleSupportEmail
 import com.delhivery.axle.utils.ContactUtils
@@ -284,21 +285,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
    * Call helpline
    */
   fun callHelpline() {
-    compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
-        .onBackground()
-        .subscribe { granted, error ->
-          if (error == null && granted) {
-            when (contactUtils.callHelpline()) {
-              false -> {
-                uiUtils.showSnackbar("Unable to place call")
-              }
-              else -> {
-              }
-            }
-          } else {
-            uiUtils.showSnackbar(getString(string.msg_call_permission))
-          }
-        }
+    startActivity(Intent(this, HelpSupportActivity::class.java))
   }
 
   /**

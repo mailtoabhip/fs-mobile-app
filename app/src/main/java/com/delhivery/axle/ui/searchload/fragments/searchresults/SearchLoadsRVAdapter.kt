@@ -15,6 +15,7 @@ import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsRequestItemVH
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.ContractProgress
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsRVAdapterItemType.LoadProgress
@@ -93,5 +94,11 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
       .let {
         operation(it)
       }
+  }
+
+  override fun onViewRecycled(holder: BaseViewHolder<*>) {
+    super.onViewRecycled(holder)
+    if(holder is SearchContractsRequestItemVH)
+      holder.stopCounter()
   }
 }

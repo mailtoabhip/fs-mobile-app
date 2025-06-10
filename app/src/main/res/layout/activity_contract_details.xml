@@ -1156,8 +1156,12 @@
             android:id="@+id/button_confirm"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_16dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingTop="@dimen/size_12dp"
+            android:paddingBottom="@dimen/size_12dp"
             android:layout_height="50dp"
-            android:background="@drawable/bg_action_btn"
+            android:background="@drawable/bg_action_light_red_btn"
             android:gravity="center_horizontal"
             android:clickable="true"
             android:focusable="true"
@@ -1166,10 +1170,9 @@
               android:id="@+id/confirmedText"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:textColor="@color/button_text"
+              android:textColor="@color/colorAccent"
               android:textSize="@dimen/text_16sp"
-              android:drawablePadding="@dimen/size_14dp"
-              android:drawableStart="@drawable/icon_bids_white"
+              android:fontFamily="sans-serif-medium"
               android:text="@string/place_your_bid"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 

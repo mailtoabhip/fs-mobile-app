@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.profile
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +16,8 @@ import com.delhivery.axle.ui.home.activity.home.FragmentName
 import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -84,6 +87,10 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
             confirmDelete()
         }
 
+        binding.call.setOnClickListener {
+            callSupport()
+        }
+
     }
     override fun onResume() {
         super.onResume()
@@ -104,38 +111,22 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
                 }
         )
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_call, menu)
-        return true
-    }
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.nav_call).isVisible = true
-        menu.findItem(R.id.nav_filter).isVisible = false
-        // menu.findItem(R.id.nav_filter).isVisible = false
-        return true
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.nav_call -> {
-                //Capture Event
-                analyticsUtil.trackEvent(
-                    EVENT_CALL_VENDOR_DESK,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(
-                        userPrefs.userId(),
-                        this.applicationContext.javaClass.simpleName
-                    )
-                )
-                callHelpline()
-                true
+    private fun callSupport() {
+        compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    when (contactUtils.callHelpline()) {
+                        false -> {
+                            uiUtils.showSnackbar("Unable to place call")
+                        }
+                        else -> {
+                        }
+                    }
+                } else {
+                    uiUtils.showSnackbar(getString(R.string.msg_call_permission))
+                }
             }
-
-            else -> {
-                super.onOptionsItemSelected(item)
-            }
-        }
     }
 
 }

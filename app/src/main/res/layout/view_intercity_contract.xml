@@ -156,7 +156,7 @@
                 android:fontFamily="sans-serif"
                 android:textSize="@dimen/text_12sp"
                 android:visibility="@{request.missingVehicleVisibility()}"
-                android:text="Vehicle/driver details missing"/>
+                android:text="@{request.detailMissingText()}"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

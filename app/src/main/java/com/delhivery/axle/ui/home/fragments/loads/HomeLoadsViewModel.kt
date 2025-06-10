@@ -248,6 +248,7 @@ class HomeLoadsViewModel @Inject constructor(
                                     AddUpdate
                                 )
                             )
+
                             add(
                                 Pair(
                                     HomeLoadsFilterItem(
@@ -376,6 +377,7 @@ class HomeLoadsViewModel @Inject constructor(
                                         AddUpdate
                                     )
                                 )
+
                                 add(
                                     Pair(
                                         HomeLoadsFilterItem(
@@ -532,6 +534,7 @@ class HomeLoadsViewModel @Inject constructor(
                         nonDlvCount = _tRes.fifth.total
                     }
                   add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
+
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(selectedFilter,_tRes.fourth.total,intercityCount,nonDlvCount,userPrefs.demandType)), AddUpdate))
                   if(!paginate) {
 //                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
