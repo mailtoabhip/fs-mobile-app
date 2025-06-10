@@ -425,9 +425,9 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private fun showInvalidBidAmountError(amount:String?=null){
     isValidBidAmount = false
     if(amount!=null){
-      binding.bidError.text = context.getString(string.bid_revise_error)+amount
+      binding.bidError.text = context.getString(string.bid_revise_error,amount)
     }else{
-      binding.bidError.text =  "Invalid Bid Amount, Out of range"
+      binding.bidError.text =  "Invalid bid: amount outside the allowed range."
     }
     binding.bidError.visibility = View.VISIBLE
   }

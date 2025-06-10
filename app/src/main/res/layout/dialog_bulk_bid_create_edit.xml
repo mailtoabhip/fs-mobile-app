@@ -162,17 +162,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="@{request.expressText(true)}"
+                android:text="1. Mandatory GPS"
                 android:textColor="@color/sub_heading_black"
-                tools:text="1. Express"
                 />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="2. Mandatory GPS"
+                android:text="@{request.expressText(true)}"
                 android:textColor="@color/sub_heading_black"
+                tools:text="1. Express"
                 />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

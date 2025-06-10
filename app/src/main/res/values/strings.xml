@@ -113,7 +113,7 @@
   <string name="hint_enter_origin">Enter origin city</string>
   <string name="hint_enter_destination">Enter destination city or state</string>
   <string name="hint_select_multi_cities">You can select multiple cities/states</string>
-  <string name="hint_rep_time">Enter Vehicle Reporting Time</string>
+  <string name="hint_rep_time">Vehicle available in</string>
   <string name="hint_select_time">Select Time</string>
   <string name="rep_time">Vehicle Reporting Time</string>
   <string name="hint_proof"> Do not upload proofs of Delhivery trips</string>
@@ -262,7 +262,7 @@
   <string name="label_your_routes">Your Routes</string>
   <string name="label_your_team">Your Team Members</string>
   <string name="label_accept_price">ACCEPT PRICE</string>
-  <string name="label_place_bid">PLACE A BID</string>
+  <string name="label_place_bid">Place Your Bid</string>
   <string name="label_add_team_member">Add Team Member</string>
   <string name="label_bidding_ended">Bidding ended</string>
   <string name="label_destination_states">Destination States</string>
@@ -555,6 +555,8 @@
   <string name="label_pmt">PMT</string>
   <string name="_3_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[Low Detention: Destination warehouse always unloads in < 8 hrs]]></string>
   <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
+  <string name="_4_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[3.Short wait time at Destination (< 8 hrs)]]></string>
+
   <string name="delhivery_load">Delhivery Load</string>
   <string name="loading_filter">Loaded after: </string>
   <string name="settled_filter">Only settled</string>
@@ -716,10 +718,10 @@
   <string name="you_did_not_bid_for_this_contract">You did not bid for this contract</string>
   <string name="results_will_be_announced_shortly">Results will be announced shortly</string>
   <string name="your_bid_amount">Your Bid Amount</string>
-  <string name="trip_commitment">Trip Commitment</string>
+  <string name="trip_commitment">How many trips can you commit ?</string>
   <string name="your_vehicle_number">Your Vehicle Number</string>
   <string name="vehicle_number">Vehicle Number</string>
-  <string name="placement_days">Placement Days</string>
+  <string name="placement_days">Vehicle available in</string>
   <string name="departure">Departure</string>
   <string name="arrival">Arrival</string>
   <string name="route_details">Route Details</string>
@@ -730,9 +732,9 @@
   <string name="schedule_might_change_amp_you_will_be_notified"><![CDATA[Schedule might change & you will be notified]]></string>
   <string name="not_meeting_travel_time_will_result_in_delay_penalty">Not meeting travel time will result in delay penalty</string>
   <string name="for_continuous_lanes_ensure_empty_vehicle_is_always_available_for_docking_loading">For continuous lanes, ensure empty vehicle is always available for docking/loading</string>
-  <string name="note_that_the_number_of_trips_are_tentative">Note that the number of trips are tentative</string>
-  <string name="ensure_adherence_to_no_of_trip_commitments">Ensure adherence to no. of trip commitments</string>
-  <string name="non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"><![CDATA[Non-adherence to contract will impact your performance score & may result in contract cancellation]]></string>
+  <string name="note_that_the_number_of_trips_are_tentative">The number of trips is not final.</string>
+  <string name="ensure_adherence_to_no_of_trip_commitments">Be sure to keep your trip commitments.</string>
+  <string name="non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"><![CDATA[Not following the contract can hurt your performance score and may lead to cancellation.]]></string>
   <string name="bidding_cancelled">Bidding has been Cancelled</string>
   <string name="cancelled">Cancelled</string>
   <string name="revise_your_bid">Revise Your Bid</string>
@@ -755,7 +757,7 @@
   <string name="view_details">View Details and Place Bid</string>
   <string name="you_have_not_bid">You have not bid yet</string>
   <string name="you_did_not_bid">You did not bid</string>
-  <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[FRC start & end date will be informed via email]]></string>
+  <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[You will receive start and end dates by email.]]></string>
   <string name="rules">Rules</string>
   <string name="view_on_map">View on map</string>
   <string name="status">Status</string>
@@ -772,7 +774,7 @@
   <string name="vehicle_is_placed_selected_days">Ensure the vehicle is placed within selected days</string>
   <string name="payment_slabs_details"><![CDATA[Monthly payout per slab is determined by vehicle type & location, and is calculated by addition of monthly average km rate for that vehicle type per slab increment.]]></string>
   <string name="hide_slabs">Hide full slabs list</string>
-  <string name="bid_revise_error">Please ensure that the revised bid amount is in multiples of ₹</string>
+  <string name="bid_revise_error">Invalid bid: use ₹ %1$s multiples.</string>
   <string name="remark_label">Remark</string>
   <string name="usage_label">Usage</string>
   <string name="no_entry_permit_label">No Entry Permit</string>
@@ -781,7 +783,7 @@
   <string name="acceptance_declaration">Upon acceptance of the load, the vehicle must arrive at least 30 minutes prior to the reporting time; failure to do so will incur a penalty</string>
   <string name="label_driver_number">Driver Number</string>
   <string name="label_driver_name">Driver Name</string>
-    <string name="your_placement_details_are_updated">Your placement details are updated</string>
+  <string name="your_placement_details_are_updated">Your placement details are updated</string>
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
   <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
 

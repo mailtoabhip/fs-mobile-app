@@ -778,18 +778,16 @@ data class HomeBidsRequestItemData(
   fun expressText(showNum: Boolean): String {
     val sb = StringBuilder()
     if (showNum)
-      sb.append("1. ")
-    sb.append("Delhivery Load")
+      sb.append("2.")
+    sb.append("Exp. loading time: ")
     if (tatMinutes != null) {
       val tat = tatMinutes?.toDouble() ?: 0.0
       if (tat > 60) {
-        sb.append("(")
-          .append(tat / 60)
-          .append(" hrs)")
+        sb.append(tat / 60)
+          .append(" hrs")
       } else {
-        sb.append("(")
-          .append(tat)
-          .append(" min)")
+        sb.append(tat)
+          .append(" min")
       }
     }
     return sb.toString()
