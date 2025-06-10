@@ -421,6 +421,7 @@
                   android:textColor="@color/heading_black"
                   android:textSize="@dimen/text_14sp"
                   android:visibility="gone"
+                  tools:visibility="visible"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintTop_toBottomOf="@id/text_destination"
                   />
@@ -499,7 +500,7 @@
               <androidx.appcompat.widget.AppCompatTextView
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
-                  android:text="Container"
+                  android:text="Vehicle Type"
                   android:textSize="@dimen/text_12sp"
                   app:layout_constraintStart_toStartOf="@+id/text_truck_details"
                   app:layout_constraintTop_toBottomOf="@+id/text_truck_details"
