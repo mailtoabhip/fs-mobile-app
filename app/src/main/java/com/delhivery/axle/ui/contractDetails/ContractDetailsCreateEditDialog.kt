@@ -367,14 +367,16 @@ class ContractDetailsCreateEditDialog @Inject constructor(
         id: Long
       ) {
         val value = parent!!.getItemAtPosition(position).toString()
-        if(value == items[0]){
-          (view as TextView).setTextColor(Color.GRAY)
-          isValidPlacementDays = false
-          enableSubmit()
-        }else{
-          isValidPlacementDays = true
-          enableSubmit()
-        }
+        isValidPlacementDays = true
+        enableSubmit()
+//        if(value == items[0]){
+//          (view as TextView).setTextColor(Color.GRAY)
+//          isValidPlacementDays = false
+//          enableSubmit()
+//        }else{
+//          isValidPlacementDays = true
+//          enableSubmit()
+//        }
       }
 
     }
