@@ -672,7 +672,7 @@
   <string name="price_banner_text">Earn ₹500 on this lane offer</string>
   <string name="share_rate">Share Rate</string>
   <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
-  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Customer Intercity - </font>  Contract for transporting non-Delhivery loads between different cities.]]></string>
+  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Non-Delhivery Intercity - </font>  Contract for transporting non-Delhivery loads between different cities.]]></string>
   <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intercity - </font> Contract for transporting Delhivery loads between different cities.]]></string>
   <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intracity - </font> Contract for transporting Delhivery loads within the same city.]]></string>
   <string name="dlv_intracity_fixed_info"><![CDATA[1. <font color=\'#5B80F7\'>Fixed Reporting - </font> Vehicle reports at a single, predefined location and time.]]></string>
