@@ -35,7 +35,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     parent: ViewGroup,
     viewType: Int
   ) = when (HomeContractsRVAdapterItemType.byTypeId(viewType)) {
-    Search -> ViewHomeLoadsSearchItemBinding.inflate(inflater, parent, false)
+    Search -> ViewSearchContractsItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeContractsProgressItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
@@ -45,7 +45,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeLoadsSearchItemBinding -> HomeContractsSearchItemVH(binding)
+    is ViewSearchContractsItemBinding -> HomeContractsSearchItemVH(binding)
     is ViewHomeContractsProgressItemBinding -> HomeContractsProgressItemVH(binding)
     is ViewWarningItemBinding -> HomeContractsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)

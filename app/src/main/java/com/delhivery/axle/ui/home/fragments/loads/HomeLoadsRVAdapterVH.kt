@@ -294,7 +294,20 @@ internal class HomeLoadsCategoriesItemVH(binding: ViewHomeLoadCategoriesItemBind
         item: HomeLoadsCategoriesItem,
         _interface: HomeLoadsRVAdapterInterface
     ) {
-       binding.actionLabel = item.data.showing
+        val infoText  = when (item.data.textDesc) {
+            DemandType.Intracity.type-> {
+                "Delhivery loads within the same city"
+
+            }
+            DemandType.Internal.type-> {
+                "Delhivery loads between different cities"
+            }
+            DemandType.Others.type-> {
+                "External client loads between different cities"
+            }
+            else -> "External client loads between different cities"
+        }
+       binding.textDescription = infoText
     }
 }
 

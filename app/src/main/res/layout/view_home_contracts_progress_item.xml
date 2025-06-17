@@ -4,6 +4,7 @@
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/size_8dp"
       android:layout_marginBottom="@dimen/size_12dp"
       android:clickable="true"
       android:focusable="true"

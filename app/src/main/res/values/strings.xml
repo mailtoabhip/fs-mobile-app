@@ -6,6 +6,7 @@
   <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
   <string name="title_dialog_delete_route">Delete Route ?</string>
   <string name="title_dialog_logout">Confirm Logout</string>
+  <string name="title_support">Need help? </string>
   <string name="title_dialog_delete">Confirm Delete</string>
   <string name="title_dialog_update">Update Available</string>
   <string name="title_dialog_invalid_num">Invalid phone number</string>
@@ -44,6 +45,7 @@
   <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
   <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
   <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+  <string name="msg_dialog_support"> Please reach out to our support team </string>
   <string name="msg_delete_account"> Are you sure you want to delete your account? \n </string>
   <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
   <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
@@ -380,7 +382,7 @@
   <string name="label_body_type">Select Body Type</string>
   <string name="label_truck_number">Truck Number</string>
   <string name="label_ownership">Ownership</string>
-  <string name="label_own_truck">Own truck</string>
+  <string name="label_own_truck">Owned truck</string>
   <string name="label_market_truck">Market truck</string>
   <string name="label_truck_size">Truck Size</string>
   <string name="label_truck_capacity">Truck Capacity</string>
@@ -670,11 +672,11 @@
   <string name="price_banner_text">Earn ₹500 on this lane offer</string>
   <string name="share_rate">Share Rate</string>
   <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
-  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Customer Intercity - </font>contract for movement of Customer load between different cities.]]></string>
-  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Line Haul - </font> contract for movement of Delhivery load between different cities.]]></string>
-  <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Fleet - </font> contract for movement of Delhivery load within the same city.]]></string>
-  <string name="dlv_intracity_fixed_info"><![CDATA[1. <font color=\'#5B80F7\'>Fixed - </font> Single reporting centre with single reporting time.]]></string>
-  <string name="dlv_intracity_flexible_info"><![CDATA[2. <font color=\'#5B80F7\'>Flexible - </font> Multiple reporting centres with Adhoc timing.]]></string>
+  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Customer Intercity - </font>  Contract for transporting non-Delhivery loads between different cities.]]></string>
+  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intercity - </font> Contract for transporting Delhivery loads between different cities.]]></string>
+  <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intracity - </font> Contract for transporting Delhivery loads within the same city.]]></string>
+  <string name="dlv_intracity_fixed_info"><![CDATA[1. <font color=\'#5B80F7\'>Fixed Reporting - </font> Vehicle reports at a single, predefined location and time.]]></string>
+  <string name="dlv_intracity_flexible_info"><![CDATA[2. <font color=\'#5B80F7\'>Flexible Reporting - </font> Vehicle will report at multiple locations with variable reporting times.]]></string>
   <string name="collecting_bids">Collecting Bids</string>
   <string name="live_bidding_at">Live Bidding at</string>
   <string name="vehicle_requirement">Vehicle Requirement</string>
@@ -719,7 +721,7 @@
   <string name="you_did_not_bid_for_this_contract">You did not bid for this contract</string>
   <string name="results_will_be_announced_shortly">Results will be announced shortly</string>
   <string name="your_bid_amount">Your Bid Amount</string>
-  <string name="trip_commitment">How many trips can you commit ?</string>
+  <string name="trip_commitment"> Number of trips you can serve on this lane ?</string>
   <string name="your_vehicle_number">Your Vehicle Number</string>
   <string name="vehicle_number">Vehicle Number</string>
   <string name="placement_days">Vehicle available in</string>
@@ -759,7 +761,7 @@
   <string name="you_have_not_bid">You have not bid yet</string>
   <string name="you_did_not_bid">You did not bid</string>
   <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[You will receive start and end dates by email.]]></string>
-  <string name="rules">Rules</string>
+  <string name="rules">Guidelines</string>
   <string name="view_on_map">Map</string>
   <string name="status">Status</string>
   <string name="truck_type">Type</string>
@@ -788,6 +790,16 @@
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
   <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
   <string name="load_categories">Load Categories</string>
+  <string name="vehicle_type_amp_count"><![CDATA[Vehicle type & count must match the requirement]]></string>
+  <string name="follow_the_schedule_to_avoid_delay_penalties">Follow the schedule to avoid delay penalties</string>
+  <string name="any_schedule_changes_will_be_informed">Any schedule changes will be informed</string>
+  <string name="keep_an_empty_vehicle_ready_for_return_or_next_trip">Keep an empty vehicle ready for return or next trip</string>
+  <string name="vehicle_type_must_match_the_requirement">Vehicle type must match the requirement</string>
+  <string name="ensure_vehicle_reports_on_time">Ensure vehicle reports on time at the reporting center</string>
+  <string name="trip_count_is_tentative_and_may_change">Trip count is tentative and may change</string>
+  <string name="stick_to_your_trip_commitments">Stick to your trip commitments</string>
+  <string name="contract_violations_may_affect_your_score">Contract violations may affect your score or lead to cancellation</string>
+  <string name="start_and_end_dates_will_be_shared_via_email">Start and end dates will be communicated via email after bidding results are finalized</string>
 
 
   <string-array name="array_truck_type">

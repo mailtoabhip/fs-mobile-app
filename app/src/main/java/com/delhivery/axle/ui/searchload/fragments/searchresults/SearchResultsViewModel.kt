@@ -111,6 +111,7 @@ class SearchResultsViewModel @Inject constructor(
       UserTripsLoadLimit,isFlexible,includeFlexibleContracts
     )
         .flatMap { t ->
+            parallelTrace.start()
           this.total=t.total
           this.hasMoreData=t.hasNext
           this.offset=t.offset

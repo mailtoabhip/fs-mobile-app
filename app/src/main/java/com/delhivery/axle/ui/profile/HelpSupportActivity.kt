@@ -87,9 +87,9 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
             confirmDelete()
         }
 
-        binding.call.setOnClickListener {
-            callSupport()
-        }
+//        binding.call.setOnClickListener {
+//            callSupport()
+//        }
 
     }
     override fun onResume() {

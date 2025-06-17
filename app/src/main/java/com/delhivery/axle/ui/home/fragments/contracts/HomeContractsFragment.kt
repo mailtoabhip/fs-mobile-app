@@ -88,7 +88,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeContractsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    demandType= if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else{""}
+    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else{""}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -98,7 +98,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     binding.rvLoads.apply {
       layoutManager = LinearLayoutManager(context)
       adapter = this@HomeContractsFragment.adapter
-      addOnScrollListener(HomeContractsRVScrollListener(binding.editStickySearch))
+   //   addOnScrollListener(HomeContractsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
@@ -106,13 +106,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       isLoadingData = it ?: false
     })
 
-    binding.editStickySearch.setOnClickListener {
-      handleAction(
-        HomeContractsSearchAction_Search, HomeContractsSearchItem()
-      )
-    }
     binding.rvLoads.setItemAnimator(null);
-
 
     viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }

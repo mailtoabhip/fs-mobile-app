@@ -124,7 +124,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
    * @param positiveBtnClr - [ColorInt] Color of positive Action Button
    * @param negativeBtnClr - [ColorInt] Color of negative Action Button
    */
-  private fun showConfirmDialog(
+  fun showConfirmDialog(
     title: String,
     message: String?,
     positiveBtnText: String,

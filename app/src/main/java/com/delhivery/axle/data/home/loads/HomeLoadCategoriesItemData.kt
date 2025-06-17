@@ -3,7 +3,7 @@ package com.delhivery.axle.data.home.loads
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeLoadCategoriesItemData(
-    val showing: Boolean = true):
+    val textDesc: String = ""):
     BaseKeyTypeModel<String>() {
     override fun key()= HomeLoadCategoriesItemDataKey
 }

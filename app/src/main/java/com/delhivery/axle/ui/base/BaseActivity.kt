@@ -28,13 +28,16 @@ import com.delhivery.axle.BR
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.network.ConnectionLiveData
-import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.Config.AxleSupportEmail
 import com.delhivery.axle.utils.ContactUtils
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_USER_LOGOUT
 import com.delhivery.axle.utils.ErrorUtils
 import com.delhivery.axle.utils.NavigationUtils
+import com.delhivery.axle.utils.PROPERTY_TIME_SINCE_LAST_LOGIN
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.extensions.disposeAndClear
 import com.delhivery.axle.utils.extensions.onBackground
@@ -285,7 +288,32 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
    * Call helpline
    */
   fun callHelpline() {
-    startActivity(Intent(this, HelpSupportActivity::class.java))
+    dialogUtils.showBasicConfirmDialog(
+      R.string.title_support,
+      R.string.msg_dialog_support,
+      positiveAction = "Call",
+      negativeAction = "Close",
+      positiveClickListener = {
+        compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
+          .onBackground()
+          .subscribe { granted, error ->
+            it.dismiss()
+            if (error == null && granted) {
+              when (contactUtils.callHelpline()) {
+                false -> {
+                  uiUtils.showSnackbar("Unable to place call")
+                }
+                else -> {
+                }
+              }
+            } else {
+              uiUtils.showSnackbar(getString(string.msg_call_permission))
+            }
+          }
+
+      }
+    )
+
   }
 
   /**

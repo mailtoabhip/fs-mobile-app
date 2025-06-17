@@ -225,60 +225,6 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_4dp"
-        android:visibility="@{request.isExpress()? View.VISIBLE : View.GONE }"
-        android:orientation="vertical"
-        >
-
-<!--      <androidx.appcompat.widget.AppCompatTextView-->
-<!--          android:layout_width="match_parent"-->
-<!--          android:layout_height="wrap_content"-->
-<!--          android:fontFamily="sans-serif-medium"-->
-<!--          android:gravity="center_horizontal"-->
-<!--          android:text=""-->
-<!--          android:textColor="@color/sub_heading_black"-->
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif-medium"
-          android:text="Note:"
-          android:layout_marginTop="@dimen/size_6dp"
-          android:textColor="@color/sub_heading_black"
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:text="1.Vehicle GPS Mandatory"
-          android:textColor="@color/sub_heading_black"
-          tools:text="1.Vehicle GPS Mandatory"
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:text="@{request.expressText(true)}"
-          tools:text = "2.Exp. Loading Time: 3 hrs"
-          android:textColor="@color/sub_heading_black"
-          />
-
-      <androidx.appcompat.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:fontFamily="sans-serif"
-          android:text = "@string/_4_low_detention_expected_detention_at_warehouse_is_8_hrs"
-          android:textColor="@color/sub_heading_black"
-          />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_12dp"
         android:gravity="end"
         >

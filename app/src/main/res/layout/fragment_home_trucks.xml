@@ -54,12 +54,12 @@
             android:layout_height="wrap_content"
             android:text="@string/action_add_truck"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/colorAccent"
             android:layout_alignParentBottom="true"
             android:gravity="center"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/size_18dp"
-            android:background="@drawable/bg_action_btn"
+            android:background="@drawable/bg_action_light_red_btn"
             />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -71,6 +71,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:visibility="gone"
+            android:backgroundTint="@color/light_red_bg"
             android:contentDescription="@string/action_add_truck"
             android:layout_marginEnd="@dimen/size_16dp"/>
 

@@ -43,7 +43,7 @@
             android:textSize="@dimen/text_12sp"
             android:textColor="@color/color_hint"
             android:fontFamily="sans-serif"
-            android:text="Upcoming 18 hrs"/>
+            android:text="Upcoming 18 hrs reporting"/>
         <View
             android:id="@+id/divider"
             android:background="@color/light_grey"

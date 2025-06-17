@@ -90,11 +90,10 @@
               android:id="@+id/text_destination_state"
               android:layout_width="0dp"
               android:layout_weight="1"
-              android:gravity="center"
+              android:gravity="end"
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_4dp"
               android:fontFamily="sans-serif"
-              android:paddingEnd="@dimen/size_8dp"
               android:paddingStart="@dimen/size_8dp"
               android:text="@{request.destinationDistrictState()}"
               android:textColor="@color/sub_heading_black"
@@ -116,12 +115,11 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/img_forward"
             app:layout_constraintTop_toTopOf="@id/img_forward"
             tools:text="Goa"
             />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:id="@+id/img_forward"
             android:orientation="vertical"
@@ -131,18 +129,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_height="wrap_content">
-          <TextView
-              android:layout_width="wrap_content"
-              android:id="@+id/stopNo"
-              android:paddingStart="@dimen/size_16dp"
-              android:paddingEnd="@dimen/size_16dp"
-             android:layout_height="wrap_content"/>
 
-          <androidx.appcompat.widget.AppCompatImageView
+         <!-- <androidx.appcompat.widget.AppCompatImageView
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               app:srcCompat="@drawable/seprator_dotted"
-              />
+              />-->
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/text_date_time"
               android:layout_width="wrap_content"
@@ -153,12 +145,22 @@
               android:text="@{request.requiredAtWithTime()}"
               android:textColor="@color/white"
               android:textSize="@dimen/text_12sp"
+              app:layout_constraintTop_toBottomOf="@+id/stopNo"
               app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintTop_toBottomOf="@id/til_state"
+              app:layout_constraintStart_toStartOf="parent"
               android:background="@drawable/bg_date_today"
               tools:text="Today"
               />
-        </LinearLayout>
+          <TextView
+              android:layout_width="wrap_content"
+              android:id="@+id/stopNo"
+              app:layout_constraintBottom_toTopOf="@+id/text_date_time"
+              app:layout_constraintStart_toStartOf="@+id/text_date_time"
+              app:layout_constraintEnd_toEndOf="@+id/text_date_time"
+              android:paddingStart="@dimen/size_16dp"
+              android:paddingEnd="@dimen/size_16dp"
+              android:layout_height="wrap_content"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
@@ -466,7 +468,7 @@
               android:layout_height="wrap_content"
               android:layout_gravity="center_vertical"
               android:layout_weight="1"
-              android:background="@drawable/bg_action_light_red_btn"
+              android:background="@drawable/bg_action_light_red_btn_without_border"
               android:gravity="center_vertical"
               >
 

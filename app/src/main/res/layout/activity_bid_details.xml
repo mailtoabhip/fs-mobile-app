@@ -423,7 +423,7 @@
                   android:visibility="gone"
                   tools:visibility="visible"
                   app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintTop_toBottomOf="@id/text_destination"
+                  app:layout_constraintTop_toBottomOf="@id/text_source"
                   />
               <androidx.appcompat.widget.AppCompatTextView
                   android:id="@+id/text_load_details"
