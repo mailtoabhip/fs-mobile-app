@@ -1461,7 +1461,12 @@ data class HomeBidsRequestItemData(
       ""
     }
 
-  fun biddingTypeText()="Rate per trip"
+  fun biddingTypeText()=
+    if(biddingType=="FTL"){
+      "/FTL per trip"
+    }else{
+      "/MT per trip"
+    }
 
   fun tentativeTripCount()=
     if(!isItLHContract()&& tentativeTripCount!=null){

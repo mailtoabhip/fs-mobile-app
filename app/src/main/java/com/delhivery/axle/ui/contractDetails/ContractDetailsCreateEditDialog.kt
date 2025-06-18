@@ -77,7 +77,7 @@ class ContractDetailsCreateEditDialog @Inject constructor(
   private var isValidBidAmount = false
   private var isValidTripCommit = false
   private var isValidVehicleNumber = false
-  private var isValidPlacementDays = true
+  private var isValidPlacementDays = false
 
 
   private var expectedArrivalTimePickup = ""
@@ -367,16 +367,14 @@ class ContractDetailsCreateEditDialog @Inject constructor(
         id: Long
       ) {
         val value = parent!!.getItemAtPosition(position).toString()
-        isValidPlacementDays = true
-        enableSubmit()
-//        if(value == items[0]){
-//          (view as TextView).setTextColor(Color.GRAY)
-//          isValidPlacementDays = false
-//          enableSubmit()
-//        }else{
-//          isValidPlacementDays = true
-//          enableSubmit()
-//        }
+        if(value == items[0]){
+          (view as TextView).setTextColor(Color.GRAY)
+          isValidPlacementDays = false
+          enableSubmit()
+        }else{
+          isValidPlacementDays = true
+          enableSubmit()
+        }
       }
 
     }

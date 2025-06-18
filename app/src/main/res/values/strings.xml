@@ -724,7 +724,7 @@
   <string name="trip_commitment"> Number of trips you can serve on this lane ?</string>
   <string name="your_vehicle_number">Your Vehicle Number</string>
   <string name="vehicle_number">Vehicle Number</string>
-  <string name="placement_days">Vehicle available in</string>
+  <string name="placement_days">Vehicle Can Be Placed In (Days)</string>
   <string name="departure">Departure</string>
   <string name="arrival">Arrival</string>
   <string name="route_details">Route Details</string>
