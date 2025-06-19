@@ -295,7 +295,7 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Hide the menu item
-        menu.findItem(R.id.nav_call).isVisible = false
+        menu.findItem(R.id.nav_call).isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

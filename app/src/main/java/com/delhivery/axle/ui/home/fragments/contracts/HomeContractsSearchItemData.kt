@@ -13,3 +13,4 @@ private const val HomeContractsSearchItemDataKey = "search"
 
 /* action id */
 const val HomeContractsSearchAction_Search = "search"
+const val HomeContractsFilterInfo = "filter_info"

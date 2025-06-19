@@ -350,7 +350,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
           val j = 0
           for (i in sortedList) {
             j + 1
-            uploadArray.add(Pair("Pickup Intermediary Stop", i.second + " " + i.third))
+            uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", i.second + " " + i.third))
           }
 
           if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
@@ -445,13 +445,13 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.unallocated =
               getString(string.unallocated_bulk_order) + (_transaction.unAllocatedVolume)?.toInt() + " MT"
           }
-          if(_transaction!!.requiredAtDraw()!=null){
+        /*  if(_transaction!!.requiredAtDraw()!=null){
           binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(
               null, null, ContextCompat.getDrawable(
               this@BidDetailsActivity, _transaction!!.requiredAtDraw()!!
           ), null
           )
-          }
+          }*/
         }
 
 
@@ -525,7 +525,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaDestination.city1.text = citNam
 
             if (binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup1Address))
+              uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup1Address))
             } else {
               var uData = StringBuilder()
               if (binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()) {
@@ -536,7 +536,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               }
 
               if (uData.toString().isNotNullOrEmpty()) {
-                uploadArray.add(Pair("Pickup Intermediary Stop", uData.toString()))
+                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
               }
             }
           }
@@ -554,7 +554,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             binding.textViaDestination.city2.text = citNam
 
             if (binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
-              uploadArray.add(Pair("Pickup Intermediary Stop", binding.transaction?.pickup2Address))
+              uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup2Address))
             } else {
 
               var uData = StringBuilder()
@@ -566,7 +566,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               }
 
               if (uData.toString().isNotNullOrEmpty()) {
-                uploadArray.add(Pair("Pickup Intermediary Stop", uData.toString()))
+                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
               }
 
             }
@@ -590,7 +590,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             if (binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
               uploadArray.add(
                 Pair(
-                  "Drop Intermediary Stop", binding.transaction?.intermediaryStop1Address
+                  "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop1Address
                 )
               )
             } else {
@@ -603,7 +603,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               }
 
               if (uData.toString().isNotNullOrEmpty()) {
-                uploadArray.add(Pair("Drop Intermediary Stop", uData.toString()))
+                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
               }
 
             }
@@ -624,7 +624,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
             if (binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
               uploadArray.add(
                 Pair(
-                  "Drop Intermediary Stop", binding.transaction?.intermediaryStop2Address
+                  "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop2Address
                 )
               )
             } else {
@@ -638,7 +638,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
               }
 
               if (uData.toString().isNotNullOrEmpty()) {
-                uploadArray.add(Pair("Drop Intermediary Stop", uData.toString()))
+                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
               }
             }
           }
@@ -721,7 +721,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
                 binding.status.visibility = View.GONE
 
-                binding.buttonConfirm.text = "Place Bid"
+                binding.buttonConfirm.text = "Place Your Bid"
                 binding.bottomLay.visibility = View.VISIBLE
                 binding.buttonConfirm.setOnClickListener {
                   bidDialog()
@@ -761,7 +761,7 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                   binding.lowBid.visibility = View.GONE
                 }
 
-                binding.buttonConfirm.text = "Place Bid"
+                binding.buttonConfirm.text = "Place Your Bid"
                 binding.bidLay.visibility = View.GONE
                 binding.bottomLay.visibility = View.VISIBLE
                 binding.buttonConfirm.setOnClickListener {

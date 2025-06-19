@@ -16,18 +16,19 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterInfo
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterAll
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFixed
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFlexible
+import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsIntracityFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
+import com.delhivery.axle.databinding.ViewSearchContractsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
@@ -35,6 +36,7 @@ import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.utils.StringUtils
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 abstract class BaseHomeContractsRVAdapterViewHolder<out B: ViewDataBinding, IT: BaseHomeContractsRVAdapterItem<*>>(binding: B):BaseViewHolder<B>(binding) {
@@ -232,12 +234,10 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
             context,
             R.drawable.bg_all_rounded_lost_red
           )
-          //synchronized(this) {
-
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            format.setTimeZone(TimeZone.getTimeZone("IST"));
-            val date1: Date = format.parse(format.format(Date()))
-            val date2: Date = format.parse(item.data.contractBiddingEndTime)
+          val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+          format.setTimeZone(TimeZone.getTimeZone("IST"));
+          val date1: Date = format.parse(format.format(Date()))
+          val date2: Date = format.parse(item.data.contractBiddingEndTime)
             if (date2.compareTo(date1) > 0) {
               val mills: Long = date2.getTime() - date1.getTime()
               stopCounter()
@@ -471,6 +471,7 @@ class HomeContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding) :
 
    fun stopCounter() {
     countDownTimer?.cancel()
+    countDownTimer = null
   }
 
 }
@@ -509,14 +510,17 @@ internal class HomeContractsWarningItemVH(binding: ViewWarningItemBinding) :
 /**
 * Search item view holder
 */
-internal class HomeContractsSearchItemVH(binding: ViewHomeLoadsSearchItemBinding) :
-  BaseHomeContractsRVAdapterViewHolder<ViewHomeLoadsSearchItemBinding, HomeContractsSearchItem>(
+internal class HomeContractsSearchItemVH(binding: ViewSearchContractsItemBinding) :
+  BaseHomeContractsRVAdapterViewHolder<ViewSearchContractsItemBinding, HomeContractsSearchItem>(
     binding
   ) {
   override fun bind(
     item: HomeContractsSearchItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
+    binding.editStickySearch.clickToAction(HomeContractsSearchAction_Search,item,_interface)
+    binding.info.clickToAction(HomeContractsFilterInfo,item,_interface)
+
   }
 }
 
@@ -567,7 +571,7 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     binding.expressToggle.clickToAction(HomeContractsFilterExpress, item, _interface)
     binding.nonExpressToggle.clickToAction(HomeContractsFilterNonExpress, item, _interface)
     binding.intracityToggle.clickToAction(HomeContractsFilterIntracity, item, _interface)
-    binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
+   // binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }
 }
 

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:bind="http://schemas.android.com/apk/res-auto">
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:background="@color/grey_bg"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
     <androidx.appcompat.widget.Toolbar
+        bind:layout_constraintStart_toStartOf="parent"
+        bind:layout_constraintTop_toTopOf="parent"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
@@ -17,6 +18,8 @@
         />
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            bind:layout_constraintStart_toStartOf="parent"
+            bind:layout_constraintTop_toBottomOf="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/size_16dp"
@@ -35,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_payment_terms"
                     android:layout_gravity="center"
-                    android:textSize="@dimen/text_16sp"
+                    android:textSize="@dimen/text_14sp"
                     android:textColor="@color/heading_black"
                     android:padding="@dimen/size_11dp"
                     android:drawableStart="@drawable/ic_payment_terms"
@@ -104,9 +107,10 @@
             android:layout_width="match_parent"
             android:id="@+id/deleteLayout"
             android:padding="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_16dp"
             android:background="@color/white"
             android:layout_marginTop="@dimen/size_8dp"
-            bind:layout_constraintTop_toBottomOf="@+id/div4"
+            bind:layout_constraintBottom_toBottomOf="parent"
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -128,5 +132,5 @@
                 android:textSize="@dimen/text_14sp"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

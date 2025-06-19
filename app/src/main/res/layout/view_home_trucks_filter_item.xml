@@ -29,7 +29,7 @@
                 android:text="@string/label_vehicle_type"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
-                android:textColor="@color/white" />
+                android:textColor="@color/colorAccent" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -52,7 +52,7 @@
                 android:text="@string/label_availability"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
-                android:textColor="@color/white" />
+                android:textColor="@color/colorAccent" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -75,7 +75,7 @@
                 android:text="@string/label_truck_size"
                 android:padding="@dimen/size_8dp"
                 android:drawableEnd="@drawable/ic_arrow_drop_down_white"
-                android:textColor="@color/white" />
+                android:textColor="@color/colorAccent" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>

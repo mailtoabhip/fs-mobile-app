@@ -67,6 +67,14 @@ data class HomePlacementsItemData(
             "0 stop"
         }
 
+    fun detailMissingText()  = if(vehicleNumber==null && (driverName==null || driverPhone==null)){
+        "Vehicle/driver details missing"
+    }else if(vehicleNumber==null){
+        "Vehicle details missing"
+    }else{
+        "Driver details missing"
+    }
+
     fun missingVehicleVisibility()= if ((vehicleNumber==null || driverName==null || driverPhone==null)&& !detailVisible) View.VISIBLE else View.GONE
 
     fun missingDriverDetails()= if ( driverName==null || driverPhone==null) View.GONE else View.VISIBLE

@@ -146,12 +146,12 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/size_16dp"
           android:lineSpacingExtra="4sp"
-          android:text="@{request.requiredAt()}"
+          android:text="@{request.requiredAtWithTime()}"
           android:textColor="@color/white"
           android:textSize="@dimen/text_10sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/til_state"
-          bind:drawableResId="@{ request.requiredAtBg() }"
+          android:background="@drawable/bg_date_today"
           tools:text="Today"
           />
 

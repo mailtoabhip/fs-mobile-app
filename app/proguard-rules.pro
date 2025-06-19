@@ -101,3 +101,5 @@
 -keepattributes Signature,*Annotation*
 
 -dontwarn javax.xml.stream.events.**
+
+-keepnames class com.delhivery.axle.ui.home.fragments.** { *; }

@@ -37,6 +37,7 @@ import com.delhivery.axle.utils.StringUtils.INTRACITY_CONTRACT_TYPE
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 /**
@@ -376,15 +377,13 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
             context,
             R.drawable.bg_all_rounded_lost_red
           )
-          synchronized(this) {
-
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            format.setTimeZone(TimeZone.getTimeZone("IST"));
-            val date1: Date = format.parse(format.format(Date()))
-            val date2: Date = format.parse(item.data.contractBiddingEndTime)
+          val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+          format.setTimeZone(TimeZone.getTimeZone("IST"));
+          val date1: Date = format.parse(format.format(Date()))
+          val date2: Date = format.parse(item.data.contractBiddingEndTime)
             if (date2.compareTo(date1) > 0) {
               val mills: Long = date2.getTime() - date1.getTime()
-              countDownTimer?.cancel()
+              stopCounter()
               countDownTimer = object : CountDownTimer(mills, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                   try {
@@ -473,7 +472,6 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
               )
               binding.tvBidTime.setText(context.getString(R.string.awaiting_results))
             }
-          }
         } else {
           // open bidding but not live bidding
           binding.tvBidStatus.setTextColor(
@@ -612,7 +610,10 @@ class SearchContractsRequestItemVH(binding: ViewHomeContractsRequestItemBinding)
 
     }
   }
-
+  fun stopCounter() {
+    countDownTimer?.cancel()
+    countDownTimer = null
+  }
 }
 
 internal class SearchContractsProgressItemVH(binding: ViewHomeContractsProgressItemBinding) :

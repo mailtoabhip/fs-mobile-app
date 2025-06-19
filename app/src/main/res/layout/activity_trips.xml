@@ -55,7 +55,7 @@
 
         <TextView
             android:id="@+id/loaded_after"
-            android:textColor="@color/white"
+            android:textColor="@color/colorAccent"
             android:padding="@dimen/size_8dp"
             android:paddingStart="@dimen/size_8dp"
             android:fontFamily="sans-serif"
@@ -73,7 +73,7 @@
             android:paddingBottom="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_8dp"
             app:srcCompat="@drawable/ic_cancel"
-            android:tint="@color/white"
+            android:tint="@color/colorAccent"
             android:layout_gravity="center"
             android:layout_width="@dimen/size_32dp"
             android:layout_height="@dimen/size_32dp"
@@ -91,7 +91,7 @@
 
         <TextView
             android:id="@+id/toggle_settled"
-            android:textColor="@color/white"
+            android:textColor="@color/colorAccent"
             android:padding="@dimen/size_8dp"
             android:paddingStart="@dimen/size_8dp"
             android:fontFamily="sans-serif"
@@ -109,7 +109,7 @@
             android:paddingBottom="@dimen/size_8dp"
             android:paddingEnd="@dimen/size_8dp"
             app:srcCompat="@drawable/ic_cancel"
-            android:tint="@color/white"
+            android:tint="@color/colorAccent"
             android:layout_gravity="center"
             android:layout_width="@dimen/size_32dp"
             android:layout_height="@dimen/size_32dp"
@@ -411,8 +411,8 @@
               android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_8dp"
-              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_marginStart="@dimen/size_4dp"
+              android:layout_marginEnd="@dimen/size_4dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -421,8 +421,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
                 android:minWidth="@dimen/size_80dp"
@@ -465,8 +465,8 @@
               android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_8dp"
-              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_marginStart="@dimen/size_4dp"
+              android:layout_marginEnd="@dimen/size_4dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -475,8 +475,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
                 android:minWidth="@dimen/size_80dp"
@@ -519,8 +519,8 @@
               android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_8dp"
-              android:layout_marginEnd="@dimen/size_8dp"
+              android:layout_marginStart="@dimen/size_4dp"
+              android:layout_marginEnd="@dimen/size_4dp"
               >
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -529,8 +529,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:minWidth="@dimen/size_80dp"
@@ -573,7 +573,7 @@
               android:background="@drawable/bg_white_all_corner_black"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/size_56dp"
-              android:layout_marginStart="@dimen/size_8dp"
+              android:layout_marginStart="@dimen/size_4dp"
               android:layout_marginEnd="@dimen/size_8dp"
               >
 
@@ -583,8 +583,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
                 android:minWidth="@dimen/size_80dp"
@@ -637,8 +637,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:lineSpacingExtra="@dimen/text_6sp"
-                android:layout_marginStart="@dimen/size_8dp"
-                android:layout_marginEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_4dp"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
                 android:minWidth="@dimen/size_80dp"

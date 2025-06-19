@@ -38,7 +38,7 @@ import javax.inject.Inject
 class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsViewModel>()
 {
 
-  var _title: String = "Ongoing Trips"
+  var _title: String = "My Trips"
   var downloadID = 0.toLong()
 
   @Inject lateinit var userPrefs: UserPrefs
@@ -221,7 +221,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
   }
 
   private fun setText() {
-    _title = "Ongoing Trips (${viewModel.totalOngoingCount})"
+    _title = "My Trips (${viewModel.totalOngoingCount})"
     binding.textAwaitingArrivalTripCount.text = viewModel.awaitingArrivalCount
     binding.textInTransitTripCount.text = viewModel.inTransitCount
     binding.textAwaitingPodTripCount.text = viewModel.awaitingPodCount

@@ -286,6 +286,31 @@ internal class HomeLoadsShareRateItemVH(binding: ViewShareLayoutBannerBinding) :
   }
 }
 
+internal class HomeLoadsCategoriesItemVH(binding: ViewHomeLoadCategoriesItemBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadCategoriesItemBinding, HomeLoadsCategoriesItem>(
+        binding
+    ) {
+    override fun bind(
+        item: HomeLoadsCategoriesItem,
+        _interface: HomeLoadsRVAdapterInterface
+    ) {
+        val infoText  = when (item.data.textDesc) {
+            DemandType.Intracity.type-> {
+                "Delhivery loads within the same city"
+
+            }
+            DemandType.Internal.type-> {
+                "Delhivery loads between different cities"
+            }
+            DemandType.Others.type-> {
+                "External client loads between different cities"
+            }
+            else -> "External client loads between different cities"
+        }
+       binding.textDescription = infoText
+    }
+}
+
 /**
  * Loads filter view holder
  */

@@ -47,8 +47,10 @@ class ContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>,priva
       }
       holder.hubCity.text = dataList[position].name?.split("(")?.get(0) ?: dataList[position].name
       holder.hubState.text = dataList[position].state
-      holder.arvTime.text = dataList[position].relEta
-      holder.depTime.text = dataList[position].relEtd
+      val etaList = dataList[position].relEta?.split(", ")
+      holder.arvTime.text ="${etaList?.getOrNull(0) ?: ""}\n${etaList?.getOrNull(1) ?: ""}"
+      val etdList = dataList[position].relEtd?.split(", ")
+      holder.depTime.text = "${etdList?.getOrNull(0) ?: ""}\n${etdList?.getOrNull(1) ?: ""}"
       holder.timeTravel.text = "Travel Time - "+dataList[position].pastTravelHrs+ " hrs"
       val lat = dataList[position].latitude
       val long = dataList[position].longitude

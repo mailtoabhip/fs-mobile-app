@@ -235,7 +235,7 @@ class HomeContractsViewModel@Inject constructor(
                 }else "All"
                 add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
               }
-              loadsCountLiveData.postValue(totalActive)
+            //  loadsCountLiveData.postValue(totalActive)
              if (_tRes.fifth.transactions.isEmpty()) {
                add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
               }

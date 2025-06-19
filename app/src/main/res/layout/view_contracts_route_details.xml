@@ -228,6 +228,7 @@
           android:id="@+id/intraCityTvMapView"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
+          android:drawableStart="@drawable/ic_navigate"
           app:layout_constraintStart_toStartOf="@id/intraCityTvCity"
           app:layout_constraintStart_toEndOf="@+id/intraCityHubIcon"
           app:layout_constraintTop_toBottomOf="@+id/intraCityTvState"

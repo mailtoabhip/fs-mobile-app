@@ -213,7 +213,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun delLoadVisibility() = if (indentOrigin.equals("LH")) {
-    View.VISIBLE
+    View.GONE
   } else {
     View.GONE
   }
@@ -778,18 +778,16 @@ data class HomeBidsRequestItemData(
   fun expressText(showNum: Boolean): String {
     val sb = StringBuilder()
     if (showNum)
-      sb.append("1. ")
-    sb.append("Delhivery Load")
+      sb.append("2.")
+    sb.append("Exp. loading time: ")
     if (tatMinutes != null) {
       val tat = tatMinutes?.toDouble() ?: 0.0
       if (tat > 60) {
-        sb.append("(")
-          .append(tat / 60)
-          .append(" hrs)")
+        sb.append(tat / 60)
+          .append(" hrs")
       } else {
-        sb.append("(")
-          .append(tat)
-          .append(" min)")
+        sb.append(tat)
+          .append(" min")
       }
     }
     return sb.toString()
@@ -1070,14 +1068,14 @@ data class HomeBidsRequestItemData(
           DateUtils.parseDate(
             contractBiddingEndTime!!,
             DatePatterns.OrionDateFormat
-          ), "dd MMM"
+          ), "dd MMM h:mm a"
         )
       } else {
         return "Bidding Closes on " + formatDate(
           DateUtils.parseDate(
             contractBiddingEndTime!!,
             DatePatterns.OrionDateFormat
-          ), "dd MMM"
+          ), "dd MMM h:mm a"
         )
       }
 
@@ -1115,7 +1113,7 @@ data class HomeBidsRequestItemData(
           DateUtils.parseDate(
             contractBiddingEndTime!!,
             DatePatterns.OrionDateFormat
-          ), "dd MMM"
+          ), "dd MMM h:mm a"
         )
       }else{
           ""
@@ -1465,9 +1463,9 @@ data class HomeBidsRequestItemData(
 
   fun biddingTypeText()=
     if(biddingType=="FTL"){
-      "FTL"
+      "/FTL per trip"
     }else{
-      "PMT"
+      "/MT per trip"
     }
 
   fun tentativeTripCount()=
