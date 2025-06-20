@@ -1,12 +1,10 @@
 package com.delhivery.axle.ui.auth
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -16,26 +14,16 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityAuthenticationBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.receiver.OTPReceiverInterface
-import com.delhivery.axle.ui.accountaction.AccountActionActivity
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
-import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AuthenticationUIError.*
 import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
-import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.Config.AxleOnboardingEmail
-import com.delhivery.axle.utils.extensions.actionDone
 import com.delhivery.axle.utils.extensions.errorVibrate
-import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -135,7 +123,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     binding.btnSendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_OTP_SEND,
               mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
               mutableListOf(binding.editPhoneNo.text.toString())
@@ -173,7 +161,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     binding.btnResendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_OTP_RESEND,
               mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
               mutableListOf(viewModel.phoneNo)
@@ -185,7 +173,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
     binding.btnSendOtp.setOnClickListener {
       // Capture event
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_OTP_SEND,
               mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
               mutableListOf(viewModel.phoneNo)
@@ -309,7 +297,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             // Capture event
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_OTP_VERIFIED,
                     mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
                     mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())

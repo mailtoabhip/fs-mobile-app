@@ -89,7 +89,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     //Capture event
     val cal = Calendar.getInstance()
     val currentHourIn24Format = cal[Calendar.HOUR_OF_DAY]
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
             EVENT_APP_OPEN,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_HOUR_OF_DAY),
             mutableListOf(userPrefs.userId() , currentHourIn24Format.toString())

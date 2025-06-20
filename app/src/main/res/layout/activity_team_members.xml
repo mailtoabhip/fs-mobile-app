@@ -65,7 +65,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_margin="@dimen/size_16dp"
-          android:background="@drawable/bg_allround_corner_red"
+          android:background="@drawable/bg_action_light_red_btn_without_border"
           android:text="Add Team Member"
           android:textAllCaps="false"
           android:visibility="gone"

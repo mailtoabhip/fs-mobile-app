@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -13,32 +12,22 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
-import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
 import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
-import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
-import com.delhivery.axle.utils.EVENT_APP_OPEN
 import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
-import com.delhivery.axle.utils.EVENT_SUBMIT_BUSINESS_PROOF
 import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
-import com.delhivery.axle.utils.PROPERTY_BUSINESS_PROOF_TYPE
-import com.delhivery.axle.utils.PROPERTY_HOUR_OF_DAY
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TTL
@@ -224,7 +213,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_PAYMENT_DETAILS,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
@@ -773,7 +762,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),

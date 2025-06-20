@@ -2,17 +2,14 @@ package com.delhivery.axle.ui.profile
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
-import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
@@ -474,7 +471,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(
                                     PROPERTY_USER_ID, PROPERTY_PHONE_NO,

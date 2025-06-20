@@ -8,14 +8,12 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Layout
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -972,34 +970,6 @@ class BidDetailsActivity : BaseActivity<ActivityBidDetailsBinding, BidDetailsVie
                 }
                 viewModel.restrictEventTrigger = false
 
-                if (viewModel.analyticsBucket) {
-                  if (data.oneVisibility() == View.VISIBLE || data.twoVisibility() == View.VISIBLE) {
-                    analyticsUtil.trackEvent(
-                      EVENT_BID_INLINE_PROMPT,
-                      mutableListOf(
-                        PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID,
-                        PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE
-                      ),
-                      mutableListOf(
-                        userPrefs.userId(), data.key(), userPrefs.demandType,
-                        userPrefs.userPerformance
-                      )
-                    )
-                  } else if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
-                    analyticsUtil.trackEvent(
-                      EVENT_BID_REVISE_PROMPT,
-                      mutableListOf(
-                        PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID,
-                        PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE
-                      ),
-                      mutableListOf(
-                        userPrefs.userId(), data.key(), userPrefs.demandType,
-                        userPrefs.userPerformance
-                      )
-                    )
-                  }
-                  viewModel.analyticsBucket = false
-                }
 
                 if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
                   val mHandler = Handler(Looper.myLooper()!!)

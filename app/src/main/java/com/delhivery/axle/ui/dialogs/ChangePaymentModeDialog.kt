@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
@@ -22,7 +21,6 @@ import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.tripdetails.FuelUserSpinnerAdapter
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
-import java.io.Serializable
 import javax.inject.Inject
 
 
@@ -46,7 +44,7 @@ class ChangePaymentModeDialog @Inject constructor(
 
     override fun cancel() {
         super.cancel()
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL,
             mutableListOf(PROPERTY_USER_ID),
             mutableListOf(userPrefs.userId())
@@ -265,7 +263,7 @@ class ChangePaymentModeDialog @Inject constructor(
         }
 
         if((fuelAmt > 0 && userNumber != "" && userOmc!= "") ){
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                 EVENT_VIEW_CHANGE_PAYMENT_MODE_DONE,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_CHANGE_PAYMENT_DIESEL_PAYOUT, PROPERTY_CHANGE_PAYMENT_DIESEL_CARD_NUMBER),
                 mutableListOf(userPrefs.userId(),userOmc, userNumber)

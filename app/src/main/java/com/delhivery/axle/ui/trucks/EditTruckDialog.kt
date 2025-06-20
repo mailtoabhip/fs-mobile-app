@@ -166,11 +166,6 @@ class EditTruckDialog @Inject constructor(
         }
 
         if (flag){
-            analyticsUtil.trackEvent(
-                EVENT_EDIT_TRUCK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
-                mutableListOf(userPrefs.userId(), data.inventoryId)
-            )
             uiUtils.showProgress()
             dialogInterface.editTruck(data, truckCity!!, truckDestination!! ,sourcedAs, truckPrice, truckOwnership, position)
             dismiss()

@@ -369,11 +369,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         if(flag) {
-            analyticsUtil.trackEvent(
-                EVENT_ADD_TRUCK,
-                mutableListOf(PROPERTY_USER_ID, PROPERTY_SOURCE),
-                mutableListOf(userPrefs.userId(),viewModel.addTruckSourceIntent)
-            )
             uiUtils.showProgress("Adding truck")
             viewModel.addNewTruck(sourcedAs.uppercase())
         }

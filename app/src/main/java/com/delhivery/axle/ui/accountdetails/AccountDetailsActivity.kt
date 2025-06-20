@@ -1,62 +1,32 @@
 package com.delhivery.axle.ui.accountdetails
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.text.Spannable
-import android.util.Log
-import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.databinding.ActivityAccountDetailsBinding
-import com.delhivery.axle.ui.accountaction.AccountActionActivity
 import com.delhivery.axle.ui.accountaction.AccountType
 import com.delhivery.axle.ui.accountaction.IntentExtraModeTypeKey
 import com.delhivery.axle.ui.accountaction.IntentExtraRoleTypeKey
 import com.delhivery.axle.ui.accountrole.AccountRole
 import com.delhivery.axle.ui.accountrole.AccountRoleActivity
-import com.delhivery.axle.ui.accountrole.accountRoleIntent
-import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.AuthenticationUIState
 
-import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseLocationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
-import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
-import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteActivity
-import com.delhivery.axle.ui.selectroute.activity.SelectRouteWelcomeIntentExtra
-import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.extensions.actionDone
-import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.raisedFocus
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 import android.text.method.LinkMovementMethod
 
-import android.text.Spanned
-
-import android.text.style.ClickableSpan
-
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.widget.TextView.BufferType
 import androidx.activity.OnBackPressedCallback
-import com.delhivery.axle.R.string
-import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.utils.extensions.focusClick
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import java.util.Date
 
 class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
     init {
@@ -138,7 +108,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                 val businessName = viewModel.business_name.value?.trim()
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMITTED_ABOUT_YOURSELF,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_USERNAME,
                         PROPERTY_BUSINESS_NAME, PROPERTY_TNC, PROPERTY_TTL),
@@ -174,7 +144,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
     }
 
     fun trackEvent(){
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_ABOUT_YOURSELF,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
             mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")

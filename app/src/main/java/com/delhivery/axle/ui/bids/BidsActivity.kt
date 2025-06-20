@@ -14,7 +14,6 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.home.bids.*
-import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
@@ -170,7 +169,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
@@ -209,7 +208,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
       HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_LIST_ITEM,
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
@@ -245,7 +244,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     bundle.putString("offerid", offerid)
     bundle.putString("amt", amount)
 
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
             EVENT_CLICKED_OFFER,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
             mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "bid_screen", offerid?:"")
@@ -300,7 +299,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_SEARCH_LOCAL,
             mutableListOf(PROPERTY_TRANSACTION_TYPE),
             mutableListOf(VALUE_BID)

@@ -65,7 +65,7 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     }
 
     fun trackEvent(ttl:String){
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
           EVENT_CONFIRM_PAN,
           mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
           mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",ttl)

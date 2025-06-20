@@ -1,32 +1,22 @@
 package com.delhivery.axle.ui.businessverification
 
-import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
-import com.delhivery.axle.utils.extensions.clearAndFocus
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
-import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.RadioGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
-import androidx.databinding.library.BuildConfig
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
@@ -36,12 +26,8 @@ import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 //import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
-import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
-import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
@@ -340,7 +326,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_BUSINESS_PROOF,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_BUSINESS_PROOF_TYPE),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), identityType)
@@ -721,7 +707,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),

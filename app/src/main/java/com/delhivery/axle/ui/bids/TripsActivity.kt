@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
@@ -23,7 +22,6 @@ import com.delhivery.axle.databinding.ActivityTripsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.TripType.Companion
 import com.delhivery.axle.ui.dialogs.TripsFilterDialog
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsProgressItem
@@ -31,8 +29,6 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapter
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsRVAdapterInterface
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.api.repository.UserSearchLimit
-import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.*
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
@@ -186,28 +182,28 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         if (viewModel.viewType.equals("trips_view")) {
           when (viewModel.tripType) {
             Companion.byTypeId(0) -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_TRIPS_AWAITING_ARRIVAL,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_AWAITING_ARRIVAL_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.awaitingArrival.count(), loadingTime)
               )
             }
             Companion.byTypeId(1) -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_TRIPS_INTRANSIT,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_INTRANSIT_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.inTransit.count(), loadingTime)
               )
             }
             Companion.byTypeId(2) -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_TRIPS_AWAITING_LOADING,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_AWAITING_LOADING_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.awaitingLoading.count(), loadingTime)
               )
             }
             else -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_TRIPS_AWAITING_UNLOADING,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRIPS_AWAITING_UNLOADING_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.awaitingUnloading.count(), loadingTime)
@@ -217,14 +213,14 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         } else if (viewModel.viewType.equals("payment_view")) {
           when (viewModel.viewPaymentType) {
             ViewPaymentType.byTypeId(0) -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_ADVANCE_PENDING,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_ADVANCE_PENDING_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.advancePending.count(), loadingTime)
               )
             }
             ViewPaymentType.byTypeId(1) -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_BALANCE_PENDING,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_BALANCE_PENDING_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.balancePending.count(), loadingTime)
@@ -232,7 +228,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
             }
             else -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_RECOVERY_PENDING,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_RECOVERY_PENDING_COUNT, PROPERTY_LOADING_TIME),
                       mutableListOf(userPrefs.userId(), it.recoveryPending.count(), loadingTime)
@@ -242,7 +238,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         }
         else{
           val total = it.awaitingArrival.count!! + it.inTransit.count!! + it.awaitingPod.count!! + it .awaitingLoading.count!! + it.awaitingUnloading.count!!
-          analyticsUtil.trackEvent(
+          analyticsUtil.moEngageTrackEvent(
                   EVENT_VIEW_ALL_TRIPS,
                   mutableListOf(PROPERTY_USER_ID , PROPERTY_ALL_TRIPS_COUNT , PROPERTY_LOADING_TIME),
                   mutableListOf(userPrefs.userId() , total.toString() ,loadingTime)
@@ -296,7 +292,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       uiUtils.hideProgress()
       if(it!= null){
         tripDataItem?.let { it1 -> ChangePaymentModeDialog(this,viewModel, it1, it, userPrefs, uiUtils, itemPos, analyticsUtil).show() }
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIPS,
           mutableListOf(PROPERTY_USER_ID),
           mutableListOf(userPrefs.userId())
@@ -454,7 +450,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
       binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
       if (viewModel.loadingDate.isNotNullOrEmpty()) {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_FILTER_ALL_TRIPS,
                 mutableListOf(PROPERTY_USER_ID , PROPERTY_LOADED_AFTER , PROPERTY_ONLY_SETTLED),
                 mutableListOf(userPrefs.userId() , viewModel.loadingDate ,viewModel.isSettledFilter.toString())
@@ -503,7 +499,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       HomeTripsRequestAction_ViewDetails -> {
         val data = item.data as HomeTripsItemData
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_TRIP, data.transactionId)
@@ -574,7 +570,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
         binding.refreshLayout.isEnabled = false
         adapter.enableFilter()
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_SEARCH_LOCAL,
             mutableListOf(PROPERTY_TRANSACTION_TYPE),
             mutableListOf(VALUE_TRIP)

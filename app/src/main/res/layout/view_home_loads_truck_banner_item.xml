@@ -87,7 +87,7 @@
               android:layout_height="wrap_content"
               android:layout_gravity="center_vertical"
               android:layout_weight="1"
-              android:background="@drawable/bg_load_action_btn"
+              android:background="@drawable/bg_action_light_red_btn_without_border"
               android:gravity="center_vertical"
               app:layout_constraintEnd_toEndOf="parent"
               app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +104,7 @@
                 android:drawablePadding="@dimen/size_2dp"
                 android:maxLines="1"
                 android:text="@string/action_add_truck"
-                android:textColor="@color/white"
+                android:textColor="@color/colorAccent"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"
                 />

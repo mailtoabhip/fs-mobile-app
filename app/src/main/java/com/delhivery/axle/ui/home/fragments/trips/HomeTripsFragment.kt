@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -74,7 +73,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     /**
      Track Event when trip_screen is created
      */
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_TRIPS,
             mutableListOf(PROPERTY_USER_ID),
             mutableListOf(userPrefs.userId())
@@ -133,7 +132,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 
     binding.viewAwaitingPod.setOnClickListener {
       userPrefs.setPreviousScreen(this.javaClass.name)
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_VIEW_TRIPS_AWAITING_POD,
               mutableListOf(PROPERTY_USER_ID , PROPERTY_TRIPS_AWAITING_POD_COUNT),
               mutableListOf(userPrefs.userId() , viewModel.awaitingPodCount)
@@ -154,7 +153,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
 
     binding.labelPaymentSummary.setOnClickListener {
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_VIEW_PAYMENT_SUMMARY,
               mutableListOf(PROPERTY_USER_ID),
               mutableListOf(userPrefs.userId())

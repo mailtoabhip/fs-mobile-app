@@ -7,10 +7,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +18,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.trucks.*
-import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
@@ -378,7 +374,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         })
 
         if((HomeLoadsTruckFragment._instance.fromNotification||HomeLoadsTruckFragment._instance.fromDeepLink) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_VIEW_MY_TRUCK,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                     mutableListOf(userPrefs.userId(), "trucks_screen")
@@ -390,19 +386,19 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             viewModel.getAllInventories(search = true)
         }else{
             if(HomeLoadsTruckFragment._instance.fromNotification){
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                         EVENT_VIEW_MY_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
                         mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_NOTIFICATION)
                 )
             }else if(HomeLoadsTruckFragment._instance.fromDeepLink){
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                         EVENT_VIEW_MY_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE),
                         mutableListOf(userPrefs.userId(), "trucks_screen", VALUE_DEEP_LINKING)
                 )
             }else{
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                         EVENT_VIEW_MY_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                         mutableListOf(userPrefs.userId(), "trucks_screen")
@@ -469,7 +465,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             HomeTrucksPriorityAction -> {
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                         EVENT_BANNER_CLICK_TOP,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                         mutableListOf(userPrefs.userId(), "trucks_screen")
@@ -601,7 +597,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
                     mutableListOf(PROPERTY_INVENTORY_UUID),
                     mutableListOf(data.inventoryId)
             )
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_DELETE_TRUCK,
                     mutableListOf(PROPERTY_INVENTORY_ID),
                     mutableListOf(data.inventoryId)
@@ -639,7 +635,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
             }
 
             if(reason != "") {
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                         EVENT_DEACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
                         mutableListOf(userPrefs.userId(), data.inventoryId, reason)
@@ -885,7 +881,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
     }
 
     override fun callRewards() {
-         analyticsUtil.trackEvent(
+         analyticsUtil.moEngageTrackEvent(
                  EVENT_CLICKED_PRICE_BANNER,
                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
                  mutableListOf(userPrefs.userId(), userPrefs.phoneNumber ?: "")
@@ -915,7 +911,7 @@ class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding,
         bundle.putString("offerid", offerid)
         bundle.putString("amt", amt)
 
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_CLICKED_OFFER,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
                 mutableListOf(userPrefs.userId(), userPrefs.phoneNumber

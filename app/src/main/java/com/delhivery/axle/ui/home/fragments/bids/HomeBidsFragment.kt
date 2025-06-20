@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.*
-import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
@@ -32,13 +30,11 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.Executors
 import javax.inject.Inject
@@ -109,7 +105,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       userPrefs.lostBidCount=viewModel.lostBids
       userPrefs.confirmedBidCount=viewModel.confirmedBids
      if(launch) {
-       analyticsUtil.trackEvent(
+       analyticsUtil.moEngageTrackEvent(
                EVENT_VIEW_BIDS_SCREEN,
                mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
                mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
@@ -117,7 +113,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
        val c = Date()
        val date = c.toString()
-       analyticsUtil.trackEvent(
+       analyticsUtil.moEngageTrackEvent(
          EVENT_VIEW_BIDS_SCREEN_OFFERS,
          mutableListOf(
            PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
@@ -185,7 +181,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     when (actionId) {
       HomeBidsHeaderAction_MyBids -> {
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_ACTIVE_BIDS,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS),
             mutableListOf(userPrefs.userId(), viewModel.activeBids)
@@ -196,7 +192,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
       HomeBidsHeaderAction_ConfirmedBids -> {
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_CONFIRMED_BIDS,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_CONFIRMED_BIDS),
             mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
@@ -207,7 +203,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
       HomeBidsHeaderAction_LostBids -> {
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_LOST_BIDS,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
             mutableListOf(userPrefs.userId(), viewModel.lostBids)
@@ -230,7 +226,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_LIST_ITEM,
             mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
             mutableListOf(VALUE_BID, _item.transactionId ?: "")
@@ -264,7 +260,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
       HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_LIST_ITEM,
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
@@ -275,7 +271,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
 
       HomeBidsSearchAction_Search -> context?.let {
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_SEARCH_LOCAL,
             mutableListOf(PROPERTY_TRANSACTION_TYPE),
             mutableListOf(VALUE_BID)
@@ -368,7 +364,7 @@ class HomeBidsFragment : HomeBaseFragment<FragmentHomeBidsBinding, HomeBidsViewM
     bundle.putString("offerid", offerid)
     bundle.putString("amt", amount)
 
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
             EVENT_CLICKED_OFFER,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
             mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "bid_screen", offerid?:"")

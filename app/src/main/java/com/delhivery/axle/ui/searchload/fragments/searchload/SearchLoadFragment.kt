@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -262,7 +261,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       if (origin == null) {
         binding.editOriginCity.error = getString(R.string.error_search_missing_origin)
         binding.editOriginCity.errorAnimate()
-        analyticsUtil.trackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
+        analyticsUtil.moEngageTrackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
         return
       }
 

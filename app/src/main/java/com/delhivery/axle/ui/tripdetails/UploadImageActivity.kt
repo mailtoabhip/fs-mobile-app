@@ -217,7 +217,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     path: String
   ) {
     if (!isFinishing) {
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
           EVENT_POD_UPLOAD,
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_SUCCESS)
@@ -232,7 +232,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 
   override fun onAWSFailure() {
     if (!isFinishing) {
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
           EVENT_POD_UPLOAD,
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_FAILURE)

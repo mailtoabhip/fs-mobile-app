@@ -75,7 +75,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
    * Move to next page
    */
   private fun moveNext() {
-    analyticsUtil.trackEvent(EVENT_VIEW_TUTORIAL)
+    analyticsUtil.moEngageTrackEvent(EVENT_VIEW_TUTORIAL)
     val currentPage = binding.viewpager.currentItem
     if (currentPage < adapter.count - 1) {
       binding.viewpager.setCurrentItem(currentPage + 1, true)
@@ -86,7 +86,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding, OnboardingVie
 
   private fun skip(intentSkip :Boolean =false) {
     if(intentSkip) {
-      analyticsUtil.trackEvent(EVENT_SKIP_TUTORIAL)
+      analyticsUtil.moEngageTrackEvent(EVENT_SKIP_TUTORIAL)
     }
     viewModel.onboardingCompleted()
     when (viewModel.isUserAuthenticated()) {

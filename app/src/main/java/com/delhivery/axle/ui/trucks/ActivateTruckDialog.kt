@@ -9,7 +9,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.delhivery.axle.R
 import com.delhivery.axle.data.CityModel
@@ -152,21 +151,21 @@ class ActivateTruckDialog @Inject constructor(
         if (flag){
             when {
                 fromDeepLink -> {
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                         EVENT_ACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_SOURCE),
                         mutableListOf(userPrefs.userId(), data.inventoryId, VALUE_DEEP_LINKING)
                     )
                 }
                 fromNotification -> {
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                         EVENT_ACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_SOURCE),
                         mutableListOf(userPrefs.userId(), data.inventoryId, VALUE_NOTIFICATION)
                     )
                 }
                 else -> {
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                         EVENT_ACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
                         mutableListOf(userPrefs.userId(), data.inventoryId)

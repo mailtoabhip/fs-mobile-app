@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.profile.raterewards.fragments.rewards
 
 import android.Manifest
 import android.app.DatePickerDialog.OnDateSetListener
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -63,7 +62,7 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("YourRewardsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_PAYOUT,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
             mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")
