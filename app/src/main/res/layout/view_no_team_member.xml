@@ -78,10 +78,10 @@
             android:layout_marginTop="@dimen/size_28dp"
             android:layout_marginBottom="30dp"
             android:text="@{ actionLabel }"
-            android:textColor="@color/white"
+            android:textColor="@color/colorAccent"
             tools:text="Action"
             android:textAllCaps="false"
-            android:background="@drawable/bg_allround_corner_red"
+            android:background="@drawable/bg_action_light_red_btn_without_border"
             />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
