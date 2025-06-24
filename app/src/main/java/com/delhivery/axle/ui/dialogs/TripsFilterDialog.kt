@@ -3,11 +3,9 @@ package com.delhivery.axle.ui.dialogs
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.RadioButton
-import android.widget.RadioGroup
 import com.delhivery.axle.databinding.DialogTripsFilterBinding
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.EVENT_FILTER_BALANCE_PENDING
@@ -105,7 +103,7 @@ class TripsFilterDialog (
         radioButton = findViewById(selectedOption)!!
 
         if(event){
-          analyticsUtil.trackEvent(
+          analyticsUtil.moEngageTrackEvent(
                   EVENT_FILTER_BALANCE_PENDING,
                   mutableListOf(PROPERTY_USER_ID, PROPERTY_FILTER_SELECTED),
                   mutableListOf(userPrefs.userId(), radioButton.text.toString())

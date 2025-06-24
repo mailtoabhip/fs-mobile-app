@@ -2,20 +2,14 @@ package com.delhivery.axle.ui.kyc.aadhaar
 
 import android.Manifest
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.view.Window
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
@@ -23,36 +17,21 @@ import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.data.gst.GstAction_ViewDetails
-import com.delhivery.axle.data.transactions.TransactionTimeOutAction
 import com.delhivery.axle.databinding.ActivityVerifyAadharBinding
-import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.dialogs.ShowVerificationOtpDialog
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
-import com.delhivery.axle.ui.kyc.gst.BaseGstRVAdapterItem
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
-import com.delhivery.axle.ui.kyc.gst.GstRVAdapterInterface
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.DecimalFormat
-import java.text.NumberFormat
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import androidx.core.app.ActivityCompat.startActivityForResult
-import com.delhivery.axle.data.gst.GstDetailData
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.firebase.perf.FirebasePerformance
@@ -215,7 +194,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 }
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_AADHAR,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())

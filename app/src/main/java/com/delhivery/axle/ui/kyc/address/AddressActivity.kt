@@ -263,7 +263,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                   EVENT_SUBMIT_OFFICE_ADDRESS
                 }
 
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     event,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), selectedAddressData.proofDocumentType?:"")
@@ -474,7 +474,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE
@@ -620,7 +620,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 binding.alterateAddressText.setText(viewModel.alternateAddress)
                 selectedAddressData = alternateAddressData
 
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_POPUP_OFFICE_ADDRESS,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy")

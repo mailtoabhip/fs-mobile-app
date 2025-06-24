@@ -65,7 +65,7 @@ class ErrorUtils @Inject constructor(
 
     when (errorCode) {
       Unauthorized ->{
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_TOKEN_EXPIRED_401,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,PROPERTY_ERROR_MESSAGE),
             mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",errorMessage?:"")
@@ -73,7 +73,7 @@ class ErrorUtils @Inject constructor(
         navigationUtils.logout(errorMessage)
       }
       Forbidden -> {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_TOKEN_EXPIRED_403,
           mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,PROPERTY_ERROR_MESSAGE),
           mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",errorMessage?:"")

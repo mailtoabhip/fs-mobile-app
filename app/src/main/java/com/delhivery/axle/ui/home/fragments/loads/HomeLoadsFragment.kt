@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -45,7 +44,6 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
-import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -341,20 +339,6 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           )
           reviseInitiated=false
         }
-        if (it.second.oneVisibility() == View.VISIBLE || it.second.twoVisibility() == View.VISIBLE) {
-          analyticsUtil.trackEvent(
-                  EVENT_BID_INLINE_PROMPT,
-                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId(), it.second.key(), userPrefs.demandType, userPrefs.userPerformance)
-          )
-
-        } else if (it.second.threeVisibility() == View.VISIBLE || it.second.fourVisibility() == View.VISIBLE) {
-          analyticsUtil.trackEvent(
-                  EVENT_BID_REVISE_PROMPT,
-                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE),
-                  mutableListOf(userPrefs.userId(), it.second.key(), userPrefs.demandType, userPrefs.userPerformance)
-          )
-        }
 
         BidConfirmReviseDialog(
                 requireContext(), it.second, viewModel, it.first
@@ -481,7 +465,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   override fun onStop() {
     super.onStop()
     if (viewModel.paginateCount > 0) {
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_LOAD_SCROLL,
               mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE, PROPERTY_NO_OF_SCROLLS, PROPERTY_OVERALL_PERFORMANCE),
               mutableListOf(userPrefs.userId(), userPrefs.demandType, viewModel.paginateCount.toString(), userPrefs.userPerformance)
@@ -493,7 +477,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   override fun onPause() {
     super.onPause()
     if (viewModel.paginateCount > 0) {
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_LOAD_SCROLL,
               mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE, PROPERTY_NO_OF_SCROLLS, PROPERTY_OVERALL_PERFORMANCE),
               mutableListOf(userPrefs.userId(), userPrefs.demandType, viewModel.paginateCount.toString(), userPrefs.userPerformance)
@@ -524,7 +508,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
             mutableListOf(data.transactionId?:" ",(orderRank- STATIC_ITEM_LIST-((orderRank- STATIC_ITEM_LIST).div(HomeLoadsAddTruckItemDataConfig))).toString(),viewModel.total.toString())
             )
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_LIST_ITEM,
                 mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
@@ -550,7 +534,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsInfoAction_EditRoute -> {
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_EDIT_ROUTE,
                 mutableListOf(PROPERTY_SOURCE),
                 mutableListOf(VALUE_LOAD_INFO)
@@ -563,7 +547,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsWarningAction_NoLoads -> {
         // Capture event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_EDIT_ROUTE,
                 mutableListOf(PROPERTY_SOURCE),
                 mutableListOf(VALUE_NO_RESULTS)
@@ -584,7 +568,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       HomeLoadsInfoAction_Search -> {
         //Capture Event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_SHOW_ADDITIONAL_LOADS,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_DEMAND_TYPE),
                 mutableListOf(userPrefs.userId(), userPrefs.demandType)
@@ -616,7 +600,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
 
       HomeLoadsPriorityAction -> {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_BANNER_CLICK_TOP,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                 mutableListOf(userPrefs.userId(), "loads_screen")
@@ -652,7 +636,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
       HomeLoadsShareRateAction ->{
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_CLICKED_PRICE_BANNER,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"")
@@ -661,7 +645,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
 
       HomeLoadsBannerAction -> {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_BANNER_CLICK_SCROLL,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
                 mutableListOf(userPrefs.userId(), "loads_screen")
@@ -692,7 +676,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
       HomeLoadDlvIntracity ->{
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_LOAD_INTRACITY_CLICKED,
           mutableListOf(PROPERTY_USER_ID),
           mutableListOf(userPrefs.userId())
@@ -702,7 +686,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         refreshData()
       }
       HomeLoadDlvIntercity ->{
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_LOAD_INTERCITY_CLICKED,
           mutableListOf(PROPERTY_USER_ID),
           mutableListOf(userPrefs.userId())
@@ -712,7 +696,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         refreshData()
       }
       HomeLoadNonDlv ->{
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_NON_DELHIVERY_LOAD_CLICKED,
           mutableListOf(PROPERTY_USER_ID),
           mutableListOf(userPrefs.userId())
@@ -796,7 +780,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     builder.setPositiveButton("Filter") { _, _ ->
 
       //Capture event
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
               EVENT_FILTER_VEHICLE_TYPE,
               mutableListOf(PROPERTY_USER_ID),
               mutableListOf(userPrefs.userId())
@@ -811,7 +795,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
       viewModel.vehicleStr = filterVehicleTypes.joinToString(separator = ",") {it}
       viewModel.filterVehicleType = true
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
         EVENT_LOAD_VEHICLE_TYPE_CLICKED,
         mutableListOf(PROPERTY_VEHICLE_TYPE),
         mutableListOf(viewModel.vehicleStr?:"No Vehicle Type")

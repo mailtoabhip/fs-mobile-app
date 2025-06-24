@@ -305,7 +305,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             }else {
                     endTime = System.currentTimeMillis()
                     val ttl = endTime - startTime
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                             EVENT_SUBMIT_OFFER,
                             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_OFFER_ID),
                             mutableListOf(userPrefs.userId(), userPrefs.phoneNumber

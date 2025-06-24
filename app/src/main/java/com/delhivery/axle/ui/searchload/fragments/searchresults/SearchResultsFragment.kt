@@ -4,7 +4,6 @@ import android.R.layout
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
@@ -35,7 +34,6 @@ import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.DialogUtils
@@ -71,7 +69,6 @@ import com.delhivery.axle.utils.PROPERTY_USER_BID_VALUE_OLD
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
 import com.delhivery.axle.utils.PaginationScrollListener
-import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
 import com.delhivery.axle.utils.extensions.centerX
@@ -503,7 +500,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK),
           mutableListOf(_item.transactionId ?: "", orderRank.toString())
         )
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_LIST_ITEM,
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
@@ -663,7 +660,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               numResults.toString())
         )
       }
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
           event,
           mutableListOf(
               PROPERTY_USER_ID,

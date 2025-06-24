@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
@@ -37,10 +36,8 @@ import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.delhivery.axle.databinding.ActivityVerifyGstBinding
 import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -211,7 +208,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                 }
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_GST,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
@@ -464,7 +461,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),

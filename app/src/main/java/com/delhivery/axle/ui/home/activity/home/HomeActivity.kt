@@ -284,7 +284,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
         ADVANCE_PENDING_REDIRECT -> {
           userPrefs.startTime = Date().time
-          analyticsUtil.trackEvent(
+          analyticsUtil.moEngageTrackEvent(
             EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
             mutableListOf(PROPERTY_USER_ID),
             mutableListOf(userPrefs.userId())
@@ -325,7 +325,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             val sortKey = dplink_tid.split("_").get(1)
           val bundle = Bundle()
           bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_APPROVED)
-            analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+            analyticsUtil.moEngageTrackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
               PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",sortKey,
               OFFER_APPROVED,
               VALUE_DEEP_LINKING))
@@ -341,7 +341,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             val sortKey = dplink_tid.split("_").get(1)
             bundle.putString(ARGS_PRICING_ID,pricingId)
             bundle.putString(ARGS_PRICING_ID,sortKey)
-               analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+               analyticsUtil.moEngageTrackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
                  PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",sortKey,
                  OFFER_REJECTED,
                  VALUE_DEEP_LINKING))
@@ -393,7 +393,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         startActivity(userRoutesIntent(this))
       }
       REDIRECT_TO_TRIP -> {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
           mutableListOf(PROPERTY_USER_ID),
           mutableListOf(userPrefs.userId())
@@ -402,7 +402,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
 
       REDIRECT_TO_SUPPLIER_RECOMMENDATION -> {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_SUPPLIER_RECOMMENDATION,
                 mutableListOf(PROPERTY_SP_PHONE_NUMBER, PROPERTY_ORDER_ID),
                 mutableListOf(userPrefs.phoneNumber.toString(), preferredTransactionId)
@@ -430,7 +430,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       }
       OFFER_LANE_UPLOADED -> {
         fromNotification = true
-        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+        analyticsUtil.moEngageTrackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
           PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingOfferId,
           notificationFrom,
           VALUE_NOTIFICATION))
@@ -443,7 +443,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         fromNotification = true
         val bundle = Bundle()
         bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_APPROVED)
-        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+        analyticsUtil.moEngageTrackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
           PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
           OFFER_APPROVED,
           VALUE_NOTIFICATION))
@@ -455,7 +455,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         bundle.putString(ARGS_NOTIFICATION_TYPE, OFFER_REJECTED)
         bundle.putString(ARGS_PRICING_ID,pricingId)
         bundle.putString(ARGS_PRICING_SORT_KEY,pricingSortKey)
-        analyticsUtil.trackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
+        analyticsUtil.moEngageTrackEvent(EVENT_CLICKED_PRICE_NOTIFICATION,mutableListOf(PROPERTY_USER_ID,
           PROPERTY_PHONE_NO, PROPERTY_OFFER_ID,PROPERTY_NOTIFICATION_DETAIL, PROPERTY_NOTIFICATION_TYPE), mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",pricingSortKey,
           OFFER_REJECTED,
           VALUE_NOTIFICATION))
@@ -488,7 +488,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     return when (item.itemId) {
       R.id.nav_call -> {
         //Capture Event
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_CALL_VENDOR_DESK,
           mutableListOf(PROPERTY_USER_ID , PROPERTY_PAGE_NAME),
           mutableListOf(userPrefs.userId() , FragmentName.fragmentName(binding.viewpager.currentItem).frgName)
@@ -605,7 +605,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
   override fun markNotificationRead() {
     super.markNotificationRead()
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
       EVENT_NOTIFICATION_OPEN,
       mutableListOf(PROPERTY_USER_ID, PROPERTY_NOTIFICATION_TYPE, PROPERTY_OVERALL_PERFORMANCE),
       mutableListOf(userPrefs.userId() , notificationType, userPrefs.userPerformance)
@@ -746,7 +746,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
     val metadata: CampaignMetadata? = p0.campaignMetadata
     Log.d("parameters",url+metadata.toString())
     userPrefs.startTime = Date().time
-    analyticsUtil.trackEvent(
+    analyticsUtil.moEngageTrackEvent(
       EVENT_DEEP_LINK_ADD_FUEL_PAYMENT,
       mutableListOf(PROPERTY_USER_ID),
       mutableListOf(userPrefs.userId())

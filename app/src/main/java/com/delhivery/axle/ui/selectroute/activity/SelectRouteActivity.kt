@@ -182,7 +182,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           }
           if(userPrefs.firstRoute){
             userPrefs.firstRoute = false
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_ENTER_FIRST_OC,
                     mutableListOf( PROPERTY_USER_ID , PROPERTY_ORIGIN_CITY_CAPTURED , PROPERTY_TIME_SINCE_LAST_LOGIN),
                     mutableListOf( userPrefs.userId(), currentRoute!!.origin.city ,  DateUtils.timeDiff(userPrefs.lastLoginTime))
@@ -201,7 +201,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
               viewModel.fetchUser { userUpdateSuccess ->
                 when (userUpdateSuccess) {
                   true -> {
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                             EVENT_EDIT_PREFERENCES,
                             mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
                             mutableListOf(userPrefs.userId(), VALUE_COMPLETE_ROUTE)
@@ -234,7 +234,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
             for (destination in currentRoute!!.destinations){
               states.add(destination.state)
             }
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_CONFIRM_FIRST_ROUTE,
                     mutableListOf(PROPERTY_USER_ID , PROPERTY_ROUTE_PREFERENCES , PROPERTY_TIME_SINCE_LAST_LOGIN),
                     mutableListOf(userPrefs.userId() , currentRoute!!.origin.city + "to " + states.toString() , DateUtils.timeDiff(userPrefs.lastLoginTime))
@@ -261,7 +261,7 @@ class SelectRouteActivity : BaseLocationActivity<ActivitySelectRouteBinding, Sel
           viewModel.updateUserRoutes(_routes, allRoutes) { _success ->
 
             //Capture Event
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_EDIT_PREFERENCES,
                     mutableListOf(PROPERTY_USER_ID , PROPERTY_ATTRIBUTE_CHANGED),
                     mutableListOf(userPrefs.userId(), VALUE_DESTINATION_STATE)

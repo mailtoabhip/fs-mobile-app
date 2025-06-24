@@ -316,7 +316,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_OFFICE_ADDRESS,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_ADD_PROOF_TYPE),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), viewModel.documentProofType?:"alternate")
@@ -686,7 +686,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),

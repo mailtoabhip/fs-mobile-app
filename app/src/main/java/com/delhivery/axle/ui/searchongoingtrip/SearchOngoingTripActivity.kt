@@ -74,7 +74,7 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
 
     viewModel.searchLiveData.observe(this, Observer {
       if(viewModel.searchProgress) {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                 EVENT_SEARCH_TRIPS,
                 mutableListOf(PROPERTY_USER_ID, PROPERTY_ENTERED_VALUE, PROPERTY_RECD_TRIP_IDS),
                 mutableListOf(userPrefs.userId(), binding.editQuery.text.toString(), viewModel.tripIdsRecd.joinToString(separator = ","))

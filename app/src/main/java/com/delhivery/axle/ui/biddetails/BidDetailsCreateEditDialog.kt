@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -227,31 +226,12 @@ class BidDetailsCreateEditDialog @Inject constructor(
                 !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 500)
         ) { "*Bid difference should be more than ₹500" }
         if (transactionBid == null) {
-          analyticsUtil.trackEvent(
-                  EVENT_PLACE_BID,
-                  mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE, PROPERTY_TIME_LAPSE, PROPERTY_OVERALL_PERFORMANCE, PROPERTY_PAGE_NAME),
-                  mutableListOf(userPrefs.userId(), transaction.key(), userPrefs.demandType, transaction.timeLapse(), userPrefs.userPerformance, fromPage)
-          )
           dialogInterface.createBid(
                   transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
                   transaction.biddingType
                           ?: "FTL", position, expectedArrivalTimePickup, expectedArrivalTimePickupRemark
           )
         } else {
-          var event: String? = null
-          if (transaction.layoutOneVisibility() || transaction.layoutTwoVisibility()) {
-            event = EVENT_EDIT_BID
-          } else if (transaction.layoutThreeVisibility() || transaction.layoutFourVisibility()) {
-            event = EVENT_REVISE_BID_INTENT
-          }
-          // Capture event
-          if (event != null) {
-            analyticsUtil.trackEvent(
-                    event,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEMAND_TYPE, PROPERTY_OVERALL_PERFORMANCE, PROPERTY_PAGE_NAME),
-                    mutableListOf(userPrefs.userId(), transaction.key(), userPrefs.demandType, userPrefs.userPerformance, fromPage)
-            )
-          }
           dialogInterface.editBid(
                   transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
                   amount, pmtRate, transaction.biddingType ?: "FTL", position,

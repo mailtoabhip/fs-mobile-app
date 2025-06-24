@@ -3,38 +3,23 @@ package com.delhivery.axle.ui.kyc.identityverification
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.view.Window
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
 import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
-import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
-import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
-import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
-import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
@@ -210,7 +195,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_SUBMIT_IDENTITY,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_IDENTITY_SELECTED),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), identityType)
@@ -539,7 +524,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                         }else if (imageScopedFile.extension=="pdf"){
                             mPhotoFile = imageScopedFile
                         }else{
-                            analyticsUtil.trackEvent(
+                            analyticsUtil.moEngageTrackEvent(
                                 EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
                                 mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,
                                     PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),

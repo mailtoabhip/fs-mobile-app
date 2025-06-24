@@ -1,6 +1,5 @@
 package com.delhivery.axle.api.repository
 
-import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.OTPLoginRequest
 import com.delhivery.axle.api.request.PasswordLoginRequest
@@ -8,9 +7,6 @@ import com.delhivery.axle.api.request.RequestOTP
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
-import com.delhivery.axle.utils.AnalyticsUtil
-import com.delhivery.axle.utils.EVENT_AUTO_LOGOUT
-import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs

@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.profile
 
-import android.Manifest
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -8,7 +7,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -24,16 +22,11 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.ActivityMyProfileBinding
 import com.delhivery.axle.databinding.DialogAccountDeletionSubmittedBinding
-import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 import com.delhivery.axle.injection.module.GlideApp
-import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
-import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
@@ -41,8 +34,6 @@ import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -85,7 +76,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 finish()
             }
         })
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_VIEW_MY_PROFILE,
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
@@ -103,7 +94,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         viewModel.accountDeleteLiveData.observe(this) {
             if (it) {
                 analyticsUtil.moEngageTrackEvent(EVENT_USER_DELETE_ACCOUNT)
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_USER_DELETE_ACCOUNT,
                     mutableListOf(PROPERTY_USER_ID , PROPERTY_TIME_SINCE_LAST_LOGIN),
                     mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))
@@ -451,7 +442,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 negativeAction = "BACK",
                 positiveClickListener = {
                     it.dismiss()
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                             EVENT_USER_LOGOUT,
                             mutableListOf(PROPERTY_USER_ID , PROPERTY_TIME_SINCE_LAST_LOGIN),
                             mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))

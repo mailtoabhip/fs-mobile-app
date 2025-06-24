@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -178,7 +177,7 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
         negativeAction = "BACK",
         positiveClickListener = {
           it.dismiss()
-          analyticsUtil.trackEvent(
+          analyticsUtil.moEngageTrackEvent(
                   EVENT_USER_LOGOUT,
                   mutableListOf(PROPERTY_USER_ID , PROPERTY_TIME_SINCE_LAST_LOGIN),
                   mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))

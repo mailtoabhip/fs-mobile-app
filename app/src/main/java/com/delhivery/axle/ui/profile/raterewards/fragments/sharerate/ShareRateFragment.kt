@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.profile.raterewards.fragments.sharerate
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,9 +8,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.sharerates.ShareRateRoutesItemData
 import com.delhivery.axle.data.sharerates.ShareRatesItemDataAction_ViewDetails
 import com.delhivery.axle.data.sharerates.ShareRatesTimeOutAction
-import com.delhivery.axle.data.yourrewards.YourRewardsItemDataAction_ViewDetails
 import com.delhivery.axle.databinding.FragmentShareRateBinding
-import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsBaseFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.utils.*
@@ -67,7 +64,7 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
         if(launch) {
           val c = Calendar.getInstance()
           val date = c.get(Calendar.DATE).toString()
-          analyticsUtil.trackEvent(
+          analyticsUtil.moEngageTrackEvent(
               EVENT_VIEW_SHARE_RATE_OFFERS,
               mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
                   PROPERTY_DATE),
@@ -116,7 +113,7 @@ class ShareRateFragment: ShareRateGetRewardsBaseFragment<FragmentShareRateBindin
         bundle.putString("amt",  data.amount)
 
 
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
                   EVENT_CLICKED_OFFER,
                   mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
                   mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "profile_screen",  data.offerId?:"")

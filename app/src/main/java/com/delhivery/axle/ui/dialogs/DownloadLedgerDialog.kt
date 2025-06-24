@@ -158,7 +158,7 @@ class DownloadLedgerDialog(
             val duration = calculateDuration()
             val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
             radioButton = findViewById(selectedOption)!!
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_DOWNLOAD_LEDGER,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_OPTION_SELECTED, PROPERTY_DURATION_SELECTED, PROPERTY_DOWNLOADED_EMAILED_SELECTED),
                     mutableListOf(userPrefs.userId(), radioButton.text.toString(), duration, VALUE_DOWNLOADED)
@@ -187,7 +187,7 @@ class DownloadLedgerDialog(
             val duration = calculateDuration()
             val selectedOption: Int = binding.radioGroup.checkedRadioButtonId
             radioButton = findViewById(selectedOption)!!
-            analyticsUtil.trackEvent(
+            analyticsUtil.moEngageTrackEvent(
                     EVENT_DOWNLOAD_LEDGER,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_OPTION_SELECTED, PROPERTY_DURATION_SELECTED, PROPERTY_EMAIL_ENTERED, PROPERTY_DOWNLOADED_EMAILED_SELECTED),
                     mutableListOf(userPrefs.userId(), radioButton.text.toString(), duration , binding.editEmailId.text.toString(), VALUE_EMAILED)

@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -13,29 +11,19 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import androidx.transition.Visibility
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.response.*
-import com.delhivery.axle.api.response.TripPaymentsResponse.ChargeType
-import com.delhivery.axle.data.AwaitingPODUpload
-import com.delhivery.axle.data.BalancePaid
-import com.delhivery.axle.data.PODUploaded
-import com.delhivery.axle.data.TripHistoryItem
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsTimeOutAction
-import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemAction
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemData
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
@@ -45,17 +33,13 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
-import com.delhivery.axle.utils.EVENT_PAYMENT_SUMMARY
 import com.delhivery.axle.utils.EVENT_POD_VIEWED
-import com.delhivery.axle.utils.EVENT_TRIP_STATUS_HISTORY
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_FAILURE
-import com.delhivery.axle.utils.VALUE_LOAD
 import com.delhivery.axle.utils.VALUE_SUCCESS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
@@ -167,7 +151,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       uiUtils.hideProgress()
       if(it!= null){
         ChangePaymentModeDialog(this,viewModel, viewModel.tripDetail, it, userPrefs, uiUtils, analyticsUtil = analyticsUtil).show()
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
           EVENT_VIEW_CHANGE_PAYMENT_MODE_TRIP_DETAILS,
           mutableListOf(PROPERTY_USER_ID),
           mutableListOf(userPrefs.userId())
@@ -447,7 +431,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       uiUtils.showSnackbar("Downloaded")
       val file = getFile()
       if (file != null) {
-        analyticsUtil.trackEvent(
+        analyticsUtil.moEngageTrackEvent(
             EVENT_POD_VIEWED,
             mutableListOf(PROPERTY_STATUS),
             mutableListOf(VALUE_SUCCESS)
@@ -461,7 +445,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
   override fun onAWSFailure() {
     if (!isFinishing) {
-      analyticsUtil.trackEvent(
+      analyticsUtil.moEngageTrackEvent(
           EVENT_POD_VIEWED,
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_FAILURE)
@@ -654,28 +638,28 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         if(!data.expanded){
           when(data.title.uppercase()){
             "CHARGES" -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_CHARGES,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_CHARGES_AMOUNT, PROPERTY_AMOUNT_TYPE),
                       mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_PENDING_AMOUNT)
               )
             }
             "DEDUCTIONS" -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_DEDUCTIONS,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_DEDUCTIONS_AMOUNT, PROPERTY_AMOUNT_TYPE),
                       mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_RECOVERY_AMOUNT)
               )
             }
             "PAYMENTS" -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_PAYMENTS,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_PAYMENTS_AMOUNT, PROPERTY_AMOUNT_TYPE),
                       mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_PENDING_AMOUNT)
               )
             }
             "RECOVERIES ADJUSTED" -> {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                       EVENT_VIEW_RECOVERIES_ADJUSTED,
                       mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_RECOVERIES_ADJUSTED_AMOUNT, PROPERTY_AMOUNT_TYPE),
                       mutableListOf(userPrefs.userId() , viewModel.transactionId, data.totalAmount() , VALUE_RECOVERY_AMOUNT)
@@ -703,7 +687,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
               event = EVENT_VIEW_TRIP_FUTURE_ADJUSTMENT
             }
             if (event != null) {
-              analyticsUtil.trackEvent(
+              analyticsUtil.moEngageTrackEvent(
                         event,
                         mutableListOf(PROPERTY_USER_ID , PROPERTY_TRANSACTION_ID , PROPERTY_TRIP_AGAINST_RECOVERY_ADJUSTED , PROPERTY_AMOUNT_OF_RECOVERY_ADJUSTED ),
                         mutableListOf(userPrefs.userId() , viewModel.transactionId, data.transactionId ?: "" , data.formattedAmount() )

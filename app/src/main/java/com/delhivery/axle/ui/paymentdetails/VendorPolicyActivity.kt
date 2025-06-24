@@ -4,13 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVendorPolicyBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.EVENT_ACCEPT_VENDOR_POLICY
-import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_TTL
 import com.delhivery.axle.utils.PROPERTY_USER_ID
@@ -47,7 +45,7 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
             if (it) {
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
-                analyticsUtil.trackEvent(
+                analyticsUtil.moEngageTrackEvent(
                     EVENT_ACCEPT_VENDOR_POLICY,
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())

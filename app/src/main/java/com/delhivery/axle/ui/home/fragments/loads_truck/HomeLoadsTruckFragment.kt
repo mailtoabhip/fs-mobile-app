@@ -1,9 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.widget.ImageView
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
@@ -21,20 +19,14 @@ import com.delhivery.axle.utils.PROPERTY_DATE
 import com.delhivery.axle.utils.PROPERTY_NUMBER_OF_OFFERS
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.tabs.TabLayout
-import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
-import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
-import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_TAB_CLICK
 import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
 import com.google.firebase.perf.FirebasePerformance
@@ -85,7 +77,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
               if(tab?.position==1){
                     val c = Date()
                     val date = c.toString()
-                    analyticsUtil.trackEvent(
+                    analyticsUtil.moEngageTrackEvent(
                         EVENT_VIEW_MY_TRUCK_OFFERS,
                         mutableListOf(
                             PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,

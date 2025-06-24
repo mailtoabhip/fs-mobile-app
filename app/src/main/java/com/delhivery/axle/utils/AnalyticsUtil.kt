@@ -1,8 +1,5 @@
 package com.delhivery.axle.utils
-import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
-import android.util.Property
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -37,26 +34,6 @@ class AnalyticsUtil @Inject constructor(
     }
   }
 
-  fun trackEvent(
-    event: String,
-    properties: List<String> = mutableListOf(),
-    values: List<String> = mutableListOf()
-  ) {
-    Log.i(TAG, event)
-    val analytics = getAnalyticsObject()
-    if (analytics != null) {
-      val bundle = Bundle()
-      for ((index, property) in properties.withIndex()) {
-        Log.i(TAG, property + ":" + values[index])
-        bundle.putString(property, values[index])
-      }
-      if (!TextUtils.isEmpty(userPrefs.phoneNumber)) {
-        analytics.setUserProperty(CUSTOM_PHONE_NUMBER, userPrefs.phoneNumber)
-      }
-      analytics.logEvent(event, bundle)
-    }
-  }
-
   fun moEngageTrackEvent(
     event: String,
     attributes: List<String> = mutableListOf(),
@@ -81,31 +58,21 @@ class AnalyticsUtil @Inject constructor(
       MoEAnalyticsHelper.setUserAttribute(activity.applicationContext,userAttribute, value)
   }
 }
-const val EVENT_PLACE_BID = "bid_place"
-const val EVENT_ACCEPT_BID = "bid_accept"
-const val EVENT_EDIT_BID = "bid_edit"
+
 const val EVENT_SEARCH_LOAD = "search_load"
 const val EVENT_SEARCH_SAVED_LOAD = "search_saved_load"
 const val EVENT_SEARCH_LOCAL = "search_local"
 const val EVENT_SEARCH_ERROR = "search_error"
-const val EVENT_LIST_HEADER = "list_header"
 const val EVENT_LIST_ITEM = "list_item"
 const val EVENT_EDIT_ROUTE = "edit_route"
-const val EVENT_TRIP_STATUS_HISTORY = "trip_status_history"
-const val EVENT_PAYMENT_SUMMARY = "trip_payment_summary"
 const val EVENT_OTP_SEND = "otp_send"
 const val EVENT_OTP_RESEND = "otp_resend"
 const val EVENT_OTP_VERIFIED = "otp_verify"
 const val EVENT_POD_VIEWED = "pod_view"
 const val EVENT_POD_UPLOAD = "pod_upload"
-const val EVENT_CALL_HELPLINE = "helpline"
 const val EVENT_CALL_VENDOR_DESK = "call_vendorDesk"
-const val EVENT_BID_INLINE_PROMPT = "Bid_in_line_prompt"
-const val EVENT_BID_REVISE_PROMPT = "Bid_revise_prompt"
-const val EVENT_REVISE_BID_INTENT = "revise_bid_intent"
 const val EVENT_SKIP_TUTORIAL = "skip_app_tutorial"
 const val EVENT_VIEW_TUTORIAL = "view_app_tutorial"
-const val EVENT_AUTO_LOGOUT = "auto_logout"
 const val EVENT_TOKEN_EXPIRED_403 = "token_expired_403"
 const val EVENT_TOKEN_EXPIRED_401 = "token_expired_401"
 const val EVENT_USER_LOGOUT = "user_logout"
@@ -135,16 +102,11 @@ const val EVENT_VIEW_PAYMENTS = "view_payments"
 const val EVENT_VIEW_RECOVERIES_ADJUSTED = "view_recoveries_adjusted"
 const val EVENT_FILTER_ALL_TRIPS = "filter_all_trips"
 const val EVENT_FILTER_VEHICLE_TYPE = "filter_vehicle_type"
-const val EVENT_FILTER_EXPRESS_LOADS = "filter_express_loads"
-const val EVENT_UPDATE_APP = "update_app"
-const val EVENT_UPDATE_CANCEL = "update_cancel"
 const val EVENT_EDIT_PREFERENCES = "edit_preferences"
 const val EVENT_ENTER_FIRST_OC = "enter_first_oc"
 const val EVENT_CONFIRM_FIRST_ROUTE = "confirm_first_route"
 const val EVENT_LOAD_SCROLL = "load_scroll"
 const val EVENT_NOTIFICATION_OPEN = "notification_open_event"
-const val EVENT_NOTIFICATION_RECEIVE = "notification_receive"
-const val EVENT_NOTIFICATION_DISMISS = "notification_dismiss"
 const val EVENT_APP_OPEN = "app_open"
 const val EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION = "doc_uploaded_with_wrong_extension"
 const val EVENT_VIEW_TRIP_RECOVERY_ADJUSTMENT = "view_trip_recovery_adjustment"
@@ -156,9 +118,7 @@ const val EVENT_VIEW_CHANGE_PAYMENT_MODE_CANCEL = "view_change_payment_mode_trip
 const val EVENT_DEEP_LINK_ADD_FUEL_PAYMENT = "deep_link_add_fuel_payment"
 const val EVENT_ACTIVATE_TRUCK = "activate_truck"
 const val EVENT_DEACTIVATE_TRUCK = "deactivate_truck"
-const val EVENT_EDIT_TRUCK = "edit_truck"
 const val EVENT_DELETE_TRUCK = "delete_truck"
-const val EVENT_ADD_TRUCK = "add_truck"
 const val EVENT_BANNER_CLICK_TOP = "click_add_truck_top_banner"
 const val EVENT_BANNER_CLICK_SCROLL = "click_add_truck_scroll_banner"
 const val EVENT_VIEW_MY_TRUCK = "view_my_truck"
@@ -184,7 +144,6 @@ const val EVENT_VIEW_MY_TRUCK_OFFERS = "view_my_truck_offers"
 const val EVENT_VIEW_MY_PROFILE = "view_my_profile"
 const val EVENT_CLICKED_PRICE_BANNER = "clicked_price_banner"
 const val EVENT_CLICKED_PRICE_NOTIFICATION = "clicked_price_notification"
-const val EVENT_DEEP_LINK_SUPPLIER_RECOMMENDATION = "recommendation_sms_open"
 const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
 
 
@@ -366,8 +325,6 @@ const val EVENT_EDIT_TRUCK_INITIATE = "edit_truck_initiate"
 const val EVENT_ADD_TRUCK_SUBMIT = "add_truck_submit"
 const val EVENT_EDIT_TRUCK_SUBMIT = "edit_truck_submit"
 const val EVENT_REQUEST_FOR_LOAD_SUBMIT = "request_for_load_submit"
-const val EVENT_COMMUNICATION_SENT = "communication_sent"
-const val EVENT_COMMUNICATION_CLICKED = "communication_clicked"
 const val EVENT_HOME_CLICKED = "home_click"
 const val EVENT_LOAD_INTRACITY_CLICKED= "Load_Intra_click"
 const val EVENT_LOAD_INTERCITY_CLICKED = "Load_Inter_click"
