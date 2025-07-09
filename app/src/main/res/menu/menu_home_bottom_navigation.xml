@@ -12,9 +12,9 @@
       android:title="@string/label_placements"/>
 
   <item
-      android:id="@+id/nav_bids"
-      android:icon="@drawable/icon_bids"
-      android:title="@string/label_nav_bids"/>
+      android:id="@+id/nav_trucks"
+      android:icon="@drawable/iconcontainer_trips"
+      android:title="@string/label_nav_trucks"/>
 
   <item
       android:id="@+id/nav_pod"
@@ -23,7 +23,7 @@
 
   <item
       android:id="@+id/nav_trips"
-      android:icon="@drawable/iconcontainer_trips"
+      android:icon="@drawable/ic_route"
       android:title="@string/label_nav_trips"/>
 
 <!--  <item-->

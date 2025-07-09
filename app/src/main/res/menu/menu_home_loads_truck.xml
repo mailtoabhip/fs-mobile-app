@@ -3,16 +3,13 @@
 
     <item
         android:id="@+id/nav_loads"
-        android:icon="@drawable/ic_nav_loads"
         android:title="@string/label_nav_load"/>
     <item
         android:id="@+id/nav_contracts"
-        android:icon="@drawable/ic_nav_loads"
         android:title="@string/nav_label_trucks"/>
     <item
         android:id="@+id/nav_trucks"
-        android:icon="@drawable/ic_nav_loads"
-        android:title="@string/nav_label_trucks"/>
+        android:title="@string/nav_label_bids"/>
 
 
 </menu>

@@ -23,7 +23,8 @@ enum class HomeFragmentType(
 ) {
   LoadsTruckFragment(R.id.nav_loads_trucks, 0, HomeLoadsTruckFragment._instance, "Home"),
   PlacementsFragment(R.id.nav_placements,1, HomePlacementsFragment._instance,"Placements"),
-  BidsFragment(R.id.nav_bids, 2, HomeBidsFragment._instance, "Bids & Requests"),
+//  BidsFragment(R.id.nav_trips, 2, HomeBidsFragment._instance, "Bids & Requests"),
+  TruckFragment(R.id.nav_trucks,2, HomeTrucksFragment._instance,"My Trucks"),
   PodFragment(R.id.nav_pod, 3, HomePodsFragment._instance, "PODs"),
   TripsFragment(R.id.nav_trips, 4, HomeTripsFragment._instance, "Ongoing Trips");
   //Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),
@@ -55,7 +56,7 @@ enum class HomeLoadsTruckFragmentType(
 ){
   LoadsFragment(R.id.nav_loads,0,HomeLoadsFragment._instance, "Loads"),
   ContractsFragment(R.id.nav_trucks,1, HomeContractsFragment._instance,"Contracts"),
-  TruckFragment(R.id.nav_trucks,2, HomeTrucksFragment._instance,"My Trucks");
+  BidsFragment(R.id.nav_trips, 2, HomeBidsFragment._instance, "Bids & Requests");
   companion object {
     /**
      * Get fragment position by [menuId]

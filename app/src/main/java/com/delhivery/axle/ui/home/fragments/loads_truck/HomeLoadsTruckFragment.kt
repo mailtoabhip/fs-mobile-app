@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import com.delhivery.axle.R
@@ -24,6 +25,7 @@ import com.google.android.material.tabs.TabLayout
 import java.util.Date
 import javax.inject.Inject
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
@@ -98,11 +100,19 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         val tab2 =   binding.tabLayout.getTabAt(1)
         val tab3 =   binding.tabLayout.getTabAt(2)
 
-        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")?.setIcon(R.drawable.ic_load_home_icon)
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads"+ if(userPrefs.fullLoadCount.isNotEmpty())" (${userPrefs.fullLoadCount})" else "")?.view?.isSelected = true
+        if(tab1?.isSelected == true){
+            tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+            }
+        }
+//            ?.setIcon(R.drawable.ic_load_home_icon)
 
-        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts")?.setIcon(R.drawable.ic_contract_icon)
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts (${userPrefs.contractCount})")
+//            ?.setIcon(R.drawable.ic_contract_icon)
 
-        tab3?.setCustomView(R.layout.badge_tab)?.setText("My Trucks")?.setIcon(R.drawable.ic_home_truck_icon)
+        tab3?.setCustomView(R.layout.badge_tab)?.setText("My Bids")
+//            ?.setIcon(R.drawable.ic_home_truck_icon)
 
         if(activity!!.fromDeepLink){
             binding.tabLayout.getTabAt(1)?.select()
@@ -133,6 +143,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+                }
                 if(tab?.position==0){
                     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
                     userPrefs.setPreviousScreen(HomeTrucksFragment::class.java.name)
@@ -161,6 +174,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
+                tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(context!!,R.color.color_hint))
+                }
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {

@@ -219,6 +219,7 @@
   <string name="label_nav_load">Load</string>
   <string name="label_nav_date">Date</string>
   <string name="label_nav_bids">Bids</string>
+  <string name="label_nav_trucks">Trucks</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_pods">PODs</string>
   <string name="label_nav_alerts">Alerts</string>
@@ -375,6 +376,8 @@
   <string name="label_home">Home</string>
   <string name="label_placements">Placements</string>
   <string name="nav_label_trucks">My Trucks</string>
+  <string name="nav_label_bids">My Bids</string>
+
   <string name="nav_label_contracts">Contracts</string>
   <string name="label_unloading_locations">Drop Location</string>
   <string name="label_current_locations">Current location</string>

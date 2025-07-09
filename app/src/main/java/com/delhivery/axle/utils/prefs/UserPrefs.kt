@@ -819,6 +819,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     get() = prefs.getString(PrefKeys.totalLoadCount, "") ?: "0"
 
+    var fullLoadCount: String
+        set(value) = editor.putString(PrefKeys.fullLoadCount,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.fullLoadCount, "") ?: "0"
+    var contractCount: String
+        set(value) = editor.putString(PrefKeys.totalContractCount,value)
+            .apply()
+        get() = prefs.getString(PrefKeys.totalContractCount, "") ?: "0"
+
   var activeBidCount: String
     set(value) = editor.putString(PrefKeys.activeBidCount,value)
         .apply()
@@ -1361,7 +1370,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val isKycVerified= "is_kyc_verified"
     const val userPreviousScreen= "previous_screen"
     const val totalLoadCount= "load_count"
-    const val activeBidCount= "active_bid_count"
+      const val fullLoadCount= "tota_load_count"
+      const val totalContractCount= "load_count"
+      const val activeBidCount= "active_bid_count"
     const val confirmedBidCount= "confirmed_bid_count"
     const val lostBidCount= "lost_bid_count"
     const val totalBidCount= "total_bid_count"

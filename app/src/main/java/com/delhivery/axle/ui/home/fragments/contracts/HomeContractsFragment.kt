@@ -114,8 +114,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
-    viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
-      HomeLoadsTruckFragment._instance.dataToUpdate("contracts",it>0,it)
+    viewModel.contractsCountLiveData.reobserve(viewLifecycleOwner, Observer {
+      userPrefs.contractCount = it.toString()
     })
 
     refreshData()

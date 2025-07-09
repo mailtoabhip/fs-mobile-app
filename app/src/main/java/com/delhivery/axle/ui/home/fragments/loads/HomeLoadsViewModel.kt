@@ -91,7 +91,9 @@ class HomeLoadsViewModel @Inject constructor(
   /* loads count live data */
   var loadsCountLiveData = MutableLiveData<Int>()
 
-  /* data loading live data */
+    var fullLoadsCountLiveData = MutableLiveData<Int>()
+
+    /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
 
   var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
@@ -125,6 +127,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
   var editFlg= mutableListOf<Boolean>(false,false,false)
+
+  var loadsCount:Int =0
 
 
   /**
@@ -248,7 +252,8 @@ class HomeLoadsViewModel @Inject constructor(
                                     AddUpdate
                                 )
                             )
-
+                        val count = _tRes.second+intercityCount+nonDlvCount
+                        fullLoadsCountLiveData.postValue(count)
                             add(
                                 Pair(
                                     HomeLoadsFilterItem(
@@ -316,7 +321,7 @@ class HomeLoadsViewModel @Inject constructor(
                     fecthToCalled = _res.offset < _res.total
                     loadPricePercent = _res.loadPricePercent
                     more_default_loads = _res.more_loads
-
+                    loadsCount+= total
                     Single.zip(
                         bidsRepository.bidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
                         bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
@@ -369,8 +374,6 @@ class HomeLoadsViewModel @Inject constructor(
                                     count = nonDlvCount
                                     loadsCountLiveData.postValue(nonDlvCount)
                                 }
-
-
                                 add(
                                     Pair(
                                         HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)),

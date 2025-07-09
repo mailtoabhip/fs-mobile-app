@@ -53,7 +53,7 @@ class HomeContractsViewModel@Inject constructor(
   var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
 
   /* loads count live data */
-  var loadsCountLiveData = MutableLiveData<Int>()
+  var contractsCountLiveData = MutableLiveData<Int>()
 
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
@@ -156,6 +156,7 @@ class HomeContractsViewModel@Inject constructor(
               var nonExpressCount =0
               var intraCityCount =0
 
+
                 for(item in _tRes.fourth.contractsCount.all){
                   if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
                     if (item.key == ContractType.LH_FTL.type) {
@@ -226,7 +227,10 @@ class HomeContractsViewModel@Inject constructor(
 
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
              // Handle filter for intracity contract type
-              if(demandType==DemandType.Intracity.type){
+            val count = expressCount+nonExpressCount+intraCityCount
+            contractsCountLiveData.postValue(count)
+
+            if(demandType==DemandType.Intracity.type){
                 var intracityContractType = ""
                 intracityContractType = if(contractType==ContractType.INTRACITY.type && isFlexible==true){
                   "Flexible"

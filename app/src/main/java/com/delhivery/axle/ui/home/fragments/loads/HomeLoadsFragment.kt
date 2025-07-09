@@ -151,6 +151,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         else -> "${getString(string.label_load_request)}($it)"
       }
     })
+    viewModel.fullLoadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
+      userPrefs.fullLoadCount = it.toString()
+    })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {
       when (it) {

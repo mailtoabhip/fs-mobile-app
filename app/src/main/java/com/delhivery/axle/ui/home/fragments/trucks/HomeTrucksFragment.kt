@@ -24,6 +24,7 @@ import com.delhivery.axle.data.home.trucks.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
+import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
@@ -44,7 +45,7 @@ import java.util.concurrent.Executors
 import javax.inject.Inject
 
 
-class HomeTrucksFragment : HomeLoadsTruckBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
+class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
         HomeTrucksRVAdapterInterface
 {
     override fun getViewModelClass() = HomeTrucksViewModel::class.java
