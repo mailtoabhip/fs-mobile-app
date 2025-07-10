@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.home.fragments.loads
 
-import android.content.Intent
 import android.os.CountDownTimer
 import android.text.Spannable
 import android.text.SpannableString
@@ -9,7 +8,6 @@ import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.DemandType
@@ -17,20 +15,12 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
-import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterAll
-import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFixed
-import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFlexible
 import com.delhivery.axle.data.home.loads.*
-import com.delhivery.axle.data.home.trucks.HomeTrucksFilterAction
-import com.delhivery.axle.data.home.trucks.HomeTrucksSearchAction_Search
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Inject
 
 /**
  * Base Home bids RV adapter view holder
@@ -86,8 +76,8 @@ abstract class BaseHomeLoadsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
 /**
  * Bid request item view holder
  */
-class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
-    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsRequestItemBinding, HomeLoadsRequestItem>(
+class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<LoadDelhiveryIntercityBinding, HomeLoadsRequestItem>(
             binding
     ) {
 
@@ -96,21 +86,24 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
           _interface: HomeLoadsRVAdapterInterface
   ) {
 
+      Log.d("adapterData", "${item.data}")
+
     if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
         binding.layoutIntracity.request = item.data
-        binding.layoutIntracity.layoutTransaction.request= item.data
+        binding.layoutIntracity.request= item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
-        binding.nonIntracityLayout.visibility = View.GONE
-        binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
-        binding.layoutIntracity.layoutTransaction.navigate.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
-        binding.layoutIntracity.btnAccept.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
-
+        binding.cvIntercity.visibility = View.GONE
+//        binding.nonIntracityLayout.visibility = View.GONE
+//        binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
+//        binding.layoutIntracity.layoutTransaction.navigate.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
+//        binding.layoutIntracity.containerRowBidFor.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
     } else {
         binding.layoutIntracity.root.visibility = View.GONE
-        binding.nonIntracityLayout.visibility = View.VISIBLE
+        binding.cvIntercity.visibility = View.VISIBLE
+//        binding.nonIntracityLayout.visibility = View.VISIBLE
         binding.request = item.data
         if(item.data.isDMTIndent()){
-            binding.timerLayout.visibility = View.GONE
+            binding.closingTime.visibility = View.GONE
         }else{
             if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
                 val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -118,8 +111,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
                 val date1: Date = format.parse(format.format(Date()))
                 val date2: Date = format.parse(item.data.bidEndingTime)
                 if (date2.compareTo(date1) > 0) {
-                    binding.timerLayout.visibility = View.VISIBLE
-
+                    binding.closingTime.visibility = View.VISIBLE
                     val mills: Long = date2.getTime() - date1.getTime()
                     countDownTimer?.cancel()
                     countDownTimer = object : CountDownTimer(mills, 1000) {
@@ -133,7 +125,7 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
                                 val ms = String.format(format, mins)
                                 val sec = String.format(format, secs)
                                 val diff = "$hrs:$ms:$sec" + "s"
-                                binding.timerTime.setText(diff)
+                                binding.closingTime.setText(diff)
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -144,19 +136,19 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
                         }
                     }.start()
                 }else{
-                    binding.timerLayout.visibility = View.GONE
+                    binding.closingTime.visibility = View.GONE
                 }
 
             }else{
-                binding.timerLayout.visibility = View.GONE
+                binding.closingTime.visibility = View.GONE
             }
         }
 
         if(item.data.indentOrigin.equals("LH")){
             if(item.data.indentHaltCenters.isNullOrEmpty()){
-                binding.stopNo.text = "No Stops"
+                binding.textStops.text = "No Stops"
             }else{
-                binding.stopNo.text = item.data.indentHaltCenters.size.toString()+" Stops"
+                binding.textStops.text = item.data.indentHaltCenters.size.toString()+" Stops"
             }
         }else{
             var total = 0
@@ -176,17 +168,18 @@ class HomeLoadsRequestItemVH(binding: ViewHomeLoadsRequestItemBinding) :
             }
 
             if(total>0){
-                binding.stopNo.text = "$total Stops"
+                binding.textStops.text = "$total Stops"
             }else{
-                binding.stopNo.text = "No Stops"
+                binding.textStops.text = "No Stops"
             }
 
         }
     }
 
-    binding.btnBid.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
-    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
-    )
+    binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+      binding.containerError.reportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
+//    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
+//    )
   }
 
 }

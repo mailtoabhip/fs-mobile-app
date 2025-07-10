@@ -50,10 +50,10 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Filters -> ViewHomeLoadFilterTypesItemBinding.inflate(inflater, parent, false)
     Count -> ViewHomeSummaryItemBinding.inflate(inflater, parent, false)
     Banners -> ViewHomeLoadsTruckBannerItemBinding.inflate(inflater, parent, false)
-   Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
+    Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
     ShareRate -> ViewShareLayoutBannerBinding.inflate(inflater, parent, false)
     LoadCategories -> ViewHomeLoadCategoriesItemBinding.inflate(inflater, parent, false)
-    else -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
+    else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
@@ -69,7 +69,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)
     is ViewShareLayoutBannerBinding->HomeLoadsShareRateItemVH(binding)
     is ViewHomeLoadCategoriesItemBinding->HomeLoadsCategoriesItemVH(binding)
-    else -> HomeLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
+    else -> HomeLoadsRequestItemVH(binding as LoadDelhiveryIntercityBinding)
   }
 
   override fun bindVH(

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+ >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/strongBidCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="#ECFDF5"
+        app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/strongBidTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Strong bid"
+                android:drawablePadding="@dimen/size_4dp"
+                android:drawableStart="@drawable/ic_thumbs_up"
+                android:textColor="#065F46"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/strongBidMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You have high chances of winning!"
+                android:textColor="#505361"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</layout>

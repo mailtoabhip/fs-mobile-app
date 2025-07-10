@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="16dp">
+
+    <!-- Bid CardView -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bidCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Route Title -->
+            <TextView
+                android:id="@+id/routeTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Navi Mumbai → Jaisalmer"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Bid Amount Label -->
+            <TextView
+                android:id="@+id/bidLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bid Amount"
+                android:textSize="14sp"
+                android:textColor="#3D445C"
+                app:layout_constraintTop_toBottomOf="@id/routeTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/layout_mobile_no"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/background_grey_border"
+                android:padding="1dp">
+
+                <LinearLayout
+                    android:layout_width="34dp"
+                    android:layout_height="40dp"
+                    android:background="#6FE0E3EB">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/phone_initial"
+                        android:layout_width="34dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="9dp"
+                        app:srcCompat="@drawable/ic_rupee_text_editor"
+                        android:background="@null" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#dddddd" />
+                </LinearLayout>
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_bid_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="50dp"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:hint="Enter bid amount"
+                    android:nextFocusLeft="@id/et_bid_amount"
+                    android:nextFocusRight="@id/et_bid_amount"
+                    android:nextFocusUp="@id/et_bid_amount"
+                    android:nextFocusDown="@id/et_bid_amount"
+                    android:nextFocusForward="@id/et_bid_amount"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="#3D445C"/>
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/strongBidCard"
+                layout="@layout/card_strong_bid"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <include
+                android:id="@+id/weak_bid_card"
+                layout="@layout/card_weak_bid"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!--            <androidx.cardview.widget.CardView-->
+<!--                android:id="@+id/strongBidCard"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                app:cardCornerRadius="8dp"-->
+<!--                app:cardBackgroundColor="#ECFDF5"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="12dp">-->
+
+<!--                    <androidx.appcompat.widget.AppCompatTextView-->
+<!--                        android:id="@+id/strongBidTitle"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Strong bid"-->
+<!--                        android:drawablePadding="@dimen/size_4dp"-->
+<!--                        android:drawableStart="@drawable/ic_thumbs_up"-->
+<!--                        android:textColor="#065F46"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:textStyle="bold" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/strongBidMessage"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="You have high chances of winning!"-->
+<!--                        android:textColor="#505361"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:layout_marginTop="4dp" />-->
+<!--                </LinearLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+            <Button
+                android:id="@+id/placeBidButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Place Bid"
+                android:backgroundTint="#000000"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_place_bid"
+                android:drawablePadding="8dp"
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintTop_toBottomOf="@id/strongBidCard"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="16dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

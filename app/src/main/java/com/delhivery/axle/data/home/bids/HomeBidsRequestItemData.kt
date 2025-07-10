@@ -563,6 +563,9 @@ data class HomeBidsRequestItemData(
   fun requiredTextColor() =
     ColorProviderUtils.getStatusColor(bidStatus().status.lowercase())
 
+  fun getTruckTypeAndNo() = truckSpecification?.let {
+    it.truckType+ " "+ it.truckDispName
+  }
   /**
    * Get truck details/type
    * Don't show MT for demand_type = Intracity for Load and LH/Intracity contracts
