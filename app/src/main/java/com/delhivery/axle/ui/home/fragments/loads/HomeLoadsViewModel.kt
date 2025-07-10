@@ -253,6 +253,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 )
                             )
                         val count = _tRes.second+intercityCount+nonDlvCount
+                        Log.d("viewmodel", "${_tRes.second} intrcity $intercityCount nonDlv $nonDlvCount")
                         fullLoadsCountLiveData.postValue(count)
                             add(
                                 Pair(

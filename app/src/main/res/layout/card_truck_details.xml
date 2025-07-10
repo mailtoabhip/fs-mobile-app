@@ -1,0 +1,84 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <androidx.cardview.widget.CardView
+        android:id="@+id/detailsCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Details"
+                android:textStyle="normal"
+                android:textSize="16sp"
+                android:textColor="#111111"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailsTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Today, 02:30 PM"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                app:layout_constraintTop_toBottomOf="@id/detailsHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="8dp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailsTruckType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="14FTSXL"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                app:layout_constraintTop_toTopOf="@id/detailsTime"
+                app:layout_constraintStart_toEndOf="@id/detailsTime"
+                android:layout_marginStart="16dp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/label_reporting_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:lineHeight="@dimen/size_16dp"
+                android:text="Reporting time"
+                android:textColor="#8F9198"
+                app:layout_constraintTop_toBottomOf="@id/detailsTime"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailsCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Closed Truck"
+                android:lineHeight="@dimen/size_16dp"
+                android:textSize="10sp"
+                android:textColor="#8F9198"
+                app:layout_constraintTop_toBottomOf="@id/detailsTruckType"
+                app:layout_constraintStart_toStartOf="@id/detailsTruckType"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
