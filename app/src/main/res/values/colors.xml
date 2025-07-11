@@ -88,7 +88,6 @@
   <color name="contracts_bid_amount">#1C1C1C</color>
   <color name="contracts_bid_hint">#1C1C1C60</color>
   <color name="contracts_result_success">#047857</color>
-  <color name="info_title">#111111</color>
 
   <color name="bid_error">#DB2777</color>
   <color name="bid_hint">#A3AAC2</color>
@@ -101,4 +100,14 @@
   <color name="light_red_bg">#FFF6F6</color>
   <color name="light_orange_color">#EA580C</color>
   <color name="placement_grey_bg">#F8F9FC</color>
+  <color name="light_grey_v2">#646873</color>
+  <color name="green_v2">#3F8672</color>
+  <color name="light_grey_v3">#EFF0F0</color>
+  <color name="light_orange_v2">#FFF7EB</color>
+  <color name="orange_v2">#F59E0B</color>
+  <color name="orange_v3">#C47E09</color>
+  <color name="info_title">#111111</color>
+  <color name="text_grey_v1">#727272</color>
+  <color name="text_grey_v2">#C7C8CC</color>
+  <color name="text_grey_v3">#505361</color>
 </resources>

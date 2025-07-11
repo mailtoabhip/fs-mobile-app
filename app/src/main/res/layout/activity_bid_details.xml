@@ -177,7 +177,7 @@
                     android:id="@+id/stopList"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    />
+                    tools:listitem="@layout/view_stop_detail_item"/>
 
                 <include
                     layout="@layout/view_intermdiary"
