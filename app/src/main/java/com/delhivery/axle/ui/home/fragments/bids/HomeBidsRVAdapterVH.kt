@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
@@ -97,13 +98,13 @@ internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
 /**
  * Bid request item view holder
  */
-class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeBidsRequestItem>(binding) {
+class HomeBidsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
+    BaseHomeBidsRVAdapterViewHolder<LoadDelhiveryIntercityBinding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    if(item.data.subRequestType== SUB_REQUEST_TYPE_INTRACITY){
+   /* if(item.data.subRequestType== SUB_REQUEST_TYPE_INTRACITY){
       binding.clIntercityBids.visibility = View.GONE
       binding.clIntracityBids.visibility = View.VISIBLE
       binding.layoutTransaction.request = item.data
@@ -141,7 +142,7 @@ class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
         _interface.getTotalOffers(item.data)
       }
     }
-
+*/
   }
 }
 

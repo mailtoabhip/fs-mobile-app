@@ -41,7 +41,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeContractsFilterItemBinding.inflate(inflater, parent, false)
     IntracityFilters-> ViewHomeContractsIntracityFilterItemBinding.inflate(inflater, parent, false)
-    else -> ViewHomeContractsRequestItemBinding.inflate(inflater, parent, false)
+    else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
@@ -51,7 +51,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)
     is ViewHomeContractsFilterItemBinding -> HomeContractsFilterItemVH(binding)
     is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding)
-    else -> HomeContractsRequestItemVH(binding as ViewHomeContractsRequestItemBinding)
+    else -> HomeContractsRequestItemVH(binding as LoadDelhiveryIntercityBinding)
   }
 
   override fun bindVH(

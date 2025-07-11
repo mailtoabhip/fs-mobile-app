@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidResultsBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
@@ -43,23 +44,23 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   ) = when (HomeBidsRVAdapterItemType.byTypeId(viewType)) {
     Header -> ViewHomeBidsHeaderItemBinding.inflate(inflater, parent, false)
     Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
-    Request -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
+    Request -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Contracts -> ViewContractsBidItemBinding.inflate(inflater, parent, false)
-    else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
+    else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomeBidsHeaderItemBinding -> HomeBidsHeaderItemVH(binding)
     is ViewHomeSearchItemBinding -> HomeBidsSearchItemVH(binding)
-    is ViewHomeBidsRequestItemBinding -> HomeBidsRequestItemVH(binding)
+    is LoadDelhiveryIntercityBinding -> HomeBidsRequestItemVH(binding)
     is ViewWarningItemBinding -> HomeBidsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeBidsTimeOutItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomeBidsProgressItemVH(binding)
     is ViewContractsBidItemBinding -> HomeContractsBidsRequestItemVH(binding)
-    else -> HomeBidsRequestItemVH(binding as ViewHomeBidsRequestItemBinding)
+    else -> HomeBidsRequestItemVH(binding as LoadDelhiveryIntercityBinding)
   }
 
   override fun bindVH(
