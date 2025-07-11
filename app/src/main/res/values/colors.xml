@@ -110,4 +110,7 @@
   <color name="text_grey_v1">#727272</color>
   <color name="text_grey_v2">#C7C8CC</color>
   <color name="text_grey_v3">#505361</color>
+  <color name="bg_light_grey">#F6F7F8</color>
+  <color name="bg_light_grey_v1">#F4F4F4</color>
+  <color name="text_grey_v4">#373737</color>
 </resources>
