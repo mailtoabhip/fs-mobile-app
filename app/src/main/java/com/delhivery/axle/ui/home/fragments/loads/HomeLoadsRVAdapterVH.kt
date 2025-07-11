@@ -93,19 +93,20 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
         binding.layoutIntracity.containerRowBidFor1.request = item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
         binding.cvIntercity.visibility = View.GONE
+//        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.rootView.
 //        binding.nonIntracityLayout.visibility = View.GONE
 //        binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
         binding.layoutIntracity.containerRowBidFor1.tvReportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
         val includedBinding = binding.layoutIntracity.containerRowBidFor1 as ItemBottomCardLoadBinding
-        includedBinding.placeBidButton1.setOnClickListener {
+        includedBinding.placeBidButton1.rootView.setOnClickListener {
             Log.d("Intracity Card Clicked", "rjrfv")
             it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
         }
-        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.setOnClickListener {
-            Log.d("Intracity Card Clicked", "rjrfv")
-            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
-        }
+//        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.setOnClickListener {
+//            Log.d("Intracity Card Clicked", "rjrfv")
+//            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+//        }
 
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
     } else {
@@ -113,6 +114,12 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
         binding.cvIntercity.visibility = View.VISIBLE
 //        binding.nonIntracityLayout.visibility = View.VISIBLE
         binding.request = item.data
+        if(item.data.demandType.equals("Internal",true)){
+            binding.materialType.visibility = View.GONE
+        } else{
+            binding.materialType.visibility = View.VISIBLE
+            binding.materialType.text = item.data.materialType
+        }
         if(item.data.isDMTIndent()){
             binding.closingTime.visibility = View.GONE
         }else{
