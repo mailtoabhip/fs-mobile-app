@@ -130,8 +130,21 @@
             tools:text ="Open 32FTXXL18 MT"
             android:textColor="#505361"
             android:drawableStart="@drawable/ic_truck_small"
-            app:layout_constraintBottom_toTopOf="@id/view"
             app:layout_constraintTop_toBottomOf="@id/fromState"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/material_type"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/size_4dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text ="Battery Type"
+            android:textColor="#505361"
+            android:drawablePadding="@dimen/size_4dp"
+            android:drawableStart="@drawable/icon_box"
+            app:layout_constraintBottom_toTopOf="@id/view"
+            app:layout_constraintTop_toBottomOf="@id/truckInfo"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -152,7 +165,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             style="@style/Divider"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/truckInfo"
+            app:layout_constraintTop_toBottomOf="@id/material_type"
             app:layout_constraintBottom_toTopOf="@id/container_error"/>
         <include
             android:id="@+id/container_error"

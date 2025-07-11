@@ -36,7 +36,7 @@
         android:id="@+id/tv_reporting_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="13 July, 3:30 PM"
+        tools:text="13 July, 3:30 PM"
         android:textColor="#121A31"
         android:textStyle="bold"
         android:textSize="14sp"
@@ -47,8 +47,8 @@
     <!-- Accept Button -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/place_bid_button_1"
-        android:layout_width="160dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/bg_place_bid"
         android:clickable="true"
         android:focusable="true"

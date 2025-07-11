@@ -99,13 +99,20 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         val tab2 =   binding.tabLayout.getTabAt(1)
         val tab3 =   binding.tabLayout.getTabAt(2)
 
-        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads"+ if(userPrefs.fullLoadCount.isNotEmpty())" (${userPrefs.fullLoadCount})" else "")?.view?.isSelected = true
+        if(tab1?.isSelected == true){
+            tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+            }
+        }
 //            ?.setIcon(R.drawable.ic_load_home_icon)
 
-        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts")
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts (${userPrefs.contractCount})")
 //            ?.setIcon(R.drawable.ic_contract_icon)
 
         tab3?.setCustomView(R.layout.badge_tab)?.setText("My Bids")
+//            ?.setIcon(R.drawable.ic_home_truck_icon)
+
 //            ?.setIcon(R.drawable.ic_home_truck_icon)
 
         if(activity!!.fromDeepLink){

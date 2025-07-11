@@ -144,8 +144,8 @@
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <include
-                layout="@layout/item_bottom_card_load"
                 android:id="@+id/containerRowBidFor1"
+                layout="@layout/item_bottom_card_load"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_16dp"
