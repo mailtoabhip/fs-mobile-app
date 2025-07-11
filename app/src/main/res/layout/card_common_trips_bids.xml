@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_intercity_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:paddingTop="@dimen/size_8dp"
+        app:cardCornerRadius="@dimen/size_8dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/include_header_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            layout="@layout/item_intent_type_and_contract"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <include
+            android:id="@+id/include_header_2"
+            layout="@layout/item_route_details"
+            app:layout_constraintTop_toBottomOf="@id/include_header_1"
+            />
+
+        <include
+            android:id="@+id/include_bid_time_3"
+            layout="@layout/item_truck_details_bidding_time"
+            />
+
+        <include
+            android:id="@+id/include_bid_time_4"
+            layout="@layout/item_trip_details_way_location"
+            />
+        <include
+            android:id="@+id/include_bid_time_5"
+            layout="@layout/item_trip_commitment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            />
+        <include
+            android:id="@+id/strongBidCard"
+            layout="@layout/card_strong_bid"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <include
+            android:id="@+id/weak_bid_card"
+            layout="@layout/card_weak_bid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:visibility="visible"
+            android:layout_marginEnd="@dimen/size_16dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <include
+            android:id="@+id/include_bid_time_6"
+            layout="@layout/item_bid_action_time"
+            />
+
+
+    </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>
