@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.loads_truck
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import com.delhivery.axle.R
@@ -100,15 +99,10 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         val tab2 =   binding.tabLayout.getTabAt(1)
         val tab3 =   binding.tabLayout.getTabAt(2)
 
-        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads"+ if(userPrefs.fullLoadCount.isNotEmpty())" (${userPrefs.fullLoadCount})" else "")?.view?.isSelected = true
-        if(tab1?.isSelected == true){
-            tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
-                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
-            }
-        }
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")
 //            ?.setIcon(R.drawable.ic_load_home_icon)
 
-        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts (${userPrefs.contractCount})")
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts")
 //            ?.setIcon(R.drawable.ic_contract_icon)
 
         tab3?.setCustomView(R.layout.badge_tab)?.setText("My Bids")
@@ -144,7 +138,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
-                    textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+                    textView.setTextColor(ContextCompat.getColor(context!!,R.color.colorDelhiveryRed))
                 }
                 if(tab?.position==0){
                     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name

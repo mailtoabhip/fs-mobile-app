@@ -68,6 +68,7 @@
             android:paddingStart="@dimen/size_1dp"
             android:fontFamily="sans-serif"
             android:layout_marginTop="@dimen/size_4dp"
+            tools:text= "154423"
             android:text="@{request.adhocIntracityhrs()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/reportingTime"

@@ -90,13 +90,24 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
 
     if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
         binding.layoutIntracity.request = item.data
-        binding.layoutIntracity.request= item.data
+        binding.layoutIntracity.containerRowBidFor1.request = item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
         binding.cvIntercity.visibility = View.GONE
 //        binding.nonIntracityLayout.visibility = View.GONE
 //        binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
-//        binding.layoutIntracity.layoutTransaction.navigate.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
-//        binding.layoutIntracity.containerRowBidFor.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+//        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
+        binding.layoutIntracity.containerRowBidFor1.tvReportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
+        val includedBinding = binding.layoutIntracity.containerRowBidFor1 as ItemBottomCardLoadBinding
+        includedBinding.placeBidButton1.setOnClickListener {
+            Log.d("Intracity Card Clicked", "rjrfv")
+            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+        }
+        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.setOnClickListener {
+            Log.d("Intracity Card Clicked", "rjrfv")
+            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+        }
+
+//        binding.layoutIntracity.containerRowBidFor1.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
     } else {
         binding.layoutIntracity.root.visibility = View.GONE
         binding.cvIntercity.visibility = View.VISIBLE
@@ -174,10 +185,11 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
             }
 
         }
+
+        binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+        binding.containerError.reportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
     }
 
-    binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
-      binding.containerError.reportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
 //    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
 //    )
   }
