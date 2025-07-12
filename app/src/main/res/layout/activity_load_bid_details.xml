@@ -5,20 +5,69 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     android:id="@+id/constraintLayout"
     >
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.biddetails.BidDetailsViewModel"
+            />
+        <variable
+            name="activity"
+            type="com.delhivery.axle.ui.biddetails.BidDetailsActivity"
+            />
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:background="#F6F7F8"
-    android:layout_height="wrap_content">
+        <variable
+            name="transaction"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+
+        <variable
+            name="refreshing"
+            type="Boolean"
+            />
+
+        <variable
+            name="error"
+            type="Boolean"
+            />
+        <variable
+            name="unallocated"
+            type="String"
+            />
+        <import type="android.view.View" />
+    </data>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@android:color/white"
-        bind:shadow="@{ @dimen/size_4dp }"
         />
+
+    <include
+        android:id="@+id/container_error"
+        layout="@layout/view_warning_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:visibility="@{error ? View.VISIBLE : View.GONE }"
+        tools:visibility="gone"
+        />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="@{!error ? View.VISIBLE : View.GONE }"
+        tools:visibility="visible">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:background="#F6F7F8"
+    android:layout_height="wrap_content">
 
     <include
         android:id="@+id/card_input"
@@ -54,5 +103,7 @@
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

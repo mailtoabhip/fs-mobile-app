@@ -106,7 +106,8 @@ interface TransactionService {
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
     @Query("is_flexible") isFlexible: Boolean?=null,
-    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null,
+    @Query("loads_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -117,7 +118,8 @@ interface TransactionService {
     @Query("only_contract_counts") onlyCount: String?,
     @Query("sp_id") userId: String,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
-    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true,
+    @Query("loads_active") loadActive:Boolean =true
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**

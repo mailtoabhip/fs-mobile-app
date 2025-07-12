@@ -104,6 +104,18 @@
                 android:layout_marginTop="12dp"
                 app:layout_constraintTop_toBottomOf="@id/tv_address"
                 app:layout_constraintStart_toStartOf="parent" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/closingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:drawablePadding="@dimen/size_4dp"
+                tools:text ="Closes in 2 hrs 15 min"
+                android:textColor="#505361"
+                android:text="@{request.formattedBiddingEndTime()}"
+                android:drawableStart="@drawable/ic_clock_small"
+                app:layout_constraintTop_toTopOf="@id/tv_truck_type"
+                app:layout_constraintEnd_toEndOf="parent"  />
 
             <!-- Distance and Duration -->
             <TextView
@@ -116,8 +128,9 @@
                 android:textColor="#505361"
                 android:drawablePadding="6dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_address"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tv_truck_type"
+                app:layout_constraintStart_toStartOf="parent"
+                />
 
             <!-- Truck Number -->
             <TextView
@@ -126,11 +139,13 @@
                 android:layout_height="wrap_content"
                 android:text="@{request.fmsTicketId}"
                 android:textSize="12sp"
+                android:drawablePadding="@dimen/size_4dp"
                 android:textColor="#505361"
                 android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="@id/tv_distance_duration"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:drawableStart="@drawable/ic_card_intracity_ticket"
-                app:layout_constraintTop_toBottomOf="@id/tv_truck_type"
-                app:layout_constraintStart_toStartOf="parent" />
+                />
 
             <!-- Divider -->
             <View

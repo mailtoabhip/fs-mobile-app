@@ -124,42 +124,11 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
             binding.closingTime.visibility = View.GONE
         }else{
             if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
-                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                format.setTimeZone(TimeZone.getTimeZone("IST"));
-                val date1: Date = format.parse(format.format(Date()))
-                val date2: Date = format.parse(item.data.bidEndingTime)
-                if (date2.compareTo(date1) > 0) {
-                    binding.closingTime.visibility = View.VISIBLE
-                    val mills: Long = date2.getTime() - date1.getTime()
-                    countDownTimer?.cancel()
-                    countDownTimer = object : CountDownTimer(mills, 1000) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            try {
-                                val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
-                                val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
-                                val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
-                                val format = "%1$02d"
-                                val hrs = String.format(format, hours)
-                                val ms = String.format(format, mins)
-                                val sec = String.format(format, secs)
-                                val diff = "$hrs:$ms:$sec" + "s"
-                                binding.closingTime.setText(diff)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-
-                        override fun onFinish() {
-                            _interface.deleteItem(item, bindingAdapterPosition)
-                        }
-                    }.start()
+                binding.closingTime.visibility = View.VISIBLE
                 }else{
                     binding.closingTime.visibility = View.GONE
                 }
 
-            }else{
-                binding.closingTime.visibility = View.GONE
-            }
         }
 
         if(item.data.indentOrigin.equals("LH")){

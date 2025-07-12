@@ -186,7 +186,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     title = ""//""Order ID - " + viewModel.transactionId
     /* setup live data observers */
     viewModel.progressLiveData.observe(this, ProgressObserver())
-//    viewModel.transactionLiveData.observe(this, TransactionObserver())
+    viewModel.transactionLiveData.observe(this, TransactionObserver())
 //    viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
     viewModel.bidPriceLiveData.observe(this, Observer {
       if (it != null) {
@@ -308,36 +308,37 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       }
     })
 
-//    binding.containerError.btnAction.setOnClickListener {
-//      refreshData()
-//    }
-//
-//    binding.refreshLayout.setOnRefreshListener {
-//      viewModel.refreshCalled = true
-//      refreshData()
-//    }
+    binding.containerError.btnAction.setOnClickListener {
+      refreshData()
+    }
+
+    binding.refreshLayout.setOnRefreshListener {
+      viewModel.refreshCalled = true
+      refreshData()
+    }
 
     viewModel.indentLiveData.observe(this, Observer {
       if (!it.isEmpty()) {
         runOnUiThread {
+
 //          binding.textViaLabel.visibility = View.VISIBLE
 //
-//          uploadArray.clear()
-//
-//          if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
-//            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
-//          } else if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
-//            uploadArray.add(
-//              Pair(
-//                "Pickup Address",
-//                binding.transaction?.loadingLocationPincode.toString() + "-" + binding.transaction?.pickupLocationCity
-//              )
-//            )
-//          }
+          uploadArray.clear()
+
+          if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+          } else if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
+            uploadArray.add(
+              Pair(
+                "Pickup Address",
+                binding.transaction?.loadingLocationPincode.toString() + "-" + binding.transaction?.pickupLocationCity
+              )
+            )
+          }
 
           val sortedList = it.sortedWith(compareBy({ it.first.first }))
 
-//          val stopAdapter = StopAdapter(sortedList)
+          val stopAdapter = StopAdapter(sortedList)
 //          binding.stopList.apply {
 //            layoutManager = LinearLayoutManager(
 //              applicationContext, LinearLayoutManager.HORIZONTAL, false
@@ -351,32 +352,32 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", i.second + " " + i.third))
           }
 
-//          if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
-//            uploadArray.add(
-//              Pair(
-//                "Drop Address",
-//                binding.transaction?.dropLocationAddress.toString()
-//              )
-//            )
-//          } else if (binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()) {
-//            uploadArray.add(
-//              Pair(
-//                "Drop Address",
-//                binding.transaction?.unloadingLocationPincode.toString() + "-" + binding.transaction?.dropLocationCity.toString()
-//              )
-//            )
-//          }
-//
-//          if (!uploadArray.isEmpty()) {
-//            binding.addressLay.visibility = View.VISIBLE
-//            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
-//            binding.addresslist.apply {
-//              layoutManager = LinearLayoutManager(applicationContext)
-//              adapter = addressDetailAdapter
-//            }
-//          } else {
-//            binding.addressLay.visibility = View.GONE
-//          }
+          if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(
+              Pair(
+                "Drop Address",
+                binding.transaction?.dropLocationAddress.toString()
+              )
+            )
+          } else if (binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()) {
+            uploadArray.add(
+              Pair(
+                "Drop Address",
+                binding.transaction?.unloadingLocationPincode.toString() + "-" + binding.transaction?.dropLocationCity.toString()
+              )
+            )
+          }
+
+          if (!uploadArray.isEmpty()) {
+            binding.cvRouteSection.addressLay.visibility = View.VISIBLE
+            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+            binding.cvRouteSection.addresslist.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = addressDetailAdapter
+            }
+          } else {
+            binding.cvRouteSection.addressLay.visibility = View.GONE
+          }
 
         }
       }
@@ -387,17 +388,18 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   }
 
   private fun refreshData() {
-//    binding.error = false
-//    viewModel.fetchTransactionDetails()
-//    binding.executePendingBindings()
-//    if (binding.buttonConfirm.visibility == View.VISIBLE) {
-//      binding.buttonConfirm.visibility = View.GONE
-//      buttonVisible = true
-//    }
-//    if (binding.bottomLay.visibility == View.VISIBLE) {
-//      binding.bottomLay.visibility = View.GONE
-//      bottomLayVisible = false
-//    }
+     binding.error = false
+     viewModel.fetchTransactionDetails()
+
+    binding.executePendingBindings()
+  /*  if (binding.buttonConfirm.visibility == View.VISIBLE) {
+      binding.buttonConfirm.visibility = View.GONE
+      buttonVisible = true
+    }
+    if (binding.bottomLay.visibility == View.VISIBLE) {
+      binding.bottomLay.visibility = View.GONE
+      bottomLayVisible = false
+    }*/
     uploadArray.clear()
   }
 
@@ -407,21 +409,21 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   inner class ProgressObserver : Observer<Boolean> {
     override fun onChanged(t: Boolean?) {
       t?.let {
-//        when (t) {
-//          true -> {
-//            binding.refreshLayout.isRefreshing = true
-//            binding.refreshing = true
-//          }
-//          false -> {
-//            binding.refreshLayout.isRefreshing = false
-//            if (buttonVisible) {
-//              binding.buttonConfirm.visibility = View.VISIBLE
-//            }
-//            if (bottomLayVisible) {
-//              binding.bottomLay.visibility = View.VISIBLE
-//            }
-//          }
-//        }
+        when (t) {
+          true -> {
+            binding.refreshLayout.isRefreshing = true
+            binding.refreshing = true
+          }
+          false -> {
+            binding.refreshLayout.isRefreshing = false
+           /* if (buttonVisible) {
+              binding.buttonConfirm.visibility = View.VISIBLE
+            }
+            if (bottomLayVisible) {
+              binding.bottomLay.visibility = View.VISIBLE
+            }*/
+          }
+        }
       }
       binding.executePendingBindings()
     }
@@ -430,268 +432,270 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   /**
    * Transaction details and UI updation Observer
    */
-//  inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-//    override fun onChanged(t: HomeBidsRequestItemData?) {
-//
-////      binding.refreshing = false
-//      if (t != null) {
-//        t.let { _transaction ->
-////          binding.error = false
-////          binding.transaction = _transaction
-//
-//          if (_transaction.isDMTIndent()) {
-////            binding.unallocated =
-////              getString(string.unallocated_bulk_order) + (_transaction.unAllocatedVolume)?.toInt() + " MT"
-//          }
-//        /*  if(_transaction!!.requiredAtDraw()!=null){
-//          binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(
-//              null, null, ContextCompat.getDrawable(
-//              this@BidDetailsActivity, _transaction!!.requiredAtDraw()!!
-//          ), null
-//          )
-//          }*/
-//        }
-//
-//
-////        if (binding.transaction?.indentOrigin.equals("LH")) {
-////
-////          if (binding.transaction?.additionalRemarks.isNotNullOrEmpty()) {
-////            binding.remarks.visibility = View.VISIBLE
-////            binding.layRem.visibility = View.VISIBLE
-////            binding.div2.visibility = View.VISIBLE
-////            binding.remarks.text = binding.transaction?.additionalRemarks
-////          } else {
-////            binding.remarks.visibility = View.GONE
-////            binding.layRem.visibility = View.GONE
-////            binding.div2.visibility = View.GONE
-////          }
-////
-////          if (binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
-////            binding.stopNo.text = "No Stops"
-////          } else {
-////            binding.stopNo.text =
-////              binding.transaction?.indentHaltCenters!!.size.toString() + " Stops"
-////            for (i in binding.transaction?.indentHaltCenters!!.indices) {
-////              viewModel.fetchIndentCenters(
-////                binding.transaction?.indentHaltCenters!![i].haltCenterCode, i + 1
-////              )
-////            }
-////          }
-////        } else {
-////
-////          if (binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()) {
-////            binding.remarks.visibility = View.VISIBLE
-////            binding.layRem.visibility = View.VISIBLE
-////            binding.div2.visibility = View.VISIBLE
-////            binding.remarks.text = binding.transaction?.orderCreationRemarks
-////          } else {
-////            binding.remarks.visibility = View.GONE
-////            binding.layRem.visibility = View.GONE
-////            binding.div2.visibility = View.GONE
-////
-////          }
-//
-//          var total = 0
-//
-//          if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
-//            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
-//          } else {
-//            var uData = StringBuilder()
-//            if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
-//              uData.append(binding.transaction?.loadingLocationPincode + "-")
-//            }
-//
-//            if (binding.transaction?.pickupLocationCity.isNotNullOrEmpty()) {
-//              uData.append(capitalize(binding.transaction?.pickupLocationCity!!))
-//            }
-//
-//            if (uData.toString().isNotNullOrEmpty()) {
-//              uploadArray.add(Pair("Pickup Address", uData.toString()))
-//            }
-//
-//          }
-//
-//          if (!TextUtils.isEmpty(binding.transaction?.pickup1)) {
-//            total = total + 1
-//            binding.textViaDestination.card1.visibility = View.VISIBLE
-//            var citNam: String? = null
-//            if (binding.transaction?.isDmt == true) {
-//              citNam = capitalize(binding.transaction?.pickup1)
-//            } else {
-//              citNam = capitalize(binding.transaction?.pickup1City)
-//            }
-//            binding.textViaDestination.city1.text = citNam
-//
-//            if (binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
-//              uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup1Address))
-//            } else {
-//              var uData = StringBuilder()
-//              if (binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()) {
-//                uData.append(binding.transaction?.pickup1AddressPin + "-")
-//              }
-//              if (citNam.isNotNullOrEmpty()) {
-//                uData.append(citNam)
-//              }
-//
-//              if (uData.toString().isNotNullOrEmpty()) {
-//                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
-//              }
-//            }
-//          }
-//
-//          if (!TextUtils.isEmpty(binding.transaction?.pickup2)) {
-//            total = total + 1
-//            binding.textViaDestination.card2.visibility = View.VISIBLE
-//
-//            var citNam: String? = null
-//            if (binding.transaction?.isDmt == true) {
-//              citNam = capitalize(binding.transaction?.pickup2)
-//            } else {
-//              citNam = capitalize(binding.transaction?.pickup2City)
-//            }
-//            binding.textViaDestination.city2.text = citNam
-//
-//            if (binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
-//              uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup2Address))
-//            } else {
-//
-//              var uData = StringBuilder()
-//              if (binding.transaction?.pickup2AddressPin.isNotNullOrEmpty()) {
-//                uData.append(binding.transaction?.pickup2AddressPin + "-")
-//              }
-//              if (citNam.isNotNullOrEmpty()) {
-//                uData.append(citNam)
-//              }
-//
-//              if (uData.toString().isNotNullOrEmpty()) {
-//                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
-//              }
-//
-//            }
-//          }
-//
-//          if (!TextUtils.isEmpty(binding.transaction?.stop1)) {
-//            if (total == 0) {
-//              binding.textViaDestination.img3.visibility = View.GONE
-//            }
-//            total = total + 1
-//            binding.textViaDestination.card3.visibility = View.VISIBLE
-//
-//            var citNam: String? = null
-//            if (binding.transaction?.isDmt == true) {
-//              citNam = capitalize(binding.transaction?.stop1)
-//            } else {
-//              citNam = capitalize(binding.transaction?.stop1City)
-//            }
-//            binding.textViaDestination.city3.text = citNam
-//
-//            if (binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
-//              uploadArray.add(
-//                Pair(
-//                  "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop1Address
-//                )
-//              )
-//            } else {
-//              var uData = StringBuilder()
-//              if (binding.transaction?.intermediaryStop1AddressPin.isNotNullOrEmpty()) {
-//                uData.append(binding.transaction?.intermediaryStop1AddressPin + "-")
-//              }
-//              if (citNam.isNotNullOrEmpty()) {
-//                uData.append(citNam)
-//              }
-//
-//              if (uData.toString().isNotNullOrEmpty()) {
-//                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
-//              }
-//
-//            }
-//
-//          }
-//          if (!TextUtils.isEmpty(binding.transaction?.stop2)) {
-//            total = total + 1
-//            binding.textViaDestination.card4.visibility = View.VISIBLE
-//
-//            var citNam: String? = null
-//            if (binding.transaction?.isDmt == true) {
-//              citNam = capitalize(binding.transaction?.stop2)
-//            } else {
-//              citNam = capitalize(binding.transaction?.stop2City)
-//            }
-//            binding.textViaDestination.city4.text = citNam
-//
-//            if (binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
-//              uploadArray.add(
-//                Pair(
-//                  "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop2Address
-//                )
-//              )
-//            } else {
-//
-//              var uData = StringBuilder()
-//              if (binding.transaction?.intermediaryStop2AddressPin.isNotNullOrEmpty()) {
-//                uData.append(binding.transaction?.intermediaryStop2AddressPin + "-")
-//              }
-//              if (citNam.isNotNullOrEmpty()) {
-//                uData.append(citNam)
-//              }
-//
-//              if (uData.toString().isNotNullOrEmpty()) {
-//                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
-//              }
-//            }
-//          }
-//
-//          if (total > 0) {
-//            binding.textViaLabel.visibility = View.VISIBLE
-//            binding.stopNo.text = "$total Stops"
-//          } else {
-//            binding.stopNo.text = "No Stops"
-//          }
-//
-//          if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
-//            uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
-//          } else {
-//
-//            var uData = StringBuilder()
-//            if (binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()) {
-//              uData.append(binding.transaction?.unloadingLocationPincode + "-")
-//            }
-//
-//            if (binding.transaction?.dropLocationCity.isNotNullOrEmpty()) {
-//              uData.append(capitalize(binding.transaction?.dropLocationCity!!))
-//            }
-//
-//            if (uData.toString().isNotNullOrEmpty()) {
-//              uploadArray.add(Pair("Drop Address", uData.toString()))
-//            }
-//
-//          }
-//
-//          if (!uploadArray.isEmpty()) {
-//            binding.addressLay.visibility = View.VISIBLE
-//            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
-//            binding.addresslist.apply {
-//              layoutManager = LinearLayoutManager(applicationContext)
-//              adapter = addressDetailAdapter
-//            }
-//          } else {
-//            binding.addressLay.visibility = View.GONE
-//          }
-//        }
-//
-//
-//        bidEndingTime = binding.transaction!!.bidEndingTime.toString()
-//
-//      } else {
-//        binding.error = true
-//        binding.containerError.title = "Session Time Out"
-//        binding.containerError.subTitle =
-//          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
-//        binding.containerError.actionLabel = "REFRESH"
-//      }
-//      binding.executePendingBindings()
-//    }
-//  }
+  inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
+    override fun onChanged(t: HomeBidsRequestItemData?) {
+
+      binding.refreshing = false
+      if (t != null) {
+        t.let { _transaction ->
+          binding.detailsContent.request = _transaction
+          binding.error = false
+          binding.transaction = _transaction
+          binding.cardInput.request = _transaction
+
+          if (_transaction.isDMTIndent()) {
+//            binding.unallocated =
+//              getString(string.unallocated_bulk_order) + (_transaction.unAllocatedVolume)?.toInt() + " MT"
+          }
+        /*  if(_transaction!!.requiredAtDraw()!=null){
+          binding.textDateTime.setCompoundDrawablesWithIntrinsicBounds(
+              null, null, ContextCompat.getDrawable(
+              this@BidDetailsActivity, _transaction!!.requiredAtDraw()!!
+          ), null
+          )
+          }*/
+        }
+
+
+        if (binding.transaction?.indentOrigin.equals("LH")) {
+
+        /*  if (binding.transaction?.additionalRemarks.isNotNullOrEmpty()) {
+            binding.remarks.visibility = View.VISIBLE
+            binding.layRem.visibility = View.VISIBLE
+            binding.div2.visibility = View.VISIBLE
+            binding.remarks.text = binding.transaction?.additionalRemarks
+          } else {
+            binding.remarks.visibility = View.GONE
+            binding.layRem.visibility = View.GONE
+            binding.div2.visibility = View.GONE
+          }*/
+
+       /*   if (binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
+            binding.stopNo.text = "No Stops"
+          } else {
+            binding.stopNo.text =
+              binding.transaction?.indentHaltCenters!!.size.toString() + " Stops"
+            for (i in binding.transaction?.indentHaltCenters!!.indices) {
+              viewModel.fetchIndentCenters(
+                binding.transaction?.indentHaltCenters!![i].haltCenterCode, i + 1
+              )
+            }
+          }*/
+        } else {
+
+        /*  if (binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()) {
+            binding.remarks.visibility = View.VISIBLE
+            binding.layRem.visibility = View.VISIBLE
+            binding.div2.visibility = View.VISIBLE
+            binding.remarks.text = binding.transaction?.orderCreationRemarks
+          } else {
+            binding.remarks.visibility = View.GONE
+            binding.layRem.visibility = View.GONE
+            binding.div2.visibility = View.GONE
+
+          }*/
+
+          var total = 0
+
+          if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+          } else {
+            var uData = StringBuilder()
+            if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
+              uData.append(binding.transaction?.loadingLocationPincode + "-")
+            }
+
+            if (binding.transaction?.pickupLocationCity.isNotNullOrEmpty()) {
+              uData.append(capitalize(binding.transaction?.pickupLocationCity!!))
+            }
+
+            if (uData.toString().isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Address", uData.toString()))
+            }
+
+          }
+
+          if (!TextUtils.isEmpty(binding.transaction?.pickup1)) {
+            total = total + 1
+          //  binding.textViaDestination.card1.visibility = View.VISIBLE
+            var citNam: String? = null
+            if (binding.transaction?.isDmt == true) {
+              citNam = capitalize(binding.transaction?.pickup1)
+            } else {
+              citNam = capitalize(binding.transaction?.pickup1City)
+            }
+         //   binding.textViaDestination.city1.text = citNam
+
+            if (binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup1Address))
+            } else {
+              var uData = StringBuilder()
+              if (binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()) {
+                uData.append(binding.transaction?.pickup1AddressPin + "-")
+              }
+              if (citNam.isNotNullOrEmpty()) {
+                uData.append(citNam)
+              }
+
+              if (uData.toString().isNotNullOrEmpty()) {
+                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
+              }
+            }
+          }
+
+          if (!TextUtils.isEmpty(binding.transaction?.pickup2)) {
+            total = total + 1
+         //   binding.textViaDestination.card2.visibility = View.VISIBLE
+
+            var citNam: String? = null
+            if (binding.transaction?.isDmt == true) {
+              citNam = capitalize(binding.transaction?.pickup2)
+            } else {
+              citNam = capitalize(binding.transaction?.pickup2City)
+            }
+         //   binding.textViaDestination.city2.text = citNam
+
+            if (binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup2Address))
+            } else {
+
+              var uData = StringBuilder()
+              if (binding.transaction?.pickup2AddressPin.isNotNullOrEmpty()) {
+                uData.append(binding.transaction?.pickup2AddressPin + "-")
+              }
+              if (citNam.isNotNullOrEmpty()) {
+                uData.append(citNam)
+              }
+
+              if (uData.toString().isNotNullOrEmpty()) {
+                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
+              }
+
+            }
+          }
+
+          if (!TextUtils.isEmpty(binding.transaction?.stop1)) {
+            if (total == 0) {
+         //     binding.textViaDestination.img3.visibility = View.GONE
+            }
+            total = total + 1
+         //   binding.textViaDestination.card3.visibility = View.VISIBLE
+
+            var citNam: String? = null
+            if (binding.transaction?.isDmt == true) {
+              citNam = capitalize(binding.transaction?.stop1)
+            } else {
+              citNam = capitalize(binding.transaction?.stop1City)
+            }
+        //    binding.textViaDestination.city3.text = citNam
+
+            if (binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
+              uploadArray.add(
+                Pair(
+                  "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop1Address
+                )
+              )
+            } else {
+              var uData = StringBuilder()
+              if (binding.transaction?.intermediaryStop1AddressPin.isNotNullOrEmpty()) {
+                uData.append(binding.transaction?.intermediaryStop1AddressPin + "-")
+              }
+              if (citNam.isNotNullOrEmpty()) {
+                uData.append(citNam)
+              }
+
+              if (uData.toString().isNotNullOrEmpty()) {
+                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
+              }
+
+            }
+
+          }
+          if (!TextUtils.isEmpty(binding.transaction?.stop2)) {
+            total = total + 1
+        //    binding.textViaDestination.card4.visibility = View.VISIBLE
+
+            var citNam: String? = null
+            if (binding.transaction?.isDmt == true) {
+              citNam = capitalize(binding.transaction?.stop2)
+            } else {
+              citNam = capitalize(binding.transaction?.stop2City)
+            }
+       //     binding.textViaDestination.city4.text = citNam
+
+            if (binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
+              uploadArray.add(
+                Pair(
+                  "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop2Address
+                )
+              )
+            } else {
+
+              var uData = StringBuilder()
+              if (binding.transaction?.intermediaryStop2AddressPin.isNotNullOrEmpty()) {
+                uData.append(binding.transaction?.intermediaryStop2AddressPin + "-")
+              }
+              if (citNam.isNotNullOrEmpty()) {
+                uData.append(citNam)
+              }
+
+              if (uData.toString().isNotNullOrEmpty()) {
+                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
+              }
+            }
+          }
+
+        /*  if (total > 0) {
+            binding.textViaLabel.visibility = View.VISIBLE
+            binding.stopNo.text = "$total Stops"
+          } else {
+            binding.stopNo.text = "No Stops"
+          }*/
+
+          if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
+            uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
+          } else {
+
+            var uData = StringBuilder()
+            if (binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()) {
+              uData.append(binding.transaction?.unloadingLocationPincode + "-")
+            }
+
+            if (binding.transaction?.dropLocationCity.isNotNullOrEmpty()) {
+              uData.append(capitalize(binding.transaction?.dropLocationCity!!))
+            }
+
+            if (uData.toString().isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Drop Address", uData.toString()))
+            }
+
+          }
+
+          if (!uploadArray.isEmpty()) {
+            binding.cvRouteSection.addressLay.visibility = View.VISIBLE
+            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+            binding.cvRouteSection.addresslist.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = addressDetailAdapter
+            }
+          } else {
+            binding.cvRouteSection.addressLay.visibility = View.GONE
+          }
+        }
+
+
+   //     bidEndingTime = binding.transaction!!.bidEndingTime.toString()
+
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Time Out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
+      }
+      binding.executePendingBindings()
+    }
+  }
 
   /**
    * Transaction bid details UI updation observer

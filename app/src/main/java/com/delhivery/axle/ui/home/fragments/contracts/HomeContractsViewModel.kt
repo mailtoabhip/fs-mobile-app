@@ -147,8 +147,13 @@ class HomeContractsViewModel@Inject constructor(
             /* remove progress item */
             add(Pair(HomeContractsProgressItem(), Remove))
 
-            val loads = _tRes.first
+            val loadsWithBids = _tRes.first
             val bids = _tRes.second
+            val bidTransactionIds = bids.map { it.transactionId }.toSet()
+            val loads = loadsWithBids.filter { load ->
+              load.transactionId !in bidTransactionIds
+            }
+
               add(Pair(HomeContractsSearchItem(), AddUpdate))
               // calculating the count based on user demand type
               var totalActive=0
