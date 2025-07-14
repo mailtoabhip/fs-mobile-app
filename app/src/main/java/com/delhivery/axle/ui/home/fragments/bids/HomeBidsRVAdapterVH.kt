@@ -98,8 +98,8 @@ internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
 /**
  * Bid request item view holder
  */
-class HomeBidsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
-    BaseHomeBidsRVAdapterViewHolder<LoadDelhiveryIntercityBinding, HomeBidsRequestItem>(binding) {
+class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface

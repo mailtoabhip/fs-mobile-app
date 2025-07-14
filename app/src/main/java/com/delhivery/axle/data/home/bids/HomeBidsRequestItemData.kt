@@ -563,7 +563,7 @@ data class HomeBidsRequestItemData(
         if (date2.compareTo(date1) > 0) {
           "Closes in ${DateUtils.timeDiff(date1.time,date2.time)}"
         } else {
-          "Closed ${ DateUtils.daysDiffWithTimeStr(bidEndingTime, DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(bidEndingTime)}"
+          "Closed ${ DateUtils.daysDiffWithTimeStr(bidEndingTime, DatePatterns.OrionDateFormat) }, ${DateUtils.getUtcToIstFormatTimeOnly(bidEndingTime)}"
         }
       }catch(_:Exception){
         ""

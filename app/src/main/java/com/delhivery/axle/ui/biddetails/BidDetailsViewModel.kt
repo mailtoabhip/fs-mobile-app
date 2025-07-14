@@ -40,7 +40,7 @@ class BidDetailsViewModel @Inject constructor(
   private val truckRepository: TruckRepository,
   private val warehouseRepository: WarehouseRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BulkBidsCreateEditInterface,
+) : BaseViewModel(), BulkBidsCreateEditInterface,
   BidConfirmReviseDialogInterface {
 
   /* transaction id */
@@ -66,7 +66,8 @@ class BidDetailsViewModel @Inject constructor(
   var refreshCalled :Boolean=false
   var openConfirmBid :Boolean=false
   var statusConfirmationPending =MutableLiveData<Boolean>()
-
+    var errorBiddingLiveData =MutableLiveData<Boolean>()
+    var successBidLiveData =MutableLiveData<Boolean>()
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, TransactionBid?>>()
 
@@ -235,15 +236,15 @@ class BidDetailsViewModel @Inject constructor(
         }
   }
 
-  override fun createBid(
+   fun createBid(
           isPMT: Boolean,
           transactionId: String,
           bidAmount: Int,
           pmtRate: Int,
           commercialType: String,
-          position: Int,
-          expectedArrivalTimePickup:String,
-          expectedArrivalTimePickupRemark:String
+          position: Int?,
+          expectedArrivalTimePickup:String?,
+          expectedArrivalTimePickupRemark:String?
   ) {
     compositeDisposable += bidsRepository.createBid(
         isPMT, transactionId, bidAmount, pmtRate, commercialType,
@@ -251,27 +252,28 @@ class BidDetailsViewModel @Inject constructor(
     )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
-        .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
                openConfirmBid= true
+              successBidLiveData.postValue(true)
               fetchTransactionBids(true)
           } else {
+              errorBiddingLiveData.postValue(true)
             error.handle()
           }
         }
   }
 
-  override fun editBid(
+   fun editBid(
           isPMT: Boolean,
           transactionId: String,
           bidId: String,
           bidAmount: Int,
           pmtRate: Int,
           commercialType: String,
-          position: Int,
-          expectedArrivalTimePickup:String,
-          expectedArrivalTimePickupRemark:String
+          position: Int?,
+          expectedArrivalTimePickup:String?,
+          expectedArrivalTimePickupRemark:String?
   ) {
     compositeDisposable += bidsRepository.editBid(
         isPMT, transactionId, bidId, bidAmount, commercialType, pmtRate,
@@ -279,13 +281,14 @@ class BidDetailsViewModel @Inject constructor(
     )
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
-        .bidsProgress()
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
               openConfirmBid= true
+              successBidLiveData.postValue(true)
               fetchTransactionBids(true)
 
           } else {
+              errorBiddingLiveData.postValue(true)
             error.handle()
           }
         }
@@ -302,12 +305,12 @@ class BidDetailsViewModel @Inject constructor(
       compositeDisposable += bidsRepository.createBulkBids(bulkBidRequest)
           .delay(BidsUpdateDelay, SECONDS)
           .onBackground()
-          .bidsProgress()
           .subscribe { _res, error ->
               if (!error && _res!=null) {
                   fetchTransactionBids(true)
 
               } else {
+
                   error.handle()
               }
           }

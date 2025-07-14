@@ -602,6 +602,7 @@
   <string name="upload_aadhaar_text">Upload Aadhaar document</string>
   <string name="label_aadhaar_verification">Aadhaar Verification</string>
   <string name="details_submitted_successfully">Details submitted successfully!</string>
+  <string name="bid_placed_successfully">Bid placed successfully!</string>
   <string name="kyc_verified_successfully">KYC verified successfully!</string>
   <string name="kyc_verified_complete_details">Your KYC verification is complete and now you can get access to all features</string>
   <string name="notify_kyc_verification">We will notify you when your KYC verification is complete</string>
@@ -805,6 +806,7 @@
   <string name="start_and_end_dates_will_be_shared_via_email">Start and end dates will be communicated via email after bidding results are finalized</string>
 
   <string name="arrow_separator_html"><![CDATA[ &rarr; ]]></string>
+  <string name="check_your_bid_status">Check your bid status and make updates anytime in the \"My Bids\" section.</string>
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>

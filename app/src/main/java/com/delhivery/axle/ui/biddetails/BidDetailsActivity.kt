@@ -6,10 +6,14 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
 import android.text.Layout
 import android.text.TextUtils
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -24,6 +28,8 @@ import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
@@ -37,15 +43,17 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import java.lang.StringBuilder
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 /**
  * Bid detail screen
  */
-class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface {
+class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface,BidSuccessInterface {
 
   init {
     hasInlineProgress = true
@@ -73,6 +81,8 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   var ellp = true
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
+  private var amount = 0
+  private var pmtRate = 0
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("BidDetailsActivity_SetupTime")
@@ -105,30 +115,6 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       layoutManager = LinearLayoutManager(applicationContext)
       adapter = addressDetailAdapter
     }
-
-//    binding.layRem.setOnClickListener {
-//      runOnUiThread {
-//        val l: Layout = binding.remarks.layout
-//        if (l != null) {
-//          val lines = l.lineCount
-//          if (lines > 0) if (l.getEllipsisCount(lines - 1) > 0 || !ellp) {
-//            if (ellp) {
-//              binding.remarks.ellipsize = null
-//              binding.remarks.setMaxLines(Integer.MAX_VALUE);
-//              ellp = false
-//              binding.clickRemark.rotation = 180F
-//            } else if (!ellp) {
-//              binding.remarks.setSingleLine(false)
-//              binding.remarks.setEllipsize(TextUtils.TruncateAt.END)
-//              val n = 2;
-//              binding.remarks.setLines(n);
-//              ellp = true
-//              binding.clickRemark.rotation = 0F
-//            }
-//          }
-//        }
-//      }
-//    }
   }
 
   override fun onResume() {
@@ -184,35 +170,47 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = ""//""Order ID - " + viewModel.transactionId
+
     /* setup live data observers */
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.transactionLiveData.observe(this, TransactionObserver())
-//    viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
+    viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
+    viewModel.errorBiddingLiveData.observe(this) {
+      uiUtils.hideProgress()
+    }
     viewModel.bidPriceLiveData.observe(this, Observer {
       if (it != null) {
-//        binding.transaction?.transactionBid = it
-//        val visibility =
-//          if (binding.transaction?.bidAmount()
-//              .isNullOrEmpty()
-//          ) View.GONE else View.VISIBLE
-//        binding.priceLay.visibility = visibility
-//        binding.textTargetPrice.visibility = visibility
-//        binding.textTargetPriceLabel.visibility = visibility
-//        if (visibility == View.VISIBLE) {
-//          binding.priceLay.visibility = View.VISIBLE
-//          if (binding.transaction?.isPMTIndent() == true) {
-//            binding.textTargetPrice.text = binding.transaction?.bidAmount() + "/MT"
-//          } else {
-//            binding.textTargetPrice.text = binding.transaction?.bidAmount()
-//
-//          }
-//          binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
-//        } else {
-//          binding.priceLay.visibility = View.GONE
-//        }
+        binding.transaction?.transactionBid = it
+        val visibility =
+          if (binding.transaction?.bidAmount()
+              .isNullOrEmpty()
+          ) View.GONE else View.VISIBLE
+      /*  binding.priceLay.visibility = visibility
+        binding.textTargetPrice.visibility = visibility
+        binding.textTargetPriceLabel.visibility = visibility
+        if (visibility == View.VISIBLE) {
+          binding.priceLay.visibility = View.VISIBLE
+          if (binding.transaction?.isPMTIndent() == true) {
+            binding.textTargetPrice.text = binding.transaction?.bidAmount() + "/MT"
+          } else {
+            binding.textTargetPrice.text = binding.transaction?.bidAmount()
+
+          }
+          binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
+        } else {
+          binding.priceLay.visibility = View.GONE
+        }*/
       }
     })
-     viewModel.reviseBidLiveData.observe(this, Observer {
+    viewModel.successBidLiveData.observe(this) {
+      if (it) {
+        dialogUtils.showSuccessBidDialog(this,
+          resources.getString(R.string.bid_placed_sucessfully),
+          resources.getString(R.string.check_your_bid_status)
+        )
+      }
+    }
+    viewModel.reviseBidLiveData.observe(this, Observer {
           if (it.first) {
 //           bidDialog(it.second)
           }
@@ -314,6 +312,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
     binding.refreshLayout.setOnRefreshListener {
       viewModel.refreshCalled = true
+      binding.mainCl.visibility = View.GONE
       refreshData()
     }
 
@@ -321,8 +320,6 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       if (!it.isEmpty()) {
         runOnUiThread {
 
-//          binding.textViaLabel.visibility = View.VISIBLE
-//
           uploadArray.clear()
 
           if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
@@ -337,14 +334,6 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
           }
 
           val sortedList = it.sortedWith(compareBy({ it.first.first }))
-
-          val stopAdapter = StopAdapter(sortedList)
-//          binding.stopList.apply {
-//            layoutManager = LinearLayoutManager(
-//              applicationContext, LinearLayoutManager.HORIZONTAL, false
-//            )
-//            adapter = stopAdapter
-//          }
 
           val j = 0
           for (i in sortedList) {
@@ -383,10 +372,136 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       }
     })
 
+    binding.cardInput.etBidAmount.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null) {
+       //   binding.tilAmount.error = null
+       //   binding.tilAmount.isErrorEnabled = false
+          try {
+            val input = s.trim()
+              .toString()
+              .toInt()
+            val data = binding.transaction as HomeBidsRequestItemData
+            if (data.isPMTIndent()) {
+              pmtRate = input
+              if (pmtRate > userPrefs.maxPMTRate) {
+                enablePlaceBid(false)
+                binding.cardInput.bidError.visibility = View.VISIBLE
+                binding.cardInput.bidError.text = "*Rate should be less than ${userPrefs.maxPMTRate}/MT"
+               // throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
+              }
+              amount = (input * data.requestedCapacityMg).toInt()
+            //  binding.labelBid.text = "Your minimum payout will be ₹ $amount"
+
+              if (data.transactionBid != null) {
+                if (abs((input * data.requestedCapacityMg) - (data.transactionBid?.pmtRate
+                    ?: 0.0)) < 500) {
+                  enablePlaceBid(false)
+                  binding.cardInput.bidError.visibility = View.VISIBLE
+                  binding.cardInput.bidError.text = "*Bid difference should be more than ₹500"
+
+                //  throw Exception("*Bid difference should be more than ₹500")
+                }
+              }
+            } else {
+              binding.cardInput.bidError.visibility = View.GONE
+              amount = input
+              if (data.transactionBid != null) {
+                  enablePlaceBid(data.transactionBid!!.bidAmount.toInt() != input)
+              }else{
+                if(input>0){
+                  enablePlaceBid(true)
+                }else{
+                  enablePlaceBid(false)
+                }
+              }
+
+            }
+          } catch (e: NumberFormatException) {
+            enablePlaceBid(false)
+
+//            binding.tilAmount.isErrorEnabled = true
+//            binding.tilAmount.error = "*Invalid Value"
+            amount = 0
+//            binding.labelBid.text = ""
+          } catch (e: Exception) {
+            enablePlaceBid(false)
+//            binding.tilAmount.isErrorEnabled = true
+//            binding.tilAmount.error = e.message
+            amount = 0
+          }
+        }else{
+          enablePlaceBid(false)
+        }
+      }
+    })
+
+    binding.cardInput.placeBidButton.setOnClickListener {
+      Log.d("Touch", "Button touched:")
+      try {
+        require(
+          !(viewModel.transaction.isPMTIndent() && pmtRate > userPrefs.maxPMTRate)
+        ) { "*Rate should be less than ${userPrefs.maxPMTRate}/MT" }
+        if (amount > 0) {
+          if (viewModel.transaction.isPMTIndent()) {
+            val costPerKm = pmtRate / viewModel.transaction.distance
+            if (costPerKm > userPrefs.maxCostPerKM) {
+              //isChecked = true
+              throw IllegalArgumentException(
+                "*Are you sure you want to bid ₹ ${
+                  StringUtils.formatDecimalAmount(
+                    costPerKm
+                  )
+                } /MT/KM"
+              )
+            }
+          } else require(
+            !(viewModel.transaction.transactionBid?.bidAmount != null && abs(viewModel.transaction.transactionBid!!.bidAmount - amount) < 500)
+          ) { "*Bid difference should be more than ₹500" }
+          if (viewModel.transaction.transactionBid == null) {
+            uiUtils.showProgress()
+            viewModel.createBid(
+              viewModel.transaction.isPMTIndent(), viewModel.transaction.key(), amount, pmtRate,
+              viewModel.transaction.biddingType
+                ?: "FTL",null,null,null
+            )
+          } else {
+            uiUtils.showProgress()
+            viewModel.editBid(
+              viewModel.transaction.isPMTIndent(),  viewModel.transaction.key(),  viewModel.transaction!!.transactionBid!!.key(),
+              amount, pmtRate, viewModel.transaction.biddingType ?: "FTL",null,null,null
+            )
+          }
+        } else {
+          throw IllegalArgumentException("*Invalid amount")
+        }
+      } catch (e: IllegalArgumentException) {
+     /*   binding.tilAmount.isErrorEnabled = true
+        binding.tilAmount.error = e.message
+        val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
+        binding.tilAmount.startAnimation(shake)*/
+      }
+    }
 
     refreshData()
   }
 
+  fun enablePlaceBid(enable:Boolean){
+    binding.cardInput.placeBidButton.isEnabled = enable
+  }
   private fun refreshData() {
      binding.error = false
      viewModel.fetchTransactionDetails()
@@ -434,10 +549,11 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
-
+      binding.mainCl.visibility =View.VISIBLE
       binding.refreshing = false
       if (t != null) {
         t.let { _transaction ->
+          binding.cardInput.etBidAmount.isFocusable = true
           binding.detailsContent.request = _transaction
           binding.error = false
           binding.transaction = _transaction
@@ -697,614 +813,651 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     }
   }
 
+  fun enableKeyboard(){
+    binding.cardInput.etBidAmount.requestFocus()
+
+    // Delay to ensure the window is ready before showing the keyboard
+    binding.cardInput.etBidAmount.post {
+      val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+      imm.showSoftInput(binding.cardInput.etBidAmount, InputMethodManager.SHOW_IMPLICIT)
+    }
+  }
   /**
    * Transaction bid details UI updation observer
    */
-//  inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
-//    override fun onChanged(t: BidDetailsUserBidState?) {
-//      t?.let { state ->
-//        when (state) {
-//          is BidDetailsUserBidState_PlaceBidFirst -> {
-//            ViewBidDetailsPlaceBidFirstBinding.inflate(
-//              layoutInflater, binding.containerActions, false
-//            )
-//              .apply {
-//                if (binding.textBulkLoad.visibility == View.GONE) {
-//                  binding.timerLayout.visibility = View.VISIBLE
-//                  setTimer(bidEndingTime)
-//                }
-//                isFirstBid = true
-//                if (viewModel.refreshCalled == false) {
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
-//                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
-//                    mutableListOf(viewModel.transactionId, source, subSource)
-//                  )
-//                }
-//                binding.status.visibility = View.GONE
-//
-//                binding.buttonConfirm.text = "Place Your Bid"
-//                binding.bottomLay.visibility = View.VISIBLE
-//                binding.buttonConfirm.setOnClickListener {
-//                  bidDialog()
-//                }
-//              }
-//          }
-//          is BidDetailsUserBidState_PlaceBid -> {
-//            ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
-//              .apply {
-//                if (binding.textBulkLoad.visibility == View.GONE) {
-//                  binding.timerLayout.visibility = View.VISIBLE
-//                  setTimer(bidEndingTime)
-//                }
-//                isFirstBid = true
-//                bidsRecieved = state.bidsCount
-//                state.lowestAndUserBidPair.second?.let {
-//                  lowestBid = when (state.lowestAndUserBidPair) {
-//                    null -> ""
-//                    else -> "Lowest Bid: ₹ ${
-//                      StringUtils.formatAmount(
-//                        state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
-//                      )
-//                    }" + if (state.isPMTIndent) "/MT" else ""
-//                  }
-//                }
-//
-//                if (state.bidsCount != null && state.bidsCount > 0) {
-//                  binding.numBids.text = "$bidsRecieved Bids Received"
-//                  binding.numLay.visibility = View.VISIBLE
-//                } else {
-//                  binding.numLay.visibility = View.GONE
-//                }
-//
-//                if (lowestBid.isNotNullOrEmpty()) {
-//                  binding.lowBid.text = lowestBid.toString()
-//                } else {
-//                  binding.lowBid.visibility = View.GONE
-//                }
-//
-//                binding.buttonConfirm.text = "Place Your Bid"
-//                binding.bidLay.visibility = View.GONE
-//                binding.bottomLay.visibility = View.VISIBLE
-//                binding.buttonConfirm.setOnClickListener {
-//                  bidDialog()
-//                }
-//                if (viewModel.refreshCalled == false) {
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-//                    mutableListOf(
-//                      PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
-//                      PROPERTY_SUB_SOURCE
-//                    ),
-//                    mutableListOf(
-//                      viewModel.transactionId,
-//                      state.bidsCount.toString(),
-//                      source,
-//                      subSource
-//                    )
-//                  )
-//                }
-//                binding.status.visibility = View.GONE
-//              }
-//          }
-//          is BidDetailsUserBidState_EditBid -> {
-//            ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
-//              .apply {
-//                binding.timerLayout.visibility = View.GONE
-//                val data = viewModel.transaction as HomeBidsRequestItemData
-//                data.numBids = state.bidsCount
-//                var oldAmount = data?.transactionBid?.bidAmount
-//                data.transactionBid = state.lowestAndUserBidPair.first
-//                bidsRecieved = state.bidsCount
-//                val userBid = state.lowestAndUserBidPair.first
-//                val lowestTBid = state.lowestAndUserBidPair.second
-//                lowestTBid?.let {
-//                  if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
-//                    lowestBid = when (it) {
-//                      null -> ""
-//                      else -> "Lowest Bid: ₹ ${
-//                        StringUtils.formatAmount(
-//                          it.bidAmount
-//                        )
-//                      }" + if (state.isPMTIndent) "/MT" else ""
-//                    }
-//                    data.lowestBid = when (it) {
-//                      null -> 0.0
-//                      else -> it.bidAmount
-//                    }
-//                  }
-//                }
-//                if (viewModel.openConfirmBid) {
-//                  viewModel.openConfirmBid=false
-//                  BidConfirmReviseDialog(
-//                    this@BidDetailsActivity,data, viewModel, 0
-//                  ).show()
-//                }
-//                binding.numLay.visibility = View.GONE
-//                binding.bottomLay.visibility = View.VISIBLE
-//
-//                if (userBid?.bidAmount != null) {
-//                  binding.bidLay.visibility = View.VISIBLE
-//                  if (state.isPMTIndent) {
-//                    binding.bidVal.text =
-//                      "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}" + "/MT"
-//                  } else {
-//                    binding.bidVal.text = "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}"
-//                  }
-//                  binding.greenBidLay.visibility = View.VISIBLE
-//                } else {
-//                  binding.bidLay.visibility = View.GONE
-//                }
-//
-//                if (state.bidsCount != null && state.bidsCount > 0) {
-//                  binding.numBidsVal.text = "$bidsRecieved Bids Received"
-//                  binding.numBidsVal.visibility = View.VISIBLE
-//                  binding.greenBidLay.visibility = View.VISIBLE
-//                } else {
-//                  binding.numBidsVal.visibility = View.GONE
-//                }
-//
-//                if (state.bidsCount != null && state.bidsCount > 1) {
-//                  if (lowestTBid?.bidAmount != null) {
-//                    if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
-//                      binding.tvCorr.setBackground(
-//                        ContextCompat.getDrawable(this@BidDetailsActivity,
-//                          R.drawable.bg_all_round_corner_light_green_12
-//                        )
-//                      )
-//                      binding.imgCorr.visibility = View.VISIBLE
-//                      binding.tvCorr.text = "Your bid is the lowest"
-//                      binding.tvCorr.setTextColor(
-//                        ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green)
-//                      )
-//                      binding.llBidStatus.background =  ContextCompat.getDrawable(this@BidDetailsActivity,
-//                        R.drawable.bg_all_round_corner_light_green_12
-//                      )
-//                    } else {
-//                      binding.tvCorr.setBackground(
-//                        ContextCompat.getDrawable(this@BidDetailsActivity,
-//                          R.drawable.bg_all_round_corner_light_pink_12
-//                        )
-//                      )
-//                      binding.llBidStatus.background = null
-//                      binding.imgCorr.visibility = View.GONE
-//                      binding.tvCorr.text = binding.transaction?.lowestbidText()
-//                      binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity as Context, R.color.bid_placed_red))
-//                    }
-//                  } else {
-//                    binding.tvCorr.setBackground(
-//                      ContextCompat.getDrawable(this@BidDetailsActivity,
-//                        R.drawable.bg_all_round_corner_light_pink_12
-//                      )
-//                    )
-//                    binding.llBidStatus.background = null
-//                    binding.imgCorr.visibility = View.GONE
-//                    binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
-//                    binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_red))
-//                  }
-//                } else if (userBid?.bidAmount != null && state.bidsCount != null && state.bidsCount == 1 && binding.transaction?.guidancePrice != null) {
-//                  if (userBid.bidAmount.compareTo(binding.transaction?.guidancePrice!!) > 0) {
-//                    binding.tvCorr.setBackground(
-//                      ContextCompat.getDrawable(this@BidDetailsActivity,
-//                        R.drawable.bg_all_round_corner_light_pink_12
-//                      )
-//                    )
-//                    binding.llBidStatus.background = null
-//                    binding.imgCorr.visibility = View.GONE
-//                    binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
-//                    binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_red))
-//                  } else {
-//                    binding.tvCorr.setBackground(
-//                      ContextCompat.getDrawable(this@BidDetailsActivity,
-//                        R.drawable.bg_all_round_corner_light_green_12
-//                      )
-//                    )
-//                    binding.llBidStatus.background =  ContextCompat.getDrawable(this@BidDetailsActivity,
-//                      R.drawable.bg_all_round_corner_light_green_12
-//                    )
-//                    binding.imgCorr.visibility = View.VISIBLE
-//                    binding.tvCorr.text = "Your bid is the lowest"
-//                    binding.tvCorr.setTextColor(
-//                      ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green)
-//                    )
-//                  }
-//                }
-//
-//                binding.buttonConfirm.text = "Edit Bid"
-//                binding.buttonConfirm.setOnClickListener {
-//                  bidDialog(userBid)
-//                }
-//
-//                request = data
-//                if ((!viewModel.restrictEventTrigger && !viewModel.refreshCalled) || isFirstBid) {
-//                  isFirstBid = false
-//                  if (!reviseInitiated) {
-//                    analyticsUtil.moEngageTrackEvent(
-//                      EVENT_ORDER_DETAILS_BID_SUBMIT,
-//                      mutableListOf(
-//                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-//                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-//                        PROPERTY_SOURCE,
-//                        PROPERTY_SUB_SOURCE
-//                      ),
-//                      mutableListOf(
-//                        state.lowestAndUserBidPair.second?.transactionId ?: "",
-//                        state.bidsCount.toString(),
-//                        state.lowestAndUserBidPair.second?.bidAmount.toString(),
-//                        state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),
-//                        source,
-//                        subSource
-//                      )
-//                    )
-//                  } else {
-//                    analyticsUtil.moEngageTrackEvent(
-//                      EVENT_BID_REVISE_SUBMITTED,
-//                      mutableListOf(
-//                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT,
-//                        PROPERTY_ORDER_LOWEST_BID_VALUE,
-//                        PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW,
-//                        PROPERTY_SOURCE, PROPERTY_SUB_SOURCE
-//                      ),
-//                      mutableListOf(
-//                        state.lowestAndUserBidPair.second?.transactionId ?: "",
-//                        state.bidsCount.toString() ?: "", data?.lowestBid.toString() ?: " ",
-//                        oldAmount.toString() ?: "", data?.bidAmountValue()
-//                          .toString() ?: "", source, subSource
-//                      )
-//                    )
-//                    reviseInitiated = false
-//                  }
-//                } else {
-//                  if (viewModel.refreshCalled == false) {
-//                    analyticsUtil.moEngageTrackEvent(
-//                      EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-//                      mutableListOf(
-//                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
-//                        PROPERTY_SUB_SOURCE
-//                      ),
-//                      mutableListOf(
-//                        viewModel.transactionId,
-//                        bidsRecieved.toString(),
-//                        source,
-//                        subSource
-//                      )
-//                    )
-//                  }
-//                  viewModel.refreshCalled = false
-//                }
-//                viewModel.restrictEventTrigger = false
-//
-//
-//                if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
-//                  val mHandler = Handler(Looper.myLooper()!!)
-//                  var mRunnable: Runnable = Runnable { }
-//                  mRunnable = object : Runnable {
-//                    override fun run() {
-//                      btnEditBidInsider.setVisibility(View.VISIBLE)
-//                      //loading our custom made animations
-//                      val animation = AnimationUtils.loadAnimation(
-//                        applicationContext, R.anim.fade_in
-//                      )
-//                      //starting the animation
-//                      btnEditBidInsider.startAnimation(animation)
-//                      val animation2 = AnimationUtils.loadAnimation(
-//                        applicationContext, R.anim.fade_out
-//                      )
-//                      btnEditBidInsider.startAnimation(animation2)
-//                      mHandler.postDelayed({
-//                        btnEditBidInsider.setVisibility(View.GONE)
-//                      }, 3000)
-//                      mHandler.postDelayed(mRunnable, 2000)
-//
-//                    }
-//                  }
-//                  mHandler.post(mRunnable)
-//                }
-//
-//                btnEditBidInsider.setOnClickListener(View.OnClickListener {
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_NOT_LOWEST_BID_CTA,
-//                    mutableListOf(PROPERTY_ORDER_ID),
-//                    mutableListOf(
-//                      state.lowestAndUserBidPair.second?.transactionId ?: ""
-//                    )
-//                  )
-//                  bidDialog(userBid)
-//                })
-//                textEditBid.setOnClickListener(View.OnClickListener {
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_LOWEST_BID_CTA,
-//                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
-//                    mutableListOf(
-//                      state.lowestAndUserBidPair.second?.transactionId ?: "",
-//                      state.bidsCount.toString()
-//                    )
-//                  )
-//                  bidDialog(userBid)
-//                })
-//                textEditBid2.setOnClickListener(View.OnClickListener {
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_LOWEST_BID_CTA,
-//                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
-//                    mutableListOf(
-//                      state.lowestAndUserBidPair.second?.transactionId ?: "",
-//                      state.bidsCount.toString()
-//                    )
-//                  )
-//                  bidDialog(userBid)
-//                })
-//                binding.status.visibility = View.VISIBLE
-//                binding.status.text = resources.getString(R.string.label_active)
-//                binding.status.setBackgroundColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_active))
-//                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_active))
-//              }
-//          }
-//          is BidDetailsUserBidState_LoadingBids -> {
-//            ViewBidDetailsLoadingBidsBinding.inflate(
-//              layoutInflater, binding.containerActions, false
-//            )
-//          }
-//          is BidDetailsUserBidState_ConfirmedBid -> {
-//            ViewBidDetailsConfirmedBidBinding.inflate(
-//              layoutInflater, binding.containerActions, false
-//            )
-//              .apply {
-//                binding.timerLayout.visibility = View.GONE
-//                pickUpLocation =
-//                  StringUtils.capitalize(state.pickupLocation)
-//                    ?: getString(string.not_available)
-//                vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
-//                driverPhone =
-//                  state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
-//                if (viewModel.refreshCalled == false)
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-//                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
-//                    mutableListOf(viewModel.transactionId, source, subSource)
-//                  )
-//
-//                binding.status.visibility = View.VISIBLE
-//                val data = viewModel.transaction as HomeBidsRequestItemData
-//
-//                if (data.clientConfirmationPending == false) {
-//                  binding.status.text = resources.getString(R.string.label_pending)
-//                  binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.pending))
-//                  binding.bottomLay.visibility = View.GONE
-//                } else {
-//                  binding.status.text = resources.getString(R.string.label_confirm)
-//                  binding.buttonConfirm.text = "View Trip"
-//                  binding.status.setBackground(
-//                    ContextCompat.getDrawable(this@BidDetailsActivity,
-//                      R.drawable.bg_all_round_corner_light_green_12
-//                    )
-//                  )
-//                  binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green))
-//                  binding.bidLay.visibility = View.GONE
-//                  binding.numLay.visibility = View.GONE
-//                  binding.bottomLay.visibility = View.VISIBLE
-//                  binding.buttonConfirm.setOnClickListener {
-//                    startActivity(
-//                      tripDetailsIntent(
-//                        viewModel.transaction.uuid.toString(), this@BidDetailsActivity
-//                      )
-//                    )
-//                  }
-//
-//                }
-//              }
-//          }
-//          is BidDetailsUserBidState_RejectedBid -> {
-//            ViewBidDetailsRejectedBidBinding.inflate(
-//              layoutInflater, binding.containerActions, false
-//            )
-//              .apply {
-//                binding.timerLayout.visibility = View.GONE
-//                binding.bottomLay.visibility = View.GONE
-//                val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-//                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
-//                } else {
-//                  StringUtils.formatAmount(state.userBid.bidAmount)
-//                }
-//                textUserHighestBid.text = bidText
-//                if (viewModel.refreshCalled == false)
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-//                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
-//                    mutableListOf(viewModel.transactionId, source, subSource)
-//                  )
-//                binding.status.visibility = View.VISIBLE
-//                binding.status.text = resources.getString(R.string.label_lost)
-//                binding.textTargetPrice.text = "₹" + if (state.isPMTIndent) {
-//                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0)
-//                } else {
-//                  StringUtils.formatAmount(state.userBid.bidAmount)
-//                }
-//                binding.textTargetPriceLabel.text = "Your Bid"
-//                binding.priceLay.visibility = View.VISIBLE
-//                binding.status.setBackgroundColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost_bg))
-//                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost_bid))
-//                binding.bottomLay.visibility = View.GONE
-//              }
-//          }
-//          is BidDetailsUserBidState_CancelledBid -> {
-//            ViewBidDetailsCancelledBidBinding.inflate(
-//              layoutInflater, binding.containerActions, false
-//            )
-//              .apply {
-//                binding.timerLayout.visibility = View.GONE
-//                binding.bottomLay.visibility = View.GONE
-//                binding.bidLay.visibility = View.GONE
-//                val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
-//                  StringUtils.formatAmount(state.userBid.bidAmount ?: 0.0) + "/MT"
-//                } else {
-//                  StringUtils.formatAmount(state.userBid.bidAmount)
-//                }
-//                if (viewModel.refreshCalled == false)
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-//                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
-//                    mutableListOf(viewModel.transactionId, source, subSource)
-//                  )
-//                textUserHighestBid.text = bidText
-//                binding.status.visibility = View.VISIBLE
-//                binding.status.text = resources.getString(R.string.label_cancel)
-//                binding.textTargetPrice.text = "₹" + if (state.isPMTIndent) {
-//                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0)
-//                } else {
-//                  StringUtils.formatAmount(state.userBid.bidAmount)
-//                }
-//                binding.textTargetPriceLabel.text = "Your Bid"
-//                binding.priceLay.visibility = View.VISIBLE
-//                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost))
-//                binding.bottomLay.visibility = View.GONE
-//              }
-//          }
-//
-//          is BidDetailsUserBidState_BulkLoad_Edit -> {
-//            ViewBidDetailsBulkLoadEditBinding.inflate(
-//              layoutInflater, binding.containerActions, false
-//            )
-//              .apply {
-//                binding.timerLayout.visibility = View.GONE
-//
-//                val data = viewModel.transaction as HomeBidsRequestItemData
-//                var bidAmount = ""
-//                var expectedArrivalPickup = ""
-//                if (data.transactionStatus == "cancelled") {
-//                  btnReviseBidInsider.visibility = View.GONE
-//                  reduceText.visibility = View.GONE
-//                }
-//                data.bulkTransactionBids = state.bids
-//                bidsRecieved = state.bidsCount
-//                data.let {
-//                  if (!it.bulkTransactionBids.isNullOrEmpty()) {
-//                    if (viewModel.restrictEventTrigger && viewModel.refreshCalled == false) {
-//                      analyticsUtil.moEngageTrackEvent(
-//                        EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-//                        mutableListOf(
-//                          PROPERTY_ORDER_ID,
-//                          PROPERTY_BID_COUNT,
-//                          PROPERTY_SOURCE,
-//                          PROPERTY_SUB_SOURCE
-//                        ),
-//                        mutableListOf(
-//                          viewModel.transactionId,
-//                          bidsRecieved.toString(),
-//                          source,
-//                          subSource
-//                        )
-//                      )
-//                    }
-//                  } else {
-//                    if (viewModel.restrictEventTrigger && viewModel.refreshCalled == false)
-//                      analyticsUtil.moEngageTrackEvent(
-//                        EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
-//                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
-//                        mutableListOf(viewModel.transactionId, source, subSource)
-//                      )
-//                  }
-//                }
-//                data.let {
-//                  if (!it.bulkTransactionBids.isNullOrEmpty()) {
-//                    for (transactionBid in it.bulkTransactionBids) {
-//                      if (bidAmount.isNullOrEmpty()) {
-//                        bidAmount = transactionBid.bidAmount.toString()
-//                      } else {
-//                        bidAmount = bidAmount + "," + transactionBid.bidAmount.toString()
-//                      }
-//                      if (expectedArrivalPickup.isNullOrEmpty()) {
-//                        expectedArrivalPickup =
-//                          transactionBid.expectedArrivalTimePickupRemark.toString()
-//                      } else {
-//                        expectedArrivalPickup =
-//                          expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
-//                      }
-//                    }
-//                  }
-//                }
-//
-//                binding.bidLay.visibility = View.GONE
-//                binding.bottomLay.visibility = View.GONE
-//
-//                rvBidSummary.apply {
-//                  layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-//                  adapter = this@BidDetailsActivity.adapter
-//                  (adapter as BulkBidsRVAdapter).clearItems()
-//                  viewModel.getUserBulkBids(
-//                    state.bids, state.lowestAndUserBidPair.second.let { it!!.bidAmount })
-//
-//                }
-//
-//                btnReviseBidInsider.setOnClickListener {
-//                  analyticsUtil.moEngageTrackEvent(
-//                    EVENT_NOT_LOWEST_BID_CTA,
-//                    mutableListOf(PROPERTY_ORDER_ID),
-//                    mutableListOf(data.uuid.toString())
-//                  )
-//                  bidDialog()
-//                }
-//                if ((!viewModel.restrictEventTrigger && !viewModel.refreshCalled) || isFirstBid) {
-//                  isFirstBid = false
-//                  if (!reviseInitiated) {
-//                    analyticsUtil.moEngageTrackEvent(
-//                      EVENT_ORDER_DETAILS_BID_SUBMIT,
-//                      mutableListOf(
-//                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-//                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
-//                        PROPERTY_SOURCE, PROPERTY_SUB_SOURCE
-//                      ),
-//                      mutableListOf(
-//                        state.lowestAndUserBidPair.second?.transactionId ?: "",
-//                        state.bidsCount.toString(),
-//                        bidAmount,
-//                        expectedArrivalPickup,
-//                        source, subSource
-//                      )
-//                    )
-//                  } else {
-//                    analyticsUtil.moEngageTrackEvent(
-//                      EVENT_BID_REVISE_SUBMITTED,
-//                      mutableListOf(
-//                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-//                        PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW,
-//                        PROPERTY_SOURCE,
-//                        PROPERTY_SUB_SOURCE
-//                      ),
-//                      mutableListOf(
-//                        state.lowestAndUserBidPair.second?.transactionId ?: "",
-//                        state.bidsCount.toString() ?: "",
-//                        state.lowestAndUserBidPair?.first?.bidAmount?.toString() ?: " ",
-//                        oldAmountbids,
-//                        bidAmount,
-//                        source,
-//                        subSource
-//                      )
-//                    )
-//                    reviseInitiated = false
-//                  }
-//                } else {
-//                  viewModel.refreshCalled = false
-//                }
-//                viewModel.restrictEventTrigger = false
-//              }
-//          }
-//          else -> null
-//        }?.let { _binding ->
-//          /* bidding ended */
-////          binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
-//          binding.containerActions.apply {
-//            removeAllViews()
-//            addView(_binding.root)
-//          }
-//        }
-//      }
-//    }
-//  }
+  inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
+    override fun onChanged(t: BidDetailsUserBidState?) {
+      uiUtils.hideProgress()
+      t?.let { state ->
+        when (state) {
+          is BidDetailsUserBidState_PlaceBidFirst -> {
+            binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
+            /*  ViewBidDetailsPlaceBidFirstBinding.inflate(
+                layoutInflater, binding.containerActions, false
+              )
+                .apply {
+                 *//* if (binding.textBulkLoad.visibility == View.GONE) {
+                  binding.timerLayout.visibility = View.VISIBLE
+                  setTimer(bidEndingTime)
+                }*//*
+                isFirstBid = true
+                if (viewModel.refreshCalled == false) {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
+                    mutableListOf(viewModel.transactionId, source, subSource)
+                  )
+                }
+             //   binding.status.visibility = View.GONE
 
-/*  override fun onBackPressed() {
+               *//* binding.buttonConfirm.text = "Place Your Bid"
+                binding.bottomLay.visibility = View.VISIBLE
+                binding.buttonConfirm.setOnClickListener {
+                  bidDialog()
+                }*//*
+              }*/
+          }
+          is BidDetailsUserBidState_PlaceBid -> {
+            binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
+          /*  ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
+              .apply {
+               *//* if (binding.textBulkLoad.visibility == View.GONE) {
+                  binding.timerLayout.visibility = View.VISIBLE
+                  setTimer(bidEndingTime)
+                }*//*
+                isFirstBid = true
+                bidsRecieved = state.bidsCount
+                state.lowestAndUserBidPair.second?.let {
+                  lowestBid = when (state.lowestAndUserBidPair) {
+                    null -> ""
+                    else -> "Lowest Bid: ₹ ${
+                      StringUtils.formatAmount(
+                        state.lowestAndUserBidPair.second?.bidAmount ?: 0.0
+                      )
+                    }" + if (state.isPMTIndent) "/MT" else ""
+                  }
+                }
+
+               *//* if (state.bidsCount != null && state.bidsCount > 0) {
+                  binding.numBids.text = "$bidsRecieved Bids Received"
+                  binding.numLay.visibility = View.VISIBLE
+                } else {
+                  binding.numLay.visibility = View.GONE
+                }
+
+                if (lowestBid.isNotNullOrEmpty()) {
+                  binding.lowBid.text = lowestBid.toString()
+                } else {
+                  binding.lowBid.visibility = View.GONE
+                }
+
+                binding.buttonConfirm.text = "Place Your Bid"
+                binding.bidLay.visibility = View.GONE
+                binding.bottomLay.visibility = View.VISIBLE
+                binding.buttonConfirm.setOnClickListener {
+                  bidDialog()
+                }*//*
+                if (viewModel.refreshCalled == false) {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                    mutableListOf(
+                      PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
+                      PROPERTY_SUB_SOURCE
+                    ),
+                    mutableListOf(
+                      viewModel.transactionId,
+                      state.bidsCount.toString(),
+                      source,
+                      subSource
+                    )
+                  )
+                }
+             //   binding.status.visibility = View.GONE
+              }*/
+          }
+          is BidDetailsUserBidState_EditBid -> {
+            enableKeyboard()
+            binding.cardInput.root.visibility = View.VISIBLE
+            binding.transaction?.transactionBid = state.lowestAndUserBidPair.second
+            enablePlaceBid(false)
+            binding.cardInput.placeBidButton.text = "Revise Bid"
+            val data = binding.transaction as HomeBidsRequestItemData
+            if (data.isPMTIndent()) {
+            //  binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
+              data.transactionBid?.bidAmount?.let {
+                binding.cardInput.etBidAmount?.setText(DecimalFormat("#########").format(it))
+              }
+              data.transactionBid?.pmtRate?.let {
+//                binding.labelBid.text =
+//                  "Your minimum payout will be ₹${StringUtils.formatAmount(transactionBid.pmtRate)}"
+              }
+            } else {
+            //  binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
+              data.transactionBid?.bidAmount?.let {
+                binding.cardInput.etBidAmount.setText(DecimalFormat("#########").format(it))
+              }
+            }
+          //  binding.cardInput.etBidAmount.text = data?.transactionBid?.bidAmount
+           /* ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
+              .apply {
+                binding.timerLayout.visibility = View.GONE
+                val data = viewModel.transaction as HomeBidsRequestItemData
+                data.numBids = state.bidsCount
+                var oldAmount = data?.transactionBid?.bidAmount
+                data.transactionBid = state.lowestAndUserBidPair.first
+                bidsRecieved = state.bidsCount
+                val userBid = state.lowestAndUserBidPair.first
+                val lowestTBid = state.lowestAndUserBidPair.second
+                lowestTBid?.let {
+                  if (it.biddingType.compareTo(userBid?.biddingType ?: "") == 0) {
+                    lowestBid = when (it) {
+                      null -> ""
+                      else -> "Lowest Bid: ₹ ${
+                        StringUtils.formatAmount(
+                          it.bidAmount
+                        )
+                      }" + if (state.isPMTIndent) "/MT" else ""
+                    }
+                    data.lowestBid = when (it) {
+                      null -> 0.0
+                      else -> it.bidAmount
+                    }
+                  }
+                }
+                if (viewModel.openConfirmBid) {
+                  viewModel.openConfirmBid=false
+                  BidConfirmReviseDialog(
+                    this@BidDetailsActivity,data, viewModel, 0
+                  ).show()
+                }
+                binding.numLay.visibility = View.GONE
+                binding.bottomLay.visibility = View.VISIBLE
+
+                if (userBid?.bidAmount != null) {
+                  binding.bidLay.visibility = View.VISIBLE
+                  if (state.isPMTIndent) {
+                    binding.bidVal.text =
+                      "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}" + "/MT"
+                  } else {
+                    binding.bidVal.text = "₹ ${StringUtils.formatAmount(userBid?.bidAmount)}"
+                  }
+                  binding.greenBidLay.visibility = View.VISIBLE
+                } else {
+                  binding.bidLay.visibility = View.GONE
+                }
+
+                if (state.bidsCount != null && state.bidsCount > 0) {
+                  binding.numBidsVal.text = "$bidsRecieved Bids Received"
+                  binding.numBidsVal.visibility = View.VISIBLE
+                  binding.greenBidLay.visibility = View.VISIBLE
+                } else {
+                  binding.numBidsVal.visibility = View.GONE
+                }
+
+                if (state.bidsCount != null && state.bidsCount > 1) {
+                  if (lowestTBid?.bidAmount != null) {
+                    if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
+                      binding.tvCorr.setBackground(
+                        ContextCompat.getDrawable(this@BidDetailsActivity,
+                          R.drawable.bg_all_round_corner_light_green_12
+                        )
+                      )
+                      binding.imgCorr.visibility = View.VISIBLE
+                      binding.tvCorr.text = "Your bid is the lowest"
+                      binding.tvCorr.setTextColor(
+                        ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green)
+                      )
+                      binding.llBidStatus.background =  ContextCompat.getDrawable(this@BidDetailsActivity,
+                        R.drawable.bg_all_round_corner_light_green_12
+                      )
+                    } else {
+                      binding.tvCorr.setBackground(
+                        ContextCompat.getDrawable(this@BidDetailsActivity,
+                          R.drawable.bg_all_round_corner_light_pink_12
+                        )
+                      )
+                      binding.llBidStatus.background = null
+                      binding.imgCorr.visibility = View.GONE
+                      binding.tvCorr.text = binding.transaction?.lowestbidText()
+                      binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity as Context, R.color.bid_placed_red))
+                    }
+                  } else {
+                    binding.tvCorr.setBackground(
+                      ContextCompat.getDrawable(this@BidDetailsActivity,
+                        R.drawable.bg_all_round_corner_light_pink_12
+                      )
+                    )
+                    binding.llBidStatus.background = null
+                    binding.imgCorr.visibility = View.GONE
+                    binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
+                    binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_red))
+                  }
+                } else if (userBid?.bidAmount != null && state.bidsCount != null && state.bidsCount == 1 && binding.transaction?.guidancePrice != null) {
+                  if (userBid.bidAmount.compareTo(binding.transaction?.guidancePrice!!) > 0) {
+                    binding.tvCorr.setBackground(
+                      ContextCompat.getDrawable(this@BidDetailsActivity,
+                        R.drawable.bg_all_round_corner_light_pink_12
+                      )
+                    )
+                    binding.llBidStatus.background = null
+                    binding.imgCorr.visibility = View.GONE
+                    binding.tvCorr.text = binding.transaction?.benchmarkPriceText()
+                    binding.tvCorr.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_red))
+                  } else {
+                    binding.tvCorr.setBackground(
+                      ContextCompat.getDrawable(this@BidDetailsActivity,
+                        R.drawable.bg_all_round_corner_light_green_12
+                      )
+                    )
+                    binding.llBidStatus.background =  ContextCompat.getDrawable(this@BidDetailsActivity,
+                      R.drawable.bg_all_round_corner_light_green_12
+                    )
+                    binding.imgCorr.visibility = View.VISIBLE
+                    binding.tvCorr.text = "Your bid is the lowest"
+                    binding.tvCorr.setTextColor(
+                      ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green)
+                    )
+                  }
+                }
+
+                binding.buttonConfirm.text = "Edit Bid"
+                binding.buttonConfirm.setOnClickListener {
+                  bidDialog(userBid)
+                }
+
+                request = data
+                if ((!viewModel.restrictEventTrigger && !viewModel.refreshCalled) || isFirstBid) {
+                  isFirstBid = false
+                  if (!reviseInitiated) {
+                    analyticsUtil.moEngageTrackEvent(
+                      EVENT_ORDER_DETAILS_BID_SUBMIT,
+                      mutableListOf(
+                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                        PROPERTY_SOURCE,
+                        PROPERTY_SUB_SOURCE
+                      ),
+                      mutableListOf(
+                        state.lowestAndUserBidPair.second?.transactionId ?: "",
+                        state.bidsCount.toString(),
+                        state.lowestAndUserBidPair.second?.bidAmount.toString(),
+                        state.lowestAndUserBidPair.second?.expectedArrivalTimePickupRemark.toString(),
+                        source,
+                        subSource
+                      )
+                    )
+                  } else {
+                    analyticsUtil.moEngageTrackEvent(
+                      EVENT_BID_REVISE_SUBMITTED,
+                      mutableListOf(
+                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT,
+                        PROPERTY_ORDER_LOWEST_BID_VALUE,
+                        PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW,
+                        PROPERTY_SOURCE, PROPERTY_SUB_SOURCE
+                      ),
+                      mutableListOf(
+                        state.lowestAndUserBidPair.second?.transactionId ?: "",
+                        state.bidsCount.toString() ?: "", data?.lowestBid.toString() ?: " ",
+                        oldAmount.toString() ?: "", data?.bidAmountValue()
+                          .toString() ?: "", source, subSource
+                      )
+                    )
+                    reviseInitiated = false
+                  }
+                } else {
+                  if (viewModel.refreshCalled == false) {
+                    analyticsUtil.moEngageTrackEvent(
+                      EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                      mutableListOf(
+                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
+                        PROPERTY_SUB_SOURCE
+                      ),
+                      mutableListOf(
+                        viewModel.transactionId,
+                        bidsRecieved.toString(),
+                        source,
+                        subSource
+                      )
+                    )
+                  }
+                  viewModel.refreshCalled = false
+                }
+                viewModel.restrictEventTrigger = false
+
+
+                if (data.threeVisibility() == View.VISIBLE || data.fourVisibility() == View.VISIBLE) {
+                  val mHandler = Handler(Looper.myLooper()!!)
+                  var mRunnable: Runnable = Runnable { }
+                  mRunnable = object : Runnable {
+                    override fun run() {
+                      btnEditBidInsider.setVisibility(View.VISIBLE)
+                      //loading our custom made animations
+                      val animation = AnimationUtils.loadAnimation(
+                        applicationContext, R.anim.fade_in
+                      )
+                      //starting the animation
+                      btnEditBidInsider.startAnimation(animation)
+                      val animation2 = AnimationUtils.loadAnimation(
+                        applicationContext, R.anim.fade_out
+                      )
+                      btnEditBidInsider.startAnimation(animation2)
+                      mHandler.postDelayed({
+                        btnEditBidInsider.setVisibility(View.GONE)
+                      }, 3000)
+                      mHandler.postDelayed(mRunnable, 2000)
+
+                    }
+                  }
+                  mHandler.post(mRunnable)
+                }
+
+                btnEditBidInsider.setOnClickListener(View.OnClickListener {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_NOT_LOWEST_BID_CTA,
+                    mutableListOf(PROPERTY_ORDER_ID),
+                    mutableListOf(
+                      state.lowestAndUserBidPair.second?.transactionId ?: ""
+                    )
+                  )
+                  bidDialog(userBid)
+                })
+                textEditBid.setOnClickListener(View.OnClickListener {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_LOWEST_BID_CTA,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
+                    mutableListOf(
+                      state.lowestAndUserBidPair.second?.transactionId ?: "",
+                      state.bidsCount.toString()
+                    )
+                  )
+                  bidDialog(userBid)
+                })
+                textEditBid2.setOnClickListener(View.OnClickListener {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_LOWEST_BID_CTA,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT),
+                    mutableListOf(
+                      state.lowestAndUserBidPair.second?.transactionId ?: "",
+                      state.bidsCount.toString()
+                    )
+                  )
+                  bidDialog(userBid)
+                })
+                binding.status.visibility = View.VISIBLE
+                binding.status.text = resources.getString(R.string.label_active)
+                binding.status.setBackgroundColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_active))
+                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_active))
+              }*/
+          }
+          is BidDetailsUserBidState_LoadingBids -> {
+            binding.cardInput.root.visibility = View.GONE
+           /* ViewBidDetailsLoadingBidsBinding.inflate(
+              layoutInflater, binding.containerActions, false
+            )*/
+          }
+          is BidDetailsUserBidState_ConfirmedBid -> {
+           /* ViewBidDetailsConfirmedBidBinding.inflate(
+              layoutInflater, binding.containerActions, false
+            )
+              .apply {
+                binding.timerLayout.visibility = View.GONE
+                pickUpLocation =
+                  StringUtils.capitalize(state.pickupLocation)
+                    ?: getString(string.not_available)
+                vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
+                driverPhone =
+                  state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
+                if (viewModel.refreshCalled == false)
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
+                    mutableListOf(viewModel.transactionId, source, subSource)
+                  )
+
+                binding.status.visibility = View.VISIBLE
+                val data = viewModel.transaction as HomeBidsRequestItemData
+
+                if (data.clientConfirmationPending == false) {
+                  binding.status.text = resources.getString(R.string.label_pending)
+                  binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.pending))
+                  binding.bottomLay.visibility = View.GONE
+                } else {
+                  binding.status.text = resources.getString(R.string.label_confirm)
+                  binding.buttonConfirm.text = "View Trip"
+                  binding.status.setBackground(
+                    ContextCompat.getDrawable(this@BidDetailsActivity,
+                      R.drawable.bg_all_round_corner_light_green_12
+                    )
+                  )
+                  binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.bid_placed_green))
+                  binding.bidLay.visibility = View.GONE
+                  binding.numLay.visibility = View.GONE
+                  binding.bottomLay.visibility = View.VISIBLE
+                  binding.buttonConfirm.setOnClickListener {
+                    startActivity(
+                      tripDetailsIntent(
+                        viewModel.transaction.uuid.toString(), this@BidDetailsActivity
+                      )
+                    )
+                  }
+
+                }
+              }*/
+          }
+          is BidDetailsUserBidState_RejectedBid -> {
+          /*  ViewBidDetailsRejectedBidBinding.inflate(
+              layoutInflater, binding.containerActions, false
+            )
+              .apply {
+                binding.timerLayout.visibility = View.GONE
+                binding.bottomLay.visibility = View.GONE
+                val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0) + "/MT"
+                } else {
+                  StringUtils.formatAmount(state.userBid.bidAmount)
+                }
+                textUserHighestBid.text = bidText
+                if (viewModel.refreshCalled == false)
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
+                    mutableListOf(viewModel.transactionId, source, subSource)
+                  )
+                binding.status.visibility = View.VISIBLE
+                binding.status.text = resources.getString(R.string.label_lost)
+                binding.textTargetPrice.text = "₹" + if (state.isPMTIndent) {
+                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0)
+                } else {
+                  StringUtils.formatAmount(state.userBid.bidAmount)
+                }
+                binding.textTargetPriceLabel.text = "Your Bid"
+                binding.priceLay.visibility = View.VISIBLE
+                binding.status.setBackgroundColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost_bg))
+                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost_bid))
+                binding.bottomLay.visibility = View.GONE
+              }*/
+          }
+          is BidDetailsUserBidState_CancelledBid -> {
+           /* ViewBidDetailsCancelledBidBinding.inflate(
+              layoutInflater, binding.containerActions, false
+            )
+              .apply {
+                binding.timerLayout.visibility = View.GONE
+                binding.bottomLay.visibility = View.GONE
+                binding.bidLay.visibility = View.GONE
+                val bidText = getString(string.msg_your_bid) + if (state.isPMTIndent) {
+                  StringUtils.formatAmount(state.userBid.bidAmount ?: 0.0) + "/MT"
+                } else {
+                  StringUtils.formatAmount(state.userBid.bidAmount)
+                }
+                if (viewModel.refreshCalled == false)
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                    mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
+                    mutableListOf(viewModel.transactionId, source, subSource)
+                  )
+                textUserHighestBid.text = bidText
+                binding.status.visibility = View.VISIBLE
+                binding.status.text = resources.getString(R.string.label_cancel)
+                binding.textTargetPrice.text = "₹" + if (state.isPMTIndent) {
+                  StringUtils.formatAmount(state.userBid.pmtRate ?: 0.0)
+                } else {
+                  StringUtils.formatAmount(state.userBid.bidAmount)
+                }
+                binding.textTargetPriceLabel.text = "Your Bid"
+                binding.priceLay.visibility = View.VISIBLE
+                binding.status.setTextColor(ContextCompat.getColor(this@BidDetailsActivity, R.color.status_lost))
+                binding.bottomLay.visibility = View.GONE
+              }*/
+          }
+
+          is BidDetailsUserBidState_BulkLoad_Edit -> {
+          /*  ViewBidDetailsBulkLoadEditBinding.inflate(
+           //   layoutInflater, binding.containerActions, false
+            )
+              .apply {
+            //    binding.timerLayout.visibility = View.GONE
+
+                val data = viewModel.transaction as HomeBidsRequestItemData
+                var bidAmount = ""
+                var expectedArrivalPickup = ""
+                if (data.transactionStatus == "cancelled") {
+                  btnReviseBidInsider.visibility = View.GONE
+                  reduceText.visibility = View.GONE
+                }
+                data.bulkTransactionBids = state.bids
+                bidsRecieved = state.bidsCount
+                data.let {
+                  if (!it.bulkTransactionBids.isNullOrEmpty()) {
+                    if (viewModel.restrictEventTrigger && viewModel.refreshCalled == false) {
+                      analyticsUtil.moEngageTrackEvent(
+                        EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
+                        mutableListOf(
+                          PROPERTY_ORDER_ID,
+                          PROPERTY_BID_COUNT,
+                          PROPERTY_SOURCE,
+                          PROPERTY_SUB_SOURCE
+                        ),
+                        mutableListOf(
+                          viewModel.transactionId,
+                          bidsRecieved.toString(),
+                          source,
+                          subSource
+                        )
+                      )
+                    }
+                  } else {
+                    if (viewModel.restrictEventTrigger && viewModel.refreshCalled == false)
+                      analyticsUtil.moEngageTrackEvent(
+                        EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID,
+                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
+                        mutableListOf(viewModel.transactionId, source, subSource)
+                      )
+                  }
+                }
+                data.let {
+                  if (!it.bulkTransactionBids.isNullOrEmpty()) {
+                    for (transactionBid in it.bulkTransactionBids) {
+                      if (bidAmount.isNullOrEmpty()) {
+                        bidAmount = transactionBid.bidAmount.toString()
+                      } else {
+                        bidAmount = bidAmount + "," + transactionBid.bidAmount.toString()
+                      }
+                      if (expectedArrivalPickup.isNullOrEmpty()) {
+                        expectedArrivalPickup =
+                          transactionBid.expectedArrivalTimePickupRemark.toString()
+                      } else {
+                        expectedArrivalPickup =
+                          expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
+                      }
+                    }
+                  }
+                }
+
+           //     binding.bidLay.visibility = View.GONE
+            //    binding.bottomLay.visibility = View.GONE
+
+                rvBidSummary.apply {
+                  layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                  adapter = this@BidDetailsActivity.adapter
+                  (adapter as BulkBidsRVAdapter).clearItems()
+                  viewModel.getUserBulkBids(
+                    state.bids, state.lowestAndUserBidPair.second.let { it!!.bidAmount })
+
+                }
+
+                btnReviseBidInsider.setOnClickListener {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_NOT_LOWEST_BID_CTA,
+                    mutableListOf(PROPERTY_ORDER_ID),
+                    mutableListOf(data.uuid.toString())
+                  )
+                //  bidDialog()
+                }
+                if ((!viewModel.restrictEventTrigger && !viewModel.refreshCalled) || isFirstBid) {
+                  isFirstBid = false
+                  if (!reviseInitiated) {
+                    analyticsUtil.moEngageTrackEvent(
+                      EVENT_ORDER_DETAILS_BID_SUBMIT,
+                      mutableListOf(
+                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                        PROPERTY_VEHICLE_REPORTING_DATE_TIME,
+                        PROPERTY_SOURCE, PROPERTY_SUB_SOURCE
+                      ),
+                      mutableListOf(
+                        state.lowestAndUserBidPair.second?.transactionId ?: "",
+                        state.bidsCount.toString(),
+                        bidAmount,
+                        expectedArrivalPickup,
+                        source, subSource
+                      )
+                    )
+                  } else {
+                    analyticsUtil.moEngageTrackEvent(
+                      EVENT_BID_REVISE_SUBMITTED,
+                      mutableListOf(
+                        PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                        PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW,
+                        PROPERTY_SOURCE,
+                        PROPERTY_SUB_SOURCE
+                      ),
+                      mutableListOf(
+                        state.lowestAndUserBidPair.second?.transactionId ?: "",
+                        state.bidsCount.toString() ?: "",
+                        state.lowestAndUserBidPair?.first?.bidAmount?.toString() ?: " ",
+                        oldAmountbids,
+                        bidAmount,
+                        source,
+                        subSource
+                      )
+                    )
+                    reviseInitiated = false
+                  }
+                } else {
+                  viewModel.refreshCalled = false
+                }
+                viewModel.restrictEventTrigger = false
+              }*/
+          }
+          else -> null
+        }?.let { _binding ->
+          /* bidding ended */
+//          binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
+         /* binding.containerActions.apply {
+            removeAllViews()
+            addView(_binding.root)
+          }*/
+        }
+      }
+    }
+  }
+
+  override fun onBackPressed() {
     userPrefs.setPreviousScreen(this.javaClass.name)
     super.onBackPressed()
-  }*/
+  }
 
   /**
    * Create/edit bid dialog
@@ -1388,6 +1541,11 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
       }
     }
+  }
+
+  override fun bidPlacedSuccess(success: Boolean) {
+    if(success)
+      navigationUtils.navigate(userBidsIntent(this,BidType.ActiveBid))
   }
 
 }

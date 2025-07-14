@@ -618,6 +618,30 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+    fun showSuccessBidDialog(bidSuccessInterface: BidSuccessInterface,title: String, subTittle: String?){
+        val dialog = Dialog(activity)
+        val bindingDialog= DialogBidPlacedSuccessBinding.inflate(activity.layoutInflater)
+        bindingDialog.titleText.text = title
+        if(subTittle!=null){
+            bindingDialog.titleSubText.visibility = View.VISIBLE
+            bindingDialog.titleSubText.text = subTittle
+        }else{
+            bindingDialog.titleSubText.visibility = View.GONE
+        }
+        bindingDialog.cancel.setOnClickListener {
+            bidSuccessInterface.bidPlacedSuccess(true)
+        }
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        if (!activity.isFinishing){
+            dialog.show()
+        }
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
 
  /* fun confirmDialog(
     homeBidsRequestItemData: HomeBidsRequestItemData,
@@ -727,6 +751,9 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
 
 interface TeamMemberInterface{
     fun deleteTeamMember(uuid: String)
+}
+interface BidSuccessInterface{
+    fun bidPlacedSuccess(success:Boolean)
 }
 
 interface DialogUtilsInterface {

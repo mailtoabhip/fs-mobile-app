@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_round_corner_pure_white"
+        android:gravity="center"
+        android:paddingBottom="@dimen/size_32dp"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/cancel"
+            android:src="@drawable/ic_search_close"
+            android:layout_gravity="end"
+            android:padding = "@dimen/size_16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_16dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/bid_success_green" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bid_placed_successfully"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_sub_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_your_bid_status"
+            android:textColor="@color/sub_heading_black"
+            android:layout_marginTop="@dimen/size_6dp"
+            android:layout_marginLeft="@dimen/size_6dp"
+            android:layout_marginRight="@dimen/size_6dp"
+            android:textAlignment="center"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_8dp"
+            android:textSize="@dimen/text_14sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

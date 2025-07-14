@@ -100,6 +100,7 @@
                     android:textColorHint="#8F9198"
                     android:background="@null"
                     android:inputType="phone"
+                    android:focusable="true"
                     android:hint="Enter bid amount"
                     android:nextFocusLeft="@id/et_bid_amount"
                     android:nextFocusRight="@id/et_bid_amount"
@@ -107,16 +108,25 @@
                     android:nextFocusDown="@id/et_bid_amount"
                     android:nextFocusForward="@id/et_bid_amount"
                     android:singleLine="true"
-                    android:text=""
                     android:textColor="#3D445C"/>
 
             </LinearLayout>
-
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/bidError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/layout_mobile_no"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="@color/bid_error"
+                android:textSize="@dimen/text_12sp"
+                android:paddingTop="@dimen/size_4dp"
+                android:visibility="gone"
+                android:text="@string/invalid_amount_out_of_range"/>
             <include
                 android:id="@+id/strongBidCard"
                 layout="@layout/card_strong_bid"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+                app:layout_constraintTop_toBottomOf="@id/bidError"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -124,7 +134,7 @@
                 android:id="@+id/weak_bid_card"
                 layout="@layout/card_weak_bid"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"
+                app:layout_constraintTop_toBottomOf="@id/bidError"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -172,13 +182,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Place Bid"
-                android:backgroundTint="#000000"
-                android:textColor="@android:color/white"
-                android:background="@drawable/bg_place_bid"
+                style="@style/ActionButton"
                 android:drawablePadding="8dp"
                 android:textAllCaps="false"
+                android:clickable="true"
+                android:enabled="false"
                 android:textSize="@dimen/text_14sp"
-                app:layout_constraintTop_toBottomOf="@id/strongBidCard"
+                app:layout_constraintTop_toBottomOf="@id/bidError"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp" />
