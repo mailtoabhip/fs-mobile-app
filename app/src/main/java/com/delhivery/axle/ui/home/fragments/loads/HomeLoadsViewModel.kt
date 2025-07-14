@@ -254,6 +254,7 @@ class HomeLoadsViewModel @Inject constructor(
                             )
                         val count = _tRes.second+intercityCount+nonDlvCount
                         Log.d("viewmodel", "${_tRes.second} intrcity $intercityCount nonDlv $nonDlvCount")
+                        Log.d("count",count.toString())
                         fullLoadsCountLiveData.postValue(count)
                             add(
                                 Pair(
@@ -271,13 +272,13 @@ class HomeLoadsViewModel @Inject constructor(
                             if (!paginate) {
                                 add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                             }
-                                if (total >= 0)
+                               /* if (total >= 0)
                                     add(
                                         Pair(
                                             HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)),
                                             AddUpdate
                                         )
-                                    )
+                                    )*/
 
                         if (total == 0 ) {
                             add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
@@ -322,23 +323,46 @@ class HomeLoadsViewModel @Inject constructor(
                     fecthToCalled = _res.offset < _res.total
                     loadPricePercent = _res.loadPricePercent
                     more_default_loads = _res.more_loads
-                    loadsCount+= total
+                    loadsCount += total
+
                     Single.zip(
                         bidsRepository.bidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
                         bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
-                        transactionsRepository.fetchIntracityRecommTransactions(offset,
+                        transactionsRepository.fetchIntracityRecommTransactions(
+                            offset,
                             userPrefs.demandType,
                             vehicleTypes,
                             excludeTruckTypes,
                             filterVehicleType,
-                            true).subscribeOn(Schedulers.io()),
-                        Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, TransactionsResponse,
-                                Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,TransactionsResponse,TransactionsResponse>> { t1, t2,t3 ->
-                            Quintuple(t1.first, t1.second, t2.second,t3,_res)
-                        })
+                            true
+                        ),
+                        transactionsRepository.fetchRecommTransactions(
+                            offset,
+                            userPrefs.demandType
+                                .split(",")
+                                .filterNot { it == DemandType.Intracity.type }
+                                .joinToString(","),
+                            userPrefs.truckTypes,
+                            excludeTruckTypes,
+                            filterVehicleType,
+                            true,
+                            splitViewCount = true
+                        ).subscribeOn(Schedulers.io()),
+                        // CORRECTED: Pass the lambda as the last argument, separated by a comma.
+                        { t1, t2, t3, t4 ->
+                            Quintuple(
+                                t1.first,
+                                t1.second,
+                                t2.second,
+                                t3,
+                                t4
+                            )
+                        }
+                    )
                 }
                 .onBackground()
-                .subscribe { _tRes, error ->
+                // CORRECTED: The subscribe method takes two separate lambdas for success and error.
+                .subscribe({ _tRes, error ->
                     if(error!=null) mainTrace.putAttribute("error_response_received",error.message.toString())
                     parallelTrace.stop()
                     mainTrace.stop()
@@ -346,10 +370,12 @@ class HomeLoadsViewModel @Inject constructor(
                         mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                             /* remove progress item */
                             add(Pair(HomeLoadsProgressItem(), Remove))
-
-                            val loads = _tRes.first
+                            val loadsWithBids = _tRes.first
                             val bids = _tRes.second
-
+                            val bidTransactionIds = bids.map { it.transactionId }.toSet()
+                            val loads = loadsWithBids.filter { load ->
+                                load.transactionId !in bidTransactionIds
+                            }
                                 var nonDlvCount = 0
                                 var intercityCount = 0
 
@@ -399,13 +425,13 @@ class HomeLoadsViewModel @Inject constructor(
                                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                                 }
 
-                                    if (total >= 0)
+                                  /*  if (total >= 0)
                                         add(
                                             Pair(
                                                 HomeLoadsSummaryItem(HomeLoadsSummaryItemData(count)),
                                                 AddUpdate
                                             )
-                                        )
+                                        )*/
                             if (total == 0 ) {
                                 add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                             }
@@ -413,7 +439,7 @@ class HomeLoadsViewModel @Inject constructor(
                                     try {
                                         load.transactionId?.let { txnIds.add(it) }
 
-                                        val lowestBid = _tRes.third.filter { b ->
+                                  /*      val lowestBid = _tRes.third.filter { b ->
                                             b.transactionId.safeEquals(load.transactionId)
                                         }[0]
                                         load.lowestBid = lowestBid.minBid
@@ -428,7 +454,7 @@ class HomeLoadsViewModel @Inject constructor(
                                                 bids.filter { b ->
                                                     b.transactionId.safeEquals(load.transactionId)
                                                 }
-                                        }
+                                        }*/
                                     } catch (e: Exception) {
                                         Log.d("No Bid found for: ", load.transactionId ?: "")
                                     }
@@ -457,7 +483,7 @@ class HomeLoadsViewModel @Inject constructor(
                     }
 
                     dataLoadingLiveData.postValue(false)
-                }
+                })
         }
     }
 
@@ -526,9 +552,13 @@ class HomeLoadsViewModel @Inject constructor(
               /* remove progress item */
               add(Pair(HomeLoadsProgressItem(), Remove))
 
-              val loads = _tRes.first
-              val bids = _tRes.second
+                val loadsWithBids = _tRes.first
+                val bids = _tRes.second
+                val bidTransactionIds = bids.map { it.transactionId }.toSet()
 
+                val loads = loadsWithBids.filter { load ->
+                    load.transactionId !in bidTransactionIds
+                }
 
                     var intercityCount =0
                     var nonDlvCount = 0
@@ -544,12 +574,12 @@ class HomeLoadsViewModel @Inject constructor(
 //                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
-                add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
+          //      add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
                 if (total == 0) {
                     add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                 }
                   for ((index, load) in loads.toMutableList().withIndex()) {
-                      try {
+                  /*    try {
                           val lowestBid = _tRes.third.filter { b ->
                               b.transactionId.safeEquals(load.transactionId)
                           }[0]
@@ -568,7 +598,7 @@ class HomeLoadsViewModel @Inject constructor(
                           }
                       } catch (e: Exception) {
                           Log.d("No Bid found for: ", load.transactionId ?: "")
-                      }
+                      }*/
                       if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
                           add(Pair(HomeLoadsAddTruckItem(), Add))
                       }

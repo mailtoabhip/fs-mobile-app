@@ -153,7 +153,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
     })
     viewModel.fullLoadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
-      userPrefs.fullLoadCount = it.toString()
+      userPrefs.loadCount = it.toString()
     })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {
@@ -825,7 +825,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       APPROVED -> {
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
-            pos = position
+            val data = item.data as HomeBidsRequestItemData
+   /*         pos = position
             val data = item.data as HomeBidsRequestItemData
             var eventPos=pos- STATIC_ITEM_LIST
             if (data.isDMTIndent()) {
@@ -855,8 +856,12 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                         requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs, "load_screen"
                 ).show()
               }
-            }
-          }
+            }*/
+            context?.let {
+              userPrefs.setPreviousScreen(this.javaClass.name)
+              startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
+
+        }
           HomeBidsRequestAction_AcceptBid -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData

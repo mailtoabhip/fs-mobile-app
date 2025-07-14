@@ -1,5 +1,6 @@
 package com.delhivery.axle.data.home.bids
 
+import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -217,6 +218,12 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+  fun nonDelLoadVisibility() = if (!demandType.equals(DemandType.Internal.type)) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
   /**
    * if trip is DMT
    */
@@ -389,7 +396,7 @@ data class HomeBidsRequestItemData(
   fun tripRouteOriginDes(): String {
     val stopBuilder = StringBuilder()
     stopBuilder.append(originCityName())
-      .append(" > ")
+      .append(" -> ")
     stopBuilder.append(destinationCityName())
     return stopBuilder.toString()
   }
@@ -545,6 +552,23 @@ data class HomeBidsRequestItemData(
 
   fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
 
+  fun formattedBiddingEndTime()= if (bidEndingTime.isNullOrBlank() || bidEndingTime.equals("null", ignoreCase = true) ){
+    ""}
+    else{
+      try{
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        format.setTimeZone(TimeZone.getTimeZone("IST"));
+        val date1: Date = format.parse(format.format(Date()))
+        val date2: Date = format.parse(bidEndingTime)
+        if (date2.compareTo(date1) > 0) {
+          "Closes in ${DateUtils.timeDiff(date1.time,date2.time)}"
+        } else {
+          "Closed ${ DateUtils.daysDiffWithTimeStr(bidEndingTime, DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(bidEndingTime)}"
+        }
+      }catch(_:Exception){
+        ""
+      }
+    }
   /**
    * Required at background as per designs
    */
@@ -564,8 +588,10 @@ data class HomeBidsRequestItemData(
     ColorProviderUtils.getStatusColor(bidStatus().status.lowercase())
 
   fun getTruckTypeAndNo() = truckSpecification?.let {
-    it.truckType+ " "+ it.truckDispName
+    capitalize(truckType?:"")+ " "+ it.truckDispName
   }
+
+  fun formattedTruckType() = capitalize(truckType?:"")+ " Truck"
   /**
    * Get truck details/type
    * Don't show MT for demand_type = Intracity for Load and LH/Intracity contracts

@@ -5,16 +5,24 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     android:id="@+id/constraintLayout"
     >
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+    </data>
 <androidx.cardview.widget.CardView
     android:layout_width="match_parent"
     app:layout_constraintTop_toBottomOf="@id/detailsContent"
     app:layout_constraintStart_toStartOf="parent"
+    app:cardElevation="0dp"
     android:layout_marginTop="@dimen/size_16dp"
-    app:cardCornerRadius="@dimen/size_8dp"
+    app:cardCornerRadius="@dimen/size_4dp"
     android:layout_height="wrap_content">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/size_12dp"
         >
 
         <TextView
@@ -23,11 +31,12 @@
             android:layout_height="wrap_content"
             android:text="Route Details"
             android:textStyle="bold"
+            android:textColor="#111111"
             android:textSize="16sp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-        <LinearLayout
+        <!--<LinearLayout
             android:id="@+id/listFlip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +53,34 @@
                 android:nestedScrollingEnabled="false"
                 />
 
-        </LinearLayout>
+        </LinearLayout>-->
+        <RelativeLayout
+            android:id="@+id/addressLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_80dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            app:layout_constraintTop_toBottomOf="@+id/routeHeader"
+            >
+
+            <LinearLayout
+                android:id="@+id/listFlip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/addresslist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
