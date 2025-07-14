@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+    
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+    </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +24,7 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text ="Open 32FTXXL18 MT"
+            android:text="@{request.getTruckTypeAndNo()}"
             android:textColor="#505361"
             android:drawablePadding="@dimen/size_4dp"
             android:drawableStart="@drawable/ic_truck_small"
@@ -30,6 +38,7 @@
             android:textSize="12sp"
             android:drawablePadding="@dimen/size_4dp"
             tools:text ="Closes in 4 days 6 hrs"
+            android:text="@{request.formattedBiddingEndTime()}"
             android:textColor="#505361"
             android:drawableStart="@drawable/ic_clock_small_grey"
             app:layout_constraintBottom_toBottomOf="@id/truckInfo"

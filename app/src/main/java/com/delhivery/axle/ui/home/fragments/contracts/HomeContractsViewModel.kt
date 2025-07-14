@@ -245,7 +245,7 @@ class HomeContractsViewModel@Inject constructor(
                 }else if(contractType==ContractType.INTRACITY.type && isFlexible==false){
                   "Fixed"
                 }else "All"
-                add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
+                //add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
               }
             //  loadsCountLiveData.postValue(totalActive)
              if (_tRes.fifth.transactions.isEmpty()) {

@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
   >
 
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -22,18 +28,22 @@
             android:id="@+id/tv_location_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="Mumbai MIDC"
+            android:text="@{request.originCityName()}"
             android:textColor="#121A31"
-            android:textStyle="bold"
             android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Mumbai MIDC" />
+
         <TextView
             android:id="@+id/tv_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             tools:text="C/O Shed No. 876, Plot 6, Mumbai Maharashtra"
+            android:text="@{request.pickupLocationAddress}"
             android:textColor="#505361"
             android:textSize="13sp"
             android:layout_marginTop="4dp"
@@ -62,6 +72,7 @@
             android:textStyle="bold"
             android:textSize="16sp"
             tools:text ="Navi Mumbai"
+            android:text="@{request.originCityName()}"
             android:textColor="#121A31"
             app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
             app:layout_constraintTop_toTopOf="parent"
@@ -108,6 +119,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             tools:text ="Jaisalmer"
+            android:text="@{request.destinationCityName()}"
             android:textColor="#121A31"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -122,6 +134,7 @@
             android:textColor="#505361"
             android:paddingTop="@dimen/size_4dp"
             tools:text ="Mumbai, Maharashtra"
+            android:text="@{request.originDistrictState()}"
             app:layout_constraintTop_toBottomOf="@id/fromCity"
             app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
             app:layout_constraintStart_toStartOf="parent" />
@@ -136,6 +149,7 @@
             android:textColor="#505361"
             android:textAlignment="textEnd"
             tools:text ="Rajasthan"
+            android:text="@{request.destinationDistrictState()}"
             app:layout_constraintStart_toEndOf="@id/guidelineCenter1"
             app:layout_constraintTop_toBottomOf="@id/toCity"
             app:layout_constraintEnd_toEndOf="@id/toCity" />

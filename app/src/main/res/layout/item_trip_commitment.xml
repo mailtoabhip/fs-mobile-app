@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <!-- Bind variables here if needed -->
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
     </data>
 
     <LinearLayout
