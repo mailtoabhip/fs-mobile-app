@@ -20,7 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="visible"
+        android:visibility="@{request.isIntraCityContract()}"
+        tools:visibility="gone"
         android:padding="16dp">
 
         <!-- Header -->
@@ -62,7 +63,8 @@
         app:layout_constraintTop_toTopOf="parent"
         android:paddingTop="16dp"
         android:paddingBottom="@dimen/size_4dp"
-        android:visibility="gone"
+        android:visibility="@{request.isLHContract()}"
+        tools:visibility="visible"
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp"
         android:elevation="4dp">
@@ -96,6 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
+            android:text="@{request.haltStops()}"
             tools:text ="2 stops"
             android:textColor="#8F9198"
             app:layout_constraintTop_toBottomOf="@id/view_stops"

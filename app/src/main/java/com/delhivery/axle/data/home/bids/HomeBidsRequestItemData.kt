@@ -633,6 +633,8 @@ data class HomeBidsRequestItemData(
       }
   }
 
+
+
   fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
 
   fun originCentreName()= StringUtils.capitalize(originCenterName)?:" "
@@ -1224,7 +1226,6 @@ data class HomeBidsRequestItemData(
     return false
   }
 
-
   fun contractBidStatusText(): String =
     if(transactionStatus=="cancelled"){
       "Cancelled"
@@ -1297,7 +1298,6 @@ data class HomeBidsRequestItemData(
       View.VISIBLE
     }
 
-
   fun isLHContract() = if (contractType == ContractType.LH_FTL.type) {
     View.VISIBLE
   } else {
@@ -1311,6 +1311,7 @@ data class HomeBidsRequestItemData(
   fun isItIntraCityContract() = contractType == ContractType.INTRACITY.type
 
 
+  //non-delhivery
   fun isFRCContract() = if (contractType == ContractType.FRC.type) {
     View.VISIBLE
   } else {
@@ -1322,11 +1323,14 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+  //delhivery intracity
   fun isLHIntraCityContract() = if (contractType == ContractType.LH_FTL.type || contractType==ContractType.INTRACITY.type) {
     View.VISIBLE
   } else {
     View.GONE
   }
+
 
   fun isIntraCityContract() = if (contractType == ContractType.INTRACITY.type) {
     View.VISIBLE
@@ -1563,7 +1567,17 @@ data class HomeBidsRequestItemData(
     }else{
       ""
     }
+
+    fun tripWaysNew() = if(isItLHContract() && routeType!=null){
+      if (routeType == "one_way") {
+        "One Way"
+      } else {
+        "Two Way"
+      }
+    } else ""
   }
+
+
 
 
 

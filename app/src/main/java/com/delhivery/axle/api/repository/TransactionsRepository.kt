@@ -124,9 +124,13 @@ enum class TransactionStatus(val statusId: String) {
 }
 
 enum class ContractType(val type: String) {
+  //delhivery intercity
   LH_FTL("LH_FTL"),
+  //non-delhivery intercity
   FRC("FRC"),
+  //intracity
   INTRACITY("INTRACITY")
+  //fixed/ flexible
 }
 
 enum class RequestType(val type: String) {

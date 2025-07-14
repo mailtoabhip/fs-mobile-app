@@ -21,13 +21,14 @@
             android:id="@+id/text_truck_loc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_location_new"
+            android:drawableStart="@drawable/ic_navigate_grey"
             android:drawablePadding="@dimen/size_8dp"
             android:paddingTop="@dimen/size_4dp"
-            android:text="One Way"
+            android:text="@{request.tripWaysNew()}"
             android:textColor="#505361"
             android:textSize="12sp"
-            android:visibility="visible"
+            tools:visibility="visible"
+            android:visibility="@{request.isLHContract()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="One Way" />
@@ -41,10 +42,12 @@
             android:paddingTop="@dimen/size_4dp"
             android:textColor="#505361"
             android:textSize="12sp"
-            android:visibility="gone"
+            android:text='@{request.intracityContractType() + " Location"}'
+            android:visibility="@{request.isIntraCityContract()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="One Way" />
+            tools:text="Fixed/ Fleaxible Location"
+            tools:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/closingTime"
@@ -55,6 +58,7 @@
             android:text="7 days a week"
             android:textColor="#505361"
             android:textSize="12sp"
+            android:visibility="@{request.isLHContract()}"
             app:layout_constraintBottom_toBottomOf="@id/text_truck_loc"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/text_truck_loc"

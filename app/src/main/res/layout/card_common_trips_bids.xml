@@ -47,7 +47,8 @@
             android:id="@+id/include_bid_time_4"
             layout="@layout/item_trip_details_way_location"
             app:request="@{request}"
-            />
+            android:visibility="@{request.isLHContract()}"/>
+
         <include
             android:id="@+id/include_bid_time_5"
             layout="@layout/item_trip_commitment"
@@ -56,6 +57,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginEnd="@dimen/size_16dp"
+            android:visibility="@{request.isIntraCityContract()}"
             app:request="@{request}"
             />
         <include
