@@ -40,7 +40,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeContractsFilterItemBinding.inflate(inflater, parent, false)
-    IntracityFilters-> ViewHomeContractsIntracityFilterItemBinding.inflate(inflater, parent, false)
+    //IntracityFilters-> ViewHomeContractsIntracityFilterItemBinding.inflate(inflater, parent, false)
     else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
   }
 
@@ -60,7 +60,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
   ) {
     when (holder) {
       is HomeContractsSearchItemVH -> holder.bind(item as HomeContractsSearchItem, _interface)
-      is HomeContractsRequestItemVH -> holder.bind(item as HomeContractsRequestItem, _interface)
+      //is HomeContractsRequestItemVH -> holder.bind(item as HomeContractsRequestItem, _interface)
       is HomeContractsProgressItemVH -> holder.bind(item as HomeContractsProgressItem, _interface)
       is HomeContractsWarningItemVH -> holder.bind(item as HomeContractsWarningItem, _interface)
       is HomeContractsTimeOutItemVH -> holder.bind(item as HomeContractsTimeoutItem, _interface)
