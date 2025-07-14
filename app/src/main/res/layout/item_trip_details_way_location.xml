@@ -46,7 +46,7 @@
             android:visibility="@{request.isIntraCityContract()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Fixed/ Fleaxible Location"
+            tools:text="Fixed/ Flexible Location"
             tools:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatTextView

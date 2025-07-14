@@ -46,8 +46,7 @@
         <include
             android:id="@+id/include_bid_time_4"
             layout="@layout/item_trip_details_way_location"
-            app:request="@{request}"
-            android:visibility="@{request.isLHContract()}"/>
+            app:request="@{request}" />
 
         <include
             android:id="@+id/include_bid_time_5"

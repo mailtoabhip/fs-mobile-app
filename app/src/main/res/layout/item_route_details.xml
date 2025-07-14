@@ -63,7 +63,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:paddingTop="16dp"
         android:paddingBottom="@dimen/size_4dp"
-        android:visibility="@{request.isLHContract()}"
+        android:visibility="@{request.isFRCContract()}"
         tools:visibility="visible"
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp"
@@ -88,7 +88,7 @@
             android:layout_height="@dimen/size_16dp"
             app:layout_constraintBottom_toBottomOf="@id/fromCity"
             app:layout_constraintEnd_toStartOf="@id/toCity"
-            app:layout_constraintHorizontal_bias="0.211"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/fromCity"
             app:layout_constraintTop_toTopOf="@id/fromCity"
             app:srcCompat="@drawable/ic_line_5" />
@@ -118,6 +118,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintGuide_percent="0.7"
             android:orientation="vertical" />
+
         <TextView
             android:id="@+id/toCity"
             android:layout_width="wrap_content"
