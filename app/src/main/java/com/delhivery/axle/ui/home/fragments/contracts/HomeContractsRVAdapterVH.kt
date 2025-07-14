@@ -120,8 +120,6 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     //
     binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
     //
-    binding.includeBidTime3.request = item.data
-    //
     //Log.d("DEBUG_LOG======>>>>>>>>>", ""+Gson().toJson(item))
     //set route details
     //binding.includeHeader2.tvLocationTitle = item.data.
