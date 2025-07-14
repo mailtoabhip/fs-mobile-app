@@ -10,6 +10,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/include_bid_time_6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -40,7 +41,7 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/place_bid_button"
+            android:id="@+id/cl_revise_bid"
             android:layout_width="160dp"
             android:layout_height="48dp"
             android:background="@drawable/bg_place_bid"

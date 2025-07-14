@@ -34,6 +34,7 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.logging.LoggingMXBean
 
 /**
  *
@@ -552,6 +553,24 @@ data class HomeBidsRequestItemData(
 
   fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
 
+  fun formattedContractBiddingEndTime()= if (contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true) ){
+    ""}
+  else{
+    try{
+      val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(contractBiddingEndTime)
+      if (date2.compareTo(date1) > 0) {
+        "Closes in ${DateUtils.timeDiff(date1.time,date2.time)}"
+      } else {
+        "Closed ${ DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
+      }
+    }catch(e:Exception){
+      Log.d("formattedBiddingEndTime::catch",""+e.printStackTrace())
+    }
+  }
+
   fun formattedBiddingEndTime()= if (bidEndingTime.isNullOrBlank() || bidEndingTime.equals("null", ignoreCase = true) ){
     ""}
     else{
@@ -565,8 +584,8 @@ data class HomeBidsRequestItemData(
         } else {
           "Closed ${ DateUtils.daysDiffWithTimeStr(bidEndingTime, DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(bidEndingTime)}"
         }
-      }catch(_:Exception){
-        ""
+      }catch(e:Exception){
+        //Log.d("formattedBiddingEndTime::catch",""+e.printStackTrace())
       }
     }
   /**

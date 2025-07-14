@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="request"
             type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
@@ -13,51 +14,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/size_16dp"
-        android:paddingEnd="@dimen/size_16dp"
-        >
+        android:paddingEnd="@dimen/size_16dp">
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_truck_loc"
             android:layout_width="wrap_content"
-            android:paddingTop="@dimen/size_4dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            tools:text ="One Way"
+            android:drawableStart="@drawable/ic_navigate_grey"
+            android:drawablePadding="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_4dp"
             android:text="One Way"
             android:textColor="#505361"
+            android:textSize="12sp"
             android:visibility="visible"
-            android:drawablePadding="@dimen/size_8dp"
-            android:drawableStart="@drawable/ic_navigate_grey"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            tools:text="One Way" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_loc_fixes"
             android:layout_width="wrap_content"
-            android:paddingTop="@dimen/size_4dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            tools:text ="One Way"
-            android:visibility="gone"
-            android:textColor="#505361"
-            android:drawablePadding="@dimen/size_8dp"
             android:drawableStart="@drawable/ic_fix_location"
+            android:drawablePadding="@dimen/size_8dp"
+            android:paddingTop="@dimen/size_4dp"
+            android:textColor="#505361"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            tools:text="One Way" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/closingTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:drawableStart="@drawable/ic_schedule_grey"
             android:drawablePadding="@dimen/size_8dp"
-            tools:text ="7 days a week"
             android:text="7 days a week"
             android:textColor="#505361"
-            android:drawableStart="@drawable/ic_schedule_grey"
-            app:layout_constraintBottom_toBottomOf="@id/truckInfo"
-            app:layout_constraintTop_toTopOf="@id/truckInfo"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/text_truck_loc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_truck_loc"
+            tools:text="7 days a week" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

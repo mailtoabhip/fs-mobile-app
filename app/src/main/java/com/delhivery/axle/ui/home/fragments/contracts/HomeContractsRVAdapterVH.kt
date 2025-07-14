@@ -111,6 +111,17 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     binding.strongBidCard.strongBidCard.visibility = View.GONE
     //
     binding.weakBidCard.weakBidCard.visibility = View.GONE
+    //
+    binding.includeBidTime6.bidAmount.visibility = View.GONE
+    //
+    binding.includeBidTime6.labelBidAmount.visibility = View.GONE
+    //
+    binding.includeBidTime6.clReviseBid.visibility = View.GONE
+    //
+    binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
+    //
+    binding.includeBidTime3.request = item.data
+    //
     //Log.d("DEBUG_LOG======>>>>>>>>>", ""+Gson().toJson(item))
     //set route details
     //binding.includeHeader2.tvLocationTitle = item.data.
