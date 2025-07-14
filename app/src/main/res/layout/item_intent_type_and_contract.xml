@@ -1,0 +1,62 @@
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+  >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/size_16dp"
+        android:paddingEnd="@dimen/size_16dp"
+        >
+
+
+    <!-- Contract Badge -->
+    <TextView
+        android:id="@+id/tv_contract"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_20dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:gravity="center"
+        android:text="Contract"
+        android:textColor="#121A31"
+        android:textStyle="normal"
+        android:textSize="12sp"
+        android:background="@drawable/bg_chip_grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Live Bidding Badge -->
+    <LinearLayout
+        android:id="@+id/ll_live_bidding"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/bg_chip_pink"
+        app:layout_constraintTop_toTopOf="@id/tv_contract"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_contract">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_circle_pink" />
+
+        <TextView
+            android:id="@+id/tv_live_bidding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Live Bidding"
+            android:textSize="12sp"
+            android:textColor="#DB2777"
+            android:textStyle="normal" />
+    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
