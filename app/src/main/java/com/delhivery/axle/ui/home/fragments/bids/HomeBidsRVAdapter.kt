@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Remove
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress

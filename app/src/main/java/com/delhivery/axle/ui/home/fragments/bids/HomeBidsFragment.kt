@@ -147,7 +147,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch bids data*/
-    fetchBidsData()
+    fetchBidsData(BidType.ActiveBid)
   }
 
   override fun onResume() {
@@ -157,16 +157,16 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
       isFirstResume = false
     }
   }
-  private fun fetchBidsData() {
+  private fun fetchBidsData(bidType: BidType) {
     viewModel.fetchBidsSummary() // bids counts are fetched from this api
-    viewModel.fetchBids(BidType.ActiveBid) //pass specific status to fetch ongoing/ won/ lost
+    viewModel.fetchBids(bidType = bidType) //pass specific status to fetch ongoing/ won/ lost
   }
 
   private fun refreshData() {
     /* remove user transactions */
     adapter.resetStaticData()
     /* fetch again */
-    fetchBidsData()
+    fetchBidsData(viewModel.bidType)
   }
 
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
@@ -179,84 +179,29 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     actionId: String,
     item: BaseHomeBidsRVAdapterItem<*>
   ) {
-    // handle actions here
     when (actionId) {
-      HomeBidsHeaderAction_MyBids -> {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_VIEW_ACTIVE_BIDS,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS),
-            mutableListOf(userPrefs.userId(), viewModel.activeBids)
-        )
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), ActiveBid), REQCODE_NO_ROUTES)
-      }
-
-      HomeBidsHeaderAction_ConfirmedBids -> {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_VIEW_CONFIRMED_BIDS,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_CONFIRMED_BIDS),
-            mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
-        )
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), ConfirmedBid), REQCODE_NO_ROUTES)
-      }
-
-      HomeBidsHeaderAction_LostBids -> {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_VIEW_LOST_BIDS,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
-            mutableListOf(userPrefs.userId(), viewModel.lostBids)
-        )
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), LostBid), REQCODE_NO_ROUTES)
-      }
-
-      HomeBidsHeaderAction_ContractBids -> {
-        // Capture event
-      /*  analyticsUtil.trackEvent(
-          EVENT_VIEW_LOST_BIDS,
-          mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
-          mutableListOf(userPrefs.userId(), viewModel.lostBids)
-        )*/
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), ContractBid), REQCODE_NO_ROUTES)
-      }
-
       HomeBidsRequestAction_ViewDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.moEngageTrackEvent(
-            EVENT_LIST_ITEM,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_BID, _item.transactionId ?: "")
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
+      }
 
-          val dmtStatus = if(_item.isDMTIndent())
-            "dmt"
-          else ""
-          val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-          val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
-            if(_item.transactionBid?.childTransactionId!=null)
-              _item.transactionBid!!.childTransactionId else _item.key()
-          }else{
-            _item.key()
-          }
-          if(id!=null)
-            context?.let {
-              userPrefs.setPreviousScreen(this.javaClass.name)
-              if(_item.subRequestType==SUB_REQUEST_TYPE_INTRACITY){
-                startActivity(tripDetailsIntent(_item.key(), it))
-              }else{
-                startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
-              }
-            }
-          else{
-            Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()
-          }
-
+      HomeBidsRequestAction_PlaceBid -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
       }
 
       HomeBidsRequestAction_ViewOtherDetails -> {
@@ -269,6 +214,22 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         )
         Log.i("itemDailog", "clicked")
         bidDialog(_item)
+      }
+
+      // Handle header tab change actions
+      HomeBidsHeaderAction_TabChangeActive -> {
+        viewModel.bidType = BidType.ActiveBid
+        refreshData()
+      }
+
+      HomeBidsHeaderAction_TabChangeConfirmed -> {
+        viewModel.bidType = BidType.ConfirmedBid
+        refreshData()
+      }
+
+      HomeBidsHeaderAction_TabChangeLost -> {
+        viewModel.bidType = BidType.LostBid
+        refreshData()
       }
 
       HomeBidsSearchAction_Search -> context?.let {

@@ -62,9 +62,16 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
 
-    binding.ongoingCount = item.data.myBids
+      binding.ongoingCount = item.data.myBids
+      binding.tvOngoing.clickToAction(HomeBidsHeaderAction_TabChangeActive, item, _interface)
+
+      //
     binding.wonCount = item.data.confirmedBid
-    binding.lostCount = item.data.lostBids
+      binding.tvWon.clickToAction(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
+
+      //
+      binding.lostCount = item.data.lostBids
+      binding.tvLost.clickToAction(HomeBidsHeaderAction_TabChangeLost, item, _interface)
 
     when(item.data.bidType){
       BidType.ActiveBid -> {
@@ -114,6 +121,7 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
 //    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
 //    binding.viewContractBids.clickToAction(HomeBidsHeaderAction_ContractBids, item, _interface)
   }
+
 }
 
 /**
@@ -233,4 +241,6 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
   ) {
 
   }
+
+
 }

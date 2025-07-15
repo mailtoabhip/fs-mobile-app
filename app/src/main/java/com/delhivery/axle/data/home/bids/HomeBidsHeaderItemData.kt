@@ -22,6 +22,11 @@ const val HomeBidsHeaderAction_ConfirmedBids = "confirmed_bids"
 const val HomeBidsHeaderAction_LostBids = "lost_bids"
 const val HomeBidsHeaderAction_ContractBids = "contract_bids"
 
+/* new tab change actions */
+const val HomeBidsHeaderAction_TabChangeActive = "tab_change_active"
+const val HomeBidsHeaderAction_TabChangeConfirmed = "tab_change_confirmed"
+const val HomeBidsHeaderAction_TabChangeLost = "tab_change_lost"
+
 
 /**
  * New data class and other attributes to incorporate the new header as per Axle App Revamp
