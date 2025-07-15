@@ -1304,6 +1304,7 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  //use this function to identify the bid type
   fun isItContract() = requestType == RequestType.Contract.type
 
   fun isItLHContract() = contractType == ContractType.LH_FTL.type
