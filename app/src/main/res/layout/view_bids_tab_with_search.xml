@@ -47,7 +47,6 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:layout_gravity="center_vertical"
-                android:state_selected='@{selectedTab == 0}'
                 android:layout_marginEnd="2dp"
                 tools:text="OnGoing(10)" />
 
@@ -64,7 +63,6 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:layout_gravity="center_vertical"
-                android:state_selected='@{selectedTab == 1}'
                 android:layout_marginEnd="2dp"
                 tools:text="Won(3)" />
 
@@ -80,7 +78,6 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:layout_gravity="center_vertical"
-                android:state_selected='@{selectedTab == 2}'
                 android:layout_marginEnd="2dp"
                 tools:text="Lost(3)" />
         </LinearLayout>

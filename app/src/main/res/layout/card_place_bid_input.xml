@@ -22,27 +22,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <TextView
+            android:id="@+id/routeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text = "Navi Mumbai -> Jaisalmer"
+            android:text="@{request.tripRouteOriginDes()}"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
             android:padding="@dimen/size_12dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/editBidCl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/routeTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingBottom="@dimen/size_12dp"
+            android:paddingLeft="@dimen/size_12dp"
+            android:paddingRight="@dimen/size_12dp"
+
             >
-
-            <!-- Route Title -->
-            <TextView
-                android:id="@+id/routeTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:text = "Navi Mumbai -> Jaisalmer"
-                android:text="@{request.tripRouteOriginDes()}"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
             <!-- Bid Amount Label -->
             <TextView
                 android:id="@+id/bidLabel"
@@ -51,7 +58,7 @@
                 android:text="Bid Amount"
                 android:textSize="14sp"
                 android:textColor="#3D445C"
-                app:layout_constraintTop_toBottomOf="@id/routeTitle"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="16dp" />
 
@@ -138,44 +145,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!--            <androidx.cardview.widget.CardView-->
-<!--                android:id="@+id/strongBidCard"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                app:cardCornerRadius="8dp"-->
-<!--                app:cardBackgroundColor="#ECFDF5"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/layout_mobile_no"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="parent">-->
-
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:padding="12dp">-->
-
-<!--                    <androidx.appcompat.widget.AppCompatTextView-->
-<!--                        android:id="@+id/strongBidTitle"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Strong bid"-->
-<!--                        android:drawablePadding="@dimen/size_4dp"-->
-<!--                        android:drawableStart="@drawable/ic_thumbs_up"-->
-<!--                        android:textColor="#065F46"-->
-<!--                        android:textSize="14sp"-->
-<!--                        android:textStyle="bold" />-->
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/strongBidMessage"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="You have high chances of winning!"-->
-<!--                        android:textColor="#505361"-->
-<!--                        android:textSize="14sp"-->
-<!--                        android:layout_marginTop="4dp" />-->
-<!--                </LinearLayout>-->
-<!--            </androidx.cardview.widget.CardView>-->
 
             <Button
                 android:id="@+id/placeBidButton"
@@ -193,6 +162,28 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/confirmedBidCl"
+                android:padding="@dimen/size_12dp"
+                android:layout_margin="@dimen/size_12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/routeTitle"
+                android:visibility="gone"
+                layout="@layout/view_bid_status_confirmed"/>
+            <include
+                android:id="@+id/rejectedBidCl"
+                android:layout_margin="@dimen/size_12dp"
+                android:padding="@dimen/size_12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/routeTitle"
+                android:visibility="visible"
+                layout="@layout/view_bid_status_rejected"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

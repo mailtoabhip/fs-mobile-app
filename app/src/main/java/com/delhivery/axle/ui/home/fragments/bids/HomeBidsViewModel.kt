@@ -140,7 +140,7 @@ class HomeBidsViewModel @Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_bids_placed_by_supplier")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_placed_and_lowest_bids_on_txns_parallel")
     mainTrace.start()
-    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
+    compositeDisposable += bidsRepository.userBids(offset, statuses, true,false,null)
       .flatMap { _res ->
         total = _res.first
         offset = _res.third

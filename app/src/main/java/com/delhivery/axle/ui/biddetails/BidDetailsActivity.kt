@@ -27,10 +27,16 @@ import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.*
+import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
+import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType
+import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.StringUtils.capitalize
@@ -203,10 +209,15 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       }
     })
     viewModel.successBidLiveData.observe(this) {
-      if (it) {
+      if (it.first) {
         dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_placed_sucessfully),
           resources.getString(R.string.check_your_bid_status)
+        )
+      }else if(it.second){
+        dialogUtils.showSuccessBidDialog(this,
+          resources.getString(R.string.bid_revised_sucessfully),
+          resources.getString(R.string.check_your_bid_revise_status)
         )
       }
     }
@@ -452,7 +463,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     binding.cardInput.placeBidButton.setOnClickListener {
       Log.d("Touch", "Button touched:")
       try {
-        require(
+      /*  require(
           !(viewModel.transaction.isPMTIndent() && pmtRate > userPrefs.maxPMTRate)
         ) { "*Rate should be less than ${userPrefs.maxPMTRate}/MT" }
         if (amount > 0) {
@@ -470,7 +481,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             }
           } else require(
             !(viewModel.transaction.transactionBid?.bidAmount != null && abs(viewModel.transaction.transactionBid!!.bidAmount - amount) < 500)
-          ) { "*Bid difference should be more than ₹500" }
+          ) { "*Bid difference should be more than ₹500" }*/
           if (viewModel.transaction.transactionBid == null) {
             uiUtils.showProgress()
             viewModel.createBid(
@@ -485,9 +496,9 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               amount, pmtRate, viewModel.transaction.biddingType ?: "FTL",null,null,null
             )
           }
-        } else {
-          throw IllegalArgumentException("*Invalid amount")
-        }
+//        } else {
+//          throw IllegalArgumentException("*Invalid amount")
+//        }
       } catch (e: IllegalArgumentException) {
      /*   binding.tilAmount.isErrorEnabled = true
         binding.tilAmount.error = e.message
@@ -586,17 +597,17 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.div2.visibility = View.GONE
           }*/
 
-       /*   if (binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
-            binding.stopNo.text = "No Stops"
+          if (binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
+           // binding.stopNo.text = "No Stops"
           } else {
-            binding.stopNo.text =
-              binding.transaction?.indentHaltCenters!!.size.toString() + " Stops"
+//            binding.stopNo.text =
+//              binding.transaction?.indentHaltCenters!!.size.toString() + " Stops"
             for (i in binding.transaction?.indentHaltCenters!!.indices) {
               viewModel.fetchIndentCenters(
                 binding.transaction?.indentHaltCenters!![i].haltCenterCode, i + 1
               )
             }
-          }*/
+          }
         } else {
 
         /*  if (binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()) {
@@ -832,6 +843,9 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
         when (state) {
           is BidDetailsUserBidState_PlaceBidFirst -> {
             binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.editBidCl.visibility = View.VISIBLE
+            binding.cardInput.confirmedBidCl.root.visibility = View.GONE
+            binding.cardInput.rejectedBidCl.root.visibility = View.GONE
             enableKeyboard()
             /*  ViewBidDetailsPlaceBidFirstBinding.inflate(
                 layoutInflater, binding.containerActions, false
@@ -860,6 +874,10 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
           }
           is BidDetailsUserBidState_PlaceBid -> {
             binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.editBidCl.visibility = View.VISIBLE
+            binding.cardInput.confirmedBidCl.root.visibility = View.GONE
+            binding.cardInput.rejectedBidCl.root.visibility = View.GONE
             enableKeyboard()
           /*  ViewBidDetailsPlaceBidBinding.inflate(layoutInflater, binding.containerActions, false)
               .apply {
@@ -918,8 +936,11 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               }*/
           }
           is BidDetailsUserBidState_EditBid -> {
-            enableKeyboard()
             binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.editBidCl.visibility = View.VISIBLE
+            binding.cardInput.confirmedBidCl.root.visibility = View.GONE
+            binding.cardInput.rejectedBidCl.root.visibility = View.GONE
+            enableKeyboard()
             binding.transaction?.transactionBid = state.lowestAndUserBidPair.second
             enablePlaceBid(false)
             binding.cardInput.placeBidButton.text = "Revise Bid"
@@ -1198,6 +1219,14 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             )*/
           }
           is BidDetailsUserBidState_ConfirmedBid -> {
+            binding.cardInput.editBidCl.visibility = View.GONE
+            binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
+            binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+binding.transaction?.transactionBid?.bidAmount
+            binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+            binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
+             // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+            }
            /* ViewBidDetailsConfirmedBidBinding.inflate(
               layoutInflater, binding.containerActions, false
             )
@@ -1247,6 +1276,18 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               }*/
           }
           is BidDetailsUserBidState_RejectedBid -> {
+            Log.d("called","BidDetailsUserBidState_RejectedBid")
+            binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.editBidCl.visibility = View.GONE
+            binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
+            binding.cardInput.rejectedBidCl.title = "Bid not selected"
+            binding.cardInput.rejectedBidCl.subTitle = "You were ₹${state.acceptedBid.bidAmount.toInt()-state.userBid.bidAmount.toInt()} above the lowest bid"
+            binding.cardInput.rejectedBidCl.actionLabel = "Go To Placement Tab"
+            binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
+              homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+
+              // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+            }
           /*  ViewBidDetailsRejectedBidBinding.inflate(
               layoutInflater, binding.containerActions, false
             )
@@ -1280,6 +1321,18 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               }*/
           }
           is BidDetailsUserBidState_CancelledBid -> {
+            Log.d("called","BidDetailsUserBidState_CancelledBid")
+            binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.editBidCl.visibility = View.GONE
+            binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
+            binding.cardInput.rejectedBidCl.title = "Bid cancelled"
+            binding.cardInput.rejectedBidCl.subTitle = "The bid was cancelled by the client"
+            binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
+            binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
+             // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+              startActivity(homeActivityIntent("placement_screen", this@BidDetailsActivity))
+
+            }
            /* ViewBidDetailsCancelledBidBinding.inflate(
               layoutInflater, binding.containerActions, false
             )

@@ -74,7 +74,7 @@
             >
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/mainCl"
-    android:visibility="gone"
+    android:visibility="visible"
     android:layout_width="match_parent"
     android:background="#F6F7F8"
     android:layout_height="wrap_content">

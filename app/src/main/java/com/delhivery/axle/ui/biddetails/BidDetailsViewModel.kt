@@ -67,7 +67,7 @@ class BidDetailsViewModel @Inject constructor(
   var openConfirmBid :Boolean=false
   var statusConfirmationPending =MutableLiveData<Boolean>()
     var errorBiddingLiveData =MutableLiveData<Boolean>()
-    var successBidLiveData =MutableLiveData<Boolean>()
+    var successBidLiveData =MutableLiveData<Pair<Boolean,Boolean>>()
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, TransactionBid?>>()
 
@@ -255,7 +255,7 @@ class BidDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
                openConfirmBid= true
-              successBidLiveData.postValue(true)
+              successBidLiveData.postValue(Pair(true,false))
               fetchTransactionBids(true)
           } else {
               errorBiddingLiveData.postValue(true)
@@ -284,7 +284,7 @@ class BidDetailsViewModel @Inject constructor(
         .subscribe { _res, error ->
           if (!error && _res.isSuccess) {
               openConfirmBid= true
-              successBidLiveData.postValue(true)
+              successBidLiveData.postValue(Pair(false,true))
               fetchTransactionBids(true)
 
           } else {

@@ -712,6 +712,7 @@
   <string name="your_trip_commitment">Your Trip Commitment</string>
   <string name="place_your_bid">Place Your Bid</string>
   <string name="bid_placed_sucessfully">Bid placed successfully</string>
+  <string name="bid_revised_sucessfully">Bid revised successfully</string>
   <string name="your_bid">Your Bid</string>
   <string name="invalid_amount_out_of_range">Invalid amount, out of range.</string>
   <string name="exceeds_tentative_trip_count">Exceeds tentative trip count</string>
@@ -807,6 +808,8 @@
 
   <string name="arrow_separator_html"><![CDATA[ &rarr; ]]></string>
   <string name="check_your_bid_status">Check your bid status and make updates anytime in the \"My Bids\" section.</string>
+  <string name="check_your_bid_revise_status"> Your bid is now the lowest and you’re in the best position to win.</string>
+
 
   <string-array name="array_truck_type">
     <item>Choose Vehicle</item>
