@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/size_8dp"
+        android:paddingHorizontal="@dimen/size_8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/kmPerMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~1000km/month"
+                android:textColor="#505361"
+                android:textSize="12sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_dot"
+                android:textSize="12sp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                app:layout_constraintTop_toTopOf="@id/kmPerMonth"
+                app:layout_constraintBottom_toBottomOf="@id/kmPerMonth"
+                app:layout_constraintStart_toEndOf="@id/kmPerMonth" />
+
+            <TextView
+                android:id="@+id/daysPerMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 days/month"
+                android:textColor="#505361"
+                android:textSize="12sp"
+                app:layout_constraintTop_toTopOf="@id/kmPerMonth"
+                app:layout_constraintBottom_toBottomOf="@id/kmPerMonth"
+                app:layout_constraintStart_toEndOf="@id/dot1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_dot"
+                android:textSize="16sp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                app:layout_constraintTop_toTopOf="@id/kmPerMonth"
+                app:layout_constraintBottom_toBottomOf="@id/kmPerMonth"
+                app:layout_constraintStart_toEndOf="@id/daysPerMonth" />
+
+            <TextView
+                android:id="@+id/hoursPerDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7 hours a week"
+                android:textColor="#8F9198"
+                android:textSize="12sp"
+                app:layout_constraintTop_toTopOf="@id/kmPerMonth"
+                app:layout_constraintBottom_toBottomOf="@id/kmPerMonth"
+                app:layout_constraintStart_toEndOf="@id/dot2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</layout>
