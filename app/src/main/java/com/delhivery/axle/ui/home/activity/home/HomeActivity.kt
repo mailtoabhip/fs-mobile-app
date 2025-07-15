@@ -27,6 +27,7 @@ import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
@@ -176,6 +177,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             )
             userPrefs.setPreviousScreen(this.javaClass.name)
             fragmentAction(NavigateHomeFragmentAction(PodFragment))
+          }
+          if (fragmentType.isNotNullOrEmpty() && fragmentType == "placement") {
+//            analyticsUtil.moEngageTrackEvent(
+//              EVENT_NAVIGATION_PODS
+//            )
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            fragmentAction(NavigateHomeFragmentAction(PlacementsFragment))
+          }
+          if (fragmentType.isNotNullOrEmpty() && fragmentType == "load") {
+//            analyticsUtil.moEngageTrackEvent(
+//              EVENT_NAVIGATION_PODS
+//            )
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
 
           binding.profile.setOnClickListener {
@@ -530,6 +545,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       )
       userPrefs.setPreviousScreen(this.javaClass.name)
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
+    }
+    if (fragmentType.isNotNullOrEmpty() && fragmentType == "placement") {
+//            analyticsUtil.moEngageTrackEvent(
+//              EVENT_NAVIGATION_PODS
+//            )
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      fragmentAction(NavigateHomeFragmentAction(PlacementsFragment))
+    }
+    if (fragmentType.isNotNullOrEmpty() && fragmentType == "load") {
+//            analyticsUtil.moEngageTrackEvent(
+//              EVENT_NAVIGATION_PODS
+//            )
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
     }
     processDeepLink()
     if (transactions.isNotEmpty())

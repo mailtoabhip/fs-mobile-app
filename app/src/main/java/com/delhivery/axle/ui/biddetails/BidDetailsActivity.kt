@@ -1224,8 +1224,11 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+binding.transaction?.transactionBid?.bidAmount
             binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+            binding.cardInput.rejectedBidCl.actionLabel = "Go To Placement Tab"
             binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-             // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+              startActivity(homeActivityIntent("placement", this@BidDetailsActivity))
+
+              // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
             }
            /* ViewBidDetailsConfirmedBidBinding.inflate(
               layoutInflater, binding.containerActions, false
@@ -1282,9 +1285,10 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.rejectedBidCl.title = "Bid not selected"
             binding.cardInput.rejectedBidCl.subTitle = "You were ₹${state.acceptedBid.bidAmount.toInt()-state.userBid.bidAmount.toInt()} above the lowest bid"
-            binding.cardInput.rejectedBidCl.actionLabel = "Go To Placement Tab"
+            binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
             binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
-              homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+           //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+              startActivity(homeActivityIntent("load", this@BidDetailsActivity))
 
               // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
             }
@@ -1330,8 +1334,8 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
             binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
              // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
-              startActivity(homeActivityIntent("placement_screen", this@BidDetailsActivity))
-
+              startActivity(homeActivityIntent("load", this@BidDetailsActivity))
+              //action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
             }
            /* ViewBidDetailsCancelledBidBinding.inflate(
               layoutInflater, binding.containerActions, false

@@ -63,7 +63,7 @@
                 android:layout_marginTop="16dp" />
 
             <LinearLayout
-                android:id="@+id/layout_mobile_no"
+                android:id="@+id/bidll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/bidLabel"
@@ -122,7 +122,176 @@
                 android:id="@+id/bidError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/layout_mobile_no"
+                app:layout_constraintTop_toBottomOf="@+id/bidll"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="@color/bid_error"
+                android:textSize="@dimen/text_12sp"
+                android:paddingTop="@dimen/size_4dp"
+                android:visibility="gone"
+                android:text="@string/invalid_amount_out_of_range"/>
+            <TextView
+                android:id="@+id/vehicleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bid Amount"
+                android:textSize="14sp"
+                android:textColor="#3D445C"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/vehicleLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:background="@drawable/background_grey_border"
+                android:padding="1dp">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etVehicleNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="50dp"
+                    android:textSize="18sp"
+                    android:textColorHint="#8F9198"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:focusable="true"
+                    android:hint="Enter bid amount"
+                    android:nextFocusLeft="@id/et_bid_amount"
+                    android:nextFocusRight="@id/et_bid_amount"
+                    android:nextFocusUp="@id/et_bid_amount"
+                    android:nextFocusDown="@id/et_bid_amount"
+                    android:nextFocusForward="@id/et_bid_amount"
+                    android:singleLine="true"
+                    android:textColor="#3D445C"/>
+
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/vehicleError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/vehicleLl"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="@color/bid_error"
+                android:textSize="@dimen/text_12sp"
+                android:paddingTop="@dimen/size_4dp"
+                android:visibility="gone"
+                android:text="@string/invalid_amount_out_of_range"/>
+            <TextView
+                android:id="@+id/tripLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bid Amount"
+                android:textSize="14sp"
+                android:textColor="#3D445C"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/tripLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:background="@drawable/background_grey_border"
+                android:padding="1dp">
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etTripNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="50dp"
+                    android:textSize="18sp"
+                    android:textColorHint="#8F9198"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    android:hint="Enter bid amount"
+                    android:nextFocusLeft="@id/et_bid_amount"
+                    android:nextFocusRight="@id/et_bid_amount"
+                    android:nextFocusUp="@id/et_bid_amount"
+                    android:nextFocusDown="@id/et_bid_amount"
+                    android:nextFocusForward="@id/et_bid_amount"
+                    android:singleLine="true"
+                    android:textColor="#3D445C"/>
+
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tripError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tripLl"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="@color/bid_error"
+                android:textSize="@dimen/text_12sp"
+                android:paddingTop="@dimen/size_4dp"
+                android:visibility="gone"
+                android:text="@string/invalid_amount_out_of_range"/>
+            <TextView
+                android:id="@+id/placemntLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bid Amount"
+                android:textSize="14sp"
+                android:textColor="#3D445C"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:id="@+id/placementLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:background="@drawable/background_grey_border"
+                android:padding="1dp">
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/placementSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="50dp"
+                    android:textSize="18sp"
+                    android:textColorHint="#8F9198"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    android:hint="Enter bid amount"
+                    android:nextFocusLeft="@id/et_bid_amount"
+                    android:nextFocusRight="@id/et_bid_amount"
+                    android:nextFocusUp="@id/et_bid_amount"
+                    android:nextFocusDown="@id/et_bid_amount"
+                    android:nextFocusForward="@id/et_bid_amount"
+                    android:singleLine="true"
+                    android:textColor="#3D445C"/>
+
+            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/placementError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tripLl"
                 app:layout_constraintStart_toStartOf="parent"
                 android:textColor="@color/bid_error"
                 android:textSize="@dimen/text_12sp"
@@ -180,7 +349,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/routeTitle"
-                android:visibility="visible"
+                android:visibility="gone"
                 layout="@layout/view_bid_status_rejected"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
