@@ -119,7 +119,7 @@ class HomeBidsViewModel @Inject constructor(
    *
    *
    */
-  fun fetchBids(paginate: Boolean = false) {
+  fun fetchBids(bidType: BidType,paginate: Boolean = false) {
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -133,9 +133,10 @@ class HomeBidsViewModel @Inject constructor(
 
     //Send ONE AT A TIME
     val statuses = mutableListOf<String>().apply {
-      add(BidType.ActiveBid.status.statusKey)
-      add(BidType.ConfirmedBid.status.statusKey)
-      add(BidType.LostBid.status.statusKey)
+      add(bidType.status.statusKey)
+//      add(BidType.ActiveBid.status.statusKey)
+//      add(BidType.ConfirmedBid.status.statusKey)
+//      add(BidType.LostBid.status.statusKey)
     }
         .joinToString(separator = ",") { it }
 

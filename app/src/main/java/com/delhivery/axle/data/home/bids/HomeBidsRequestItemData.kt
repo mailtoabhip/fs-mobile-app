@@ -1311,6 +1311,12 @@ data class HomeBidsRequestItemData(
   fun isItFRContract() = contractType == ContractType.FRC.type
   fun isItIntraCityContract() = contractType == ContractType.INTRACITY.type
 
+  fun isItContractOrLoadV2()= if (requestType == RequestType.Contract.type || requestType != RequestType.Contract.type) {
+    true
+  } else {
+    false
+  }
+
   fun isItContractOrLoad()= if (requestType == RequestType.Contract.type) {
     "Contract"
   } else {
@@ -1327,7 +1333,13 @@ data class HomeBidsRequestItemData(
     return isUnderOneHour()
   }
 
-  //non-delhivery
+  //non-delhivery intercity
+  fun isFRCContractV2() = if (contractType == ContractType.FRC.type) {
+    true
+  } else {
+    false
+  }
+
   fun isFRCContract() = if (contractType == ContractType.FRC.type) {
     View.VISIBLE
   } else {

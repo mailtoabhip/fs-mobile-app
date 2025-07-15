@@ -17,6 +17,7 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BidType.ActiveBid
 import com.delhivery.axle.ui.bids.BidType.ConfirmedBid
 import com.delhivery.axle.ui.bids.BidType.ContractBid
@@ -158,7 +159,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   }
   private fun fetchBidsData() {
     viewModel.fetchBidsSummary() // bids counts are fetched from this api
-    viewModel.fetchBids() //pass specific status to fetch ongoing/ won/ lost
+    viewModel.fetchBids(BidType.ActiveBid) //pass specific status to fetch ongoing/ won/ lost
   }
 
   private fun refreshData() {
@@ -377,7 +378,8 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchBids(true)
+      //
+    override fun loadMore() = viewModel.fetchBids(bidType = BidType.ActiveBid, paginate = true)
 
     override fun hasMore() = viewModel.hasMoreData
 
