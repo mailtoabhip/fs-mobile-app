@@ -4,7 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.axle.databinding.CardCommonBidsBinding
 import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
+import com.delhivery.axle.databinding.ViewBidsHeaderNewItemBinding
+import com.delhivery.axle.databinding.ViewBidsSearchbarNewItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidResultsBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
@@ -42,32 +45,34 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     parent: ViewGroup,
     viewType: Int
   ) = when (HomeBidsRVAdapterItemType.byTypeId(viewType)) {
-    Header -> ViewHomeBidsHeaderItemBinding.inflate(inflater, parent, false)
-    Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
+    //Header -> ViewHomeBidsHeaderItemBinding.inflate(inflater, parent, false)
+    Header -> ViewBidsHeaderNewItemBinding.inflate(inflater, parent, false)
+    //Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
+    Search -> ViewBidsSearchbarNewItemBinding.inflate(inflater, parent, false)
     //load bids
-    Request -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
+    Request -> CardCommonBidsBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     //contract bids
-    Contracts -> ViewContractsBidItemBinding.inflate(inflater, parent, false)
+    Contracts -> CardCommonBidsBinding.inflate(inflater, parent, false)
     //load bids
-    else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
+    else -> CardCommonBidsBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeBidsHeaderItemBinding -> HomeBidsHeaderItemVH(binding)
-    is ViewHomeSearchItemBinding -> HomeBidsSearchItemVH(binding)
-    //load bids
-    is LoadDelhiveryIntercityBinding -> HomeBidsRequestItemVH(binding)
+    is ViewBidsHeaderNewItemBinding -> HomeBidsHeaderItemVH(binding)
+    is ViewBidsSearchbarNewItemBinding -> HomeBidsSearchItemVH(binding)
+    //load bids + contract bids
+    is CardCommonBidsBinding -> HomeBidsRequestItemVH(binding)
     //
     is ViewWarningItemBinding -> HomeBidsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeBidsTimeOutItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomeBidsProgressItemVH(binding)
     //contract bids
-    is ViewContractsBidItemBinding -> HomeContractsBidsRequestItemVH(binding)
-    //else -> //load bids
-    else -> HomeBidsRequestItemVH(binding as LoadDelhiveryIntercityBinding)
+    //is ViewContractsBidItemBinding -> HomeContractsBidsRequestItemVH(binding)
+    //else -> //load bids + contract bids
+    else -> HomeBidsRequestItemVH(binding as CardCommonBidsBinding)
   }
 
   override fun bindVH(
@@ -77,12 +82,12 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     when (holder) {
       is HomeBidsHeaderItemVH -> holder.bind(item as HomeBidsHeaderItem, _interface)
       is HomeBidsSearchItemVH -> holder.bind(item as HomeBidsSearchItem, _interface)
-      //load bids
+      //load bids + //contract bids
       is HomeBidsRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface)
       is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface)
       is HomeBidsTimeOutItemVH -> holder.bind(item as HomeBidsTimeoutItem, _interface)
       //contract bids
-      is HomeContractsBidsRequestItemVH -> holder.bind(item as HomeContractsBidsRequestItem, _interface)
+      //is HomeContractsBidsRequestItemVH -> holder.bind(item as HomeContractsBidsRequestItem, _interface)
     }
   }
 

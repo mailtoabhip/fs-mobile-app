@@ -83,6 +83,7 @@ class HomeBidsTimeoutItem(data: HomeBidsTimeOutItemData) :
 class HomeBidsProgressItem(data: HomeBidsProgressItemData = HomeBidsProgressItemData()) :
     BaseHomeBidsRVAdapterItem<HomeBidsProgressItemData>(Progress, data)
 
+//No more in use as of now
 /**
  * Contracts Bid request item
  */

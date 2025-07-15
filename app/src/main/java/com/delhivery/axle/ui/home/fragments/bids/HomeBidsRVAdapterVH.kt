@@ -7,7 +7,10 @@ import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.databinding.CardCommonBidsBinding
 import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
+import com.delhivery.axle.databinding.ViewBidsHeaderNewItemBinding
+import com.delhivery.axle.databinding.ViewBidsSearchbarNewItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
@@ -51,98 +54,65 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
 /**
  * Header item view holder
  */
-internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsHeaderItemBinding, HomeBidsHeaderItem>(binding) {
+internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewBidsHeaderNewItemBinding, HomeBidsHeaderItem>(binding) {
   override fun bind(
     item: HomeBidsHeaderItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.myBids = when (item.data.myBids) {
-      -1 -> ""
-      else -> item.data.myBids.toString() + " Bids"
-    }
-    binding.confirmedBids = when (item.data.confirmedBid) {
-      -1 -> ""
-      else -> item.data.confirmedBid.toString() + " Bids"
-    }
-    binding.lostBids = when (item.data.lostBids) {
-      -1 -> ""
-      else -> item.data.lostBids.toString() + " Bids"
-    }
-    binding.contractBids = when (item.data.contractBids) {
-      -1 -> ""
-      else -> item.data.contractBids.toString() + " Bids"
-    }
 
-    binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
-    binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
-    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
-    binding.viewContractBids.clickToAction(HomeBidsHeaderAction_ContractBids, item, _interface)
+
+
+//    binding.myBids = when (item.data.myBids) {
+//      -1 -> ""
+//      else -> item.data.myBids.toString() + " Bids"
+//    }
+//    binding.confirmedBids = when (item.data.confirmedBid) {
+//      -1 -> ""
+//      else -> item.data.confirmedBid.toString() + " Bids"
+//    }
+//    binding.lostBids = when (item.data.lostBids) {
+//      -1 -> ""
+//      else -> item.data.lostBids.toString() + " Bids"
+//    }
+//    binding.contractBids = when (item.data.contractBids) {
+//      -1 -> ""
+//      else -> item.data.contractBids.toString() + " Bids"
+//    }
+//
+//    binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
+//    binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
+//    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
+//    binding.viewContractBids.clickToAction(HomeBidsHeaderAction_ContractBids, item, _interface)
   }
 }
 
 /**
  * Search item view holder
  */
-internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeSearchItemBinding, HomeBidsSearchItem>(binding) {
+internal class HomeBidsSearchItemVH(binding: ViewBidsSearchbarNewItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewBidsSearchbarNewItemBinding, HomeBidsSearchItem>(binding) {
   override fun bind(
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.editQuery.hint = "Origin / Destination"
-    binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
+    //binding.editQuery.hint = "Origin / Destination"
+    //binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
   }
 }
 
 /**
  * Bid request item view holder
  */
-class HomeBidsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
-    BaseHomeBidsRVAdapterViewHolder<LoadDelhiveryIntercityBinding, HomeBidsRequestItem>(binding) {
+class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
+    BaseHomeBidsRVAdapterViewHolder<CardCommonBidsBinding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-   /* if(item.data.subRequestType== SUB_REQUEST_TYPE_INTRACITY){
-      binding.clIntercityBids.visibility = View.GONE
-      binding.clIntracityBids.visibility = View.VISIBLE
-      binding.layoutTransaction.request = item.data
-    }else{
-      binding.clIntercityBids.visibility = View.VISIBLE
-      binding.clIntracityBids.visibility = View.GONE
-      binding.request = item.data
-      Log.i("bulkTransactionBids",item.data.bulkTransactionBids?.size.toString())
-      binding.moreBidsRecieved = (item.data.bulkTransactionBids?.size?:0) -1
-      // binding.moreBidsRecieved = 2
-      binding.textMoreBids.underline = true
-      binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
+    binding.request = item.data
+    //
 
-      if(item.data.bidStatus().statusKey.lowercase().equals("open")){
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_active))
-        binding.textBidStatus.text = context.resources.getString(R.string.label_active)
-      }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
-        if(item.data.transactionBid?.clientConfirmationPending == false){
-          binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.pending))
-          binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
-        }else{
-          binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
-          binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
-        }
-      }else if(item.data.bidStatus().statusKey.lowercase().equals("rejected")) {
-        binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
-      }else if(item.data.bidStatus().statusKey.lowercase().equals("cancelled")) {
-        binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
-      }
-
-      val res = item.data.resOffer
-      if(item.data.resOffer?.first?.first==null){
-        _interface.getTotalOffers(item.data)
-      }
-    }
-*/
   }
 }
 

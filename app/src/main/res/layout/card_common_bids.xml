@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_8dp"
         android:paddingTop="@dimen/size_8dp"
+        android:layout_marginHorizontal="16dp"
         app:cardCornerRadius="@dimen/size_8dp">
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,6 +29,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             layout="@layout/item_intent_type_and_contract"
             app:layout_constraintTop_toTopOf="parent"
+            app:request="@{request}"
             />
 
         <include

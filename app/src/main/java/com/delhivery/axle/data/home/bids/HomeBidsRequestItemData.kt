@@ -567,7 +567,7 @@ data class HomeBidsRequestItemData(
         "Closed ${ DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
       }
     }catch(e:Exception){
-      Log.d("formattedBiddingEndTime::catch",""+e.printStackTrace())
+      Log.d("formattedBidding::catch",""+e.printStackTrace())
     }
   }
 
@@ -1311,6 +1311,21 @@ data class HomeBidsRequestItemData(
   fun isItFRContract() = contractType == ContractType.FRC.type
   fun isItIntraCityContract() = contractType == ContractType.INTRACITY.type
 
+  fun isItContractOrLoad()= if (requestType == RequestType.Contract.type) {
+    "Contract"
+  } else {
+    "Load"
+  }
+
+  fun isItContractAndLiveBidding() = if (requestType == RequestType.Contract.type && isLiveBidding()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isLiveBidding(): Boolean {
+    return isUnderOneHour()
+  }
 
   //non-delhivery
   fun isFRCContract() = if (contractType == ContractType.FRC.type) {
