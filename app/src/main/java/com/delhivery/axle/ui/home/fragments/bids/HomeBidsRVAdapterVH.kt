@@ -20,6 +20,7 @@ import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.utils.extensions.underline
 
 /**
@@ -61,6 +62,34 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
 
+    binding.ongoingCount = item.data.myBids
+    binding.wonCount = item.data.confirmedBid
+    binding.lostCount = item.data.lostBids
+
+    when(item.data.bidType){
+      BidType.ActiveBid -> {
+        binding.tvOngoing.isSelected = true
+        binding.tvWon.isSelected = false
+        binding.tvLost.isSelected = false
+      }
+
+      BidType.ConfirmedBid -> {
+        binding.tvOngoing.isSelected = false
+        binding.tvWon.isSelected = true
+        binding.tvLost.isSelected = false
+      }
+
+      BidType.LostBid -> {
+        binding.tvOngoing.isSelected = false
+        binding.tvWon.isSelected = false
+        binding.tvLost.isSelected = true
+      }
+
+      else -> {
+        //this space is intentionally left blank
+      }
+
+    }
 
 
 //    binding.myBids = when (item.data.myBids) {

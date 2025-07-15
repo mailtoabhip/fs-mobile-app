@@ -80,6 +80,9 @@ class HomeBidsViewModel @Inject constructor(
   var confirmedBids= ""
   var lostBids= ""
   var contractBids= ""
+
+  //
+  var bidType : BidType = BidType.ActiveBid
   /**
    * Fetch bids summary
    */
@@ -101,7 +104,8 @@ class HomeBidsViewModel @Inject constructor(
                               _res.myBids,
                               _res.confirmedBids,
                               _res.lostBids,
-                            _res.contractBids
+                            _res.contractBids,
+                            bidType
                           )
                       ), Update
                   )
@@ -120,6 +124,9 @@ class HomeBidsViewModel @Inject constructor(
    *
    */
   fun fetchBids(bidType: BidType,paginate: Boolean = false) {
+    //set bidType
+    this@HomeBidsViewModel.bidType = bidType
+
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -213,6 +220,8 @@ class HomeBidsViewModel @Inject constructor(
                     transaction.numBids = lowestBid.numBids
                     transaction.lowestBid = lowestBid.minBid
                     transaction.loadPricePercent = _res.second.loadPricePercent
+                    //set bidType as well
+                    transaction.bidType = bidType
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]

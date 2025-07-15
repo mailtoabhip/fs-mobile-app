@@ -12,8 +12,11 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
+import com.delhivery.axle.R
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.utils.extensions.hasResource
 
 object BindingAdapters {
@@ -98,6 +101,21 @@ object BindingAdapters {
   ) {
     view.setBackgroundResource(resId)
   }
+
+  @JvmStatic
+  @BindingAdapter("optionalTextColor")
+  fun setOptionalTextColor(view: TextView, request: HomeBidsRequestItemData?) {
+    if (request == null) return
+
+    val colorResId = if (request.isActiveBid()) {
+      R.color.colorAccent
+    } else {
+      R.color.text_grey_v3
+    }
+
+    view.setTextColor(ContextCompat.getColor(view.context, colorResId))
+  }
+
 
 //    @JvmStatic
 //    @BindingAdapter("bind:font")

@@ -5,8 +5,10 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.R
@@ -22,6 +24,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
@@ -152,9 +155,14 @@ data class HomeBidsRequestItemData(
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
   var showing: Boolean = false,
-  var bulkTransactionBids: List<TransactionBid> = mutableListOf()
+  var bulkTransactionBids: List<TransactionBid> = mutableListOf(),
+  //
+  var bidType : BidType? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
+
+  fun isActiveBid() = bidType == BidType.ActiveBid
+
 
   fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
 

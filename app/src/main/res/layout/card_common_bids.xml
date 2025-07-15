@@ -41,7 +41,7 @@
 
         <include
             android:id="@+id/include_bid_time_3"
-            layout="@layout/item_truck_details_bidding_time"
+            layout="@layout/bid_item_truck_details_bidding_time"
             app:request="@{request}"
             />
 

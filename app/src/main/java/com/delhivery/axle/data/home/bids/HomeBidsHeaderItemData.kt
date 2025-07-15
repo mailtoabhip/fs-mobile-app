@@ -1,12 +1,14 @@
 package com.delhivery.axle.data.home.bids
 
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.ui.bids.BidType
 
 data class HomeBidsHeaderItemData(
-  val myBids: Int = -1,
-  val confirmedBid: Int = -1,
-  val lostBids: Int = -1,
-  val contractBids: Int = -1
+  val myBids: Int = 0,
+  val confirmedBid: Int = 0,
+  val lostBids: Int = 0,
+  val contractBids: Int = 0,
+  var bidType: BidType = BidType.ActiveBid
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeBidsHeaderItemDataKey
 }

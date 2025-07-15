@@ -379,7 +379,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
       //
-    override fun loadMore() = viewModel.fetchBids(bidType = BidType.ActiveBid, paginate = true)
+    override fun loadMore() = viewModel.fetchBids(bidType = viewModel.bidType, paginate = true)
 
     override fun hasMore() = viewModel.hasMoreData
 
