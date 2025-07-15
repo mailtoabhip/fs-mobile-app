@@ -157,8 +157,8 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     }
   }
   private fun fetchBidsData() {
-    viewModel.fetchBidsSummary()
-    viewModel.fetchBids()
+    viewModel.fetchBidsSummary() // bids counts are fetched from this api
+    viewModel.fetchBids() //pass specific status to fetch ongoing/ won/ lost
   }
 
   private fun refreshData() {

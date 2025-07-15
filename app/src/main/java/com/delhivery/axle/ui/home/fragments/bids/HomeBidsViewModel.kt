@@ -116,6 +116,8 @@ class HomeBidsViewModel @Inject constructor(
 
   /**
    * Fetch bids
+   *
+   *
    */
   fun fetchBids(paginate: Boolean = false) {
     if (!paginate) {
@@ -129,6 +131,7 @@ class HomeBidsViewModel @Inject constructor(
       Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
 
+    //Send ONE AT A TIME
     val statuses = mutableListOf<String>().apply {
       add(BidType.ActiveBid.status.statusKey)
       add(BidType.ConfirmedBid.status.statusKey)
@@ -140,6 +143,8 @@ class HomeBidsViewModel @Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_bids_placed_by_supplier")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_placed_and_lowest_bids_on_txns_parallel")
     mainTrace.start()
+    //Fetching all user bids from server
+    //sending the contract param as null will include "contract" type bids into the response
     compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
       .flatMap { _res ->
         total = _res.first
@@ -151,8 +156,14 @@ class HomeBidsViewModel @Inject constructor(
         } else {
           parallelTrace.start()
           Single.zip(
+            //fetch all transaction data
+            //request = send all the transactionIds
+            //response = [{transoBJ}, {transoBJ2}]
             transactionsRepository.bulkTransactions(_res.second).subscribeOn(Schedulers.io()),
+            //to fetch the lowest bid from all the transactions ids
+            //response = map [tid, lowest_price]
             bidsRepository.bulkLowestBidsForTransactions(_res.second).subscribeOn(Schedulers.io()),
+            //fetch all the bids data against all the transactionIds
             bidsRepository.bidsForBulkLoads(_res.second).subscribeOn(Schedulers.io()),
             Function3<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,Pair<List<TransactionBid>, List<TransactionBid>>,
                     Quintuple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>, List<TransactionBid>,List<TransactionBid>>> { t1, t2,t3 ->
