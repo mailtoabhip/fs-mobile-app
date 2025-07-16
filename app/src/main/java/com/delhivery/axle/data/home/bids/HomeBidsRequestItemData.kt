@@ -169,20 +169,50 @@ data class HomeBidsRequestItemData(
     ""
   }
 
-  fun isStrongestBid() =
-    if (((transactionBid?.bidAmount ?: 0.0) <= (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
-      View.VISIBLE
-    else
-      View.GONE
+//  fun isStrongBid(){
+//      if(isBidOpen() && bidStatus().statusKey.lowercase() == "open"){
+//          if (((transactionBid?.bidAmount ?: 0.0) <= (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
+//              View.VISIBLE
+//          else
+//              View.GONE
+//      }
+//  }
 
-  fun isWeakBid() =
-    if (((transactionBid?.bidAmount ?: 0.0) > (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
-      View.VISIBLE
-    else
-      View.GONE
+    fun isStrongBid(): Int {
+        val isBidOpen = isBidOpen()
+        val isStatusOpen = bidStatus().statusKey.equals("open", ignoreCase = true)
+        val bidAmount = transactionBid?.bidAmount ?: 0.0
+        val minBid = lowestBid ?: 0.0
+
+        return if (isBidOpen && isStatusOpen && bidAmount <= minBid && numBids >= 1 && minBid > 0.0) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+
+//  fun isWeakBid() =
+//    if (((transactionBid?.bidAmount ?: 0.0) > (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
+//      View.VISIBLE
+//    else
+//      View.GONE
+
+
+    fun isWeakBid(): Int {
+        val isBidOpen = isBidOpen()
+        val isStatusOpen = bidStatus().statusKey.equals("open", ignoreCase = true)
+        val bidAmount = transactionBid?.bidAmount ?: 0.0
+        val minBid = lowestBid ?: 0.0
+
+        return if (isBidOpen && isStatusOpen && bidAmount > minBid && numBids >= 1 && minBid > 0.0) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
 
   fun isActiveBid() = bidType == BidType.ActiveBid
-
 
   fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
 

@@ -58,13 +58,13 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginEnd="@dimen/size_16dp"
-            android:visibility="@{request.isIntraCityContract()}"
+            android:visibility="gone"
             app:request="@{request}"
             />
         <include
             android:id="@+id/strongBidCard"
             layout="@layout/card_strong_bid"
-            android:visibility="@{request.isStrongestBid()}"
+            android:visibility="@{request.isStrongBid()}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
