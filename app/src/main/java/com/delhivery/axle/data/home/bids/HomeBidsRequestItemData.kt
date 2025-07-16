@@ -376,14 +376,14 @@ data class HomeBidsRequestItemData(
     }else{
       val stopBuilder = StringBuilder()
       stopBuilder.append(originCityName())
-        .append(" to ")
+        .append(" -> ")
       if (!TextUtils.isEmpty(stop1City)) {
         stopBuilder.append(StringUtils.capitalize(stop1City))
-          .append(" to ")
+          .append(" -> ")
       }
       if (!TextUtils.isEmpty(stop2City)) {
         stopBuilder.append(StringUtils.capitalize(stop2City))
-          .append(" to ")
+          .append(" -> ")
       }
       stopBuilder.append(destinationCityName())
       return stopBuilder.toString()
@@ -395,11 +395,17 @@ data class HomeBidsRequestItemData(
    * @return intermediary stops
    */
   fun tripRouteOriginDes(): String {
-    val stopBuilder = StringBuilder()
-    stopBuilder.append(originCityName())
-      .append(" -> ")
-    stopBuilder.append(destinationCityName())
-    return stopBuilder.toString()
+    return if(isItIntraCityContract()&& isFlexible){
+      reportingCenters()
+    }else if(isItIntraCityContract()){
+      reportingCenters()
+    }else{
+      val stopBuilder = StringBuilder()
+      stopBuilder.append(originCityName())
+        .append(" -> ")
+      stopBuilder.append(destinationCityName())
+      stopBuilder.toString()
+    }
   }
 
   /**
@@ -585,6 +591,7 @@ data class HomeBidsRequestItemData(
           "Closed ${ DateUtils.daysDiffWithTimeStr(bidEndingTime, DatePatterns.OrionDateFormat) }, ${DateUtils.getUtcToIstFormatTimeOnly(bidEndingTime)}"
         }
       }catch(e:Exception){
+        ""
         //Log.d("formattedBiddingEndTime::catch",""+e.printStackTrace())
       }
     }
@@ -1312,7 +1319,7 @@ data class HomeBidsRequestItemData(
 
 
   //non-delhivery
-  fun isFRCContract() = if (contractType == ContractType.FRC.type) {
+  fun isFRCContract() = if ((requestType==RequestType.Contract.type) && contractType == ContractType.FRC.type) {
     View.VISIBLE
   } else {
     View.GONE
@@ -1332,19 +1339,19 @@ data class HomeBidsRequestItemData(
   }
 
 
-  fun isIntraCityContract() = if (contractType == ContractType.INTRACITY.type) {
+  fun isIntraCityContract() = if ((requestType==RequestType.Contract.type) && contractType == ContractType.INTRACITY.type) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
-  fun isIntraCityFlexibleContract() = if (contractType == ContractType.INTRACITY.type && isFlexible==true) {
+  fun isIntraCityFlexibleContract() = if ((requestType==RequestType.Contract.type)&&contractType == ContractType.INTRACITY.type && isFlexible==true) {
     View.VISIBLE
   } else {
     View.GONE
   }
 
-  fun isIntraCityFixedContract() = if (contractType == ContractType.INTRACITY.type && isFlexible==false) {
+  fun isIntraCityFixedContract() = if ((requestType==RequestType.Contract.type) && contractType == ContractType.INTRACITY.type && isFlexible==false) {
     View.VISIBLE
   } else {
     View.GONE

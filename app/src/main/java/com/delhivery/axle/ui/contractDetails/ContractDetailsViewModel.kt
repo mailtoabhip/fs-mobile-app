@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 class ContractDetailsViewModel @Inject constructor(private val transactionsRepository: TransactionsRepository,
   private val bidsRepository: BidsRepository,val userPrefs: UserPrefs
-): BaseViewModel(),ContractDetailsCreateEditDialogInterface{
+): BaseViewModel(){
 
 
 
@@ -54,6 +54,8 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
   var bidPriceLiveData = MutableLiveData<TransactionBid>()
 
   var showSuccessPlaceReviseDialogLiveData = MutableLiveData<Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>>()
+  var errorBiddingLiveData =MutableLiveData<Boolean>()
+  var successBidLiveData =MutableLiveData<Pair<Boolean,Boolean>>()
 
   var hideProgress = MutableLiveData<Boolean>()
   lateinit var transaction: HomeBidsRequestItemData
@@ -158,7 +160,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
 
   }
 
-  override fun createBid(
+  fun createBid(
     isPMT: Boolean,
     transactionId: String,
     bidAmount: Int,
@@ -174,20 +176,20 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
     )
       .delay(BidsUpdateDelay, SECONDS)
       .onBackground()
-      .bidsProgress()
       .subscribe { _res, error ->
         if (!error && _res.isSuccess) {
-          showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),if(transaction.isItIntraCityContract())vehicleNumber?.toString() else tentativeTripCount?.toString(),Pair(isPMT,false)))
+          successBidLiveData.postValue(Pair(true,false))
+         // showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),if(transaction.isItIntraCityContract())vehicleNumber?.toString() else tentativeTripCount?.toString(),Pair(isPMT,false)))
         } else {
           fetchTransactionBids()
-          hideProgress.postValue(true)
+          errorBiddingLiveData.postValue(true)
           error.handle()
         }
       }
 
   }
 
-  override fun editBid(
+   fun editBid(
     isPMT: Boolean,
     transactionId: String,
     bidId: String,
@@ -204,13 +206,13 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
     )
       .delay(BidsUpdateDelay, SECONDS)
       .onBackground()
-      .bidsProgress()
       .subscribe { _res, error ->
         if (!error && _res.isSuccess) {
-          showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),if(transaction.isItIntraCityContract())vehicleNumber?.toString() else tentativeTripCount?.toString(),Pair(isPMT,true)))
+          successBidLiveData.postValue(Pair(false,true))
+        //  showSuccessPlaceReviseDialogLiveData.postValue(Triple(Pair(bidAmount.toString(),pmtRate.toString()),if(transaction.isItIntraCityContract())vehicleNumber?.toString() else tentativeTripCount?.toString(),Pair(isPMT,true)))
         } else {
           fetchTransactionBids()
-         hideProgress.postValue(true)
+          errorBiddingLiveData.postValue(true)
           error.handle()
         }
       }

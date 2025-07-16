@@ -109,11 +109,6 @@
                     android:inputType="phone"
                     android:focusable="true"
                     android:hint="Enter bid amount"
-                    android:nextFocusLeft="@id/et_bid_amount"
-                    android:nextFocusRight="@id/et_bid_amount"
-                    android:nextFocusUp="@id/et_bid_amount"
-                    android:nextFocusDown="@id/et_bid_amount"
-                    android:nextFocusForward="@id/et_bid_amount"
                     android:singleLine="true"
                     android:textColor="#3D445C"/>
 
@@ -133,21 +128,21 @@
                 android:id="@+id/vehicleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bid Amount"
+                android:text="Vehicle Number"
                 android:textSize="14sp"
                 android:textColor="#3D445C"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="@{request.isIntraCityContract()}"
+                app:layout_constraintTop_toBottomOf="@+id/bidError"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/vehicleLl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_height="40dp"
+                app:layout_constraintTop_toBottomOf="@+id/vehicleLabel"
                 android:layout_marginTop="4dp"
-                android:visibility="gone"
+                android:visibility="@{request.isIntraCityContract()}"
                 android:background="@drawable/background_grey_border"
                 android:padding="1dp">
 
@@ -161,14 +156,8 @@
                     android:textSize="18sp"
                     android:textColorHint="#8F9198"
                     android:background="@null"
-                    android:inputType="phone"
-                    android:focusable="true"
-                    android:hint="Enter bid amount"
-                    android:nextFocusLeft="@id/et_bid_amount"
-                    android:nextFocusRight="@id/et_bid_amount"
-                    android:nextFocusUp="@id/et_bid_amount"
-                    android:nextFocusDown="@id/et_bid_amount"
-                    android:nextFocusForward="@id/et_bid_amount"
+                    android:inputType="textCapCharacters"
+                    android:hint="Enter vehicle number"
                     android:singleLine="true"
                     android:textColor="#3D445C"/>
 
@@ -188,21 +177,21 @@
                 android:id="@+id/tripLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bid Amount"
+                android:text="Number of trips you can serve on this lane"
                 android:textSize="14sp"
                 android:textColor="#3D445C"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="@{request.isFRCContract()}"
+                app:layout_constraintTop_toBottomOf="@+id/vehicleError"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/tripLl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_height="40dp"
+                app:layout_constraintTop_toBottomOf="@+id/tripLabel"
                 android:layout_marginTop="4dp"
-                android:visibility="gone"
+                android:visibility="@{request.isFRCContract()}"
                 android:background="@drawable/background_grey_border"
                 android:padding="1dp">
 
@@ -219,13 +208,7 @@
                     android:background="@null"
                     android:inputType="phone"
                     android:focusable="true"
-                    android:visibility="gone"
-                    android:hint="Enter bid amount"
-                    android:nextFocusLeft="@id/et_bid_amount"
-                    android:nextFocusRight="@id/et_bid_amount"
-                    android:nextFocusUp="@id/et_bid_amount"
-                    android:nextFocusDown="@id/et_bid_amount"
-                    android:nextFocusForward="@id/et_bid_amount"
+                    android:hint="Enter number of trips"
                     android:singleLine="true"
                     android:textColor="#3D445C"/>
 
@@ -242,67 +225,49 @@
                 android:visibility="gone"
                 android:text="@string/invalid_amount_out_of_range"/>
             <TextView
-                android:id="@+id/placemntLabel"
+                android:id="@+id/placementLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bid Amount"
+                android:text="Vehicle Can Be Placed In (Days)"
                 android:textSize="14sp"
                 android:textColor="#3D445C"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="@{request.isIntraCityContract()}"
+                app:layout_constraintTop_toBottomOf="@+id/tripError"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/placementLl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/bidLabel"
+                android:layout_height="40dp"
+                app:layout_constraintTop_toBottomOf="@+id/placementLabel"
                 android:layout_marginTop="4dp"
-                android:visibility="gone"
+                android:visibility="@{request.isIntraCityContract()}"
                 android:background="@drawable/background_grey_border"
                 android:padding="1dp">
 
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/placementSpinner"
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinnerPlacementDays"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginEnd="50dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@drawable/bg_spinner"
+                    android:drawSelectorOnTop="true"
+                    android:layout_gravity="center"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_marginEnd="@dimen/size_12dp"
+                    android:entries="@array/placementDaysItems"
                     android:textSize="18sp"
-                    android:textColorHint="#8F9198"
-                    android:background="@null"
-                    android:inputType="phone"
-                    android:focusable="true"
-                    android:visibility="gone"
-                    android:hint="Enter bid amount"
-                    android:nextFocusLeft="@id/et_bid_amount"
-                    android:nextFocusRight="@id/et_bid_amount"
-                    android:nextFocusUp="@id/et_bid_amount"
-                    android:nextFocusDown="@id/et_bid_amount"
-                    android:nextFocusForward="@id/et_bid_amount"
-                    android:singleLine="true"
                     android:textColor="#3D445C"/>
 
             </LinearLayout>
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/placementError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/tripLl"
-                app:layout_constraintStart_toStartOf="parent"
-                android:textColor="@color/bid_error"
-                android:textSize="@dimen/text_12sp"
-                android:paddingTop="@dimen/size_4dp"
-                android:visibility="gone"
-                android:text="@string/invalid_amount_out_of_range"/>
+
             <include
                 android:id="@+id/strongBidCard"
                 layout="@layout/card_strong_bid"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/bidError"
+                app:layout_constraintTop_toBottomOf="@id/placementLl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -310,7 +275,7 @@
                 android:id="@+id/weak_bid_card"
                 layout="@layout/card_weak_bid"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/bidError"
+                app:layout_constraintTop_toBottomOf="@id/placementLl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -326,7 +291,8 @@
                 android:clickable="true"
                 android:enabled="false"
                 android:textSize="@dimen/text_14sp"
-                app:layout_constraintTop_toBottomOf="@id/bidError"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@id/placementLl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp" />
@@ -351,6 +317,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/routeTitle"
                 android:visibility="gone"
                 layout="@layout/view_bid_status_rejected"/>
+            <include
+                android:id="@+id/awaitingBidCl"
+                android:layout_margin="@dimen/size_12dp"
+                android:padding="@dimen/size_12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/routeTitle"
+                android:visibility="gone"
+                layout="@layout/view_bid_status_awaiting"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

@@ -34,8 +34,16 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:animateLayoutChanges="true"
+      android:layout_marginBottom="@dimen/size_12dp"
       android:orientation="vertical">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        bind:shadow="@{ @dimen/size_4dp }"
+        android:background="@android:color/white"
+        />
+<!--    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
@@ -65,7 +73,7 @@
         android:textColor="@color/heading_black"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/backArrow"/>
-    <androidx.constraintlayout.widget.ConstraintLayout
+  &lt;!&ndash;  <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_bid_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -107,8 +115,8 @@
           android:text="@string/live_bidding_at"
           android:textSize="@dimen/text_12sp"
           />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>&ndash;&gt;
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
   <include
       android:id="@+id/container_error"
       layout="@layout/view_warning_item"
@@ -128,39 +136,26 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/cl_bid_status">
+        android:background="@color/white">
 
-      <androidx.appcompat.widget.AppCompatImageView
-          android:id="@+id/seperator"
-          android:layout_width="match_parent"
-          android:layout_height="5dp"
-          app:srcCompat="@drawable/seperator_line"
-          android:layout_marginTop="@dimen/size_12dp"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          android:visibility="gone"
-
-          />
       <androidx.core.widget.NestedScrollView
-          android:layout_width="0dp"
+          android:layout_width="match_parent"
           android:layout_height="0dp"
-          app:layout_constraintBottom_toTopOf="@+id/bottomLay"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintHorizontal_bias="1.0"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/seperator"
+          app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintVertical_bias="1.0"
           >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_16dp"
+            android:id="@+id/mainCl"
             android:paddingBottom="@dimen/size_16dp"
             android:visibility="@{!refreshing &amp;&amp; !error ? View.VISIBLE : View.GONE }"
             >
-          <View
+       <!--   <View
               android:id="@+id/view_margin_result"
               android:layout_width="match_parent"
               android:layout_height="@dimen/size_20dp"
@@ -178,6 +173,15 @@
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/contractResult"
               tools:visibility="gone"
+              />-->
+          <include
+              android:visibility="gone"
+              android:id="@+id/card_input"
+              layout="@layout/card_place_bid_input"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              tools:visibility="visible"
               />
           <View
               android:id="@+id/view_margin_route"
@@ -187,7 +191,7 @@
               android:background="@color/transparent_white"
               android:visibility="gone"
               app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toBottomOf="@+id/contractRulesWithResult"
+              app:layout_constraintTop_toBottomOf="@+id/card_input"
               />
           <View
               android:id="@+id/view_margin_paymentInfo"
@@ -885,7 +889,7 @@
               app:layout_constraintTop_toBottomOf="@+id/paymentSlabsInfoLbl"
               android:visibility="@{transaction.paymentSlabsVisibility()}"
               />
-          <include
+          <!--<include
               layout="@layout/view_contracts_bid_results"
               android:id="@+id/contractResult"
               android:layout_width="match_parent"
@@ -901,7 +905,7 @@
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/view_margin_rule"
               tools:visibility="gone"
-              />
+              />-->
           <include
               layout="@layout/view_contracts_route_details"
               android:id="@+id/routeDetails"
@@ -927,7 +931,7 @@
               />
         </androidx.constraintlayout.widget.ConstraintLayout>
       </androidx.core.widget.NestedScrollView>
-      <androidx.constraintlayout.widget.ConstraintLayout
+    <!--  <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:padding="@dimen/size_16dp"
@@ -1176,7 +1180,7 @@
               android:text="@string/place_your_bid"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
   </androidx.appcompat.widget.LinearLayoutCompat>
