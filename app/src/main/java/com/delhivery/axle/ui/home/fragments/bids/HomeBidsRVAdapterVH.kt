@@ -47,8 +47,10 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
     item: IT,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    setOnClickListener { action(actionId, item, _interface) }
-    this.isSelected = true
+    setOnClickListener {
+      if(this.isSelected) return@setOnClickListener
+      action(actionId, item, _interface)
+    }
   }
 
   /**
@@ -71,16 +73,16 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
 
-      binding.ongoingCount = item.data.myBids
-      binding.tvOngoing.clickToAction(HomeBidsHeaderAction_TabChangeActive, item, _interface)
+    binding.ongoingCount = item.data.myBids
+    binding.tvOngoing.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeActive, item, _interface)
 
-      //
-      binding.wonCount = item.data.confirmedBid
-      binding.tvWon.clickToAction(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
+    //
+    binding.wonCount = item.data.confirmedBid
+    binding.tvWon.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
 
-      //
-      binding.lostCount = item.data.lostBids
-      binding.tvLost.clickToAction(HomeBidsHeaderAction_TabChangeLost, item, _interface)
+    //
+    binding.lostCount = item.data.lostBids
+    binding.tvLost.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeLost, item, _interface)
 
     when(item.data.bidType){
       BidType.ActiveBid -> {

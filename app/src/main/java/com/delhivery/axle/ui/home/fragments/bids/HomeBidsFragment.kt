@@ -167,7 +167,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem(HomeBidsSearchItemData()))
-    add(0, HomeBidsProgressItem())
+    add(2, HomeBidsProgressItem())
   }
 
   override fun handleAction(
