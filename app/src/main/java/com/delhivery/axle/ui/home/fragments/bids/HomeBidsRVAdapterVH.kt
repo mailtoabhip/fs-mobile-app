@@ -31,7 +31,8 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
     BaseViewHolder<B>(binding) {
   abstract fun bind(
     item: IT,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean = false
   )
 
   /**
@@ -71,19 +72,62 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
     BaseHomeBidsRVAdapterViewHolder<ViewBidsHeaderNewItemBinding, HomeBidsHeaderItem>(binding) {
   override fun bind(
     item: HomeBidsHeaderItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
 
     binding.ongoingCount = item.data.myBids
-    binding.tvOngoing.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeActive, item, _interface)
+    if (isLoadingData) {
+      // Disable tab clicks when loading
+      binding.tvOngoing.setOnClickListener(null)
+      binding.tvOngoing.isEnabled = false
+      binding.tvOngoing.alpha = 0.5f
+      // Add loading indicator text
+      binding.tvOngoing.text = "Ongoing (${item.data.myBids})..."
+    } else {
+      // Enable tab clicks when not loading
+      binding.tvOngoing.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeActive, item, _interface)
+      binding.tvOngoing.isEnabled = true
+      binding.tvOngoing.alpha = 1.0f
+      // Remove loading indicator text
+      binding.tvOngoing.text = "Ongoing (${item.data.myBids})"
+    }
 
     //
     binding.wonCount = item.data.confirmedBid
-    binding.tvWon.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
+    if (isLoadingData) {
+      // Disable tab clicks when loading
+      binding.tvWon.setOnClickListener(null)
+      binding.tvWon.isEnabled = false
+      binding.tvWon.alpha = 0.5f
+      // Add loading indicator text
+      binding.tvWon.text = "Won (${item.data.confirmedBid})..."
+    } else {
+      // Enable tab clicks when not loading
+      binding.tvWon.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
+      binding.tvWon.isEnabled = true
+      binding.tvWon.alpha = 1.0f
+      // Remove loading indicator text
+      binding.tvWon.text = "Won (${item.data.confirmedBid})"
+    }
 
     //
     binding.lostCount = item.data.lostBids
-    binding.tvLost.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeLost, item, _interface)
+    if (isLoadingData) {
+      // Disable tab clicks when loading
+      binding.tvLost.setOnClickListener(null)
+      binding.tvLost.isEnabled = false
+      binding.tvLost.alpha = 0.5f
+      // Add loading indicator text
+      binding.tvLost.text = "Lost (${item.data.lostBids})..."
+    } else {
+      // Enable tab clicks when not loading
+      binding.tvLost.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeLost, item, _interface)
+      binding.tvLost.isEnabled = true
+      binding.tvLost.alpha = 1.0f
+      // Remove loading indicator text
+      binding.tvLost.text = "Lost (${item.data.lostBids})"
+    }
 
     when(item.data.bidType){
       BidType.ActiveBid -> {
@@ -125,7 +169,8 @@ internal class HomeBidsSearchItemVH(binding: ViewBidsSearchbarNewItemBinding) :
 
   override fun bind(
     item: HomeBidsSearchItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
     // Set hint for origin/destination search
     //binding.searchBar.hint = "Search by Origin or Destination"
@@ -197,7 +242,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
     BaseHomeBidsRVAdapterViewHolder<CardCommonBidsBinding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
     binding.request = item.data
 
@@ -273,7 +319,8 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
   BaseHomeBidsRVAdapterViewHolder<ViewContractsBidItemBinding, HomeContractsBidsRequestItem>(binding) {
   override fun bind(
     item: HomeContractsBidsRequestItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
     binding.request = item.data
     if(item.data.bidStatus().statusKey.lowercase().equals("open")){
@@ -316,7 +363,8 @@ internal class HomeBidsWarningItemVH(binding: ViewWarningItemBinding) :
     BaseHomeBidsRVAdapterViewHolder<ViewWarningItemBinding, HomeBidsWarningItem>(binding) {
   override fun bind(
     item: HomeBidsWarningItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
@@ -332,7 +380,8 @@ internal class HomeBidsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
     BaseHomeBidsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeBidsTimeoutItem>(binding) {
   override fun bind(
     item: HomeBidsTimeoutItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
     binding.title = item.data.title
     binding.subTitle = item.data.subtitle
@@ -350,10 +399,9 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
     ) {
   override fun bind(
     item: HomeBidsProgressItem,
-    _interface: HomeBidsRVAdapterInterface
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
   ) {
 
   }
-
-
 }
