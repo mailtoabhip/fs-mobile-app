@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -677,6 +678,15 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
   }*/
 
+  fun enableKeyboard(){
+    binding.cardInput.etBidAmount.requestFocus()
+
+    // Delay to ensure the window is ready before showing the keyboard
+    binding.cardInput.etBidAmount.post {
+      val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+      imm.showSoftInput(binding.cardInput.etBidAmount, InputMethodManager.SHOW_IMPLICIT)
+    }
+  }
   inner class ProgressObserver : Observer<Boolean> {
     override fun onChanged(t: Boolean?) {
       t?.let {
@@ -870,6 +880,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           is BidDetailsUserBidState_PlaceBidFirst -> {
             setBiddingInput(viewModel.transaction)
             binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
             /* binding.bottomLay.visibility = View.VISIBLE
              binding.confirmedText.text = getString(string.place_your_bid)
              binding.clBidYet.visibility = View.VISIBLE
@@ -883,7 +894,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.cardInput.placeBidButton.text = "Place Bid"
             setBiddingInput(viewModel.transaction)
             binding.cardInput.root.visibility = View.VISIBLE
-
+            enableKeyboard()
             /*  binding.bottomLay.visibility = View.VISIBLE
               binding.confirmedText.text = getString(string.place_your_bid)
               binding.clBidYet.visibility = View.VISIBLE
@@ -899,6 +910,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             viewModel.transaction.transactionBid = state.lowestAndUserBidPair.first
             setBiddingInput(viewModel.transaction)
             binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
             /*    binding.bottomLay.visibility = View.VISIBLE
                  binding.confirmedText.text = getString(string.revise_your_bid)
                  val data = viewModel.transaction
@@ -1043,7 +1055,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
               binding.cardInput.rejectedBidCl.title = "Bid not selected"
-              binding.cardInput.rejectedBidCl.subTitle = "You were ₹${viewModel.transaction.bidAmount().toInt()-userBid.bidAmount.toInt()} above the lowest bid"
+              binding.cardInput.rejectedBidCl.subTitle = "You were ₹${viewModel.transaction.lowestBid!!.toInt()-userBid.bidAmount.toInt()} above the lowest bid"
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
               binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
                 //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)

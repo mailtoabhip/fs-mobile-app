@@ -18,9 +18,11 @@ import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
+import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryBidAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -188,9 +190,13 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         )
         Log.i("itemDailog", "clicked")
         if(_item.requestType==RequestType.Contract.type){
-          navigationUtils.navigate(ContractDetailsActivity::class.java)
+          startActivity(_item.transactionId?.let { context?.let { it1 ->
+            contractDetailsIntent(it,
+              it1
+            )
+          } })
         }else{
-          navigationUtils.navigate(BidDetailsActivity::class.java)
+          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
 
         }
       }

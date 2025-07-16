@@ -936,30 +936,47 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               }*/
           }
           is BidDetailsUserBidState_EditBid -> {
-            binding.cardInput.root.visibility = View.VISIBLE
-            binding.cardInput.editBidCl.visibility = View.VISIBLE
-            binding.cardInput.confirmedBidCl.root.visibility = View.GONE
-            binding.cardInput.rejectedBidCl.root.visibility = View.GONE
-            enableKeyboard()
-            binding.transaction?.transactionBid = state.lowestAndUserBidPair.second
-            enablePlaceBid(false)
-            binding.cardInput.placeBidButton.text = "Revise Bid"
+
+
             val data = binding.transaction as HomeBidsRequestItemData
-            if (data.isPMTIndent()) {
-            //  binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
-              data.transactionBid?.bidAmount?.let {
-                binding.cardInput.etBidAmount?.setText(DecimalFormat("#########").format(it))
+            if(!data.isLoadBiddingOpen()){
+              binding.cardInput.editBidCl.visibility = View.GONE
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.awaitingBidCl.root.visibility = View.VISIBLE
+              binding.cardInput.awaitingBidCl.title = "Awaiting Result"
+              binding.cardInput.awaitingBidCl.subTitle = "We’ll notify you once the results are out"
+              binding.cardInput.awaitingBidCl.actionLabel = "Explore New Bids"
+              binding.cardInput.awaitingBidCl.btnAction.setOnClickListener {
+                startActivity(homeActivityIntent("load", this@BidDetailsActivity))
+
+                // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
               }
-              data.transactionBid?.pmtRate?.let {
+            }else{
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.editBidCl.visibility = View.VISIBLE
+              binding.cardInput.confirmedBidCl.root.visibility = View.GONE
+              binding.cardInput.rejectedBidCl.root.visibility = View.GONE
+              enableKeyboard()
+              binding.transaction?.transactionBid = state.lowestAndUserBidPair.second
+              enablePlaceBid(false)
+              binding.cardInput.placeBidButton.text = "Revise Bid"
+              if (data.isPMTIndent()) {
+                //  binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
+                data.transactionBid?.bidAmount?.let {
+                  binding.cardInput.etBidAmount?.setText(DecimalFormat("#########").format(it))
+                }
+                data.transactionBid?.pmtRate?.let {
 //                binding.labelBid.text =
 //                  "Your minimum payout will be ₹${StringUtils.formatAmount(transactionBid.pmtRate)}"
-              }
-            } else {
-            //  binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
-              data.transactionBid?.bidAmount?.let {
-                binding.cardInput.etBidAmount.setText(DecimalFormat("#########").format(it))
+                }
+              } else {
+                //  binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
+                data.transactionBid?.bidAmount?.let {
+                  binding.cardInput.etBidAmount.setText(DecimalFormat("#########").format(it))
+                }
               }
             }
+
           //  binding.cardInput.etBidAmount.text = data?.transactionBid?.bidAmount
            /* ViewBidDetailsEditBidBinding.inflate(layoutInflater, binding.containerActions, false)
               .apply {
@@ -1224,7 +1241,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+binding.transaction?.transactionBid?.bidAmount
             binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
-            binding.cardInput.rejectedBidCl.actionLabel = "Go To Placement Tab"
+            binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
             binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
               startActivity(homeActivityIntent("placement", this@BidDetailsActivity))
 

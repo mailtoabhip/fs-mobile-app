@@ -1287,6 +1287,17 @@ data class HomeBidsRequestItemData(
     return false
   }
 
+  fun isLoadBiddingOpen(): Boolean {
+    if (bidEndingTime != null) {
+      val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      val date1: Date = format.parse(format.format(Date()))
+      val date2: Date = format.parse(bidEndingTime)
+      return date2.compareTo(date1) >= 0
+    }
+    return false
+  }
+
   fun isUnderOneHour(): Boolean {
     if (contractBiddingEndTime != null && isContractBiddingOpen()) {
       try {
