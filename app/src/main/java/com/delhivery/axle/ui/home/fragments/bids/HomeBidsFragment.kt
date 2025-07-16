@@ -14,10 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
+import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
+import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.custom.DelhiveryBidAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -184,7 +187,12 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
-        bidDialog(_item)
+        if(_item.requestType==RequestType.Contract.type){
+          navigationUtils.navigate(ContractDetailsActivity::class.java)
+        }else{
+          navigationUtils.navigate(BidDetailsActivity::class.java)
+
+        }
       }
 
       HomeBidsRequestAction_PlaceBid -> {

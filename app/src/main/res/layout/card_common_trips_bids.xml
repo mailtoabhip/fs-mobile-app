@@ -59,6 +59,7 @@
             android:visibility="@{request.isIntraCityContract()}"
             app:request="@{request}"
             />
+
         <include
             android:id="@+id/strongBidCard"
             layout="@layout/card_strong_bid"
@@ -83,6 +84,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:request="@{request}" />
+
         <include
             android:id="@+id/include_bid_time_6"
             layout="@layout/item_bid_action_time"
