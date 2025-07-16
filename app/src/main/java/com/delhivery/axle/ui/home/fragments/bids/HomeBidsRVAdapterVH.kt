@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.DemandType
+import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.CardCommonBidsBinding
 import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
@@ -108,29 +109,6 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
       }
 
     }
-
-
-//    binding.myBids = when (item.data.myBids) {
-//      -1 -> ""
-//      else -> item.data.myBids.toString() + " Bids"
-//    }
-//    binding.confirmedBids = when (item.data.confirmedBid) {
-//      -1 -> ""
-//      else -> item.data.confirmedBid.toString() + " Bids"
-//    }
-//    binding.lostBids = when (item.data.lostBids) {
-//      -1 -> ""
-//      else -> item.data.lostBids.toString() + " Bids"
-//    }
-//    binding.contractBids = when (item.data.contractBids) {
-//      -1 -> ""
-//      else -> item.data.contractBids.toString() + " Bids"
-//    }
-//
-//    binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
-//    binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
-//    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
-//    binding.viewContractBids.clickToAction(HomeBidsHeaderAction_ContractBids, item, _interface)
   }
 
 }
@@ -160,7 +138,54 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
   ) {
     binding.request = item.data
     //
+    //binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
+    //set button or bid status visibility based on ongoing/ won/ lost tab and bid cancelled/ bid lost/ awaiting result
 
+    when(item.data.bidStatus().statusKey.lowercase()){
+      TransactionBidStatus.Open.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.VISIBLE
+        binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
+        binding.includeBidTime6.ivBidStatus.visibility = View.GONE
+        binding.includeBidTime6.tvBidStatus.visibility = View.GONE
+      }
+
+      TransactionBidStatus.Accepted.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+        //set image
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
+        //set text
+        binding.includeBidTime6.tvBidStatus.text = "Bid Confirmed"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+      }
+
+      TransactionBidStatus.Rejected.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+        //set image
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
+        //set text
+        binding.includeBidTime6.tvBidStatus.text = "Bid Rejected"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+      }
+
+      TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+        //set image
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
+        //set text
+        binding.includeBidTime6.tvBidStatus.text = "Bid Cancelled"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+      }
+
+      else -> {
+        //this space is intentionally left blank
+      }
+    }
   }
 }
 

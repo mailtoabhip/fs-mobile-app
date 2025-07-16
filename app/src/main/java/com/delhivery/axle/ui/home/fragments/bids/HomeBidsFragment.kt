@@ -199,6 +199,18 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         bidDialog(_item)
       }
 
+        HomeBidsRequestAction_ReviseBid -> {
+            val _item = item.data as HomeBidsRequestItemData
+            // Capture event
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_LIST_ITEM,
+                mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+                mutableListOf(VALUE_BID, _item.transactionId ?: "")
+            )
+            Log.i("itemDailog", "clicked")
+            bidDialog(_item)
+        }
+
       HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event

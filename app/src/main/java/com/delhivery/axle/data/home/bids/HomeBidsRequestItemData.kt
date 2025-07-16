@@ -592,7 +592,7 @@ data class HomeBidsRequestItemData(
       if (date2.compareTo(date1) > 0) {
         "Closes in ${DateUtils.timeDiff(date1.time,date2.time)}"
       } else {
-        "Closed ${ DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
+        "Closed ${DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
       }
     }catch(e:Exception){
       Log.d("formattedBidding::catch",""+e.printStackTrace())
@@ -1561,7 +1561,7 @@ data class HomeBidsRequestItemData(
           }
           i++
         }
-        (numStops).toString()+" stops"
+        if(numStops>0) (numStops).toString()+" stops" else ""
       }else{
         ""
       }
@@ -1702,6 +1702,7 @@ const val SUB_REQUEST_TYPE_INTRACITY = "intracity"
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
+const val HomeBidsRequestAction_ReviseBid = "revise_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
 const val HomeBidsRequestAction_AcceptBid = "accept_bid"

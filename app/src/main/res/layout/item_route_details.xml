@@ -64,7 +64,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:paddingTop="16dp"
         android:paddingBottom="@dimen/size_4dp"
-        android:visibility="@{request.isFRCContract()}"
+        android:visibility="@{request.isFRCLHContract()}"
         tools:visibility="visible"
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp"
