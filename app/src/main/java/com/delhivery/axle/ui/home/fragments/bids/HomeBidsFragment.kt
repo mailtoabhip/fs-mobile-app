@@ -16,23 +16,14 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
-import com.delhivery.axle.ui.biddetails.*
 import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.ui.bids.BidType.ActiveBid
-import com.delhivery.axle.ui.bids.BidType.ConfirmedBid
-import com.delhivery.axle.ui.bids.BidType.ContractBid
-import com.delhivery.axle.ui.bids.BidType.LostBid
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
-import com.delhivery.axle.ui.bids.userBidsIntent
-import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
+import com.delhivery.axle.ui.custom.DelhiveryBidAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
-import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -45,7 +36,7 @@ import javax.inject.Inject
  * All bids screen on home
  */
 class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
-    HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
+    HomeBidsRVAdapterInterface, DelhiveryBidAnimatedSearchBar.ToolbarElevationChangeListener {
 
   var _title: String = "My Bids"
   var launch : Boolean =true
@@ -158,13 +149,17 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     }
   }
   private fun fetchBidsData(bidType: BidType) {
-    viewModel.fetchBidsSummary() // bids counts are fetched from this api
+    //set bidType
+    viewModel.bidType = bidType
+    //
+    viewModel.fetchBidsSummary(bidType = bidType) // bids counts are fetched from this api
+    //
     viewModel.fetchBids(bidType = bidType) //pass specific status to fetch ongoing/ won/ lost
   }
 
   private fun refreshData() {
     /* remove user transactions */
-    adapter.resetStaticData()
+    adapter.resetStaticData(activeBidCount = viewModel.activeBids, confirmedBidCount = viewModel.confirmedBids, lostBidCount = viewModel.lostBids, bidType = viewModel.bidType)
     /* fetch again */
     fetchBidsData(viewModel.bidType)
   }
@@ -172,7 +167,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
     add(0, HomeBidsHeaderItem())
     add(1, HomeBidsSearchItem(HomeBidsSearchItemData()))
-    add(2, HomeBidsProgressItem())
+    add(0, HomeBidsProgressItem())
   }
 
   override fun handleAction(
@@ -348,7 +343,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   }
 
   inner class HomeBidsRVScrollListener(
-    private val stickyView: DelhiveryAnimatedSearchBar,
+    private val stickyView: DelhiveryBidAnimatedSearchBar,
     private val elevation: Float = 12f
   ) : OnScrollListener() {
 

@@ -27,12 +27,13 @@
           />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+    <com.delhivery.axle.ui.custom.DelhiveryBidAnimatedSearchBar
         android:id="@+id/edit_sticky_search"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_72dp"
         android:gravity="center_vertical"
-        android:hint="@string/hint_search_bids"
+        android:drawableLeft="@drawable/ic_search"
+        android:hint="@string/hint_search"
         android:imeOptions="actionSearch"
         android:maxLines="1"
         android:paddingBottom="@dimen/size_16dp"

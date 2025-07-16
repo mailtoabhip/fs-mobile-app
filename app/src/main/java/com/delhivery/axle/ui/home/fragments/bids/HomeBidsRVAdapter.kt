@@ -30,6 +30,8 @@ import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Reque
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Timeout
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Warning
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * RV adapter for [HomeBidsFragment]
@@ -98,9 +100,11 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   /**
    * Reset all data, remove all errors/transactions
    */
-  fun resetStaticData() {
+  //fun resetStaticData(bidType: BidType = BidType.ActiveBid) {
+  fun resetStaticData(activeBidCount:String = "0", confirmedBidCount:String = "0", lostBidCount:String = "0", bidType: BidType = BidType.ActiveBid) {
     mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData()), Update))
+      //commented this out to avoid the wrong tab selection during refresh if any other tab is clicked apart from the default one i.e "Ongoing"
+      add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData(myBids = Integer.parseInt(activeBidCount), confirmedBid = Integer.parseInt(confirmedBidCount), lostBids = Integer.parseInt(lostBidCount), bidType = bidType)), Update))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
       items.filter { it.type == Request || it.type == Warning || it.type == Timeout || it.type == Search || it.type==Contracts }
           .map { Pair(it, Remove) }

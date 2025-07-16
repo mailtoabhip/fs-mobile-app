@@ -86,7 +86,7 @@ class HomeBidsViewModel @Inject constructor(
   /**
    * Fetch bids summary
    */
-  fun fetchBidsSummary() {
+  fun fetchBidsSummary(bidType: BidType) {
     compositeDisposable += bidsRepository.userBidsSummary()
         .onBackground()
         .subscribe { _res, error ->
@@ -124,8 +124,6 @@ class HomeBidsViewModel @Inject constructor(
    *
    */
   fun fetchBids(bidType: BidType,paginate: Boolean = false) {
-    //set bidType
-    this@HomeBidsViewModel.bidType = bidType
 
     if (!paginate) {
       offset = 0

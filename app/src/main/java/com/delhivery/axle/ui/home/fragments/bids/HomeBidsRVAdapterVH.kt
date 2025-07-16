@@ -42,6 +42,15 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
     _interface: HomeBidsRVAdapterInterface
   ) = setOnClickListener { action(actionId, item, _interface) }
 
+  protected fun View.clickToActionWithStateSelection(
+    actionId: String,
+    item: IT,
+    _interface: HomeBidsRVAdapterInterface
+  ) {
+    setOnClickListener { action(actionId, item, _interface) }
+    this.isSelected = true
+  }
+
   /**
    * Post action to UI
    */
@@ -66,7 +75,7 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
       binding.tvOngoing.clickToAction(HomeBidsHeaderAction_TabChangeActive, item, _interface)
 
       //
-    binding.wonCount = item.data.confirmedBid
+      binding.wonCount = item.data.confirmedBid
       binding.tvWon.clickToAction(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
 
       //
