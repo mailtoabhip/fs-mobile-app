@@ -86,7 +86,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     binding.rvBids.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = this@HomeBidsFragment.adapter
-      addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
+      //addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
@@ -135,7 +135,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     })
 
     /* attach sticky search with adapter */
-    binding.editStickySearch.attachWithAdapter(adapter, this)
+    //binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch bids data*/
     fetchBidsData(BidType.ActiveBid)
@@ -239,39 +239,39 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         refreshData()
       }
 
-      HomeBidsSearchAction_Search -> context?.let {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_SEARCH_LOCAL,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE),
-            mutableListOf(VALUE_BID)
-        )
-
-        val childView = binding.rvBids.findViewHolderForAdapterPosition(1)!!.itemView
-        val stickyView = binding.editStickySearch
-        stickyView.visibility = View.VISIBLE
-        stickyView.translationY = childView.top.toFloat()
-        stickyView.alpha = 1f
-        binding.rvBids.alpha = 0f
-        adapter.enableFilter()
-
-        val valueAnimator = ValueAnimator.ofInt(childView.top, 0)
-        valueAnimator.duration = 250
-        valueAnimator.addUpdateListener { t ->
-          val animValue = t.animatedValue as Int
-          stickyView.translationY = animValue.toFloat()
-          stickyView.setRatio((animValue.toFloat() / childView.top))
-          if (animValue.toFloat() / childView.top == 1f) {
-            binding.rvBids.alpha = 1f
-          }
-        }
-        valueAnimator.start()
-        stickyView.postDelayed({
-          stickyView.requestFocus()
-          uiUtils.toggleKeyboard(false)
-          toolbarElevationLiveData!!.postValue(0f)
-        }, 300)
-      }
+//      HomeBidsSearchAction_Search -> context?.let {
+//        // Capture event
+//        analyticsUtil.moEngageTrackEvent(
+//            EVENT_SEARCH_LOCAL,
+//            mutableListOf(PROPERTY_TRANSACTION_TYPE),
+//            mutableListOf(VALUE_BID)
+//        )
+//
+//        val childView = binding.rvBids.findViewHolderForAdapterPosition(1)!!.itemView
+//        val stickyView = binding.editStickySearch
+//        stickyView.visibility = View.VISIBLE
+//        stickyView.translationY = childView.top.toFloat()
+//        stickyView.alpha = 1f
+//        binding.rvBids.alpha = 0f
+//        adapter.enableFilter()
+//
+//        val valueAnimator = ValueAnimator.ofInt(childView.top, 0)
+//        valueAnimator.duration = 250
+//        valueAnimator.addUpdateListener { t ->
+//          val animValue = t.animatedValue as Int
+//          stickyView.translationY = animValue.toFloat()
+//          stickyView.setRatio((animValue.toFloat() / childView.top))
+//          if (animValue.toFloat() / childView.top == 1f) {
+//            binding.rvBids.alpha = 1f
+//          }
+//        }
+//        valueAnimator.start()
+//        stickyView.postDelayed({
+//          stickyView.requestFocus()
+//          uiUtils.toggleKeyboard(false)
+//          toolbarElevationLiveData!!.postValue(0f)
+//        }, 300)
+//      }
 
       HomeBidsWarningAction_NoBids -> {
         action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
