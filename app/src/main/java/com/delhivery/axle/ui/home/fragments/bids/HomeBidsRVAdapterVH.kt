@@ -137,7 +137,7 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
     _interface: HomeBidsRVAdapterInterface
   ) {
     binding.request = item.data
-    //
+
     //binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
     //set button or bid status visibility based on ongoing/ won/ lost tab and bid cancelled/ bid lost/ awaiting result
 

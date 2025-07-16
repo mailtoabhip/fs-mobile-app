@@ -107,7 +107,7 @@ object BindingAdapters {
   fun setOptionalTextColor(view: TextView, request: HomeBidsRequestItemData?) {
     if (request == null) return
 
-    val colorResId = if (request.isActiveBid()) {
+    val colorResId = if (request.isBidOpen()) {
       R.color.colorAccent
     } else {
       R.color.text_grey_v3

@@ -581,12 +581,32 @@ data class HomeBidsRequestItemData(
 
   fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
 
+  fun isBidEndingTimeExist() = if(contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true)) View.GONE else View.VISIBLE
+
+  fun isBidOpen(): Boolean {
+    val endTime = contractBiddingEndTime?.takeIf {
+      it.isNotBlank() && !it.equals("null", ignoreCase = true)
+    } ?: return true //assume if contractBiddingEndTime is null -> bid is open
+
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
+      timeZone = TimeZone.getTimeZone("IST")
+    }
+
+    return try {
+      val now = Date()
+      val endDate = format.parse(endTime)
+      endDate?.after(now) ?: true
+    } catch (e: Exception) {
+      true // If parsing fails, assume bid is open
+    }
+  }
+
   fun formattedContractBiddingEndTime()= if (contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true) ){
     ""}
   else{
     try{
       val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      format.setTimeZone(TimeZone.getTimeZone("IST"))
       val date1: Date = format.parse(format.format(Date()))
       val date2: Date = format.parse(contractBiddingEndTime)
       if (date2.compareTo(date1) > 0) {
