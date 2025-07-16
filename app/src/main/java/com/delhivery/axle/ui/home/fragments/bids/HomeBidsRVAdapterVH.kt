@@ -143,10 +143,24 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
 
     when(item.data.bidStatus().statusKey.lowercase()){
       TransactionBidStatus.Open.statusKey.lowercase() -> {
-        binding.includeBidTime6.tvReviseBid.visibility = View.VISIBLE
-        binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
-        binding.includeBidTime6.ivBidStatus.visibility = View.GONE
-        binding.includeBidTime6.tvBidStatus.visibility = View.GONE
+        if(item.data.isBidOpen()){
+          //Bid Open status - Can be revised
+          binding.includeBidTime6.tvReviseBid.visibility = View.VISIBLE
+          binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
+          binding.includeBidTime6.ivBidStatus.visibility = View.GONE
+          binding.includeBidTime6.tvBidStatus.visibility = View.GONE
+        }else{
+          //Awaiting Result status - can't be revised
+          binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+          binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+          binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+
+          //set image
+          binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_wait)
+          //set text
+          binding.includeBidTime6.tvBidStatus.text = "Awaiting Result"
+          binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.orange_v3))
+        }
       }
 
       TransactionBidStatus.Accepted.statusKey.lowercase() -> {
@@ -165,10 +179,10 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
         binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
         binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
         //set image
-        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
         //set text
-        binding.includeBidTime6.tvBidStatus.text = "Bid Rejected"
-        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+        binding.includeBidTime6.tvBidStatus.text = "Bid Lost"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
       }
 
       TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
@@ -176,10 +190,10 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
         binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
         binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
         //set image
-        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
         //set text
         binding.includeBidTime6.tvBidStatus.text = "Bid Cancelled"
-        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
       }
 
       else -> {
