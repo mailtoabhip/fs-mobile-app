@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -38,7 +39,7 @@
                 android:id="@+id/weakBidTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Weak bid"
+                android:text="You're losing"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="#8E2720"
@@ -50,7 +51,8 @@
                 android:id="@+id/weakBidSubtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="You have low chances of winning!"
+                android:text="@{request.getLowestBidAmount()}"
+                tools:text="Lowest bid amount is 47,500"
                 android:textSize="14sp"
                 android:textColor="#505361"
                 android:layout_marginTop="6dp"

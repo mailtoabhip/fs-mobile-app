@@ -161,6 +161,26 @@ data class HomeBidsRequestItemData(
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
 
+  fun getBidAmount() = "₹${transactionBid?.bidAmount?.toString()?:""}"
+
+  fun getLowestBidAmount() = if((numBids >= 1) && ((lowestBid ?: 0.0) > 0.0)) {
+    "Lowest bid is ₹${lowestBid?.toString()}."
+  }else{
+    ""
+  }
+
+  fun isStrongestBid() =
+    if (((transactionBid?.bidAmount ?: 0.0) <= (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
+      View.VISIBLE
+    else
+      View.GONE
+
+  fun isWeakBid() =
+    if (((transactionBid?.bidAmount ?: 0.0) > (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
+      View.VISIBLE
+    else
+      View.GONE
+
   fun isActiveBid() = bidType == BidType.ActiveBid
 
 
