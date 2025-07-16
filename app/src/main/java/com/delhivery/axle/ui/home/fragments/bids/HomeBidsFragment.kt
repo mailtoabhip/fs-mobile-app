@@ -199,19 +199,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         bidDialog(_item)
       }
 
-        HomeBidsRequestAction_ReviseBid -> {
-            val _item = item.data as HomeBidsRequestItemData
-            // Capture event
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_LIST_ITEM,
-                mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-                mutableListOf(VALUE_BID, _item.transactionId ?: "")
-            )
-            Log.i("itemDailog", "clicked")
-            bidDialog(_item)
-        }
-
-      HomeBidsRequestAction_ViewOtherDetails -> {
+      HomeBidsRequestAction_ReviseBid -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.moEngageTrackEvent(
@@ -223,55 +211,53 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         bidDialog(_item)
       }
 
-      // Handle header tab change actions
       HomeBidsHeaderAction_TabChangeActive -> {
+        // Handle tab change to active bids
         viewModel.bidType = BidType.ActiveBid
         refreshData()
       }
 
       HomeBidsHeaderAction_TabChangeConfirmed -> {
+        // Handle tab change to confirmed bids
         viewModel.bidType = BidType.ConfirmedBid
         refreshData()
       }
 
       HomeBidsHeaderAction_TabChangeLost -> {
+        // Handle tab change to lost bids
         viewModel.bidType = BidType.LostBid
         refreshData()
       }
 
-//      HomeBidsSearchAction_Search -> context?.let {
-//        // Capture event
-//        analyticsUtil.moEngageTrackEvent(
-//            EVENT_SEARCH_LOCAL,
-//            mutableListOf(PROPERTY_TRANSACTION_TYPE),
-//            mutableListOf(VALUE_BID)
-//        )
-//
-//        val childView = binding.rvBids.findViewHolderForAdapterPosition(1)!!.itemView
-//        val stickyView = binding.editStickySearch
-//        stickyView.visibility = View.VISIBLE
-//        stickyView.translationY = childView.top.toFloat()
-//        stickyView.alpha = 1f
-//        binding.rvBids.alpha = 0f
-//        adapter.enableFilter()
-//
-//        val valueAnimator = ValueAnimator.ofInt(childView.top, 0)
-//        valueAnimator.duration = 250
-//        valueAnimator.addUpdateListener { t ->
-//          val animValue = t.animatedValue as Int
-//          stickyView.translationY = animValue.toFloat()
-//          stickyView.setRatio((animValue.toFloat() / childView.top))
-//          if (animValue.toFloat() / childView.top == 1f) {
-//            binding.rvBids.alpha = 1f
-//          }
-//        }
-//        valueAnimator.start()
-//        stickyView.postDelayed({
-//          stickyView.requestFocus()
-//          uiUtils.toggleKeyboard(false)
-//          toolbarElevationLiveData!!.postValue(0f)
-//        }, 300)
-//      }
+      HomeBidsSearchAction_Search -> {
+        // Handle search action - get query and apply filter
+        val searchItem = item as HomeBidsSearchItem
+        val query = searchItem.data.query
+        Log.d("SearchDebug", "Search action triggered with query: $query")
+        
+        if (!query.isNullOrEmpty()) {
+          // Only filter if the query has changed to avoid unnecessary updates
+          if (!adapter.checkFiltering() || adapter.getCurrentFilterQuery() != query) {
+            Log.d("SearchDebug", "Applying filter with query: $query")
+            val result = adapter.filter(query)
+            Log.d("SearchDebug", "Filter result: $result, filtered items: ${adapter.itemsList().size}")
+            
+            // Test: Show a toast with the result
+            //android.widget.Toast.makeText(context, "Search: $query, Results: ${adapter.itemsList().size}", android.widget.Toast.LENGTH_SHORT).show()
+          } else {
+            Log.d("SearchDebug", "Skipping filter - same query")
+          }
+        } else {
+          Log.d("SearchDebug", "Query is null or empty")
+        }
+      }
+
+      HomeBidsSearchAction_Clear -> {
+        // Handle clear search action
+        Log.d("SearchDebug", "Clearing search")
+        adapter.cancelFilter()
+        //android.widget.Toast.makeText(context, "Search cleared", android.widget.Toast.LENGTH_SHORT).show()
+      }
 
       HomeBidsWarningAction_NoBids -> {
         action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
@@ -279,6 +265,10 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
       HomeBidsTimeOutAction -> {
         refreshData()
+      }
+
+      else -> {
+        // Handle other actions
       }
     }
   }

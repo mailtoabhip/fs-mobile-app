@@ -118,12 +118,75 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
  */
 internal class HomeBidsSearchItemVH(binding: ViewBidsSearchbarNewItemBinding) :
     BaseHomeBidsRVAdapterViewHolder<ViewBidsSearchbarNewItemBinding, HomeBidsSearchItem>(binding) {
+  
+  private var textWatcher: android.text.TextWatcher? = null
+  private var searchRunnable: Runnable? = null
+  private var currentQuery: String = ""
+  
   override fun bind(
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    //binding.editQuery.hint = "Origin / Destination"
-    //binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
+    // Set hint for origin/destination search
+    //binding.searchBar.hint = "Search by Origin or Destination"
+    
+    // Remove previous text watcher to avoid multiple listeners
+    textWatcher?.let { binding.searchBar.removeTextChangedListener(it) }
+    
+    // Set up IME action listener to prevent focus crash
+    binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
+      if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+        // Hide keyboard and clear focus to prevent crash
+        binding.searchBar.clearFocus()
+        val inputMethodManager = binding.searchBar.context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.searchBar.windowToken, 0)
+        return@setOnEditorActionListener true
+      }
+      false
+    }
+    
+    // Set up text change listener for search
+    textWatcher = object : android.text.TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+      
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      
+      override fun afterTextChanged(s: android.text.Editable?) {
+        val query = s?.toString()?.trim() ?: ""
+        currentQuery = query
+        
+        // Cancel previous search runnable
+        searchRunnable?.let { binding.searchBar.removeCallbacks(it) }
+        
+        if (query.isEmpty()) {
+          // Clear search immediately
+          _interface.handleAction(HomeBidsSearchAction_Clear, item)
+        } else {
+          // Debounce search with 300ms delay
+          searchRunnable = Runnable {
+            val searchItem = HomeBidsSearchItem(HomeBidsSearchItemData(query = query))
+            _interface.handleAction(HomeBidsSearchAction_Search, searchItem)
+          }
+          binding.searchBar.postDelayed(searchRunnable!!, 300)
+        }
+      }
+    }
+    
+    // Add the text watcher
+    textWatcher?.let { binding.searchBar.addTextChangedListener(it) }
+    
+    // Set initial query if available, but only if different to avoid triggering text change
+    item.data.query?.let { query ->
+      if (binding.searchBar.text.toString() != query) {
+        binding.searchBar.setText(query)
+        currentQuery = query
+      }
+    }
+    
+    // Preserve focus if this is a rebind
+    if (currentQuery.isNotEmpty()) {
+      binding.searchBar.requestFocus()
+    }
   }
 }
 
