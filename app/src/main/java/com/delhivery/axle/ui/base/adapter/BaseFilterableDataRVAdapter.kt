@@ -11,7 +11,7 @@ abstract class BaseFilterableDataRVAdapter<
     VH : BaseViewHolder<*>>(clickListener: ItemClickListener<D>) : BaseDataRVAdapter<D, B, VH>(clickListener) {
 
   /* List of filtered items */
-  private val filteredItems = mutableListOf<D>()
+  protected val filteredItems = mutableListOf<D>()
 
   /* Is filter mode enabled */
   protected var isFiltering = false
@@ -31,7 +31,7 @@ abstract class BaseFilterableDataRVAdapter<
    *
    * @return true if filtered results are found else false
    */
-  fun filter(query: String?): Boolean {
+  open fun filter(query: String?): Boolean {
     filteredItems.clear()
     /* filter new results */
     if (query.isNotNullOrEmpty()) {
@@ -52,7 +52,7 @@ abstract class BaseFilterableDataRVAdapter<
   /**
    * Cancel filtering
    */
-  fun cancelFilter() {
+  open fun cancelFilter() {
     isFiltering = false
     filteredItems.clear()
     notifyDataSetChanged()

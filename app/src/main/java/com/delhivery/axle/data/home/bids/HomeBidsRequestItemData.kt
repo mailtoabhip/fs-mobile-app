@@ -5,8 +5,10 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import com.delhivery.axle.R
@@ -22,6 +24,7 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
@@ -152,9 +155,64 @@ data class HomeBidsRequestItemData(
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
   var showing: Boolean = false,
-  var bulkTransactionBids: List<TransactionBid> = mutableListOf()
+  var bulkTransactionBids: List<TransactionBid> = mutableListOf(),
+  //
+  var bidType : BidType? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = uuid ?: transactionId!!
+
+  fun getBidAmount() = "₹${transactionBid?.bidAmount?.toString()?:""}"
+
+  fun getLowestBidAmount() = if((numBids >= 1) && ((lowestBid ?: 0.0) > 0.0)) {
+    "Lowest bid is ₹${lowestBid?.toString()}."
+  }else{
+    ""
+  }
+
+//  fun isStrongBid(){
+//      if(isBidOpen() && bidStatus().statusKey.lowercase() == "open"){
+//          if (((transactionBid?.bidAmount ?: 0.0) <= (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
+//              View.VISIBLE
+//          else
+//              View.GONE
+//      }
+//  }
+
+    fun isStrongBid(): Int {
+        val isBidOpen = isBidOpen()
+        val isStatusOpen = bidStatus().statusKey.equals("open", ignoreCase = true)
+        val bidAmount = transactionBid?.bidAmount ?: 0.0
+        val minBid = lowestBid ?: 0.0
+
+        return if (isBidOpen && isStatusOpen && bidAmount <= minBid && numBids >= 1 && minBid > 0.0) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+
+//  fun isWeakBid() =
+//    if (((transactionBid?.bidAmount ?: 0.0) > (lowestBid ?: 0.0)) && (numBids >= 1) && ((lowestBid ?: 0.0) > 0.0))
+//      View.VISIBLE
+//    else
+//      View.GONE
+
+
+    fun isWeakBid(): Int {
+        val isBidOpen = isBidOpen()
+        val isStatusOpen = bidStatus().statusKey.equals("open", ignoreCase = true)
+        val bidAmount = transactionBid?.bidAmount ?: 0.0
+        val minBid = lowestBid ?: 0.0
+
+        return if (isBidOpen && isStatusOpen && bidAmount > minBid && numBids >= 1 && minBid > 0.0) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+  fun isActiveBid() = bidType == BidType.ActiveBid
 
   fun loadDetails() = StringUtils.capitalize(materialType) ?: "Not available"
 
@@ -559,21 +617,41 @@ data class HomeBidsRequestItemData(
 
   fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
 
+  fun isBidEndingTimeExist() = if(contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true)) View.GONE else View.VISIBLE
+
+  fun isBidOpen(): Boolean {
+    val endTime = contractBiddingEndTime?.takeIf {
+      it.isNotBlank() && !it.equals("null", ignoreCase = true)
+    } ?: return true //assume if contractBiddingEndTime is null -> bid is open
+
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
+      timeZone = TimeZone.getTimeZone("IST")
+    }
+
+    return try {
+      val now = Date()
+      val endDate = format.parse(endTime)
+      endDate?.after(now) ?: true
+    } catch (e: Exception) {
+      true // If parsing fails, assume bid is open
+    }
+  }
+
   fun formattedContractBiddingEndTime()= if (contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true) ){
     ""}
   else{
     try{
       val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-      format.setTimeZone(TimeZone.getTimeZone("IST"));
+      format.setTimeZone(TimeZone.getTimeZone("IST"))
       val date1: Date = format.parse(format.format(Date()))
       val date2: Date = format.parse(contractBiddingEndTime)
       if (date2.compareTo(date1) > 0) {
         "Closes in ${DateUtils.timeDiff(date1.time,date2.time)}"
       } else {
-        "Closed ${ DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }}, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
+        "Closed ${DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
       }
     }catch(e:Exception){
-      Log.d("formattedBiddingEndTime::catch",""+e.printStackTrace())
+      Log.d("formattedBidding::catch",""+e.printStackTrace())
     }
   }
 
@@ -1311,13 +1389,40 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  //use this function to identify the bid type
   fun isItContract() = requestType == RequestType.Contract.type
 
   fun isItLHContract() = contractType == ContractType.LH_FTL.type
   fun isItFRContract() = contractType == ContractType.FRC.type
   fun isItIntraCityContract() = contractType == ContractType.INTRACITY.type
 
+  fun isItContractOrLoadV2()= if (requestType == RequestType.Contract.type || requestType != RequestType.Contract.type) {
+    true
+  } else {
+    false
+  }
 
+  fun isItContractOrLoad()= if (requestType == RequestType.Contract.type) {
+    "Contract"
+  } else {
+    "Load"
+  }
+
+  fun isItContractAndLiveBidding() = if (requestType == RequestType.Contract.type && isLiveBidding()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isLiveBidding(): Boolean {
+    return isUnderOneHour()
+  }
+
+  fun isFRCContractV2() = if (contractType == ContractType.FRC.type) {
+    true
+  } else {
+    false
+  }
   //non-delhivery
   fun isFRCContract() = if ((requestType==RequestType.Contract.type) && contractType == ContractType.FRC.type) {
     View.VISIBLE
@@ -1512,7 +1617,7 @@ data class HomeBidsRequestItemData(
           }
           i++
         }
-        (numStops).toString()+" stops"
+        if(numStops>0) (numStops).toString()+" stops" else ""
       }else{
         ""
       }
@@ -1653,6 +1758,7 @@ const val SUB_REQUEST_TYPE_INTRACITY = "intracity"
 /* actions */
 const val HomeBidsRequestAction_ViewDetails = "bid_details"
 const val HomeBidsRequestAction_PlaceBid = "place_bid"
+const val HomeBidsRequestAction_ReviseBid = "revise_bid"
 const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
 const val HomeBidsRequestAction_AcceptBid = "accept_bid"

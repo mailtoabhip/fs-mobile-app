@@ -117,6 +117,7 @@
   <string name="hint_select_multi_cities">You can select multiple cities/states</string>
   <string name="hint_rep_time">Vehicle available in</string>
   <string name="hint_select_time">Select Time</string>
+  <string name="hint_search">Search</string>
   <string name="rep_time">Vehicle Reporting Time</string>
   <string name="hint_proof"> Do not upload proofs of Delhivery trips</string>
 

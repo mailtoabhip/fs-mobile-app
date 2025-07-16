@@ -17,6 +17,7 @@ import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.*
+import com.delhivery.axle.ui.bids.BidType.ActiveBid
 import com.delhivery.axle.ui.bids.BidType.ContractBid
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
@@ -147,7 +148,7 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
 
   private fun refreshData() {
     /* remove user transactions */
-    adapter.resetStaticData()
+    adapter.resetStaticData(bidType = ActiveBid)
     /* fetch again */
     viewModel.fetchBids(false)
   }

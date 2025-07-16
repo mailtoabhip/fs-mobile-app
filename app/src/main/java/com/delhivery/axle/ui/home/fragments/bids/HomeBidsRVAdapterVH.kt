@@ -6,8 +6,12 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.DemandType
+import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.databinding.CardCommonBidsBinding
 import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
+import com.delhivery.axle.databinding.ViewBidsHeaderNewItemBinding
+import com.delhivery.axle.databinding.ViewBidsSearchbarNewItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
@@ -17,6 +21,7 @@ import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.utils.extensions.underline
 
 /**
@@ -38,6 +43,17 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
     _interface: HomeBidsRVAdapterInterface
   ) = setOnClickListener { action(actionId, item, _interface) }
 
+  protected fun View.clickToActionWithStateSelection(
+    actionId: String,
+    item: IT,
+    _interface: HomeBidsRVAdapterInterface
+  ) {
+    setOnClickListener {
+      if(this.isSelected) return@setOnClickListener
+      action(actionId, item, _interface)
+    }
+  }
+
   /**
    * Post action to UI
    */
@@ -51,98 +67,202 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
 /**
  * Header item view holder
  */
-internal class HomeBidsHeaderItemVH(binding: ViewHomeBidsHeaderItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsHeaderItemBinding, HomeBidsHeaderItem>(binding) {
+internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewBidsHeaderNewItemBinding, HomeBidsHeaderItem>(binding) {
   override fun bind(
     item: HomeBidsHeaderItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.myBids = when (item.data.myBids) {
-      -1 -> ""
-      else -> item.data.myBids.toString() + " Bids"
-    }
-    binding.confirmedBids = when (item.data.confirmedBid) {
-      -1 -> ""
-      else -> item.data.confirmedBid.toString() + " Bids"
-    }
-    binding.lostBids = when (item.data.lostBids) {
-      -1 -> ""
-      else -> item.data.lostBids.toString() + " Bids"
-    }
-    binding.contractBids = when (item.data.contractBids) {
-      -1 -> ""
-      else -> item.data.contractBids.toString() + " Bids"
-    }
 
-    binding.viewMyBids.clickToAction(HomeBidsHeaderAction_MyBids, item, _interface)
-    binding.viewConfirmedBids.clickToAction(HomeBidsHeaderAction_ConfirmedBids, item, _interface)
-    binding.viewLostBids.clickToAction(HomeBidsHeaderAction_LostBids, item, _interface)
-    binding.viewContractBids.clickToAction(HomeBidsHeaderAction_ContractBids, item, _interface)
+    binding.ongoingCount = item.data.myBids
+    binding.tvOngoing.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeActive, item, _interface)
+
+    //
+    binding.wonCount = item.data.confirmedBid
+    binding.tvWon.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
+
+    //
+    binding.lostCount = item.data.lostBids
+    binding.tvLost.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeLost, item, _interface)
+
+    when(item.data.bidType){
+      BidType.ActiveBid -> {
+        binding.tvOngoing.isSelected = true
+        binding.tvWon.isSelected = false
+        binding.tvLost.isSelected = false
+      }
+
+      BidType.ConfirmedBid -> {
+        binding.tvOngoing.isSelected = false
+        binding.tvWon.isSelected = true
+        binding.tvLost.isSelected = false
+      }
+
+      BidType.LostBid -> {
+        binding.tvOngoing.isSelected = false
+        binding.tvWon.isSelected = false
+        binding.tvLost.isSelected = true
+      }
+
+      else -> {
+        //this space is intentionally left blank
+      }
+
+    }
   }
+
 }
 
 /**
  * Search item view holder
  */
-internal class HomeBidsSearchItemVH(binding: ViewHomeSearchItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeSearchItemBinding, HomeBidsSearchItem>(binding) {
+internal class HomeBidsSearchItemVH(binding: ViewBidsSearchbarNewItemBinding) :
+    BaseHomeBidsRVAdapterViewHolder<ViewBidsSearchbarNewItemBinding, HomeBidsSearchItem>(binding) {
+
+  private var textWatcher: android.text.TextWatcher? = null
+  private var searchRunnable: Runnable? = null
+  private var currentQuery: String = ""
+
   override fun bind(
     item: HomeBidsSearchItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-    binding.editQuery.hint = "Origin / Destination"
-    binding.editQuery.clickToAction(HomeBidsSearchAction_Search, item, _interface)
+    // Set hint for origin/destination search
+    //binding.searchBar.hint = "Search by Origin or Destination"
+
+    // Remove previous text watcher to avoid multiple listeners
+    textWatcher?.let { binding.searchBar.removeTextChangedListener(it) }
+
+    // Set up IME action listener to prevent focus crash
+    binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
+      if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+        // Hide keyboard and clear focus to prevent crash
+        binding.searchBar.clearFocus()
+        val inputMethodManager = binding.searchBar.context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.searchBar.windowToken, 0)
+        return@setOnEditorActionListener true
+      }
+      false
+    }
+
+    // Set up text change listener for search
+    textWatcher = object : android.text.TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+      override fun afterTextChanged(s: android.text.Editable?) {
+        val query = s?.toString()?.trim() ?: ""
+        currentQuery = query
+
+        // Cancel previous search runnable
+        searchRunnable?.let { binding.searchBar.removeCallbacks(it) }
+
+        if (query.isEmpty()) {
+          // Clear search immediately
+          _interface.handleAction(HomeBidsSearchAction_Clear, item)
+        } else {
+          // Debounce search with 300ms delay
+          searchRunnable = Runnable {
+            val searchItem = HomeBidsSearchItem(HomeBidsSearchItemData(query = query))
+            _interface.handleAction(HomeBidsSearchAction_Search, searchItem)
+          }
+          binding.searchBar.postDelayed(searchRunnable!!, 300)
+        }
+      }
+    }
+
+    // Add the text watcher
+    textWatcher?.let { binding.searchBar.addTextChangedListener(it) }
+
+    // Set initial query if available, but only if different to avoid triggering text change
+    item.data.query?.let { query ->
+      if (binding.searchBar.text.toString() != query) {
+        binding.searchBar.setText(query)
+        currentQuery = query
+      }
+    }
+
+    // Preserve focus if this is a rebind
+    if (currentQuery.isNotEmpty()) {
+      binding.searchBar.requestFocus()
+    }
   }
 }
 
 /**
  * Bid request item view holder
  */
-class HomeBidsRequestItemVH(binding: ViewHomeBidsRequestItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsRequestItemBinding, HomeBidsRequestItem>(binding) {
+class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
+    BaseHomeBidsRVAdapterViewHolder<CardCommonBidsBinding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface
   ) {
-   /* if(item.data.subRequestType== SUB_REQUEST_TYPE_INTRACITY){
-      binding.clIntercityBids.visibility = View.GONE
-      binding.clIntracityBids.visibility = View.VISIBLE
-      binding.layoutTransaction.request = item.data
-    }else{
-      binding.clIntercityBids.visibility = View.VISIBLE
-      binding.clIntracityBids.visibility = View.GONE
-      binding.request = item.data
-      Log.i("bulkTransactionBids",item.data.bulkTransactionBids?.size.toString())
-      binding.moreBidsRecieved = (item.data.bulkTransactionBids?.size?:0) -1
-      // binding.moreBidsRecieved = 2
-      binding.textMoreBids.underline = true
-      binding.textMoreBids.clickToAction(HomeBidsRequestAction_ViewOtherDetails, item, _interface)
+    binding.request = item.data
 
-      if(item.data.bidStatus().statusKey.lowercase().equals("open")){
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_active))
-        binding.textBidStatus.text = context.resources.getString(R.string.label_active)
-      }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
-        if(item.data.transactionBid?.clientConfirmationPending == false){
-          binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.pending))
-          binding.textBidStatus.text = context.resources.getString(R.string.label_pending)
+    //binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
+    //set button or bid status visibility based on ongoing/ won/ lost tab and bid cancelled/ bid lost/ awaiting result
+
+    when(item.data.bidStatus().statusKey.lowercase()){
+      TransactionBidStatus.Open.statusKey.lowercase() -> {
+        if(item.data.isBidOpen()){
+          //Bid Open status - Can be revised
+          binding.includeBidTime6.tvReviseBid.visibility = View.VISIBLE
+          binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
+          binding.includeBidTime6.ivBidStatus.visibility = View.GONE
+          binding.includeBidTime6.tvBidStatus.visibility = View.GONE
         }else{
-          binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
-          binding.textBidStatus.text = context.resources.getString(R.string.label_confirm)
+          //Awaiting Result status - can't be revised
+          binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+          binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+          binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+
+          //set image
+          binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_wait)
+          //set text
+          binding.includeBidTime6.tvBidStatus.text = "Awaiting Result"
+          binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.orange_v3))
         }
-      }else if(item.data.bidStatus().statusKey.lowercase().equals("rejected")) {
-        binding.textBidStatus.text = context.resources.getString(R.string.label_lost)
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
-      }else if(item.data.bidStatus().statusKey.lowercase().equals("cancelled")) {
-        binding.textBidStatus.text = context.resources.getString(R.string.label_cancel)
-        binding.textBidStatus.setTextColor(ContextCompat.getColor(context, R.color.status_lost))
       }
 
-      val res = item.data.resOffer
-      if(item.data.resOffer?.first?.first==null){
-        _interface.getTotalOffers(item.data)
+      TransactionBidStatus.Accepted.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+        //set image
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
+        //set text
+        binding.includeBidTime6.tvBidStatus.text = "Bid Confirmed"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+      }
+
+      TransactionBidStatus.Rejected.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+        //set image
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
+        //set text
+        binding.includeBidTime6.tvBidStatus.text = "Bid Lost"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
+      }
+
+      TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
+        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
+        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
+        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
+        //set image
+        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
+        //set text
+        binding.includeBidTime6.tvBidStatus.text = "Bid Cancelled"
+        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
+      }
+
+      else -> {
+        //this space is intentionally left blank
       }
     }
-*/
   }
 }
 
@@ -234,4 +354,6 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
   ) {
 
   }
+
+
 }

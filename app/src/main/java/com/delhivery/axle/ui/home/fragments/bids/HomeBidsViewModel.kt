@@ -80,10 +80,13 @@ class HomeBidsViewModel @Inject constructor(
   var confirmedBids= ""
   var lostBids= ""
   var contractBids= ""
+
+  //
+  var bidType : BidType = BidType.ActiveBid
   /**
    * Fetch bids summary
    */
-  fun fetchBidsSummary() {
+  fun fetchBidsSummary(bidType: BidType) {
     compositeDisposable += bidsRepository.userBidsSummary()
         .onBackground()
         .subscribe { _res, error ->
@@ -101,7 +104,8 @@ class HomeBidsViewModel @Inject constructor(
                               _res.myBids,
                               _res.confirmedBids,
                               _res.lostBids,
-                            _res.contractBids
+                            _res.contractBids,
+                            bidType
                           )
                       ), Update
                   )
@@ -116,8 +120,11 @@ class HomeBidsViewModel @Inject constructor(
 
   /**
    * Fetch bids
+   *
+   *
    */
-  fun fetchBids(paginate: Boolean = false) {
+  fun fetchBids(bidType: BidType,paginate: Boolean = false) {
+
     if (!paginate) {
       offset = 0
     } else if (paginate && !hasMoreData) {
@@ -129,10 +136,12 @@ class HomeBidsViewModel @Inject constructor(
       Pair(HomeBidsProgressItem(), AddUpdate).let { userBidsData.postValue(listOf(it)) }
     }
 
+    //Send ONE AT A TIME
     val statuses = mutableListOf<String>().apply {
-      add(BidType.ActiveBid.status.statusKey)
-      add(BidType.ConfirmedBid.status.statusKey)
-      add(BidType.LostBid.status.statusKey)
+      add(bidType.status.statusKey)
+//      add(BidType.ActiveBid.status.statusKey)
+//      add(BidType.ConfirmedBid.status.statusKey)
+//      add(BidType.LostBid.status.statusKey)
     }
         .joinToString(separator = ",") { it }
 
@@ -140,7 +149,9 @@ class HomeBidsViewModel @Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_bids_placed_by_supplier")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_placed_and_lowest_bids_on_txns_parallel")
     mainTrace.start()
-    compositeDisposable += bidsRepository.userBids(offset, statuses, true,false,null)
+    //Fetching all user bids from server
+    //sending the contract param as null will include "contract" type bids into the response
+    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
       .flatMap { _res ->
         total = _res.first
         offset = _res.third
@@ -151,8 +162,14 @@ class HomeBidsViewModel @Inject constructor(
         } else {
           parallelTrace.start()
           Single.zip(
+            //fetch all transaction data
+            //request = send all the transactionIds
+            //response = [{transoBJ}, {transoBJ2}]
             transactionsRepository.bulkTransactions(_res.second).subscribeOn(Schedulers.io()),
+            //to fetch the lowest bid from all the transactions ids
+            //response = map [tid, lowest_price]
             bidsRepository.bulkLowestBidsForTransactions(_res.second).subscribeOn(Schedulers.io()),
+            //fetch all the bids data against all the transactionIds
             bidsRepository.bidsForBulkLoads(_res.second).subscribeOn(Schedulers.io()),
             Function3<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,Pair<List<TransactionBid>, List<TransactionBid>>,
                     Quintuple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>, List<TransactionBid>,List<TransactionBid>>> { t1, t2,t3 ->
@@ -201,6 +218,8 @@ class HomeBidsViewModel @Inject constructor(
                     transaction.numBids = lowestBid.numBids
                     transaction.lowestBid = lowestBid.minBid
                     transaction.loadPricePercent = _res.second.loadPricePercent
+                    //set bidType as well
+                    transaction.bidType = bidType
                     transaction.transactionBid = bids.filter { b ->
                       b.transactionId.safeEquals(transaction.transactionId)
                     }[0]

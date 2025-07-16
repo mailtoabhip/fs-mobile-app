@@ -3,7 +3,8 @@ package com.delhivery.axle.data.home.bids
 import com.delhivery.axle.data.BaseKeyTypeModel
 
 data class HomeBidsSearchItemData(
-  val showing: Boolean = true
+  val showing: Boolean = true,
+  val query: String? = null
 ) : BaseKeyTypeModel<String>() {
   override fun key() = HomeBidsSearchItemDataKey
 }
@@ -13,4 +14,5 @@ private const val HomeBidsSearchItemDataKey = "search"
 
 /* action id */
 const val HomeBidsSearchAction_Search = "search"
+const val HomeBidsSearchAction_Clear = "search_clear"
 

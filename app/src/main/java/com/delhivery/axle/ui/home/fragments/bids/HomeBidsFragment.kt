@@ -16,22 +16,14 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
-import com.delhivery.axle.ui.biddetails.*
-import com.delhivery.axle.ui.bids.BidType.ActiveBid
-import com.delhivery.axle.ui.bids.BidType.ConfirmedBid
-import com.delhivery.axle.ui.bids.BidType.ContractBid
-import com.delhivery.axle.ui.bids.BidType.LostBid
+import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
-import com.delhivery.axle.ui.bids.userBidsIntent
-import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
-import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
+import com.delhivery.axle.ui.custom.DelhiveryBidAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
-import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
-import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -44,7 +36,7 @@ import javax.inject.Inject
  * All bids screen on home
  */
 class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
-    HomeBidsRVAdapterInterface, ToolbarElevationChangeListener {
+    HomeBidsRVAdapterInterface, DelhiveryBidAnimatedSearchBar.ToolbarElevationChangeListener {
 
   var _title: String = "My Bids"
   var launch : Boolean =true
@@ -94,7 +86,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     binding.rvBids.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
       adapter = this@HomeBidsFragment.adapter
-      addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
+      //addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
       addOnScrollListener(PaginationInterface())
     }
 
@@ -143,10 +135,10 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     })
 
     /* attach sticky search with adapter */
-    binding.editStickySearch.attachWithAdapter(adapter, this)
+    //binding.editStickySearch.attachWithAdapter(adapter, this)
 
     /* fetch bids data*/
-    fetchBidsData()
+    fetchBidsData(BidType.ActiveBid)
   }
 
   override fun onResume() {
@@ -156,16 +148,20 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
       isFirstResume = false
     }
   }
-  private fun fetchBidsData() {
-    viewModel.fetchBidsSummary()
-    viewModel.fetchBids()
+  private fun fetchBidsData(bidType: BidType) {
+    //set bidType
+    viewModel.bidType = bidType
+    //
+    viewModel.fetchBidsSummary(bidType = bidType) // bids counts are fetched from this api
+    //
+    viewModel.fetchBids(bidType = bidType) //pass specific status to fetch ongoing/ won/ lost
   }
 
   private fun refreshData() {
     /* remove user transactions */
-    adapter.resetStaticData()
+    adapter.resetStaticData(activeBidCount = viewModel.activeBids, confirmedBidCount = viewModel.confirmedBids, lostBidCount = viewModel.lostBids, bidType = viewModel.bidType)
     /* fetch again */
-    fetchBidsData()
+    fetchBidsData(viewModel.bidType)
   }
 
   private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
@@ -178,87 +174,8 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     actionId: String,
     item: BaseHomeBidsRVAdapterItem<*>
   ) {
-    // handle actions here
     when (actionId) {
-      HomeBidsHeaderAction_MyBids -> {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_VIEW_ACTIVE_BIDS,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS),
-            mutableListOf(userPrefs.userId(), viewModel.activeBids)
-        )
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), ActiveBid), REQCODE_NO_ROUTES)
-      }
-
-      HomeBidsHeaderAction_ConfirmedBids -> {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_VIEW_CONFIRMED_BIDS,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_CONFIRMED_BIDS),
-            mutableListOf(userPrefs.userId(),viewModel.confirmedBids)
-        )
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), ConfirmedBid), REQCODE_NO_ROUTES)
-      }
-
-      HomeBidsHeaderAction_LostBids -> {
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_VIEW_LOST_BIDS,
-            mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
-            mutableListOf(userPrefs.userId(), viewModel.lostBids)
-        )
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), LostBid), REQCODE_NO_ROUTES)
-      }
-
-      HomeBidsHeaderAction_ContractBids -> {
-        // Capture event
-      /*  analyticsUtil.trackEvent(
-          EVENT_VIEW_LOST_BIDS,
-          mutableListOf(PROPERTY_USER_ID, PROPERTY_LOST_BIDS),
-          mutableListOf(userPrefs.userId(), viewModel.lostBids)
-        )*/
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivityForResult(userBidsIntent(requireContext(), ContractBid), REQCODE_NO_ROUTES)
-      }
-
       HomeBidsRequestAction_ViewDetails -> {
-        val _item = item.data as HomeBidsRequestItemData
-        // Capture event
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_LIST_ITEM,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
-            mutableListOf(VALUE_BID, _item.transactionId ?: "")
-        )
-
-          val dmtStatus = if(_item.isDMTIndent())
-            "dmt"
-          else ""
-          val active = dmtStatus =="dmt" && _item.bidStatus().status == "Active"
-          val id = if(dmtStatus =="dmt" && (_item.bidStatus().status == "Confirmed" ||_item.bidStatus().status == "Lost"|| _item.bidStatus().status == "Cancelled")){
-            if(_item.transactionBid?.childTransactionId!=null)
-              _item.transactionBid!!.childTransactionId else _item.key()
-          }else{
-            _item.key()
-          }
-          if(id!=null)
-            context?.let {
-              userPrefs.setPreviousScreen(this.javaClass.name)
-              if(_item.subRequestType==SUB_REQUEST_TYPE_INTRACITY){
-                startActivity(tripDetailsIntent(_item.key(), it))
-              }else{
-                startActivity(bidDetailsIntent(id, it, dmtStatus, true, active))
-              }
-            }
-          else{
-            Toast.makeText(context,"Not Found",Toast.LENGTH_SHORT).show()
-          }
-
-      }
-
-      HomeBidsRequestAction_ViewOtherDetails -> {
         val _item = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.moEngageTrackEvent(
@@ -270,38 +187,76 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         bidDialog(_item)
       }
 
-      HomeBidsSearchAction_Search -> context?.let {
+      HomeBidsRequestAction_PlaceBid -> {
+        val _item = item.data as HomeBidsRequestItemData
         // Capture event
         analyticsUtil.moEngageTrackEvent(
-            EVENT_SEARCH_LOCAL,
-            mutableListOf(PROPERTY_TRANSACTION_TYPE),
-            mutableListOf(VALUE_BID)
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
+      }
 
-        val childView = binding.rvBids.findViewHolderForAdapterPosition(1)!!.itemView
-        val stickyView = binding.editStickySearch
-        stickyView.visibility = View.VISIBLE
-        stickyView.translationY = childView.top.toFloat()
-        stickyView.alpha = 1f
-        binding.rvBids.alpha = 0f
-        adapter.enableFilter()
+      HomeBidsRequestAction_ReviseBid -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        bidDialog(_item)
+      }
 
-        val valueAnimator = ValueAnimator.ofInt(childView.top, 0)
-        valueAnimator.duration = 250
-        valueAnimator.addUpdateListener { t ->
-          val animValue = t.animatedValue as Int
-          stickyView.translationY = animValue.toFloat()
-          stickyView.setRatio((animValue.toFloat() / childView.top))
-          if (animValue.toFloat() / childView.top == 1f) {
-            binding.rvBids.alpha = 1f
+      HomeBidsHeaderAction_TabChangeActive -> {
+        // Handle tab change to active bids
+        viewModel.bidType = BidType.ActiveBid
+        refreshData()
+      }
+
+      HomeBidsHeaderAction_TabChangeConfirmed -> {
+        // Handle tab change to confirmed bids
+        viewModel.bidType = BidType.ConfirmedBid
+        refreshData()
+      }
+
+      HomeBidsHeaderAction_TabChangeLost -> {
+        // Handle tab change to lost bids
+        viewModel.bidType = BidType.LostBid
+        refreshData()
+      }
+
+      HomeBidsSearchAction_Search -> {
+        // Handle search action - get query and apply filter
+        val searchItem = item as HomeBidsSearchItem
+        val query = searchItem.data.query
+        Log.d("SearchDebug", "Search action triggered with query: $query")
+        
+        if (!query.isNullOrEmpty()) {
+          // Only filter if the query has changed to avoid unnecessary updates
+          if (!adapter.checkFiltering() || adapter.getCurrentFilterQuery() != query) {
+            Log.d("SearchDebug", "Applying filter with query: $query")
+            val result = adapter.filter(query)
+            Log.d("SearchDebug", "Filter result: $result, filtered items: ${adapter.itemsList().size}")
+            
+            // Test: Show a toast with the result
+            //android.widget.Toast.makeText(context, "Search: $query, Results: ${adapter.itemsList().size}", android.widget.Toast.LENGTH_SHORT).show()
+          } else {
+            Log.d("SearchDebug", "Skipping filter - same query")
           }
+        } else {
+          Log.d("SearchDebug", "Query is null or empty")
         }
-        valueAnimator.start()
-        stickyView.postDelayed({
-          stickyView.requestFocus()
-          uiUtils.toggleKeyboard(false)
-          toolbarElevationLiveData!!.postValue(0f)
-        }, 300)
+      }
+
+      HomeBidsSearchAction_Clear -> {
+        // Handle clear search action
+        Log.d("SearchDebug", "Clearing search")
+        adapter.cancelFilter()
+        //android.widget.Toast.makeText(context, "Search cleared", android.widget.Toast.LENGTH_SHORT).show()
       }
 
       HomeBidsWarningAction_NoBids -> {
@@ -310,6 +265,10 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
       HomeBidsTimeOutAction -> {
         refreshData()
+      }
+
+      else -> {
+        // Handle other actions
       }
     }
   }
@@ -377,7 +336,8 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchBids(true)
+      //
+    override fun loadMore() = viewModel.fetchBids(bidType = viewModel.bidType, paginate = true)
 
     override fun hasMore() = viewModel.hasMoreData
 
@@ -385,7 +345,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   }
 
   inner class HomeBidsRVScrollListener(
-    private val stickyView: DelhiveryAnimatedSearchBar,
+    private val stickyView: DelhiveryBidAnimatedSearchBar,
     private val elevation: Float = 12f
   ) : OnScrollListener() {
 
