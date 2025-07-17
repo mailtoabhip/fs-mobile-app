@@ -16,6 +16,7 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
@@ -127,7 +128,7 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
 
     
     // Set up click listener for the place bid button
-    //binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     
     // You can add more click listeners for other action buttons as needed
     // For example, if there are other buttons in the included layouts

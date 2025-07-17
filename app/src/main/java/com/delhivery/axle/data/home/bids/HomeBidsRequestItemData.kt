@@ -163,6 +163,32 @@ data class HomeBidsRequestItemData(
 
   fun getBidAmount() = "₹${transactionBid?.bidAmount?.toString()?:""}"
 
+  /**
+   * Returns formatted bid amount with commas and proper decimal formatting
+   * Example: ₹1,25,000.50
+   */
+  fun getFormattedBidAmount(): String {
+    val bidAmount = transactionBid?.bidAmount ?: 0.0
+    return if (bidAmount > 0.0) {
+      "₹${StringUtils.formatDecimalAmount(bidAmount)}"
+    } else {
+      "₹0"
+    }
+  }
+
+  /**
+   * Returns formatted bid amount with commas but without decimal places
+   * Example: ₹1,25,000
+   */
+  fun getFormattedBidAmountWhole(): String {
+    val bidAmount = transactionBid?.bidAmount ?: 0.0
+    return if (bidAmount > 0.0) {
+      "₹${StringUtils.formatAmount(bidAmount)}"
+    } else {
+      "₹0"
+    }
+  }
+
   fun getLowestBidAmount() = if((numBids >= 1) && ((lowestBid ?: 0.0) > 0.0)) {
     "Lowest bid is ₹${lowestBid?.toString()}."
   }else{
