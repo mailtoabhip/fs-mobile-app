@@ -146,13 +146,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
     })
-    viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
+   /* viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       userPrefs.loadCount = it.toString()
       _title = when (it) {
         0, null -> getString(string.label_load_request)
         else -> "${getString(string.label_load_request)}($it)"
       }
-    })
+    })*/
     viewModel.fullLoadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       Log.d("observedCount",it.toString())
       HomeLoadsTruckFragment._instance.dataToUpdate("loads",it>0,it)
