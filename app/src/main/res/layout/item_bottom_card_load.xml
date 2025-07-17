@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:paddingTop="12dp"
         android:duplicateParentState="true"
-        android:paddingBottom="12dp"
         >
 
 
@@ -58,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent">
     <Button
         android:id="@+id/btn_accept_bid"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@{ @string/action_accept(request.formatedTargetPrice()) }"
         android:textAllCaps="false"
@@ -67,11 +66,8 @@
         android:textSize="14sp"
         tools:text = "Accept for 30000"
         android:duplicateParentState="true"
-        android:drawablePadding="8dp"
         android:backgroundTint="#121A31"
-        android:layout_marginStart="12dp"
-        android:gravity="center"
-        android:minHeight="48dp"
+        android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

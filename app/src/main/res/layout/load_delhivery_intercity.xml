@@ -73,12 +73,6 @@
             app:layout_constraintGuide_percent="0.4"
             android:orientation="vertical" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineCenter1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="0.7"
-            android:orientation="vertical" />
         <TextView
             android:id="@+id/toCity"
             android:layout_width="wrap_content"
@@ -92,6 +86,27 @@
 
 
         <!-- From State -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/fromCity"
+            app:layout_constraintStart_toStartOf="parent"
+            >
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineCenter2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.4"
+                android:orientation="vertical" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineCenter1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.7"
+                android:orientation="vertical" />
+
         <TextView
             android:id="@+id/fromState"
             android:layout_width="0dp"
@@ -101,11 +116,10 @@
             android:paddingTop="@dimen/size_4dp"
             android:text="@{request.originDistrictState()}"
             tools:text ="Mumbai, Maharashtra"
-            app:layout_constraintTop_toBottomOf="@id/fromCity"
-            app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guidelineCenter2"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- To State -->
         <TextView
             android:id="@+id/toState"
             android:layout_width="0dp"
@@ -115,10 +129,13 @@
             android:textColor="#505361"
             android:textAlignment="textEnd"
             android:text="@{request.destinationDistrictState()}"
-            tools:text ="Rajasthan"
+            tools:text ="Rajasthan "
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/guidelineCenter1"
-            app:layout_constraintTop_toBottomOf="@id/toCity"
-            app:layout_constraintEnd_toEndOf="@id/toCity" />
+            app:layout_constraintEnd_toEndOf="parent"
+             />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/truckInfo"
@@ -131,7 +148,8 @@
             tools:text ="Open 32FTXXL18 MT"
             android:textColor="#505361"
             android:drawableStart="@drawable/ic_truck_small"
-            app:layout_constraintTop_toBottomOf="@id/fromState"
+            app:layout_constraintTop_toBottomOf="@id/cl_container"
+            app:layout_constraintBottom_toBottomOf="@id/closingTime"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -142,7 +160,7 @@
             android:textSize="12sp"
             tools:text ="Battery Type"
             android:textColor="#505361"
-            android:drawablePadding="@dimen/size_4dp"
+            android:drawablePadding="@dimen/size_8dp"
             android:drawableStart="@drawable/icon_box"
             app:layout_constraintBottom_toTopOf="@id/view"
             app:layout_constraintTop_toBottomOf="@id/truckInfo"
@@ -156,10 +174,11 @@
             android:drawablePadding="@dimen/size_4dp"
             tools:text ="Closes in 2 hrs 15 min"
             android:textColor="#505361"
+            android:paddingTop="@dimen/size_4dp"
             android:text="@{request.formattedBiddingEndTime()}"
             android:drawableStart="@drawable/ic_clock_small"
             app:layout_constraintBottom_toBottomOf="@id/truckInfo"
-            app:layout_constraintTop_toTopOf="@id/truckInfo"
+            app:layout_constraintTop_toBottomOf="@id/toState"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <View

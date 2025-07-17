@@ -231,7 +231,7 @@ class HomeContractsViewModel@Inject constructor(
               }
 
             val count = expressCount+nonExpressCount+intraCityCount
-            Log.d("viewmodelContract", "${expressCount} intrcity $intraCityCount nonDlv $nonExpressCount")
+            Log.d("viewmodelContract", "${expressCount} intrcityCon $intraCityCount nonDlv $nonExpressCount")
 
             contractsCountLiveData.postValue(count)
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
