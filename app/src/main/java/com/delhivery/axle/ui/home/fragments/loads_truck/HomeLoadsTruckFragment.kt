@@ -101,7 +101,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         val tab3 =   binding.tabLayout.getTabAt(2)
         Log.d("observedCount1",userPrefs.fullLoadCount + userPrefs.contractCount.toString())
 
- //       tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads"+ if(userPrefs.fullLoadCount.isNotEmpty())" (${userPrefs.fullLoadCount})" else "")?.view?.isSelected = true
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads"+ if(userPrefs.fullLoadCount.isNotEmpty())" (${userPrefs.fullLoadCount})" else "")?.view?.isSelected = true
         if(tab1?.isSelected == true){
             tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
                 textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
