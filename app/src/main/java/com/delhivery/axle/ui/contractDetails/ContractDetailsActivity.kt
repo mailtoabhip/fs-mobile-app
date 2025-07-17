@@ -55,6 +55,7 @@ import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.utils.BidSuccessInterface
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.EVENT_ADD_TRUCK_INITIATE
 import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
 import com.delhivery.axle.utils.EVENT_REVISE_CONTRACT_BID
 import com.delhivery.axle.utils.EVENT_SUBMIT_CONTRACT_BID
@@ -69,6 +70,7 @@ import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.VALUE_APP_FLOW
+import com.delhivery.axle.utils.VALUE_BANNER
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -407,7 +409,28 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
     binding.cardInput.placeBidButton.setOnClickListener {
      // binding.editBidAmount.clearFocus()
-      submit(transaction)
+      when (viewModel.userPrefs.canBid()) {
+        APPROVED -> {
+          submit(transaction)
+        }
+        UNAPPROVED -> {
+          dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_not_approved,
+            string.msg_dialog_supplier_not_approved,
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
+          )
+        }
+        DISABLED -> {
+          dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_disabled,
+            string.msg_dialog_supplier_disabled,
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
+          )
+        }
+      }
+
 
     }
 

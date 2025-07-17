@@ -26,6 +26,7 @@ import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.trucks.TruckFrequentItem
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
@@ -494,20 +495,46 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
           } else require(
             !(viewModel.transaction.transactionBid?.bidAmount != null && abs(viewModel.transaction.transactionBid!!.bidAmount - amount) < 500)
           ) { "*Bid difference should be more than ₹500" }*/
-          if (viewModel.transaction.transactionBid == null) {
-            uiUtils.showProgress()
-            viewModel.createBid(
-              viewModel.transaction.isPMTIndent(), viewModel.transaction.key(), amount, pmtRate,
-              viewModel.transaction.biddingType
-                ?: "FTL",null,null,null
+        when (viewModel.userPrefs.canBid()) {
+          APPROVED -> {
+            analyticsUtil.moEngageTrackEvent(
+              EVENT_ADD_TRUCK_INITIATE,
+              mutableListOf(PROPERTY_SOURCE),
+              mutableListOf(VALUE_BANNER)
             )
-          } else {
-            uiUtils.showProgress()
-            viewModel.editBid(
-              viewModel.transaction.isPMTIndent(),  viewModel.transaction.key(),  viewModel.transaction!!.transactionBid!!.key(),
-              amount, pmtRate, viewModel.transaction.biddingType ?: "FTL",null,null,null
+            if (viewModel.transaction.transactionBid == null) {
+              uiUtils.showProgress()
+              viewModel.createBid(
+                viewModel.transaction.isPMTIndent(), viewModel.transaction.key(), amount, pmtRate,
+                viewModel.transaction.biddingType
+                  ?: "FTL",null,null,null
+              )
+            } else {
+              uiUtils.showProgress()
+              viewModel.editBid(
+                viewModel.transaction.isPMTIndent(),  viewModel.transaction.key(),  viewModel.transaction!!.transactionBid!!.key(),
+                amount, pmtRate, viewModel.transaction.biddingType ?: "FTL",null,null,null
+              )
+            }
+          }
+          UNAPPROVED -> {
+            dialogUtils.showBasicConfirmDialog(
+              string.title_dialog_supplier_not_approved,
+              string.msg_dialog_supplier_not_approved,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
             )
           }
+          DISABLED -> {
+            dialogUtils.showBasicConfirmDialog(
+              string.title_dialog_supplier_disabled,
+              string.msg_dialog_supplier_disabled,
+              getString(string.label_call_us), getString(string.label_mail_us),
+              { callHelpline() }, { sendMail() }
+            )
+          }
+        }
+
 //        } else {
 //          throw IllegalArgumentException("*Invalid amount")
 //        }

@@ -10,6 +10,7 @@ import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
 import com.delhivery.axle.api.response.TruckDisplayNamesResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.google.gson.annotations.SerializedName
 import io.reactivex.Single
 import retrofit2.http.*
 
@@ -39,7 +40,8 @@ interface TransactionService {
     @Query("is_flexible") isFlexible:Boolean?=null,
     @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null,
     @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true,
-    @Query("exclude_union_area")excludeUnionArea:Boolean= true
+    @Query("exclude_union_area")excludeUnionArea:Boolean= true,
+    @Query("loads_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -57,8 +59,8 @@ interface TransactionService {
     @Query("filter_vehicle_type") filterVehicleType: Boolean?= null,
     @Query("bidding_going_on") biddingGoingOn: Boolean?= false,
     @Query("exclude_trip_ids") excludeTripIds: String? = null,
-    @Query("exclude_union_area")excludeUnionArea:Boolean= true
-
+    @Query("exclude_union_area")excludeUnionArea:Boolean= true,
+    @Query("loads_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -106,8 +108,10 @@ interface TransactionService {
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
     @Query("is_flexible") isFlexible: Boolean?=null,
-    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null,
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null
+/*
     @Query("loads_active") loadActive:Boolean =true
+*/
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**

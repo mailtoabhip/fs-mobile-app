@@ -98,7 +98,6 @@ class SearchResultsViewModel @Inject constructor(
         Pair(SearchLoadsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
       else
         Pair(SearchContractsProgressItem(), AddUpdate).let{ searchResults.postValue(listOf(it))}
-
     }
 
     dataLoadingLiveData.postValue(true)
