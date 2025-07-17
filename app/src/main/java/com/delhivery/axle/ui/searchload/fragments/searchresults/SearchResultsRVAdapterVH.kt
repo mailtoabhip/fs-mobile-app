@@ -108,6 +108,7 @@ class SearchLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
     item: SearchLoadsRequestItem,
     _interface: SearchLoadsRVAdapterInterface
   ) {
+
     if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
       binding.layoutIntracity.request = item.data
       binding.containerError.request = item.data
@@ -126,6 +127,7 @@ class SearchLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
       binding.layoutIntracity.root.visibility = View.GONE
       binding.cvIntercity.visibility = View.VISIBLE
       binding.request = item.data
+      binding.containerError.request= item.data
       if(item.data.demandType.equals("Internal",true)){
         binding.materialType.visibility = View.GONE
       } else{
@@ -135,6 +137,7 @@ class SearchLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
     if(item.data.isDMTIndent()){
       binding.closingTime.visibility = View.GONE
     }else{
+
       if(item.data.bidEndingTime.isNotNullOrEmpty() && item.data.transactionBid== null){
         binding.closingTime.visibility = View.VISIBLE
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
