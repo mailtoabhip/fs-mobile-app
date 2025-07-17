@@ -137,6 +137,8 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
     viewModel.dataLoadingLiveData.reobserve(this, Observer {
       isLoadingData = it ?: false
+      // Pass loading state to adapter to disable tab clicks during data fetch
+      adapter.setLoadingState(isLoadingData)
     })
 
     /* attach sticky search with adapter */
@@ -236,18 +238,33 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
       HomeBidsHeaderAction_TabChangeActive -> {
         // Handle tab change to active bids
+        if (isLoadingData) {
+          // Prevent tab change when data is loading
+          Log.d("TabDebug", "Tab change blocked - data is loading")
+          return@handleAction
+        }
         viewModel.bidType = BidType.ActiveBid
         refreshData()
       }
 
       HomeBidsHeaderAction_TabChangeConfirmed -> {
         // Handle tab change to confirmed bids
+        if (isLoadingData) {
+          // Prevent tab change when data is loading
+          Log.d("TabDebug", "Tab change blocked - data is loading")
+          return@handleAction
+        }
         viewModel.bidType = BidType.ConfirmedBid
         refreshData()
       }
 
       HomeBidsHeaderAction_TabChangeLost -> {
         // Handle tab change to lost bids
+        if (isLoadingData) {
+          // Prevent tab change when data is loading
+          Log.d("TabDebug", "Tab change blocked - data is loading")
+          return@handleAction
+        }
         viewModel.bidType = BidType.LostBid
         refreshData()
       }

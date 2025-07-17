@@ -43,6 +43,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     ) {
 
   private var currentFilterQuery: String? = null
+  private var isLoadingData: Boolean = false
 
   override fun getItemViewType(position: Int) = itemsList()[position].type.typeId
 
@@ -86,14 +87,14 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     item: BaseHomeBidsRVAdapterItem<*>
   ) {
     when (holder) {
-      is HomeBidsHeaderItemVH -> holder.bind(item as HomeBidsHeaderItem, _interface)
-      is HomeBidsSearchItemVH -> holder.bind(item as HomeBidsSearchItem, _interface)
+      is HomeBidsHeaderItemVH -> holder.bind(item as HomeBidsHeaderItem, _interface, isLoadingData)
+      is HomeBidsSearchItemVH -> holder.bind(item as HomeBidsSearchItem, _interface, isLoadingData)
       //load bids + //contract bids
-      is HomeBidsRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface)
-      is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface)
-      is HomeBidsTimeOutItemVH -> holder.bind(item as HomeBidsTimeoutItem, _interface)
+      is HomeBidsRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface, isLoadingData)
+      is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface, isLoadingData)
+      is HomeBidsTimeOutItemVH -> holder.bind(item as HomeBidsTimeoutItem, _interface, isLoadingData)
       //contract bids
-      //is HomeContractsBidsRequestItemVH -> holder.bind(item as HomeContractsBidsRequestItem, _interface)
+      is HomeContractsBidsRequestItemVH -> holder.bind(item as HomeContractsBidsRequestItem, _interface, isLoadingData)
     }
   }
 
@@ -176,6 +177,15 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
   }
 
   fun getCurrentFilterQuery(): String? = currentFilterQuery
+
+  /**
+   * Update loading state to disable tab clicks during data fetch
+   */
+  fun setLoadingState(loading: Boolean) {
+    isLoadingData = loading
+    // Notify all items to update their states
+    notifyDataSetChanged()
+  }
 
   /**
    * Reset all data, remove all errors/transactions
