@@ -81,7 +81,7 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
       // Disable tab clicks when loading
       binding.tvOngoing.setOnClickListener(null)
       binding.tvOngoing.isEnabled = false
-      binding.tvOngoing.alpha = 0.5f
+      //binding.tvOngoing.alpha = 0.5f
       // Add loading indicator text
       binding.tvOngoing.text = "Ongoing (${item.data.myBids})..."
     } else {
@@ -99,7 +99,7 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
       // Disable tab clicks when loading
       binding.tvWon.setOnClickListener(null)
       binding.tvWon.isEnabled = false
-      binding.tvWon.alpha = 0.5f
+      //binding.tvWon.alpha = 0.5f
       // Add loading indicator text
       binding.tvWon.text = "Won (${item.data.confirmedBid})..."
     } else {
@@ -117,7 +117,7 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
       // Disable tab clicks when loading
       binding.tvLost.setOnClickListener(null)
       binding.tvLost.isEnabled = false
-      binding.tvLost.alpha = 0.5f
+      //binding.tvLost.alpha = 0.5f
       // Add loading indicator text
       binding.tvLost.text = "Lost (${item.data.lostBids})..."
     } else {
