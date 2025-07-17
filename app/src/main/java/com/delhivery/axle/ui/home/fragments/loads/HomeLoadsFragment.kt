@@ -44,6 +44,7 @@ import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
+import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -154,7 +155,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
     viewModel.fullLoadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
       Log.d("observedCount",it.toString())
-      userPrefs.fullLoadCount = it.toString()
+      HomeLoadsTruckFragment._instance.dataToUpdate("loads",it>0,it)
     })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {
