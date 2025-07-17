@@ -3,6 +3,8 @@ package com.delhivery.axle.ui.searchload.fragments.searchresults
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.databinding.CardCommonTripsBidsBinding
+import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
@@ -38,8 +40,8 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     parent: ViewGroup,
     viewType: Int
   ) = when (SearchResultsRVAdapterItemType.byTypeId(viewType)) {
-    Request -> ViewHomeLoadsRequestItemBinding.inflate(inflater, parent, false)
-    Contracts -> ViewHomeContractsRequestItemBinding.inflate(inflater,parent,false)
+    Request -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
+    Contracts -> CardCommonTripsBidsBinding.inflate(inflater,parent,false)
     SearchSpinner -> ViewHomeBidsSearchSpinnerItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     ContractProgress -> ViewHomeContractsProgressItemBinding.inflate(inflater,parent,false)
@@ -48,13 +50,13 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeLoadsRequestItemBinding -> SearchLoadsRequestItemVH(binding)
-    is ViewHomeContractsRequestItemBinding -> SearchContractsRequestItemVH(binding)
+    is LoadDelhiveryIntercityBinding -> SearchLoadsRequestItemVH(binding)
+    is CardCommonTripsBidsBinding -> SearchContractsRequestItemVH(binding)
     is ViewHomeBidsSearchSpinnerItemBinding -> SearchLoadsSearchSpinnerItemVH(binding)
     is ViewWarningItemBinding -> SearchLoadsWarningItemVH(binding)
     is ViewHomeContractsProgressItemBinding -> SearchContractsProgressItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> SearchLoadsProgressItemVH(binding)
-    else -> SearchLoadsRequestItemVH(binding as ViewHomeLoadsRequestItemBinding)
+    else -> SearchLoadsRequestItemVH(binding as LoadDelhiveryIntercityBinding)
   }
 
   override fun bindVH(
@@ -98,7 +100,7 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
 
   override fun onViewRecycled(holder: BaseViewHolder<*>) {
     super.onViewRecycled(holder)
-    if(holder is SearchContractsRequestItemVH)
-      holder.stopCounter()
+//    if(holder is SearchContractsRequestItemVH)
+//      holder.stopCounter()
   }
 }

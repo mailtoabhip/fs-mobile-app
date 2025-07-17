@@ -14,6 +14,7 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
@@ -99,15 +100,17 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
         binding.layoutIntracity.containerRowBidFor1.tvReportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
         val includedBinding = binding.layoutIntracity.containerRowBidFor1 as ItemBottomCardLoadBinding
-        includedBinding.placeBidButton1.rootView.setOnClickListener {
-            Log.d("Intracity Card Clicked", "rjrfv")
-            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
-        }
+//        includedBinding.placeBidButton1.rootView.setOnClickListener {
+//            Log.d("Intracity Card Clicked1", "rjrfv")
+//            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+//        }
 
-        includedBinding.btnAcceptBid.setOnClickListener {
-            Log.d("Intracity Card Clicked", "rjrfv")
-            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
-        }
+//        includedBinding.btnAcceptBid.setOnClickListener {
+//            Log.d("Intracity Card Clicked2", "rjrfv")
+//            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+//        }
+        includedBinding.btnAcceptBid.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.setOnClickListener {
 //            Log.d("Intracity Card Clicked", "rjrfv")
 //            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
