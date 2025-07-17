@@ -71,7 +71,7 @@ class SearchCityViewModel @Inject constructor(
                         }
 
                         else {
-                            for (city in _res.responseData.cities) {
+                            for (city in _res.responseData.cities.distinctBy { it.orionDbCityCode }) {
                                 add(Pair(SearchDataItem(city), DataRVAdapterOperationType.Add))
                             }
                         }

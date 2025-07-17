@@ -18,6 +18,8 @@ data class CityModel(
 
   fun stateName() = StringUtils.capitalize(state) ?: ""
 
+  fun districtName() = StringUtils.capitalize(district) ?: ""
+
   fun cityState(): String {
     val sb = StringBuilder().append(cityName())
     if (district.isNotNullOrEmpty())
@@ -36,6 +38,9 @@ data class CityModel(
 
   fun getUserCity() = UserCity(city, orionDbCityCode)
 
+  fun cityDist()=
+    if (districtName().isNotEmpty()) "${cityName()}, ${districtName()}" else cityName()
+
 }
 
 data class CitiesResponse(
@@ -49,15 +54,17 @@ fun List<CityModel>.names() =
   mapIndexed { _, cityModel ->
     val city: String = StringUtils.capitalize(cityModel.city) ?: ""
     val district: String = StringUtils.capitalize(cityModel.district) ?: ""
-    val state: String = StringUtils.capitalize(cityModel.state) ?: ""
+  //  val state: String = StringUtils.capitalize(cityModel.state) ?: ""
     val sb = StringBuilder()
     sb.append(city)
     if (district.isNotNullOrEmpty())
       sb.append(", ").append(district)
-    if (state.isNotNullOrEmpty())
-      sb.append(", ").append(state)
+//    if (state.isNotNullOrEmpty())
+//      sb.append(", ").append(state)
     return@mapIndexed sb.toString()
   }
+
+
 
 /**
  * Search city model

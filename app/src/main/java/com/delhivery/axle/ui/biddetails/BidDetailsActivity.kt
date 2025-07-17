@@ -214,11 +214,23 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
           resources.getString(R.string.bid_placed_sucessfully),
           resources.getString(R.string.check_your_bid_status)
         )
+        Handler(Looper.getMainLooper()).postDelayed({
+          // Your action here
+          startActivity(homeActivityIntent("load", this@BidDetailsActivity))
+
+        }, 2000)
+
       }else if(it.second){
         dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_revised_sucessfully),
           resources.getString(R.string.check_your_bid_revise_status)
         )
+        Handler(Looper.getMainLooper()).postDelayed({
+          // Your action here
+          startActivity(homeActivityIntent("load", this@BidDetailsActivity))
+
+        }, 2000)
+
       }
     }
     viewModel.reviseBidLiveData.observe(this, Observer {
@@ -1619,7 +1631,8 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
   override fun bidPlacedSuccess(success: Boolean) {
     if(success)
-      navigationUtils.navigate(userBidsIntent(this,BidType.ActiveBid))
+      startActivity(homeActivityIntent("load", this@BidDetailsActivity))
+
   }
 
 }

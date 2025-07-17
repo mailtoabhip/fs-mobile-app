@@ -153,7 +153,7 @@ class AutoCompleteUtils @Inject constructor(
           .subscribe { _res, _err ->
               if (!_err && _res != null) {
                   _res.responseData?.let { cities ->
-                      editText.setItems(cities.cities) {
+                      editText.setItems(cities.cities.distinctBy { it.orionDbCityCode }) {
                           disposable?.dispose()
                           action(it)
                       }

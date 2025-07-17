@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -548,12 +550,24 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           resources.getString(R.string.bid_placed_sucessfully),
           resources.getString(R.string.check_your_bid_status)
         )
+        Handler(Looper.getMainLooper()).postDelayed({
+          // Your action here
+          startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+
+        }, 2000)
+
       }else if(it.second){
         uiUtils.hideProgress()
         dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_revised_sucessfully),
           resources.getString(R.string.check_your_bid_revise_status)
         )
+        Handler(Looper.getMainLooper()).postDelayed({
+          // Your action here
+          startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+
+        }, 2000)
+
       }
     }
     viewModel.hideProgress.observe(this, Observer {
@@ -1362,7 +1376,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
   override fun bidPlacedSuccess(success: Boolean) {
     if(success)
-      navigationUtils.navigate(userBidsIntent(this, BidType.ActiveBid))
+      startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+
   }
 
 }
