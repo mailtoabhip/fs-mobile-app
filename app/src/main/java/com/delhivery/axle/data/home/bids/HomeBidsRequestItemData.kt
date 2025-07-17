@@ -643,12 +643,29 @@ data class HomeBidsRequestItemData(
 
   fun requiredAtWithTime() = "${_requiredOn?.let { DateUtils.daysDiffWithTimeStr(it, DatePatterns.OrionDateFormat)}}, ${DateUtils.getUtcToIstFormatTimeOnly(_requiredOn)}"
 
-  fun isBidEndingTimeExist() = if(contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true)) View.GONE else View.VISIBLE
+  fun isBidEndingTimeExist() : Int{
+    if(requestType == RequestType.Contract.type){
+      return if(contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true)) View.GONE else View.VISIBLE
+    }else{
+      return if(bidEndingTime.isNullOrBlank() || bidEndingTime.equals("null", ignoreCase = true)) View.GONE else View.VISIBLE
+    }
+  }
 
   fun isBidOpen(): Boolean {
-    val endTime = contractBiddingEndTime?.takeIf {
-      it.isNotBlank() && !it.equals("null", ignoreCase = true)
-    } ?: return true //assume if contractBiddingEndTime is null -> bid is open
+
+    var endTime : String = ""
+    if(requestType == RequestType.Contract.type){
+      //contract
+      endTime = contractBiddingEndTime?.takeIf {
+        it.isNotBlank() && !it.equals("null", ignoreCase = true)
+      } ?: return true //assume if contractBiddingEndTime is null -> bid is open
+
+    }else{
+      //Load
+      endTime = bidEndingTime?.takeIf {
+        it.isNotBlank() && !it.equals("null", ignoreCase = true)
+      } ?: return true //assume if contractBiddingEndTime is null -> bid is open
+    }
 
     val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
       timeZone = TimeZone.getTimeZone("IST")
@@ -660,6 +677,14 @@ data class HomeBidsRequestItemData(
       endDate?.after(now) ?: true
     } catch (e: Exception) {
       true // If parsing fails, assume bid is open
+    }
+  }
+
+  fun formattedLoadAndContractBidEndingTime() : String{
+    if(requestType == RequestType.Contract.type){
+      return formattedContractBiddingEndTime()
+    }else{
+      return formattedBiddingEndTime()
     }
   }
 
@@ -677,7 +702,7 @@ data class HomeBidsRequestItemData(
         "Closed ${DateUtils.daysDiffWithTimeStr(contractBiddingEndTime?:"", DatePatterns.OrionDateFormat) }, ${DateUtils.getUtcToIstFormatTimeOnly(contractBiddingEndTime)}"
       }
     }catch(e:Exception){
-      Log.d("formattedBidding::catch",""+e.printStackTrace())
+      ""
     }
   }
 
@@ -1348,6 +1373,56 @@ data class HomeBidsRequestItemData(
     return false
   }
 
+  fun isUnderOneHourLoadAndContract() : Boolean {
+    if (requestType == RequestType.Contract.type) {
+      if (contractBiddingEndTime != null && isContractBiddingOpen()) {
+        try {
+          val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+          format.setTimeZone(TimeZone.getTimeZone("IST"));
+          val date1: Date = format.parse(format.format(Date()))
+          val date2: Date = format.parse(contractBiddingEndTime)
+          if (date2.compareTo(date1) > 0) {
+            val mills: Long = date2.getTime() - date1.getTime()
+            val hours = (mills / (1000 * 60 * 60)).toInt()
+            val mins = (mills / (1000 * 60)).toInt() % 60
+            val secs = ((mills / 1000).toInt() % 60).toLong()
+            if (hours < 1 && (mins > 0 || secs > 0)) {
+              return true
+            }
+
+          }
+        } catch (e: Exception) {
+          Log.i("exception", e.toString())
+          return false
+        }
+      }
+    } else {
+      if (bidEndingTime != null && isContractBiddingOpen()) {
+        try {
+          val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+          format.setTimeZone(TimeZone.getTimeZone("IST"));
+          val date1: Date = format.parse(format.format(Date()))
+          val date2: Date = format.parse(bidEndingTime)
+          if (date2.compareTo(date1) > 0) {
+            val mills: Long = date2.getTime() - date1.getTime()
+            val hours = (mills / (1000 * 60 * 60)).toInt()
+            val mins = (mills / (1000 * 60)).toInt() % 60
+            val secs = ((mills / 1000).toInt() % 60).toLong()
+            if (hours < 1 && (mins > 0 || secs > 0)) {
+              return true
+            }
+
+          }
+        } catch (e: Exception) {
+          Log.i("exception", e.toString())
+          return false
+        }
+      }
+    }
+    return false
+  }
+
+
   fun contractBidStatusText(): String =
     if(transactionStatus=="cancelled"){
       "Cancelled"
@@ -1452,7 +1527,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun isLiveBidding(): Boolean {
-    return isUnderOneHour()
+    return isUnderOneHourLoadAndContract()
   }
 
   fun isFRCContractV2() = if (contractType == ContractType.FRC.type) {

@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_clock_new"
             android:drawablePadding="@dimen/size_4dp"
-            android:text="@{request.formattedContractBiddingEndTime()}"
+            android:text="@{request.formattedLoadAndContractBidEndingTime()}"
             android:textColor="@color/text_grey_v3"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/truckInfo"
