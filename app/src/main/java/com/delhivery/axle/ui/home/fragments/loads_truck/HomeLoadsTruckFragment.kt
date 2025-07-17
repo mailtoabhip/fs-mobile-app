@@ -101,7 +101,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         val tab3 =   binding.tabLayout.getTabAt(2)
         Log.d("observedCount1",userPrefs.fullLoadCount + userPrefs.contractCount.toString())
 
-        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads"+ if(userPrefs.fullLoadCount.isNotEmpty())" (${userPrefs.fullLoadCount})" else "")?.view?.isSelected = true
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")?.view?.isSelected = true
         if(tab1?.isSelected == true){
             tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
                 textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
@@ -112,7 +112,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         }
 //            ?.setIcon(R.drawable.ic_load_home_icon)
 
-        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts (${userPrefs.contractCount})")
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("Contracts")
 //            ?.setIcon(R.drawable.ic_contract_icon)
 
         tab3?.setCustomView(R.layout.badge_tab)?.setText("My Bids")
@@ -233,7 +233,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                         View.GONE
                 }
             }
-        }catch (e:Exception){}
+        }catch (e:Exception){
+
+        }
     }
 
 }
