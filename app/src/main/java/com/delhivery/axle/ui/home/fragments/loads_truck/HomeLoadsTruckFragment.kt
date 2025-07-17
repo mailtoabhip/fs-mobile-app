@@ -106,6 +106,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
                 textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
             }
+            binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
+                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+            }
         }
 //            ?.setIcon(R.drawable.ic_load_home_icon)
 
@@ -149,6 +152,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                 tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
                     textView.setTextColor(ContextCompat.getColor(context!!,R.color.colorDelhiveryRed))
                 }
+                tab?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+                }
                 if(tab?.position==0){
                     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
                     userPrefs.setPreviousScreen(HomeTrucksFragment::class.java.name)
@@ -179,6 +185,9 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
                     textView.setTextColor(ContextCompat.getColor(context!!,R.color.color_hint))
+                }
+                tab?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.color_hint))
                 }
             }
 
