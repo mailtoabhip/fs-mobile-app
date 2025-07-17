@@ -16,32 +16,24 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
+import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterAll
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFixed
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFlexible
-import com.delhivery.axle.data.home.loads.HomeLoadsSearchAction_Search
-import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsIntracityFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsSearchItemBinding
 import com.delhivery.axle.databinding.ViewSearchContractsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
-import com.delhivery.axle.injection.module.GlideApp
+
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.utils.StringUtils
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
+
 import com.delhivery.axle.databinding.CardCommonTripsBidsBinding
-import com.google.gson.Gson
+
 
 abstract class BaseHomeContractsRVAdapterViewHolder<out B: ViewDataBinding, IT: BaseHomeContractsRVAdapterItem<*>>(binding: B):BaseViewHolder<B>(binding) {
   abstract fun bind(
@@ -127,7 +119,7 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
 
     
     // Set up click listener for the place bid button
-    //binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     
     // You can add more click listeners for other action buttons as needed
     // For example, if there are other buttons in the included layouts

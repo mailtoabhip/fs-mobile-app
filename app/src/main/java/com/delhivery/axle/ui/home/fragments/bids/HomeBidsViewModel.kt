@@ -261,7 +261,7 @@ class HomeBidsViewModel @Inject constructor(
     //map same vehicle type with bids
     val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
     for (bid in userBids!!) {
-      val key: String = bid.vehicleType!!
+      val key: String = bid.vehicleType?:""
       if (map.containsKey(key)) {
         val list: MutableList<TransactionBid>? = map[key]
         list!!.add(bid)
