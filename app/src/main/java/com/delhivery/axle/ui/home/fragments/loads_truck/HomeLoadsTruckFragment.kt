@@ -212,8 +212,15 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
             if (showBadge && type == "contracts") {
                 if (binding.tabLayout.getTabAt(1)?.customView != null) {
                     binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
-                        "($count)"
+                       if(count>0) "($count)" else ""
                     binding.tabLayout.getTabAt(1)?.customView?.findViewById<ImageView>(R.id.badge)?.visibility =
+                        View.GONE
+                }
+            } else if (showBadge && type == "loads") {
+                if (binding.tabLayout.getTabAt(0)?.customView != null) {
+                    binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
+                        if(count>0) "($count)" else ""
+                    binding.tabLayout.getTabAt(0)?.customView?.findViewById<ImageView>(R.id.badge)?.visibility =
                         View.GONE
                 }
             }
