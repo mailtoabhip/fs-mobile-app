@@ -153,7 +153,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
     })
     viewModel.fullLoadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
-      userPrefs.loadCount = it.toString()
+      Log.d("observedCount",it.toString())
+      userPrefs.fullLoadCount = it.toString()
     })
 
     viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {

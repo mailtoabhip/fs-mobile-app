@@ -103,6 +103,11 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
             Log.d("Intracity Card Clicked", "rjrfv")
             it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
         }
+
+        includedBinding.btnAcceptBid.setOnClickListener {
+            Log.d("Intracity Card Clicked", "rjrfv")
+            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+        }
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.setOnClickListener {
 //            Log.d("Intracity Card Clicked", "rjrfv")
 //            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)

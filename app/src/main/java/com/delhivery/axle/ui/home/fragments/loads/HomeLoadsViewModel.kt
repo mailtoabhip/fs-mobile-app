@@ -408,8 +408,10 @@ class HomeLoadsViewModel @Inject constructor(
                                         AddUpdate
                                     )
                                 )
+                            val count1 = _tRes.fourth.total + intercityCount + nonDlvCount
+                            fullLoadsCountLiveData.postValue(count1)
 
-                                add(
+                            add(
                                     Pair(
                                         HomeLoadsFilterItem(
                                             HomeLoadsFilterItemData(
@@ -569,7 +571,8 @@ class HomeLoadsViewModel @Inject constructor(
                         nonDlvCount = _tRes.fifth.total
                     }
                   add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
-
+                val count = _tRes.fourth.total+intercityCount+nonDlvCount
+                fullLoadsCountLiveData.postValue(count)
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(selectedFilter,_tRes.fourth.total,intercityCount,nonDlvCount,userPrefs.demandType)), AddUpdate))
                   if(!paginate) {
 //                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
