@@ -95,6 +95,7 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.request = item.data
+//    binding.includeBidTime6.containerError.request = item.data
     //hide contract and live bidding tags view
     binding.includeHeader1.includeHeader1.visibility = View.GONE
     //hide 7 days a week view
@@ -110,8 +111,16 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     //
     binding.includeBidTime6.clReviseBid.visibility = View.GONE
     //
-    binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
+    if(item.data.reportingTime!=null) {
+      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.VISIBLE
+      binding.includeBidTime6.placeBidButton.visibility = View.GONE
+    } else {
+      binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
+      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.GONE
+
+    }
     //
+
     //Log.d("DEBUG_LOG======>>>>>>>>>", ""+Gson().toJson(item))
     //set route details
     //binding.includeHeader2.tvLocationTitle = item.data.
@@ -119,7 +128,10 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
 
     
     // Set up click listener for the place bid button
+    Log.d("contractTag"," required On ${item.data._requiredOn} reqTime ${item.data.requiredAtWithTime()} reportTime ${item.data.reportingTime}")
     binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    binding.includeBidTime6.containerError.reportingTime.text = item.data.getTimeOfContracts()
+    binding.includeBidTime6.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     
     // You can add more click listeners for other action buttons as needed
     // For example, if there are other buttons in the included layouts

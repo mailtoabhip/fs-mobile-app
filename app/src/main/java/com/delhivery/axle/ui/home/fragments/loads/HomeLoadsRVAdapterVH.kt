@@ -122,6 +122,7 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
         binding.cvIntercity.visibility = View.VISIBLE
 //        binding.nonIntracityLayout.visibility = View.VISIBLE
         binding.request = item.data
+        binding.containerError.request = item.data
         if(item.data.demandType.equals("Internal",true)){
             binding.materialType.visibility = View.GONE
         } else{
@@ -171,7 +172,7 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
         }
 
         binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
-        binding.containerError.reportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
+        binding.containerError.reportingTime.text = item.data.requiredAtWithTime()
     }
 
 //    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
