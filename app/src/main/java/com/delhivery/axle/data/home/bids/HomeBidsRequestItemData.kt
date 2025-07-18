@@ -215,7 +215,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun getLowestBidAmount() = if((numBids >= 1) && ((lowestBid ?: 0.0) > 0.0)) {
-    "Lowest bid is ₹${lowestBid?.toString()}."
+    "Lowest bid is ₹${StringUtils.formatAmount(lowestBid?:0.0)}"
   }else{
     ""
   }
