@@ -209,9 +209,6 @@ class SearchLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
         binding.textStops.text = "No Stops"
       }
     }
-      Log.d("navigateLoad1","clicked")
-
-
     binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
       binding.containerError.reportingTime.text = item.data.requiredAtWithTime()
 //    binding.viewBidInfo.clickToAction(
