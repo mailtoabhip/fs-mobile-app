@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -23,9 +24,10 @@
                 android:id="@+id/kmPerMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="~1000km/month"
+                tools:text="~1000km/month"
                 android:textColor="@color/text_grey_v3"
                 android:textSize="12sp"
+                android:text="@{request.intracityKms()}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -46,9 +48,10 @@
                 android:id="@+id/daysPerMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10 days/month"
+                tools:text="10 days/month"
                 android:textColor="@color/text_grey_v3"
                 android:textSize="12sp"
+                android:text="@{request.intracityDays()}"
                 app:layout_constraintTop_toTopOf="@id/kmPerMonth"
                 app:layout_constraintBottom_toBottomOf="@id/kmPerMonth"
                 app:layout_constraintStart_toEndOf="@id/dot1" />
@@ -69,7 +72,8 @@
                 android:id="@+id/hoursPerDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="7 hours a week"
+                tools:text="7 hours a week"
+                android:text="@{request.intracityHours()}"
                 android:textColor="@color/text_grey_v3"
                 android:textSize="12sp"
                 app:layout_constraintTop_toTopOf="@id/kmPerMonth"

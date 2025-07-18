@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="@{request.isIntraCityContract()}"
-        tools:visibility="gone"
+        tools:visibility="visible"
         android:padding="16dp">
 
         <!-- Header -->
@@ -30,7 +30,6 @@
             android:id="@+id/tv_location_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@{request.originCityName()}"
             android:textColor="#121A31"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -65,7 +64,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="@dimen/size_4dp"
         android:visibility="@{request.isFRCLHContract()}"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp"
         android:elevation="4dp">

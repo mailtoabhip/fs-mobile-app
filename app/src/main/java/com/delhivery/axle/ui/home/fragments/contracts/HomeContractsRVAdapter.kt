@@ -50,8 +50,8 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     is ViewWarningItemBinding -> HomeContractsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)
     is ViewHomeContractsFilterItemBinding -> HomeContractsFilterItemVH(binding)
-    is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding)
-    else -> HomeContractsRequestItemVH(binding as CardCommonTripsBidsBinding)  // Use CardCommonTripsBidsBinding
+    is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding) // old view - ViewHomeContractsIntracityFilterItemBinding
+    else -> HomeContractsRequestItemVH(binding as CardCommonTripsBidsBinding)  // Use CardCommonTripsBidsBinding  //OLDER VIEW - "ViewHomeContractsRequestItemBinding"
   }
 
   override fun bindVH(

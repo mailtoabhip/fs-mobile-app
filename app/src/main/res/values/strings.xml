@@ -86,7 +86,9 @@
   <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
   <string name="msg_privacy_policy"> Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
   <string name="msg_more"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d more </font>]]> </string>
-  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d More Centers </font>]]> </string>
+<!--  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d More Centers </font>]]> </string>-->
+  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#121A31\'> (+%2$d centers)</font>]]> </string>
+
 
 
   <!--Hints (hint_)-->
