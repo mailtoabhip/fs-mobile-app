@@ -7,6 +7,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import android.text.Html
+import android.util.Log
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
@@ -107,7 +108,8 @@ object BindingAdapters {
   fun setOptionalTextColor(view: TextView, request: HomeBidsRequestItemData?) {
     if (request == null) return
 
-    val colorResId = if (request.isBidOpen()) {
+    val colorResId = if (request.isUnderTwoHourLoadAndContract()) {
+        Log.d("setOptionalTextColor===>>>", "${request.isUnderTwoHourLoadAndContract()}")
       R.color.colorAccent
     } else {
       R.color.text_grey_v3

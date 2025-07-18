@@ -39,14 +39,9 @@
 
         <include
             android:id="@+id/include_bid_time_3"
-            layout="@layout/item_truck_details_bidding_time"
+            layout="@layout/bid_item_truck_details_bidding_time_combined"
             app:request="@{request}"
             />
-
-        <include
-            android:id="@+id/include_bid_time_4"
-            layout="@layout/item_trip_details_way_location"
-            app:request="@{request}" />
 
         <include
             android:id="@+id/include_bid_time_5"
