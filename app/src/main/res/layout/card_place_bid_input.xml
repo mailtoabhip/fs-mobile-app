@@ -55,7 +55,7 @@
                 android:id="@+id/bidLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bid Amount"
+                android:text="@{request.bidAmountLabel()}"
                 android:textSize="14sp"
                 android:textColor="#3D445C"
                 app:layout_constraintTop_toTopOf="parent"

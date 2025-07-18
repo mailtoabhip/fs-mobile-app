@@ -715,7 +715,7 @@
   <string name="bid_placed_sucessfully">Bid placed successfully</string>
   <string name="bid_revised_sucessfully">Bid revised successfully</string>
   <string name="your_bid">Your Bid</string>
-  <string name="invalid_amount_out_of_range">Invalid amount, out of range.</string>
+  <string name="invalid_amount_out_of_range">Invalid Amount, out of range.</string>
   <string name="exceeds_tentative_trip_count">Exceeds tentative trip count</string>
   <string name="invalid_vehicle_number">Invalid Vehicle Number</string>
   <string name="bid_amount">Bid Amount</string>

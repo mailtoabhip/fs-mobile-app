@@ -247,6 +247,9 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
   ) {
     binding.request = item.data
 
+      //hide the placebid section for Bids
+      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.GONE
+
     //binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
     //set button or bid status visibility based on ongoing/ won/ lost tab and bid cancelled/ bid lost/ awaiting result
 

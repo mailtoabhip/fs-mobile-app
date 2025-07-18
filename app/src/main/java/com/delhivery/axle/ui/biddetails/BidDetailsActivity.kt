@@ -599,8 +599,6 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
     override fun onChanged(t: HomeBidsRequestItemData?) {
-      binding.mainCl.visibility =View.VISIBLE
-      binding.refreshing = false
       if (t != null) {
         t.let { _transaction ->
           binding.cardInput.etBidAmount.isFocusable = true
@@ -877,6 +875,8 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
    */
   inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
     override fun onChanged(t: BidDetailsUserBidState?) {
+      binding.refreshing = false
+      binding.mainCl.visibility = View.VISIBLE
       uiUtils.hideProgress()
       t?.let { state ->
         when (state) {

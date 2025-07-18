@@ -254,7 +254,7 @@ class SearchContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     //hide contract and live bidding tags view
     binding.includeHeader1.includeHeader1.visibility = View.GONE
     //hide 7 days a week view
-    binding.includeBidTime4.closingTime.visibility = View.GONE
+    binding.includeBidTime3.tvFrequency.visibility = View.GONE
     //hide strong/ weak bid view
     binding.strongBidCard.strongBidCard.visibility = View.GONE
     //
