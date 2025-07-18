@@ -46,7 +46,7 @@ class SearchLoadsRVAdapter(private val _interface: SearchLoadsRVAdapterInterface
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     ContractProgress -> ViewHomeContractsProgressItemBinding.inflate(inflater,parent,false)
     LoadProgress -> ViewHomeBidsProgressItemBinding.inflate(inflater,parent,false)
-    else -> ViewHomeBidsRequestItemBinding.inflate(inflater, parent, false)
+    else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
