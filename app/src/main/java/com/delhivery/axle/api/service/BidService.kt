@@ -74,7 +74,9 @@ interface BidService {
     @Query("limit") limit: Int,
     @Query("bid_status") status: String,
     @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true,
+/*
     @Query("include_all_bid_type") includeAllBidType:Boolean=true
+*/
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -110,7 +112,9 @@ interface BidService {
     @Query("confirmation_pending") confirmationPending: Boolean?,
     @Query("only_frc_bids") onlyFRCBids: Boolean?=null,
     @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true,
+/*
     @Query("include_all_bid_type") includeAllBidType:Boolean=true
+*/
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
@@ -120,7 +124,9 @@ interface BidService {
   fun userBidsSummary(
     @Query("supplier_id") userId: String,
     @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true,
+/*
     @Query("include_all_bid_type") includeAllBidType:Boolean=true
+*/
   ): Single<BaseResponse<BidSummaryResponse>>
 
   /**

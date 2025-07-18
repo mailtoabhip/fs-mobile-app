@@ -41,7 +41,9 @@ interface TransactionService {
     @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null,
     @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true,
     @Query("exclude_union_area")excludeUnionArea:Boolean= true,
+/*
     @Query("loads_active") loadActive:Boolean =true
+*/
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -60,7 +62,9 @@ interface TransactionService {
     @Query("bidding_going_on") biddingGoingOn: Boolean?= false,
     @Query("exclude_trip_ids") excludeTripIds: String? = null,
     @Query("exclude_union_area")excludeUnionArea:Boolean= true,
+/*
     @Query("loads_active") loadActive:Boolean =true
+*/
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -123,7 +127,9 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
     @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true,
+/*
     @Query("loads_active") loadActive:Boolean =true
+*/
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**

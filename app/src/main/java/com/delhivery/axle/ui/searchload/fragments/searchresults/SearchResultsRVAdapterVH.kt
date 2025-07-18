@@ -211,7 +211,7 @@ class SearchLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
 
     }
       Log.d("dataSearch","${item.data.reportingTime?:item.data?.requiredAtWithTime()}")
-    binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+    binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, bindingAdapterPosition, _interface)
       binding.containerError.reportingTime.text = item.data.requiredAtWithTime()
 //    binding.viewBidInfo.clickToAction(
 //        HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface
