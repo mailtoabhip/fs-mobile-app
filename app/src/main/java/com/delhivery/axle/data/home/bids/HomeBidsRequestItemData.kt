@@ -723,12 +723,10 @@ data class HomeBidsRequestItemData(
   fun bidAmountLabelEditHint()=
     if(isItFRContract()){
       "Enter bid amount per trip"
-    }else if(isItLHContract()){
-
-    }else if(isItIntraCityContract()){
+    }else if(isItIntraCityContract() || isItLHContract() ){
       "Enter bid amount for entire contract"
     }else{
-      ""
+      "Enter bid amount"
     }
 
   fun formattedContractBiddingEndTime()= if (contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true) ){

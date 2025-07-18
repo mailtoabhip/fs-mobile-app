@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -211,26 +212,17 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     })
     viewModel.successBidLiveData.observe(this) {
       if (it.first) {
-        dialogUtils.showSuccessBidDialog(this,
+      val dialog =  dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_placed_sucessfully),
           resources.getString(R.string.check_your_bid_status)
         )
-        Handler(Looper.getMainLooper()).postDelayed({
-          // Your action here
-          startActivity(homeActivityIntent("load", this@BidDetailsActivity))
-
-        }, 2000)
-
+        navigateToBid(dialog)
       }else if(it.second){
-        dialogUtils.showSuccessBidDialog(this,
+      val dialog =  dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_revised_sucessfully),
           resources.getString(R.string.check_your_bid_revise_status)
         )
-        Handler(Looper.getMainLooper()).postDelayed({
-          // Your action here
-          startActivity(homeActivityIntent("load", this@BidDetailsActivity))
-
-        }, 2000)
+        navigateToBid(dialog)
 
       }
     }
@@ -568,6 +560,27 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     uploadArray.clear()
   }
 
+  fun navigateToBid(dialog: Dialog){
+    var dialogCancelled = false
+    dialog.setOnCancelListener {
+      dialogCancelled = true
+    }
+
+    dialog.setOnDismissListener {
+      dialogCancelled = true
+    }
+    Handler(Looper.getMainLooper()).postDelayed({
+      if (dialog.isShowing) {
+        dialog.dismiss()
+      }
+
+      if (!dialogCancelled && !isFinishing && !isDestroyed) {
+        dialog.dismiss()
+        startActivity(homeActivityIntent("load", this@BidDetailsActivity))
+        finish()
+      }
+    }, 2000)
+  }
   /**
    * Progress observer
    */
@@ -996,7 +1009,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               binding.cardInput.confirmedBidCl.root.visibility = View.GONE
               binding.cardInput.rejectedBidCl.root.visibility = View.GONE
               enableKeyboard()
-              binding.transaction?.transactionBid = state.lowestAndUserBidPair.second
+              binding.transaction?.transactionBid = state.lowestAndUserBidPair.first
               enablePlaceBid(false)
               binding.cardInput.placeBidButton.text = "Revise Bid"
               if (data.isPMTIndent()) {
