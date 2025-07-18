@@ -189,7 +189,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/forward_arrow"
             android:visibility="@{request.isLHContract()}"
-            android:text="@{request.haltStops()}"
+            android:text="@{request.getIntermediateStops()}"
             tools:text="1 stops"/>
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/forward_arrow"

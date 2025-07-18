@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:text="@{request.haltStops()}"
+            android:text="@{request.getIntermediateStops()}"
             tools:text ="2 stops"
             android:textColor="#8F9198"
             app:layout_constraintTop_toBottomOf="@id/view_stops"

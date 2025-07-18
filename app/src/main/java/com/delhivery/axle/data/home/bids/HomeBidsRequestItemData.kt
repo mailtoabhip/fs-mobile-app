@@ -713,6 +713,24 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  fun bidAmountLabel()=
+    if(isItFRContract()){
+      "Bid Amount Per Trip"
+    }else{
+      "Bid Amount"
+    }
+
+  fun bidAmountLabelEditHint()=
+    if(isItFRContract()){
+      "Enter bid amount per trip"
+    }else if(isItLHContract()){
+
+    }else if(isItIntraCityContract()){
+      "Enter bid amount for entire contract"
+    }else{
+      ""
+    }
+
   fun formattedContractBiddingEndTime()= if (contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true) ){
     ""}
   else{
@@ -1797,6 +1815,45 @@ data class HomeBidsRequestItemData(
 //
 //        }
 //    }
+
+  fun getIntermediateStops(): String {
+    return try {
+      if (requestType == RequestType.Contract.type) {
+        getContractStops()
+      } else {
+        getLoadStops()
+      }
+    } catch (e: Exception) {
+      "No Stops"
+    }
+  }
+
+  fun getContractStops(): String {
+    val centers = haltCenters ?: return "No Stops"
+    if (centers.size < 2) return "No Stops"
+
+    var numStops = 0
+    for (i in 1 until centers.size - 1) {
+      if (centers[i].name != centers[i + 1].name) {
+        numStops++
+      }
+    }
+
+    return if (numStops > 0) "$numStops Stops" else "No Stops"
+  }
+
+   fun getLoadStops(): String {
+    return if (indentOrigin == "LH") {
+      val stops = indentHaltCenters?.size ?: 0
+      if (stops > 0) "$stops Stops" else "No Stops"
+    } else {
+      val stops = listOf(stop1City, stop2City, pickup1City, pickup2City)
+        .count { !it.isNullOrBlank() }
+
+      if (stops > 0) "$stops Stops" else "No Stops"
+    }
+  }
+
 
   fun haltStops():String=
     if(haltCenters!=null){
