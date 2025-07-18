@@ -30,7 +30,7 @@
             android:id="@+id/reporting_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{request.requiredAtWithTime()}"
+            android:text="@{request._requiredOn != null ? request.requiredAtWithTime() : request.getTimeOfContracts()}"
             android:textColor="#121A31"
             android:textStyle="bold"
             android:textSize="14sp"
