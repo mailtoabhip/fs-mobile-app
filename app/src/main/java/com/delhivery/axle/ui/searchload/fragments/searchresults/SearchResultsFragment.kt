@@ -367,12 +367,10 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   private fun setupSpinners() {
     binding.spinnerTruckType.isEnabled = false
     binding.spinnerTruckType.isClickable = false
-    binding.spinnerStatus.isEnabled = false
-    binding.spinnerStatus.isClickable = false
+
     binding.spinnerTruckDisplayName.isEnabled = false
     binding.spinnerTruckDisplayName.isClickable = false
     binding.spinnerTruckType.setup(R.array.array_truck_type) {  p, v -> }
-    binding.spinnerStatus.setup(R.array.array_status) { p, v -> binding.spinnerStatus.setHintColor(v) }
     }
 
   /**
@@ -414,7 +412,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       setTruckDisplayAdapter(truckDisplayNames)
     }
     binding.spinnerTruckType.setSelection(pos, true)
-    binding.spinnerStatus.setSelection(resources.getStringArray(R.array.array_status).toList().indexOf(status))
     binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
     isContract = contractType!=null
     isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
