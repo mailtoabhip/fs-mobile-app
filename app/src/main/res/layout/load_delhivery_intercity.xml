@@ -31,6 +31,13 @@
         android:paddingEnd="@dimen/size_16dp"
         android:elevation="4dp">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_from_to_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            >
         <TextView
             android:id="@+id/fromCity"
             android:layout_width="0dp"
@@ -73,26 +80,26 @@
             app:layout_constraintGuide_percent="0.4"
             android:orientation="vertical" />
 
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineCenter3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="113dp" />
+
         <TextView
             android:id="@+id/toCity"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:text="@{request.destinationCityName()}"
             tools:text ="Jaisalmer"
             android:textColor="#121A31"
+            app:layout_constraintStart_toStartOf="@id/guidelineCenter3"
+            android:textAlignment="textEnd"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-
-        <!-- From State -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/fromCity"
-            app:layout_constraintStart_toStartOf="parent"
-            >
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineCenter2"
                 android:layout_width="wrap_content"
@@ -104,7 +111,7 @@
                 android:id="@+id/guidelineCenter1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintGuide_percent="0.7"
+                app:layout_constraintGuide_percent="0.6"
                 android:orientation="vertical" />
 
         <TextView
@@ -116,7 +123,7 @@
             android:paddingTop="@dimen/size_4dp"
             android:text="@{request.originDistrictState()}"
             tools:text ="Mumbai, Maharashtra"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fromCity"
             app:layout_constraintEnd_toStartOf="@id/guidelineCenter2"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -130,7 +137,7 @@
             android:textAlignment="textEnd"
             android:text="@{request.destinationDistrictState()}"
             tools:text ="Rajasthan "
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toCity"
             app:layout_constraintStart_toEndOf="@id/guidelineCenter1"
             app:layout_constraintEnd_toEndOf="parent"
              />
@@ -148,7 +155,7 @@
             tools:text ="Open 32FTXXL18 MT"
             android:textColor="#505361"
             android:drawableStart="@drawable/ic_truck_small"
-            app:layout_constraintTop_toBottomOf="@id/cl_container"
+            app:layout_constraintTop_toBottomOf="@id/cl_from_to_city"
             app:layout_constraintBottom_toBottomOf="@id/closingTime"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -178,7 +185,6 @@
             android:text="@{request.formattedBiddingEndTime()}"
             android:drawableStart="@drawable/ic_clock_small"
             app:layout_constraintBottom_toBottomOf="@id/truckInfo"
-            app:layout_constraintTop_toBottomOf="@id/toState"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <View

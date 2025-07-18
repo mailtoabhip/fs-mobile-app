@@ -176,6 +176,31 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  /****
+   *
+   * get Ticket Id
+   */
+  fun getTicketId(): String = "Ticket Id: "+fmsTicketId
+
+
+  /**
+   * get time in ist
+   */
+
+  fun getTimeOfContracts(): String {
+    val ist = TimeZone.getTimeZone("Asia/Kolkata")
+
+    val inputFormat = SimpleDateFormat("HH:mm:ss")
+    inputFormat.timeZone = ist
+
+    val outputFormat = SimpleDateFormat("hh:mm a")
+    outputFormat.timeZone = ist
+
+    val date = reportingTime?.let { inputFormat.parse(it) }
+    val formattedTime = date?.let { outputFormat.format(it) }
+    return formattedTime?:"na"
+  }
+
   /**
    * Returns formatted bid amount with commas but without decimal places
    * Example: ₹1,25,000

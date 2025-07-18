@@ -250,6 +250,7 @@ class SearchContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     binding.request = item.data
 
     binding.request = item.data
+    binding.includeBidTime6.containerError.request = item.data
     //hide contract and live bidding tags view
     binding.includeHeader1.includeHeader1.visibility = View.GONE
     //hide 7 days a week view
@@ -265,7 +266,18 @@ class SearchContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     //
     binding.includeBidTime6.clReviseBid.visibility = View.GONE
     //
-    binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
+    binding.includeBidTime6.containerError.reportingTime.text = item.data.requiredAtWithTime()
+    if(item.data.reportingTime!=null) {
+      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.VISIBLE
+      binding.includeBidTime6.placeBidButton.visibility = View.GONE
+    } else {
+      binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
+      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.GONE
+
+    }
+    binding.includeBidTime6.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+
 //    if(item.data.isItIntraCityContract()){
 //      if(item.data.isFlexible){
 //        binding.tvIntracityHubOriginCity.text = if(item.data.secondaryReportingCenters!=null&&item.data.secondaryReportingCenters.size>1){

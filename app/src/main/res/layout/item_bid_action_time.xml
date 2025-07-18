@@ -122,10 +122,21 @@
             android:drawablePadding="8dp"
             android:textAllCaps="false"
             android:visibility="gone"
+            tools:visibility="visible"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp" />
+        <include
+            android:id="@+id/container_error"
+            layout="@layout/item_bottom_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
