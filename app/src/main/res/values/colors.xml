@@ -113,4 +113,7 @@
   <color name="bg_light_grey">#F6F7F8</color>
   <color name="bg_light_grey_v1">#F4F4F4</color>
   <color name="text_grey_v4">#373737</color>
+
+  <color name="text_grey">#8F9198</color>
+
 </resources>

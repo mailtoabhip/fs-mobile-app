@@ -618,7 +618,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
-    fun showSuccessBidDialog(bidSuccessInterface: BidSuccessInterface,title: String, subTittle: String?){
+    fun showSuccessBidDialog(bidSuccessInterface: BidSuccessInterface,title: String, subTittle: String?):Dialog{
         val dialog = Dialog(activity)
         val bindingDialog= DialogBidPlacedSuccessBinding.inflate(activity.layoutInflater)
         bindingDialog.titleText.text = title
@@ -641,6 +641,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
         dialog.window!!.setGravity(Gravity.BOTTOM)
+        return dialog
     }
 
  /* fun confirmDialog(

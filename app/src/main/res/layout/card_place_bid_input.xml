@@ -108,7 +108,7 @@
                     android:background="@null"
                     android:inputType="phone"
                     android:focusable="true"
-                    android:hint="Enter bid amount"
+                    android:hint="@{request.bidAmountLabelEditHint()}"
                     android:singleLine="true"
                     android:textColor="#3D445C"/>
 

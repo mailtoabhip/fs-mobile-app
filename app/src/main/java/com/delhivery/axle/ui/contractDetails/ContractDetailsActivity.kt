@@ -159,6 +159,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       Log.i("transaction",transaction.key())
       transaction.transactionBid?.bidAmount?.let {
         isValidBidAmount= true
+        showBidAmountPerDayTrip(it.toInt(),transaction)
        /* binding.title.text = "Revise Your Bid"
         binding.bidAmountLbl.text = "Revised Bid Amount"*/
         binding.cardInput.etBidAmount?.setText(DecimalFormat("#########").format(it))
@@ -234,7 +235,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 if(transaction.targetPrice!=null&&(amount>(transaction.targetPrice!!+transaction.targetPrice!!*upperPercentage/100)|| amount<(transaction.targetPrice!!-transaction.targetPrice!!*lowerPercentage/100))){
                   showInvalidBidAmountError()
                 }else{
-                  removeInvalidBidAmountError()
+                  removeInvalidBidAmountError(transaction,amount)
                 }
               }
               enableSubmit(transaction)
@@ -249,27 +250,27 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   if (transaction.transactionBid != null) {
                     if(transaction.isItIntraCityContract()){
                       if (abs(amount-transaction.transactionBid!!.bidAmount.toInt()) >=100 && abs(amount-transaction.transactionBid!!.bidAmount.toInt()) %100==0) {
-                        removeInvalidBidAmountError()
+                        removeInvalidBidAmountError(transaction,amount)
                       }else{
                         showInvalidBidAmountError("100")
                       }
                     }else{
                       if(amount<12000){
                         if (abs(amount-transaction.transactionBid!!.bidAmount.toInt()) >=50 && abs(amount-transaction.transactionBid!!.bidAmount.toInt()) %50==0) {
-                          removeInvalidBidAmountError()
+                          removeInvalidBidAmountError(transaction,amount)
                         }else{
                           showInvalidBidAmountError("50")
                         }
                       }else{
                         if (abs(amount-transaction.transactionBid!!.bidAmount.toInt()) >=250 && abs(amount-transaction.transactionBid!!.bidAmount.toInt()) %250==0) {
-                          removeInvalidBidAmountError()
+                          removeInvalidBidAmountError(transaction,amount)
                         }else{
                           showInvalidBidAmountError("250")
                         }
                       }
                     }
                   }else{
-                    removeInvalidBidAmountError()
+                    removeInvalidBidAmountError(transaction,amount)
                   }
                 }
 
@@ -473,6 +474,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
   private fun showInvalidBidAmountError(amount:String?=null){
     isValidBidAmount = false
+    binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.bid_error))
     if(amount!=null){
       binding.cardInput.bidError.text = getString(string.bid_revise_error,amount)
     }else{
@@ -481,9 +483,33 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     binding.cardInput.bidError.visibility = View.VISIBLE
   }
 
-  private fun removeInvalidBidAmountError(){
+  private fun removeInvalidBidAmountError(transaction: HomeBidsRequestItemData, amount:Int){
     isValidBidAmount = true
-    binding.cardInput.bidError.visibility = View.GONE
+    showBidAmountPerDayTrip(amount,transaction)
+   // binding.cardInput.bidError.visibility = View.GONE
+  }
+
+  private fun showBidAmountPerDayTrip(bidAmount:Int, transaction: HomeBidsRequestItemData){
+    try {
+      if(transaction.isItLHContract()){
+        binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
+        binding.cardInput.bidError.visibility = View.VISIBLE
+        val amount = bidAmount/(transaction.operatingDays!!*4)
+        binding.cardInput.bidError.text = "Your bid price per day: ₹${amount}"
+      }else if (transaction.isItIntraCityContract()){
+        binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
+        binding.cardInput.bidError.visibility = View.VISIBLE
+        val amount = bidAmount/transaction.intracityDays!!.toInt()
+        binding.cardInput.bidError.text = "Your bid price per trip: ₹${amount}"
+
+      }else{
+        binding.cardInput.bidError.visibility = View.GONE
+
+      }
+    }catch (e:Exception){
+      Log.i("Error", e.toString())
+    }
+
   }
   private fun checkValueChangeForFRC(transaction:HomeBidsRequestItemData): Boolean{
     return if (transaction.transactionBid != null) (transaction.isItFRContract()&&Integer.parseInt(binding.cardInput.etTripNumber.text.toString()) == viewModel.transaction.transactionBid!!.tentativeTripCount
@@ -569,27 +595,19 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     viewModel.successBidLiveData.observe(this) {
       if (it.first) {
         uiUtils.hideProgress()
-        dialogUtils.showSuccessBidDialog(this,
+        val dialog = dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_placed_sucessfully),
           resources.getString(R.string.check_your_bid_status)
         )
-        Handler(Looper.getMainLooper()).postDelayed({
-          // Your action here
-          startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
-
-        }, 2000)
+        navigateToBid(dialog)
 
       }else if(it.second){
         uiUtils.hideProgress()
-        dialogUtils.showSuccessBidDialog(this,
+        val dialog =   dialogUtils.showSuccessBidDialog(this,
           resources.getString(R.string.bid_revised_sucessfully),
           resources.getString(R.string.check_your_bid_revise_status)
         )
-        Handler(Looper.getMainLooper()).postDelayed({
-          // Your action here
-          startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
-
-        }, 2000)
+        navigateToBid(dialog)
 
       }
     }
@@ -1067,7 +1085,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.root.visibility = View.VISIBLE
               binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
-              binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+binding.transaction?.transactionBid?.bidAmount
+              binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+ binding.transaction?.transactionBid?.bidAmount?.let {
+                StringUtils.formatDecimalAmount(
+                  it
+                )
+              }
               binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
               binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
               binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
@@ -1092,7 +1114,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
               binding.cardInput.rejectedBidCl.title = "Bid not selected"
-              binding.cardInput.rejectedBidCl.subTitle = "You were ₹${viewModel.transaction.lowestBid!!.toInt()-userBid.bidAmount.toInt()} above the lowest bid"
+              try{
+                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${StringUtils.formatDecimalAmount(viewModel.transaction.lowestBid!!.toDouble()-userBid.bidAmount)} above the lowest bid"
+              }catch (e:Exception){
+              }
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
               binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
                 //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
@@ -1357,6 +1382,27 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     flexibleReportingCentersArray.clear()
   }
 
+  fun navigateToBid(dialog: Dialog){
+    var dialogCancelled = false
+    dialog.setOnCancelListener {
+      dialogCancelled = true
+    }
+
+    dialog.setOnDismissListener {
+      dialogCancelled = true
+    }
+    Handler(Looper.getMainLooper()).postDelayed({
+      if (dialog.isShowing) {
+        dialog.dismiss()
+      }
+
+      if (!dialogCancelled && !isFinishing && !isDestroyed) {
+        dialog.dismiss()
+        startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+        finish()
+      }
+    }, 2000)
+  }
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){
        REFRESH_ON_BACK = true
       val dialog = Dialog(this)
