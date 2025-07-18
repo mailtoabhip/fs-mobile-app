@@ -1373,9 +1373,58 @@ data class HomeBidsRequestItemData(
     return false
   }
 
+    fun isUnderTwoHourLoadAndContract() : Boolean {
+        if (requestType == RequestType.Contract.type) {
+            if (contractBiddingEndTime != null && isBidOpen()) {
+                try {
+                    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    format.setTimeZone(TimeZone.getTimeZone("IST"));
+                    val date1: Date = format.parse(format.format(Date()))
+                    val date2: Date = format.parse(contractBiddingEndTime)
+                    if (date2.compareTo(date1) > 0) {
+                        val mills: Long = date2.getTime() - date1.getTime()
+                        val hours = (mills / (1000 * 60 * 60)).toInt()
+                        val mins = (mills / (1000 * 60)).toInt() % 60
+                        val secs = ((mills / 1000).toInt() % 60).toLong()
+                        if (hours < 2 && (mins > 0 || secs > 0)) {
+                            return true
+                        }
+
+                    }
+                } catch (e: Exception) {
+                    Log.i("exception", e.toString())
+                    return false
+                }
+            }
+        } else {
+            if (bidEndingTime != null && isBidOpen()) {
+                try {
+                    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    format.setTimeZone(TimeZone.getTimeZone("IST"));
+                    val date1: Date = format.parse(format.format(Date()))
+                    val date2: Date = format.parse(bidEndingTime)
+                    if (date2.compareTo(date1) > 0) {
+                        val mills: Long = date2.getTime() - date1.getTime()
+                        val hours = (mills / (1000 * 60 * 60)).toInt()
+                        val mins = (mills / (1000 * 60)).toInt() % 60
+                        val secs = ((mills / 1000).toInt() % 60).toLong()
+                        if (hours < 2 && (mins > 0 || secs > 0)) {
+                            return true
+                        }
+
+                    }
+                } catch (e: Exception) {
+                    Log.i("exception", e.toString())
+                    return false
+                }
+            }
+        }
+        return false
+    }
+
   fun isUnderOneHourLoadAndContract() : Boolean {
     if (requestType == RequestType.Contract.type) {
-      if (contractBiddingEndTime != null && isContractBiddingOpen()) {
+      if (contractBiddingEndTime != null && isBidOpen()) {
         try {
           val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
           format.setTimeZone(TimeZone.getTimeZone("IST"));
@@ -1397,7 +1446,7 @@ data class HomeBidsRequestItemData(
         }
       }
     } else {
-      if (bidEndingTime != null && isContractBiddingOpen()) {
+      if (bidEndingTime != null && isBidOpen()) {
         try {
           val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
           format.setTimeZone(TimeZone.getTimeZone("IST"));
@@ -1520,7 +1569,7 @@ data class HomeBidsRequestItemData(
     "Load"
   }
 
-  fun isItContractAndLiveBidding() = if (requestType == RequestType.Contract.type && isLiveBidding()) {
+  fun isItContractAndLiveBidding() = if (requestType == RequestType.Contract.type && isLiveBidding()) {     
     View.VISIBLE
   } else {
     View.GONE
@@ -1717,6 +1766,12 @@ data class HomeBidsRequestItemData(
     }else {
       ""
     }
+
+//    fun getIntermediaryStops():String{
+//        if(requestType == RequestType.Contract.type){
+//
+//        }
+//    }
 
   fun haltStops():String=
     if(haltCenters!=null){
