@@ -629,7 +629,7 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
             bindingDialog.titleSubText.visibility = View.GONE
         }
         bindingDialog.cancel.setOnClickListener {
-            bidSuccessInterface.bidPlacedSuccess(true)
+            dialog.cancel()
         }
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)

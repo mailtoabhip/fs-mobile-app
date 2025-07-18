@@ -1166,9 +1166,9 @@ data class HomeBidsRequestItemData(
     time%=minutesInMilli
 
     return if (elapsedHours.toInt() !=0) {
-      "$elapsedHours hours, $elapsedMinutes minutes"
+      "$elapsedHours hrs, $elapsedMinutes min"
     } else{
-      "$elapsedMinutes minutes"
+      "$elapsedMinutes min"
     }
   }
 

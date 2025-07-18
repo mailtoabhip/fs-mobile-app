@@ -20,7 +20,7 @@
             android:background="@drawable/bg_search_white_load"
             android:paddingBottom="@dimen/size_8dp"
             android:paddingTop="@dimen/size_8dp"
-            android:textSize="@dimen/text_16sp"
+            android:textSize="@dimen/text_14sp"
             android:textColor="@color/heading_black"
             />
         <androidx.appcompat.widget.AppCompatImageView

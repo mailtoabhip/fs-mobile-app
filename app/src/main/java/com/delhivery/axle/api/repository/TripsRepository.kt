@@ -97,4 +97,4 @@ class TripsRepository @Inject constructor(
 }
 
 /* User trips pagination load limit */
-const val UserTripsLoadLimit = 50
+const val UserTripsLoadLimit = 100

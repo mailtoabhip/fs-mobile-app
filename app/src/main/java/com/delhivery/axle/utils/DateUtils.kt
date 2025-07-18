@@ -181,14 +181,22 @@ object DateUtils {
 
     val elapsedSec = milli / secondsInMilli
 
-    return if (elapsedDays.toInt() != 0) {
-      "$elapsedDays days, $elapsedHrs hrs"
-    } else if (elapsedHrs.toInt() != 0) {
-      "$elapsedHrs hrs, $elapsedMinutes minutes"
-    } else if (elapsedMinutes.toInt() != 0) {
-      "$elapsedMinutes minutes, $elapsedSec sec"
-    } else {
-      "$elapsedSec sec"
+    return when {
+      elapsedDays.toInt() != 0 -> {
+        "${elapsedDays.toInt()} ${if (elapsedDays.toInt() == 1) "day" else "days"}, " +
+                "${elapsedHrs.toInt()} ${if (elapsedHrs.toInt() == 1) "hr" else "hrs"}"
+      }
+      elapsedHrs.toInt() != 0 -> {
+        "${elapsedHrs.toInt()} ${if (elapsedHrs.toInt() == 1) "hr" else "hrs"}, " +
+                "${elapsedMinutes.toInt()} ${if (elapsedMinutes.toInt() == 1) "min" else "mins"}"
+      }
+      elapsedMinutes.toInt() != 0 -> {
+        "${elapsedMinutes.toInt()} ${if (elapsedMinutes.toInt() == 1) "min" else "mins"}, " +
+                "${elapsedSec.toInt()} ${if (elapsedSec.toInt() == 1) "sec" else "secs"}"
+      }
+      else -> {
+        "${elapsedSec.toInt()} ${if (elapsedSec.toInt() == 1) "sec" else "secs"}"
+      }
     }
   }
 
