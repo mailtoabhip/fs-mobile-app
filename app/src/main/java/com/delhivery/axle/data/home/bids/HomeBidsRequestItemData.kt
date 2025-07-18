@@ -427,17 +427,16 @@ data class HomeBidsRequestItemData(
   /**
    * @return origin district and state name
    */
-  fun originDistrictState() = if(originDistrictName().isNotNullOrEmpty()) {
-    originDistrictName() + ", " + originStateName()
+  fun originDistrictState() = if (originDistrictName().isNotNullOrEmpty()) {
+    originDistrictName() + "\n" + originStateName()
   } else {
     originStateName()
   }
-
   /**
    * @return destination district and state name
    */
   fun destinationDistrictState() = if(destinationDistrictName().isNotNullOrEmpty()) {
-    destinationDistrictName() + ", " + destinationStateName()
+    destinationDistrictName() + "\n" + destinationStateName()
   } else {
     destinationStateName()
   }
