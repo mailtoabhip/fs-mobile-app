@@ -135,6 +135,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:layout_gravity="center_vertical"
             app:layout_constraintTop_toTopOf="parent"
+            app:request="@{request}"
             tools:visibility="gone"
             />
 
