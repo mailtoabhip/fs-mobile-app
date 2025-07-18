@@ -1085,7 +1085,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.root.visibility = View.VISIBLE
               binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
-              binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+binding.transaction?.transactionBid?.bidAmount
+              binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+ binding.transaction?.transactionBid?.bidAmount?.let {
+                StringUtils.formatDecimalAmount(
+                  it
+                )
+              }
               binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
               binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
               binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
@@ -1110,7 +1114,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
               binding.cardInput.rejectedBidCl.title = "Bid not selected"
-              binding.cardInput.rejectedBidCl.subTitle = "You were ₹${viewModel.transaction.lowestBid!!.toInt()-userBid.bidAmount.toInt()} above the lowest bid"
+              try{
+                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${StringUtils.formatDecimalAmount(viewModel.transaction.lowestBid!!.toDouble()-userBid.bidAmount)} above the lowest bid"
+              }catch (e:Exception){
+              }
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
               binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
                 //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
