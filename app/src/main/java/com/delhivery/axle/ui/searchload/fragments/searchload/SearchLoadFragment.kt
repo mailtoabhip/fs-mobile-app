@@ -159,17 +159,17 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       binding.checkBoxFlexibleIntracity.setOnCheckedChangeListener { _, isChecked ->
         binding.checkBoxFlexibleIntracity.isChecked = isChecked
       }
-      binding.spinnerStatus.apply{
-        setup(R.array.array_status){ p, v ->
-          if(p==0) setHintColor(v)
-        }
-      }
+//      binding.spinnerStatus.apply{
+//        setup(R.array.array_status){ p, v ->
+//          if(p==0) setHintColor(v)
+//        }
+//      }
       autoCompleteUtils.autoCompleteCity(binding.editReportingCenter){
         origin = it
       }
       binding.btnSearch.setOnClickListener{
         if(binding.checkBoxFixedIntracity.isChecked|| binding.checkBoxFlexibleIntracity.isChecked){
-          searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),binding.spinnerStatus.selectedItem.toString(),if(binding.checkBoxFlexibleIntracity.isChecked&&binding.checkBoxFixedIntracity.isChecked)null else if (binding.checkBoxFixedIntracity.isChecked)false else if (binding.checkBoxFlexibleIntracity.isChecked) true else null, true)
+          searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),"",if(binding.checkBoxFlexibleIntracity.isChecked&&binding.checkBoxFixedIntracity.isChecked)null else if (binding.checkBoxFixedIntracity.isChecked)false else if (binding.checkBoxFlexibleIntracity.isChecked) true else null, true)
         }else{
           uiUtils.showToast("Please select contract type")
         }
