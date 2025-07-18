@@ -57,7 +57,8 @@ class TransactionsRepository @Inject constructor(
    */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null) =
     transactionService.contractsTransactions(
-      userPrefs.parentId, offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,isFlexible,includeFlexibleContracts).
+      userPrefs.parentId, offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,isFlexible,includeFlexibleContracts
+    , searchAfterCreationTime = "", searchAfterTransactionId = "").
     convertResponse()
 
 

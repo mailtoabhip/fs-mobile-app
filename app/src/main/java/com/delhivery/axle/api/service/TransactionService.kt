@@ -62,9 +62,7 @@ interface TransactionService {
     @Query("bidding_going_on") biddingGoingOn: Boolean?= false,
     @Query("exclude_trip_ids") excludeTripIds: String? = null,
     @Query("exclude_union_area")excludeUnionArea:Boolean= true,
-/*
-    @Query("loads_active") loadActive:Boolean =true
-*/
+    @Query("loads_with_bid_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -112,10 +110,12 @@ interface TransactionService {
     @Query("all_active_fetched") allActiveFetched: Boolean?= null,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean?= null,
     @Query("is_flexible") isFlexible: Boolean?=null,
-    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null
-/*
-    @Query("loads_active") loadActive:Boolean =true
-*/
+    @Query("include_flexible_contracts") includeFlexibleContracts: Boolean?=null,
+    @Query("search_after_creation_time") searchAfterCreationTime: String?,
+    @Query("search_after_transaction_id") searchAfterTransactionId: String?,
+    @Query("loads_with_bid_active") loadsWithBidActive:Boolean? = true,
+    @Query("skip_self_bids") skipSelfBids:Boolean? = true,
+    @Query("loads_with_bid_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
@@ -127,9 +127,7 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
     @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true,
-/*
-    @Query("loads_active") loadActive:Boolean =true
-*/
+    @Query("loads_with_bid_active") loadActive:Boolean =true
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**
