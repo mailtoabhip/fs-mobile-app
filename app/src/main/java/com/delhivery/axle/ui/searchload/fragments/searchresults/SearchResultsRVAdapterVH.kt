@@ -246,10 +246,20 @@ class SearchContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     _interface: SearchLoadsRVAdapterInterface
   ) {
     binding.request = item.data
-
+    Log.d("contIten", "${item.data}")
     binding.request = item.data
     binding.includeBidTime6.containerError.request = item.data
     //hide contract and live bidding tags view
+    if(item.data.isItIntraCityContract()){
+      if(item.data.isFlexible){
+        binding.includeHeader2.tvLocationTitle.text = if(item.data.secondaryReportingCenters!=null&&item.data.secondaryReportingCenters.size>1){
+          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),item.data.secondaryReportingCenters.size-1), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
+      }else{
+        binding.includeHeader2.tvLocationTitle.text =item.data.originCityName()
+      }
+    }else{
+      binding.includeHeader2.tvLocationTitle.text = item.data.originCityName()
+    }
     binding.includeHeader1.includeHeader1.visibility = View.GONE
     //hide 7 days a week view
     binding.includeBidTime3.tvFrequency.visibility = View.GONE

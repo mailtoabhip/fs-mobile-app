@@ -18,16 +18,9 @@ import retrofit2.HttpException
  */
 fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
   map {
-    Log.d("DelhiveryExtension", it.responseData.toString())
     if (it.isSuccess) {
-      try {
         it.responseData
-      } catch (e:Exception){
-        Log.d("DelhiveryExcept", it.responseData.toString())
-        it.responseData
-      }
     } else {
-      Log.d("DelhiveryExcept", it.responseData.toString())
       throw it.toHttpException()
     }
   }

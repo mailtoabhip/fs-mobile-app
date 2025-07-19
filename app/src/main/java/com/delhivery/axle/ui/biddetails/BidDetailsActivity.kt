@@ -1401,6 +1401,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.mainCl.visibility = View.VISIBLE
             Log.d("called","BidDetailsUserBidState_CancelledBid")
             binding.cardInput.root.visibility = View.VISIBLE
+
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.rejectedBidCl.title = "Bid cancelled"

@@ -62,7 +62,7 @@ import com.google.firebase.perf.metrics.Trace
 import com.moengage.firebase.MoEFireBaseHelper
 import javax.inject.Inject
 
-class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),
+class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),BidSuccessInterface,
     HomeLoadsRVAdapterInterface, TitleProvider {
 
   var _title: String = "Home"
@@ -297,9 +297,11 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it!=null){
-        uiUtils.showToast("Indent accepted successfully!")
+        dialogUtils.showSuccessBidDialog(this,
+          resources.getString(R.string.details_submitted_successfully),
+          null
+        )
         refreshData()
-
       }
     })
 
@@ -1087,5 +1089,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   /** Create new frequent truck item*/
   private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
     ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
+
+  override fun bidPlacedSuccess(success: Boolean) {
+//    TODO("Not yet implemented")
+  }
 }
 const val STATIC_ITEM_LIST = 3

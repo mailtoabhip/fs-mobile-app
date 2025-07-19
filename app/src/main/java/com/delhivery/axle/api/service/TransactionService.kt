@@ -127,7 +127,9 @@ interface TransactionService {
     @Query("sp_id") userId: String,
     @Query("match_lane_pref_origin_cities") matchLanePrefOriginCities: Boolean= true,
     @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true,
-    @Query("loads_with_bid_active") loadActive:Boolean =true
+    @Query("loads_with_bid_active") loadActive:Boolean =true,
+    @Query("loads_with_bid_active") loadsWithBidActive:Boolean? = true,
+    @Query("skip_self_bids") skipSelfBids:Boolean? = true,
   ): Single<BaseResponse<ContractsSummaryResponse>>
 
   /**

@@ -3,19 +3,32 @@ package com.delhivery.axle.api.response
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
+import retrofit2.http.Query
 
 data class TransactionsResponse(
-  @SerializedName("has_next") val hasNext: Boolean = false,
-  @SerializedName("more_loads") val more_loads: Boolean = false,
-  @SerializedName("load_price_percent") val loadPricePercent: Int=10,
-  @SerializedName("total") val total: Int = 12,
-  @SerializedName("offset") val offset: Int =0,
-  @SerializedName("active_count") val activeCount: Int=0,
+  @SerializedName("has_next") val hasNext: Boolean,
+  @SerializedName("more_loads") val more_loads: Boolean,
+  @SerializedName("load_price_percent") val loadPricePercent: Int,
+  @SerializedName("total") val total: Int,
+  @SerializedName("offset") val offset: Int,
+  @SerializedName("active_count") val activeCount: Int?=0,
   @SerializedName("result") val transactions: List<HomeBidsRequestItemData>,
-  @SerializedName("all_active_fetched") val allActiveFetched: Boolean = false,
-  @SerializedName("load_counts") val loadCounts:LoadCounts?
+  @SerializedName("all_active_fetched") val allActiveFetched: Boolean?,
+  @SerializedName("load_counts") val loadCounts:LoadCounts?,
+  @SerializedName("search_after") val searchAfter: SearchAfter?,
+  @SerializedName("search_after_creation_time") val searchAfterCreationTime: String?,
+  @SerializedName("search_after_transaction_id") val searchAfterTransactionId: String?,
 )
 
+/**
+ *  data class for pagination
+ */
+data class SearchAfter(
+  @SerializedName("creation_time") val creationTime:String?,
+  @SerializedName("transaction_id") val transactionId:String?,
+  @SerializedName("required_on") val requiredOn:String?
+
+)
 /**
  *Contains details about the truck display names availabel
  */

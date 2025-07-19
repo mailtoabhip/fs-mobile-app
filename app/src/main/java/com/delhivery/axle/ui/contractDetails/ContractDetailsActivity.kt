@@ -495,12 +495,12 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
         binding.cardInput.bidError.visibility = View.VISIBLE
         val amount = bidAmount/(transaction.operatingDays!!*4)
-        binding.cardInput.bidError.text = "Your bid price per day: ₹${amount}"
+        binding.cardInput.bidError.text = "Your bid price per trip: ₹${amount}"
       }else if (transaction.isItIntraCityContract()){
         binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
         binding.cardInput.bidError.visibility = View.VISIBLE
         val amount = bidAmount/transaction.intracityDays!!.toInt()
-        binding.cardInput.bidError.text = "Your bid price per trip: ₹${amount}"
+        binding.cardInput.bidError.text = "Your bid price per day: ₹${amount}"
 
       }else{
         binding.cardInput.bidError.visibility = View.GONE

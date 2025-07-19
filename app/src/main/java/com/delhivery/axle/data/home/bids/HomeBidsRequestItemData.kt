@@ -1645,7 +1645,7 @@ data class HomeBidsRequestItemData(
   }
 
 
-  fun isIntraCityContract() = if ((requestType==RequestType.Contract.type) && contractType == ContractType.INTRACITY.type) {
+  fun isIntraCityContract() =  if ((requestType==RequestType.Contract.type) && contractType == ContractType.INTRACITY.type) {
     View.VISIBLE
   } else {
     View.GONE

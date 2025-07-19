@@ -83,7 +83,8 @@ class HomeContractsViewModel@Inject constructor(
   var paginateCount =0
 
   var txnIds:ArrayList<String> = ArrayList()
-
+  var searchAfterCreationTime :String? = null
+  var searchAfterTransactionId : String? = null
 
   var fromNotification: Boolean
     get() = userPrefs.fromNotification
@@ -120,9 +121,13 @@ class HomeContractsViewModel@Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_contract_transactions")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_contract_transactions_parallel")
     mainTrace.start()
+    Log.d("cntrctVM", "srchaftr $searchAfterCreationTime searctTrans $searchAfterTransactionId")
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts)
+        10,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts, searchAfterCreationTime = searchAfterCreationTime,searchAfterTransactionId= searchAfterTransactionId)
       .flatMap  { _res ->
+        searchAfterTransactionId = _res.searchAfterTransactionId
+        searchAfterCreationTime = _res.searchAfterCreationTime
+        Log.d("cntrctVM", "srchaftr $searchAfterCreationTime searctTrans $searchAfterTransactionId")
         total = _res.total
         offset = _res.offset
         hasMoreData = _res.hasNext

@@ -11,6 +11,7 @@ import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
+import com.delhivery.axle.api.response.SearchAfter
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.Quintuple
@@ -129,9 +130,11 @@ class HomeLoadsViewModel @Inject constructor(
   var editFlg= mutableListOf<Boolean>(false,false,false)
 
   var loadsCount:Int =0
+    var searchAfter: SearchAfter?=null
 
 
-  /**
+
+    /**
    * Getter/Setter for route update flag to preferences
    */
   var routeUpdated: Boolean
@@ -195,11 +198,12 @@ class HomeLoadsViewModel @Inject constructor(
                 vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
-                true,null
+                true,null,
+                searchAfter
             ).flatMap {_res ->
-
+                searchAfter =  _res.searchAfter
             offset = _res.offset?:0
-            total = _res.total?:0
+            total = _res.transactions.size?:0
             fecthToCalled = _res.offset < _res.total
             loadPricePercent = _res.loadPricePercent
             more_default_loads = _res.more_loads
@@ -214,7 +218,8 @@ class HomeLoadsViewModel @Inject constructor(
                 userPrefs.truckTypes,
                 excludeTruckTypes,
                 filterVehicleType,
-                true, splitViewCount = true
+                true, splitViewCount = true,
+                searchAfter = searchAfter
             ).map {
                     Triple(_res.transactions,_res.total, it)
                 }
@@ -307,7 +312,7 @@ class HomeLoadsViewModel @Inject constructor(
                 dataLoadingLiveData.postValue(false)
             }
         }else {
-            Log.d("ViewmodelLoadIntercity1 ", "in else")
+            Log.d("Viewmod1", "in else")
 
             compositeDisposable += transactionsRepository.fetchRecommTransactions(
                 offset,
@@ -315,14 +320,15 @@ class HomeLoadsViewModel @Inject constructor(
                 vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
-                true
+                true,
+                searchAfter = searchAfter
             )
                 .flatMap { _res ->
                     Log.d("Viewmode123", "${_res.toString()}")
 
                     Log.d("Viewmode12", "${_res.transactions}")
                     offset = _res.offset
-                    total = _res.total
+                    total = _res?.transactions?.size?:0
                     fecthToCalled = _res.offset < _res.total
                     loadPricePercent = _res.loadPricePercent
                     more_default_loads = _res.more_loads
@@ -349,7 +355,8 @@ class HomeLoadsViewModel @Inject constructor(
                             excludeTruckTypes,
                             filterVehicleType,
                             true,
-                            splitViewCount = true
+                            splitViewCount = true,
+                            searchAfter = searchAfter
                         ).subscribeOn(Schedulers.io()),
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
                         { t1, t2, t3, t4 ->
@@ -439,9 +446,9 @@ class HomeLoadsViewModel @Inject constructor(
                                                 AddUpdate
                                             )
                                         )*/
-//                            if (total == 0 ) {
-//                                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
-//                            }
+                            if (total == 0 ) {
+                                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+                            }
                                 for ((index, load) in loads.toMutableList().withIndex()) {
                                     try {
                                         load.transactionId?.let { txnIds.add(it) }

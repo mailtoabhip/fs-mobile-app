@@ -9,6 +9,7 @@ import com.delhivery.axle.api.repository.TransactionStatus.InEnquiry
 import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.ReccomdationRequest
+import com.delhivery.axle.api.response.SearchAfter
 import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
@@ -37,28 +38,28 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get user transactions
    */
-  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, splitViewCount:Boolean?=null) =
+  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, splitViewCount:Boolean?=null, searchAfter: SearchAfter?) =
          recommendationService.recommendationTransactions(
            ReccomdationRequest( userPrefs.parentId,UserTripsLoadLimit,offset,
-             demand_type, vehicle_type, splitViewCount = splitViewCount )
+             demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter )
           ).convertResponse()
 
   /**
    * Get user intracity transactions
    */
-  fun fetchIntracityRecommTransactions(offset: Int, demand_type: String?=null, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, onlyCount:Boolean?=null) =
+  fun fetchIntracityRecommTransactions(offset: Int, demand_type: String?=null, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, onlyCount:Boolean?=null, searchAfter: SearchAfter?= null) =
     recommendationService.recommendationIntracityTransactions(
       ReccomdationRequest(userPrefs.parentId,UserTripsLoadLimit,offset,
-        null, vehicle_type, onlyCount = onlyCount)
+        null, vehicle_type, onlyCount = onlyCount, searchAfter = searchAfter)
     ).convertResponse()
 
   /**
    * Get contracts transactions
    */
-  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null) =
+  fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null, searchAfterCreationTime:String? = null, searchAfterTransactionId:String? = null) =
     transactionService.contractsTransactions(
       userPrefs.parentId, offset, limit,demand_type, allActiveFetched = allActiveFetched,matchLanePrefOriginCities,isFlexible,includeFlexibleContracts
-    , searchAfterCreationTime = "", searchAfterTransactionId = "").
+    , searchAfterCreationTime = searchAfterCreationTime, searchAfterTransactionId = searchAfterTransactionId).
     convertResponse()
 
 

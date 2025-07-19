@@ -36,6 +36,7 @@ import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
+import com.delhivery.axle.utils.BidSuccessInterface
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
 import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS
@@ -86,7 +87,7 @@ import javax.inject.Inject
  * Search results screen
  */
 class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBinding, SearchResultsViewModel>(),
-    SearchLoadsRVAdapterInterface {
+    SearchLoadsRVAdapterInterface,BidSuccessInterface {
 
   companion object {
     val _instance: SearchResultsFragment by lazy { SearchResultsFragment() }
@@ -177,12 +178,16 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     })
 
 
+
     viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
-      if(it!=null){
-        uiUtils.showToast("Indent accepted successfully!")
-        refreshData()
-      }
-    })
+          if(it!=null){
+            dialogUtils.showSuccessBidDialog(this,
+              resources.getString(R.string.details_submitted_successfully),
+              null
+            )
+            refreshData()
+          }
+        })
 
     viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it != null){
@@ -757,4 +762,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       }
     }
   }
+
+  override fun bidPlacedSuccess(success: Boolean) {
+//    TODO("Not yet implemented")
   }
+}
