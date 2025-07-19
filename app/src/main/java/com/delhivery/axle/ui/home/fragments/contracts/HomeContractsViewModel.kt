@@ -98,6 +98,8 @@ class HomeContractsViewModel@Inject constructor(
   fun fetchUserTransactions(
     paginate: Boolean = false, demandType: String,contractType: String?=null,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null){
     if (!paginate ) {
+      searchAfterTransactionId = null
+      searchAfterCreationTime = null
       offset = 0
       allActiveFetched = false
     } else if (paginate && !hasMoreData) {
@@ -130,7 +132,7 @@ class HomeContractsViewModel@Inject constructor(
         Log.d("cntrctVM", "srchaftr $searchAfterCreationTime searctTrans $searchAfterTransactionId")
         total = _res.total
         offset = _res.offset
-        hasMoreData = _res.hasNext
+        hasMoreData = _res.searchAfterTransactionId!= null && _res.searchAfterCreationTime !=null && _res.total!=0
         allActiveFetched = _res.allActiveFetched?:false
         parallelTrace.start()
         Single.zip(
@@ -159,7 +161,7 @@ class HomeContractsViewModel@Inject constructor(
               load.transactionId !in bidTransactionIds
             }*/
 
-              add(Pair(HomeContractsSearchItem(), AddUpdate))
+            add(Pair(HomeContractsSearchItem(), AddUpdate))
               // calculating the count based on user demand type
               var totalActive=0
               var expressCount =0
@@ -253,7 +255,7 @@ class HomeContractsViewModel@Inject constructor(
                 //add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
               }
             //  loadsCountLiveData.postValue(totalActive)
-             if (_tRes.fifth.transactions.isEmpty()) {
+             if (_tRes.fifth.transactions.isEmpty() && !paginate) {
                add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
               }
               if(_tRes.fifth.transactions.isNotEmpty()){

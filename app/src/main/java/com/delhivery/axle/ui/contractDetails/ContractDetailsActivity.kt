@@ -364,7 +364,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.vehicleError.visibility = View.GONE
             } else {
               binding.cardInput.vehicleError.visibility = View.VISIBLE
-              binding.cardInput.vehicleError.text ="Invalid vehicle Number"
+              binding.cardInput.vehicleError.text ="Invalid Vehicle Number"
               isValidVehicleNumber = false
 
             }
@@ -478,7 +478,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     if(amount!=null){
       binding.cardInput.bidError.text = getString(string.bid_revise_error,amount)
     }else{
-      binding.cardInput.bidError.text =  "Invalid bid: amount outside the allowed range."
+      binding.cardInput.bidError.text =  "Invalid bid: Amount outside the allowed range."
     }
     binding.cardInput.bidError.visibility = View.VISIBLE
   }

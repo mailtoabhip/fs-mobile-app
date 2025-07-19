@@ -113,6 +113,35 @@
                 app:layout_constraintStart_toStartOf="@id/materialType"
                 />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/client_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Closed Truck"
+                android:lineHeight="@dimen/size_16dp"
+                android:textSize="10sp"
+                android:visibility="@{request.nonDelLoadVisibility()}"
+                android:text="Client Name"
+                android:textColor="#8F9198"
+                app:layout_constraintStart_toStartOf="@id/clientName"
+                app:layout_constraintTop_toBottomOf="@id/clientName"
+                />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/clientName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineHeight="@dimen/size_16dp"
+                tools:text="Havells"
+                android:layout_marginTop="16dp"
+                android:text="@{request.clientName}"
+                android:textSize="12sp"
+                android:textColor="#000000"
+                android:visibility="@{request.nonDelLoadVisibility()}"
+                app:layout_constraintTop_toBottomOf="@id/label_reporting_time"
+                app:layout_constraintBottom_toTopOf="@id/client_label"
+                app:layout_constraintStart_toStartOf="@id/label_reporting_time"
+                />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

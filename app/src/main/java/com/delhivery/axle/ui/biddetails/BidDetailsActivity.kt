@@ -1302,6 +1302,20 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
               // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
             }
+            val data = viewModel.transaction as HomeBidsRequestItemData
+            if (data.clientConfirmationPending == false) {
+              binding.bottomLay.visibility = View.GONE
+            } else {
+              binding.bottomLay.visibility = View.VISIBLE
+              binding.btnTripView.setOnClickListener {
+                startActivity(
+                  tripDetailsIntent(
+                    viewModel.transaction.uuid.toString(), this@BidDetailsActivity
+                  )
+                )
+              }
+
+            }
            /* ViewBidDetailsConfirmedBidBinding.inflate(
               layoutInflater, binding.containerActions, false
             )

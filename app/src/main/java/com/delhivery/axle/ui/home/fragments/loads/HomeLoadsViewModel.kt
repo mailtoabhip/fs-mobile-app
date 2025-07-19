@@ -164,6 +164,7 @@ class HomeLoadsViewModel @Inject constructor(
             paginate: Boolean = false, demandType: String,
             selectedFilter: String = "", infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
         if (!paginate || infoSearch) {
+            searchAfter = null
             offset = 0
             offsetFetch = 0
             totalFetchTitle =0
@@ -201,9 +202,14 @@ class HomeLoadsViewModel @Inject constructor(
                 true,null,
                 searchAfter
             ).flatMap {_res ->
-                searchAfter =  _res.searchAfter
+
             offset = _res.offset?:0
             total = _res.transactions.size?:0
+                searchAfter =  _res.searchAfter
+                        if(total ==0) {
+                            searchAfter = null
+                            hasMoreData = false
+                        }
             fecthToCalled = _res.offset < _res.total
             loadPricePercent = _res.loadPricePercent
             more_default_loads = _res.more_loads
@@ -285,7 +291,7 @@ class HomeLoadsViewModel @Inject constructor(
                                         )
                                     )*/
 
-                        if (total == 0 ) {
+                        if (total == 0  && searchAfter != null) {
                             add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                         }
                             for ((index, load) in loads.toMutableList().withIndex()) {
@@ -327,8 +333,14 @@ class HomeLoadsViewModel @Inject constructor(
                     Log.d("Viewmode123", "${_res.toString()}")
 
                     Log.d("Viewmode12", "${_res.transactions}")
+                    searchAfter = _res.searchAfter
+                    hasMoreData = searchAfter!=null
                     offset = _res.offset
                     total = _res?.transactions?.size?:0
+                    if(total ==0) {
+                        searchAfter = null
+                        hasMoreData = false
+                    }
                     fecthToCalled = _res.offset < _res.total
                     loadPricePercent = _res.loadPricePercent
                     more_default_loads = _res.more_loads
@@ -446,7 +458,7 @@ class HomeLoadsViewModel @Inject constructor(
                                                 AddUpdate
                                             )
                                         )*/
-                            if (total == 0 ) {
+                            if (total == 0 && !paginate) {
                                 add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                             }
                                 for ((index, load) in loads.toMutableList().withIndex()) {
@@ -510,6 +522,7 @@ class HomeLoadsViewModel @Inject constructor(
     infoSearch: Boolean = false, excludeTruckTypes: String?= null) {
     if (!paginate || infoSearch) {
       offsetFetch = 0
+      searchAfter = null
     } else if (paginate && !hasMoreData ) {
       return
     }
@@ -590,7 +603,7 @@ class HomeLoadsViewModel @Inject constructor(
                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                   }
           //      add(Pair(HomeLoadsSummaryItem(HomeLoadsSummaryItemData(totalFetchTitle)), AddUpdate))
-                if (total == 0) {
+                if (total == 0  && !paginate) {
                     add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                 }
                   for ((index, load) in loads.toMutableList().withIndex()) {
