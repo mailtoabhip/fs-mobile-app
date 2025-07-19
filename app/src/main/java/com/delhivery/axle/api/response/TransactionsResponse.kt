@@ -5,14 +5,14 @@ import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 
 data class TransactionsResponse(
-  @SerializedName("has_next") val hasNext: Boolean,
-  @SerializedName("more_loads") val more_loads: Boolean,
-  @SerializedName("load_price_percent") val loadPricePercent: Int,
-  @SerializedName("total") val total: Int,
-  @SerializedName("offset") val offset: Int,
-  @SerializedName("active_count") val activeCount: Int?=0,
+  @SerializedName("has_next") val hasNext: Boolean = false,
+  @SerializedName("more_loads") val more_loads: Boolean = false,
+  @SerializedName("load_price_percent") val loadPricePercent: Int=10,
+  @SerializedName("total") val total: Int = 12,
+  @SerializedName("offset") val offset: Int =0,
+  @SerializedName("active_count") val activeCount: Int=0,
   @SerializedName("result") val transactions: List<HomeBidsRequestItemData>,
-  @SerializedName("all_active_fetched") val allActiveFetched: Boolean?,
+  @SerializedName("all_active_fetched") val allActiveFetched: Boolean = false,
   @SerializedName("load_counts") val loadCounts:LoadCounts?
 )
 

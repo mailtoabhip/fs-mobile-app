@@ -198,8 +198,8 @@ class HomeLoadsViewModel @Inject constructor(
                 true,null
             ).flatMap {_res ->
 
-            offset = _res.offset
-            total = _res.total
+            offset = _res.offset?:0
+            total = _res.total?:0
             fecthToCalled = _res.offset < _res.total
             loadPricePercent = _res.loadPricePercent
             more_default_loads = _res.more_loads
@@ -307,6 +307,7 @@ class HomeLoadsViewModel @Inject constructor(
                 dataLoadingLiveData.postValue(false)
             }
         }else {
+            Log.d("ViewmodelLoadIntercity1 ", "in else")
 
             compositeDisposable += transactionsRepository.fetchRecommTransactions(
                 offset,
@@ -317,7 +318,9 @@ class HomeLoadsViewModel @Inject constructor(
                 true
             )
                 .flatMap { _res ->
+                    Log.d("Viewmode123", "${_res.toString()}")
 
+                    Log.d("Viewmode12", "${_res.transactions}")
                     offset = _res.offset
                     total = _res.total
                     fecthToCalled = _res.offset < _res.total
@@ -408,6 +411,7 @@ class HomeLoadsViewModel @Inject constructor(
                                         AddUpdate
                                     )
                                 )
+                            Log.d("LoadView", "${_tRes.fourth.total} inter $intercityCount nonDlv $nonDlvCount")
                             val count1 = _tRes.fourth.total + intercityCount + nonDlvCount
                             fullLoadsCountLiveData.postValue(count1)
 
@@ -435,9 +439,9 @@ class HomeLoadsViewModel @Inject constructor(
                                                 AddUpdate
                                             )
                                         )*/
-                            if (total == 0 ) {
-                                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
-                            }
+//                            if (total == 0 ) {
+//                                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+//                            }
                                 for ((index, load) in loads.toMutableList().withIndex()) {
                                     try {
                                         load.transactionId?.let { txnIds.add(it) }

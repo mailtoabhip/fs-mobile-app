@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils.extensions
 
+import android.util.Log
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ErrorResponseBody
@@ -17,9 +18,16 @@ import retrofit2.HttpException
  */
 fun <M : Any, T : BaseResponse<M>> Single<T>.convertResponse(): Single<M> =
   map {
+    Log.d("DelhiveryExtension", it.responseData.toString())
     if (it.isSuccess) {
-      it.responseData
+      try {
+        it.responseData
+      } catch (e:Exception){
+        Log.d("DelhiveryExcept", it.responseData.toString())
+        it.responseData
+      }
     } else {
+      Log.d("DelhiveryExcept", it.responseData.toString())
       throw it.toHttpException()
     }
   }
