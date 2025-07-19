@@ -125,7 +125,7 @@ class HomeContractsViewModel@Inject constructor(
     mainTrace.start()
     Log.d("cntrctVM", "srchaftr $searchAfterCreationTime searctTrans $searchAfterTransactionId")
     compositeDisposable += transactionsRepository.fetchContractsTransactions(offset, demandType, allActiveFetched = allActiveFetched,
-        10,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts, searchAfterCreationTime = searchAfterCreationTime,searchAfterTransactionId= searchAfterTransactionId)
+      UserTripsLoadLimit,if(demandType==DemandType.Intracity.type)true else null,isFlexible,includeFlexibleContracts, searchAfterCreationTime = searchAfterCreationTime,searchAfterTransactionId= searchAfterTransactionId)
       .flatMap  { _res ->
         searchAfterTransactionId = _res.searchAfterTransactionId
         searchAfterCreationTime = _res.searchAfterCreationTime
