@@ -883,11 +883,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
           // Transaction Cancel
           is BidDetailsContractCancelled ->{
             binding.cardInput.request = viewModel.transaction
-            binding.mainCl.visibility = View.VISIBLE
             binding.cardInput.root.visibility = View.VISIBLE
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
-//            binding.ro
             binding.cardInput.rejectedBidCl.title = "Bid cancelled"
             binding.cardInput.rejectedBidCl.subTitle = "The bid was cancelled by the client"
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
