@@ -12,6 +12,7 @@ import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
@@ -138,7 +139,12 @@ class HomeBidsViewModel @Inject constructor(
 
     //Send ONE AT A TIME
     val statuses = mutableListOf<String>().apply {
-      add(bidType.status.statusKey)
+      if (bidType == BidType.LostBid) {
+        add(BidType.LostBid.status.statusKey)
+        add(TransactionBidStatus.Cancelled.statusKey)
+      }else {
+        add(bidType.status.statusKey)
+      }
 //      add(BidType.ActiveBid.status.statusKey)
 //      add(BidType.ConfirmedBid.status.statusKey)
 //      add(BidType.LostBid.status.statusKey)
@@ -187,7 +193,7 @@ class HomeBidsViewModel @Inject constructor(
             mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */
               add(Pair(HomeBidsProgressItem(), Remove))
-
+              Log.d("bidsview","$paginate $total")
               /* edit route prefs, if fresh fetch n total == 0 */
               if (!paginate && total == 0) {
                 add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
@@ -238,10 +244,10 @@ class HomeBidsViewModel @Inject constructor(
               add(Pair(HomeBidsProgressItem(), Remove))
               /* remove search item */
               add(Pair(HomeBidsSearchItem(), Remove))
-              if (error is NoBidsFoundException) {
+              if (error is NoBidsFoundException &&!paginate) {
                 /* add no bids warning item */
                 add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              } else {
+              } else if(!paginate){
                 /* add api time out item */
                 add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
               }

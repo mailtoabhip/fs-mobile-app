@@ -102,7 +102,7 @@ class BidsViewModel @Inject constructor(
     var statuses:String? = bidType.status.statusKey
     var pending:Boolean? = false
     if (bidType == BidType.LostBid) {
-       statuses = mutableListOf<String>().apply {
+      statuses = mutableListOf<String>().apply {
         add(BidType.LostBid.status.statusKey)
         add(TransactionBidStatus.Cancelled.statusKey)
       }
