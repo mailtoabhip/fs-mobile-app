@@ -293,7 +293,8 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.contractDetails.ContractDetailsActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
 
         <activity android:name=".ui.auth.AccountDeletionActivity"
             android:screenOrientation="portrait"/>
