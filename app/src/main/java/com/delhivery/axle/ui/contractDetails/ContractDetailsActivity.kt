@@ -882,6 +882,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         when (state) {
           // Transaction Cancel
           is BidDetailsContractCancelled ->{
+            binding.cardInput.request = viewModel.transaction
             binding.cardInput.root.visibility = View.VISIBLE
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
