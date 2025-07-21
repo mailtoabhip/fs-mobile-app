@@ -80,12 +80,15 @@
 
         <TextView
             android:id="@+id/toCity"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:gravity="end"
+            android:maxLines="1"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            tools:text ="Jaisalmer"
+            tools:text ="Jaisalmer, MIDC, Kanpur, Delhi, Bengal"
             android:text="@{request.destinationCityName()}"
             android:textColor="#121A31"
+            app:layout_constraintStart_toStartOf="@id/guidelineCenter1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -113,11 +116,11 @@
             android:paddingTop="@dimen/size_4dp"
             android:textColor="#505361"
             android:textAlignment="textEnd"
-            tools:text ="Rajasthan"
+            tools:text ="Uttar Pradesh, Rajasthan, Delhi NCR"
             android:text="@{request.destinationDistrictState()}"
             app:layout_constraintStart_toEndOf="@id/guidelineCenter1"
             app:layout_constraintTop_toBottomOf="@id/toCity"
-            app:layout_constraintEnd_toEndOf="@id/toCity" />
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
