@@ -41,9 +41,7 @@ interface TransactionService {
     @Query("include_flexible_contracts") includeFlexibleContracts:Boolean?=null,
     @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true,
     @Query("exclude_union_area")excludeUnionArea:Boolean= true,
-/*
-    @Query("loads_active") loadActive:Boolean =true
-*/
+    @Query("loads_with_bid_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
