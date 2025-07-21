@@ -32,9 +32,9 @@
             android:text="Bid placed for"
             android:textColor="#888888"
             android:textSize="12sp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@+id/border"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/bid_amount"
@@ -52,15 +52,14 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_revise_bid"
-            android:layout_width="160dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:visibility="visible"
             tools:visibility="visible"
             app:layout_constraintTop_toBottomOf="@+id/border"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -71,6 +70,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tv_bid_status"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:visibility="gone"
                 tools:visibility="visible"
@@ -83,6 +83,7 @@
                 android:textColor="@color/bid_placed_green"
                 android:textStyle="bold"
                 android:textSize="14sp"
+                android:layout_marginTop="8dp"
                 tools:text="Bid Confirmed"
                 android:gravity="center"
                 tools:visibility="visible"
@@ -92,19 +93,16 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-
             <TextView
                 android:id="@+id/tv_revise_bid"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="164dp"
+                android:layout_height="40dp"
                 android:text="Revise Bid"
                 android:textColor="#FFFFFF"
                 android:background="@drawable/bg_place_bid"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone"
                 android:visibility="gone"
                 android:gravity="center"
                 android:textSize="14sp"

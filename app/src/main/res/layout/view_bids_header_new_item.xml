@@ -48,7 +48,13 @@
                 android:textSize="14sp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="2dp"
-                tools:text="Ongoing(10)" />
+                tools:text="Ongoing (1000)"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"/>
 
 
             <androidx.appcompat.widget.AppCompatTextView
