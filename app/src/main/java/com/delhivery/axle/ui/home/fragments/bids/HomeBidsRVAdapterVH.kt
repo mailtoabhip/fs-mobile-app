@@ -304,7 +304,7 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
         //set image
         binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
         //set text
-        binding.includeBidTime6.tvBidStatus.text = "Bid Cancelled"
+        binding.includeBidTime6.tvBidStatus.text = "Demand Cancelled"
         binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
       }
 
