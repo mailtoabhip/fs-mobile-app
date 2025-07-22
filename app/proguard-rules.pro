@@ -56,6 +56,8 @@
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
 -keep class com.delhivery.axle.api.response.** { *; }
+#-keep class com.delhivery.axle.api.request.** { *; }
+
 -keep class com.google.gson.stream.** { *; }
 
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
@@ -103,3 +105,10 @@
 -dontwarn javax.xml.stream.events.**
 
 -keepnames class com.delhivery.axle.ui.home.fragments.** { *; }
+
+-keepclassmembers enum * { *; }
+-keep class com.google.code.gson.* { *; }
+-keepattributes *Annotation*, Signature, Exception
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
