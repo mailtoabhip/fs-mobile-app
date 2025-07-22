@@ -130,6 +130,7 @@ class AutoCompleteUtils @Inject constructor(
     jsonObject.addProperty("prefix", query)
     jsonObject.addProperty("field", "city_display")
     jsonObject.addProperty("size", "100")
+      parentJsonObject.addProperty("recommendation_type","city_based")
     val jsonArray = JsonArray()
     jsonArray.add(jsonObject)
     parentJsonObject.add("suggesters", jsonArray)
@@ -153,7 +154,7 @@ class AutoCompleteUtils @Inject constructor(
           .subscribe { _res, _err ->
               if (!_err && _res != null) {
                   _res.responseData?.let { cities ->
-                      editText.setItems(cities.cities.distinctBy { it.orionDbCityCode }) {
+                      editText.setItems(cities.cities) {
                           disposable?.dispose()
                           action(it)
                       }

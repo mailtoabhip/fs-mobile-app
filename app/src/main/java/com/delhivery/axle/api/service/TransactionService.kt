@@ -26,8 +26,8 @@ interface TransactionService {
   fun transactions(
     @Query("offset") offset: Int,
     @Query("status_list") status_list: String?,
-    @Query("origin_city_code") source: String? = null,
-    @Query("destination_city_code") destination: String? = null,
+    @Query("origin_city_list") source: String? = null,
+    @Query("destination_city_list") destination: String? = null,
     @Query("truck_types") truckType: String? = null,
     @Query("truck_display_names") truckDisplayName: String? = null,
     @Query("contract_status") contractStatus: String?,
@@ -42,7 +42,7 @@ interface TransactionService {
     @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true,
     @Query("exclude_union_area")excludeUnionArea:Boolean= true,
     @Query("loads_with_bid_active") loadActive:Boolean =true
-  ): Single<BaseResponse<TransactionsResponse>>
+    ): Single<BaseResponse<TransactionsResponse>>
 
   /**
    * Loadboard transactions
