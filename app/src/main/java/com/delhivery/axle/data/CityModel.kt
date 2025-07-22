@@ -42,6 +42,9 @@ data class CityModel(
     if (districtName().isNotEmpty()) "${cityName()}, ${districtName()}" else cityName()
 
   fun cityStateWithoutDisc()=
+    if(type=="state"){
+      stateName()
+    }else
     if (stateName().isNotEmpty()) "${cityName()}, ${stateName()}" else cityName()
 
 }
