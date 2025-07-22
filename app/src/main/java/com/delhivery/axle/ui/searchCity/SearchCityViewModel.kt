@@ -47,6 +47,8 @@ class SearchCityViewModel @Inject constructor(
         jsonObject.addProperty("prefix", query)
         jsonObject.addProperty("field", "city_display")
         jsonObject.addProperty("size", 25)
+        parentJsonObject.addProperty("recommendation_type","city_based")
+
         val jsonArray = JsonArray()
         jsonArray.add(jsonObject)
         parentJsonObject.add("suggesters", jsonArray)
@@ -71,7 +73,7 @@ class SearchCityViewModel @Inject constructor(
                         }
 
                         else {
-                            for (city in _res.responseData.cities.distinctBy { it.orionDbCityCode }) {
+                            for (city in _res.responseData.cities) {
                                 add(Pair(SearchDataItem(city), DataRVAdapterOperationType.Add))
                             }
                         }

@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="@dimen/text_16sp"
-            android:text="@{request.cityDist()}"
+            android:text="@{request.cityStateWithoutDisc()}"
             tools:text= "Jaipur"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

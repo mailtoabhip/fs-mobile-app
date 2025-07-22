@@ -41,6 +41,9 @@ data class CityModel(
   fun cityDist()=
     if (districtName().isNotEmpty()) "${cityName()}, ${districtName()}" else cityName()
 
+  fun cityStateWithoutDisc()=
+    if (stateName().isNotEmpty()) "${cityName()}, ${stateName()}" else cityName()
+
 }
 
 data class CitiesResponse(
@@ -53,14 +56,14 @@ data class CitiesResponse(
 fun List<CityModel>.names() =
   mapIndexed { _, cityModel ->
     val city: String = StringUtils.capitalize(cityModel.city) ?: ""
-    val district: String = StringUtils.capitalize(cityModel.district) ?: ""
-  //  val state: String = StringUtils.capitalize(cityModel.state) ?: ""
+   // val district: String = StringUtils.capitalize(cityModel.district) ?: ""
+    val state: String = StringUtils.capitalize(cityModel.state) ?: ""
     val sb = StringBuilder()
     sb.append(city)
-    if (district.isNotNullOrEmpty())
-      sb.append(", ").append(district)
-//    if (state.isNotNullOrEmpty())
-//      sb.append(", ").append(state)
+//    if (district.isNotNullOrEmpty())
+//      sb.append(", ").append(district)
+    if (state.isNotNullOrEmpty())
+      sb.append(", ").append(state)
     return@mapIndexed sb.toString()
   }
 

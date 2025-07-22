@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="@dimen/text_16sp"
-            android:text="@{request.cityDist()}"
+            android:text="@{request.cityStateWithoutDisc()}"
             app:layout_constraintEnd_toStartOf="@+id/checkbox_city_state"
             tools:text= "Jaipur"/>
         <CheckBox
