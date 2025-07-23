@@ -221,7 +221,7 @@ class HomeLoadsViewModel @Inject constructor(
                     .split(",")
                     .filterNot { it == DemandType.Intracity.type}
                     .joinToString(","),
-                userPrefs.truckTypes,
+                vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
                 true, splitViewCount = true,
@@ -363,7 +363,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 .split(",")
                                 .filterNot { it == DemandType.Intracity.type }
                                 .joinToString(","),
-                            userPrefs.truckTypes,
+                            vehicleTypes,
                             excludeTruckTypes,
                             filterVehicleType,
                             true,
