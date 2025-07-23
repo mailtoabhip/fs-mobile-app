@@ -694,7 +694,7 @@
   <string name="per_day">Per day</string>
   <string name="per_month">Per month</string>
   <string name="tentative_total_vehicles_count">Vehicle Per Departure ,</string>
-  <string name="daily_departure_approximately">Daily Departure approximately</string>
+  <string name="daily_departure_approximately">Daily Departure</string>
   <string name="one_way">1 Way</string>
   <string name="trip_details">Trip Details</string>
   <string name="payment_info">Payment Information</string>

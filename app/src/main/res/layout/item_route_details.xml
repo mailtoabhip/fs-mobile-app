@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="@{request.isIntraCityContract()}"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:padding="16dp">
 
         <!-- Header -->
@@ -64,7 +64,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="@dimen/size_4dp"
         android:visibility="@{request.isFRCLHContract()}"
-        tools:visibility="gone"
+        tools:visibility="visible"
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp"
         android:elevation="4dp">
@@ -133,6 +133,7 @@
                 android:textStyle="bold"
                 android:text="@{request.destinationCityName()}"
                 tools:text ="Jaisalmer"
+                android:textSize="@dimen/text_16sp"
                 android:textColor="#121A31"
                 app:layout_constraintStart_toStartOf="@id/guidelineCenter3"
                 android:textAlignment="textEnd"
