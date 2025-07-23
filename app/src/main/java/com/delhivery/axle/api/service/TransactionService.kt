@@ -79,7 +79,8 @@ interface TransactionService {
    */
   @GET("/transactions/list/")
   fun bulkTransactions(
-    @Query("transactions_ids") transactionIds: String
+    @Query("transactions_ids") transactionIds: String,
+    @Query("include_adhoc_intracity") includeAdhocIntracity: Boolean = true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
