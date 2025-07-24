@@ -69,7 +69,8 @@ interface TransactionService {
   @GET("/transactions/")
   fun transactionDetails(
     @Query("uuid") transactionId: String,
-    @Query("sp_id") supplierId:String?=null
+    @Query("sp_id") supplierId:String?=null,
+    @Query("skip_od_in_halts")skipODInHalts:Boolean=true
   ): Single<BaseResponse<HomeBidsRequestItemData>>
 
   /**

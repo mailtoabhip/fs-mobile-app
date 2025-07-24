@@ -51,8 +51,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   private var destination: CityModel? = null
   private var requestType: String? =  ""
   private var contractType:String? = ""
-  private var truckDisplayNames = arrayListOf("Select Vehicle Type")
-
+  private var truckDisplayNames: ArrayList<String>? = arrayListOf("Select Vehicle Type")
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
@@ -75,10 +74,10 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         else uiUtils.hideProgress()
       }
       viewModel.truckDisplayNamesLiveData.observe(this){
-          truckDisplayNames.clear()
-          truckDisplayNames.add("Select Vehicle Type")
+          truckDisplayNames?.clear()
+          truckDisplayNames?.add("Select Vehicle Type")
           if(it!=null)
-            truckDisplayNames.addAll(it)
+            truckDisplayNames?.addAll(it)
           binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
       }
     }
@@ -169,7 +168,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
       }
       binding.btnSearch.setOnClickListener{
         if(binding.checkBoxFixedIntracity.isChecked|| binding.checkBoxFlexibleIntracity.isChecked){
-          searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem.toString(),"",if(binding.checkBoxFlexibleIntracity.isChecked&&binding.checkBoxFixedIntracity.isChecked)null else if (binding.checkBoxFixedIntracity.isChecked)false else if (binding.checkBoxFlexibleIntracity.isChecked) true else null, true)
+          searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem?.toString()
+            ?.takeIf { it != "Select Vehicle Type" },"",if(binding.checkBoxFlexibleIntracity.isChecked&&binding.checkBoxFixedIntracity.isChecked)null else if (binding.checkBoxFixedIntracity.isChecked)false else if (binding.checkBoxFlexibleIntracity.isChecked) true else null, true)
         }else{
           uiUtils.showToast("Please select contract type")
         }
@@ -213,7 +213,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
 
    private fun AppCompatSpinner.setTruckDisplayNamesAdapter() {
     val truckDisplayAdapter =
-      ArrayAdapter(this.context, layout.simple_spinner_item, truckDisplayNames).apply {
+      ArrayAdapter(this.context, layout.simple_spinner_item, truckDisplayNames ?: arrayListOf("Select Vehicle Type")).apply {
         setDropDownViewResource(layout.simple_spinner_dropdown_item)
         onItemSelectedListener = object : OnItemSelectedListener {
           override fun onItemSelected(
@@ -252,10 +252,10 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
         binding.editReportingCenter.errorAnimate()
         return
       }
-      if(truckDisplayName!!.lowercase().contains("select")) {
-        binding.spinnerTruckDisplayName.errorVibrate()
-        return
-      }
+//      if(truckDisplayName!!.lowercase().contains("select")) {
+//        binding.spinnerTruckDisplayName.errorVibrate()
+//        return
+//      }
     }
     else{
       if (origin == null) {
@@ -285,7 +285,6 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
     }
     /* searching progress */
     action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
-
     /* delay and search for better UX */
       Handler(Looper.myLooper()!!).postDelayed({
         action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory,isFlexible,includeFlexibleContracts))

@@ -715,6 +715,8 @@ data class HomeBidsRequestItemData(
   fun bidAmountLabel()=
     if(isItFRContract()){
       "Bid Amount Per Trip"
+    }else if(isItIntraCityContract() || isItLHContract()){
+      "Bid Amount Per Month"
     }else{
       "Bid Amount"
     }
@@ -1798,6 +1800,16 @@ data class HomeBidsRequestItemData(
       "1"
     }else {
       "1"
+    }
+  fun vehicleDepText():String=
+    if(vehicleCountCCLane!=null){
+     if(vehicleCountCCLane!!.toInt()>1){
+       "Daily Departure(s)"
+     }else{
+       "Daily Departure"
+     }
+    }else{
+      "Daily Departure"
     }
 
   fun vehicleRouteCount():String=

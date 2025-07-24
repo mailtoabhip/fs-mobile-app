@@ -889,8 +889,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.cardInput.root.visibility = View.VISIBLE
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
-            binding.cardInput.rejectedBidCl.title = "Bid cancelled"
-            binding.cardInput.rejectedBidCl.subTitle = "The bid was cancelled by the client"
+            binding.cardInput.rejectedBidCl.title = "Demand cancelled"
+            binding.cardInput.rejectedBidCl.subTitle = "The demand was cancelled by the client"
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
             binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
               // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
@@ -1105,8 +1105,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.root.visibility = View.VISIBLE
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
-              binding.cardInput.rejectedBidCl.title = "Bid cancelled"
-              binding.cardInput.rejectedBidCl.subTitle = "The bid was cancelled by the client"
+              binding.cardInput.rejectedBidCl.title = "Demand cancelled"
+              binding.cardInput.rejectedBidCl.subTitle = "The demand was cancelled by the client"
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
               binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
                 // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
@@ -1119,7 +1119,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
               binding.cardInput.rejectedBidCl.title = "Bid not selected"
               try{
-                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${StringUtils.formatDecimalAmount(viewModel.transaction.lowestBid!!.toDouble()-userBid.bidAmount)} above the lowest bid"
+              if(userBid.bidAmount<=state.lowestAndUserBidPair.second!!.bidAmount){
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second!!.bidAmount.toInt())} on Lost cards"
+              }else{
+                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second!!.bidAmount.toInt()-userBid.bidAmount.toInt())} above the lowest bid"
+              }
               }catch (e:Exception){
               }
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
@@ -1405,7 +1409,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
         finish()
       }
-    }, 2000)
+    }, 5000)
   }
   private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){
        REFRESH_ON_BACK = true

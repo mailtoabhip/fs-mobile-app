@@ -390,7 +390,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
     saveToHistory: Boolean,
     requestType:String?,
     contractType:String?,
-    truckDisplayNames: ArrayList<String>,
+    truckDisplayNames: ArrayList<String>?,
     progress: Boolean = true,
     isFlexible:Boolean? = null,
     includeFlexibleContracts:Boolean?=null
@@ -414,10 +414,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       else -> 0
     }
     binding.spinnerTruckDisplayName.apply {
-      setTruckDisplayAdapter(truckDisplayNames)
+      truckDisplayNames?.let { setTruckDisplayAdapter(it) }
     }
     binding.spinnerTruckType.setSelection(pos, true)
-    binding.spinnerTruckDisplayName.setSelection(truckDisplayNames.indexOf(displayName))
+    truckDisplayNames?.indexOf(displayName)
+      ?.let { binding.spinnerTruckDisplayName.setSelection(it) }
     isContract = contractType!=null
     isIntraCity = contractType!=null && contractType==ContractType.INTRACITY.type
     binding.isIntraCityContract = isIntraCity
@@ -649,7 +650,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 PROPERTY_SEARCH_BODY_TYPE),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
-                if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem.toString() else binding.spinnerTruckType.selectedItem.toString())
+                if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem?.toString() ?: "" else binding.spinnerTruckType.selectedItem.toString())
         )
       }else{
         analyticsUtil.moEngageTrackEvent(
@@ -658,7 +659,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 PROPERTY_SEARCH_BODY_TYPE, PROPERTY_ORDER_COUNT),
             mutableListOf(  binding.origin?.cityName() ?: "Anywhere",
                 binding.destination?.cityName() ?: "Anywhere",
-              if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem.toString() else binding.spinnerTruckType.selectedItem.toString(),
+              if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem?.toString() ?: "" else binding.spinnerTruckType.selectedItem.toString(),
               numResults.toString())
         )
       }

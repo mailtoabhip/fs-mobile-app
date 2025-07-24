@@ -479,7 +479,7 @@
                 android:layout_marginTop="@dimen/size_18dp"
                 android:paddingStart="@dimen/size_2dp"
                 android:paddingTop="@dimen/size_2dp"
-                android:text="@string/daily_departure_approximately"
+                android:text="@{transaction.vehicleDepText()}"
                 android:textColor="@color/color_hint"
                 android:textSize="@dimen/text_12sp"
                 android:visibility="@{transaction.isLHVehicleVisible()}"

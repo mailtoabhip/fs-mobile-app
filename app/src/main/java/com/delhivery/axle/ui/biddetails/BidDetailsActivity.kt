@@ -26,6 +26,7 @@ import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trucks.TruckFrequentItem
 import com.delhivery.axle.databinding.*
@@ -579,7 +580,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
         startActivity(homeActivityIntent("load", this@BidDetailsActivity))
         finish()
       }
-    }, 2000)
+    }, 5000)
   }
   /**
    * Progress observer
@@ -1371,7 +1372,15 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.rejectedBidCl.title = "Bid not selected"
-            binding.cardInput.rejectedBidCl.subTitle = "You were ₹${DecimalFormat("#########").format(state.acceptedBid.bidAmount.toInt()-state.userBid.bidAmount.toInt())} above the lowest bid"
+            try{
+              if(state.userBid.bidAmount<=state.acceptedBid.bidAmount){
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid.bidAmount.toInt())} on Lost cards"
+              }else{
+                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${DecimalFormat("#########").format(state.acceptedBid.bidAmount.toInt()-state.userBid.bidAmount.toInt())} above the lowest bid"
+              }
+            }catch (e:Exception){
+
+            }
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
             binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
            //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
@@ -1418,8 +1427,8 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
-            binding.cardInput.rejectedBidCl.title = "Bid cancelled"
-            binding.cardInput.rejectedBidCl.subTitle = "The bid was cancelled by the client"
+            binding.cardInput.rejectedBidCl.title = "Demand cancelled"
+            binding.cardInput.rejectedBidCl.subTitle = "The demand was cancelled by the client"
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
             binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
              // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
