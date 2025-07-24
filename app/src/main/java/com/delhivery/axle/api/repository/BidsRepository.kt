@@ -51,23 +51,28 @@ class BidsRepository @Inject constructor(
       }
 
         val userBid :TransactionBid?
+        var acceptedBid: TransactionBid? = null
         it.bids.forEach { it1 ->
           when (it1.biddingType.lowercase()) {
             "pmt" -> hasPMT = true
             "ftl" -> hasFTL = true
           }
+            if(it1.status()==TransactionBidStatus.Accepted){
+                acceptedBid = it1
+            }
         }
         var lowestBid: TransactionBid? = null
         if ((hasPMT && !hasFTL) || (!hasPMT && hasFTL)) {
           lowestBid = (it.bids.minByOrNull { b -> b.bidAmount })
         }
+
         userBid = if (userPrefs.isParent) {
           it.bids.firstOrNull { _b -> _b.supplierId.safeEquals(userId) }
         } else {
           it.bids.firstOrNull { _b -> _b.secondaryVendorId.safeEquals(userId) }
         }
         Triple(
-            Pair(userBid, lowestBid), userBids , it.totalBids
+            Pair(userBid, Pair(lowestBid,acceptedBid)), userBids , it.totalBids
         )
       }!!
 

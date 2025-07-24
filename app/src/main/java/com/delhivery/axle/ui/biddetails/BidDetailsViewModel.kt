@@ -127,7 +127,7 @@ class BidDetailsViewModel @Inject constructor(
         .subscribe { _bRes, error ->
           if (!error) {
             bidCount=_bRes.third
-            lowestBid=_bRes.first.second?.bidAmount
+            lowestBid=_bRes.first.second.first?.bidAmount
             //determine bid state and post to live data
             when {
               _bRes.third == 0 -> {
@@ -170,7 +170,7 @@ class BidDetailsViewModel @Inject constructor(
                           try {
                               transactionBidLiveData.postValue(
                                       BidDetailsUserBidState_RejectedBid(
-                                              _bRes.first.second!!, _bRes.first.first!!,
+                                              _bRes.first.second.second!!, _bRes.first.first!!,
                                               transaction.isPMTIndent()
                                       )
                               )

@@ -1372,15 +1372,10 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.editBidCl.visibility = View.GONE
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.rejectedBidCl.title = "Bid not selected"
-            try{
-              if(state.userBid.bidAmount<=state.acceptedBid.bidAmount){
-                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid.bidAmount.toInt())} on Lost cards"
-              }else{
-                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${DecimalFormat("#########").format(state.acceptedBid.bidAmount.toInt()-state.userBid.bidAmount.toInt())} above the lowest bid"
+              try{
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid?.bidAmount?.toInt())} on Lost cards"
+              }catch (e:Exception){
               }
-            }catch (e:Exception){
-
-            }
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
             binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
            //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
