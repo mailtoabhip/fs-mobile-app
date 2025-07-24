@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,8 +14,10 @@
         android:layout_alignParentStart="true"
         android:layout_height="@dimen/size_38dp"
         android:background="@drawable/bg_search_white_load_spinner"
+        android:gravity="center_vertical"
         android:paddingBottom="@dimen/size_8dp"
         android:paddingTop="@dimen/size_8dp"
+        tools:text = "fxxgxgh"
         android:textSize="@dimen/text_14sp"
         android:textColor="@color/heading_black"
         />

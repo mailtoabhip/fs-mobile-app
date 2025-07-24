@@ -649,8 +649,43 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
           }*/
 
           if (binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
-           // binding.stopNo.text = "No Stops"
+            if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
+              uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+            } else if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
+              uploadArray.add(
+                Pair(
+                  "Pickup Address",
+                  binding.transaction?.loadingLocationPincode.toString() + "-" + binding.transaction?.pickupLocationCity
+                )
+              )
+            }
+            if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
+              uploadArray.add(
+                Pair(
+                  "Drop Address",
+                  binding.transaction?.dropLocationAddress.toString()
+                )
+              )
+            } else if (binding.transaction?.unloadingLocationPincode.isNotNullOrEmpty()) {
+              uploadArray.add(
+                Pair(
+                  "Drop Address",
+                  binding.transaction?.unloadingLocationPincode.toString() + "-" + binding.transaction?.dropLocationCity.toString()
+                )
+              )
+            }
+            if (!uploadArray.isEmpty()) {
+              binding.cvRouteSection.addressLay.visibility = View.VISIBLE
+              val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+              binding.cvRouteSection.addresslist.apply {
+                layoutManager = LinearLayoutManager(applicationContext)
+                adapter = addressDetailAdapter
+              }
+            } else {
+              binding.cvRouteSection.addressLay.visibility = View.GONE
+            }
           } else {
+
 //            binding.stopNo.text =
 //              binding.transaction?.indentHaltCenters!!.size.toString() + " Stops"
             for (i in binding.transaction?.indentHaltCenters!!.indices) {
