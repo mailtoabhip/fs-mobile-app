@@ -23,7 +23,7 @@ data class BidDetailsUserBidState_PlaceBidFirst(val bidsCount: Int = 0) : BidDet
 data class BidDetailsUserBidState_PlaceBid(
   val bidsCount: Int,
   val bids: List<TransactionBid>,
-  val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+  val lowestAndUserBidPair: Pair<TransactionBid?, Pair<TransactionBid?,TransactionBid?>?>,
   val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_place_bid)
 
@@ -33,7 +33,7 @@ data class BidDetailsUserBidState_PlaceBid(
 data class BidDetailsUserBidState_EditBid(
   val bidsCount: Int,
   val bids: List<TransactionBid>,
-  val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+  val lowestAndUserBidPair: Pair<TransactionBid?, Pair<TransactionBid?,TransactionBid?>?>,
   val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
 
@@ -44,7 +44,7 @@ data class BidDetailsUserBidState_EditBid(
 data class BidDetailsUserBidState_ContractResult(
   val bidsCount: Int,
   val bids: List<TransactionBid>,
-  val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+  val lowestAndUserBidPair: Pair<TransactionBid?,Pair<TransactionBid?,TransactionBid?>?>,
   val isPMTIndent: Boolean
 ) : BidDetailsUserBidState(R.layout.view_bid_details_edit_bid)
 
@@ -87,7 +87,7 @@ data class BidDetailsUserBidState_CancelledBid(
 data class BidDetailsUserBidState_BulkLoad_Edit(
     val bidsCount: Int,
     val bids: List<TransactionBid>,
-    val lowestAndUserBidPair: Pair<TransactionBid?, TransactionBid?>,
+    val lowestAndUserBidPair: Pair<TransactionBid?, Pair<TransactionBid?,TransactionBid?>?>,
     val isPMTIndent: Boolean
 ): BidDetailsUserBidState(R.layout.view_bid_details_bulk_load_edit)
 

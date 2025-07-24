@@ -1071,7 +1071,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             data.numBids = state.bidsCount
             val userBid = state.lowestAndUserBidPair.first
             val lowestTBid = state.lowestAndUserBidPair.second
-            data.lowestBid =lowestTBid?.bidAmount
+            //data.lowestBid =lowestTBid?.bidAmount
             showPayoutSlabs(data)
             if(userBid?.status()==Open){
               binding.cardInput.editBidCl.visibility = View.GONE
@@ -1119,11 +1119,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
               binding.cardInput.rejectedBidCl.title = "Bid not selected"
               try{
-              if(userBid.bidAmount<=state.lowestAndUserBidPair.second!!.bidAmount){
-                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second!!.bidAmount.toInt())} on Lost cards"
-              }else{
-                binding.cardInput.rejectedBidCl.subTitle = "You were ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second!!.bidAmount.toInt()-userBid.bidAmount.toInt())} above the lowest bid"
-              }
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second?.second?.bidAmount?.toInt())} on Lost cards"
               }catch (e:Exception){
               }
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"

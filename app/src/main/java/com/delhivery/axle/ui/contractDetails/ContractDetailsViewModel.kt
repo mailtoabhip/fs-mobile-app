@@ -62,6 +62,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
 
   var bidCount =0
   var lowestBid:Double?=0.0
+  var acceptedBid:Double?=0.0
 
   /**
    * Fetch transaction details
@@ -92,7 +93,8 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
       .subscribe { _bRes, error ->
         if (!error) {
           bidCount=_bRes.third
-          lowestBid=_bRes.first.second?.bidAmount
+          lowestBid=_bRes.first.second.first?.bidAmount
+          acceptedBid = _bRes.first.second.second?.bidAmount
           //determine bid state and post to live data
           when {
              transaction.transactionStatus=="cancelled"->{
