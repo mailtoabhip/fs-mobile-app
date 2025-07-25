@@ -21,6 +21,7 @@
             android:paddingBottom="@dimen/size_8dp"
             android:paddingTop="@dimen/size_8dp"
             android:textSize="@dimen/text_14sp"
+            android:gravity="center_vertical"
             android:textColor="@color/heading_black"
             />
         <androidx.appcompat.widget.AppCompatImageView

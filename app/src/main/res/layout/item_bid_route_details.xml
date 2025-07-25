@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="16sp"
+            android:textSize="13sp"
             tools:text ="Navi Mumbai"
             android:text="@{request.originCityName()}"
             android:textColor="#121A31"
@@ -75,7 +75,7 @@
             android:id="@+id/guidelineCenter1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="0.7"
+            app:layout_constraintGuide_percent="0.6"
             android:orientation="vertical" />
 
         <TextView
@@ -84,8 +84,8 @@
             android:gravity="end"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="@dimen/text_16sp"
-            tools:text ="Jaisalmer,MIDC,Kanpur, Delhi, Bengal"
+            android:textSize="13sp"
+            tools:text ="Jaisalmer"
             android:text="@{request.destinationCityName()}"
             android:textColor="#121A31"
             app:layout_constraintStart_toStartOf="@id/guidelineCenter1"

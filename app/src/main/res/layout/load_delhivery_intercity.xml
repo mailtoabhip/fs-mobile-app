@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="16sp"
+            android:textSize="13sp"
             android:text="@{request.originCityName()}"
             tools:text ="Navi Mumbai"
             android:textColor="#121A31"
@@ -85,13 +85,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_end="113dp" />
+                app:layout_constraintGuide_percent="0.6"/>
 
         <TextView
             android:id="@+id/toCity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textSize="13sp"
             android:text="@{request.destinationCityName()}"
             tools:text ="Jaisalmer"
             android:textColor="#121A31"
