@@ -40,7 +40,7 @@
             android:text="@{request.formattedLoadAndContractBidEndingTime()}"
             app:optionalTextColor="@{request}"
             android:textSize="12sp"
-            android:visibility="@{request.isBidEndingTimeExist()}"
+            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/truckInfo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/truckInfo"

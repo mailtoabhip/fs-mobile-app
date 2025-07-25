@@ -261,6 +261,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
           binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
           binding.includeBidTime6.ivBidStatus.visibility = View.GONE
           binding.includeBidTime6.tvBidStatus.visibility = View.GONE
+          //show closes/ closed time
+          binding.includeBidTime3.closingTime.visibility = item.data.isBidEndingTimeExist()
         }else{
           //Awaiting Result status - can't be revised
           binding.includeBidTime6.tvReviseBid.visibility = View.GONE
@@ -272,6 +274,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
           //set text
           binding.includeBidTime6.tvBidStatus.text = "Awaiting Result"
           binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.orange_v3))
+          //show closes/ closed time
+          binding.includeBidTime3.closingTime.visibility = item.data.isBidEndingTimeExist()
         }
       }
 
@@ -284,6 +288,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
         //set text
         binding.includeBidTime6.tvBidStatus.text = "Bid Confirmed"
         binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+        //check if bid ending time is in future - hide this
+        if(item.data.isBidOpen()) binding.includeBidTime3.closingTime.visibility = View.GONE
       }
 
       TransactionBidStatus.Rejected.statusKey.lowercase() -> {
@@ -295,6 +301,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
         //set text
         binding.includeBidTime6.tvBidStatus.text = "Bid Lost"
         binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
+        //check if bid ending time is in future - hide this
+        if(item.data.isBidOpen()) binding.includeBidTime3.closingTime.visibility = View.GONE
       }
 
       TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
@@ -306,6 +314,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
         //set text
         binding.includeBidTime6.tvBidStatus.text = "Demand Cancelled"
         binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
+        //check if bid ending time is in future - hide this
+        if(item.data.isBidOpen()) binding.includeBidTime3.closingTime.visibility = View.GONE
       }
 
       else -> {

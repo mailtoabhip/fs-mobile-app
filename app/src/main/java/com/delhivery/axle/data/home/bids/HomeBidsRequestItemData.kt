@@ -1611,7 +1611,14 @@ data class HomeBidsRequestItemData(
     "Load"
   }
 
-  fun isItContractAndLiveBidding() = if (requestType == RequestType.Contract.type && isLiveBidding()) {     
+  /**
+   * Show live bidding condition
+   * 1. Contract type
+   * 2. Bid status == Open
+   * 3. Close time under one hour
+   */
+
+  fun isItContractAndLiveBidding() = if (requestType == RequestType.Contract.type && bidStatus().statusKey == TransactionBidStatus.Open.statusKey  && isLiveBidding()) {
     View.VISIBLE
   } else {
     View.GONE
@@ -1620,6 +1627,8 @@ data class HomeBidsRequestItemData(
   fun isLiveBidding(): Boolean {
     return isUnderOneHourLoadAndContract()
   }
+
+
 
   fun isFRCContractV2() = if (contractType == ContractType.FRC.type) {
     true
