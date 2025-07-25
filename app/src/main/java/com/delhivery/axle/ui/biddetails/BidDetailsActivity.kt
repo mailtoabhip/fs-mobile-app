@@ -1408,7 +1408,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
             binding.cardInput.rejectedBidCl.title = "Bid not selected"
               try{
-                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid?.bidAmount?.toInt())} on Lost cards"
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid?.bidAmount?.toInt())}"
               }catch (e:Exception){
               }
             binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"

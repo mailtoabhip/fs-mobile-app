@@ -1119,7 +1119,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
               binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
               binding.cardInput.rejectedBidCl.title = "Bid not selected"
               try{
-                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second?.second?.bidAmount?.toInt())} on Lost cards"
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second?.second?.bidAmount?.toInt())}"
               }catch (e:Exception){
               }
               binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
