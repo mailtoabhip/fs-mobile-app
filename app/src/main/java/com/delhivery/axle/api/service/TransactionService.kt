@@ -42,7 +42,7 @@ interface TransactionService {
     @Query("include_adhoc_intracity")includeAdhocIntracity:Boolean=true,
     @Query("exclude_union_area")excludeUnionArea:Boolean= true,
     @Query("loads_with_bid_active") loadActive:Boolean =true
-    ): Single<BaseResponse<TransactionsResponse>>
+  ): Single<BaseResponse<TransactionsResponse>>
 
   /**
    * Loadboard transactions
@@ -81,7 +81,9 @@ interface TransactionService {
   @GET("/transactions/list/")
   fun bulkTransactions(
     @Query("transactions_ids") transactionIds: String,
-    @Query("include_adhoc_intracity") includeAdhocIntracity: Boolean = true
+    @Query("include_adhoc_intracity") includeAdhocIntracity: Boolean = true,
+    @Query("skip_od_in_halts") skipOnInHalts:Boolean = true
+//    @Query("loads_with_bid_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 
   /**
