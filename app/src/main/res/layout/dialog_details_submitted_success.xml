@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_round_corner_pure_white"
+        android:gravity="center"
+        android:paddingBottom="@dimen/size_32dp"
+        android:orientation="vertical">
+
+        <!-- Close Button -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_close"
+            android:src="@drawable/ic_search_close"
+            android:layout_gravity="end"
+            android:padding="@dimen/size_16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"/>
+
+        <!-- Success Icon -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_16dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_16dp"
+            app:srcCompat="@drawable/bg_all_round_corner_light_green"
+            android:background="@drawable/bg_all_round_corner_light_green"/>
+
+        <!-- Success Check Icon -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_8dp"
+            app:srcCompat="@drawable/ic_white_tick"
+            android:background="@drawable/bg_all_round_corner_light_green"
+            android:padding="@dimen/size_8dp"/>
+
+        <!-- Success Title -->
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_success_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Details submitted successfully!"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:textSize="@dimen/text_18sp"
+            android:textStyle="bold" />
+
+        <!-- Information Box -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_all_round_corner_light_orange_v2"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:padding="@dimen/size_16dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Drivers are required to mark in and out using the Driver App."
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textAlignment="center"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <!-- Driver App Download Link Section -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Driver App Download link:"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/size_8dp"/>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_app_link"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="https://play.google.com/store/apps/details?..."
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_12sp"
+                    android:background="@drawable/bg_all_round_corner_light_grey_v2"
+                    android:padding="@dimen/size_12dp"
+                    android:layout_marginEnd="@dimen/size_8dp"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_copy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Copy"
+                    android:textColor="@color/white"
+                    android:background="@drawable/bg_all_round_corner_solid_orange"
+                    android:paddingStart="@dimen/size_16dp"
+                    android:paddingEnd="@dimen/size_16dp"
+                    android:paddingTop="@dimen/size_8dp"
+                    android:paddingBottom="@dimen/size_8dp"
+                    android:textSize="@dimen/text_12sp"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <!-- WhatsApp Share Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_share_whatsapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginStart="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_24dp"
+            android:text="Share App link on WhatsApp"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_all_round_corner_solid_black"
+            android:padding="@dimen/size_16dp"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/ic_whatsapp"
+            android:drawablePadding="@dimen/size_8dp"
+            android:gravity="center"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout> 
