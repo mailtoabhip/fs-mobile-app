@@ -814,6 +814,9 @@
   <string name="check_your_bid_revise_status"> Your bid is now the lowest and you’re in the best position to win.</string>
 
 
+  <string name="title_dialog_success">Details submitted successfully!</string>
+  <string name="sub_title_dialog_success">Drivers are required to mark in and out using the Driver App.</string>
+  <string name="copy_whatsapp_share">Share on Whatsapp</string>
   <string name="driver_app_link">https://play.google.com/store/apps/details?id=com.delhivery.fmsdriver</string>
 
 

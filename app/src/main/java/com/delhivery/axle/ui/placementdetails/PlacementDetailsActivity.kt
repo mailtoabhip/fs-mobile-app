@@ -30,6 +30,7 @@ import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_ADD_DETAILS_ATTEMPTED
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_ADD_DETAILS_SUCCESS
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
@@ -205,7 +206,34 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
          if(it){
              uiUtils.hideProgress()
              pushMoengageEvent(true)
-             showSuccessEditDialog()
+             //showSuccessEditDialog()
+             // prepare dialog UI's and whatsapp share data
+             val title = getString(R.string.title_dialog_success)
+             val subTittle = getString(R.string.sub_title_dialog_success)
+             val playStoreLink = getString(R.string.driver_app_link)
+             val ticketId = "TKT123456"
+             val reportingCentre = "https://maps.google.com/?q=Mumbai+MIDC"
+             val reportingTime = "09:00 AM"
+             val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+             val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+
+             // Show the dialog
+             dialogUtils.showDetailsSubmittedSuccessDialog(
+                 title = title,
+                 subTittle = subTittle,
+                 playStoreLink = playStoreLink,
+                 ticketId = ticketId,
+                 reportingCentre = reportingCentre,
+                 reportingTime = reportingTime,
+                 hindiVideoLink = hindiVideoLink,
+                 englishVideoLink = englishVideoLink,
+                 dialogInterface = object : DetailsSubmittedSuccessInterface {
+                     override fun onDialogDismissed() {
+                         // Handle dialog dismissal if needed
+                         println("Dialog dismissed")
+                     }
+                 }
+             )
          }else{
              uiUtils.hideProgress()
          }

@@ -650,17 +650,25 @@ class DialogUtils @Inject constructor(
     }
 
     fun showDetailsSubmittedSuccessDialog(
+        title: String,
+        subTittle: String,
+        playStoreLink: String,
         ticketId: String,
         reportingCentre: String,
         reportingTime: String,
-        playStoreLink: String,
         hindiVideoLink: String,
         englishVideoLink: String,
         dialogInterface: DetailsSubmittedSuccessInterface
     ): Dialog {
         val dialog = Dialog(activity)
         val bindingDialog = DialogDetailsSubmittedSuccessBinding.inflate(activity.layoutInflater)
-        
+
+        //set title
+        bindingDialog.tvTitle.text = title
+
+        //set sub-title
+        bindingDialog.tvSubtitle.text = subTittle
+
         // Set the app link
         bindingDialog.tvAppLink.text = playStoreLink
         

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,10 +30,10 @@
 
         <!-- Success Title -->
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_success_title"
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Details submitted successfully!"
+            tools:text="@string/title_dialog_success"
             android:textColor="@color/heading_black"
             android:layout_marginTop="@dimen/size_16dp"
             android:textSize="@dimen/text_16sp"
@@ -49,9 +50,10 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Drivers are required to mark in and out using the Driver App."
+                tools:text="@string/sub_title_dialog_success"
                 android:textColor="@color/text_black_v1"
                 android:textSize="@dimen/text_14sp"
                 android:textAlignment="center"/>
@@ -89,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/driver_app_link"
+                    tools:text="@string/driver_app_link"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/text_12sp"
                     android:maxLines="1"
@@ -137,7 +139,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Share on Whatsapp"
+                    android:text="@string/copy_whatsapp_share"
                     android:textColor="@color/info_title"
                     android:gravity="center"
                     android:layout_gravity="center"
