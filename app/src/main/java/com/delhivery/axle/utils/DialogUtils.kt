@@ -682,7 +682,12 @@ class DialogUtils @Inject constructor(
                 playStoreLink, hindiVideoLink, englishVideoLink
             )
             shareOnWhatsApp(shareText)
+        }
+        
+        // Done button
+        bindingDialog.btnDone.setOnClickListener {
             dialog.dismiss()
+            dialogInterface.onDialogDismissed()
         }
         
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
