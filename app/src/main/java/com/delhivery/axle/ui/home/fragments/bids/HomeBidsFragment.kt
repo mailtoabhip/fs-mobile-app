@@ -194,23 +194,17 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
+        //
+        if(_item.requestType==RequestType.Contract.type){
+          startActivity(_item.transactionId?.let { context?.let { it1 ->
+            contractDetailsIntent(it,
+              it1
+            )
+          } })
+        }else{
+          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
 
-
-        Log.d("showSuccessDialogExample====>>>>>>>", "clicked")
-        // Add this button to your layout
-        dialogUsageExample.showSuccessDialogExample()
-
-
-//        if(_item.requestType==RequestType.Contract.type){
-//          startActivity(_item.transactionId?.let { context?.let { it1 ->
-//            contractDetailsIntent(it,
-//              it1
-//            )
-//          } })
-//        }else{
-//          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
-//
-//        }
+        }
       }
 
       HomeBidsRequestAction_PlaceBid -> {

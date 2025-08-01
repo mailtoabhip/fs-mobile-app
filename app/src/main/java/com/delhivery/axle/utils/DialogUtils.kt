@@ -675,6 +675,7 @@ class DialogUtils @Inject constructor(
         // Close button
         bindingDialog.btnClose.setOnClickListener {
             dialog.dismiss()
+            dialogInterface.onDialogDismissed()
         }
         
         // Copy button

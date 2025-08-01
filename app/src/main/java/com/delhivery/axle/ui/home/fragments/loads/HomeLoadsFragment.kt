@@ -471,7 +471,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             dialogInterface = object : DetailsSubmittedSuccessInterface {
                 override fun onDialogDismissed() {
                     // Handle dialog dismissal if needed
-                    println("Dialog dismissed")
+                    Log.d("onDialogDismissed===>>>","Dialog dismissed")
                     // Clear the stored data after dialog is dismissed
                     selectedBidData = null
                 }
