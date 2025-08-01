@@ -206,34 +206,12 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
          if(it){
              uiUtils.hideProgress()
              pushMoengageEvent(true)
-             //showSuccessEditDialog()
-             // prepare dialog UI's and whatsapp share data
-             val title = getString(R.string.title_dialog_success)
-             val subTittle = getString(R.string.sub_title_dialog_success)
-             val playStoreLink = getString(R.string.driver_app_link)
-             val ticketId = "TKT123456"
-             val reportingCentre = "https://maps.google.com/?q=Mumbai+MIDC"
-             val reportingTime = "09:00 AM"
-             val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
-             val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+             //show newly added success dialog incase of adhoc intracity only
+             when(viewModel.homePlacementsItemData.loadType){
+                 LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
+                 else -> showSuccessEditDialog()
+             }
 
-             // Show the dialog
-             dialogUtils.showDetailsSubmittedSuccessDialog(
-                 title = title,
-                 subTittle = subTittle,
-                 playStoreLink = playStoreLink,
-                 ticketId = ticketId,
-                 reportingCentre = reportingCentre,
-                 reportingTime = reportingTime,
-                 hindiVideoLink = hindiVideoLink,
-                 englishVideoLink = englishVideoLink,
-                 dialogInterface = object : DetailsSubmittedSuccessInterface {
-                     override fun onDialogDismissed() {
-                         // Handle dialog dismissal if needed
-                         println("Dialog dismissed")
-                     }
-                 }
-             )
          }else{
              uiUtils.hideProgress()
          }
@@ -473,7 +451,38 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
             }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
+
+    fun showIntracityAdhocSuccessDialog(){
+        // prepare dialog UI's and whatsapp share data
+        val title = getString(R.string.title_dialog_success)
+        val subTittle = getString(R.string.sub_title_dialog_success)
+        val playStoreLink = getString(R.string.driver_app_link)
+        val ticketId = "TKT123456"
+        val reportingCentre = "https://maps.google.com/?q=Mumbai+MIDC"
+        val reportingTime = "09:00 AM"
+        val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+
+        // Show the dialog
+        dialogUtils.showDetailsSubmittedSuccessDialog(
+            title = title,
+            subTittle = subTittle,
+            playStoreLink = playStoreLink,
+            ticketId = ticketId,
+            reportingCentre = reportingCentre,
+            reportingTime = reportingTime,
+            hindiVideoLink = hindiVideoLink,
+            englishVideoLink = englishVideoLink,
+            dialogInterface = object : DetailsSubmittedSuccessInterface {
+                override fun onDialogDismissed() {
+                    // Handle dialog dismissal if needed
+                    println("Dialog dismissed")
+                }
+            }
+        )
+    }
 }
+
 fun placementDetailsIntent(
     homePlacementsItemData: HomePlacementsItemData,
     context: Context

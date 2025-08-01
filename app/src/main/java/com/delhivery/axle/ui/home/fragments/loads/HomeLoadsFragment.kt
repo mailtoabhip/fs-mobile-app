@@ -301,37 +301,10 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 //          resources.getString(R.string.details_submitted_successfully),
 //          null
 //        )
-
-        // prepare dialog UI's and whatsapp share data
-            val mContext = requireContext()
-            val title = mContext.getString(string.title_dialog_success)
-            val subTittle = mContext.getString(string.sub_title_dialog_success)
-            val playStoreLink = mContext.getString(string.driver_app_link)
-            val ticketId = "TKT123456"
-            val reportingCentre = "https://maps.google.com/?q=Mumbai+MIDC"
-            val reportingTime = "09:00 AM"
-            val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
-            val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
-
-            // Show the dialog
-            dialogUtils.showDetailsSubmittedSuccessDialog(
-              title = title?:"",
-              subTittle = subTittle?:"",
-              playStoreLink = playStoreLink?:"",
-              ticketId = ticketId,
-              reportingCentre = reportingCentre,
-              reportingTime = reportingTime,
-              hindiVideoLink = hindiVideoLink,
-              englishVideoLink = englishVideoLink,
-              dialogInterface = object : DetailsSubmittedSuccessInterface {
-                override fun onDialogDismissed() {
-                  // Handle dialog dismissal if needed
-                  println("Dialog dismissed")
-                }
-              }
-            )
-
-        refreshData()
+          //
+          showIntracityAdhocSuccessDialog()
+          //
+          refreshData()
       }
     })
 
@@ -467,7 +440,38 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
   }
 
-  private fun setupLoadFilter() {
+    private fun showIntracityAdhocSuccessDialog() {
+        // prepare dialog UI's and whatsapp share data
+        val mContext = requireContext()
+        val title = mContext.getString(string.title_dialog_success)
+        val subTittle = mContext.getString(string.sub_title_dialog_success)
+        val playStoreLink = mContext.getString(string.driver_app_link)
+        val ticketId = "TKT123456"
+        val reportingCentre = "https://maps.google.com/?q=Mumbai+MIDC"
+        val reportingTime = "09:00 AM"
+        val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+
+        // Show the dialog
+        dialogUtils.showDetailsSubmittedSuccessDialog(
+            title = title?:"",
+            subTittle = subTittle?:"",
+            playStoreLink = playStoreLink?:"",
+            ticketId = ticketId,
+            reportingCentre = reportingCentre,
+            reportingTime = reportingTime,
+            hindiVideoLink = hindiVideoLink,
+            englishVideoLink = englishVideoLink,
+            dialogInterface = object : DetailsSubmittedSuccessInterface {
+                override fun onDialogDismissed() {
+                    // Handle dialog dismissal if needed
+                    println("Dialog dismissed")
+                }
+            }
+        )
+    }
+
+    private fun setupLoadFilter() {
     val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)
     val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type)
     if (enableIntracityLoad){
