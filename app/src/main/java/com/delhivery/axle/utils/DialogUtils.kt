@@ -730,7 +730,6 @@ class DialogUtils @Inject constructor(
         return """📲 Delhivery Driver App Required !!
 You've been assigned an an Intracity Adhoc Ticket.
 
-🧾 Ticket ID: $ticketId
 📍 Reporting Centre: $reportingCentre
 ⏰ Reporting Time: $reportingTime
 
