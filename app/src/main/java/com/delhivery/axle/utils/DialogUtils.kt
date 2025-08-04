@@ -728,22 +728,24 @@ class DialogUtils @Inject constructor(
         englishVideoLink: String
     ): String {
         return """📲 Delhivery Driver App Required !!
-You've been assigned an an Intracity Adhoc Ticket.
+You've been assigned an Intracity Adhoc Ticket.
 
 📍 Reporting Centre: $reportingCentre
+
 ⏰ Reporting Time: $reportingTime
 
 Use the Delhivery Driver App to start your trip and mark attendance.
 📥 App Link: $playStoreLink
 
 
- 🎥 Mark-in / Mark-out Video: 
+🎥 Mark-in / Mark-out Video: 
 
 Hindi - $hindiVideoLink
 
 English - $englishVideoLink
 
-✅ Mark-in & Mark-out on Driver App must!
+✅ Mark-in & Mark-out on the Driver App must!
+
 Thank you!"""
     }
     

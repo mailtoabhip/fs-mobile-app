@@ -24,11 +24,13 @@ class DialogUsageExample @Inject constructor(
         val title = activity.getString(R.string.title_dialog_success)
         val subTittle = activity.getString(R.string.sub_title_dialog_success)
         val playStoreLink = activity.getString(R.string.driver_app_link)
+        val hindiVideoLink = activity.getString(R.string.hindi_video_link)
+        val englishVideoLink = activity.getString(R.string.english_video_link)
         val ticketId = "TKT123456"
         val reportingCentre = "https://maps.google.com/?q=Mumbai+MIDC"
         val reportingTime = "09:00 AM"
-        val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
-        val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+        //val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        //val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
 
         // Show the dialog
         val dialog = dialogUtils.showDetailsSubmittedSuccessDialog(

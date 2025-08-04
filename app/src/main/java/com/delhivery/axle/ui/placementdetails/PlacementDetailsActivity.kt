@@ -460,15 +460,17 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
         val title = getString(R.string.title_dialog_success)
         val subTittle = getString(R.string.sub_title_dialog_success)
         val playStoreLink = getString(R.string.driver_app_link)
-        
+        val hindiVideoLink = getString(R.string.hindi_video_link)
+        val englishVideoLink = getString(R.string.english_video_link)
+
         // Extract data from the placement item
         val placementData = viewModel.homePlacementsItemData
         Log.d("placementData=====>>>>", Gson().toJson(placementData))
         val ticketId = placementData.transactionId ?: ""
         val reportingCentre = generateReportingCentreLink(placementData)
         val reportingTime = formatReportingTime(placementData.reportingTime)
-        val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
-        val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+        //val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        //val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
 
         // Show the dialog
         dialogUtils.showDetailsSubmittedSuccessDialog(

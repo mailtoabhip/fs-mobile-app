@@ -449,14 +449,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         val title = mContext.getString(string.title_dialog_success)
         val subTittle = mContext.getString(string.sub_title_dialog_success)
         val playStoreLink = mContext.getString(string.driver_app_link)
+        val hindiVideoLink = getString(R.string.hindi_video_link)
+        val englishVideoLink = getString(R.string.english_video_link)
         
         // Extract data from the selected bid item
         val bidData = selectedBidData
         val ticketId = bidData?.fmsTicketId ?: ""
         val reportingCentre = generateReportingCentreLink(bidData)
         val reportingTime = bidData?.requiredAtWithTime()?:""
-        val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
-        val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+        //val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        //val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
 
         // Show the dialog
         dialogUtils.showDetailsSubmittedSuccessDialog(
