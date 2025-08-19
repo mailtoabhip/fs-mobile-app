@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Html
@@ -29,6 +30,7 @@ import com.delhivery.axle.ui.dialogs.ErrorDialog
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.RewardStartDate
 import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.RewardStartDateCalender
+import com.delhivery.axle.utils.UiUtils
 import dagger.android.support.DaggerAppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -36,7 +38,10 @@ import java.util.Date
 import javax.inject.Inject
 
 @ActivityScope
-class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActivity) {
+class DialogUtils @Inject constructor(
+    private val activity: DaggerAppCompatActivity,
+    private val uiUtils: UiUtils
+) {
 
   /**
    * Show Simple date picker and pass callback via [DatePickerDialog.OnDateSetListener]
@@ -644,6 +649,124 @@ class DialogUtils @Inject constructor(private val activity: DaggerAppCompatActiv
         return dialog
     }
 
+    fun showDetailsSubmittedSuccessDialog(
+        title: String,
+        subTittle: String,
+        playStoreLink: String,
+        ticketId: String,
+        reportingCentre: String,
+        reportingTime: String,
+        hindiVideoLink: String,
+        englishVideoLink: String,
+        dialogInterface: DetailsSubmittedSuccessInterface
+    ): Dialog {
+        val dialog = Dialog(activity)
+        val bindingDialog = DialogDetailsSubmittedSuccessBinding.inflate(activity.layoutInflater)
+
+        //set title
+        bindingDialog.tvTitle.text = title
+
+        //set sub-title
+        bindingDialog.tvSubtitle.text = subTittle
+
+        // Set the app link
+        bindingDialog.tvAppLink.text = playStoreLink
+        
+        // Close button
+        bindingDialog.btnClose.setOnClickListener {
+            dialog.dismiss()
+            dialogInterface.onDialogDismissed()
+        }
+        
+        // Copy button
+        bindingDialog.btnCopy.setOnClickListener {
+            copyToClipboard(playStoreLink)
+            uiUtils.showSnackbar("App link copied to clipboard")
+        }
+        
+        // WhatsApp share button
+        bindingDialog.btnShareWhatsapp.setOnClickListener {
+            val shareText = generateWhatsAppShareText(
+                ticketId, reportingCentre, reportingTime, 
+                playStoreLink, hindiVideoLink, englishVideoLink
+            )
+            shareOnWhatsApp(shareText)
+        }
+        
+        // Done button
+        bindingDialog.btnDone.setOnClickListener {
+            dialog.dismiss()
+            dialogInterface.onDialogDismissed()
+        }
+        
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        if (!activity.isFinishing) {
+            dialog.show()
+        }
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+        
+        return dialog
+    }
+    
+    private fun copyToClipboard(text: String) {
+        val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val clip = android.content.ClipData.newPlainText("App Link", text)
+        clipboard.setPrimaryClip(clip)
+    }
+    
+    private fun generateWhatsAppShareText(
+        ticketId: String,
+        reportingCentre: String,
+        reportingTime: String,
+        playStoreLink: String,
+        hindiVideoLink: String,
+        englishVideoLink: String
+    ): String {
+        return """📲 Delhivery Driver App Required !!
+You've been assigned an Intracity Adhoc Ticket.
+
+📍 Reporting Centre: $reportingCentre
+
+⏰ Reporting Time: $reportingTime
+
+Use the Delhivery Driver App to start your trip and mark attendance.
+📥 App Link: $playStoreLink
+
+
+🎥 Mark-in / Mark-out Video: 
+
+Hindi - $hindiVideoLink
+
+English - $englishVideoLink
+
+✅ Mark-in & Mark-out on the Driver App must!
+
+Thank you!"""
+    }
+    
+    private fun shareOnWhatsApp(text: String) {
+        try {
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, text)
+                setPackage("com.whatsapp")
+            }
+            activity.startActivity(intent)
+        } catch (e: Exception) {
+            // Fallback to general share if WhatsApp is not installed
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, text)
+            }
+            activity.startActivity(Intent.createChooser(intent, "Share via"))
+        }
+    }
+
  /* fun confirmDialog(
     homeBidsRequestItemData: HomeBidsRequestItemData,
     state: BidDetailsUserBidState_EditBid,
@@ -773,4 +896,8 @@ interface DialogUtilsInterface {
 
 interface ResetManualVerification{
   fun resetManualData(boolean: Boolean)
+}
+
+interface DetailsSubmittedSuccessInterface {
+    fun onDialogDismissed()
 }

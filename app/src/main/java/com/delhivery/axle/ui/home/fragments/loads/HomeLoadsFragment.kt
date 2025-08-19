@@ -86,6 +86,9 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   var selectedLoadFilter: String = ""
   private var fragmentSetupTrace: Trace? = null
   private var isFirstResume = true
+  
+  // Store the selected item data for success dialog
+  private var selectedBidData: HomeBidsRequestItemData? = null
 
   init {
     toolbarElevationLiveData = MutableLiveData()
@@ -297,11 +300,14 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
       if(it!=null){
-        dialogUtils.showSuccessBidDialog(this,
-          resources.getString(R.string.details_submitted_successfully),
-          null
-        )
-        refreshData()
+//        dialogUtils.showSuccessBidDialog(this,
+//          resources.getString(R.string.details_submitted_successfully),
+//          null
+//        )
+          //
+          showIntracityAdhocSuccessDialog()
+          //
+          refreshData()
       }
     })
 
@@ -437,7 +443,83 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     })
   }
 
-  private fun setupLoadFilter() {
+    private fun showIntracityAdhocSuccessDialog() {
+        // prepare dialog UI's and whatsapp share data
+        val mContext = requireContext()
+        val title = mContext.getString(string.title_dialog_success)
+        val subTittle = mContext.getString(string.sub_title_dialog_success)
+        val playStoreLink = mContext.getString(string.driver_app_link)
+        val hindiVideoLink = getString(R.string.hindi_video_link)
+        val englishVideoLink = getString(R.string.english_video_link)
+        
+        // Extract data from the selected bid item
+        val bidData = selectedBidData
+        val ticketId = bidData?.fmsTicketId ?: ""
+        val reportingCentre = generateReportingCentreLink(bidData)
+        val reportingTime = bidData?.requiredAtWithTime()?:""
+        //val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        //val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+
+        // Show the dialog
+        dialogUtils.showDetailsSubmittedSuccessDialog(
+            title = title,
+            subTittle = subTittle,
+            playStoreLink = playStoreLink,
+            ticketId = ticketId,
+            reportingCentre = reportingCentre,
+            reportingTime = reportingTime,
+            hindiVideoLink = hindiVideoLink,
+            englishVideoLink = englishVideoLink,
+            dialogInterface = object : DetailsSubmittedSuccessInterface {
+                override fun onDialogDismissed() {
+                    // Handle dialog dismissal if needed
+                    Log.d("onDialogDismissed===>>>","Dialog dismissed")
+                    // Clear the stored data after dialog is dismissed
+                    selectedBidData = null
+                }
+            }
+        )
+    }
+    
+    /**
+     * Generate Google Maps link for reporting centre based on bid data
+     */
+    private fun generateReportingCentreLink(bidData: HomeBidsRequestItemData?): String {
+        return if (bidData != null) {
+            // Try to use pickup location coordinates if available
+            val coordinates = bidData.pickupLocationCoordinates
+            if (coordinates != null && coordinates.lat != null && coordinates.lon != null) {
+                "https://maps.google.com/?q=${coordinates.lat},${coordinates.lon}"
+            } else {
+                // Fallback to pickup location or origin
+                val location = bidData.pickupLocation ?: bidData.origin ?: ""
+                "https://maps.google.com/?q=$location"
+            }
+        } else {
+            ""
+        }
+    }
+    
+    /**
+     * Format reporting time from bid data
+     */
+    private fun formatReportingTime(reportingTime: String?): String {
+        return if (!reportingTime.isNullOrEmpty()) {
+            try {
+                // Parse the time and format it
+                val inputFormat = java.text.SimpleDateFormat("HH:mm:ss")
+                val outputFormat = java.text.SimpleDateFormat("hh:mm a")
+                val date = inputFormat.parse(reportingTime)
+                outputFormat.format(date ?: java.util.Date())
+            } catch (e: Exception) {
+                "--:--" // Default time if parsing fails
+            }
+        } else {
+            "--:--" // Default time if no reporting time available
+        }
+    }
+
+    private fun setupLoadFilter() {
     val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)
     val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type)
     if (enableIntracityLoad){
@@ -869,6 +951,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           HomeBidsRequestAction_AcceptBid -> {
             pos = position
             val data = item.data as HomeBidsRequestItemData
+            // Store the selected bid data for success dialog
+            selectedBidData = data
             analyticsUtil.moEngageTrackEvent(
               EVENT_LOAD_INTRACITY_ACCEPT_CLICKED,
               mutableListOf(PROPERTY_ORDER_ID),

@@ -46,6 +46,9 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   var _title: String = "My Bids"
   var launch : Boolean =true
   @Inject lateinit var userPrefs: UserPrefs
+  // In any existing activity
+  @Inject
+  lateinit var dialogUsageExample: DialogUsageExample
 
   override val title: CharSequence
     get() = _title
@@ -191,6 +194,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
+        //
         if(_item.requestType==RequestType.Contract.type){
           startActivity(_item.transactionId?.let { context?.let { it1 ->
             contractDetailsIntent(it,

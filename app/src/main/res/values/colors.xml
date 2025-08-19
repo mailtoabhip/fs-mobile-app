@@ -116,4 +116,11 @@
 
   <color name="text_grey">#8F9198</color>
 
+  <!-- New colors for updated dialog design -->
+  <color name="green">#4CAF50</color>
+  <color name="dark_grey">#666666</color>
+  <color name="whatsapp_green">#25D366</color>
+  <color name="beige_border">#FDECCE</color>
+  <color name="text_black_v1">#32353D</color>
+
 </resources>

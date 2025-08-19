@@ -30,6 +30,7 @@ import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.trucks.truckIntent
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_ADD_DETAILS_ATTEMPTED
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_ADD_DETAILS_SUCCESS
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
@@ -58,6 +59,7 @@ import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import com.google.gson.Gson
 import java.time.LocalDateTime
 import java.util.Date
 import java.util.regex.Pattern
@@ -205,7 +207,14 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
          if(it){
              uiUtils.hideProgress()
              pushMoengageEvent(true)
-             showSuccessEditDialog()
+             //show newly added success dialog incase of adhoc intracity only
+             when(viewModel.homePlacementsItemData.loadType){
+
+                 LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
+
+                 else -> showSuccessEditDialog()
+             }
+
          }else{
              uiUtils.hideProgress()
          }
@@ -445,7 +454,85 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
             }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
+
+    private fun showIntracityAdhocSuccessDialog(){
+        // prepare dialog UI's and whatsapp share data
+        val title = getString(R.string.title_dialog_success)
+        val subTittle = getString(R.string.sub_title_dialog_success)
+        val playStoreLink = getString(R.string.driver_app_link)
+        val hindiVideoLink = getString(R.string.hindi_video_link)
+        val englishVideoLink = getString(R.string.english_video_link)
+
+        // Extract data from the placement item
+        val placementData = viewModel.homePlacementsItemData
+        Log.d("placementData=====>>>>", Gson().toJson(placementData))
+        val ticketId = placementData.transactionId ?: ""
+        val reportingCentre = generateReportingCentreLink(placementData)
+        val reportingTime = formatReportingTime(placementData.reportingTime)
+        //val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+        //val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+
+        // Show the dialog
+        dialogUtils.showDetailsSubmittedSuccessDialog(
+            title = title,
+            subTittle = subTittle,
+            playStoreLink = playStoreLink,
+            ticketId = ticketId,
+            reportingCentre = reportingCentre,
+            reportingTime = reportingTime,
+            hindiVideoLink = hindiVideoLink,
+            englishVideoLink = englishVideoLink,
+            dialogInterface = object : DetailsSubmittedSuccessInterface {
+                override fun onDialogDismissed() {
+                    // Handle dialog dismissal if needed
+                    Log.d("onDialogDismissed===>>>","Dialog dismissed")
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        REFRESH_ON_BACK_PLACEMENT = true
+                        finish()
+                    }, 100)
+                }
+            }
+        )
+    }
+    
+    /**
+     * Generate Google Maps link for reporting centre based on placement data
+     */
+    private fun generateReportingCentreLink(placementData: HomePlacementsItemData): String {
+        return if (placementData.originCenterLat != null && placementData.originCenterLong != null) {
+            // Use GPS coordinates if available
+            "https://maps.google.com/?q=${placementData.originCenterLat},${placementData.originCenterLong}"
+        } else {
+            // Fallback to origin center name
+            val location = placementData.originCenterName ?: ""
+            if (location.isNotEmpty()) {
+                "https://maps.google.com/?q=$location"
+            } else {
+                ""
+            }
+        }
+    }
+    
+    /**
+     * Format reporting time from placement data
+     */
+    private fun formatReportingTime(reportingTime: String?): String {
+        return if (!reportingTime.isNullOrEmpty()) {
+            try {
+                // Parse the time and format it
+                val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+                val outputFormat = java.text.SimpleDateFormat("dd MMM, hh:mm a")
+                val date = inputFormat.parse(reportingTime)
+                outputFormat.format(date ?: java.util.Date())
+            } catch (e: Exception) {
+                "--:--" // Default time if parsing fails
+            }
+        } else {
+            "--:--" // Default time if no reporting time available
+        }
+    }
 }
+
 fun placementDetailsIntent(
     homePlacementsItemData: HomePlacementsItemData,
     context: Context
