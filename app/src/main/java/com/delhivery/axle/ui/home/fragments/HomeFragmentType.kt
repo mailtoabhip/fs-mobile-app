@@ -7,6 +7,8 @@ import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsDelayedFragment
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsExpectedFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
@@ -65,6 +67,32 @@ enum class HomeLoadsTruckFragmentType(
 
     /**
      * Get [HomeLoadsTruckFragmentType] by position
+     */
+    fun pos(position: Int) = values().firstOrNull { it.position == position }
+
+    /**
+     * Count
+     */
+    fun count() = values().size
+  }
+}
+
+enum class HomePlacementsFragmentType(
+  val menuId: Int,
+  val position: Int,
+  val fragment: HomeBaseFragment<*, *>,
+  val title: String
+){
+  DelayedFragment(R.id.nav_delayed,0, HomePlacementsDelayedFragment._instance, "Delayed"),
+  ExpectedFragment(R.id.nav_expected,1, HomePlacementsExpectedFragment._instance,"Expected");
+  companion object {
+    /**
+     * Get fragment position by [menuId]
+     */
+    fun posById(menuId: Int) = values().firstOrNull { it.menuId == menuId }?.position ?: -1
+
+    /**
+     * Get [HomePlacementsFragmentType] by position
      */
     fun pos(position: Int) = values().firstOrNull { it.position == position }
 

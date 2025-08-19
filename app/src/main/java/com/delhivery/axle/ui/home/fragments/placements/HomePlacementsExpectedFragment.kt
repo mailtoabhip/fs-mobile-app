@@ -1,0 +1,150 @@
+package com.delhivery.axle.ui.home.fragments.placements
+
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.delhivery.axle.R
+import com.delhivery.axle.databinding.FragmentHomePlacementsExpectedBinding
+import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
+import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
+import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import javax.inject.Inject
+
+/**
+ * Expected placements fragment
+ */
+class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsExpectedBinding, HomePlacementsViewModel>(),
+    HomePlacementsRVAdapterInterface {
+
+    @Inject lateinit var userPrefs: UserPrefs
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
+
+    companion object {
+        /* singleton instance */
+        val _instance: HomePlacementsExpectedFragment by lazy { HomePlacementsExpectedFragment() }
+    }
+
+    override fun getViewModelClass() = HomePlacementsViewModel::class.java
+
+    override fun layoutId() = R.layout.fragment_home_placements_expected
+
+    /* RV adapter */
+    private val adapter: HomePlacementsRVAdapter by lazy {
+        HomePlacementsRVAdapter(this)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsExpectedFragment_SetupTime")
+        fragmentSetupTrace?.start()
+
+        binding.refreshLayout.setOnRefreshListener {
+            binding.refreshLayout.isRefreshing = false
+            refreshData()
+        }
+
+        /* setup recycler view */
+        binding.rvLoads.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@HomePlacementsExpectedFragment.adapter
+        }
+        binding.rvLoads.itemAnimator = null
+
+        viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+            isLoadingData = it ?: false
+        })
+
+        viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
+            it?.let { _items -> adapter.operation(_items) }
+        })
+
+        viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
+            it?.let { _items -> adapter.operation(_items) }
+        })
+
+        // Track analytics for expected tab
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_HOME_PLACEMENT_EXPECTED_TAB,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PHONE_NO
+            ),
+            mutableListOf(
+                userPrefs.userId(),
+                userPrefs.phoneNumber ?: ""
+            )
+        )
+
+        refreshData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
+
+    private fun refreshData() {
+        adapter.resetStaticData()
+        viewModel.fetchPlacementLoads(PlacementTypes.Expected.name)
+    }
+
+    override fun handleAction(actionId: String, item: BaseHomePlacementsRVAdapterItem<*>) {
+        when (actionId) {
+            HomePlacementRequested_ViewDetails -> {
+                val data = item.data as HomePlacementsItemData
+                val missingDetails = data.vehicleNumber == null || data.driverName == null || data.driverPhone == null
+                analyticsUtil.moEngageTrackEvent(
+                    EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED,
+                    mutableListOf(
+                        PROPERTY_USER_ID,
+                        PROPERTY_PHONE_NO,
+                        PROPERTY_DEMAND_TYPE,
+                        PROPERTY_EXPECTED_TIME,
+                        PROPERTY_MISSING_FLAG
+                    ),
+                    mutableListOf(
+                        userPrefs.userId(),
+                        userPrefs.phoneNumber ?: "",
+                        data.loadType ?: "",
+                        data.reportingTime ?: "",
+                        missingDetails.toString()
+                    )
+                )
+                context?.let {
+                    userPrefs.setPreviousScreen(this.javaClass.name)
+                    startActivity(placementDetailsIntent(data, it))
+                }
+            }
+            HomePlacementsTimeoutItemAction -> {
+                refreshData()
+            }
+        }
+    }
+
+    override fun handleAction(
+        actionId: String,
+        item: BaseHomePlacementsRVAdapterItem<*>,
+        position: Int
+    ) {
+        // Not implemented for this fragment
+    }
+} 

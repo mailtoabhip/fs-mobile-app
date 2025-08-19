@@ -10,9 +10,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 
-class FilterDurationAdapter(private val context: Context, private var dataList: ArrayList<Pair<String, Boolean>>, private val homePlacementsFragment: HomePlacementsFragment) : RecyclerView.Adapter<FilterDurationAdapter.ViewHolder>() {
+class FilterDurationAdapter(private val context: Context, private var dataList: ArrayList<Pair<String, Boolean>>, private val listener: FilterItemOnClickListener) : RecyclerView.Adapter<FilterDurationAdapter.ViewHolder>() {
     var selectedPosition = -1
     var lastSelectedPosition = -1
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -28,7 +27,7 @@ class FilterDurationAdapter(private val context: Context, private var dataList: 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.durationItem.text =  dataList[position].first
         if(position==0){
-            homePlacementsFragment.handleItemClick(dataList[position])
+            listener.handleItemClick(dataList[position])
             holder.selectedImage.visibility = View.VISIBLE
             holder.mConstraintLayout.background =ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_red)
         }else{
@@ -42,7 +41,7 @@ class FilterDurationAdapter(private val context: Context, private var dataList: 
             notifyItemChanged(selectedPosition)
         }
         if (selectedPosition == holder.bindingAdapterPosition) {
-            homePlacementsFragment.handleItemClick(dataList[position])
+            listener.handleItemClick(dataList[position])
             holder.mConstraintLayout.background =ContextCompat.getDrawable(context, R.drawable.bg_all_round_corner_light_red)
             holder.selectedImage.visibility = View.VISIBLE
         } else {
@@ -56,6 +55,7 @@ class FilterDurationAdapter(private val context: Context, private var dataList: 
     }
 
 }
+
 interface FilterItemOnClickListener{
     fun handleItemClick(item : Pair<String,Boolean?>)
 }
