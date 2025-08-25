@@ -491,25 +491,23 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
   private fun showBidAmountPerDayTrip(bidAmount:Int, transaction: HomeBidsRequestItemData){
     try {
-      if(transaction.isItLHContract()){
-        binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
-        binding.cardInput.bidError.visibility = View.VISIBLE
-        val amount = bidAmount/((transaction.operatingDays!!/7)*30)
-        binding.cardInput.bidError.text = "Your bid price per day: ₹${StringUtils.formatDecimalAmount(
-          amount.toDouble()
-        )}"
-      }else if (transaction.isItIntraCityContract()){
-        binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
-        binding.cardInput.bidError.visibility = View.VISIBLE
-        val amount = bidAmount/transaction.intracityDays!!.toInt()
-        binding.cardInput.bidError.text = "Your bid price per day: ₹${StringUtils.formatDecimalAmount(
-          amount.toDouble())}"
-
-      }else{
-        binding.cardInput.bidError.visibility = View.GONE
-
-      }
-    }catch (e:Exception){
+//      if(transaction.isItLHContract()){
+//        binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
+//        binding.cardInput.bidError.visibility = View.VISIBLE
+//        val amount = bidAmount/((transaction.operatingDays!!/7)*30)
+//        binding.cardInput.bidError.text = "Your bid price per day: ₹${StringUtils.formatDecimalAmount(
+//          amount.toDouble()
+//        )}"
+//      }else
+        if (transaction.isItIntraCityContract()) {
+            binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
+            binding.cardInput.bidError.visibility = View.VISIBLE
+            val amount = bidAmount/transaction.intracityDays!!.toInt()
+            binding.cardInput.bidError.text = "Your bid price per day: ₹${StringUtils.formatDecimalAmount(amount.toDouble())}"
+        }else{
+            binding.cardInput.bidError.visibility = View.GONE
+        }
+    } catch (e:Exception){
       Log.i("Error", e.toString())
     }
 
