@@ -155,6 +155,7 @@
             android:visibility="@{request.isRemarkAvailable(dialog)}"
             app:layout_constraintTop_toBottomOf="@+id/reportingAddress"
             app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
