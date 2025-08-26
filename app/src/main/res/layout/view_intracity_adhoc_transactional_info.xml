@@ -150,6 +150,7 @@
             android:background="@drawable/bg_all_round_corner_white"
             android:text="@{request.getRemarks()}"
             tools:text="Remarks: Call me when you reach"
+            android:maxLength="150"
             android:padding="@dimen/size_4dp"
             android:visibility="@{request.isRemarkAvailable(dialog)}"
             app:layout_constraintTop_toBottomOf="@+id/reportingAddress"

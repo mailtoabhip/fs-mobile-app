@@ -1230,7 +1230,7 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
-    fun isRemarkAvailable(isDialog:Boolean) = if (additionalRemarks.isNotNullOrEmpty()) {
+    fun isRemarkAvailable(isDialog:Boolean) = if (additionalRemarks.isNotNullOrEmpty() && isDialog) {
         View.VISIBLE
     } else {
         View.GONE
