@@ -245,7 +245,9 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
     }
 
     fun setNavigationVisibleAndClickListner(){
-        if(transaction.pickupLocationCoordinates != null){
+        if(transaction.pickupLocationCoordinates != null
+            && transaction.pickupLocationCoordinates.lat.isNotNullOrEmpty()
+            && transaction.pickupLocationCoordinates.lon.isNotNullOrEmpty()){
             binding.layoutTransaction.navigate.visibility = View.VISIBLE
             binding.layoutTransaction.navigate.setOnClickListener{
                 openGoogleMapsWithCoordinates()
