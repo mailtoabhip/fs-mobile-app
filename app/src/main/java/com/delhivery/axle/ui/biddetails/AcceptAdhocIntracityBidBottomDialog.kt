@@ -2,8 +2,10 @@ package com.delhivery.axle.ui.biddetails
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +14,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
@@ -31,6 +34,7 @@ import com.delhivery.axle.utils.PROPERTY_DRIVER_NAME
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NUMBER
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_NUMBER
 import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -73,6 +77,9 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         binding.progress.visibility = View.GONE
         binding.progressMsg.visibility = View.GONE
+        //navigation listner
+        setNavigationVisibleAndClickListner()
+        //
         binding.close.setOnClickListener {
             dismiss()
         }
@@ -235,6 +242,43 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
             }
         })
 
+    }
+
+    fun setNavigationVisibleAndClickListner(){
+        if(transaction.pickupLocationCoordinates != null
+            && transaction.pickupLocationCoordinates.lat.isNotNullOrEmpty()
+            && transaction.pickupLocationCoordinates.lon.isNotNullOrEmpty()){
+            binding.layoutTransaction.navigate.visibility = View.VISIBLE
+            binding.layoutTransaction.navigate.setOnClickListener{
+                openGoogleMapsWithCoordinates()
+            }
+        }
+    }
+
+    private fun openGoogleMapsWithCoordinates() {
+        try {
+            val coordinates = transaction.pickupLocationCoordinates
+            if (coordinates != null && coordinates.lat != null && coordinates.lon != null) {
+                // Create Google Maps intent with coordinates and location name
+                val gmmIntentUri = Uri.parse("geo:0,0?q=${coordinates.lat},${coordinates.lon}(${transaction.origin})")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                
+                // Check if Google Maps app is available
+                if (mapIntent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(mapIntent)
+                } else {
+                    // Fallback to web browser if Google Maps app is not installed
+                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://maps.google.com/?q=${coordinates.lat},${coordinates.lon}"))
+                    context.startActivity(webIntent)
+                }
+            } else {
+                Toast.makeText(context, "Location information not available", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e("NavigationError", "Error opening Google Maps: ${e.message}")
+            Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun  enableSubmit(){

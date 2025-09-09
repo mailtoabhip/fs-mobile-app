@@ -715,18 +715,22 @@ data class HomeBidsRequestItemData(
   fun bidAmountLabel()=
     if(isItFRContract()){
       "Bid Amount Per Trip"
-    }else if(isItIntraCityContract() || isItLHContract()){
+    } else if(isItIntraCityContract()){
       "Bid Amount Per Month"
-    }else{
+    } else if(isItLHContract()){
+        "Bid Amount Per Trip"
+    } else{
       "Bid Amount"
     }
 
   fun bidAmountLabelEditHint()=
     if(isItFRContract()){
       "Enter bid amount per trip"
-    }else if(isItIntraCityContract() || isItLHContract() ){
+    } else if(isItIntraCityContract()){
       "Enter bid amount for entire contract"
-    }else{
+    } else if(isItLHContract()){
+        "Enter bid amount per trip"
+    } else{
       "Enter bid amount"
     }
 
@@ -1225,6 +1229,15 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+    fun isRemarkAvailable(isDialog:Boolean) = if (additionalRemarks.isNotNullOrEmpty() && isDialog) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+
+    fun getRemarks() = if(additionalRemarks.isNotNullOrEmpty()) "Remarks: ${additionalRemarks}" else ""
+
 
   fun isTicketVisibility(isDialog:Boolean) = if (fmsTicketId!=null && isDialog) {
     View.VISIBLE
