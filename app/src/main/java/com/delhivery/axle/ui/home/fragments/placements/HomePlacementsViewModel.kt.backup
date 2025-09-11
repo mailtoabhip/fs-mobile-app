@@ -5,6 +5,7 @@ import com.delhivery.axle.api.repository.TPSRepository
 import com.delhivery.axle.data.Quadruple
 import com.delhivery.axle.data.home.placements.HomePlacementNoDelayItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsDurationItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsFilterItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsTypeItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -111,10 +112,17 @@ class HomePlacementsViewModel @Inject constructor(
                 mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         /* remove progress item */
                         add( Pair(HomePlacementsProgressItem(), DataRVAdapterOperationType.Remove))
+                        add( Pair(HomePlacementsFilterItem(HomePlacementsFilterItemData(placementType,
+                                delayedPlacementList.size.toString(),(missingDetailsDelayedPlacementList.size + missingDetailsExpectedPlacementList.size).toString(),
+                                expectedPlacementList.size.toString()
+                        )), DataRVAdapterOperationType.AddUpdate))
                         when (placementType) {
                             PlacementTypes.Delayed.name -> {
-//                                    for(load in expectedPlacementList)
-//                                            segregateBasedOnTimeInterval(load)
+                                    for(load in expectedPlacementList)
+                                            segregateBasedOnTimeInterval(load)
+                                    add(Pair(HomePlacementsDurationItem(
+                                            HomePlacementsDurationItemData("Delayed")
+                                    ), DataRVAdapterOperationType.Add))
                                     if(delayedPlacementList.size==0){
                                             add( Pair(HomePlacementsNoDelayItem(
                                                     HomePlacementNoDelayItemData("Whohoo! No delays in placements!","No_Delay")
@@ -129,9 +137,9 @@ class HomePlacementsViewModel @Inject constructor(
 
                                             }
                                     }
-//                                    for(item in addItemBasisLoadTypeAndDuration(PlacementTypes.Delayed.name)){
-//                                          add(item)
-//                                    }
+                                    for(item in addItemBasisLoadTypeAndDuration(PlacementTypes.Delayed.name)){
+                                          add(item)
+                                    }
                             }
                             PlacementTypes.MissingDetails.name -> {
                                     add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Details Missing")), DataRVAdapterOperationType.Add))
@@ -139,6 +147,9 @@ class HomePlacementsViewModel @Inject constructor(
                                     for(load in missingDetailsExpectedPlacementList){
                                             segregateBasedOnTimeInterval(load)
                                     }
+                                    add(Pair(HomePlacementsDurationItem(
+                                            HomePlacementsDurationItemData("Delayed")
+                                    ), DataRVAdapterOperationType.Add))
                                     if(missingDetailsDelayedPlacementList.size==0){
                                             add( Pair(HomePlacementsNoDelayItem(
                                                     HomePlacementNoDelayItemData("Whohoo! No delays in placements!","No_Delay")
@@ -172,6 +183,10 @@ class HomePlacementsViewModel @Inject constructor(
                                     }
                             }
                         }
+                        add(Pair(HomePlacementsFilterItem(HomePlacementsFilterItemData(placementType,
+                                delayedPlacementList.size.toString(),(missingDetailsDelayedPlacementList.size + missingDetailsExpectedPlacementList.size).toString(),
+                                expectedPlacementList.size.toString()
+                        )), DataRVAdapterOperationType.AddUpdate))
                 }.let { userLoadsData.postValue(it) }
         }else{
                 mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

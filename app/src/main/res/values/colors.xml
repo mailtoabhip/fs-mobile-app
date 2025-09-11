@@ -98,6 +98,7 @@
 
   <color name="custom_blue">#5B80F7</color>
   <color name="light_red_bg">#FFF6F6</color>
+  <color name="placement_light_grey_bg">#F6F7F8</color>
   <color name="light_orange_color">#EA580C</color>
   <color name="placement_grey_bg">#F8F9FC</color>
   <color name="light_grey_v2">#646873</color>
