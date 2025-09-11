@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.lifecycle.Observer
+
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.databinding.ActivityAccountDetailsBinding
@@ -24,6 +24,7 @@ import javax.inject.Inject
 import android.text.method.LinkMovementMethod
 
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.Observer
 import com.delhivery.axle.utils.extensions.focusClick
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace

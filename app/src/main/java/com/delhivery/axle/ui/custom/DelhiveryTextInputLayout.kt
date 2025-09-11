@@ -100,7 +100,7 @@ class DelhiveryTextInputLayout(
   override fun setError(errorText: CharSequence?) {
     super.setError(errorText)
     try {
-      val errorTextInput = findViewById<TextView>(R.id.textinput_error)
+      val errorTextInput = findViewById<TextView>(com.google.android.material.R.id.textinput_error)
       val layoutParams =
         FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
       layoutParams.topMargin = 8

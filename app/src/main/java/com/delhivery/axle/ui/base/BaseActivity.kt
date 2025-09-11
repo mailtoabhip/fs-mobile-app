@@ -23,7 +23,6 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.delhivery.axle.BR
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
@@ -225,7 +224,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   /** Hide **/
   private fun bindContentView(layoutId: Int) {
     binding = DataBindingUtil.setContentView(this, layoutId)
-    viewModel = ViewModelProviders.of(this, viewModelFactory)
+    viewModel = ViewModelProvider(this, viewModelFactory)
         .get(getViewModelClass())
     binding.setVariable(BR.viewModel, viewModel)
   }
