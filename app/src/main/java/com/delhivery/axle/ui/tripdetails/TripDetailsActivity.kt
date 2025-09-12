@@ -303,7 +303,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
    * Transaction details and UI updation Observer
    */
   inner class TransactionObserver : Observer<Pair<HomeBidsRequestItemData, HomeTripsItemData>> {
-    override fun onChanged(t: Pair<HomeBidsRequestItemData, HomeTripsItemData>?) {
+    override fun onChanged(t: Pair<HomeBidsRequestItemData, HomeTripsItemData>) {
       binding.refreshing = false
       if (t != null) {
         binding.error = false
@@ -393,7 +393,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
    * Progress observer
    */
   inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean?) {
+    override fun onChanged(t: Boolean) {
       t?.let {
         when (t) {
           true -> {

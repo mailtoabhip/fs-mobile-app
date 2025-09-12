@@ -77,7 +77,7 @@ class SelectRouteOriginCityFragment : SelectRouteBaseFragment<FragmentSelectRout
    * Event observer
    */
   private inner class EventObserver : Observer<SelectRouteOriginCityBaseEvent> {
-    override fun onChanged(t: SelectRouteOriginCityBaseEvent?) {
+    override fun onChanged(t: SelectRouteOriginCityBaseEvent) {
       t?.let { event ->
         when (event) {
           is SelectRouteOriginCityErrorEvent -> {

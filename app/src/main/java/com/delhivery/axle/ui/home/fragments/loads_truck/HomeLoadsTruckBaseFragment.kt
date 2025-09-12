@@ -33,7 +33,7 @@ abstract class HomeLoadsTruckBaseFragment<B : ViewDataBinding, VM : BaseViewMode
         observer: Observer<T>
     ) {
         observe(lifecycleOwner, object : Observer<T> {
-            override fun onChanged(t: T?) {
+            override fun onChanged(t: T) {
                 observer.onChanged(t)
                 removeObserver(this)
             }

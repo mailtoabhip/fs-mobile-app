@@ -146,7 +146,7 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
      * Search load history observer
      */
     inner class SearchCityHistoryObserver : Observer<List<SearchCityEntity>> {
-        override fun onChanged(t: List<SearchCityEntity>?) {
+        override fun onChanged(t: List<SearchCityEntity>) {
             t?.let { items ->
                 binding.containerHistory.removeAllViews()
                 items.forEachIndexed { index, item ->

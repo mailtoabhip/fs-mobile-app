@@ -419,7 +419,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
      * ProfileUIState
      */
     inner class StateObserver : Observer<ProfileUIState> {
-        override fun onChanged(it: ProfileUIState?) {
+        override fun onChanged(it: ProfileUIState) {
             it?.let { state ->
                 binding.state = state
                 when (state) {

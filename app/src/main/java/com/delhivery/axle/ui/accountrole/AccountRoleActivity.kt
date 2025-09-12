@@ -162,7 +162,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
     }
 
     inner class StateObserver : Observer<AccountType> {
-        override fun onChanged(it: AccountType?) {
+        override fun onChanged(it: AccountType) {
             it?.let { state ->
                 when (state) {
                   AccountType.PostLoad->{
@@ -251,7 +251,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
     }
 
     inner class RoleUIObserver : Observer<RoleUIState> {
-        override fun onChanged(it: RoleUIState?) {
+        override fun onChanged(it: RoleUIState) {
             it?.let { state ->
                 when (state) {
                     RoleUIState.PostLoadShipper -> {

@@ -621,7 +621,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
    * Search results observer
    */
   inner class SearchResultsObserver : Observer<List<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>> {
-    override fun onChanged(t: List<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>?) {
+    override fun onChanged(t: List<Pair<BaseSearchLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>) {
       //resetSpinnerContainer()
       /* hide progress */
         action(ProgressSearchLoadAction(false))

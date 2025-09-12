@@ -153,7 +153,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
     }
 
     inner class StateObserver : Observer<AuthenticationUIState> {
-        override fun onChanged(it: AuthenticationUIState?) {
+        override fun onChanged(it: AuthenticationUIState) {
             it?.let { state ->
                 when (state) {
                     AuthenticationUIState.PhoneNo -> { }
