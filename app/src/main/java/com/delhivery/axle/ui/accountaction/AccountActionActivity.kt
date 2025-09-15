@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.accountrole.accountRoleIntent
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -38,6 +39,11 @@ class AccountActionActivity  : BaseActivity<ActivityAccountActionBinding, Accoun
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

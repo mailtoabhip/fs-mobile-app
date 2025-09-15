@@ -13,6 +13,7 @@ import com.delhivery.axle.databinding.ActivityCreateFuelCardBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -54,6 +55,11 @@ class CreateFuelCardActivity : BaseActivity<ActivityCreateFuelCardBinding, Creat
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Create fuel card"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

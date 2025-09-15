@@ -21,6 +21,7 @@ import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.AddNewRoute
 import com.delhivery.axle.ui.selectroute.SelectRouteFlowType.EditRoute
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -67,6 +68,11 @@ class ManageRouteActivity : BaseActivity<ActivityManageRouteBinding, ManageRoute
     super.onPostCreate(savedInstanceState)
 
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     startTime = System.currentTimeMillis()
 

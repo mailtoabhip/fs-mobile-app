@@ -22,6 +22,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.utils.REQCODE_DESTINATION_SELECT_CITY
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getQueryTextChangeObservable
 import com.delhivery.axle.utils.extensions.not
@@ -86,6 +87,11 @@ class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, Sea
         super.onPostCreate(savedInstanceState)
 
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = if(viewModel.cityType == "origin") "Origin Location" else "Destination Location"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){

@@ -6,7 +6,8 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:background="@color/grey_bg"
-        android:orientation="vertical">
+        android:orientation="vertical"
+      android:fitsSystemWindows="true">
     <androidx.appcompat.widget.Toolbar
         bind:layout_constraintStart_toStartOf="parent"
         bind:layout_constraintTop_toTopOf="parent"
@@ -25,7 +26,8 @@
             android:padding="@dimen/size_16dp"
             android:background="@color/white"
 
-            android:orientation="vertical">
+            android:orientation="vertical"
+      android:fitsSystemWindows="true">
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

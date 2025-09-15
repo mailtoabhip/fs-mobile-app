@@ -113,7 +113,8 @@
                         android:layout_marginTop="@dimen/size_10dp"
                         bind:layout_constraintTop_toBottomOf="@id/banner"
                         bind:layout_constraintStart_toStartOf="parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+      android:fitsSystemWindows="true">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
@@ -254,7 +255,8 @@
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_height="match_parent"
+      android:fitsSystemWindows="true">
 
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/text_truck_size"
@@ -388,7 +390,8 @@
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_height="match_parent"
+      android:fitsSystemWindows="true">
 
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:layout_width="wrap_content"

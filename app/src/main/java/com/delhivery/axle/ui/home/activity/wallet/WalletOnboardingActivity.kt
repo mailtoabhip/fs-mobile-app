@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityWalletOnboardingBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -36,6 +37,11 @@ class WalletOnboardingActivity : BaseActivity<ActivityWalletOnboardingBinding, W
     super.onPostCreate(savedInstanceState)
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Axle Wallet Flow"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

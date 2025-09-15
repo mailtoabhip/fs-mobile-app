@@ -29,7 +29,8 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F6F7F8">
+        android:background="#F6F7F8"
+        android:fitsSystemWindows="true">
 
         <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar

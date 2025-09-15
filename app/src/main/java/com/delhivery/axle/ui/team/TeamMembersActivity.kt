@@ -24,6 +24,7 @@ import com.delhivery.axle.databinding.ActivityTeamMembersBinding
 import com.delhivery.axle.databinding.DialogTeamMemberBottomOptionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.TeamMemberInterface
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -64,6 +65,11 @@ class TeamMembersActivity : BaseActivity<ActivityTeamMembersBinding, TeamMembers
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "My Team Members"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {

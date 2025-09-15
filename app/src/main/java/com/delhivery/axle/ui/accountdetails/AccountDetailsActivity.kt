@@ -28,6 +28,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.utils.extensions.focusClick
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
     init {
@@ -60,6 +61,11 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
             }
         })
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
