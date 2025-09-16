@@ -73,7 +73,116 @@ override fun onCreate(savedInstanceState: Bundle?) {
 - Maintains existing behavior for older Android versions
 - Provides foundation for all activities to handle system UI properly
 
-### 2.2 WindowInsetsUtils Utility Class
+### 2.2 Namespace Declaration
+
+**File**: `app/build.gradle`
+
+#### Changes Made:
+```gradle
+android {
+  namespace 'com.delhivery.axle'  // ← Added namespace declaration
+  compileSdk 35
+  // ... rest of configuration
+}
+```
+
+**Purpose**: 
+- **Gradle 8.0+ Requirement**: Namespace declaration is mandatory for Gradle 8.0+ and Android Gradle Plugin 8.0+
+- **Package Declaration**: Replaces the need for package declaration in AndroidManifest.xml
+- **Build Optimization**: Improves build performance and reduces conflicts
+- **Modern Android Development**: Aligns with current Android development best practices
+
+**Impact**:
+- Eliminates the need for `package="com.delhivery.axle"` in AndroidManifest.xml
+- Improves build system efficiency
+- Reduces potential package conflicts
+- Required for compatibility with latest build tools
+
+### 2.3 Observer Pattern Updates (onChanged Function)
+
+#### Changes Made:
+Updated Observer implementations to handle non-nullable arguments properly:
+
+**Before** (Nullable arguments):
+```kotlin
+inner class StateObserver : Observer<ProfileUIState> {
+    override fun onChanged(it: ProfileUIState?) {  // Nullable parameter
+        it?.let { state ->  // Null check required
+            // Handle state
+        }
+    }
+}
+```
+
+**After** (Non-nullable arguments):
+```kotlin
+inner class StateObserver : Observer<ProfileUIState> {
+    override fun onChanged(it: ProfileUIState) {  // Non-nullable parameter
+        it.let { state ->  // Direct usage, no null check needed
+            // Handle state
+        }
+    }
+}
+```
+
+**Files Updated**:
+- ✅ `MyProfileActivity.kt` - ProfileUIState observer
+- ✅ `TeamMembersActivity.kt` - Progress observer
+- ✅ `SearchCity.kt` - SearchCityHistoryObserver
+- ✅ `TransactionDetailActivity.kt` - TransactionObserver
+- ✅ `ContractDetailsActivity.kt` - Multiple observers
+- ✅ `BidDetailsActivity.kt` - Multiple observers
+- ✅ `AccountRoleActivity.kt` - State and Role observers
+- ✅ `AccountDetailsActivity.kt` - StateObserver
+- ✅ `TripDetailsActivity.kt` - Transaction and Progress observers
+- ✅ `HomeLoadsFragment.kt` - ProgressObserver
+- ✅ `SearchLoadFragment.kt` - Multiple observers
+- ✅ `AuthenticationActivity.kt` - State and Error observers
+- ✅ `SearchResultsFragment.kt` - SearchResultsObserver
+- ✅ `SelectRouteOriginCityFragment.kt` - EventObserver
+- ✅ `HomeTripsFragment.kt` - ProgressObserver
+- ✅ `HomeBaseFragment.kt` - Generic observer
+- ✅ **+ Multiple other observer implementations**
+
+**Purpose**:
+- **Kotlin Null Safety**: Leverages Kotlin's null safety features
+- **Performance Improvement**: Eliminates unnecessary null checks
+- **Code Clarity**: Makes code more readable and maintainable
+- **Type Safety**: Ensures type safety at compile time
+- **Modern Kotlin**: Aligns with current Kotlin best practices
+
+### 2.4 Service Lifecycle Updates (onTimeout Implementation)
+
+**File**: `app/src/main/java/com/delhivery/axle/tokenExpiryHandling/RefreshAuthTokenService.kt`
+
+#### Changes Made:
+```kotlin
+override fun onTimeout(startId: Int) {
+    super.onTimeout(startId)
+    // Stop the service when timeout occurs as required by API 35
+    if(Build.VERSION.SDK_INT >= 28)
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    else
+        stopForeground(true)
+    stopService(Intent(applicationContext, RefreshAuthTokenService::class.java))
+    WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+}
+```
+
+**Purpose**:
+- **API 35 Compliance**: Android 15 requires proper service timeout handling
+- **Resource Management**: Ensures services don't run indefinitely
+- **Battery Optimization**: Prevents battery drain from long-running services
+- **System Stability**: Improves overall system stability
+- **Foreground Service Requirements**: Meets new foreground service lifecycle requirements
+
+**Key Features**:
+- **Proper Cleanup**: Stops foreground service and removes notification
+- **WorkManager Integration**: Cancels associated WorkManager tasks
+- **Version Compatibility**: Handles different Android versions appropriately
+- **Service Termination**: Ensures complete service shutdown
+
+### 2.5 WindowInsetsUtils Utility Class
 
 **File**: `app/src/main/java/com/delhivery/axle/utils/WindowInsetsUtils.kt` (NEW)
 
@@ -465,11 +574,13 @@ When creating new activities, follow this pattern:
 ## 8. Migration Impact Summary
 
 ### 8.1 Files Modified
-- **Build Configuration**: 1 file (`app/build.gradle`)
+- **Build Configuration**: 1 file (`app/build.gradle`) - namespace declaration and targetSdkVersion
 - **Core Infrastructure**: 2 files (`BaseActivity.kt`, `WindowInsetsUtils.kt`)
+- **Service Updates**: 1 file (`RefreshAuthTokenService.kt`) - onTimeout implementation
+- **Observer Pattern Updates**: 20+ files with onChanged function improvements
 - **Layout Files**: 56 activity layout files
 - **Activity Classes**: 56 activity class files
-- **Total**: 115+ files modified or created
+- **Total**: 135+ files modified or created
 
 ### 8.2 Coverage Statistics
 - **Layout Coverage**: 42/56 layouts (75%) with `fitsSystemWindows="true"`
@@ -502,7 +613,48 @@ The app is now fully prepared for Android 15 deployment while maintaining excell
 
 This section provides a comprehensive checklist for any Android app migrating to Target API 35, covering all critical touch points and considerations, including foreground and background services.
 
-### 10.1 Edge-to-Edge Display Requirements
+### 10.1 Build Configuration Requirements
+
+#### ✅ **Mandatory Checkpoints**
+- [ ] **Target SDK Update**: Update `targetSdkVersion` to 35 in `app/build.gradle`
+- [ ] **Namespace Declaration**: Add `namespace 'com.yourpackage.name'` in `app/build.gradle`
+- [ ] **Gradle Compatibility**: Ensure Gradle 8.0+ and Android Gradle Plugin 8.0+
+- [ ] **Compile SDK**: Update `compileSdk` to 35
+
+#### ✅ **Build System Updates**
+- [ ] **Package Declaration**: Remove `package` attribute from AndroidManifest.xml (replaced by namespace)
+- [ ] **Build Tools**: Update to latest build tools and dependencies
+- [ ] **Kotlin Version**: Ensure compatible Kotlin version for API 35
+
+### 10.2 Observer Pattern Updates
+
+#### ✅ **onChanged Function Updates**
+- [ ] **Non-nullable Parameters**: Update Observer implementations to use non-nullable parameters
+- [ ] **Null Safety**: Remove unnecessary null checks in onChanged methods
+- [ ] **Type Safety**: Ensure proper type safety in observer implementations
+- [ ] **Performance**: Optimize observer patterns for better performance
+
+#### ✅ **Files to Update**
+- [ ] All Activity classes with Observer implementations
+- [ ] All Fragment classes with Observer implementations
+- [ ] Custom Observer classes and interfaces
+- [ ] LiveData observer implementations
+
+### 10.3 Service Lifecycle Updates
+
+#### ✅ **onTimeout Implementation**
+- [ ] **Service Timeout**: Implement proper `onTimeout()` method in foreground services
+- [ ] **Resource Cleanup**: Ensure proper cleanup when service times out
+- [ ] **Notification Removal**: Remove foreground service notifications on timeout
+- [ ] **WorkManager Integration**: Cancel associated WorkManager tasks on timeout
+
+#### ✅ **Service Requirements**
+- [ ] **Foreground Service Types**: Declare proper `foregroundServiceType` in AndroidManifest.xml
+- [ ] **Service Lifecycle**: Implement proper service lifecycle management
+- [ ] **Battery Optimization**: Handle battery optimization scenarios
+- [ ] **System Integration**: Ensure proper system integration for API 35
+
+### 10.4 Edge-to-Edge Display Requirements
 
 #### ✅ **Mandatory Checkpoints**
 - [ ] **Enable Edge-to-Edge Display**: Set `WindowCompat.setDecorFitsSystemWindows(window, false)` for API 35+
