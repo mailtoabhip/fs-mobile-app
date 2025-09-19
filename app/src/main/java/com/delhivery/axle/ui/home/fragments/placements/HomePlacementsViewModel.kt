@@ -1,4 +1,5 @@
 package com.delhivery.axle.ui.home.fragments.placements
+import android.util.Log
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.TPSRepository
@@ -77,36 +78,37 @@ class HomePlacementsViewModel @Inject constructor(
                         loads.loadType= LoadTypes.intracityRegular.name
                         segregateLoadType(loads)
                 }
-                var ftlAdhocMissingCount =0
-                var ftlContractMissingCount =0
-                var intracityAdhocMissingCount =0
-                var intracityContractMissingCount =0
-                for(load in missingDetailsExpectedPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->  {
-                                        ftlAdhocMissingCount++ }
-                                LoadTypes.ftlRegular.name-> {
-                                        ftlContractMissingCount++ }
-                                LoadTypes.intracityRegular.name->  {
-                                        intracityContractMissingCount++ }
-                                LoadTypes.intracityAdhoc.name->  {
-                                        intracityAdhocMissingCount++ }
-
-                        }
-                }
-                for (load in missingDetailsDelayedPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->
-                                        ftlAdhocMissingCount++
-                                LoadTypes.ftlRegular.name->
-                                        ftlContractMissingCount++
-                                LoadTypes.intracityRegular.name->
-                                        intracityContractMissingCount++
-                                LoadTypes.intracityAdhoc.name->
-                                        intracityAdhocMissingCount++
-                        }
-                }
-                missingDataLiveData.postValue(Pair(Quadruple(ftlAdhocMissingCount,ftlContractMissingCount,intracityAdhocMissingCount,intracityContractMissingCount),missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size))
+//                var ftlAdhocMissingCount =0
+//                var ftlContractMissingCount =0
+//                var intracityAdhocMissingCount =0
+//                var intracityContractMissingCount =0
+//                for(load in missingDetailsExpectedPlacementList){
+//                        when(load.loadType){
+//                                LoadTypes.ftlAdhoc.name->  {
+//                                        ftlAdhocMissingCount++ }
+//                                LoadTypes.ftlRegular.name-> {
+//                                        ftlContractMissingCount++ }
+//                                LoadTypes.intracityRegular.name->  {
+//                                        intracityContractMissingCount++ }
+//                                LoadTypes.intracityAdhoc.name->  {
+//                                        intracityAdhocMissingCount++ }
+//
+//                        }
+//                }
+//                for (load in missingDetailsDelayedPlacementList){
+//                        when(load.loadType){
+//                                LoadTypes.ftlAdhoc.name->
+//                                        ftlAdhocMissingCount++
+//                                LoadTypes.ftlRegular.name->
+//                                        ftlContractMissingCount++
+//                                LoadTypes.intracityRegular.name->
+//                                        intracityContractMissingCount++
+//                                LoadTypes.intracityAdhoc.name->
+//                                        intracityAdhocMissingCount++
+//                        }
+//                }
+//                missingDataLiveData.postValue(Pair(Quadruple(ftlAdhocMissingCount,ftlContractMissingCount,intracityAdhocMissingCount,intracityContractMissingCount),missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size))
+                Log.d("HomePlacementsViewModel", "Posting totalPlacementLiveData - Delayed: ${delayedPlacementList.size}, Expected: ${expectedPlacementList.size}")
                 totalPlacementLiveData.postValue(Triple(delayedPlacementList.size,missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size,expectedPlacementList.size))
                 mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         /* remove progress item */
@@ -121,50 +123,34 @@ class HomePlacementsViewModel @Inject constructor(
                                             ), DataRVAdapterOperationType.AddUpdate))
                                     }
                                     for (load in delayedPlacementList){
-                                            when(load.loadType){
-                                                    LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                                    LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                                    LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                                    LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
+                                            add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))
 
-                                            }
-                                    }
+                            }
 //                                    for(item in addItemBasisLoadTypeAndDuration(PlacementTypes.Delayed.name)){
 //                                          add(item)
 //                                    }
                             }
-                            PlacementTypes.MissingDetails.name -> {
-                                    add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Details Missing")), DataRVAdapterOperationType.Add))
-
-                                    for(load in missingDetailsExpectedPlacementList){
-                                            segregateBasedOnTimeInterval(load)
-                                    }
-                                    if(missingDetailsDelayedPlacementList.size==0){
-                                            add( Pair(HomePlacementsNoDelayItem(
-                                                    HomePlacementNoDelayItemData("Whohoo! No delays in placements!","No_Delay")
-                                            ), DataRVAdapterOperationType.AddUpdate))
-                                    }
-
-                                    for (load in missingDetailsDelayedPlacementList){
-                                            when(load.loadType){
-                                                    LoadTypes.ftlAdhoc.name->  {
-                                                            add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))}
-                                                    LoadTypes.ftlRegular.name-> {
-                                                            add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))}
-                                                    LoadTypes.intracityRegular.name->  {
-                                                            add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))}
-                                                    LoadTypes.intracityAdhoc.name->  {
-                                                            add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))}
-
-                                            }
-                                    }
-
-                                    for(item in addItemBasisLoadTypeAndDuration(PlacementTypes.MissingDetails.name)){
-                                            add(item)
-                                    }
-                            }
+//                            PlacementTypes.MissingDetails.name -> {
+//                                    add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Details Missing")), DataRVAdapterOperationType.Add))
+//
+//                                    for(load in missingDetailsExpectedPlacementList){
+//                                            segregateBasedOnTimeInterval(load)
+//                                    }
+//                                    if(missingDetailsDelayedPlacementList.size==0){
+//                                            add( Pair(HomePlacementsNoDelayItem(
+//                                                    HomePlacementNoDelayItemData("Whohoo! No delays in placements!","No_Delay")
+//                                            ), DataRVAdapterOperationType.AddUpdate))
+//                                    }
+//
+//                                    for (load in missingDetailsDelayedPlacementList){
+//                                            add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))}
+//
+//                                    for(item in addItemBasisLoadTypeAndDuration(PlacementTypes.MissingDetails.name)){
+//                                            add(item)
+//                                    }
+//                            }
                             PlacementTypes.Expected.name -> {
-                                    add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Expected")), DataRVAdapterOperationType.Add))
+                                  //  add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Expected")), DataRVAdapterOperationType.Add))
                                     for(load in expectedPlacementList)
                                             segregateBasedOnTimeInterval(load)
                                     for(item in addItemBasisLoadTypeAndDuration(PlacementTypes.Expected.name)){
@@ -224,7 +210,7 @@ class HomePlacementsViewModel @Inject constructor(
 
         private fun addItemBasisLoadTypeAndDuration(placementType: String):MutableList<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>{
                 return mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("0–2 hrs")), DataRVAdapterOperationType.Add))
+                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("Expected in 0–2 hrs")), DataRVAdapterOperationType.Add))
                  var title = ""
                  var status = ""
                  when(placementType){
@@ -236,61 +222,35 @@ class HomePlacementsViewModel @Inject constructor(
                                  status = "No_Pipeline"}
                  }
                 for(load in _0_2hoursPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
+                                add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))
                         }
-                }
                 if (_0_2hoursPlacementList.size==0)add(Pair(HomePlacementsNoDelayItem(HomePlacementNoDelayItemData(title,status)),DataRVAdapterOperationType.Add))
-                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("2–4 hrs")), DataRVAdapterOperationType.Add))
+                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("Expected in 2–4 hrs")), DataRVAdapterOperationType.Add))
                 for(load in _2_4hoursPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                        }
+                        add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))
+
                 }
                 if (_2_4hoursPlacementList.size==0)add(Pair(HomePlacementsNoDelayItem( HomePlacementNoDelayItemData(title,status)),DataRVAdapterOperationType.Add))
 
-                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("4–6 hrs")), DataRVAdapterOperationType.Add))
+                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("Expected in 4–6 hrs")), DataRVAdapterOperationType.Add))
                 for(load in _4_6hoursPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                        }
+                        add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))
                 }
                 if (_4_6hoursPlacementList.size==0)add(Pair(HomePlacementsNoDelayItem( HomePlacementNoDelayItemData(title,status)),DataRVAdapterOperationType.Add))
 
-                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("6–12 hrs")), DataRVAdapterOperationType.Add))
+                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("Expected in 6–12 hrs")), DataRVAdapterOperationType.Add))
                 for(load in _6_12hoursPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                        }
+                        add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))
                 }
                 if (_6_12hoursPlacementList.size==0)add(Pair(HomePlacementsNoDelayItem( HomePlacementNoDelayItemData(title,status)),DataRVAdapterOperationType.Add))
 
-                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("12–18 hrs")), DataRVAdapterOperationType.Add))
+                add(Pair(HomePlacementsDurationItem(HomePlacementsDurationItemData("Expected in 12–18 hrs")), DataRVAdapterOperationType.Add))
                 for(load in _12_18hoursPlacementList){
-                        when(load.loadType){
-                                LoadTypes.ftlAdhoc.name->  add(Pair(HomePlacementsIntercityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.ftlRegular.name->  add(Pair(HomePlacementsIntercityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityRegular.name->  add(Pair(HomePlacementsIntracityContractsRequestItem(load), DataRVAdapterOperationType.Add))
-                                LoadTypes.intracityAdhoc.name->  add(Pair(HomePlacementsIntracityAdhocRequestItem(load), DataRVAdapterOperationType.Add))
-                        }
+                        add(Pair(HomeVehiclePlacementsRequestItem(load), DataRVAdapterOperationType.Add))
                 }
                 if (_12_18hoursPlacementList.size==0)add(Pair(HomePlacementsNoDelayItem( HomePlacementNoDelayItemData(title,status)),DataRVAdapterOperationType.Add))
 
         }
 
         }
-
-
 }

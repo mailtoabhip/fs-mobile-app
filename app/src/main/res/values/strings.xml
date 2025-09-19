@@ -894,4 +894,19 @@
     <item>12–18 Hours</item>
   </string-array>
 
+
+<!-- Delayed Placement Card Strings -->
+<string name="placement_card_content_description">Placement card with delay information and details</string>
+<string name="delay_status_content_description">Delay status</string>
+<string name="client_badge_icon_content_description">Client badge icon</string>
+<string name="client_badge_text_content_description">Client badge text</string>
+<string name="close_content_description">Close</string>
+<string name="route_content_description">Route information</string>
+<string name="stops_content_description">Number of stops</string>
+<string name="fill_details">Fill Details</string>
+<string name="fill_details_content_description">Fill placement details</string>
+<string name="share_details">Share Details</string>
+<string name="share_details_content_description">Share placement details</string>
+<string name="call">Call</string>
+<string name="call_content_description">Call driver</string>
 </resources>

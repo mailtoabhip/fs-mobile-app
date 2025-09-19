@@ -185,9 +185,9 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
                 binding.intercityContract.root.visibility = View.VISIBLE
                 binding.intercityContract.request = viewModel.homePlacementsItemData
                 binding.intercityContract.originDestination.request = viewModel.homePlacementsItemData
-                binding.intercityContract.mapText.setOnClickListener{
-                    navigateToMap()
-                }
+//                binding.intercityContract.mapText.setOnClickListener{
+//                    navigateToMap()
+//                }
             }
         }
         if (viewModel.homePlacementsItemData.status=="Marked-in"){

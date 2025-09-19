@@ -496,6 +496,10 @@ object DateUtils {
     }
     return ""
   }
+
+  fun getRelativeTimeDiff(statTime:String, endTime:String){
+
+  }
 }
 
 /**

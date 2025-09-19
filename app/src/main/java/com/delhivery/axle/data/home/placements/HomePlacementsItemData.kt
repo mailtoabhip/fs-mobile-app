@@ -3,16 +3,16 @@ package com.delhivery.axle.data.home.placements
 import android.view.View
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntercityAdhocRequestItem
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntercityContractsRequestItem
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntracityAdhocRequestItem
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsIntracityContractsRequestItem
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.StringUtils
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
 
 data class HomePlacementsItemData(
     @SerializedName("contract_code") val contractCode: String?,
@@ -29,6 +29,10 @@ data class HomePlacementsItemData(
     @SerializedName("origin_center_long") val originCenterLong: Float?,
     @SerializedName("origin_center_name") val originCenterName: String?,
     @SerializedName("origin_center_state") val originCenterState: String?,
+    @SerializedName("origin") val origin: String?,
+    @SerializedName("origin_state") val originState: String?,
+    @SerializedName("destination") val destination: String?,
+    @SerializedName("destination_state") val destinationState: String?,
     @SerializedName("reporting_time") val reportingTime: String?,
     @SerializedName("status") val status: String?,
     @SerializedName("vehicle_id") val vehicleId: String?,
@@ -74,12 +78,13 @@ data class HomePlacementsItemData(
     }else{
         "Driver details missing"
     }
-
     fun missingVehicleVisibility()= if ((vehicleNumber==null || driverName==null || driverPhone==null)&& !detailVisible) View.VISIBLE else View.GONE
+
+    fun fillDetailsVisibility()= if ((vehicleNumber==null || driverName==null || driverPhone==null)) View.VISIBLE else View.GONE
 
     fun missingDriverDetails()= if ( driverName==null || driverPhone==null) View.GONE else View.VISIBLE
 
-    fun editIconVisibility()= if (status=="Marked-in") View.GONE else View.VISIBLE
+    fun editIconVisibility()= if (status=="Marked-in" ||((vehicleNumber==null || driverName==null || driverPhone==null))) View.GONE else View.VISIBLE
 
     fun formattedConfirmedPrice()= "₹" + confirmedPrice?.let { StringUtils.formatAmount(it) }
 
@@ -95,18 +100,38 @@ data class HomePlacementsItemData(
         return if(detailVisible)View.GONE else View.VISIBLE
     }
 
-    fun formatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
+    fun formatReportingTime():String?= "Report "+reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
 
     fun formatReportingTimeWithDiv():String= "| "+ reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
 
     fun driverName():String? = driverName?.let { StringUtils.capitalize(driverName)}
 
-    fun loadType():String? = loadType?.let {when(loadType){
-        LoadTypes.ftlAdhoc.name->  "FTL Adhoc"
-        LoadTypes.ftlRegular.name->  "FTL Contract"
-        LoadTypes.intracityRegular.name->  "Intracity Contract"
-        LoadTypes.intracityAdhoc.name->  "Intracity Adhoc"
+    fun formattedOriginCity()= if(loadType ==LoadTypes.orionSpot.name || loadType== LoadTypes.orionFixed.name){
+        StringUtils.capitalize(origin)+", "+StringUtils.capitalize(originState)
+    }else{
+        StringUtils.capitalize(originCenterName)+", "+StringUtils.capitalize(originCenterState)
+    }
+    fun formattedDestinationCity() = if(loadType ==LoadTypes.orionSpot.name || loadType== LoadTypes.orionFixed.name){
+        StringUtils.capitalize(destination)+", "+StringUtils.capitalize(destinationState)
+    }else{
+        StringUtils.capitalize(destinationCenterName)+", "+StringUtils.capitalize(destinationCenterState)
 
+    }
+    fun relativeDurationStatus():String{
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+        val date1: Date = format.parse(format.format(Date()))
+        val date2: Date = format.parse(reportingTime)
+        val statusDuration = if(status==PlacementTypes.Delayed.name) {"Delayed by ${DateUtils.timeDiff(date2.time,date1.time)}"} else if (status==PlacementTypes.Expected.name){"Expected in ${DateUtils.timeDiff(
+          date1.time,date2.time)}"} else ""
+        return statusDuration
+    }
+    fun loadType():String? = loadType?.let {when(loadType){
+        LoadTypes.ftlAdhoc.name->  "Delhivery Load"
+        LoadTypes.ftlRegular.name->  "Delhivery Contract"
+        LoadTypes.intracityRegular.name->  "Delhivery Contract"
+        LoadTypes.intracityAdhoc.name->  "Delhivery Load"
+        LoadTypes.orionFixed.name->  "Client Contract"
+        LoadTypes.orionSpot.name->  "Client Load"
         else -> {null}
     } }
 

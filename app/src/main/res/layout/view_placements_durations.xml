@@ -11,6 +11,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/durationText"
             app:layout_constraintEnd_toStartOf="@+id/durationText"
             android:layout_width="0dp"
+            android:layout_marginEnd="@dimen/size_16dp"
             android:layerType="software"
             android:layout_height="@dimen/size_2dp"
             android:src="@drawable/dotted_line"/>
@@ -22,9 +23,9 @@
             android:paddingEnd="@dimen/size_16dp"
             android:paddingTop="@dimen/size_4dp"
             android:paddingBottom="@dimen/size_4dp"
-            android:background="@drawable/bg_all_round_corner_orange_boundary"
+            android:background="@drawable/bg_all_round_corner_light_grey_v2_boundary"
             android:id="@+id/durationText"
-            android:textColor="@color/white"
+            android:textColor="@color/text_black_v2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Delayed"/>
@@ -35,6 +36,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/durationText"
             app:layout_constraintStart_toEndOf="@+id/durationText"
             android:layout_width="0dp"
+            android:layout_marginStart="@dimen/size_16dp"
             android:layerType="software"
             android:layout_height="@dimen/size_2dp"
             android:src="@drawable/dotted_line"/>

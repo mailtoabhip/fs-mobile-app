@@ -4,15 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
-import com.delhivery.axle.databinding.ViewIntercityAdhocBinding
-import com.delhivery.axle.databinding.ViewIntercityContractBinding
-import com.delhivery.axle.databinding.ViewIntracityContractBinding
-import com.delhivery.axle.databinding.ViewIntractiyAdhocBinding
 import com.delhivery.axle.databinding.ViewPlacementsDurationsBinding
 import com.delhivery.axle.databinding.ViewPlacementsFiltersBinding
 import com.delhivery.axle.databinding.ViewPlacementsNoDelayBinding
 import com.delhivery.axle.databinding.ViewPlacementsTypeBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
+import com.delhivery.axle.databinding.ViewVehiclePlacementBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.base.adapter.BaseDataRVAdapter
@@ -37,10 +34,7 @@ class HomePlacementsRVAdapter (private val _interface: HomePlacementsRVAdapterIn
         parent: ViewGroup,
         viewType: Int
     ) = when (HomePlacementsRVAdapterItemType.byTypeId(viewType)) {
-        HomePlacementsRVAdapterItemType.IntercityAdhoc ->ViewIntercityAdhocBinding.inflate(inflater,parent,false)
-        HomePlacementsRVAdapterItemType.IntracityAdhoc ->ViewIntractiyAdhocBinding.inflate(inflater,parent,false)
-        HomePlacementsRVAdapterItemType.IntercityContracts->ViewIntercityContractBinding.inflate(inflater,parent,false)
-        HomePlacementsRVAdapterItemType.IntracityContracts -> ViewIntracityContractBinding.inflate(inflater,parent,false)
+        HomePlacementsRVAdapterItemType.PlacementItem ->ViewVehiclePlacementBinding.inflate(inflater,parent,false)
         HomePlacementsRVAdapterItemType.Progress -> ViewHomeContractsProgressItemBinding.inflate(inflater, parent, false)
         HomePlacementsRVAdapterItemType.Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
         HomePlacementsRVAdapterItemType.Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
@@ -52,10 +46,7 @@ class HomePlacementsRVAdapter (private val _interface: HomePlacementsRVAdapterIn
     }
 
     override fun createVH(binding: ViewDataBinding) = when (binding) {
-        is ViewIntercityAdhocBinding -> HomePlacementsIntercityAdhocRequestItemVH(binding)
-        is ViewIntercityContractBinding -> HomePlacementsIntercityContractRequestItemVH(binding)
-        is ViewIntractiyAdhocBinding -> HomePlacementsIntracityAdhocRequestItemVH(binding)
-        is ViewIntracityContractBinding -> HomePlacementsIntracityContractRequestItemVH(binding)
+        is ViewVehiclePlacementBinding -> HomeVehiclePlacementsRequestItemVH(binding)
         is ViewPlacementsTypeBinding -> HomePlacementsTypeItemVH(binding)
         is ViewHomeContractsProgressItemBinding -> HomePlacementsProgressItemVH(binding)
         is ViewWarningItemBinding -> HomePlacementsWarningItemVH(binding)
@@ -71,10 +62,7 @@ class HomePlacementsRVAdapter (private val _interface: HomePlacementsRVAdapterIn
         item: BaseHomePlacementsRVAdapterItem<*>
     ) {
         when (holder) {
-            is HomePlacementsIntercityAdhocRequestItemVH -> holder.bind(item as HomePlacementsIntercityAdhocRequestItem, _interface)
-            is HomePlacementsIntercityContractRequestItemVH -> holder.bind(item as  HomePlacementsIntercityContractsRequestItem, _interface)
-            is HomePlacementsIntracityAdhocRequestItemVH -> holder.bind(item as HomePlacementsIntracityAdhocRequestItem, _interface)
-            is HomePlacementsIntracityContractRequestItemVH -> holder.bind(item as HomePlacementsIntracityContractsRequestItem, _interface)
+            is HomeVehiclePlacementsRequestItemVH -> holder.bind(item as HomeVehiclePlacementsRequestItem, _interface)
             is HomePlacementsTypeItemVH -> holder.bind(item as HomePlacementsTypeItem, _interface)
             is HomePlacementsProgressItemVH -> holder.bind(item as HomePlacementsProgressItem, _interface)
             is HomePlacementsWarningItemVH -> holder.bind(item as HomePlacementsWarningItem, _interface)
@@ -93,8 +81,8 @@ class HomePlacementsRVAdapter (private val _interface: HomePlacementsRVAdapterIn
         mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
             add(Pair(HomePlacementsProgressItem(), DataRVAdapterOperationType.AddUpdate))
             items.filter {
-                it.type == HomePlacementsRVAdapterItemType.Header  ||  it.type == HomePlacementsRVAdapterItemType.Duration || it.type == HomePlacementsRVAdapterItemType.NonDelay||  it.type == HomePlacementsRVAdapterItemType.IntracityAdhoc|| it.type == HomePlacementsRVAdapterItemType.IntracityContracts
-                        || it.type == HomePlacementsRVAdapterItemType.IntercityAdhoc || it.type == HomePlacementsRVAdapterItemType.IntercityContracts ||   it.type == HomePlacementsRVAdapterItemType.Filters ||   it.type == HomePlacementsRVAdapterItemType.Timeout ||  it.type == HomePlacementsRVAdapterItemType.Warning
+                it.type == HomePlacementsRVAdapterItemType.Header  ||  it.type == HomePlacementsRVAdapterItemType.Duration || it.type == HomePlacementsRVAdapterItemType.NonDelay||  it.type == HomePlacementsRVAdapterItemType.PlacementItem||
+                          it.type == HomePlacementsRVAdapterItemType.Filters ||   it.type == HomePlacementsRVAdapterItemType.Timeout ||  it.type == HomePlacementsRVAdapterItemType.Warning
             }
                 .map { Pair(it, DataRVAdapterOperationType.Remove) }
                 .let {

@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.placements
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -9,7 +8,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomePlacementsV3Binding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -48,7 +46,6 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
     companion object {
         /* singleton instance */
         val _instance: HomePlacementsFragment by lazy { HomePlacementsFragment() }
-        private const val TAG = "HomePlacementsFragment"
     }
 
     override fun getViewModelClass() = HomePlacementsViewModel::class.java
@@ -113,20 +110,6 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
-
-        // Observe placement counts and update tab counts
-        Log.d(TAG, "Setting up observer for totalPlacementLiveData")
-        viewModel.totalPlacementLiveData.observe(viewLifecycleOwner, Observer { placementData ->
-            Log.d(TAG, "Observer triggered with data: $placementData")
-            placementData?.let { (delayedCount, _, expectedCount) ->
-                Log.d(TAG, "Updating tab counts - Delayed: $delayedCount, Expected: $expectedCount")
-                updateTabCounts(delayedCount, expectedCount)
-            }
-        })
-
-        // Trigger data fetch to get initial counts
-        Log.d(TAG, "Triggering initial data fetch")
-        viewModel.fetchPlacementLoads("Initial")
     }
 
     override fun onResume() {
@@ -182,7 +165,6 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
      */
     fun updateTabCounts(delayedCount: Int, expectedCount: Int) {
         try {
-            Log.d(TAG, "updateTabCounts called with Delayed: $delayedCount, Expected: $expectedCount")
             // Update Delayed tab count
             binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
                 if (delayedCount > 0) " ($delayedCount)" else ""
@@ -190,10 +172,8 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
             // Update Expected tab count
             binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
                 if (expectedCount > 0) " ($expectedCount)" else ""
-            
-            Log.d(TAG, "Tab counts updated successfully")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating tab counts", e)
+            // Handle exception
         }
     }
 }
