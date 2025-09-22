@@ -63,12 +63,19 @@ data class HomePlacementsItemData(
                     }
                     i++
                 }
-                (numStops).toString()+" stops"
+                if(numStops==1){
+                    (numStops).toString()+" stop"
+                }else if (numStops>1){
+                    (numStops).toString()+" stops"
+                }else{
+                    ""
+                }
+
             }else{
                 ""
             }
         }else  {
-            "0 stop"
+            ""
         }
 
     fun detailMissingText()  = if(vehicleNumber==null && (driverName==null || driverPhone==null)){
@@ -122,7 +129,7 @@ data class HomePlacementsItemData(
         val date1: Date = format.parse(format.format(Date()))
         val date2: Date = format.parse(reportingTime)
         val statusDuration = if(status==PlacementTypes.Delayed.name) {"Delayed by ${DateUtils.timeDiff(date2.time,date1.time)}"} else if (status==PlacementTypes.Expected.name){"Expected in ${DateUtils.timeDiff(
-          date1.time,date2.time)}"} else ""
+          date1.time,date2.time)}"} else if(status=="Marked-in"){"Marked-in"} else ""
         return statusDuration
     }
     fun loadType():String? = loadType?.let {when(loadType){

@@ -16,3 +16,5 @@ const val HomePlacementsFilterItemDataKeyPrefix = "filter_"
 const val HomePlacementsFilterDelay = "filter_delay"
 const val HomePlacementsFilterMissing = "filter_missing"
 const val HomePlacementsFilterExpected = "filter_expected"
+const val HomePlacementsCallDriver = "call_driver"
+

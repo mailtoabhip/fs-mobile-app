@@ -78,6 +78,14 @@ class HomePlacementsViewModel @Inject constructor(
                         loads.loadType= LoadTypes.intracityRegular.name
                         segregateLoadType(loads)
                 }
+                for (loads in _tRes.orionFixed ){
+                        loads.loadType= LoadTypes.orionFixed.name
+                        segregateLoadType(loads)
+                }
+                for (loads in _tRes.orionSpot ){
+                        loads.loadType= LoadTypes.orionSpot.name
+                        segregateLoadType(loads)
+                }
 //                var ftlAdhocMissingCount =0
 //                var ftlContractMissingCount =0
 //                var intracityAdhocMissingCount =0

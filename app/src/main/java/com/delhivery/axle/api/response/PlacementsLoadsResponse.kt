@@ -8,5 +8,7 @@ data class PlacementsLoadDataResponse(
     @SerializedName("ftl_adhoc") val ftlAdhoc: List<HomePlacementsItemData>,
     @SerializedName("ftl_regular") val ftlRegular: List<HomePlacementsItemData>,
     @SerializedName("intracity_adhoc") val intracityAdhoc: List<HomePlacementsItemData>,
-    @SerializedName("intracity_regular") val intracityRegular: List<HomePlacementsItemData>
+    @SerializedName("intracity_regular") val intracityRegular: List<HomePlacementsItemData>,
+    @SerializedName("orion_fixed") val orionFixed: List<HomePlacementsItemData>,
+    @SerializedName("orion_spot") val orionSpot: List<HomePlacementsItemData>
 )

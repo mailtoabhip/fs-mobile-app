@@ -11,6 +11,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterDelay
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterExpected
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterMissing
@@ -89,6 +90,8 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
         binding.driverTruckDetails.request = item.data
         binding.originDestination.request = item.data
         binding.placementActions.request = item.data
+        binding.placementActions.btnCall.clickToAction(HomePlacementsCallDriver, item, _interface)
+
         val spannable = SpannableStringBuilder()
         spannable.clearSpans()
 // Origin text (black, bold)
@@ -111,7 +114,7 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
         if (item.data.loadType == LoadTypes.orionFixed.name || item.data.loadType == LoadTypes.orionSpot.name || item.data.loadType == LoadTypes.ftlRegular.name || item.data.loadType == LoadTypes.ftlAdhoc.name) {
 // Arrow as inline image
         val arrowDrawable =
-            ContextCompat.getDrawable(context, R.drawable.ic_arrow_forward_black_new)
+            ContextCompat.getDrawable(context, R.drawable.ic_arrow_forward_blue)
         arrowDrawable?.let { drawable ->
             val textSize = binding.originDestination.originDestinationText.textSize.toInt()
             drawable.setBounds(0, 0, textSize, textSize)
@@ -210,17 +213,30 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
             "Delayed"-> {
                 binding.tvStatusDuration.background = null
                 binding.tvStatusDuration.setTextColor(ContextCompat.getColor(context, R.color.light_orange_color))
+                binding.tvStatusDuration.setPadding(
+                    0,0,0,0
+                )
 
             }
             "Marked-in"-> {
                 binding.tvStatusDuration.background =
-                ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_won)
+                ContextCompat.getDrawable(context, R.drawable.bg_all_rounded_marked_in)
                 binding.tvStatusDuration.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+                val scale = context.resources.displayMetrics.density
+                binding.tvStatusDuration.setPadding(
+                    (8 * scale).toInt(),
+                    (4 * scale).toInt(),
+                    (8 * scale).toInt(),
+                    (4 * scale).toInt()
+                )
 
             }
             "Expected"-> {
                 binding.tvStatusDuration.background = null
                 binding.tvStatusDuration.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
+                binding.tvStatusDuration.setPadding(
+                    0,0,0,0
+                )
 
             }
 

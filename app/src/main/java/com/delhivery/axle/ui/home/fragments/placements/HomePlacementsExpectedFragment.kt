@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.placements
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +10,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomePlacementsExpectedBinding
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
+import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
@@ -20,9 +22,12 @@ import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
 import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 /**
@@ -39,6 +44,7 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
         /* singleton instance */
         val _instance: HomePlacementsExpectedFragment by lazy { HomePlacementsExpectedFragment() }
     }
+
 
     override fun getViewModelClass() = HomePlacementsViewModel::class.java
 
@@ -134,12 +140,40 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
                     startActivity(placementDetailsIntent(data, it))
                 }
             }
+            HomePlacementsCallDriver ->{
+
+                val data = item.data as HomePlacementsItemData
+                Log.i("callDriver", data.driverPhone?:"")
+                callDriver(data.driverPhone?:"")
+            }
             HomePlacementsTimeoutItemAction -> {
                 refreshData()
             }
         }
     }
-
+    private fun callDriver(phoneNumber:String?){
+        compositeDisposable += requestPermission(
+            Manifest.permission.CALL_PHONE
+        )
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    when (phoneNumber?.let { it1 ->
+                        contactUtils.callDriver(
+                            it1
+                        )
+                    }) {
+                        false -> {
+                            uiUtils.showSnackbar("Unable to place call")
+                        }
+                        else -> {
+                        }
+                    }
+                } else {
+                    uiUtils.showSnackbar(getString(R.string.msg_call_permission))
+                }
+            }
+    }
     override fun handleAction(
         actionId: String,
         item: BaseHomePlacementsRVAdapterItem<*>,
