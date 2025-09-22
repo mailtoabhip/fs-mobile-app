@@ -3,6 +3,8 @@ package com.delhivery.axle.ui.home.fragments.placements
 import android.Manifest
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -55,6 +57,7 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsDelayedFragment_SetupTime")
         fragmentSetupTrace?.start()
 
@@ -109,6 +112,12 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
     private fun refreshData() {
         adapter.resetStaticData()
         viewModel.fetchPlacementLoads(PlacementTypes.Delayed.name)
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        menu.removeItem(R.id.nav_filter)
+
     }
 
     override fun handleAction(actionId: String, item: BaseHomePlacementsRVAdapterItem<*>) {

@@ -154,7 +154,7 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
         menu.findItem(R.id.nav_call).isVisible = true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+/*  override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_filter -> {
                 analyticsUtil.moEngageTrackEvent(
@@ -175,7 +175,7 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
                 super.onOptionsItemSelected(item)
             }
         }
-    }
+    }*/
 
     /**
      * Update tab counts for Delayed and Expected tabs
