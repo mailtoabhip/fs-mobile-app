@@ -46,6 +46,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
@@ -661,6 +662,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
   /**
    * Fragment action observer
    */
+  /**
+   * Fragment action observer
+   */
   fun fragmentAction(action: BaseHomeFragmentAction) {
     when (action.type) {
       /* navigate to fragment action */
@@ -669,6 +673,31 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         binding.viewpager.setCurrentItem(fragmentType.position, true)
         binding.toolbarTitle.text = title
       }
+      /* update placement badge action */
+      HomeFragmentActionType.UpdatePlacementBadge -> {
+        val delayedCount = (action as UpdatePlacementBadgeAction).delayedCount
+        updatePlacementBadgeCount(delayedCount)
+      }
+    }
+  }
+
+  /**
+   * Update placement badge count on bottom navigation
+   */
+  fun updatePlacementBadgeCount(delayedCount: Int) {
+    try {
+      if (delayedCount > 0) {
+        val badge = binding.bottomNav.getOrCreateBadge(R.id.nav_placements)
+        badge.number = delayedCount
+        badge.isVisible = true
+        badge.backgroundColor = ContextCompat.getColor(this@HomeActivity, R.color.colorDelhiveryRed)
+      } else {
+        binding.bottomNav.removeBadge(R.id.nav_placements)
+      }
+    } catch (e: Exception) {
+      Log.e("HomeActivity", "Error updating placement badge: ${e.message}", e)
+      // Fallback: Just log the count for now
+      Log.d("HomeActivity", "Badge count would be: $delayedCount")
     }
   }
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)

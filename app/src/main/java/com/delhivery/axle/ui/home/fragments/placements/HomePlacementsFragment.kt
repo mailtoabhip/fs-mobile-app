@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomePlacementsFragmentType
 import com.delhivery.axle.ui.home.fragments.HomePlacementsFragmentsAdapter
+import com.delhivery.axle.ui.home.fragments.UpdatePlacementBadgeAction
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_USER_ID
@@ -183,6 +184,9 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
     fun updateTabCounts(delayedCount: Int, expectedCount: Int) {
         try {
             Log.d(TAG, "updateTabCounts called with Delayed: $delayedCount, Expected: $expectedCount")
+            
+            // Update bottom navigation badge for placement icon
+            action(UpdatePlacementBadgeAction(delayedCount))
             // Update Delayed tab count
             binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
                 if (delayedCount > 0) " ($delayedCount)" else ""

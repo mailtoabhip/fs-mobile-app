@@ -1,7 +1,7 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
     <!-- Customize your theme here. -->
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -170,7 +170,7 @@
     <item name="android:windowExitAnimation">@anim/slide_out</item>
   </style>
 
-  <style name="RatingBar" parent="Theme.AppCompat">
+  <style name="RatingBar" parent="Theme.MaterialComponents">
     <item name="colorControlNormal">@color/grey_bg</item>
     <item name="colorControlActivated">@color/yellow</item>
   </style>
@@ -181,7 +181,7 @@
     <item name="android:textSize">@dimen/text_14sp</item>
   </style>
 
-  <style name="CheckBoxStyle" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="CheckBoxStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorControlNormal">@color/white</item>
     <item name="colorAccent">@color/dark_blue</item>
     <item name="colorControlActivated">@color/dark_blue</item>

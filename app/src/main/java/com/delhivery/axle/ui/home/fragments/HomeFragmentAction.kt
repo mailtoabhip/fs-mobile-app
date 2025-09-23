@@ -1,12 +1,14 @@
 package com.delhivery.axle.ui.home.fragments
 
 import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType.Navigate
+import com.delhivery.axle.ui.home.fragments.HomeFragmentActionType.UpdatePlacementBadge
 
 /**
  * Home fragment actions type
  */
 enum class HomeFragmentActionType {
-  Navigate
+  Navigate,
+  UpdatePlacementBadge
 }
 
 /**
@@ -23,4 +25,11 @@ class NavigateHomeFragmentAction(val fragmentType: HomeFragmentType) : BaseHomeF
 
 class NavigateHomeLoadsFragmentAction(val fragmentType: HomeLoadsTruckFragmentType) : BaseHomeFragmentAction(
     Navigate
+)
+
+/**
+ * Update placement badge count
+ */
+class UpdatePlacementBadgeAction(val delayedCount: Int) : BaseHomeFragmentAction(
+    UpdatePlacementBadge
 )
