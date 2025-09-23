@@ -77,8 +77,8 @@ abstract class BaseHomeLoadsRVAdapterViewHolder<out B : ViewDataBinding, IT : Ba
 /**
  * Bid request item view holder
  */
-class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
-    BaseHomeLoadsRVAdapterViewHolder<LoadDelhiveryIntercityBinding, HomeLoadsRequestItem>(
+class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
+    BaseHomeLoadsRVAdapterViewHolder<LoadDelhiveryIntercityV2Binding, HomeLoadsRequestItem>(
             binding
     ) {
 
@@ -86,7 +86,7 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
           item: HomeLoadsRequestItem,
           _interface: HomeLoadsRVAdapterInterface
   ) {
-
+      val demandType = item.data.getDemandTypeByLoad()
       Log.d("adapterData", "${item.data}")
 
     if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
@@ -123,12 +123,42 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
 //        binding.nonIntracityLayout.visibility = View.VISIBLE
         binding.request = item.data
         binding.containerError.request = item.data
-        if(item.data.demandType.equals("Internal",true)){
-            binding.materialType.visibility = View.GONE
-        } else{
-            binding.materialType.visibility = View.VISIBLE
-            binding.materialType.text = item.data.materialType
+        
+        // Set payment mode display
+        if (item.data.paymentMode != null) {
+            binding.paymentType.text = item.data.getPaymentModeDisplay()
+        } else {
+            binding.paymentType.visibility = View.GONE
+            binding.advancePaymentPercentage.visibility = View.GONE
         }
+        binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
+        if (demandType == "Delhivery Load") {
+            binding.demandLoadType.text = "Delhivery Load"
+            // Set background color for Delhivery Load
+            binding.loadTypeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.delhivery_load_bg))
+            // Set drawable start and colors
+            binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(context, R.drawable.ic_truck_small), null, null, null
+            )
+            binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+            binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        } else if (demandType == "Client Load") {
+            binding.demandLoadType.text = "Client Load"
+            // Set background color for Client Load
+            binding.loadTypeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.client_load_bg))
+            // Set drawable start and colors
+            binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
+            )
+            binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+            binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+        }
+//        if(item.data.demandType.equals("Internal",true)){
+//            binding.materialType.visibility = View.GONE
+//        } else{
+//            binding.materialType.visibility = View.VISIBLE
+//            binding.materialType.text = item.data.materialType
+//        }
         if(item.data.isDMTIndent()){
             binding.closingTime.visibility = View.GONE
         }else{
@@ -142,9 +172,9 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
 
         if(item.data.indentOrigin.equals("LH")){
             if(item.data.indentHaltCenters.isNullOrEmpty()){
-                binding.textStops.text = "No Stops"
+                binding.stops.text = "No Stops"
             }else{
-                binding.textStops.text = item.data.indentHaltCenters.size.toString()+" Stops"
+                binding.stops.text = item.data.indentHaltCenters.size.toString()+" Stops"
             }
         }else{
             var total = 0
@@ -164,9 +194,9 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityBinding) :
             }
 
             if(total>0){
-                binding.textStops.text = "$total Stops"
+                binding.stops.text = "$total Stops"
             }else{
-                binding.textStops.text = "No Stops"
+                binding.stops.text = "No Stops"
             }
 
         }
@@ -198,8 +228,8 @@ internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding
 /**
  * Search item view holder
  */
-internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchPlaceholderItemBinding) :
-    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchPlaceholderItemBinding, HomeLoadsSearchItem>(
+internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchPlaceholderItemV2Binding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchPlaceholderItemV2Binding, HomeLoadsSearchItem>(
             binding
     ) {
   override fun bind(
@@ -207,8 +237,8 @@ internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchPlaceholderItem
           _interface: HomeLoadsRVAdapterInterface
   ) {
     binding.editStickySearch.clickToAction(HomeLoadsSearchAction_Search,item,_interface)
-    binding.spinnerTruckDisplayName.clickToAction(HomeLoadsVehicleFilterAction,item,_interface)
-    binding.spinnerTruckDisplayName.text = "Vehicle Type"+if(item.data.query?.split(",")?.size==0)"" else " : " + item.data.query?.split(",")?.joinToString(", ")
+    binding.filterIcon.clickToAction(HomeLoadsVehicleFilterAction,item,_interface)
+    //binding.spinnerTruckDisplayName.text = "Vehicle Type"+if(item.data.query?.split(",")?.size==0)"" else " : " + item.data.query?.split(",")?.joinToString(", ")
   }
 }
 
@@ -310,9 +340,9 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
           item: HomeLoadsFilterItem,
           _interface: HomeLoadsRVAdapterInterface
   ) {
-      binding.dlvIntracityToggle.text =  "${context.getString(R.string.action_dlv_intracity)} (${item.data.dlvIntracityCount})"
-      binding.dlvIntercityToggle.text =   "${context.getString(R.string.action_dlv_intercity)} (${item.data.dlvIntercityCount})"
-      binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
+      binding.dlvIntracityToggle.text =  "${context.getString(R.string.intracity)} (${item.data.dlvIntracityCount + item.data.nonDlvCount})"
+      binding.dlvIntercityToggle.text =   "${context.getString(R.string.intercity)} (${item.data.dlvIntercityCount})"
+      //binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
       binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
       binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
@@ -321,22 +351,22 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
           DemandType.Intracity.type-> {
               binding.dlvIntracityToggle.isSelected = true
               binding.dlvIntercityToggle.isSelected = false
-              binding.nonDlvToggle.isSelected = false
+              //binding.nonDlvToggle.isSelected = false
           }
           DemandType.Internal.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = true
-              binding.nonDlvToggle.isSelected = false
+              //binding.nonDlvToggle.isSelected = false
           }
           DemandType.Others.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = false
-              binding.nonDlvToggle.isSelected = true
+              //binding.nonDlvToggle.isSelected = true
           }
       }
       binding.dlvIntracityToggle.clickToAction(HomeLoadDlvIntracity, item, _interface)
       binding.dlvIntercityToggle.clickToAction(HomeLoadDlvIntercity, item, _interface)
-      binding.nonDlvToggle.clickToAction(HomeLoadNonDlv, item, _interface)
+      //binding.nonDlvToggle.clickToAction(HomeLoadNonDlv, item, _interface)
   }
 }
 

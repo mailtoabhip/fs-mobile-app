@@ -41,7 +41,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     parent: ViewGroup,
     viewType: Int
   ) = when (HomeLoadsRVAdapterItemType.byTypeId(viewType)) {
-    Search -> ViewHomeLoadsSearchPlaceholderItemBinding.inflate(inflater, parent, false)
+    Search -> ViewHomeLoadsSearchPlaceholderItemV2Binding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Info -> ViewHomeLoadsInfoItemBinding.inflate(inflater, parent, false)
@@ -53,11 +53,11 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
     ShareRate -> ViewShareLayoutBannerBinding.inflate(inflater, parent, false)
     LoadCategories -> ViewHomeLoadCategoriesItemBinding.inflate(inflater, parent, false)
-    else -> LoadDelhiveryIntercityBinding.inflate(inflater, parent, false)
+    else -> LoadDelhiveryIntercityV2Binding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeLoadsSearchPlaceholderItemBinding -> HomeLoadsSearchItemVH(binding)
+    is ViewHomeLoadsSearchPlaceholderItemV2Binding -> HomeLoadsSearchItemVH(binding)
     is ViewHomeLoadsProgressItemBinding -> HomeLoadsProgressItemVH(binding)
     is ViewWarningItemBinding -> HomeLoadsWarningItemVH(binding)
     is ViewHomeLoadsInfoItemBinding -> HomeLoadsInfoItemVH(binding)
@@ -69,7 +69,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)
     is ViewShareLayoutBannerBinding->HomeLoadsShareRateItemVH(binding)
     is ViewHomeLoadCategoriesItemBinding->HomeLoadsCategoriesItemVH(binding)
-    else -> HomeLoadsRequestItemVH(binding as LoadDelhiveryIntercityBinding)
+    else -> HomeLoadsRequestItemVH(binding as LoadDelhiveryIntercityV2Binding)
   }
 
   override fun bindVH(

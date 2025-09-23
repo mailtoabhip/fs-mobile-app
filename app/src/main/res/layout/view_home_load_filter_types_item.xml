@@ -22,23 +22,17 @@
       android:id="@+id/dlvIntracityToggle"
       style="@style/FilterButton"
       app:layout_constraintStart_toStartOf="parent"
-      android:text="@string/action_dlv_intracity"
+      android:text="@string/intracity"
+      android:textStyle="bold"
       app:layout_constraintTop_toTopOf="parent"
       />
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/dlvIntercityToggle"
         style="@style/FilterButton"
         app:layout_constraintStart_toEndOf="@id/dlvIntracityToggle"
-        android:text="@string/action_dlv_intercity"
+        android:text="@string/intercity"
+        android:textStyle="bold"
         android:layout_marginStart="@dimen/size_8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/nonDlvToggle"
-        style="@style/FilterButton"
-        android:layout_marginStart="@dimen/size_8dp"
-        app:layout_constraintStart_toEndOf="@id/dlvIntercityToggle"
-        android:text="@string/action_non_delhivery"
         app:layout_constraintTop_toTopOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

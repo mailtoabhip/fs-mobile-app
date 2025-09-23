@@ -15,6 +15,8 @@ import com.delhivery.axle.api.response.SearchAfter
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.Quintuple
+import com.delhivery.axle.data.UserModel
+import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.bids.BulkBidCreateRequest
 import com.delhivery.axle.data.bids.BulkBidRemoveRequest
 import com.delhivery.axle.data.bids.BulkBidUpdateRequest
@@ -131,6 +133,8 @@ class HomeLoadsViewModel @Inject constructor(
 
   var loadsCount:Int =0
     var searchAfter: SearchAfter?=null
+
+    var user: UserModel? = null
 
 
 
@@ -688,6 +692,18 @@ class HomeLoadsViewModel @Inject constructor(
           }
         }
   }
+
+    fun getUser() {
+        compositeDisposable += userRepository.getUser(false)
+            .onBackground()
+            .subscribe { _user, error ->
+                if (!error && _user != null) {
+                    user = _user
+                } else {
+                    error?.handle()
+                }
+            }
+    }
   fun fetchTruckType(data :HomeBidsRequestItemData) {
     compositeDisposable += truckRepository.getTruckType()
       .onBackground()

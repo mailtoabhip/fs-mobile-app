@@ -150,6 +150,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_states")val nepState:String?=null,
   @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
   @SerializedName("intracity_lob")val intracityLob:String?=null,
+  @SerializedName("payment_mode")val paymentMode:String?=null,
+  @SerializedName("advance_percentage")val advancePercentage:String?=null,
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -183,6 +185,26 @@ data class HomeBidsRequestItemData(
   fun getTicketId(): String = "Ticket Id: "+fmsTicketId
 
 
+  /**
+   * get formatted payment mode display text
+   */
+  fun getPaymentModeDisplay(): String {
+    return when (paymentMode?.lowercase()) {
+      "credit" -> "Credit Payment"
+      "advance" -> "Advance Payment"
+      else -> paymentMode?.replaceFirstChar { it.uppercase() } ?: "N/A"
+    }
+  }
+
+  fun getAdvancePaymentPercentage() : String {
+    return "$advancePercentage%" ?: ""
+  }
+
+  fun getDemandTypeByLoad() : String {
+    if (demandType == "Internal" || demandType == "Intracity") {
+      return "Delhivery Load"
+    } else return "Client Load"
+  }
   /**
    * get time in ist
    */
@@ -440,6 +462,10 @@ data class HomeBidsRequestItemData(
   } else {
     destinationStateName()
   }
+
+  fun originCityState() = "${originCityName()} (${originStateName()})"
+
+  fun destinationCityState() = "${destinationCityName()} (${destinationStateName()})"
 
   /**
    * @return formatted origin district, city, state

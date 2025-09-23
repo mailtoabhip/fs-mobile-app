@@ -820,6 +820,8 @@
   <string name="driver_app_link">https://play.google.com/store/apps/details?id=com.delhivery.fmsdriver</string>
   <string name="hindi_video_link">https://youtu.be/x7YhuhHdGkA</string>
   <string name="english_video_link">https://youtu.be/RUutFvWwyQQ</string>
+  <string name="intracity">Intracity</string>
+  <string name="intercity">Intercity</string>
 
 
   <string-array name="array_truck_type">

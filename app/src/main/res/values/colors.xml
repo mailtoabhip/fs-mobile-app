@@ -123,4 +123,10 @@
   <color name="beige_border">#FDECCE</color>
   <color name="text_black_v1">#32353D</color>
 
+  <!-- Load type colors -->
+  <color name="delhivery_load_bg">#F5EFFE</color>
+  <color name="delhivery_load_color">#7C3AED</color>
+  <color name="client_load_bg">#FFF7EB</color>
+  <color name="client_load_color">#C47E09</color>
+
 </resources>

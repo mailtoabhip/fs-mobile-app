@@ -783,22 +783,27 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           mutableListOf(userPrefs.userId())
         )
         selectedLoadFilter = DemandType.Internal.type
-        demandType = DemandType.Internal.type
-        refreshData()
-      }
-      HomeLoadNonDlv ->{
-        analyticsUtil.moEngageTrackEvent(
-          EVENT_NON_DELHIVERY_LOAD_CLICKED,
-          mutableListOf(PROPERTY_USER_ID),
-          mutableListOf(userPrefs.userId())
-        )
-        selectedLoadFilter = DemandType.Others.type
         demandType = userPrefs.demandType
-          .split(",")
-          .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
-          .joinToString(",")
+            .split(",")
+            .filterNot {
+                it == DemandType.Intracity.type
+            }
+            .joinToString { "," }
         refreshData()
       }
+//      HomeLoadNonDlv ->{
+//        analyticsUtil.moEngageTrackEvent(
+//          EVENT_NON_DELHIVERY_LOAD_CLICKED,
+//          mutableListOf(PROPERTY_USER_ID),
+//          mutableListOf(userPrefs.userId())
+//        )
+//        selectedLoadFilter = DemandType.Others.type
+//        demandType = userPrefs.demandType
+//          .split(",")
+//          .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+//          .joinToString(",")
+//        refreshData()
+//      }
     }
   }
 
