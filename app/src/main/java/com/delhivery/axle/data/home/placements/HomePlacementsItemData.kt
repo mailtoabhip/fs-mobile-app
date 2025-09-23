@@ -108,6 +108,7 @@ data class HomePlacementsItemData(
     }
 
     fun formatReportingTime():String?= "Report "+reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
+    fun onlyFormatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
 
     fun formatReportingTimeWithDiv():String= "| "+ reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
 
@@ -159,7 +160,10 @@ data class HomePlacementsItemData(
 data class HaltCenters(
         @SerializedName("halt_center_code") val haltCenterCode: String?,
         @SerializedName("halt_center_name") val haltCenterName: String?,
-):Serializable
+        @SerializedName("latitude") val latitude: String?,
+        @SerializedName("longitude") val longitude: String?,
+
+        ):Serializable
 
 
 

@@ -14,9 +14,11 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
 import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
+import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DELAYED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
 import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
@@ -38,6 +40,8 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
     HomePlacementsRVAdapterInterface {
 
     @Inject lateinit var userPrefs: UserPrefs
+    @Inject lateinit var dialogUtils: DialogUtils
+
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
 
@@ -152,6 +156,10 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
                 Log.i("callDriver", data.driverPhone?:"")
                 callDriver(data.driverPhone?:"")
 
+            }
+            HomePlacementsShareOnWhatsapp ->{
+                val data = item.data as HomePlacementsItemData
+                dialogUtils.shareOnWhatsApp(dialogUtils.generatePlacementWhatsappContent(data))
             }
             HomePlacementsTimeoutItemAction -> {
                 refreshData()

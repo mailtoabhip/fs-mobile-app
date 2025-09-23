@@ -15,6 +15,7 @@ import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterDelay
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterExpected
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterMissing
+import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewPlacementsDurationsBinding
 import com.delhivery.axle.databinding.ViewPlacementsFiltersBinding
@@ -91,7 +92,7 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
         binding.originDestination.request = item.data
         binding.placementActions.request = item.data
         binding.placementActions.btnCall.clickToAction(HomePlacementsCallDriver, item, _interface)
-
+        binding.placementActions.btnShareWhatsapp.clickToAction(HomePlacementsShareOnWhatsapp, item, _interface)
         val spannable = SpannableStringBuilder()
         spannable.clearSpans()
 // Origin text (black, bold)

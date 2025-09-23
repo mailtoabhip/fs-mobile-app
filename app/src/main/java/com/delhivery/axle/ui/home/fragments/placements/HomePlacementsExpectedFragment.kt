@@ -20,12 +20,14 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
 import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
 import com.delhivery.axle.databinding.DialogDurationFiltersBinding
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
 import com.delhivery.axle.ui.placementdetails.FilterDurationAdapter
 import com.delhivery.axle.ui.placementdetails.FilterItemOnClickListener
+import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
@@ -49,6 +51,7 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
     HomePlacementsRVAdapterInterface, FilterItemOnClickListener {
 
     @Inject lateinit var userPrefs: UserPrefs
+    @Inject lateinit var dialogUtils: DialogUtils
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
     private var filterItem = ""
@@ -157,6 +160,11 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
             HomePlacementsCallDriver ->{
                 val data = item.data as HomePlacementsItemData
                 callDriver(data.driverPhone?:"")
+            }
+            HomePlacementsShareOnWhatsapp ->{
+                val data = item.data as HomePlacementsItemData
+                dialogUtils.shareOnWhatsApp(dialogUtils.generatePlacementWhatsappContent(data))
+
             }
             HomePlacementsTimeoutItemAction -> {
                 refreshData()
