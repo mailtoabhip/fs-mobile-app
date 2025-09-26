@@ -200,7 +200,7 @@ internal class HomeContractsSearchItemVH(binding: ViewSearchContractsItemBinding
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.editStickySearch.clickToAction(HomeContractsSearchAction_Search,item,_interface)
-    binding.info.clickToAction(HomeContractsFilterInfo,item,_interface)
+    //binding.info.clickToAction(HomeContractsFilterInfo,item,_interface)
 
   }
 }

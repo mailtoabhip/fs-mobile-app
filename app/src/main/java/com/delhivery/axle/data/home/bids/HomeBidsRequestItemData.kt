@@ -207,6 +207,7 @@ data class HomeBidsRequestItemData(
   }
 
   fun getDemandTypeByLoad() : String {
+    Log.d("Demand Type ","$demandType")
     if (demandType == "Internal" || demandType == "Intracity") {
       return "Delhivery Load"
     } else return "Client Load"

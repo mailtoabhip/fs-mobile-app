@@ -155,7 +155,7 @@
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_2dp"
                     android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.formattedBiddingEndTime()}"
+                    android:text="@{request.getAdvancePaymentPercentage()}"
                     app:layout_constraintStart_toEndOf="@id/paymentType"
                     app:layout_constraintTop_toTopOf="@id/paymentType"
                     app:layout_constraintBottom_toBottomOf="@id/paymentType" />
