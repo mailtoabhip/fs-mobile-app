@@ -43,7 +43,7 @@
                     android:text="@{request.formattedBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
-                
+
                 <LinearLayout
                     android:id="@+id/load_type_layout"
                     android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                     android:paddingEnd="@dimen/size_8dp"
                     android:orientation="horizontal"
                     android:background="@drawable/bg_all_round_corner_black"
-                        android:backgroundTint="#F5EFFE"
+                    android:backgroundTint="#F5EFFE"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/closingTime"
                     app:layout_constraintBottom_toBottomOf="@id/closingTime">
@@ -62,7 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_truck_small"
-                        android:text="Delhivery Load"
+                        android:text="Delhivery Contract"
                         android:textStyle="bold"
                         android:drawablePadding="@dimen/size_2dp"
                         android:drawableTint="#7C3AED"
@@ -157,34 +157,19 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/paymentType"
+                    android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
-                    tools:text ="Advance Payment"
+                    tools:text ="~1000km/month"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:paddingTop="@dimen/size_4dp"
-                    android:drawableStart="@drawable/money_bill_wave"
+                    android:drawableStart="@drawable/route"
                     app:layout_constraintStart_toEndOf="@id/truckInfo"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/advance_payment_percentage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:drawablePadding="@dimen/size_4dp"
-                    tools:text ="(50%)"
-                    android:textColor="#505361"
-                    android:layout_marginStart="@dimen/size_2dp"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.formattedBiddingEndTime()}"
-                    app:layout_constraintStart_toEndOf="@id/paymentType"
-                    app:layout_constraintTop_toTopOf="@id/paymentType"
-                    app:layout_constraintBottom_toBottomOf="@id/paymentType" />
 
                 <include
                     android:id="@+id/container_error"
@@ -204,7 +189,7 @@
         <include
             android:id="@+id/layoutIntracity"
             tools:visibility = "gone"
-            layout="@layout/card_load_delhivery_intracity_v2"/>
+            layout="@layout/card_load_delhivery_intracity"/>
     </androidx.cardview.widget.CardView>
 
 </layout>

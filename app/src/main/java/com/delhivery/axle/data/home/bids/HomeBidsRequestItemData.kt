@@ -150,8 +150,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_states")val nepState:String?=null,
   @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
   @SerializedName("intracity_lob")val intracityLob:String?=null,
-  @SerializedName("payment_mode")val paymentMode:String?=null,
-  @SerializedName("advance_percentage")val advancePercentage:String?=null,
+  @SerializedName("payment_mode")var paymentMode:String?=null,
+  @SerializedName("advance_percentage")var advancePercentage:String?=null,
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -184,7 +184,6 @@ data class HomeBidsRequestItemData(
    */
   fun getTicketId(): String = "Ticket Id: "+fmsTicketId
 
-
   /**
    * get formatted payment mode display text
    */
@@ -196,8 +195,15 @@ data class HomeBidsRequestItemData(
     }
   }
 
-  fun getAdvancePaymentPercentage() : String {
-    return "$advancePercentage%" ?: ""
+  /**
+   * get formatted advance payment percentage
+   */
+  fun getAdvancePaymentPercentage(): String {
+    return if (advancePercentage != null) {
+      "${advancePercentage}%"
+    } else {
+      ""
+    }
   }
 
   fun getDemandTypeByLoad() : String {

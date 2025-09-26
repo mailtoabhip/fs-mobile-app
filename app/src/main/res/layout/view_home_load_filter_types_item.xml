@@ -35,6 +35,16 @@
         android:layout_marginStart="@dimen/size_8dp"
         app:layout_constraintTop_toTopOf="parent"
         />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dlvMarketplaceToggle"
+        style="@style/FilterButton"
+        app:layout_constraintStart_toEndOf="@id/dlvIntercityToggle"
+        android:text="@string/market_place"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/size_8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
   </HorizontalScrollView>
 </layout>

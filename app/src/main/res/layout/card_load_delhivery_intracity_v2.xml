@@ -43,7 +43,7 @@
                     android:text="@{request.formattedBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
-                
+
                 <LinearLayout
                     android:id="@+id/load_type_layout"
                     android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                     android:paddingEnd="@dimen/size_8dp"
                     android:orientation="horizontal"
                     android:background="@drawable/bg_all_round_corner_black"
-                        android:backgroundTint="#F5EFFE"
+                    android:backgroundTint="#F5EFFE"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/closingTime"
                     app:layout_constraintBottom_toBottomOf="@id/closingTime">
@@ -61,10 +61,10 @@
                         android:id="@+id/demand_load_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_truck_small"
+                        android:drawableStart="@drawable/ic_delhivery_bolt"
                         android:text="Delhivery Load"
                         android:textStyle="bold"
-                        android:drawablePadding="@dimen/size_2dp"
+                        android:drawablePadding="5.5dp"
                         android:drawableTint="#7C3AED"
                         android:textColor="#7C3AED"/>
 
@@ -93,49 +93,18 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
-                    <!-- 2. Arrow - Sticks to fromCity with 4dp gap -->
                     <TextView
-                        android:id="@+id/fromCity_toCity_arrow"
+                        android:id="@+id/pincode_state"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_14sp"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        android:text="➔"
-                        tools:text ="➔"
-                        android:textColor="#121A31"
-                        android:gravity="center"
-                        app:layout_constraintStart_toEndOf="@id/fromCity"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                    <TextView
-                        android:id="@+id/toCity"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_14sp"
-                        android:text="@{request.destinationCityState()}"
-                        tools:text ="Jaisalmer"
-                        android:textColor="#121A31"
-                        android:maxLines="2"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/fromCity_toCity_arrow" />
-
-                    <!-- 4. Stops - Sticks to toCity with 4dp gap -->
-                    <TextView
-                        android:id="@+id/stops"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_12sp"
-                        tools:text="3 stops"
-                        android:layout_marginStart="@dimen/size_4dp"
                         android:paddingTop="@dimen/size_2dp"
-                        android:gravity="center"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:textSize="@dimen/text_12sp"
+                        android:text="@{request.originCityState()}"
+                        tools:text ="110006, Delhi"
+                        android:textColor="#8F9198"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/toCity" />
+                        app:layout_constraintStart_toEndOf="@id/fromCity"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -188,7 +157,7 @@
 
                 <include
                     android:id="@+id/container_error"
-                    layout="@layout/item_bottom_button_v2"
+                    layout="@layout/item_loads_itracity_bottom_button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -200,11 +169,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-        <include
-            android:id="@+id/layoutIntracity"
-            tools:visibility = "gone"
-            layout="@layout/card_load_delhivery_intracity_v2"/>
     </androidx.cardview.widget.CardView>
 
 </layout>

@@ -43,32 +43,6 @@
                     android:text="@{request.formattedBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
-                
-                <LinearLayout
-                    android:id="@+id/load_type_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/size_8dp"
-                    android:paddingEnd="@dimen/size_8dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/bg_all_round_corner_black"
-                        android:backgroundTint="#F5EFFE"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/closingTime"
-                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/demand_load_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_truck_small"
-                        android:text="Delhivery Load"
-                        android:textStyle="bold"
-                        android:drawablePadding="@dimen/size_2dp"
-                        android:drawableTint="#7C3AED"
-                        android:textColor="#7C3AED"/>
-
-                </LinearLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_from_to_city"
@@ -123,20 +97,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@id/fromCity_toCity_arrow" />
 
-                    <!-- 4. Stops - Sticks to toCity with 4dp gap -->
-                    <TextView
-                        android:id="@+id/stops"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_12sp"
-                        tools:text="3 stops"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        android:paddingTop="@dimen/size_2dp"
-                        android:gravity="center"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/toCity" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -172,6 +132,20 @@
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/supplierNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="9876******"
+                    android:textColor="#505361"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    android:drawableStart="@drawable/ic_call_12dp"
+                    app:layout_constraintStart_toStartOf="@id/paymentType"
+                    app:layout_constraintTop_toBottomOf="@id/paymentType" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/advance_payment_percentage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -193,9 +167,25 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:layout_gravity="center_vertical"
-                    app:layout_constraintTop_toBottomOf="@id/truckInfo"
+                    app:layout_constraintTop_toBottomOf="@id/supplierName"
                     tools:visibility="visible"
                     />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/supplierName"
+                    android:layout_width="wrap_content"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:paddingEnd="@dimen/size_11dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    android:text="@{request.getTruckTypeAndNo()}"
+                    tools:text ="Mohan Aggarwal"
+                    android:textColor="#505361"
+                    android:drawableStart="@drawable/ic_user"
+                    app:layout_constraintTop_toBottomOf="@id/truckInfo"
+                    app:layout_constraintStart_toStartOf="@id/truckInfo" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

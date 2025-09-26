@@ -162,6 +162,16 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
     /**
+     * Helper method to populate payment fields from user data
+     */
+    private fun populatePaymentFields(load: HomeBidsRequestItemData) {
+        user?.supplierDetails?.let { supplier ->
+            load.paymentMode = supplier.paymentMode
+            load.advancePercentage = supplier.advancePercentage
+        }
+    }
+
+    /**
      * Fetch user [Requested] transactions
      */
     fun fetchUserTransactions(
@@ -193,6 +203,33 @@ class HomeLoadsViewModel @Inject constructor(
         }
 
         dataLoadingLiveData.postValue(true)
+        
+        // Fetch user data first if not available
+        if (user == null) {
+            compositeDisposable += userRepository.getUser(false)
+                .onBackground()
+                .subscribe { userModel, error ->
+                    if (!error && userModel != null) {
+                        this.user = userModel
+                        // Now proceed with fetching loads
+                        fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                    } else {
+                        error?.handle()
+                        dataLoadingLiveData.postValue(false)
+                    }
+                }
+        } else {
+            // User data already available, proceed with loads
+            fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+        }
+    }
+    
+    /**
+     * Fetch loads data (separated from user data fetching)
+     */
+    private fun fetchLoadsData(
+        paginate: Boolean, demandType: String, selectedFilter: String, 
+        infoSearch: Boolean, excludeTruckTypes: String?) {
         val mainTrace = Firebase.performance.newTrace("fetch_recommended_transactions")
         val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_recommended_transactions_parallel")
         mainTrace.start()
@@ -305,6 +342,8 @@ class HomeLoadsViewModel @Inject constructor(
                                 } catch (e: Exception) {
                                     Log.d("No Bid found for: ", load.transactionId ?: "")
                                 }
+                                // Populate payment fields from user data
+                                populatePaymentFields(load)
                                 add(Pair(HomeLoadsRequestItem(load), Add))
                             }
 
@@ -488,6 +527,8 @@ class HomeLoadsViewModel @Inject constructor(
                                     } catch (e: Exception) {
                                         Log.d("No Bid found for: ", load.transactionId ?: "")
                                     }
+                                    // Populate payment fields from user data
+                                    populatePaymentFields(load)
                                     if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
                                         add(Pair(HomeLoadsAddTruckItem(), Add))
                                     }
@@ -551,6 +592,33 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
     dataLoadingLiveData.postValue(true)
+    
+    // Fetch user data first if not available
+    if (user == null) {
+        compositeDisposable += userRepository.getUser(false)
+            .onBackground()
+            .subscribe { userModel, error ->
+                if (!error && userModel != null) {
+                    this.user = userModel
+                    // Now proceed with fetching supplier loads
+                    fetchSupplierLoadsData(paginate, selectedFilter, demandType, infoSearch, excludeTruckTypes)
+                } else {
+                    error?.handle()
+                    dataLoadingLiveData.postValue(false)
+                }
+            }
+    } else {
+        // User data already available, proceed with supplier loads
+        fetchSupplierLoadsData(paginate, selectedFilter, demandType, infoSearch, excludeTruckTypes)
+    }
+  }
+  
+  /**
+   * Fetch supplier loads data (separated from user data fetching)
+   */
+  private fun fetchSupplierLoadsData(
+    paginate: Boolean, selectedFilter: String, demandType: String,
+    infoSearch: Boolean, excludeTruckTypes: String?) {
 
       compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offsetFetch, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, transactionIds)
                               .flatMap { t ->
@@ -631,6 +699,8 @@ class HomeLoadsViewModel @Inject constructor(
                       } catch (e: Exception) {
                           Log.d("No Bid found for: ", load.transactionId ?: "")
                       }*/
+                      // Populate payment fields from user data
+                      populatePaymentFields(load)
                       if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
                           add(Pair(HomeLoadsAddTruckItem(), Add))
                       }
