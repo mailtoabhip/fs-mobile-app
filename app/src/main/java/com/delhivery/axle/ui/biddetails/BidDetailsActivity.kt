@@ -92,6 +92,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   private var isFirstResume = true
   private var amount = 0
   private var pmtRate = 0
+  private var forPlacement =  false
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("BidDetailsActivity_SetupTime")
@@ -118,7 +119,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
     subSource = intent.getStringExtra(PROPERTY_SUB_SOURCE) ?: "NA"
-
+    forPlacement =   intent.getBooleanExtra(ForPlacementKey, false)
     val addressDetailAdapter: AddressDetailAdapter = AddressDetailAdapter(uploadArray)
     binding.cvRouteSection.addresslist.apply {
       layoutManager = LinearLayoutManager(applicationContext)
@@ -1326,32 +1327,40 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             )*/
           }
           is BidDetailsUserBidState_ConfirmedBid -> {
-            binding.mainCl.visibility = View.VISIBLE
-            binding.cardInput.editBidCl.visibility = View.GONE
-            binding.cardInput.root.visibility = View.VISIBLE
-            binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
-            binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+DecimalFormat("#########").format(binding.transaction?.transactionBid?.bidAmount)
-            binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
-            binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
-            binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-              startActivity(homeActivityIntent("placement", this@BidDetailsActivity))
+            if(forPlacement){
+              binding.mainCl.visibility = View.VISIBLE
+              binding.cardInput.editBidCl.visibility = View.GONE
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.placementCl.root.visibility = View.VISIBLE
+            }else{
+              binding.mainCl.visibility = View.VISIBLE
+              binding.cardInput.editBidCl.visibility = View.GONE
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
+              binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+DecimalFormat("#########").format(binding.transaction?.transactionBid?.bidAmount)
+              binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+              binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
+              binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
+                startActivity(homeActivityIntent("placement", this@BidDetailsActivity))
 
-              // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
-            }
-            val data = viewModel.transaction as HomeBidsRequestItemData
-            if (data.clientConfirmationPending == false) {
-              binding.bottomLay.visibility = View.GONE
-            } else {
-              binding.bottomLay.visibility = View.VISIBLE
-              binding.btnTripView.setOnClickListener {
-                startActivity(
-                  tripDetailsIntent(
-                    viewModel.transaction.uuid.toString(), this@BidDetailsActivity
-                  )
-                )
+                // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
               }
+              val data = viewModel.transaction as HomeBidsRequestItemData
+              if (data.clientConfirmationPending == false) {
+                binding.bottomLay.visibility = View.GONE
+              } else {
+                binding.bottomLay.visibility = View.VISIBLE
+                binding.btnTripView.setOnClickListener {
+                  startActivity(
+                    tripDetailsIntent(
+                      viewModel.transaction.uuid.toString(), this@BidDetailsActivity
+                    )
+                  )
+                }
 
+              }
             }
+
            /* ViewBidDetailsConfirmedBidBinding.inflate(
               layoutInflater, binding.containerActions, false
             )
@@ -1743,6 +1752,8 @@ private const val TransactionIdIntentKey = "transaction_id"
 private const val RequestTypeIntentKey = "request_type"
 private const val FromPage = "from_page"
 private const val ActiveBid= "active_bid"
+private const val ForPlacementKey= "for_placement"
+
 /**
  * Bid details intent
  */
@@ -1753,7 +1764,8 @@ fun bidDetailsIntent(
         fromBidsPage:Boolean = false,
         active:Boolean = false,
         source:String?= VALUE_APP_FLOW,
-        subSource:String?="NA"
+        subSource:String?="NA",
+        forPlacement:Boolean = false
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   if(requestType!=null)
@@ -1762,4 +1774,5 @@ fun bidDetailsIntent(
   putExtra(ActiveBid,active)
   putExtra(PROPERTY_SOURCE,source)
   putExtra(PROPERTY_SUB_SOURCE,subSource)
+  putExtra(ForPlacementKey,forPlacement)
 }

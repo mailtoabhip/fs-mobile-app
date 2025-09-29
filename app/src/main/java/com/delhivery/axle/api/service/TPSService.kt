@@ -2,6 +2,7 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.DriverDataResponse
 import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.api.response.PlacementsLoadDataResponse
 import com.delhivery.axle.api.response.TPSBaseResponse
@@ -25,6 +26,10 @@ interface TPSService{
     @GET("placement_dashboard/get_center_details")
     fun getFacilityAddress(@Query("center_code") centerCode: String)
             : Single<TPSBaseResponse<FacilityAddressResponse>>
+
+    @GET("placement_dashboard/contracts/list_drivers")
+    fun getRecentDriverNameOnVehicle(@Query("vehicle_no") vehicleNumber: String)
+            : Single<TPSBaseResponse<List<DriverDataResponse>>>?
 }
 
 

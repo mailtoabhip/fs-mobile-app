@@ -50,9 +50,7 @@ import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_TIMESTAMP
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_NO
-import com.delhivery.axle.utils.PROPERTY_VEHICLE_NUMBER
 import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
-import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PAGE
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getSerializableExtra
@@ -60,8 +58,6 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import com.google.gson.Gson
-import java.time.LocalDateTime
-import java.util.Date
 import java.util.regex.Pattern
 import javax.inject.Inject
 

@@ -16,6 +16,8 @@ import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
+import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
 import com.delhivery.axle.utils.DialogUtils
@@ -146,10 +148,16 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
                         missingDetails.toString()
                     )
                 )
-                context?.let {
-                    userPrefs.setPreviousScreen(this.javaClass.name)
-                    startActivity(placementDetailsIntent(data, it))
+
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name){
+                    startActivity(data.transactionId?.let { context?.let {
+                            it1 -> bidDetailsIntent(it, it1, forPlacement = true) } })
+                }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ||data.loadType==LoadTypes.orionFixed.name){
+                    startActivity(data.transactionId?.let { context?.let {
+                            it1 -> contractDetailsIntent(it, it1, forPlacement = true, homePlacementsItemData = data) } })
                 }
+
             }
             HomePlacementsCallDriver ->{
                 val data = item.data as HomePlacementsItemData

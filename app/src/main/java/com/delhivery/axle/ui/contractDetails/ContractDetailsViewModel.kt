@@ -1,18 +1,26 @@
 package com.delhivery.axle.ui.contractDetails
 
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.RequestType
+import com.delhivery.axle.api.repository.TPSRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.repository.UserTrucksLoadLimit
+import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
+import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.biddetails.BidDetailsContractCancelled
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_BulkLoad_Edit
@@ -23,10 +31,14 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_LoadingBids
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_RejectedBid
+import com.delhivery.axle.ui.home.fragments.trucks.BaseHomeTrucksRVAdapterItem
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksRequestItem
+import com.delhivery.axle.utils.extensions.errorTPSResponseBody
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.JsonObject
 import io.reactivex.Single
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,7 +47,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 class ContractDetailsViewModel @Inject constructor(private val transactionsRepository: TransactionsRepository,
-  private val bidsRepository: BidsRepository,val userPrefs: UserPrefs
+                                                   private val bidsRepository: BidsRepository, private val tpsRepository: TPSRepository, val userPrefs: UserPrefs
 ): BaseViewModel(){
 
 
@@ -220,6 +232,74 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
       }
 
   }
+
+  var addressLiveData = MutableLiveData<FacilityAddressResponse>()
+
+  var updateVehicleDetails= MutableLiveData<Boolean>()
+
+ /* fun getFacilityAddress() {
+    if(homePlacementsItemData.originCenterCode!=null)
+      compositeDisposable += tpsRepository.getFacilityAddress(homePlacementsItemData.originCenterCode!!)
+        .onBackground()
+        .subscribe { _tRes, error ->
+          if (!error && _tRes != null) {
+            Log.i("Address", _tRes.toString())
+            addressLiveData.postValue(_tRes)
+          }else{ error.handle()
+          }
+        }
+  }*/
+
+
+  fun updateVehicleDetails(updateVehicleDetailsRequest: UpdateVehicleDetailsRequest) {
+    compositeDisposable += tpsRepository.updateVehicleDetails(updateVehicleDetailsRequest)
+      .onBackground()
+      .subscribe { _tRes, error ->
+        if (!error && _tRes != null) {
+
+          updateVehicleDetails.postValue(true)
+        }else{
+          updateVehicleDetails.postValue(false)
+          val errorBody = error.errorTPSResponseBody()
+            ?.messageBody
+          if (errorBody != null) {
+            Throwable(errorBody.toString()).handle()
+          } else {
+            error?.handle()
+          }
+        }
+      }
+  }
+
+  /*fun getAllInventories(searchText:String){
+
+    val jsonObject = JsonObject()
+    jsonObject.addProperty("supplier_id", userPrefs.parentId)
+
+    jsonObject.addProperty("offset", 0)
+    jsonObject.addProperty("limit", UserTrucksLoadLimit)
+    jsonObject.addProperty("vehicle_prefix",searchText)
+
+    compositeDisposable += inventoryRepository.getInventories(jsonObject)
+      .onBackground()
+      .subscribe{ _res, error ->
+        if(!error && _res != null) {
+          Log.i("inventories", _res.toString())
+          val trucksList :List<HomeTrucksRequestItemData> = _res.trucks
+
+          mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            if(trucksList != null && trucksList.isNotEmpty()) {
+              for (trucks in trucksList) {
+                add(Pair(HomeTrucksRequestItem(trucks), DataRVAdapterOperationType.AddUpdate))
+              }
+            }
+          }.let {
+            // userTrucksData.postValue(it)
+          }
+        }
+      }
+
+  }*/
   /**
    * Emit bids fetching progress
    */

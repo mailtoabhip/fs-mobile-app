@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <data>
+            <variable
+                name="request"
+                type="com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel"
+                />
+        </data>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/editBidCl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@+id/routeTitle"
+    app:layout_constraintStart_toStartOf="parent"
+   >
+    <TextView
+        android:id="@+id/vehicleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vehicle Number"
+        android:textSize="14sp"
+        android:textColor="#3D445C"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+         />
+
+    <FrameLayout
+        android:id="@+id/vehicleFrameLayout"
+        app:layout_constraintTop_toBottomOf="@+id/vehicleLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/edit_text_vehicle_number"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_16sp"
+            android:inputType="textCapCharacters"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:background="@drawable/bg_login_edit"
+            android:elevation="@dimen/size_2dp"
+            android:layout_height="@dimen/size_42dp"/>
+        <com.delhivery.axle.ui.custom.DelhiveryTrucksAutoEditText
+            android:id="@+id/edit_auto_complete_trucks"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_16sp"
+            android:hint="Select Vehicle Number"
+            android:drawablePadding="@dimen/size_4dp"
+            android:inputType="textCapCharacters"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:drawableEnd="@drawable/bg_spinner"
+            android:background="@drawable/bg_login_edit"
+            android:elevation="@dimen/size_2dp"
+            android:layout_height="@dimen/size_42dp"/>
+    </FrameLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/vehicleError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/vehicleFrameLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/bid_error"
+        android:textSize="@dimen/text_12sp"
+        android:paddingTop="@dimen/size_4dp"
+        android:visibility="gone"
+        android:text="@string/invalid_amount_out_of_range"/>
+    <TextView
+        android:id="@+id/driverNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Driver Name"
+        android:textSize="14sp"
+        android:textColor="#3D445C"
+        app:layout_constraintTop_toBottomOf="@+id/vehicleError"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp" />
+    <FrameLayout
+        android:id="@+id/driverNameFrameLayout"
+        app:layout_constraintTop_toBottomOf="@+id/driverNameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/edit_text_driver_name"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_16sp"
+            android:inputType="textCapCharacters"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:background="@drawable/bg_login_edit"
+            android:elevation="@dimen/size_2dp"
+            android:layout_height="@dimen/size_42dp"/>
+        <com.delhivery.axle.ui.custom.DelhiveryDriverNameAutoEditText
+            android:id="@+id/edit_auto_complete_driver_name"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_16sp"
+            android:hint="Enter/Select Driver Name"
+            android:drawablePadding="@dimen/size_4dp"
+            android:inputType="textCapCharacters"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:drawableEnd="@drawable/bg_spinner"
+            android:background="@drawable/bg_login_edit"
+            android:elevation="@dimen/size_2dp"
+            android:layout_height="@dimen/size_42dp"/>
+    </FrameLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/driverNameError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/driverNameFrameLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/bid_error"
+        android:textSize="@dimen/text_12sp"
+        android:paddingTop="@dimen/size_4dp"
+        android:visibility="gone"
+        android:text="@string/invalid_amount_out_of_range"/>
+    <TextView
+        android:id="@+id/driverPhoneLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Driver Phone Number"
+        android:textSize="14sp"
+        android:textColor="#3D445C"
+        app:layout_constraintTop_toBottomOf="@+id/driverNameError"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <FrameLayout
+        android:id="@+id/driverNumberFrameLayout"
+        app:layout_constraintTop_toBottomOf="@+id/driverPhoneLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/edit_text_driver_phone"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_16sp"
+            android:inputType="textCapCharacters"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginRight="@dimen/size_8dp"
+            android:background="@drawable/bg_login_edit"
+            android:elevation="@dimen/size_2dp"
+            android:layout_height="@dimen/size_42dp"/>
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_driver_number"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/text_16sp"
+            android:hint="Enter Driver Number"
+            android:maxLength="10"
+            android:drawablePadding="@dimen/size_4dp"
+            android:inputType="number"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:drawableEnd="@drawable/bg_spinner"
+            android:background="@drawable/bg_login_edit"
+            android:elevation="@dimen/size_2dp"
+            android:layout_height="@dimen/size_42dp"/>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        style="@style/ActionButton"
+        android:drawablePadding="8dp"
+        android:textAllCaps="false"
+        android:clickable="true"
+        android:enabled="false"
+        android:textSize="@dimen/text_14sp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/driverNumberFrameLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

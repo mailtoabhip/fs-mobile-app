@@ -184,7 +184,7 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
                 binding.placementLoadType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delhivery_load_flash,0,0,0)
                 binding.placementLoadType.setBackgroundResource(R.drawable.bg_all_rounded_delhivery) }
             LoadTypes.ftlRegular.name-> {
-                binding.placementLoadType.text =  "Delhivery Load"
+                binding.placementLoadType.text =  "Delhivery Contract"
                 binding.placementLoadType.setTextColor(ContextCompat.getColor(context, R.color.bid_under_review))
                 binding.placementLoadType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delhivery_load_flash,0,0,0)
                 binding.placementLoadType.setBackgroundResource(R.drawable.bg_all_rounded_delhivery)}

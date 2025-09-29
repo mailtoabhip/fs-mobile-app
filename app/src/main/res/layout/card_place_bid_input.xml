@@ -48,7 +48,6 @@
             android:paddingBottom="@dimen/size_12dp"
             android:paddingLeft="@dimen/size_12dp"
             android:paddingRight="@dimen/size_12dp"
-
             >
             <!-- Bid Amount Label -->
             <TextView
@@ -262,7 +261,6 @@
                     android:textColor="#3D445C"/>
 
             </LinearLayout>
-
             <include
                 android:id="@+id/strongBidCard"
                 layout="@layout/card_strong_bid"
@@ -297,6 +295,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="16dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/placementCl"
+                android:padding="@dimen/size_12dp"
+                android:layout_margin="@dimen/size_12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/routeTitle"
+                android:visibility="gone"
+                layout="@layout/view_placement_input_details"/>
             <include
                 android:id="@+id/confirmedBidCl"
                 android:padding="@dimen/size_12dp"

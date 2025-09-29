@@ -30,6 +30,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
+import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
@@ -39,6 +40,8 @@ import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.PaymentSlabs
 import com.delhivery.axle.data.home.bids.SecondaryReportingCenters
+import com.delhivery.axle.data.home.placements.HOME_PLACEMENT_ITEM_DATA
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.databinding.ActivityContractDetailsBinding
 import com.delhivery.axle.databinding.DialogContractsBidSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -53,6 +56,8 @@ import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
+import com.delhivery.axle.ui.trucks.truckIntent
+import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.BidSuccessInterface
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_ADD_TRUCK_INITIATE
@@ -67,10 +72,14 @@ import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
+import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
 import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.VALUE_BANNER
+import com.delhivery.axle.utils.extensions.focusClick
+import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -91,6 +100,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     hasInlineProgress = true
   }
   @Inject lateinit var userPrefs: UserPrefs
+  @Inject
+  lateinit var autoCompleteUtils: AutoCompleteUtils
   var routesArray:ArrayList<HaltCenters> = ArrayList()
   var flexibleReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
   var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
@@ -104,6 +115,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   private var isValidTripCommit = false
   private var isValidVehicleNumber = false
   private var isValidPlacementDays = false
+  private var forPlacement = false
+  private var isValidDriverNumber = false
+  private var isValidDriverName = false
+  private var homePlacementsItemData:HomePlacementsItemData?=null
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("ContractDetailsActivity_SetupTime")
@@ -120,7 +135,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.requestType = RequestType.Contract.type
     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
-
+    forPlacement = intent.getBooleanExtra(ForPlacementKey,false)
+    if( intent?.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java)!=null)
+      homePlacementsItemData =  intent.extras?.getSerializableExtra(PlacementData,HomePlacementsItemData::class.java)
    /* binding.backArrow.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }*/
@@ -1084,21 +1101,31 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
               }
             }else if(userBid?.status()==Accepted){
-              binding.cardInput.editBidCl.visibility = View.GONE
-              binding.cardInput.root.visibility = View.VISIBLE
-              binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
-              binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+ binding.transaction?.transactionBid?.bidAmount?.let {
-                StringUtils.formatDecimalAmount(
-                  it
-                )
-              }
-              binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
-              binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
-              binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                startActivity(homeActivityIntent("placement", this@ContractDetailsActivity))
+              Log.i("forPlacement", forPlacement.toString())
+              if(forPlacement){
+                binding.cardInput.editBidCl.visibility = View.GONE
+                binding.cardInput.root.visibility = View.VISIBLE
+                binding.cardInput.placementCl.root.visibility = View.VISIBLE
+                placementInput()
 
-                // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+              }else{
+                binding.cardInput.editBidCl.visibility = View.GONE
+                binding.cardInput.root.visibility = View.VISIBLE
+                binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
+                binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+ binding.transaction?.transactionBid?.bidAmount?.let {
+                  StringUtils.formatDecimalAmount(
+                    it
+                  )
+                }
+                binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+                binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
+                binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
+                  startActivity(homeActivityIntent("placement", this@ContractDetailsActivity))
+
+                  // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+                }
               }
+
             }else if (userBid?.status()==Cancelled){
               binding.cardInput.root.visibility = View.VISIBLE
               binding.cardInput.editBidCl.visibility = View.GONE
@@ -1371,6 +1398,227 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             binding.viewMarginWithoutResult.visibility = View.GONE
     }
    }*/
+  fun placementInput(){
+    binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
+
+    autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
+      if(it=="Add New Truck"){
+        binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+        this?.let { startActivityForResult(truckIntent(this, source = VALUE_ADD_TRUCK_PLACEMENT), REQCODE_ADD_TRUCK) }
+      }else if(validateTruckNumber(it)){
+        isValidVehicleNumber = true
+        binding.cardInput.placementCl.vehicleError.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.VISIBLE
+        enableSubmitPlacement()
+      } else {
+        binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+        binding.cardInput.placementCl.vehicleError.text ="Please enter valid vehicle Number"
+        isValidVehicleNumber = false
+        enableSubmitPlacement()
+      }
+    }
+    binding.cardInput.placementCl.editTextVehicleNumber.setOnClickListener {
+      binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.GONE
+      binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.VISIBLE
+      binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+      isValidVehicleNumber = false
+      enableSubmitPlacement()
+    }
+    homePlacementsItemData?.vehicleNumber?.let {
+      Log.i("vehicleNumber",it)
+      isValidVehicleNumber = true
+      binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+      enableSubmitPlacement()
+    }
+    homePlacementsItemData?.driverName?.let {
+      isValidDriverName = true
+      binding.cardInput.placementCl.editTextDriverPhone.setText(it)
+      enableSubmitPlacement()
+    }
+    homePlacementsItemData?.driverPhone?.let {
+      isValidDriverNumber = true
+      binding.cardInput.placementCl.editTextDriverPhone.setText(it)
+      enableSubmitPlacement()
+    }
+    if (homePlacementsItemData?.status=="Marked-in"){
+      binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
+      binding.cardInput.placementCl.editTextDriverName.isEnabled = false
+      binding.cardInput.placementCl.editTextDriverPhone.isEnabled = false
+      disableSubmitPlcButton()
+    }
+    binding.cardInput.placementCl.btnSubmit.setOnClickListener{
+      submitPlacementDetails()
+    }
+    autoCompleteUtils.autoCompleteDriverName(binding.cardInput.placementCl.editAutoCompleteDriverName){
+    if(validateTruckNumber(it)){
+        isValidDriverName = true
+        binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+        binding.cardInput.placementCl.editTextDriverName.setText(it)
+        binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
+        binding.cardInput.placementCl.editTextDriverName.visibility =  View.VISIBLE
+        enableSubmitPlacement()
+      } else {
+        binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
+        binding.cardInput.placementCl.driverNameError.text ="Please enter valid driver name"
+        isValidDriverName = false
+        enableSubmitPlacement()
+      }
+    }
+
+/*    binding.cardInput.placementCl.editAutoCompleteDriverName?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim()
+            .toString()
+          if(input.length>=2){
+            isValidDriverName = true
+            binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+          } else {
+            binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
+            binding.cardInput.placementCl.driverNameError.text ="Please enter valid driver name"
+            isValidDriverName = false
+
+          }
+          enableSubmitPlacement()
+
+        }else{
+
+          isValidDriverName = false
+          enableSubmitPlacement()
+
+        }
+      }
+    })*/
+
+    binding.cardInput.placementCl.editTextDriverPhone?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim()
+            .toString()
+          if(input.length==10 && validatePhoneNumber(input)){
+            isValidDriverNumber = true
+           // binding.cardInput.placementCl.driverNumberError.visibility = View.GONE
+          } else {
+           // binding.cardInput.placementCl.driverNumberError.visibility = View.VISIBLE
+           // binding.cardInput.placementCl.driverNumberError.text ="Please enter a valid driver number"
+            isValidDriverNumber = false
+
+          }
+          enableSubmitPlacement()
+
+        }else{
+          isValidDriverNumber = false
+          enableSubmitPlacement()
+
+        }
+      }
+    })
+  }
+  private fun  enableSubmitPlacement(){
+    isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
+    Log.i("validate",isValidDriverName.toString()+":"+isValidVehicleNumber.toString()+":"+isValidDriverNumber )
+    if(isValidDriverName&&isValidVehicleNumber&&isValidDriverNumber){
+      enableSubmitPlcButton()
+    }else{
+      disableSubmitPlcButton()
+    }
+  }
+  private fun disableSubmitPlcButton(){
+    binding.cardInput.placementCl.btnSubmit.isEnabled = false
+  }
+  private fun enableSubmitPlcButton(){
+    binding.cardInput.placementCl.btnSubmit.isEnabled = true
+  }
+
+  private fun validatePhoneNumber(number:String):Boolean{
+    val sameDigitsReg = "^([0-9])\\1*$"
+    var result = false
+    val sameDigitsPattern = Pattern.compile(
+      sameDigitsReg
+    )
+    if(!sameDigitsPattern.matcher(number).matches()){
+      val standardNumberPattern = Pattern.compile(
+        "^[6-9]{1}[0-9]{9}$"
+      )
+      result = standardNumberPattern.matcher(number).matches()
+    }
+
+    return result
+  }
+  private fun submitPlacementDetails() {
+    if (binding.cardInput.placementCl.editAutoCompleteTrucks.visibility == View.VISIBLE) {
+     // binding.cardInput.placementCl.vehicleNumberError.visibility = View.VISIBLE
+     // binding.cardInput.placementCl.vehicleNumberError.text = "Please select a valid vehicle number"
+      isValidVehicleNumber = false
+      binding.cardInput.placementCl.editAutoCompleteTrucks.errorAnimate()
+      enableSubmitPlacement()
+    } else {
+    // binding.cardInput.placementCl.vehicleNumberError.visibility = View.GONE
+
+      try {
+        val isOrionType =  homePlacementsItemData?.loadType!!.toLowerCase().contains("orion")
+
+        val vehicleType = if (isOrionType ) {null} else if (homePlacementsItemData?.loadType!!.toLowerCase().contains("adhoc")) {
+          "adhoc"
+        } else {
+          "regular"
+        }
+        val contractType = if (isOrionType ) {null} else if  (homePlacementsItemData?.loadType!!.toLowerCase().contains("ftl")) {
+          "ftl"
+        } else {
+          "intracity"
+        }
+        val action = if(isOrionType) {
+          "placement_on_orion"
+        } else if (homePlacementsItemData?.vehicleNumber == null) {
+          "add_placement"
+        } else {
+          "update_placement"
+
+        }
+        try {
+          uiUtils.showProgress()
+        //  pushMoengageEvent(false)
+          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editTextDriverName.text.toString(), binding.cardInput.placementCl.editTextDriverPhone.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
+          viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
+        }catch (e:Exception){
+          uiUtils.showToast("Something went wrong")
+          uiUtils.hideProgress()
+        }
+      } catch (e: IllegalArgumentException) {
+        uiUtils.hideProgress()
+        Log.e("AcceptAdhocBid", e.toString())
+      }
+    }
+  }
   override fun getViewModelClass()= ContractDetailsViewModel::class.java
 
   override fun layoutId(): Int= R.layout.activity_contract_details
@@ -1461,12 +1709,22 @@ private const val RequestTypeIntentKey = "request_type"
 /**
  * Bid details intent
  */
+private const val ForPlacementKey = "for_placement"
+
+private const val PlacementData = "placement_data"
+
+
 fun contractDetailsIntent(
   transactionId: String,
   context: Context,
   source: String?= VALUE_APP_FLOW,
+  forPlacement:Boolean=false,
+  homePlacementsItemData: HomePlacementsItemData?=null
+
 ) = Intent(context, ContractDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   putExtra(PROPERTY_SOURCE,source)
+  putExtra(ForPlacementKey, forPlacement)
+  putExtra(PlacementData, homePlacementsItemData)
 
 }

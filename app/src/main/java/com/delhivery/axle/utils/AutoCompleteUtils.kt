@@ -1,14 +1,17 @@
 package com.delhivery.axle.utils
 
 import android.widget.Toast
+import com.delhivery.axle.api.response.DriverDataResponse
 import com.delhivery.axle.api.response.TruckDisplayNameItem
 import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.api.service.InventoryService
+import com.delhivery.axle.api.service.TPSService
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.data.home.trucks.names
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+import com.delhivery.axle.ui.custom.DelhiveryDriverNameAutoEditText
 import com.delhivery.axle.ui.custom.DelhiveryTrucksAutoEditText
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -28,6 +31,7 @@ import javax.inject.Inject
 class AutoCompleteUtils @Inject constructor(
   private val cityService: CityService,
   private val inventoryService: InventoryService,
+  private val tpsService: TPSService,
   private val activity: DaggerAppCompatActivity
 ) {
 
@@ -78,6 +82,19 @@ class AutoCompleteUtils @Inject constructor(
                 }, {
                     it.printStackTrace()
                 })
+    }
+
+    fun autoCompleteDriverName(
+        editText: DelhiveryDriverNameAutoEditText,
+        action: (String) -> Unit
+    ) {
+        val d = RxTextView.textChanges(editText)
+            .filter { it.length >= 2 }
+            .subscribe({
+                resetNetworkDriverNameSuggestions(it.toString(), editText, action)
+            }, {
+                it.printStackTrace()
+            })
     }
 
   fun skipFirstAutoCompleteCity(
@@ -208,6 +225,48 @@ class AutoCompleteUtils @Inject constructor(
                     }
         }
     }
+
+    private fun resetNetworkDriverNameSuggestions(
+        query: String,
+        editText: DelhiveryDriverNameAutoEditText,
+        action: (String) -> Unit
+    ) {
+        disposable?.dispose()
+        if(userPrefs.jwtToken != null) {
+            disposable = tpsService.getRecentDriverNameOnVehicle(query)
+                ?.onBackground()
+                ?.doOnSubscribe {
+                    editText.progress()
+                    editText.dismissDropDown()
+                }
+                ?.doFinally {
+                    try{
+                        editText.progress(false)
+                        editText.showDropDown()
+                    }catch (e:Exception){
+
+                    }
+                }
+                ?.subscribe { _res, _err ->
+                    if (!_err && _res != null) {
+                        _res.responseData?.let { res ->
+                            val arrayList = ArrayList<DriverDataResponse>()
+                            for(item in res)
+                                arrayList.add(item)
+                           // arrayList.add("Add New Truck")
+                            editText.setItems(arrayList) {
+                                disposable?.dispose()
+                                action(it)
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+
+
+
 
 
   fun clearDisposable() {

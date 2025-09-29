@@ -93,6 +93,8 @@ data class HomePlacementsItemData(
 
     fun editIconVisibility()= if (status=="Marked-in" ||((vehicleNumber==null || driverName==null || driverPhone==null))) View.GONE else View.VISIBLE
 
+    fun callVisibility()= if (driverPhone!=null && vehicleNumber!=null && driverName!=null) View.VISIBLE else View.GONE
+
     fun formattedConfirmedPrice()= "₹" + confirmedPrice?.let { StringUtils.formatAmount(it) }
 
     fun confirmedPriceVisibility():Int {

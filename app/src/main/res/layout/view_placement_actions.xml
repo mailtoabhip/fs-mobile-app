@@ -56,7 +56,7 @@
         android:layout_height="@dimen/size_32dp"
         android:text="Call"
         android:textAllCaps="false"
-        android:visibility="@{request.editIconVisibility()}"
+        android:visibility="@{request.callVisibility()}"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnShareWhatsapp"
         app:layout_constraintEnd_toStartOf="@+id/btnFillDetails"
