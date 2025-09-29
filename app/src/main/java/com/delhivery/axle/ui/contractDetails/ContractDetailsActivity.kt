@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -54,6 +55,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -93,11 +95,15 @@ import java.util.TimeZone
 import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.math.abs
+import android.database.Cursor
 
 class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
 
   init {
     hasInlineProgress = true
+  }
+  companion object {
+    private const val REQCODE_PICK_CONTACT = 2001
   }
   @Inject lateinit var userPrefs: UserPrefs
   @Inject
@@ -1404,7 +1410,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
       if(it=="Add New Truck"){
         binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
-        this?.let { startActivityForResult(truckIntent(this, source = VALUE_ADD_TRUCK_PLACEMENT), REQCODE_ADD_TRUCK) }
+        this?.let {showAddTruckBottomSheet()}
       }else if(validateTruckNumber(it)){
         isValidVehicleNumber = true
         binding.cardInput.placementCl.vehicleError.visibility = View.GONE
@@ -1541,6 +1547,29 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         }
       }
     })
+
+    // Contact picker functionality
+    binding.cardInput.placementCl.btnContactPicker.setOnClickListener {
+      val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+      startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
+    }
+  }
+  private fun showAddTruckBottomSheet() {
+    val dialog = AddTruckBottomSheetDialog(
+      this,
+      viewModelFactory,
+      userPrefs,
+      autoCompleteUtils,
+      onTruckAdded = { truckNumber ->
+        // Populate the vehicle number field with the newly added truck
+        binding.cardInput.placementCl.editTextVehicleNumber.setText(truckNumber)
+        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
+        isValidVehicleNumber = true
+        enableSubmitPlacement()
+      }
+    )
+    dialog.show()
   }
   private fun  enableSubmitPlacement(){
     isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
@@ -1697,6 +1726,30 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     if(success)
       startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
 
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      REQCODE_PICK_CONTACT -> {
+        if (resultCode == RESULT_OK && data != null) {
+          val contactUri: Uri? = data.data
+          contactUri?.let {
+            val cursor: Cursor? = contentResolver.query(it, null, null, null, null)
+            cursor?.use { c ->
+              if (c.moveToFirst()) {
+                val numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                if (numberIndex != -1) {
+                  val phoneNumber = c.getString(numberIndex)
+                  val trimmedNumber = phoneNumber?.replace("+91", "")?.trim()
+                  binding.cardInput.placementCl.editTextDriverPhone.setText(trimmedNumber)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
 }
