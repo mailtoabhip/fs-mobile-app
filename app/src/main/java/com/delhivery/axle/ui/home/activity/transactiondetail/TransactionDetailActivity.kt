@@ -30,6 +30,7 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelD
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateFuelRevertCredit
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateLoading
 import com.delhivery.axle.ui.home.activity.transactionlist.TransactionStateReconciliationDebit
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -70,7 +71,13 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-    title = viewModel.transaction.transactionHeading()
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
+
+      title = viewModel.transaction.transactionHeading()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
@@ -98,7 +105,7 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
    * Observes [TransactionState]
    */
   inner class TransactionObserver : Observer<TransactionState> {
-    override fun onChanged(t: TransactionState?) {
+    override fun onChanged(t: TransactionState) {
       t?.let { state ->
         when (state) {
           is TransactionStateLoading -> {

@@ -8,6 +8,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentType
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentsAdapter
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.tabs.TabLayout
@@ -40,6 +41,11 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {

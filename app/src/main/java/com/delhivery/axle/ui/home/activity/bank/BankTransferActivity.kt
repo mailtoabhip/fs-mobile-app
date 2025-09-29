@@ -14,6 +14,7 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.databinding.ActivityBankTrasnferBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactionlist.transactionsIntent
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -42,6 +43,11 @@ class BankTransferActivity : BaseActivity<ActivityBankTrasnferBinding, BankTrans
     activitySetupTrace?.start()
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Transfer to bank account"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {

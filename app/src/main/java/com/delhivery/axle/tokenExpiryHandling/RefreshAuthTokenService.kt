@@ -133,6 +133,17 @@ class RefreshAuthTokenService : Service(){
         super.onTaskRemoved(rootIntent)
     }
 
+    override fun onTimeout(startId: Int) {
+        super.onTimeout(startId)
+        // Stop the service when timeout occurs as required by API 35
+        if(Build.VERSION.SDK_INT >= 28)
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        else
+            stopForeground(true)
+        stopService(Intent(applicationContext, RefreshAuthTokenService::class.java))
+        WorkManager.getInstance(applicationContext).cancelUniqueWork(RefreshTokenWorker.WORK_NAME)
+    }
+
     fun restartService() {
         if (userPrefs.jwtToken == null) {
             if(Build.VERSION.SDK_INT >= 28)

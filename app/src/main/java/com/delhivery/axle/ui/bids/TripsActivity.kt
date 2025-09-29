@@ -128,6 +128,11 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
       }
     }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
 
     setHeaderResources()
 

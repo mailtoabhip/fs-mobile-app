@@ -37,6 +37,7 @@ import com.delhivery.axle.utils.ImageUtils
 import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.extensions.onBackground
@@ -102,6 +103,11 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     super.onPostCreate(savedInstanceState)
 
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Dispatch Details"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {

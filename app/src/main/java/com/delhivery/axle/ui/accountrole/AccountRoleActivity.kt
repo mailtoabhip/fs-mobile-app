@@ -24,6 +24,7 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 
 class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRoleViewModel>() {
@@ -46,6 +47,11 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
       onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
@@ -162,7 +168,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
     }
 
     inner class StateObserver : Observer<AccountType> {
-        override fun onChanged(it: AccountType?) {
+        override fun onChanged(it: AccountType) {
             it?.let { state ->
                 when (state) {
                   AccountType.PostLoad->{
@@ -251,7 +257,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
     }
 
     inner class RoleUIObserver : Observer<RoleUIState> {
-        override fun onChanged(it: RoleUIState?) {
+        override fun onChanged(it: RoleUIState) {
             it?.let { state ->
                 when (state) {
                     RoleUIState.PostLoadShipper -> {

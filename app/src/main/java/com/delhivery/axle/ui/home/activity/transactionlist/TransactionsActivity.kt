@@ -13,6 +13,7 @@ import com.delhivery.axle.data.transactions.TransactionsItemData
 import com.delhivery.axle.databinding.ActivityTransactionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.transactiondetail.transactionDetailIntent
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -44,6 +45,11 @@ class TransactionsActivity : BaseActivity<ActivityTransactionsBinding, Transacti
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("TransactionsActivity_SetupTime")
     activitySetupTrace?.start()
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Transaction Summary"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

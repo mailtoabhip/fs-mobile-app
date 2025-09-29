@@ -186,6 +186,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
 
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = "Share rate & earn reward"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setOriginDestinationTruck()

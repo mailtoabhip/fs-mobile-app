@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+      android:fitsSystemWindows="true">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -26,7 +27,8 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+      android:fitsSystemWindows="true">
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,13 +36,15 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+      android:fitsSystemWindows="true">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+      android:fitsSystemWindows="true">
                     <RelativeLayout
                         android:layout_width="wrap_content"
                        android:id="@+id/picLayout"
@@ -98,7 +102,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
                     android:padding="@dimen/size_16dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+      android:fitsSystemWindows="true">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -125,7 +130,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/size_16dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+      android:fitsSystemWindows="true">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,7 +156,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/size_16dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+      android:fitsSystemWindows="true">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -20,6 +20,7 @@ import com.delhivery.axle.utils.EVENT_SEARCH_DETAILS_SUBMIT
 import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
 import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
 import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -63,7 +64,11 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
-
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = if(intentRequestType =="load"){
       "Search Load"
     }else {

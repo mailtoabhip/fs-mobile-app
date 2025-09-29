@@ -16,6 +16,7 @@ import com.delhivery.axle.ui.home.activity.home.FragmentName
 import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -43,6 +44,11 @@ class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfile
         super.onPostCreate(savedInstanceState)
 
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Help & Support"
 

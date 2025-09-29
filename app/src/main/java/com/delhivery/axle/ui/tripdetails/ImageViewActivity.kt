@@ -8,6 +8,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityImageViewBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 
@@ -49,6 +50,11 @@ class ImageViewActivity : BaseActivity<ActivityImageViewBinding, ImageViewModel>
     super.onPostCreate(savedInstanceState)
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     title = viewModel.type

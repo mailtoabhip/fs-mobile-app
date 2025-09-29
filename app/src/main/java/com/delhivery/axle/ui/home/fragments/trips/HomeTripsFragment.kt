@@ -209,7 +209,7 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
    * Progress observer
    */
   inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean?) {
+    override fun onChanged(t: Boolean) {
       t?.let {
         when (t) {
           true -> uiUtils.showProgress()
