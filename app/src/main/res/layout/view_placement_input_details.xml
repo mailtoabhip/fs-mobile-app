@@ -130,16 +130,6 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/edit_text_driver_phone"
-            android:layout_width="match_parent"
-            android:textSize="@dimen/text_16sp"
-            android:inputType="textCapCharacters"
-            android:layout_marginTop="@dimen/size_8dp"
-            android:layout_marginRight="@dimen/size_8dp"
-            android:background="@drawable/bg_login_edit"
-            android:elevation="@dimen/size_2dp"
-            android:layout_height="@dimen/size_42dp"/>
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edit_driver_number"
             android:layout_width="match_parent"

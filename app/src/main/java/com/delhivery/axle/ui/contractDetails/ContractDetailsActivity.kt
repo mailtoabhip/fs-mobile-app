@@ -1742,7 +1742,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 if (numberIndex != -1) {
                   val phoneNumber = c.getString(numberIndex)
                   val trimmedNumber = phoneNumber?.replace("+91", "")?.trim()
-                  binding.cardInput.placementCl.editTextDriverPhone.setText(trimmedNumber)
+                  binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
                 }
               }
             }
