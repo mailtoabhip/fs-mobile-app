@@ -1440,18 +1440,18 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
     homePlacementsItemData?.driverName?.let {
       isValidDriverName = true
-      binding.cardInput.placementCl.editTextDriverPhone.setText(it)
+      binding.cardInput.placementCl.editDriverNumber.setText(it)
       enableSubmitPlacement()
     }
     homePlacementsItemData?.driverPhone?.let {
       isValidDriverNumber = true
-      binding.cardInput.placementCl.editTextDriverPhone.setText(it)
+      binding.cardInput.placementCl.editDriverNumber.setText(it)
       enableSubmitPlacement()
     }
     if (homePlacementsItemData?.status=="Marked-in"){
       binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
       binding.cardInput.placementCl.editTextDriverName.isEnabled = false
-      binding.cardInput.placementCl.editTextDriverPhone.isEnabled = false
+      binding.cardInput.placementCl.editDriverNumber.isEnabled = false
       disableSubmitPlcButton()
     }
     binding.cardInput.placementCl.btnSubmit.setOnClickListener{
@@ -1511,7 +1511,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       }
     })*/
 
-    binding.cardInput.placementCl.editTextDriverPhone?.addTextChangedListener(object : TextWatcher {
+    binding.cardInput.placementCl.editDriverNumber?.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(
         s: CharSequence?,
@@ -1636,7 +1636,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         try {
           uiUtils.showProgress()
         //  pushMoengageEvent(false)
-          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editTextDriverName.text.toString(), binding.cardInput.placementCl.editTextDriverPhone.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
+          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editTextDriverName.text.toString(), binding.cardInput.placementCl.editDriverNumber.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
           viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
         }catch (e:Exception){
           uiUtils.showToast("Something went wrong")

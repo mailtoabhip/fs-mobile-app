@@ -18,6 +18,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:layout_alignParentEnd="true"
                 android:layout_marginEnd="@dimen/size_12dp"
                 app:srcCompat="@drawable/ic_close_black" />
 
@@ -26,8 +27,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="6dp"
                 android:layout_marginStart="@dimen/size_8dp"
-                android:layout_toEndOf="@+id/close_btn"
                 android:text="Add New Truck"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_16sp"
@@ -359,12 +360,22 @@
                     android:visibility="gone" />
 
                 <!-- Add Truck Button -->
+                <!-- Progress Bar -->
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/size_16dp"
+                    android:visibility="gone" />
+
+                <!-- Add Truck Button -->
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_add_truck"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_42dp"
                     android:layout_marginTop="@dimen/size_24dp"
-                    android:background="@drawable/bg_all_round_corner_black"
+                    android:background="@drawable/bg_all_round_corner_solid_black"
                     android:text="Add Truck"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/text_14sp"

@@ -88,6 +88,9 @@ class AddTruckBottomSheetDialog(
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window?.setGravity(Gravity.BOTTOM)
+
+        // Add progress bar setup
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun setupClickListeners() {
@@ -149,10 +152,12 @@ class AddTruckBottomSheetDialog(
 
         viewModel.addTruckLiveData.observe(context as DaggerAppCompatActivity, Observer {
             if (it == true) {
+                hideProgress()
                 Toast.makeText(context, "Truck added successfully", Toast.LENGTH_SHORT).show()
                 onTruckAdded(viewModel.truckNumber)
                 dismiss()
             } else if (it == false) {
+                hideProgress()
                 Toast.makeText(context, "Failed to add truck", Toast.LENGTH_SHORT).show()
             }
         })
@@ -160,6 +165,18 @@ class AddTruckBottomSheetDialog(
 
     private fun fetchTruckTypes() {
         viewModel.fetchTruckType()
+    }
+
+    private fun showProgress(message: String = "Adding truck...") {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnAddTruck.isEnabled = false
+        binding.btnAddTruck.text = message
+    }
+
+    private fun hideProgress() {
+        binding.progressBar.visibility = View.GONE
+        binding.btnAddTruck.isEnabled = true
+        binding.btnAddTruck.text = "Add Truck"
     }
 
     private fun validateFieldsAndAddTruck() {
@@ -230,6 +247,7 @@ class AddTruckBottomSheetDialog(
         }
 
         if (flag) {
+            showProgress("Adding truck...")
             viewModel.addNewTruck(sourcedAs.uppercase())
         }
     }
