@@ -27,8 +27,8 @@ interface TPSService{
     fun getFacilityAddress(@Query("center_code") centerCode: String)
             : Single<TPSBaseResponse<FacilityAddressResponse>>
 
-    @GET("placement_dashboard/contracts/list_drivers")
-    fun getRecentDriverNameOnVehicle(@Query("vehicle_no") vehicleNumber: String)
+    @GET("placement_dashboard/drivers/recommended")
+    fun getRecentDriverNameOnVehicle(@Query("vehicle_registration_number") vehicleNumber: String)
             : Single<TPSBaseResponse<List<DriverDataResponse>>>?
 }
 

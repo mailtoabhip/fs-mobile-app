@@ -125,6 +125,31 @@ class DelhiveryDriverNameAutoEditText(
         invalidate()
     }
 
+    // Overload method that returns full DriverDataResponse
+    fun setItemsWithData(
+        driverData: List<DriverDataResponse>,
+        selected: (DriverDataResponse) -> Unit
+    ) {
+        if (!isPerformingCompletion) {
+            progress(false)
+            val adapter = CustomAdapter(context, R.layout.view_driver_name_item, driverData)
+            setAdapter(adapter)
+            setOnItemClickListener { _, _, i, _ ->
+                setText(driverData[i].driverName)
+                selected(driverData[i])
+                dismissDropDown()
+            }
+        }
+        if (driverData.isEmpty()) {
+            error = true
+            dismissDropDown()
+        } else {
+            error = false
+        }
+        invalidate()
+    }
+
+
     fun errorAnimate() {
         val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
         this.startAnimation(shake)

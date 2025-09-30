@@ -1432,6 +1432,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       isValidVehicleNumber = false
       enableSubmitPlacement()
     }
+    binding.cardInput.placementCl.editTextDriverName.setOnClickListener {
+      binding.cardInput.placementCl.editTextDriverName.visibility =  View.GONE
+      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.VISIBLE
+      binding.cardInput.placementCl.editAutoCompleteDriverName.focusClick()
+      isValidDriverName = false
+      enableSubmitPlacement()
+    }
     homePlacementsItemData?.vehicleNumber?.let {
       Log.i("vehicleNumber",it)
       isValidVehicleNumber = true
@@ -1440,7 +1447,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
     homePlacementsItemData?.driverName?.let {
       isValidDriverName = true
-      binding.cardInput.placementCl.editDriverNumber.setText(it)
+      binding.cardInput.placementCl.editTextDriverName.setText(it)
       enableSubmitPlacement()
     }
     homePlacementsItemData?.driverPhone?.let {
@@ -1457,13 +1464,23 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     binding.cardInput.placementCl.btnSubmit.setOnClickListener{
       submitPlacementDetails()
     }
-    autoCompleteUtils.autoCompleteDriverName(binding.cardInput.placementCl.editAutoCompleteDriverName){
-    if(it.length>=2){
+    autoCompleteUtils.autoCompleteDriverNameWithPhone(
+        binding.cardInput.placementCl.editAutoCompleteDriverName,
+        { binding.cardInput.placementCl.editTextVehicleNumber.text.toString() }
+    ){ driverData ->
+      if(driverData.driverName != null && driverData.driverName!!.length >= 2){
         isValidDriverName = true
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-        binding.cardInput.placementCl.editTextDriverName.setText(it)
+        binding.cardInput.placementCl.editTextDriverName.setText(driverData.driverName)
         binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
         binding.cardInput.placementCl.editTextDriverName.visibility =  View.VISIBLE
+        
+        // Populate driver phone number
+        driverData.driverPhone?.let {
+          binding.cardInput.placementCl.editDriverNumber.setText(it)
+          isValidDriverNumber = validatePhoneNumber(it)
+        }
+        
         enableSubmitPlacement()
       } else {
         if(binding.cardInput.placementCl.editAutoCompleteDriverName.text!!.length>=2){

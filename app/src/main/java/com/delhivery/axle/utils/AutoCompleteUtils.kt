@@ -97,6 +97,23 @@ class AutoCompleteUtils @Inject constructor(
             })
     }
 
+    // Overload that returns full DriverDataResponse
+    fun autoCompleteDriverNameWithPhone(
+        editText: DelhiveryDriverNameAutoEditText,
+        vehicleNumberProvider: () -> String,
+        action: (DriverDataResponse) -> Unit
+    ) {
+        val d = RxTextView.textChanges(editText)
+            .filter { it.length >= 2 }
+            .subscribe({
+                val vehicleNumber = vehicleNumberProvider()
+                resetNetworkDriverNameSuggestionsWithPhone(it.toString(), vehicleNumber, editText, action)
+            }, {
+                it.printStackTrace()
+            })
+    }
+
+
   fun skipFirstAutoCompleteCity(
     editText: DelhiveryCityAutoEditText,
     action: (CityModel) -> Unit
@@ -263,6 +280,49 @@ class AutoCompleteUtils @Inject constructor(
                 }
         }
     }
+
+    private fun resetNetworkDriverNameSuggestionsWithPhone(
+        driverNameQuery: String,
+        vehicleNumber: String,
+        editText: DelhiveryDriverNameAutoEditText,
+        action: (DriverDataResponse) -> Unit
+    ) {
+        disposable?.dispose()
+        if(userPrefs.jwtToken != null && vehicleNumber.isNotEmpty()) {
+            disposable = tpsService.getRecentDriverNameOnVehicle("MP09QT0003")
+                ?.onBackground()
+                ?.doOnSubscribe {
+                    editText.progress()
+                    editText.dismissDropDown()
+                }
+                ?.doFinally {
+                    try{
+                        editText.progress(false)
+                        editText.showDropDown()
+                    }catch (e:Exception){
+
+                    }
+                }
+                ?.subscribe { _res, _err ->
+                    if (!_err && _res != null) {
+                        _res.responseData?.let { res ->
+                            val arrayList = ArrayList<DriverDataResponse>()
+                            // Filter drivers by name query (case insensitive)
+                            for(item in res) {
+                                if(item.driverName?.lowercase()?.contains(driverNameQuery.lowercase()) == true) {
+                                    arrayList.add(item)
+                                }
+                            }
+                            editText.setItemsWithData(arrayList) {
+                                disposable?.dispose()
+                                action(it)
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
 
 
 
