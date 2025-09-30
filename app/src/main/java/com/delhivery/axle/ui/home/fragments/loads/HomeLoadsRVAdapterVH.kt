@@ -133,9 +133,7 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
         binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
         if (demandType == "Delhivery Load") {
             binding.demandLoadType.text = "Delhivery Load"
-            // Set background color for Delhivery Load
-            binding.loadTypeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.delhivery_load_bg))
-            // Set drawable start and colors
+            binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
             binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(context, R.drawable.ic_truck_small), null, null, null
             )
@@ -143,21 +141,13 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
         } else if (demandType == "Client Load") {
             binding.demandLoadType.text = "Client Load"
-            // Set background color for Client Load
-            binding.loadTypeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.client_load_bg))
-            // Set drawable start and colors
+            binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
             binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
             )
             binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
             binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
         }
-//        if(item.data.demandType.equals("Internal",true)){
-//            binding.materialType.visibility = View.GONE
-//        } else{
-//            binding.materialType.visibility = View.VISIBLE
-//            binding.materialType.text = item.data.materialType
-//        }
         if(item.data.isDMTIndent()){
             binding.closingTime.visibility = View.GONE
         }else{
@@ -339,8 +329,8 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
           item: HomeLoadsFilterItem,
           _interface: HomeLoadsRVAdapterInterface
   ) {
-      binding.dlvIntracityToggle.text =  "${context.getString(R.string.intracity)} (${item.data.dlvIntracityCount + item.data.nonDlvCount})"
-      binding.dlvIntercityToggle.text =   "${context.getString(R.string.intercity)} (${item.data.dlvIntercityCount})"
+      binding.dlvIntracityToggle.text =  "${context.getString(R.string.intracity)} (${item.data.dlvIntracityCount})"
+      binding.dlvIntercityToggle.text =   "${context.getString(R.string.intercity)} (${item.data.dlvIntercityCount + item.data.nonDlvCount})"
       //binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
       binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE

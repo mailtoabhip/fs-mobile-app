@@ -41,7 +41,7 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeContractsFilterItemBinding.inflate(inflater, parent, false)
     IntracityFilters-> ViewHomeContractsIntracityFilterItemBinding.inflate(inflater, parent, false)
-    else -> CardCommonTripsBidsBinding.inflate(inflater, parent, false)  // Use card_common_trips_bids layout
+    else -> CardContractsIntercityTripsBidsBinding.inflate(inflater, parent, false)  // Use card_contracts_intercity_trips_bids layout
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
@@ -50,8 +50,9 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     is ViewWarningItemBinding -> HomeContractsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)
     is ViewHomeContractsFilterItemBinding -> HomeContractsFilterItemVH(binding)
-    is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding) // old view - ViewHomeContractsIntracityFilterItemBinding
-    else -> HomeContractsRequestItemVH(binding as CardCommonTripsBidsBinding)  // Use CardCommonTripsBidsBinding  //OLDER VIEW - "ViewHomeContractsRequestItemBinding"
+    is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding)
+    is CardContractsIntercityTripsBidsBinding -> HomeContractsRequestItemVH(binding)
+    else -> HomeContractsRequestItemVH(binding as CardContractsIntercityTripsBidsBinding)
   }
 
   override fun bindVH(

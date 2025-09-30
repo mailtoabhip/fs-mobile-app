@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
   <data>
 
     <variable
@@ -41,6 +42,8 @@
         style="@style/FilterButton"
         app:layout_constraintStart_toEndOf="@id/dlvIntercityToggle"
         android:text="@string/market_place"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:textStyle="bold"
         android:layout_marginStart="@dimen/size_8dp"
         app:layout_constraintTop_toTopOf="parent"

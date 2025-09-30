@@ -227,7 +227,7 @@ data class HomeBidsRequestItemData(
 
     val date = reportingTime?.let { inputFormat.parse(it) }
     val formattedTime = date?.let { outputFormat.format(it) }
-    return formattedTime?:"na"
+    return formattedTime?:"NA"
   }
 
   /**

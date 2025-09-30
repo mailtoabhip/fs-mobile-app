@@ -172,7 +172,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Internal") ContractType.LH_FTL.type else if(demandType=="Corporate") ContractType.FRC.type else ContractType.INTRACITY.type))
+            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Intracity") ContractType.INTRACITY.type else ContractType.LH_FTL.type))
           )
         }
       }
@@ -184,14 +184,9 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         refreshData()
       }
       HomeContractsFilterExpress -> {
-        demandType = DemandType.Internal.type
-        contractType = null
-        isflexible = null
-        includeFlexibleContract= null
-        refreshData()
-      }
-      HomeContractsFilterNonExpress -> {
-        demandType = DemandType.Corporate.type
+        // Merged functionality: now handles both Internal (express) and Corporate (non-express) demand types
+        // This will show all express and non-express contracts together
+        demandType = "" // Set to empty string to include both Internal and Corporate types
         contractType = null
         isflexible = null
         includeFlexibleContract= null

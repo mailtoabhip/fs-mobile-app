@@ -13,5 +13,5 @@ const val HomeContractsFilterItemDataKeyPrefix = "filter_"
 
 /* actions */
 const val HomeContractsFilterExpress = "filter_express"
-const val HomeContractsFilterNonExpress = "filter_non_express"
+// Removed: const val HomeContractsFilterNonExpress = "filter_non_express" - merged into express filter
 const val HomeContractsFilterIntracity = "filter_intracity"

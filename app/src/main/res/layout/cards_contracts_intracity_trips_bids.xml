@@ -148,17 +148,13 @@
                     android:layout_marginTop="@dimen/size_12dp"
                     android:layout_gravity="center_vertical"
                     app:layout_constraintTop_toBottomOf="@id/truckInfo"
+                    android:visibility="visible"
                     tools:visibility="visible"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-        <include
-            android:id="@+id/layoutIntracity"
-            tools:visibility = "gone"
-            layout="@layout/card_load_delhivery_intracity_v2"/>
     </androidx.cardview.widget.CardView>
 
 </layout>
