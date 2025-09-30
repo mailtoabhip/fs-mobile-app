@@ -98,6 +98,7 @@
             android:id="@+id/edit_text_driver_name"
             android:layout_width="match_parent"
             android:textSize="@dimen/text_16sp"
+            android:text="Enter/Select Driver Name"
             android:inputType="textCapCharacters"
             android:layout_marginTop="@dimen/size_8dp"
             android:background="@drawable/bg_login_edit"

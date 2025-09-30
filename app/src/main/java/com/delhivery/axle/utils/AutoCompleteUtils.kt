@@ -36,6 +36,12 @@ class AutoCompleteUtils @Inject constructor(
 ) {
 
   private var disposable: Disposable? = null
+  
+  // Cache for driver data by vehicle number
+  private var cachedDriverData: List<DriverDataResponse> = emptyList()
+  private var cachedVehicleNumber: String = ""
+  private var driverNameDisposable: Disposable? = null
+  private var vehicleNumberDisposable: Disposable? = null
   private lateinit var cities: List<CityModel>
 
   @Inject lateinit var userPrefs: UserPrefs
@@ -84,6 +90,64 @@ class AutoCompleteUtils @Inject constructor(
                 })
     }
 
+    // Load drivers for a specific vehicle (API call)
+    private fun loadDriversForVehicle(
+        vehicleNumber: String,
+        editText: DelhiveryDriverNameAutoEditText,
+        action: (DriverDataResponse) -> Unit
+    ) {
+        disposable?.dispose()
+        if(userPrefs.jwtToken != null) {
+            disposable = tpsService.getRecentDriverNameOnVehicle(vehicleNumber)
+                ?.onBackground()
+                ?.doOnSubscribe {
+                    editText.progress()
+                    editText.dismissDropDown()
+                }
+                ?.doFinally {
+                    try{
+                        editText.progress(false)
+                        editText.showDropDown()
+                    }catch (e:Exception){
+
+                    }
+                }
+                ?.subscribe { _res, _err ->
+                    if (!_err && _res != null) {
+                        _res.responseData?.let { res ->
+                            cachedDriverData = res
+                            // Filter with current driver name query
+                            val currentQuery = editText.text.toString()
+                            if (currentQuery.length >= 2) {
+                                filterCachedDrivers(currentQuery, editText, action)
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    // Filter cached drivers by driver name query
+    private fun filterCachedDrivers(
+        driverNameQuery: String,
+        editText: DelhiveryDriverNameAutoEditText,
+        action: (DriverDataResponse) -> Unit
+    ) {
+        if (cachedDriverData.isEmpty()) {
+            editText.dismissDropDown()
+            return
+        }
+        
+        val filteredDrivers = cachedDriverData.filter { driver ->
+            driver.driverName?.lowercase()?.contains(driverNameQuery.lowercase()) == true
+        }
+        
+        editText.setItemsWithData(filteredDrivers) {
+            action(it)
+        }
+    }
+
+
     fun autoCompleteDriverName(
         editText: DelhiveryDriverNameAutoEditText,
         action: (String) -> Unit
@@ -97,17 +161,47 @@ class AutoCompleteUtils @Inject constructor(
             })
     }
 
-    // Overload that returns full DriverDataResponse
+    // Optimized overload that caches driver data by vehicle number
     fun autoCompleteDriverNameWithPhone(
         editText: DelhiveryDriverNameAutoEditText,
         vehicleNumberProvider: () -> String,
         action: (DriverDataResponse) -> Unit
     ) {
-        val d = RxTextView.textChanges(editText)
-            .filter { it.length >= 2 }
-            .subscribe({
-                val vehicleNumber = vehicleNumberProvider()
-                resetNetworkDriverNameSuggestionsWithPhone(it.toString(), vehicleNumber, editText, action)
+        // Clear previous disposables
+        driverNameDisposable?.dispose()
+        vehicleNumberDisposable?.dispose()
+        
+        // Listen to vehicle number changes
+        vehicleNumberDisposable = RxTextView.textChanges(editText)
+            .map { vehicleNumberProvider() }
+            .distinctUntilChanged()
+            .filter { it.isNotEmpty() }
+            .subscribe({ vehicleNumber ->
+                if (vehicleNumber != cachedVehicleNumber) {
+                    cachedVehicleNumber = vehicleNumber
+                    loadDriversForVehicle(vehicleNumber, editText, action)
+                }
+            }, {
+                it.printStackTrace()
+            })
+        
+        // Listen to driver name changes for filtering and manual typing validation
+        driverNameDisposable = RxTextView.textChanges(editText)
+            .subscribe({ driverNameQuery ->
+                val queryText = driverNameQuery.toString()
+                if (queryText.length >= 2) {
+                    // Filter cached drivers and show dropdown
+                    filterCachedDrivers(queryText, editText, action)
+                    
+                    // Also create a temporary DriverDataResponse for manual typing validation
+                    val tempDriverData = DriverDataResponse(queryText, null)
+                    action(tempDriverData)
+                } else {
+                    // Clear dropdown and create empty driver data for validation
+                    editText.dismissDropDown()
+                    val tempDriverData = DriverDataResponse(queryText, null)
+                    action(tempDriverData)
+                }
             }, {
                 it.printStackTrace()
             })
@@ -331,6 +425,8 @@ class AutoCompleteUtils @Inject constructor(
 
   fun clearDisposable() {
     disposable?.dispose()
+    driverNameDisposable?.dispose()
+    vehicleNumberDisposable?.dispose()
   }
 
 }
