@@ -5,6 +5,8 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.repository.TPSRepository
+import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.api.request.WarehouseRequest
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.api.response.WarehouseIndentResponse
@@ -39,9 +41,9 @@ class BidDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val truckRepository: TruckRepository,
   private val warehouseRepository: WarehouseRepository,
+  private val tpsRepository: TPSRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BulkBidsCreateEditInterface,
-  BidConfirmReviseDialogInterface {
+) : BaseViewModel(), BulkBidsCreateEditInterface, BidConfirmReviseDialogInterface {
 
   /* transaction id */
   lateinit var transactionId: String
@@ -71,10 +73,10 @@ class BidDetailsViewModel @Inject constructor(
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, TransactionBid?>>()
 
-    companion object{
+  companion object{
     var truckNumTextViewAdded :Boolean=false
     val indentMap = ArrayList<Triple<Pair<Int,String?>, String?, String?>>()
-   }
+  }
 
     lateinit var transaction: HomeBidsRequestItemData
 
@@ -253,7 +255,7 @@ class BidDetailsViewModel @Inject constructor(
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
+          if (!error) {
                openConfirmBid= true
               successBidLiveData.postValue(Pair(true,false))
               fetchTransactionBids(true)
@@ -282,7 +284,7 @@ class BidDetailsViewModel @Inject constructor(
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
+          if (!error) {
               openConfirmBid= true
               successBidLiveData.postValue(Pair(false,true))
               fetchTransactionBids(true)
@@ -535,7 +537,21 @@ class BidDetailsViewModel @Inject constructor(
   override fun reviseBid(transactionBid: TransactionBid?, position: Int) {
     reviseBidLiveData.postValue(Pair(true, transactionBid))
   }
+  var updateVehicleDetails = MutableLiveData<Boolean>()
+
+  fun updateVehicleDetails(updateVehicleDetailsRequest: UpdateVehicleDetailsRequest) {
+    compositeDisposable += tpsRepository.updateVehicleDetails(updateVehicleDetailsRequest)
+        .onBackground()
+        .subscribe { _res, error ->
+            if (!error) {
+                updateVehicleDetails.postValue(true)
+            } else {
+                updateVehicleDetails.postValue(false)
+                error.handle()
+            }
+        }
+  }
 
 }
 
-private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating
+  private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating

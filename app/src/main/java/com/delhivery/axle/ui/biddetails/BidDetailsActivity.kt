@@ -49,6 +49,23 @@ import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import android.database.Cursor
+import android.net.Uri
+import android.provider.ContactsContract
+import android.view.ViewGroup
+import android.view.Window
+import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.delhivery.axle.utils.AutoCompleteUtils
+import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
+import com.delhivery.axle.utils.extensions.focusClick
+import com.delhivery.axle.utils.extensions.getSerializableExtra
+import com.google.gson.Gson
+import java.util.regex.Pattern
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import java.lang.StringBuilder
@@ -69,6 +86,17 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   }
 
   @Inject lateinit var userPrefs: UserPrefs
+  @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+
+  private var isValidVehicleNumber = false
+  private var isValidDriverName = false
+  private var isValidDriverNumber = false
+  private var hasUserInteractedWithDriverName = false
+  private var homePlacementsItemData: HomePlacementsItemData? = null
+
+  companion object {
+    private const val REQCODE_PICK_CONTACT = 2001
+  }
 
   override fun getViewModelClass() = BidDetailsViewModel::class.java
 
@@ -120,6 +148,8 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
     subSource = intent.getStringExtra(PROPERTY_SUB_SOURCE) ?: "NA"
     forPlacement =   intent.getBooleanExtra(ForPlacementKey, false)
+    if (intent?.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java) != null)
+      homePlacementsItemData = intent.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java)
     val addressDetailAdapter: AddressDetailAdapter = AddressDetailAdapter(uploadArray)
     binding.cvRouteSection.addresslist.apply {
       layoutManager = LinearLayoutManager(applicationContext)
@@ -1332,6 +1362,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               binding.cardInput.editBidCl.visibility = View.GONE
               binding.cardInput.root.visibility = View.VISIBLE
               binding.cardInput.placementCl.root.visibility = View.VISIBLE
+              placementInput()
             }else{
               binding.mainCl.visibility = View.VISIBLE
               binding.cardInput.editBidCl.visibility = View.GONE
@@ -1737,7 +1768,385 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     }
   }
 
-  override fun bidPlacedSuccess(success: Boolean) {
+  
+
+  fun placementInput() {
+    binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+    binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+    
+    viewModel.updateVehicleDetails.observe(this, Observer {
+      if(it){
+        uiUtils.hideProgress()
+        when(homePlacementsItemData?.loadType){
+          LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
+          else -> showSuccessEditDialog()
+        }
+      }else{
+        uiUtils.hideProgress()
+      }
+    })
+    
+    autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
+      if(it=="Add New Truck"){
+        binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+        this?.let {showAddTruckBottomSheet()}
+      }else if(validateTruckNumber(it)){
+        isValidVehicleNumber = true
+        binding.cardInput.placementCl.vehicleError.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
+        enableSubmitPlacement()
+      } else {
+        binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+        binding.cardInput.placementCl.vehicleError.text = "Please enter valid vehicle Number"
+        isValidVehicleNumber = false
+        enableSubmitPlacement()
+      }
+    }
+    
+    binding.cardInput.placementCl.editTextVehicleNumber.setOnClickListener {
+      binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.GONE
+      binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.VISIBLE
+      binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+      isValidVehicleNumber = false
+      enableSubmitPlacement()
+    }
+    
+    binding.cardInput.placementCl.editTextVehicleNumber.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+    })
+    
+    binding.cardInput.placementCl.editTextDriverName.setOnClickListener {
+      hasUserInteractedWithDriverName = true
+      binding.cardInput.placementCl.editTextDriverName.visibility = View.GONE
+      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.VISIBLE
+      binding.cardInput.placementCl.editAutoCompleteDriverName.focusClick()
+      enableSubmitPlacement()
+    }
+    
+    binding.cardInput.placementCl.editTextDriverName.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        val driverName = s?.toString() ?: ""
+        Log.i("DriverNameValidation", "Text changed: '$driverName', length: ${driverName.length}")
+        if(driverName.length >= 2){
+          isValidDriverName = true
+          binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+          Log.i("DriverNameValidation", "Setting isValidDriverName = true")
+        }
+        enableSubmitPlacement()
+      }
+    })
+    
+    homePlacementsItemData?.vehicleNumber?.let {
+      Log.i("vehicleNumber", it)
+      isValidVehicleNumber = true
+      binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+      enableSubmitPlacement()
+    }
+    
+    homePlacementsItemData?.driverName?.let {
+      Log.i("DriverNameValidation", "Initial setup: Found existing driver name: '${it}'")
+      isValidDriverName = true
+      binding.cardInput.placementCl.editTextDriverName.setText(it)
+      binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+      enableSubmitPlacement()
+    }
+    
+    homePlacementsItemData?.driverPhone?.let {
+      isValidDriverNumber = true
+      binding.cardInput.placementCl.editDriverNumber.setText(it)
+      enableSubmitPlacement()
+    }
+    
+    if (homePlacementsItemData?.status=="Marked-in"){
+      binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
+      binding.cardInput.placementCl.editTextDriverName.isEnabled = false
+      binding.cardInput.placementCl.editDriverNumber.isEnabled = false
+      disableSubmitPlcButton()
+    }
+    
+    binding.cardInput.placementCl.btnSubmit.setOnClickListener{
+      submitPlacementDetails()
+    }
+    
+    autoCompleteUtils.autoCompleteDriverNameWithPhone(
+      binding.cardInput.placementCl.editAutoCompleteDriverName,
+      { binding.cardInput.placementCl.editTextVehicleNumber.text.toString() }
+    ){ driverData ->
+      val driverName = driverData.driverName ?: ""
+      Log.i("DriverNameValidation", "Driver data received: '$driverName', length: ${driverName.length}")
+      
+      if(driverName.length>0){
+        binding.cardInput.placementCl.editTextDriverName.setText(driverName)
+      }
+      
+      if(driverName.length >= 2){
+        isValidDriverName = true
+        binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+        Log.i("DriverNameValidation", "Setting isValidDriverName = true")
+      }
+      
+      driverData.driverPhone?.let {
+        binding.cardInput.placementCl.editDriverNumber.setText(it)
+        isValidDriverNumber = validatePhoneNumber(it)
+      }
+      
+      enableSubmitPlacement()
+    }
+    
+    binding.cardInput.placementCl.editDriverNumber?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim().toString()
+          if(input.length==10 && validatePhoneNumber(input)){
+            isValidDriverNumber = true
+          } else {
+            isValidDriverNumber = false
+          }
+          enableSubmitPlacement()
+        }else{
+          isValidDriverNumber = false
+          enableSubmitPlacement()
+        }
+      }
+    })
+    
+    binding.cardInput.placementCl.btnContactPicker.setOnClickListener {
+      val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+      startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
+    }
+  }
+
+  private fun showAddTruckBottomSheet() {
+    val dialog = AddTruckBottomSheetDialog(
+      this,
+      viewModelFactory,
+      userPrefs,
+      autoCompleteUtils,
+      onTruckAdded = { truckNumber ->
+        binding.cardInput.placementCl.editTextVehicleNumber.setText(truckNumber)
+        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
+        isValidVehicleNumber = true
+        enableSubmitPlacement()
+      }
+    )
+    dialog.show()
+  }
+
+  private fun enableSubmitPlacement(){
+    isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
+    val driverNameText = binding.cardInput.placementCl.editTextDriverName.text.toString()
+    val errorVisibility = if(binding.cardInput.placementCl.driverNameError.visibility == View.VISIBLE) "VISIBLE" else "GONE"
+    Log.i("validate", "DriverName: '$driverNameText', length: ${driverNameText.length}, isValidDriverName: $isValidDriverName, isValidVehicleNumber: $isValidVehicleNumber, isValidDriverNumber: $isValidDriverNumber, hasUserInteracted: $hasUserInteractedWithDriverName, errorVisibility: $errorVisibility")
+    if(isValidDriverName&&isValidVehicleNumber&&isValidDriverNumber){
+      enableSubmitPlcButton()
+    }else{
+      disableSubmitPlcButton()
+    }
+  }
+
+  private fun disableSubmitPlcButton(){
+    binding.cardInput.placementCl.btnSubmit.isEnabled = false
+  }
+
+  private fun enableSubmitPlcButton(){
+    binding.cardInput.placementCl.btnSubmit.isEnabled = true
+  }
+
+  private fun validateTruckNumber(number: String): Boolean{
+    val pattern = Pattern.compile(
+      "^[a-zA-Z]{2}(((0?[1-9]{1}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}$|^[a-zA-Z]{3}[0-9]{4}$"
+    )
+    return pattern.matcher(number).matches()
+  }
+
+  private fun validatePhoneNumber(number:String):Boolean{
+    val sameDigitsReg = "^([0-9])\\1*$"
+    var result = false
+    val sameDigitsPattern = Pattern.compile(sameDigitsReg)
+    if(!sameDigitsPattern.matcher(number).matches()){
+      val standardNumberPattern = Pattern.compile("^[6-9]{1}[0-9]{9}$")
+      result = standardNumberPattern.matcher(number).matches()
+    }
+    return result
+  }
+
+  private fun submitPlacementDetails() {
+    if (homePlacementsItemData == null) {
+      uiUtils.showToast("Placement data not available")
+      return
+    }
+    if (binding.cardInput.placementCl.editAutoCompleteTrucks.visibility == View.VISIBLE) {
+      binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+      binding.cardInput.placementCl.vehicleError.text = "Please select a valid vehicle number"
+      isValidVehicleNumber = false
+      binding.cardInput.placementCl.editAutoCompleteTrucks.errorAnimate()
+      enableSubmitPlacement()
+    } else {
+      binding.cardInput.placementCl.vehicleError.visibility = View.GONE
+      
+      try {
+        val isOrionType = homePlacementsItemData?.loadType?.toLowerCase()?.contains("orion") ?: false
+        
+        val vehicleType = if (isOrionType ) {null} else if (homePlacementsItemData?.loadType?.toLowerCase()?.contains("adhoc") ?: false) {
+          "adhoc"
+        } else {
+          "regular"
+        }
+        val contractType = if (isOrionType ) {null} else if  (homePlacementsItemData?.loadType!!.toLowerCase().contains("ftl")) {
+          "ftl"
+        } else {
+          "intracity"
+        }
+        val action = if(isOrionType) {
+          "placement_on_orion"
+        } else if (homePlacementsItemData?.vehicleNumber == null) {
+          "add_placement"
+        } else {
+          "update_placement"
+        }
+        try {
+          uiUtils.showProgress()
+          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(
+            binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), 
+            binding.cardInput.placementCl.editTextDriverName.text.toString(), 
+            binding.cardInput.placementCl.editDriverNumber.text.toString(), 
+            contractType, 
+            vehicleType, 
+            homePlacementsItemData?.vehicleType ?: "", 
+            homePlacementsItemData?.transporterSupplierId ?: "", 
+            if(isOrionType) null else homePlacementsItemData?.contractId, 
+            homePlacementsItemData?.transporterId ?: 0, 
+            action, 
+            if(isOrionType) null else homePlacementsItemData?.reportingTime ?: "", 
+            if(isOrionType)null else homePlacementsItemData?.originCenterCode ?: "",  
+            if(isOrionType)null else homePlacementsItemData?.vehicleNumber, 
+            if(isOrionType)null else homePlacementsItemData?.vehicleId,  
+            if(isOrionType)null else homePlacementsItemData?.driverName,  
+            if(isOrionType)null else homePlacementsItemData?.driverPhone, 
+            homePlacementsItemData?.transactionId
+          )
+          viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
+        }catch (e:Exception){
+          uiUtils.showToast("Something went wrong")
+          uiUtils.hideProgress()
+        }
+      } catch (e: IllegalArgumentException) {
+        uiUtils.hideProgress()
+        Log.e("PlacementDetails", e.toString())
+      }
+    }
+  }
+
+  private fun showIntracityAdhocSuccessDialog(){
+    val title = getString(R.string.title_dialog_success)
+    val subTittle = getString(R.string.sub_title_dialog_success)
+    val playStoreLink = getString(R.string.driver_app_link)
+    val hindiVideoLink = getString(R.string.hindi_video_link)
+    val englishVideoLink = getString(R.string.english_video_link)
+    
+    val placementData = homePlacementsItemData
+    Log.d("placementData=====>>>>", Gson().toJson(placementData))
+    val ticketId = placementData?.transactionId ?: ""
+    val reportingCentre = generateReportingCentreLink(placementData!!)
+    val reportingTime = formatReportingTime(placementData?.reportingTime)
+    
+    dialogUtils.showDetailsSubmittedSuccessDialog(
+      title = title,
+      subTittle = subTittle,
+      playStoreLink = playStoreLink,
+      ticketId = ticketId,
+      reportingCentre = reportingCentre,
+      reportingTime = reportingTime,
+      hindiVideoLink = hindiVideoLink,
+      englishVideoLink = englishVideoLink,
+      dialogInterface = object : DetailsSubmittedSuccessInterface {
+        override fun onDialogDismissed() {
+          Log.d("onDialogDismissed===>>>","Dialog dismissed")
+          Handler(Looper.myLooper()!!).postDelayed({
+            REFRESH_ON_BACK_PLACEMENT = true
+            finish()
+          }, 100)
+        }
+      }
+    )
+  }
+
+  private fun generateReportingCentreLink(placementData: HomePlacementsItemData): String {
+    return if (placementData.originCenterLat != null && placementData.originCenterLong != null) {
+      "https://maps.google.com/?q=${placementData.originCenterLat},${placementData.originCenterLong}"
+    } else {
+      val location = placementData.originCenterName ?: ""
+      if (location.isNotEmpty()) {
+        "https://maps.google.com/?q=$location"
+      } else {
+        ""
+      }
+    }
+  }
+
+  private fun formatReportingTime(reportingTime: String?): String {
+    return if (!reportingTime.isNullOrEmpty()) {
+      try {
+        val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+        val outputFormat = java.text.SimpleDateFormat("dd MMM, hh:mm a")
+        val date = inputFormat.parse(reportingTime)
+        outputFormat.format(date ?: java.util.Date())
+      } catch (e: Exception) {
+        "--:--"
+      }
+    } else {
+      "--:--"
+    }
+  }
+
+  private fun showSuccessEditDialog(){
+    val dialog = Dialog(this)
+    val bindingDialog = DialogPlacementDetailsEditBinding.inflate(layoutInflater)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+    if(!this.isFinishing)
+      dialog.show()
+    if(!this.isFinishing)
+      Handler(Looper.myLooper()!!).postDelayed({
+        dialog.dismiss()
+        REFRESH_ON_BACK_PLACEMENT = true
+        finish()
+      }, 2000)
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      REQCODE_PICK_CONTACT -> {
+        if (resultCode == RESULT_OK && data != null) {
+          val contactUri: Uri? = data.data
+          contactUri?.let {
+            val cursor: Cursor? = contentResolver.query(it, null, null, null, null)
+            cursor?.use { c ->
+              if (c.moveToFirst()) {
+                val numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                if (numberIndex != -1) {
+                  val phoneNumber = c.getString(numberIndex)
+                  val trimmedNumber = phoneNumber?.replace("+91", "")?.trim()
+                  binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }override fun bidPlacedSuccess(success: Boolean) {
     if(success)
       startActivity(homeActivityIntent("load", this@BidDetailsActivity))
 
@@ -1753,6 +2162,7 @@ private const val RequestTypeIntentKey = "request_type"
 private const val FromPage = "from_page"
 private const val ActiveBid= "active_bid"
 private const val ForPlacementKey= "for_placement"
+private const val PlacementData = "placement_data"
 
 /**
  * Bid details intent
@@ -1765,7 +2175,8 @@ fun bidDetailsIntent(
         active:Boolean = false,
         source:String?= VALUE_APP_FLOW,
         subSource:String?="NA",
-        forPlacement:Boolean = false
+        forPlacement:Boolean = false,
+        homePlacementsItemData: HomePlacementsItemData? = null
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   if(requestType!=null)
@@ -1775,4 +2186,5 @@ fun bidDetailsIntent(
   putExtra(PROPERTY_SOURCE,source)
   putExtra(PROPERTY_SUB_SOURCE,subSource)
   putExtra(ForPlacementKey,forPlacement)
+  putExtra(PlacementData, homePlacementsItemData)
 }

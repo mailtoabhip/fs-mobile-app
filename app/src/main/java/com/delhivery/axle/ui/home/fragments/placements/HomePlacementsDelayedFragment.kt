@@ -152,7 +152,7 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
                 userPrefs.setPreviousScreen(this.javaClass.name)
                 if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name){
                     startActivity(data.transactionId?.let { context?.let {
-                            it1 -> bidDetailsIntent(it, it1, forPlacement = true) } })
+                            it1 -> bidDetailsIntent(it, it1, forPlacement = true, homePlacementsItemData = data) } })
                 }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ||data.loadType==LoadTypes.orionFixed.name){
                     startActivity(data.transactionId?.let { context?.let {
                             it1 -> contractDetailsIntent(it, it1, forPlacement = true, homePlacementsItemData = data) } })
