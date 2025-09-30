@@ -123,7 +123,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   private var isValidPlacementDays = false
   private var forPlacement = false
   private var isValidDriverNumber = false
-  private var isValidDriverName = false
+  private var isValidDriverName = true
   private var homePlacementsItemData:HomePlacementsItemData?=null
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -1458,7 +1458,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       submitPlacementDetails()
     }
     autoCompleteUtils.autoCompleteDriverName(binding.cardInput.placementCl.editAutoCompleteDriverName){
-    if(validateTruckNumber(it)){
+    if(it.length>=2){
         isValidDriverName = true
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
         binding.cardInput.placementCl.editTextDriverName.setText(it)
@@ -1466,9 +1466,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         binding.cardInput.placementCl.editTextDriverName.visibility =  View.VISIBLE
         enableSubmitPlacement()
       } else {
-        binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
-        binding.cardInput.placementCl.driverNameError.text ="Please enter valid driver name"
-        isValidDriverName = false
+        if(binding.cardInput.placementCl.editAutoCompleteDriverName.text!!.length>=2){
+          isValidDriverName = true
+        }else {
+          binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
+          binding.cardInput.placementCl.driverNameError.text = "Please enter valid driver name"
+          isValidDriverName = false
+        }
         enableSubmitPlacement()
       }
     }
@@ -1604,13 +1608,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   private fun submitPlacementDetails() {
     if (binding.cardInput.placementCl.editAutoCompleteTrucks.visibility == View.VISIBLE) {
-     // binding.cardInput.placementCl.vehicleNumberError.visibility = View.VISIBLE
-     // binding.cardInput.placementCl.vehicleNumberError.text = "Please select a valid vehicle number"
+      binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+      binding.cardInput.placementCl.vehicleError.text = "Please select a valid vehicle number"
       isValidVehicleNumber = false
       binding.cardInput.placementCl.editAutoCompleteTrucks.errorAnimate()
       enableSubmitPlacement()
     } else {
-    // binding.cardInput.placementCl.vehicleNumberError.visibility = View.GONE
+     binding.cardInput.placementCl.vehicleError.visibility = View.GONE
 
       try {
         val isOrionType =  homePlacementsItemData?.loadType!!.toLowerCase().contains("orion")
