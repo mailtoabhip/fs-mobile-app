@@ -50,6 +50,7 @@ class DelhiveryTrucksAutoEditText(
 
     private var progress = false
     private var error = false
+    private var isSelectionInProgress = false
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -105,16 +106,20 @@ class DelhiveryTrucksAutoEditText(
             trucks: List<String>,
             selected: (String) -> Unit
     ) {
-        if (!isPerformingCompletion) {
-            progress(false)
-            val adapter = CustomAdapter(context, R.layout.view_truck_item, trucks)
-            setAdapter(adapter)
-            setOnItemClickListener { _, _, i, _ ->
-                setText(trucks[i])
-                selected(trucks[i])
-                dismissDropDown()
-            }
+        progress(false)
+        val adapter = CustomAdapter(context, R.layout.view_truck_item, trucks)
+        setAdapter(adapter)
+        setOnItemClickListener { _, _, i, _ ->
+            isSelectionInProgress = true
+            setText(trucks[i])
+            selected(trucks[i])
+            dismissDropDown()
+            // Reset flag after a short delay
+            postDelayed({
+                isSelectionInProgress = false
+            }, 100)
         }
+        
         if (trucks.isEmpty()) {
             error = true
             dismissDropDown()
@@ -127,6 +132,11 @@ class DelhiveryTrucksAutoEditText(
     fun errorAnimate() {
         val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
         this.startAnimation(shake)
+    }
+    
+    // Check if selection is in progress
+    fun isSelectionInProgress(): Boolean {
+        return isSelectionInProgress
     }
 
     class CustomAdapter(context: Context?, resource: Int, items: List<String?>?) : ArrayAdapter<String?>(context!!, resource, items!!) {

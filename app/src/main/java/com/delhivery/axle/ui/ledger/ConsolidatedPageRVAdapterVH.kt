@@ -3,7 +3,7 @@ package com.delhivery.axle.ui.ledger
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.content.ContextCompat.startActivity
+import android.app.Activity
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
 import com.delhivery.axle.data.ledger.ConsolidatedLedgerItemAction
@@ -55,7 +55,10 @@ class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBindin
         var index = 0
 
         binding.textLRMain.setOnClickListener{
-            startActivity(binding.deductionsContainer.context, tripDetailsIntent(item.data.tripId,binding.deductionsContainer.context),null)
+            val intent = tripDetailsIntent(item.data.tripId, binding.deductionsContainer.context)
+            if (intent != null && binding.deductionsContainer.context is Activity) {
+                (binding.deductionsContainer.context as Activity).startActivity(intent)
+            }
         }
         if(item.data.expanded) {
             deductions.visibility =View.VISIBLE
@@ -68,7 +71,10 @@ class ConsolidatedPageLedgerItemVH(binding: ViewConsolidatedPageLedgerItemBindin
                 if(item.data.deductions[index]["deduction_type"] == "dn_deduction"){
                     deductionBinding.root.setOnClickListener {
                         // open activity
-                        startActivity(binding.deductionsContainer.context, tripDetailsIntent(item.data.tripId,binding.deductionsContainer.context),null)
+                        val intent = tripDetailsIntent(item.data.tripId, binding.deductionsContainer.context)
+                        if (intent != null && binding.deductionsContainer.context is Activity) {
+                            (binding.deductionsContainer.context as Activity).startActivity(intent)
+                        }
                     }
                 }
                 deductions.addView(deductionBinding.root)

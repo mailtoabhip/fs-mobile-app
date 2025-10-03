@@ -51,7 +51,7 @@ class DelhiveryDriverNameAutoEditText(
 
     private var progress = false
     private var error = false
-    private var isPerformingCompletion = false
+    private var isSelectionInProgress = false
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -137,88 +137,53 @@ class DelhiveryDriverNameAutoEditText(
         invalidate()
     }
 
-    // Overload method that returns full DriverDataResponse
+    // Simple method that returns full DriverDataResponse
     fun setItemsWithData(
         driverData: List<DriverDataResponse>,
         selected: (DriverDataResponse) -> Unit
     ) {
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "setItemsWithData called with ${driverData.size} items")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "isPerformingCompletion: $isPerformingCompletion")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "Current text: '${text}'")
-        
-        // Always set up the adapter and listener, regardless of isPerformingCompletion
         progress(false)
         val adapter = CustomAdapter(context, R.layout.view_driver_name_item, driverData)
         setAdapter(adapter)
         setOnItemClickListener { _, _, i, _ ->
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "Item clicked: ${driverData[i].driverName}")
-            setText(driverData[i].driverName)
-            selected(driverData[i])
+            isSelectionInProgress = true
+            val selectedDriverName = driverData[i].driverName ?: ""
+            setText(selectedDriverName)
             dismissDropDown()
+            selected(driverData[i])
+            // Reset flag after a short delay
+            postDelayed({
+                isSelectionInProgress = false
+            }, 100)
         }
         
         if (driverData.isEmpty()) {
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "No data, setting error and dismissing dropdown")
             error = true
             dismissDropDown()
         } else {
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "Data available, setting up dropdown")
             error = false
-            // Always try to show dropdown with a small delay to ensure proper setup
-            post {
-                android.util.Log.d("DelhiveryDriverNameAutoEditText", "Calling showDropDown() after delay")
-                showDropDown()
-            }
+            // Don't automatically show dropdown to avoid focus issues
+            // showDropDown()
         }
         invalidate()
+    }
+    
+    // Manual method to show dropdown when needed
+    fun showDropdownIfNeeded() {
+        if (adapter != null && adapter!!.count > 0) {
+            showDropDown()
+        }
+    }
+    
+    // Check if selection is in progress
+    fun isSelectionInProgress(): Boolean {
+        return isSelectionInProgress
     }
 
 
     fun errorAnimate() {
         val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
         this.startAnimation(shake)
-    }
-    
-    fun forceShowDropDown() {
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "forceShowDropDown called")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "Adapter: ${adapter}, Count: ${adapter?.count}")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "isPopupShowing: $isPopupShowing")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "isPerformingCompletion: $isPerformingCompletion")
-        
-        if (adapter != null && adapter!!.count > 0) {
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "Forcing dropdown to show")
-            super.showDropDown()
-        } else {
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "Cannot show dropdown - no adapter or empty adapter")
-        }
-    }
-    
-    override fun performCompletion() {
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "performCompletion called")
-        isPerformingCompletion = true
-        super.performCompletion()
-        // Reset the flag after a short delay to allow dropdown to show
-        post {
-            isPerformingCompletion = false
-        }
-    }
-    
-    override fun showDropDown() {
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "showDropDown called, isPerformingCompletion: $isPerformingCompletion")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "Adapter: ${adapter}, Count: ${adapter?.count}")
-        android.util.Log.d("DelhiveryDriverNameAutoEditText", "isPopupShowing: $isPopupShowing")
-        
-        // Always try to show dropdown, but with a small delay if performing completion
-        if (!isPerformingCompletion) {
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "Calling super.showDropDown() immediately")
-            super.showDropDown()
-        } else {
-            android.util.Log.d("DelhiveryDriverNameAutoEditText", "Delaying showDropDown due to isPerformingCompletion")
-            post {
-                android.util.Log.d("DelhiveryDriverNameAutoEditText", "Delayed showDropDown, isPerformingCompletion: $isPerformingCompletion")
-                super.showDropDown()
-            }
-        }
     }
 
     class CustomAdapter(context: Context?, resource: Int, items: List<DriverDataResponse?>?) : ArrayAdapter<DriverDataResponse?>(context!!, resource, items!!) {
