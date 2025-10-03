@@ -12,6 +12,7 @@
     android:layout_height="wrap_content"
     app:layout_constraintTop_toBottomOf="@+id/routeTitle"
     app:layout_constraintStart_toStartOf="parent"
+    android:paddingBottom="@dimen/size_12dp"
    >
     <TextView
         android:id="@+id/vehicleLabel"

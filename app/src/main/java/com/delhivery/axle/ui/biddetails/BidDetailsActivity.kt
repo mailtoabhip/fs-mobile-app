@@ -1793,7 +1793,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       }else if(validateTruckNumber(it)){
         isValidVehicleNumber = true
         binding.cardInput.placementCl.vehicleError.visibility = View.GONE
-        binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+        binding.cardInput.placementCl.editTextVehicleNumber.text = it
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
         enableSubmitPlacement()
@@ -1845,14 +1845,20 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     homePlacementsItemData?.vehicleNumber?.let {
       Log.i("vehicleNumber", it)
       isValidVehicleNumber = true
-      binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+      binding.cardInput.placementCl.editTextVehicleNumber.text = it
+      binding.cardInput.placementCl.editAutoCompleteTrucks.setText(it)
+      binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+      binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
       enableSubmitPlacement()
     }
     
     homePlacementsItemData?.driverName?.let {
       Log.i("DriverNameValidation", "Initial setup: Found existing driver name: '${it}'")
       isValidDriverName = true
-      binding.cardInput.placementCl.editTextDriverName.setText(it)
+      binding.cardInput.placementCl.editTextDriverName.text = it
+      binding.cardInput.placementCl.editAutoCompleteDriverName.setText(it)
+      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
+      binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE
       binding.cardInput.placementCl.driverNameError.visibility = View.GONE
       enableSubmitPlacement()
     }
@@ -1882,7 +1888,9 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       Log.i("DriverNameValidation", "Driver data received: '$driverName', length: ${driverName.length}")
       
       if(driverName.length>0){
-        binding.cardInput.placementCl.editTextDriverName.setText(driverName)
+        binding.cardInput.placementCl.editTextDriverName.text = driverName
+        binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
+        binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE
       }
       
       if(driverName.length >= 2){
@@ -1931,7 +1939,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       userPrefs,
       autoCompleteUtils,
       onTruckAdded = { truckNumber ->
-        binding.cardInput.placementCl.editTextVehicleNumber.setText(truckNumber)
+        binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
         isValidVehicleNumber = true

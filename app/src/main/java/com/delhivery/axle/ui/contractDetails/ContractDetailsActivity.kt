@@ -1438,7 +1438,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       }else if(validateTruckNumber(it)){
         isValidVehicleNumber = true
         binding.cardInput.placementCl.vehicleError.visibility = View.GONE
-        binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+        binding.cardInput.placementCl.editTextVehicleNumber.text = it
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.VISIBLE
         enableSubmitPlacement()
@@ -1478,7 +1478,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
     
     // Add text change listener for manual typing in driver name field
-    binding.cardInput.placementCl.editTextDriverName.addTextChangedListener(object : TextWatcher {
+    binding.cardInput.placementCl.editAutoCompleteDriverName.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -1506,13 +1506,19 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     homePlacementsItemData?.vehicleNumber?.let {
       Log.i("vehicleNumber",it)
       isValidVehicleNumber = true
-      binding.cardInput.placementCl.editTextVehicleNumber.setText(it)
+      binding.cardInput.placementCl.editTextVehicleNumber.text = it
+      binding.cardInput.placementCl.editAutoCompleteTrucks.setText(it)
+      binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+      binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
       enableSubmitPlacement()
     }
     homePlacementsItemData?.driverName?.let {
       Log.i("DriverNameValidation", "Initial setup: Found existing driver name: '${it}'")
       isValidDriverName = true
-      binding.cardInput.placementCl.editTextDriverName.setText(it)
+      binding.cardInput.placementCl.editTextDriverName.text = it
+      binding.cardInput.placementCl.editAutoCompleteDriverName.setText(it)
+      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
+      binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE
       binding.cardInput.placementCl.driverNameError.visibility = View.GONE
       enableSubmitPlacement()
     }
@@ -1540,7 +1546,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       Log.i("DriverNameValidation", "Driver data received: '$driverName', length: ${driverName.length}")
 
       if(driverName.length>0){
-        binding.cardInput.placementCl.editTextDriverName.setText(driverName)
+        binding.cardInput.placementCl.editTextDriverName.text = driverName
+        binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
+        binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE
       }
       // Always set the driver name text
     /*  binding.cardInput.placementCl.editTextDriverName.setText(driverName)
@@ -1663,7 +1671,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       autoCompleteUtils,
       onTruckAdded = { truckNumber ->
         // Populate the vehicle number field with the newly added truck
-        binding.cardInput.placementCl.editTextVehicleNumber.setText(truckNumber)
+        binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
         isValidVehicleNumber = true
