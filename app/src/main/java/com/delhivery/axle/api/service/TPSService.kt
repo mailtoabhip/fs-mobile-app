@@ -5,6 +5,7 @@ import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.DriverDataResponse
 import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.api.response.PlacementsLoadDataResponse
+import com.delhivery.axle.api.response.RecommendedDriverResponse
 import com.delhivery.axle.api.response.TPSBaseResponse
 import io.reactivex.Single
 import org.json.JSONObject
@@ -29,7 +30,7 @@ interface TPSService{
 
     @GET("placement_dashboard/drivers/recommended")
     fun getRecentDriverNameOnVehicle(@Query("vehicle_registration_number") vehicleNumber: String)
-            : Single<TPSBaseResponse<List<DriverDataResponse>>>?
+            : Single<TPSBaseResponse<RecommendedDriverResponse>>?
 }
 
 

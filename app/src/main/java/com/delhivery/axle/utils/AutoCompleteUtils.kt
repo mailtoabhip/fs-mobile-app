@@ -45,6 +45,9 @@ class AutoCompleteUtils @Inject constructor(
   private lateinit var cities: List<CityModel>
 
   @Inject lateinit var userPrefs: UserPrefs
+  
+  // Test mode flag - set to true for testing with mock data
+  var isTestMode: Boolean = false
 
   /**
    * Attach auto complete for cities
@@ -97,6 +100,13 @@ class AutoCompleteUtils @Inject constructor(
         action: (DriverDataResponse) -> Unit
     ) {
         disposable?.dispose()
+        
+        // Use mock data if in test mode
+        if (isTestMode) {
+            loadMockDriversForVehicle(vehicleNumber, editText, action)
+            return
+        }
+        
         if(userPrefs.jwtToken != null) {
             disposable = tpsService.getRecentDriverNameOnVehicle(vehicleNumber)
                 ?.onBackground()
@@ -107,7 +117,6 @@ class AutoCompleteUtils @Inject constructor(
                 ?.doFinally {
                     try{
                         editText.progress(false)
-                        editText.showDropDown()
                     }catch (e:Exception){
 
                     }
@@ -115,15 +124,70 @@ class AutoCompleteUtils @Inject constructor(
                 ?.subscribe { _res, _err ->
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
-                            cachedDriverData = res
+                            cachedDriverData = res.recommendedDrivers ?: emptyList()
                             // Filter with current driver name query
                             val currentQuery = editText.text.toString()
                             if (currentQuery.length >= 2) {
                                 filterCachedDrivers(currentQuery, editText, action)
+                            } else {
+                                // If no query, just show all drivers
+                                editText.setItemsWithData(cachedDriverData) {
+                                    action(it)
+                                }
                             }
                         }
                     }
                 }
+        }
+    }
+    
+    // Load mock drivers for testing
+    private fun loadMockDriversForVehicle(
+        vehicleNumber: String,
+        editText: DelhiveryDriverNameAutoEditText,
+        action: (DriverDataResponse) -> Unit
+    ) {
+        android.util.Log.d("AutoCompleteUtils", "Loading mock drivers for vehicle: $vehicleNumber")
+        android.util.Log.d("AutoCompleteUtils", "Test mode enabled: $isTestMode")
+        
+        // Ensure UI operations run on main thread
+        editText.post {
+            // Simulate network delay
+            editText.progress()
+            editText.dismissDropDown()
+            
+            // Simulate async loading
+            editText.postDelayed({
+                try {
+                    cachedDriverData = MockDriverData.getMockDriverDataForVehicle(vehicleNumber)
+                    android.util.Log.d("AutoCompleteUtils", "Loaded ${cachedDriverData.size} drivers: ${cachedDriverData.map { it.driverName }}")
+                    editText.progress(false)
+                    
+                    // Filter with current driver name query
+                    val currentQuery = editText.text.toString()
+                    android.util.Log.d("AutoCompleteUtils", "Current query: '$currentQuery', length: ${currentQuery.length}")
+                    
+                    if (currentQuery.length >= 2) {
+                        android.util.Log.d("AutoCompleteUtils", "Filtering with query: '$currentQuery'")
+                        filterCachedDrivers(currentQuery, editText, action)
+                    } else {
+                        // If no query, just show all drivers
+                        android.util.Log.d("AutoCompleteUtils", "Showing all drivers")
+                        editText.setItemsWithData(cachedDriverData) {
+                            action(it)
+                        }
+                        
+                        // Force show dropdown after setting items
+                        editText.post {
+                            android.util.Log.d("AutoCompleteUtils", "Forcing dropdown to show after showing all drivers")
+                            editText.forceShowDropDown()
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("AutoCompleteUtils", "Error loading mock drivers", e)
+                    editText.progress(false)
+                }
+            }, 100) // 100ms delay for better responsiveness
         }
     }
 
@@ -133,7 +197,12 @@ class AutoCompleteUtils @Inject constructor(
         editText: DelhiveryDriverNameAutoEditText,
         action: (DriverDataResponse) -> Unit
     ) {
+        android.util.Log.d("AutoCompleteUtils", "Filtering drivers with query: '$driverNameQuery'")
+        android.util.Log.d("AutoCompleteUtils", "Cached drivers count: ${cachedDriverData.size}")
+        android.util.Log.d("AutoCompleteUtils", "Cached drivers: ${cachedDriverData.map { it.driverName }}")
+        
         if (cachedDriverData.isEmpty()) {
+            android.util.Log.d("AutoCompleteUtils", "No cached drivers, dismissing dropdown")
             editText.dismissDropDown()
             return
         }
@@ -142,8 +211,33 @@ class AutoCompleteUtils @Inject constructor(
             driver.driverName?.lowercase()?.contains(driverNameQuery.lowercase()) == true
         }
         
-        editText.setItemsWithData(filteredDrivers) {
-            action(it)
+        android.util.Log.d("AutoCompleteUtils", "Filtered drivers count: ${filteredDrivers.size}")
+        android.util.Log.d("AutoCompleteUtils", "Filtered drivers: ${filteredDrivers.map { it.driverName }}")
+        
+        if (filteredDrivers.isNotEmpty()) {
+            android.util.Log.d("AutoCompleteUtils", "Showing filtered drivers in dropdown")
+            android.util.Log.d("AutoCompleteUtils", "About to call setItemsWithData")
+            
+            // Ensure UI operations run on main thread
+            editText.post {
+                editText.setItemsWithData(filteredDrivers) {
+                    android.util.Log.d("AutoCompleteUtils", "Driver selected: ${it.driverName}")
+                    action(it)
+                }
+                android.util.Log.d("AutoCompleteUtils", "setItemsWithData completed")
+                
+                // Force show dropdown after setting items
+                editText.post {
+                    android.util.Log.d("AutoCompleteUtils", "Forcing dropdown to show after setItemsWithData")
+                    editText.forceShowDropDown()
+                }
+            }
+        } else {
+            android.util.Log.d("AutoCompleteUtils", "No matching drivers, dismissing dropdown")
+            editText.post {
+                editText.dismissDropDown()
+            }
+            // Don't call action with empty data to prevent validation loops
         }
     }
 
@@ -171,38 +265,42 @@ class AutoCompleteUtils @Inject constructor(
         driverNameDisposable?.dispose()
         vehicleNumberDisposable?.dispose()
         
-        // Listen to vehicle number changes
-        vehicleNumberDisposable = RxTextView.textChanges(editText)
-            .map { vehicleNumberProvider() }
-            .distinctUntilChanged()
-            .filter { it.isNotEmpty() }
-            .subscribe({ vehicleNumber ->
-                if (vehicleNumber != cachedVehicleNumber) {
-                    cachedVehicleNumber = vehicleNumber
-                    loadDriversForVehicle(vehicleNumber, editText, action)
-                }
-            }, {
-                it.printStackTrace()
-            })
-        
         // Listen to driver name changes for filtering and manual typing validation
         driverNameDisposable = RxTextView.textChanges(editText)
+            .debounce(100, java.util.concurrent.TimeUnit.MILLISECONDS) // Add debounce to prevent rapid firing
             .subscribe({ driverNameQuery ->
                 val queryText = driverNameQuery.toString()
-                if (queryText.length >= 2) {
+                val currentVehicleNumber = vehicleNumberProvider()
+                
+                android.util.Log.d("AutoCompleteUtils", "Text changed: '$queryText', Vehicle: '$currentVehicleNumber', Cached: '$cachedVehicleNumber', TestMode: $isTestMode")
+                
+                // If vehicle number is available and different from cached, load new driver data
+                if (currentVehicleNumber.isNotEmpty() && currentVehicleNumber != cachedVehicleNumber) {
+                    android.util.Log.d("AutoCompleteUtils", "Vehicle number changed, loading new drivers")
+                    cachedVehicleNumber = currentVehicleNumber
+                    loadDriversForVehicle(currentVehicleNumber, editText, action)
+                } else if (currentVehicleNumber.isNotEmpty() && cachedDriverData.isEmpty()) {
+                    // Load driver data if vehicle number is available but no cached data
+                    android.util.Log.d("AutoCompleteUtils", "Vehicle number available but no cached data, loading drivers")
+                    cachedVehicleNumber = currentVehicleNumber
+                    loadDriversForVehicle(currentVehicleNumber, editText, action)
+                } else if (queryText.length >= 2 && cachedDriverData.isNotEmpty()) {
                     // Filter cached drivers and show dropdown
+                    android.util.Log.d("AutoCompleteUtils", "Query length >= 2, filtering cached drivers")
                     filterCachedDrivers(queryText, editText, action)
-                    
-                    // Also create a temporary DriverDataResponse for manual typing validation
-                    val tempDriverData = DriverDataResponse(queryText, null)
-                    action(tempDriverData)
+                } else if (queryText.length >= 2 && cachedDriverData.isEmpty()) {
+                    // If we have a query but no cached data, try to load drivers
+                    android.util.Log.d("AutoCompleteUtils", "Query length >= 2 but no cached data, loading drivers")
+                    if (currentVehicleNumber.isNotEmpty()) {
+                        loadDriversForVehicle(currentVehicleNumber, editText, action)
+                    }
                 } else {
-                    // Clear dropdown and create empty driver data for validation
+                    // Clear dropdown
+                    android.util.Log.d("AutoCompleteUtils", "Query length < 2, dismissing dropdown")
                     editText.dismissDropDown()
-                    val tempDriverData = DriverDataResponse(queryText, null)
-                    action(tempDriverData)
                 }
             }, {
+                android.util.Log.e("AutoCompleteUtils", "Error in text changes", it)
                 it.printStackTrace()
             })
     }
@@ -362,7 +460,8 @@ class AutoCompleteUtils @Inject constructor(
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
                             val arrayList = ArrayList<DriverDataResponse>()
-                            for(item in res)
+                            val drivers = res.recommendedDrivers ?: emptyList()
+                            for(item in drivers)
                                 arrayList.add(item)
                            // arrayList.add("Add New Truck")
                             editText.setItems(arrayList) {
@@ -383,7 +482,7 @@ class AutoCompleteUtils @Inject constructor(
     ) {
         disposable?.dispose()
         if(userPrefs.jwtToken != null && vehicleNumber.isNotEmpty()) {
-            disposable = tpsService.getRecentDriverNameOnVehicle("MP09QT0003")
+            disposable = tpsService.getRecentDriverNameOnVehicle(vehicleNumber)
                 ?.onBackground()
                 ?.doOnSubscribe {
                     editText.progress()
@@ -401,8 +500,9 @@ class AutoCompleteUtils @Inject constructor(
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
                             val arrayList = ArrayList<DriverDataResponse>()
+                            val drivers = res.recommendedDrivers ?: emptyList()
                             // Filter drivers by name query (case insensitive)
-                            for(item in res) {
+                            for(item in drivers) {
                                 if(item.driverName?.lowercase()?.contains(driverNameQuery.lowercase()) == true) {
                                     arrayList.add(item)
                                 }
@@ -427,6 +527,20 @@ class AutoCompleteUtils @Inject constructor(
     disposable?.dispose()
     driverNameDisposable?.dispose()
     vehicleNumberDisposable?.dispose()
+  }
+  
+  /**
+   * Enable test mode with mock data
+   */
+  fun enableTestMode() {
+    isTestMode = true
+  }
+  
+  /**
+   * Disable test mode (use real API)
+   */
+  fun disableTestMode() {
+    isTestMode = false
   }
 
 }

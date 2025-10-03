@@ -136,6 +136,9 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     // Force hide driver name error on initial load
     binding.cardInput.placementCl.driverNameError.visibility = View.GONE
     
+    // Enable test mode for driver autocomplete (remove this in production)
+    autoCompleteUtils.enableTestMode()
+    
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("ContractDetailsActivity_SetupTime")
     activitySetupTrace?.start()
     try {
@@ -1467,42 +1470,15 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         // The autoCompleteDriverNameWithPhone will handle this automatically
       }
     })
-    binding.cardInput.placementCl.editTextDriverName.setOnClickListener {
+    // Driver name field click handling - now just focus the single field
+    binding.cardInput.placementCl.editAutoCompleteDriverName.setOnClickListener {
       hasUserInteractedWithDriverName = true
-      binding.cardInput.placementCl.editTextDriverName.visibility =  View.GONE
-      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.VISIBLE
       binding.cardInput.placementCl.editAutoCompleteDriverName.focusClick()
-      // Don't reset isValidDriverName here - let the text change listener handle validation
       enableSubmitPlacement()
     }
 
     
-    // Add text change listener for manual typing in driver name field
-    binding.cardInput.placementCl.editAutoCompleteDriverName.addTextChangedListener(object : TextWatcher {
-      override fun afterTextChanged(s: Editable?) = Unit
-      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        val driverName = s?.toString() ?: ""
-        Log.i("DriverNameValidation", "Text changed: '$driverName', length: ${driverName.length}")
-        if(driverName.length >= 2){
-          isValidDriverName = true
-          binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-          Log.i("DriverNameValidation", "Setting isValidDriverName = true")
-        }
-       /* else {
-          isValidDriverName = false
-          // Only show error if user has interacted with the field
-          if(hasUserInteractedWithDriverName) {
-            binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
-            binding.cardInput.placementCl.driverNameError.text = "Please enter valid driver name"
-          } else {
-            binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-          }
-          Log.i("DriverNameValidation", "Setting isValidDriverName = false")
-        }*/
-        enableSubmitPlacement()
-      }
-    })
+    // Text change handling is now managed by the AutoCompleteUtils
     homePlacementsItemData?.vehicleNumber?.let {
       Log.i("vehicleNumber",it)
       isValidVehicleNumber = true
@@ -1515,22 +1491,21 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     homePlacementsItemData?.driverName?.let {
       Log.i("DriverNameValidation", "Initial setup: Found existing driver name: '${it}'")
       isValidDriverName = true
-      binding.cardInput.placementCl.editTextDriverName.text = it
       binding.cardInput.placementCl.editAutoCompleteDriverName.setText(it)
-      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
-      binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE
       binding.cardInput.placementCl.driverNameError.visibility = View.GONE
       enableSubmitPlacement()
     }
     homePlacementsItemData?.driverPhone?.let {
       isValidDriverNumber = true
-      binding.cardInput.placementCl.editDriverNumber.setText(it)
+      val trimmedNumber = it?.replace("+91", "")?.trim()
+      binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
       enableSubmitPlacement()
     }
     if (homePlacementsItemData?.status=="Marked-in"){
       binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
-      binding.cardInput.placementCl.editTextDriverName.isEnabled = false
+      binding.cardInput.placementCl.editAutoCompleteDriverName.isEnabled = false
       binding.cardInput.placementCl.editDriverNumber.isEnabled = false
+      binding.cardInput.placementCl.btnContactPicker.isEnabled = false
       disableSubmitPlcButton()
     }
     binding.cardInput.placementCl.btnSubmit.setOnClickListener{
@@ -1538,87 +1513,56 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
     autoCompleteUtils.autoCompleteDriverNameWithPhone(
         binding.cardInput.placementCl.editAutoCompleteDriverName,
-        { binding.cardInput.placementCl.editTextVehicleNumber.text.toString() }
-    ){ driverData ->
-      // Handle both autocomplete selection and manual typing
-     // hasUserInteractedWithDriverName = true
-      val driverName = driverData.driverName ?: ""
-      Log.i("DriverNameValidation", "Driver data received: '$driverName', length: ${driverName.length}")
-
-      if(driverName.length>0){
-        binding.cardInput.placementCl.editTextDriverName.text = driverName
-        binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
-        binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE
-      }
-      // Always set the driver name text
-    /*  binding.cardInput.placementCl.editTextDriverName.setText(driverName)
-      binding.cardInput.placementCl.editAutoCompleteDriverName.visibility = View.GONE
-      binding.cardInput.placementCl.editTextDriverName.visibility = View.VISIBLE*/
-      
-      // Validate based on length >= 2
-    //  val driverName = driverData.driverName ?: ""
-      if(driverName.length >= 2){
-        isValidDriverName = true
-        binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-        Log.i("DriverNameValidation", "Setting isValidDriverName = true")
-      } /*else {
-        isValidDriverName = false
-        // Only show error if user has interacted with the field
-        if(hasUserInteractedWithDriverName) {
-          binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
-          binding.cardInput.placementCl.driverNameError.text = "Please enter valid driver name"
-        } else {
-          binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+        { 
+          val vehicleNumber = binding.cardInput.placementCl.editTextVehicleNumber.text.toString()
+          Log.i("DriverNameValidation", "Vehicle number provider called: '$vehicleNumber'")
+          vehicleNumber
         }
-        Log.i("DriverNameValidation", "Setting isValidDriverName = false")
-      }*/
+    ){ driverData ->
+      val driverName = driverData.driverName ?: ""
+      val currentText = binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString()
       
-      // Populate driver phone number only if available (from autocomplete selection)
-      driverData.driverPhone?.let {
-        binding.cardInput.placementCl.editDriverNumber.setText(it)
-        isValidDriverNumber = validatePhoneNumber(it)
+      Log.i("DriverNameValidation", "Driver data received: '$driverName', current text: '$currentText', length: ${driverName.length}")
+
+      // Only process if this is a meaningful change (not just empty data from filtering)
+      if (driverName.isNotEmpty() || currentText.isNotEmpty()) {
+        // Mark as user interacted only when there's actual text input
+        if (currentText.isNotEmpty()) {
+          hasUserInteractedWithDriverName = true
+        }
+
+        // Validate based on current text length >= 2
+        val textToValidate = if (driverName.isNotEmpty()) driverName else currentText
+        if(textToValidate.length >= 2){
+          isValidDriverName = true
+          binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+          Log.i("DriverNameValidation", "Setting isValidDriverName = true")
+        } else {
+          isValidDriverName = false
+          // Only show error if user has interacted with the field and text is too short
+          if(hasUserInteractedWithDriverName && currentText.isNotEmpty()) {
+            binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
+            binding.cardInput.placementCl.driverNameError.text = "Please enter valid driver name"
+          } else {
+            binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+          }
+          Log.i("DriverNameValidation", "Setting isValidDriverName = false")
+        }
+        
+        // Populate driver phone number only if available (from autocomplete selection)
+        driverData.driverPhone?.let {
+          binding.cardInput.placementCl.editDriverNumber.setText(it)
+          isValidDriverNumber = validatePhoneNumber(it)
+        }
+        
+        // Always call enableSubmitPlacement to update the submit button state
+        enableSubmitPlacement()
+      } else {
+        // Empty data, just update submit button state
+        enableSubmitPlacement()
       }
-      
-      enableSubmitPlacement()
     }
 
-/*    binding.cardInput.placementCl.editAutoCompleteDriverName?.addTextChangedListener(object : TextWatcher {
-      override fun afterTextChanged(s: Editable?) = Unit
-      override fun beforeTextChanged(
-        s: CharSequence?,
-        start: Int,
-        count: Int,
-        after: Int
-      ) = Unit
-
-      override fun onTextChanged(
-        s: CharSequence?,
-        start: Int,
-        before: Int,
-        count: Int
-      ) {
-        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
-          val input = s.trim()
-            .toString()
-          if(input.length>=2){
-            isValidDriverName = true
-            binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-          } else {
-            binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
-            binding.cardInput.placementCl.driverNameError.text ="Please enter valid driver name"
-            isValidDriverName = false
-
-          }
-          enableSubmitPlacement()
-
-        }else{
-
-          isValidDriverName = false
-          enableSubmitPlacement()
-
-        }
-      }
-    })*/
 
     binding.cardInput.placementCl.editDriverNumber?.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) = Unit
@@ -1659,6 +1603,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
     // Contact picker functionality
     binding.cardInput.placementCl.btnContactPicker.setOnClickListener {
+
       val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
       startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
     }
@@ -1682,10 +1627,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   private fun  enableSubmitPlacement(){
     isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
-    val driverNameText = binding.cardInput.placementCl.editTextDriverName.text.toString()
+    val driverNameText = binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString()
     val errorVisibility = if(binding.cardInput.placementCl.driverNameError.visibility == View.VISIBLE) "VISIBLE" else "GONE"
     Log.i("validate", "DriverName: '$driverNameText', length: ${driverNameText.length}, isValidDriverName: $isValidDriverName, isValidVehicleNumber: $isValidVehicleNumber, isValidDriverNumber: $isValidDriverNumber, hasUserInteracted: $hasUserInteractedWithDriverName, errorVisibility: $errorVisibility")
-    if(isValidDriverName&&isValidVehicleNumber&&isValidDriverNumber){
+    if(isValidDriverName&&isValidVehicleNumber&&isValidDriverNumber && !(homePlacementsItemData?.status=="Marked-in")){
       enableSubmitPlcButton()
     }else{
       disableSubmitPlcButton()
@@ -1747,7 +1692,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         try {
           uiUtils.showProgress()
         //  pushMoengageEvent(false)
-          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editTextDriverName.text.toString(), binding.cardInput.placementCl.editDriverNumber.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
+          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString(), binding.cardInput.placementCl.editDriverNumber.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
           viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
         }catch (e:Exception){
           uiUtils.showToast("Something went wrong")
