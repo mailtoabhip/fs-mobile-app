@@ -205,13 +205,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_6dp"
                     android:orientation="horizontal">
-                    <RadioButton
+                    <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/btn_radio_own_truck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="@string/label_own_truck"/>
-                    <RadioButton
+                    <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/btn_radio_market_truck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

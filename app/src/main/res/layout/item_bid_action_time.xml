@@ -93,7 +93,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_revise_bid"
                 android:layout_width="164dp"
                 android:layout_height="40dp"
@@ -110,7 +110,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/placeBidButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

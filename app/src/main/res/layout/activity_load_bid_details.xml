@@ -39,7 +39,22 @@
             android:background="@android:color/white"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/toolbarEndText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:gravity="center"
+                android:textColor="#935F07"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_12sp"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:paddingTop="@dimen/size_4dp"
+                android:paddingBottom="@dimen/size_4dp"
+                android:paddingStart="@dimen/size_8dp"
+                android:paddingEnd="@dimen/size_8dp" />
+        </androidx.appcompat.widget.Toolbar>
 
         <!-- Error container -->
         <include

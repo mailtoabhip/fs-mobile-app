@@ -237,9 +237,9 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
 
   var updateVehicleDetails= MutableLiveData<Boolean>()
 
- /* fun getFacilityAddress() {
-    if(homePlacementsItemData.originCenterCode!=null)
-      compositeDisposable += tpsRepository.getFacilityAddress(homePlacementsItemData.originCenterCode!!)
+  fun getFacilityAddress(originCenterCode:String?) {
+    if(originCenterCode!=null)
+      compositeDisposable += tpsRepository.getFacilityAddress(originCenterCode)
         .onBackground()
         .subscribe { _tRes, error ->
           if (!error && _tRes != null) {
@@ -248,8 +248,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
           }else{ error.handle()
           }
         }
-  }*/
-
+  }
 
   fun updateVehicleDetails(updateVehicleDetailsRequest: UpdateVehicleDetailsRequest) {
     compositeDisposable += tpsRepository.updateVehicleDetails(updateVehicleDetailsRequest)
@@ -307,6 +306,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
     if (transactionBidLiveData.value !is BidDetailsUserBidState_LoadingBids)
       transactionBidLiveData.postValue(BidDetailsUserBidState_LoadingBids())
   }
+
 
 }
 

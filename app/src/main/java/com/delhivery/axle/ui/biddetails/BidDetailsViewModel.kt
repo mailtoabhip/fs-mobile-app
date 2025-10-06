@@ -8,6 +8,7 @@ import com.delhivery.axle.api.repository.*
 import com.delhivery.axle.api.repository.TPSRepository
 import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.api.request.WarehouseRequest
+import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.api.response.WarehouseIndentResponse
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
@@ -551,6 +552,20 @@ class BidDetailsViewModel @Inject constructor(
             }
         }
   }
+    var addressLiveData = MutableLiveData<FacilityAddressResponse>()
+
+    fun getFacilityAddress(originCenterCode:String?) {
+        if(originCenterCode!=null)
+            compositeDisposable += tpsRepository.getFacilityAddress(originCenterCode)
+                .onBackground()
+                .subscribe { _tRes, error ->
+                    if (!error && _tRes != null) {
+                        Log.i("Address", _tRes.toString())
+                        addressLiveData.postValue(_tRes)
+                    }else{ error.handle()
+                    }
+                }
+    }
 
 }
 

@@ -149,8 +149,8 @@ class DelhiveryTrucksAutoEditText(
 
             tvVehicleNumber?.text = getItem(position)
             if(tvVehicleNumber?.text=="Add New Truck"){
-                tvVehicleNumber.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
-                tvVehicleNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context,R.drawable.ic_add),null,null,null)
+                tvVehicleNumber.setTextColor(ContextCompat.getColor(context,R.color.text_blue_v1))
+                tvVehicleNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context,R.drawable.ic_plus_blue),null,null,null)
                 tvVehicleNumber.background =ContextCompat.getDrawable(context,R.drawable.bg_all_round_corner_white)
             }else{
                 tvVehicleNumber?.elevation = 8.0f

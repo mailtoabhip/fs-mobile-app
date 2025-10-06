@@ -52,6 +52,7 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import android.database.Cursor
 import android.net.Uri
 import android.provider.ContactsContract
+import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
 import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
@@ -59,6 +60,7 @@ import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
@@ -213,7 +215,16 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = ""//""Order ID - " + viewModel.transactionId
+    if(homePlacementsItemData?.status== PlacementTypes.Delayed.name){
+      binding.toolbarEndText.visibility = View.VISIBLE
+      binding.toolbarEndText.text =
+        "Delayed"
+      binding.toolbarEndText.background =
+        ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
+    }else{
+      binding.toolbarEndText.visibility = View.GONE
 
+    }
     /* setup live data observers */
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.transactionLiveData.observe(this, TransactionObserver())
@@ -1776,13 +1787,28 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   fun placementInput() {
     binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
     binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-    
+    if(homePlacementsItemData?.loadType==LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType==LoadTypes.intracityRegular.name){
+      viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+      binding.cardInput.routeAddress.visibility = View.VISIBLE
+      binding.cardInput.mapText.visibility = View.VISIBLE
+      binding.cardInput.mapText.setOnClickListener {
+        navigateToMap()
+      }
+    }else{
+      binding.cardInput.routeAddress.visibility = View.GONE
+      binding.cardInput.mapText.visibility = View.GONE
+
+    }
+    viewModel.addressLiveData.observe(this, Observer {
+      binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
+    })
     viewModel.updateVehicleDetails.observe(this, Observer {
       if(it){
         uiUtils.hideProgress()
+        REFRESH_ON_BACK_PLACEMENT = true
         when(homePlacementsItemData?.loadType){
           LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
-          else -> showSuccessEditDialog()
+          else -> showSuccessEditDialog("Submitted successfully!")
         }
       }else{
         uiUtils.hideProgress()
@@ -1952,7 +1978,16 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
     }
   }
-
+  private fun navigateToMap(){
+    try {
+      val gmmIntentUri = Uri.parse("geo:0,0?q=${homePlacementsItemData?.originCenterLat},${homePlacementsItemData?.originCenterLong}"+"(" + homePlacementsItemData?.originCenterName+ ")")
+      val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+      mapIntent.setPackage("com.google.android.apps.maps")
+      startActivity(mapIntent)
+    } catch (e: Exception) {
+      Toast.makeText(this, "Unable to open map", Toast.LENGTH_SHORT).show()
+    }
+  }
   private fun showAddTruckBottomSheet() {
     val dialog = AddTruckBottomSheetDialog(
       this,
@@ -1960,6 +1995,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       userPrefs,
       autoCompleteUtils,
       onTruckAdded = { truckNumber ->
+        showSuccessEditDialog("Truck added successfully!")
         binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
@@ -2108,11 +2144,12 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       englishVideoLink = englishVideoLink,
       dialogInterface = object : DetailsSubmittedSuccessInterface {
         override fun onDialogDismissed() {
-          Log.d("onDialogDismissed===>>>","Dialog dismissed")
+          REFRESH_ON_BACK_PLACEMENT = true
+        /*  Log.d("onDialogDismissed===>>>","Dialog dismissed")
           Handler(Looper.myLooper()!!).postDelayed({
             REFRESH_ON_BACK_PLACEMENT = true
             finish()
-          }, 100)
+          }, 100)*/
         }
       }
     )
@@ -2146,20 +2183,26 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     }
   }
 
-  private fun showSuccessEditDialog(){
+  private fun showSuccessEditDialog(msg:String){
     val dialog = Dialog(this)
     val bindingDialog = DialogPlacementDetailsEditBinding.inflate(layoutInflater)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(bindingDialog.root)
+    bindingDialog.titleText.text = msg
+    bindingDialog.closeBtn.setOnClickListener {
+      dialog.dismiss()
+    }
     if(!this.isFinishing)
       dialog.show()
-    if(!this.isFinishing)
-      Handler(Looper.myLooper()!!).postDelayed({
-        dialog.dismiss()
-        REFRESH_ON_BACK_PLACEMENT = true
-        finish()
-      }, 2000)
+//    if(!this.isFinishing)
+//      Handler(Looper.myLooper()!!).postDelayed({
+//        dialog.dismiss()
+//        REFRESH_ON_BACK_PLACEMENT = true
+//        finish()
+//      }, 2000)
     dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setGravity(Gravity.BOTTOM)
+
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

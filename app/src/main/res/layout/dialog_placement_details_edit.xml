@@ -3,26 +3,43 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:paddingTop="@dimen/size_64dp"
-        android:paddingBottom="@dimen/size_64dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:background="@drawable/bg_all_round_corner_white"
+        android:background="@drawable/bg_bottom_dialog"
         android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/size_24dp"
+        android:paddingBottom="@dimen/size_32dp"
+        android:layout_height="wrap_content">
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/close_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_alignParentEnd="true"
+            app:srcCompat="@drawable/ic_close_icon" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ic_tick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/close_btn"
             android:padding="@dimen/size_16dp"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/circle_check" />
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/ic_submitted_success" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/your_placement_details_are_updated"
+            android:text="Submitted successfully!"
             android:textColor="@color/heading_black"
             android:layout_marginTop="@dimen/size_6dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/ic_tick"
             android:textSize="@dimen/text_20sp"
             android:textStyle="bold" />
+    </RelativeLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

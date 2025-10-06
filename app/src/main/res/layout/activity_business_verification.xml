@@ -233,7 +233,7 @@
                 android:layout_marginBottom="@dimen/size_8dp"
                 bind:layout_constraintTop_toBottomOf="@+id/verification_desc"
                 android:layout_height="wrap_content">
-                <RadioButton
+                <androidx.appcompat.widget.AppCompatRadioButton
                     android:id="@+id/text_truck"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/edit_text_height"
@@ -248,7 +248,7 @@
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
-                <RadioButton
+                <androidx.appcompat.widget.AppCompatRadioButton
                     android:id="@+id/text_LR"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"

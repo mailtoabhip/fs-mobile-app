@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
+import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DELAYED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
@@ -113,6 +114,9 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
             fragmentSetupTrace?.stop()
             isFirstResume = false
         }
+        if(REFRESH_ON_BACK_PLACEMENT){
+            refreshData()
+        }
     }
 
     private fun refreshData() {
@@ -150,14 +154,14 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
                 )
 
                 userPrefs.setPreviousScreen(this.javaClass.name)
-                if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name){
+                if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name ||data.loadType==LoadTypes.orionFixed.name){
                     val transactionId = data.transactionId
                     val context = this.context
                     if (transactionId != null && context != null) {
                         val intent = bidDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
-                }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ||data.loadType==LoadTypes.orionFixed.name){
+                }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ){
                     val transactionId = data.transactionId
                     val context = this.context
                     if (transactionId != null && context != null) {

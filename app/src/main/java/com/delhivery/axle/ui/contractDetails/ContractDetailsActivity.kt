@@ -96,8 +96,12 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.math.abs
 import android.database.Cursor
+import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
+import android.view.WindowManager
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.google.gson.Gson
@@ -612,6 +616,17 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = ""//""Order ID - " + viewModel.transactionId
+    if(homePlacementsItemData?.status==PlacementTypes.Delayed.name){
+      binding.toolbarEndText.visibility = View.VISIBLE
+      binding.toolbarEndText.text =
+        "Delayed"
+      binding.toolbarEndText.background =
+        ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
+    }else{
+      binding.toolbarEndText.visibility = View.GONE
+
+    }
+
     /* setup live data observers */
     viewModel.progressLiveData.observe(this, ProgressObserver())
     viewModel.transactionLiveData.observe(this, TransactionObserver())
@@ -1419,8 +1434,25 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
    }*/
   fun placementInput(){
     binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
+    if(homePlacementsItemData?.loadType==LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType==LoadTypes.intracityRegular.name){
+      viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+      binding.cardInput.routeAddress.visibility = View.VISIBLE
+      binding.cardInput.mapText.visibility = View.VISIBLE
+      binding.cardInput.mapText.setOnClickListener {
+        //navigateToMap()
+        showSuccessEditDialog("Truck added successfully!")
+      }
+
+    }else{
+      binding.cardInput.routeAddress.visibility = View.GONE
+      binding.cardInput.mapText.visibility = View.GONE
+    }
+    viewModel.addressLiveData.observe(this, Observer {
+      binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
+    })
     viewModel.updateVehicleDetails.observe(this, Observer {
       if(it){
+        REFRESH_ON_BACK_PLACEMENT = true
         uiUtils.hideProgress()
        // pushMoengageEvent(true)
         //show newly added success dialog incase of adhoc intracity only
@@ -1428,7 +1460,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
 
           LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
 
-          else -> showSuccessEditDialog()
+          else -> showSuccessEditDialog("Submitted successfully!")
         }
 
       }else{
@@ -1598,6 +1630,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       userPrefs,
       autoCompleteUtils,
       onTruckAdded = { truckNumber ->
+        showSuccessEditDialog("Truck added successfully!")
         // Populate the vehicle number field with the newly added truck
         binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
@@ -1814,12 +1847,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       englishVideoLink = englishVideoLink,
       dialogInterface = object : DetailsSubmittedSuccessInterface {
         override fun onDialogDismissed() {
+          REFRESH_ON_BACK_PLACEMENT = true
           // Handle dialog dismissal if needed
-          Log.d("onDialogDismissed===>>>","Dialog dismissed")
-          Handler(Looper.myLooper()!!).postDelayed({
-            REFRESH_ON_BACK_PLACEMENT = true
-            finish()
-          }, 100)
+//          Log.d("onDialogDismissed===>>>","Dialog dismissed")
+//          Handler(Looper.myLooper()!!).postDelayed({
+//            REFRESH_ON_BACK_PLACEMENT = true
+//            finish()
+//          }, 100)
         }
       }
     )
@@ -1843,6 +1877,16 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
   }
 
+  private fun navigateToMap(){
+    try {
+      val gmmIntentUri = Uri.parse("geo:0,0?q=${homePlacementsItemData?.originCenterLat},${homePlacementsItemData?.originCenterLong}"+"(" + homePlacementsItemData?.originCenterName+ ")")
+      val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+      mapIntent.setPackage("com.google.android.apps.maps")
+      startActivity(mapIntent)
+    } catch (e: Exception) {
+      Toast.makeText(this, "Unable to open map", Toast.LENGTH_SHORT).show()
+    }
+  }
   /**
    * Format reporting time from placement data
    */
@@ -1862,21 +1906,32 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
   }
 
-  private fun showSuccessEditDialog(){
+  private fun showSuccessEditDialog(msg:String){
 
     val dialog = Dialog(this)
     val bindingDialog= DialogPlacementDetailsEditBinding.inflate(layoutInflater)
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(bindingDialog.root)
+    bindingDialog.titleText.text = msg
+    bindingDialog.closeBtn.setOnClickListener {
+      dialog.dismiss()
+    }
     if(!this.isFinishing)
       dialog.show()
-    if(!this.isFinishing)
+  /*  if(!this.isFinishing)
       Handler(Looper.myLooper()!!).postDelayed({
         dialog.dismiss()
         REFRESH_ON_BACK_PLACEMENT = true
         finish()
-      }, 2000)
+      }, 2000)*/
     dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // transparent bg for rounded corners
+    dialog.window!!.setGravity(Gravity.BOTTOM)
+    window.attributes.windowAnimations = R.style.DialogAnimation
+    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND) // optional: remove gray dim if unwanted
+    window.decorView.setPadding(0, 0, 0, 0)
+
+
   }
 
   override fun bidPlacedSuccess(success: Boolean) {

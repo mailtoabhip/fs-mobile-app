@@ -25,7 +25,7 @@
           app:srcCompat="@drawable/ic_vector_gst"
           android:layout_alignParentStart="true"
           android:layout_height="wrap_content"/>
-      <RadioButton
+      <androidx.appcompat.widget.AppCompatRadioButton
           android:layout_width="wrap_content"
           android:id="@+id/radioGst"
           android:layout_marginEnd="@dimen/size_16dp"
