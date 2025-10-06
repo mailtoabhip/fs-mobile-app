@@ -114,7 +114,16 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
         )
         if (item.data.loadType == LoadTypes.orionFixed.name || item.data.loadType == LoadTypes.orionSpot.name || item.data.loadType == LoadTypes.ftlRegular.name || item.data.loadType == LoadTypes.ftlAdhoc.name) {
 // Arrow as inline image
-        val arrowDrawable =
+
+            val arrowStart = spannable.length
+            spannable.append(" ➔ ")
+            spannable.setSpan(
+                StyleSpan(Typeface.BOLD),
+                arrowStart,
+                spannable.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+    /*    val arrowDrawable =
             ContextCompat.getDrawable(context, R.drawable.ic_arrow_forward_blue)
         arrowDrawable?.let { drawable ->
             val textSize = binding.originDestination.originDestinationText.textSize.toInt()
@@ -128,8 +137,7 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
                 arrowStart + 1,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-        }
-        spannable.append(" ")
+        }*/
 
 // Destination text (black, bold)
         val destStart = spannable.length
