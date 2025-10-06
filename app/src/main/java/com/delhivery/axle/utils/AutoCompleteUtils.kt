@@ -105,7 +105,12 @@ class AutoCompleteUtils @Inject constructor(
                 ?.subscribe { _res, _err ->
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
-                            val drivers = res.recommendedDrivers ?: emptyList()
+                            val test1 = DriverDataResponse("Rahul", "9675435502")
+                            val test2 = DriverDataResponse("Rajat", "9898779988")
+                            val arrayListTest = ArrayList<DriverDataResponse>()
+                            arrayListTest.add(test1)
+                            arrayListTest.add(test2)
+                            val drivers = arrayListTest
                             val currentQuery = editText.text.toString()
                             
                             // Filter drivers by current query
@@ -340,7 +345,12 @@ class AutoCompleteUtils @Inject constructor(
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
                             val arrayList = ArrayList<DriverDataResponse>()
-                            val drivers = res.recommendedDrivers ?: emptyList()
+                            val test1 = DriverDataResponse("Rahul", "9675435502")
+                            val test2 = DriverDataResponse("Rajat", "9898779988")
+                            val arrayListTest = ArrayList<DriverDataResponse>()
+                            arrayListTest.add(test1)
+                            arrayListTest.add(test2)
+                            val drivers = arrayListTest
                             for(item in drivers)
                                 arrayList.add(item)
                            // arrayList.add("Add New Truck")
@@ -384,7 +394,12 @@ class AutoCompleteUtils @Inject constructor(
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
                             val arrayList = ArrayList<DriverDataResponse>()
-                            val drivers = res.recommendedDrivers ?: emptyList()
+                            val test1 = DriverDataResponse("Rahul", "9675435502")
+                            val test2 = DriverDataResponse("Rajat", "9898779988")
+                            val arrayListTest = ArrayList<DriverDataResponse>()
+                            arrayListTest.add(test1)
+                            arrayListTest.add(test2)
+                            val drivers =  arrayListTest
                             // Filter drivers by name query (case insensitive)
                             for(item in drivers) {
                                 if(item.driverName?.lowercase()?.contains(driverNameQuery.lowercase()) == true) {

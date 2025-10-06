@@ -153,7 +153,7 @@ class AddTruckBottomSheetDialog(
         viewModel.addTruckLiveData.observe(context as DaggerAppCompatActivity, Observer {
             if (it == true) {
                 hideProgress()
-                Toast.makeText(context, "Truck added successfully", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(context, "Truck added successfully", Toast.LENGTH_SHORT).show()
                 onTruckAdded(viewModel.truckNumber)
                 dismiss()
             } else if (it == false) {
@@ -170,7 +170,7 @@ class AddTruckBottomSheetDialog(
     private fun showProgress(message: String = "Adding truck...") {
         binding.progressBar.visibility = View.VISIBLE
         binding.btnAddTruck.isEnabled = false
-        binding.btnAddTruck.text = message
+        binding.btnAddTruck.text = "Add Truck"
     }
 
     private fun hideProgress() {

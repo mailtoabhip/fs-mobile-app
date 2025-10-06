@@ -1439,8 +1439,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       binding.cardInput.routeAddress.visibility = View.VISIBLE
       binding.cardInput.mapText.visibility = View.VISIBLE
       binding.cardInput.mapText.setOnClickListener {
-        //navigateToMap()
-        showSuccessEditDialog("Truck added successfully!")
+        navigateToMap()
       }
 
     }else{
@@ -1571,11 +1570,16 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         binding.cardInput.placementCl.editAutoCompleteDriverName,
         { binding.cardInput.placementCl.editTextVehicleNumber.text.toString() }
     ){ driverData ->
+
+      driverData.driverName?.let {
+        isValidDriverName = it.length>=2
+      }
       // Populate phone number when driver is selected from dropdown
       driverData.driverPhone?.let {
         binding.cardInput.placementCl.editDriverNumber.setText(it)
         isValidDriverNumber = validatePhoneNumber(it)
       }
+      enableSubmitPlacement()
     }
 
 
@@ -1643,13 +1647,13 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   private fun  enableSubmitPlacement(){
     // DEBOUNCE PROTECTION - Prevent rapid calls to enableSubmitPlacement (reduced from 500ms to 100ms)
-    val currentTime = System.currentTimeMillis()
+   /* val currentTime = System.currentTimeMillis()
     val timeSinceLastCall = currentTime - lastEnableSubmitTime
     if (timeSinceLastCall < 100) { // Less than 100ms since last call
       Log.i("validate", "Skipping enableSubmitPlacement - too frequent (${timeSinceLastCall}ms since last)")
       return
     }
-    lastEnableSubmitTime = currentTime
+    lastEnableSubmitTime = currentTime*/
     
     // Re-validate all conditions
     isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
@@ -1924,14 +1928,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         REFRESH_ON_BACK_PLACEMENT = true
         finish()
       }, 2000)*/
-    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // transparent bg for rounded corners
-    dialog.window!!.setGravity(Gravity.BOTTOM)
-    window.attributes.windowAnimations = R.style.DialogAnimation
-    window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND) // optional: remove gray dim if unwanted
-    window.decorView.setPadding(0, 0, 0, 0)
-
-
+    dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+    dialog.window?.setGravity(Gravity.BOTTOM)
   }
 
   override fun bidPlacedSuccess(success: Boolean) {

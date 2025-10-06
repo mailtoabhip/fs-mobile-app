@@ -46,6 +46,8 @@ data class HomePlacementsItemData(
     @SerializedName("duration") var duration:Float?=null,
     @SerializedName("transaction_id") var transactionId: String?,
     @SerializedName("ticket_flexible_contract_id") var ticketFlexibleContractId: String?=null,
+    @SerializedName("pickup_location_coordinates") var pickupLocationCoordinates: LatLong?=null,
+    @SerializedName("drop_location_coordinates") var dropLocationCoordinates: LatLong?=null,
     var loadType:String?=null,
     var detailVisible:Boolean= false
 
@@ -168,7 +170,10 @@ data class HaltCenters(
         ):Serializable
 
 
-
+data class LatLong(
+    @SerializedName("lat") val latitude: String?,
+    @SerializedName("lon") val longitude: String?,
+    ):Serializable
 
 
 

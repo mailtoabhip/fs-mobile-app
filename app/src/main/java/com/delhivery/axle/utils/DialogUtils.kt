@@ -782,8 +782,19 @@ Thank you!"""
         }
         val reportingTime: String = itemData.onlyFormatReportingTime()?:""
         val vehicleAndType: String = if(itemData.vehicleNumber!=null){itemData.vehicleNumber+" | "+ itemData.vehicleType}else{itemData.vehicleType?:""}
-        val origin = "${itemData.originCenterLat},${itemData.originCenterLong}"
-        val destination = "${itemData.destinationCenterLat},${itemData.destinationCenterLong}"
+        val origin = if(itemData.loadType == LoadTypes.orionFixed.name || itemData.loadType == LoadTypes.orionSpot.name){
+            if(itemData.pickupLocationCoordinates!=null && itemData.dropLocationCoordinates!=null){
+                "${itemData.pickupLocationCoordinates?.latitude},${itemData.pickupLocationCoordinates?.longitude}"
+            }else{
+                ""
+            }
+        }else "${itemData.originCenterLat},${itemData.originCenterLong}"
+        val destination = if(itemData.loadType == LoadTypes.orionFixed.name || itemData.loadType == LoadTypes.orionSpot.name){
+            if(itemData.pickupLocationCoordinates!=null && itemData.dropLocationCoordinates!=null){
+                "${itemData.dropLocationCoordinates?.latitude},${itemData.dropLocationCoordinates?.longitude}"
+            }else{
+                ""
+            }} else "${itemData.destinationCenterLat},${itemData.destinationCenterLong}"
 
         val waypoints = itemData.haltCenters
             ?.drop(1)                       // remove origin
@@ -792,7 +803,9 @@ Thank you!"""
             ?.joinToString("|") { "${it.latitude},${it.longitude}" }
             .orEmpty()
 // Suppose haltCenters is a list of lat/longs
-        val routeMapLink=  if(!intercity){
+        val routeMapLink=  if(origin.isEmpty() || destination.isEmpty()){
+            ""
+        }else if(!intercity){
             "📌 View Site Location on Map: "+"https://www.google.com/maps/dir/?api=1" +
             "&origin=$origin"
         }else if(waypoints.isNotEmpty()){

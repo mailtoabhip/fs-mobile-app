@@ -174,7 +174,9 @@ class DelhiveryDriverNameAutoEditText(
             showDropDown()
         }
     }
-    
+    fun hideDropdownIfNeeded() {
+        isSelectionInProgress = true
+    }
     // Check if selection is in progress
     fun isSelectionInProgress(): Boolean {
         return isSelectionInProgress
