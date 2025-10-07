@@ -54,6 +54,7 @@
                 android:drawableStart="@drawable/ic_navigate"
                 android:drawablePadding="@dimen/size_4dp"
                 android:textColor="#4657B9"
+                android:visibility="gone"
                 android:layout_marginEnd="@dimen/size_12dp"
                 android:text="@string/view_on_map_html"
                 />
@@ -67,6 +68,7 @@
             android:paddingStart="@dimen/size_12dp"
             android:paddingEnd="@dimen/size_12dp"
             android:textColor="#505361"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/routeTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
