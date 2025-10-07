@@ -105,12 +105,12 @@ class AutoCompleteUtils @Inject constructor(
                 ?.subscribe { _res, _err ->
                     if (!_err && _res != null) {
                         _res.responseData?.let { res ->
-                            val test1 = DriverDataResponse("Rahul", "9675435502")
+                            /*val test1 = DriverDataResponse("Rahul", "9675435502")
                             val test2 = DriverDataResponse("Rajat", "9898779988")
                             val arrayListTest = ArrayList<DriverDataResponse>()
                             arrayListTest.add(test1)
-                            arrayListTest.add(test2)
-                            val drivers = arrayListTest
+                            arrayListTest.add(test2)*/
+                            val drivers = res.recommendedDrivers ?: emptyList()
                             val currentQuery = editText.text.toString()
                             
                             // Filter drivers by current query

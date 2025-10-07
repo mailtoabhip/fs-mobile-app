@@ -1549,7 +1549,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
     homePlacementsItemData?.driverPhone?.let {
       isValidDriverNumber = true
-      val trimmedNumber = it?.replace("+91", "")?.trim()
+      val trimmedNumber = it?.replace("+91", "")?.replaceFirst("^0+".toRegex(), "")?.trim()
       binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
     }
     

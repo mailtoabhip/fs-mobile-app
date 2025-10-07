@@ -2217,7 +2217,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
                 val numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                 if (numberIndex != -1) {
                   val phoneNumber = c.getString(numberIndex)
-                  val trimmedNumber = phoneNumber?.replace("+91", "")?.trim()
+                  val trimmedNumber = phoneNumber?.replace("+91", "")?.replaceFirst("^0+".toRegex(), "")?.trim()
                   binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
                 }
               }
