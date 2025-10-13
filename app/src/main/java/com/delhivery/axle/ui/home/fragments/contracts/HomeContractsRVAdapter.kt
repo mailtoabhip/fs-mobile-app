@@ -28,7 +28,15 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
 
   override fun getItemId(position: Int): Long = position.toLong()
 
-  override fun getItemViewType(position: Int) = items[position].type.typeId
+  override fun getItemViewType(position: Int): Int {
+    val item = items[position]
+    // Check if it's a contract request item and if it's intracity
+    return if (item is HomeContractsRequestItem && item.data.isItIntraCityContract()) {
+      HomeContractsRVAdapterItemType.IntracityContracts.typeId
+    } else {
+      item.type.typeId
+    }
+  }
 
   override fun getBinding(
     inflater: LayoutInflater,
@@ -41,7 +49,8 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Filters -> ViewHomeContractsFilterItemBinding.inflate(inflater, parent, false)
     IntracityFilters-> ViewHomeContractsIntracityFilterItemBinding.inflate(inflater, parent, false)
-    else -> CardContractsIntercityTripsBidsBinding.inflate(inflater, parent, false)  // Use card_contracts_intercity_trips_bids layout
+    HomeContractsRVAdapterItemType.IntracityContracts -> CardsContractsIntracityTripsBidsBinding.inflate(inflater, parent, false)  // Use intracity layout
+    else -> CardContractsIntercityTripsBidsBinding.inflate(inflater, parent, false)  // Use intercity layout
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
@@ -51,7 +60,8 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
     is ViewTimeOutItemBinding -> HomeContractsTimeOutItemVH(binding)
     is ViewHomeContractsFilterItemBinding -> HomeContractsFilterItemVH(binding)
     is ViewHomeContractsIntracityFilterItemBinding -> HomeContractsIntracityFilterItemVH(binding)
-    is CardContractsIntercityTripsBidsBinding -> HomeContractsRequestItemVH(binding)
+    is CardsContractsIntracityTripsBidsBinding -> HomeContractsIntracityRequestItemVH(binding)  // Intracity contracts
+    is CardContractsIntercityTripsBidsBinding -> HomeContractsRequestItemVH(binding)  // Intercity contracts
     else -> HomeContractsRequestItemVH(binding as CardContractsIntercityTripsBidsBinding)
   }
 
@@ -61,7 +71,8 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
   ) {
     when (holder) {
       is HomeContractsSearchItemVH -> holder.bind(item as HomeContractsSearchItem, _interface)
-      is HomeContractsRequestItemVH -> holder.bind(item as HomeContractsRequestItem, _interface)
+      is HomeContractsIntracityRequestItemVH -> holder.bind(item as HomeContractsRequestItem, _interface)  // Intracity contracts
+      is HomeContractsRequestItemVH -> holder.bind(item as HomeContractsRequestItem, _interface)  // Intercity contracts
       is HomeContractsProgressItemVH -> holder.bind(item as HomeContractsProgressItem, _interface)
       is HomeContractsWarningItemVH -> holder.bind(item as HomeContractsWarningItem, _interface)
       is HomeContractsTimeOutItemVH -> holder.bind(item as HomeContractsTimeoutItem, _interface)
@@ -110,7 +121,9 @@ class HomeContractsRVAdapter (private val _interface: HomeContractsRVAdapterInte
 
   override fun onViewRecycled(holder: BaseViewHolder<*>) {
     super.onViewRecycled(holder)
-    if(holder is HomeContractsRequestItemVH)
-      holder.stopCounter()
+    when (holder) {
+      is HomeContractsRequestItemVH -> holder.stopCounter()
+      is HomeContractsIntracityRequestItemVH -> holder.stopCounter()
+    }
   }
 }

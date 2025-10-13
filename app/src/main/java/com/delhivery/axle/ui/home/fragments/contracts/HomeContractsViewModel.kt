@@ -135,13 +135,26 @@ class HomeContractsViewModel@Inject constructor(
         hasMoreData = _res.searchAfterTransactionId!= null && _res.searchAfterCreationTime !=null && _res.total!=0
         allActiveFetched = _res.allActiveFetched?:false
         parallelTrace.start()
+        // Apply client-side vehicle filtering if needed
+        val filteredTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
+          val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
+          _res.transactions.filter { transaction ->
+            transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
+          }
+        } else {
+          _res.transactions
+        }
+        
+        // Update the response with filtered transactions
+        val filteredRes = _res.copy(transactions = filteredTransactions)
+        
         Single.zip(
-          bidsRepository.bidsForLoads(_res.transactions,true).subscribeOn(Schedulers.io()),
-          bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
+          bidsRepository.bidsForLoads(filteredTransactions,true).subscribeOn(Schedulers.io()),
+          bidsRepository.bulkLowestBidsForLoads(filteredTransactions).subscribeOn(Schedulers.io()),
           transactionsRepository.fetchContractsSummaryCount().subscribeOn(Schedulers.io()),
           Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse,
               Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse>> { t1, t2,t3 ->
-            Quintuple(t1.first, t1.second, t2.second,t3,_res)
+            Quintuple(t1.first, t1.second, t2.second,t3,filteredRes)
           })
       }
       .onBackground()

@@ -4,6 +4,7 @@
     >
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="request"
             type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
@@ -13,8 +14,11 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/size_8dp">
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
+        app:cardCornerRadius="@dimen/size_8dp"
+        android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_intercity"
@@ -40,7 +44,7 @@
                     tools:text ="Closes in 2 hrs 15 min"
                     android:textColor="#ED4136"
                     android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.formattedBiddingEndTime()}"
+                    android:text="@{request.formattedLoadAndContractBidEndingTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
 
@@ -52,7 +56,6 @@
                     android:paddingEnd="@dimen/size_8dp"
                     android:orientation="horizontal"
                     android:background="@drawable/bg_load_type_100dp_corner"
-                    android:backgroundTint="#F5EFFE"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/closingTime"
                     app:layout_constraintBottom_toBottomOf="@id/closingTime">
@@ -61,13 +64,43 @@
                         android:id="@+id/demand_load_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_delhivery_bolt"
-                        android:text="Delhivery Load"
                         android:textStyle="bold"
-                        android:drawablePadding="5.5dp"
-                        android:drawableTint="#7C3AED"
-                        android:textColor="#7C3AED"/>
+                        android:drawableStart="@drawable/ic_truck_small"
+                        android:drawablePadding="@dimen/size_2dp"
+                        tools:text="Delhivery Load"/>
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_live_bidding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/size_20dp"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/size_2dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/size_2dp"
+                    android:visibility="@{request.isItContractAndLiveBidding()}"
+                    android:background="@drawable/bg_chip_pink"
+                    app:layout_constraintEnd_toStartOf="@id/load_type_layout"
+                    app:layout_constraintTop_toTopOf="@id/closingTime"
+                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="@dimen/size_8dp"
+                        android:background="@drawable/bg_circle_pink" />
+
+                    <TextView
+                        android:id="@+id/tv_live_bidding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Live"
+                        android:paddingEnd="@dimen/size_4dp"
+                        android:textSize="12sp"
+                        android:textColor="#ED4136"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -88,7 +121,6 @@
                         android:text="@{request.originCityName()}"
                         tools:text ="Navi Mumbai"
                         android:textColor="#121A31"
-                        android:maxWidth="150dp"
                         android:maxLines="2"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -126,14 +158,33 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="~1000km/month"
+                    android:text="@{request.intracityKms()}"
+                    android:textColor="#505361"
+                    android:visibility="gone"
+                    tools:visibility="@{request.isItContract() ? View.VISIBLE : View.GONE}"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:drawableStart="@drawable/route"
+                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintTop_toTopOf="@id/truckInfo"
+                    app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/paymentType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Advance Payment"
-                    android:text="@{request.getPaymentModeDisplay}"
+                    android:text="@{request.getPaymentModeDisplay()}"
                     android:textColor="#505361"
+                    android:visibility="@{request.isItContract() ? View.GONE : View.VISIBLE}"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:paddingTop="@dimen/size_4dp"
                     android:drawableStart="@drawable/money_bill_wave"
@@ -149,6 +200,7 @@
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="(50%)"
                     android:textColor="#505361"
+                    android:visibility="@{request.isItContract() ? View.GONE : View.VISIBLE}"
                     android:layout_marginStart="@dimen/size_2dp"
                     android:paddingTop="@dimen/size_4dp"
                     android:text="@{request.getAdvancePaymentPercentage()}"
@@ -157,19 +209,34 @@
                     app:layout_constraintBottom_toBottomOf="@id/paymentType" />
 
                 <include
+                    android:id="@+id/strong_BidCard"
+                    layout="@layout/card_strong_bids_v2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:layout_marginStart="@dimen/size_1dp"
+                    android:layout_marginEnd="@dimen/size_1dp"
+                    app:layout_constraintTop_toBottomOf="@+id/truckInfo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:request="@{request}" />
+
+                <include
                     android:id="@+id/container_error"
-                    layout="@layout/item_loads_itracity_bottom_button"
+                    layout="@layout/common_item_place_bid_price_button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:layout_gravity="center_vertical"
-                    app:layout_constraintTop_toBottomOf="@id/truckInfo"
+                    app:layout_constraintTop_toBottomOf="@id/strong_BidCard"
+                    app:request="@{request}"
                     tools:visibility="visible"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
+
     </androidx.cardview.widget.CardView>
 
 </layout>

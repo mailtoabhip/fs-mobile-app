@@ -26,7 +26,8 @@ enum class HomeContractsRVAdapterItemType(val typeId: Int) {
   Warning(3),
   Timeout(4),
   Filters(5),
-  IntracityFilters(6);
+  IntracityFilters(6),
+  IntracityContracts(7);  // New type for intracity contracts
 
   companion object {
     /**

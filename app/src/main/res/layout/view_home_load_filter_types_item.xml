@@ -13,6 +13,8 @@
   <HorizontalScrollView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_12dp"
+      android:layout_marginEnd="@dimen/size_12dp"
       android:scrollbars="none">
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_marginTop="@dimen/size_4dp"

@@ -42,7 +42,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/place_bid_button"
             android:layout_width="150dp"
-            android:layout_height="36dp"
+            android:layout_height="40dp"
             android:background="@drawable/bg_place_bid_radius_6px"
             android:clickable="true"
             android:focusable="true"
@@ -65,23 +65,24 @@
                 android:textStyle="bold" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <!--        <Button-->
-        <!--            android:id="@+id/placeBidButton"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:focusable="true"-->
-        <!--            android:text="Place Bid"-->
-        <!--            android:backgroundTint="#000000"-->
-        <!--            android:textColor="@android:color/white"-->
-        <!--            android:background="@drawable/bg_place_bid"-->
-        <!--            android:drawablePadding="8dp"-->
-        <!--            android:textAllCaps="false"-->
-        <!--            android:clickable="true"-->
-        <!--            android:visibility="visible"-->
-        <!--            android:textSize="@dimen/text_14sp"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            android:layout_marginTop="16dp" />-->
+        <Button
+            android:id="@+id/placeBidButton_maxWidth"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_40dp"
+            tools:text="Accept For ₹3,000"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="#000000"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_place_bid"
+            android:drawablePadding="8dp"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="@dimen/size_16dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

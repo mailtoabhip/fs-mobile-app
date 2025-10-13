@@ -33,6 +33,7 @@
             android:textColor="#121A31"
             android:textStyle="bold"
             tools:text="₹48,000"
+            android:text="@{request.getFormattedBidAmountWhole()}"
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/label_reporting"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,8 +41,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/place_bid_button"
-            android:layout_width="150dp"
-            android:layout_height="36dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:paddingStart="@dimen/size_18dp"
+            android:paddingEnd="@dimen/size_18dp"
             android:background="@drawable/bg_place_bid_radius_6px"
             android:clickable="true"
             android:focusable="true"
@@ -66,6 +69,28 @@
                 android:textStyle="bold" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/placeBidButton_maxWidth"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:text="Place Bid"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="#000000"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_place_bid"
+            android:drawablePadding="8dp"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="@dimen/size_16dp"/>
+
+
         <!--        <Button-->
         <!--            android:id="@+id/placeBidButton"-->
         <!--            android:layout_width="wrap_content"-->

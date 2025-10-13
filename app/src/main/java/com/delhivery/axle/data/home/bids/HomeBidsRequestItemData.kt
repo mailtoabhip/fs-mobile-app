@@ -1,17 +1,12 @@
 package com.delhivery.axle.data.home.bids
 
-import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
-import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
@@ -37,7 +32,6 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.LoggingMXBean
 
 /**
  *
@@ -152,6 +146,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("intracity_lob")val intracityLob:String?=null,
   @SerializedName("payment_mode")var paymentMode:String?=null,
   @SerializedName("advance_percentage")var advancePercentage:String?=null,
+  @SerializedName("bid_suggestion")var bidSuggestion: Boolean = false,
+  @SerializedName("message")var suggestedBidMessage: String? = null,
+
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -178,6 +175,42 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  /**
+   * Returns bid suggestion availability
+   * Returns true if bid suggestion data is available
+   */
+  fun getBidSuggestionValue() : Boolean {
+    return bidSuggestion
+  }
+
+  /**
+   * Returns the suggested message if there is any
+   * Example: "Competition is tough! Lower your price by ₹20 to win the load"
+   */
+  fun getSuggestedBidMessageValue() : String {
+    return suggestedBidMessage ?: ""
+  }
+
+  /**
+   * Returns the suggested bid amount if there is any
+   */
+  fun getSuggestedBidAmount() : Int? {
+    return transactionBid?.suggestion?.suggestedAmount
+  }
+
+  /**
+   * Returns formatted suggested bid amount with currency
+   * Example: "₹1,25,000"
+   */
+  fun getFormattedSuggestedBidAmount(): String {
+    val suggestedAmount = transactionBid?.suggestion?.suggestedAmount
+    return if (suggestedAmount != null && suggestedAmount > 0) {
+      "₹${StringUtils.formatAmount(suggestedAmount.toDouble())}"
+    } else {
+      ""
+    }
+  }
+
   /****
    *
    * get Ticket Id
@@ -200,7 +233,7 @@ data class HomeBidsRequestItemData(
    */
   fun getAdvancePaymentPercentage(): String {
     return if (advancePercentage != null) {
-      "${advancePercentage}%"
+      "(${advancePercentage}%)"
     } else {
       ""
     }
@@ -439,6 +472,20 @@ data class HomeBidsRequestItemData(
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
   /**
+   * @return formatted origin pincode and state
+   */
+  fun originPincodeState(): String {
+    val pincode = loadingLocationPincode
+    val state = originStateName()
+    return when {
+      !pincode.isNullOrEmpty() && state.isNotEmpty() -> "$pincode, $state"
+      !pincode.isNullOrEmpty() -> pincode
+      state.isNotEmpty() -> state
+      else -> ""
+    }
+  }
+
+  /**
    * @return formatted destination state name
    */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
@@ -470,9 +517,9 @@ data class HomeBidsRequestItemData(
     destinationStateName()
   }
 
-  fun originCityState() = "${originCityName()} (${originStateName()})"
+  fun originCityState() = "${originCityName()} \n(${originStateName()})"
 
-  fun destinationCityState() = "${destinationCityName()} (${destinationStateName()})"
+  fun destinationCityState() = "${destinationCityName()} \n(${destinationStateName()})"
 
   /**
    * @return formatted origin district, city, state
@@ -1035,7 +1082,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if speed is express
    */
-  fun isExpress() = speed?.compareTo("EXP") == 0
+  fun isExpress() = speed == "EXP"
 
   /**
    * @return expressText with tat

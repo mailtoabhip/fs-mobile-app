@@ -13,7 +13,10 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cv"
         android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
         android:layout_marginTop="@dimen/size_16dp"
+        app:cardCornerRadius="@dimen/size_8dp"
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
@@ -40,7 +43,7 @@
                     tools:text ="Closes in 2 hrs 15 min"
                     android:textColor="#ED4136"
                     android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.formattedBiddingEndTime()}"
+                    android:text="@{request.formattedLoadAndContractBidEndingTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
 
@@ -85,10 +88,9 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_14sp"
-                        android:text="@{request.originCityState()}"
+                        android:text="@{request.originCityName()}"
                         tools:text ="Navi Mumbai"
                         android:textColor="#121A31"
-                        android:maxWidth="150dp"
                         android:maxLines="2"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -100,7 +102,7 @@
                         android:paddingTop="@dimen/size_2dp"
                         android:layout_marginStart="@dimen/size_4dp"
                         android:textSize="@dimen/text_12sp"
-                        android:text="@{request.originCityState()}"
+                        android:text="@{request.originPincodeState()}"
                         tools:text ="110006, Delhi"
                         android:textColor="#8F9198"
                         app:layout_constraintTop_toTopOf="parent"
@@ -132,6 +134,7 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="~1000km/month"
+                    android:text="@{request.intracityKms()}"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:paddingTop="@dimen/size_4dp"

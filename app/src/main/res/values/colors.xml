@@ -7,6 +7,10 @@
   <color name="colorDelhiveryRed">#ED4136</color>
   <color name="colorBackground">#F2F2F2</color>
   <color name="light_red_background">#FEF2F2</color>
+  
+  <!-- Bid suggestion colors -->
+  <color name="bid_suggestion_background">#FEEFEF</color>
+  <color name="bid_suggestion_text">#8E2720</color>
 
 
   <color name="colorShimmerPrimary">#F1F1F1</color>

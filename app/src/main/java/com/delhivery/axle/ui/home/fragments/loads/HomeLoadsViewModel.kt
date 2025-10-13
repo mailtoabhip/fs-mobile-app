@@ -255,11 +255,16 @@ class HomeLoadsViewModel @Inject constructor(
             loadPricePercent = _res.loadPricePercent
             more_default_loads = _res.more_loads
             loadsCountLiveData.postValue(total)
+            
+            // Speed is already set in each transaction from API response
+            // No need to override: _res.transactions.forEach { it.speed = _res.speed }
 
             transactionsRepository.fetchRecommTransactions(
                 offset,
                 userPrefs.demandType
                     .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
                     .filterNot { it == DemandType.Intracity.type}
                     .joinToString(","),
                 vehicleTypes,
@@ -365,7 +370,12 @@ class HomeLoadsViewModel @Inject constructor(
 
             compositeDisposable += transactionsRepository.fetchRecommTransactions(
                 offset,
-                demandType,
+                userPrefs.demandType
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .filterNot { it == DemandType.Intracity.type }
+                    .joinToString(","),
                 vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
@@ -404,6 +414,8 @@ class HomeLoadsViewModel @Inject constructor(
                             offset,
                             userPrefs.demandType
                                 .split(",")
+                                .map { it.trim() }
+                                .filter { it.isNotEmpty() }
                                 .filterNot { it == DemandType.Intracity.type }
                                 .joinToString(","),
                             vehicleTypes,

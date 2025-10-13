@@ -75,6 +75,7 @@ class BidsViewModel @Inject constructor(
   var total = 0
   var offset = 0
   var hasMoreData = true
+  var bidSuggestion = false
 
   /* transaction id */
   lateinit var transactionId: String
@@ -121,7 +122,7 @@ class BidsViewModel @Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_bids_by_type")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_by_type_and_lowest_bids_on_txns_parallel")
     mainTrace.start()
-    compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract,onlyFrcBids)
+    compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract,onlyFrcBids,bidSuggestion)
         .flatMap { _res ->
           total = _res.first
           offset = _res.third

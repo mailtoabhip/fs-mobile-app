@@ -86,19 +86,86 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
           item: HomeLoadsRequestItem,
           _interface: HomeLoadsRVAdapterInterface
   ) {
+      Log.d("Reprting time debug", "${absoluteAdapterPosition}, ${item.data._requiredOn}, ${item.data.reportingTime}")
       val demandType = item.data.getDemandTypeByLoad()
       Log.d("adapterData", "${item.data}")
+      Log.d("HomeLoadsRVAdapter", "Speed field: ${item.data.speed}, isExpress: ${item.data.isExpress()}, DemandType: $demandType")
 
     if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
         binding.layoutIntracity.request = item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
         binding.cvIntercity.visibility = View.GONE
+        
+        // Set load type display for intracity
+        if (demandType == "Delhivery Load") {
+            binding.layoutIntracity.demandLoadType.text = "Delhivery Load"
+            binding.layoutIntracity.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+            
+            // Determine drawable based on speed field
+            val loadTypeDrawable = if (item.data.isExpress()) {
+                R.drawable.ic_delhivery_bolt  // Express
+            } else {
+                R.drawable.ic_truck_small  // Regular (NEXP or null)
+            }
+            
+            binding.layoutIntracity.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(context, loadTypeDrawable), null, null, null
+            )
+            binding.layoutIntracity.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+            binding.layoutIntracity.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        } else if (demandType == "Client Load") {
+            binding.layoutIntracity.demandLoadType.text = "Client Load"
+            binding.layoutIntracity.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+            
+            // Determine drawable based on speed field - show bolt icon for Express loads
+            val loadTypeDrawable = if (item.data.isExpress()) {
+                R.drawable.ic_delhivery_bolt  // Express
+            } else {
+                R.drawable.ic_user  // Regular (NEXP or null)
+            }
+            
+            binding.layoutIntracity.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(context, loadTypeDrawable), null, null, null
+            )
+            binding.layoutIntracity.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+            binding.layoutIntracity.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+        }
+        
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.rootView.
 //        binding.nonIntracityLayout.visibility = View.GONE
 //        binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.clickToAction(HomeBidsRequestAction_NavigationMap, item, bindingAdapterPosition, _interface)
-        binding.layoutIntracity.containerError.reportingTime.text = item.data.reportingTime?: item.data.requiredAtWithTime()
-        val includedBinding = binding.layoutIntracity.containerError as ItemBottomButtonV2Binding
+        // Handle visibility based on the same logic as XML data binding:
+        // android:text="@{request._requiredOn != null ? request.requiredAtWithTime() : request.getTimeOfContracts()}"
+        val reportingTimeText = if (item.data._requiredOn != null) {
+            item.data.requiredAtWithTime()
+        } else {
+            item.data.getTimeOfContracts()
+        }
+        
+        // Show max width button only if there's no meaningful reporting time
+        if (item.data._requiredOn == null && item.data.reportingTime == null) {
+            // Hide reporting time section
+            binding.layoutIntracity.containerError.labelReporting.visibility = View.GONE
+            binding.layoutIntracity.containerError.reportingTime.visibility = View.GONE
+            binding.layoutIntracity.containerError.placeBidButton.visibility = View.GONE
+            
+            // Show full-width button
+            binding.layoutIntracity.containerError.placeBidButtonMaxWidth.visibility = View.VISIBLE
+            binding.layoutIntracity.containerError.placeBidButtonMaxWidth.text = "Accept For ${item.data.formatedTargetPrice()}"
+            binding.layoutIntracity.containerError.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+        } else {
+            // Show reporting time section
+            binding.layoutIntracity.containerError.labelReporting.visibility = View.VISIBLE
+            binding.layoutIntracity.containerError.reportingTime.visibility = View.VISIBLE
+            binding.layoutIntracity.containerError.placeBidButton.visibility = View.VISIBLE
+            binding.layoutIntracity.containerError.reportingTime.text = reportingTimeText
+            
+            // Hide full-width button
+            binding.layoutIntracity.containerError.placeBidButtonMaxWidth.visibility = View.GONE
+            binding.layoutIntracity.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+        }
+        
 //        includedBinding.placeBidButton1.rootView.setOnClickListener {
 //            Log.d("Intracity Card Clicked1", "rjrfv")
 //            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
@@ -108,7 +175,6 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
 //            Log.d("Intracity Card Clicked2", "rjrfv")
 //            it.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
 //        }
-        includedBinding.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
 
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.setOnClickListener {
 //            Log.d("Intracity Card Clicked", "rjrfv")
@@ -134,16 +200,32 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
         if (demandType == "Delhivery Load") {
             binding.demandLoadType.text = "Delhivery Load"
             binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+            
+            // Determine drawable based on speed field
+            val loadTypeDrawable = if (item.data.isExpress()) {
+                R.drawable.ic_delhivery_bolt  // Express
+            } else {
+                R.drawable.ic_truck_small  // Regular (NEXP or null)
+            }
+            
             binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
-                ContextCompat.getDrawable(context, R.drawable.ic_truck_small), null, null, null
+                ContextCompat.getDrawable(context, loadTypeDrawable), null, null, null
             )
             binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
             binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
         } else if (demandType == "Client Load") {
             binding.demandLoadType.text = "Client Load"
             binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+            
+            // Determine drawable based on speed field - show bolt icon for Express loads
+            val loadTypeDrawable = if (item.data.isExpress()) {
+                R.drawable.ic_delhivery_bolt  // Express
+            } else {
+                R.drawable.ic_user  // Regular (NEXP or null)
+            }
+            
             binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
-                ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
+                ContextCompat.getDrawable(context, loadTypeDrawable), null, null, null
             )
             binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
             binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
@@ -190,8 +272,36 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
 
         }
 
-        binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
-        binding.containerError.reportingTime.text = item.data.requiredAtWithTime()
+        // Handle visibility based on the same logic as XML data binding:
+        // android:text="@{request._requiredOn != null ? request.requiredAtWithTime() : request.getTimeOfContracts()}"
+        val reportingTimeIntercity = if (item.data._requiredOn != null) {
+            item.data.requiredAtWithTime()
+        } else {
+            item.data.getTimeOfContracts()
+        }
+        
+        // Show max width button only if there's no meaningful reporting time
+        if (item.data._requiredOn == null && item.data.reportingTime == null) {
+            // Hide reporting time section
+            binding.containerError.labelReporting.visibility = View.GONE
+            binding.containerError.reportingTime.visibility = View.GONE
+            binding.containerError.placeBidButton.visibility = View.GONE
+            
+            // Show full-width button
+            binding.containerError.placeBidButtonMaxWidth.visibility = View.VISIBLE
+            binding.containerError.placeBidButtonMaxWidth.text = "Place Bid"
+            binding.containerError.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+        } else {
+            // Show reporting time section
+            binding.containerError.labelReporting.visibility = View.VISIBLE
+            binding.containerError.reportingTime.visibility = View.VISIBLE
+            binding.containerError.placeBidButton.visibility = View.VISIBLE
+            binding.containerError.reportingTime.text = reportingTimeIntercity
+            
+            // Hide full-width button
+            binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
+            binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+        }
     }
 
 //    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface

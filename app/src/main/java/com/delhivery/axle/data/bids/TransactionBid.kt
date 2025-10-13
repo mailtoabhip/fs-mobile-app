@@ -27,7 +27,8 @@ data class TransactionBid(
   @SerializedName("client_confirmed") val clientConfirmationPending: Boolean?=null,
   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark: String?=null,
   @SerializedName("tentative_trip_count") val tentativeTripCount: Int?=null,
-  @SerializedName("placement_days") val placementDays: String?=null
+  @SerializedName("placement_days") val placementDays: String?=null,
+  @SerializedName("suggestion") val suggestion: BidSuggestion?=null,
 
 
   ) : BaseKeyTypeModel<String>() {
