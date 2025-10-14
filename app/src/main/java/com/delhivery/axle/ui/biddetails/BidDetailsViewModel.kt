@@ -1,7 +1,5 @@
 package com.delhivery.axle.ui.biddetails
 
-import android.content.Context
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
@@ -10,7 +8,6 @@ import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.api.request.WarehouseRequest
 import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.api.response.WarehouseIndentResponse
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -20,8 +17,6 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
-import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -31,7 +26,6 @@ import com.google.firebase.perf.ktx.performance
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
-import kotlin.math.log
 
 /**
  * View model for [BidDetailsActivity]
@@ -47,7 +41,12 @@ class BidDetailsViewModel @Inject constructor(
 ) : BaseViewModel(), BulkBidsCreateEditInterface, BidConfirmReviseDialogInterface {
 
   /* transaction id */
-  lateinit var transactionId: String
+    var transactionId: String?=null
+    //contract code
+    var contractCode: String?=null
+    //placement type for placements details page
+    var placementType: String?=null
+    //
     lateinit var dmtStatus: String
     var fromPage: Boolean = false
     var active = false
@@ -93,7 +92,7 @@ class BidDetailsViewModel @Inject constructor(
    * Fetch transaction details
    */
   fun fetchTransactionDetails() {
-    compositeDisposable += transactionsRepository.transactionDetails(transactionId)
+    compositeDisposable += transactionsRepository.transactionDetails(transactionId?:"")
         .onBackground()
         .progress()
         .subscribe { _tRes, error ->
@@ -110,11 +109,8 @@ class BidDetailsViewModel @Inject constructor(
     /**
      * Fetch placement details
      */
-    /**
-     * Fetch transaction details
-     */
     fun fetchPlacementDetails() {
-        compositeDisposable += transactionsRepository.getPlacementDetails(placementType = "abc", transactionId = "xyz", contractCode = "123")
+        compositeDisposable += transactionsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
             .onBackground()
             .progress()
             .subscribe { _tRes, error ->
@@ -148,7 +144,7 @@ class BidDetailsViewModel @Inject constructor(
    * Fetch transaction bids and update UI as per response
    */
   fun fetchTransactionBids( action: Boolean = false) {
-    compositeDisposable += bidsRepository.transactionBids(transactionId)
+    compositeDisposable += bidsRepository.transactionBids(transactionId?:"")
         .onBackground()
         .subscribe { _bRes, error ->
           if (!error) {
@@ -243,7 +239,7 @@ class BidDetailsViewModel @Inject constructor(
   private fun fetchTripDetails() {
     val parallelTrace = Firebase.performance.newTrace("trips_and_transaction_details_parallel")
     parallelTrace.start()
-    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
+    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId?:"")
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->

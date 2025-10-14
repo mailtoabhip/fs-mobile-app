@@ -104,6 +104,7 @@ import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 
 class PlacementsContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
@@ -1970,7 +1971,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityContractDetailsBin
 }
 
 /* intent keys */
+private const val PlacementTypeIndentKey = "placementType"
 private const val TransactionIdIntentKey = "transaction_id"
+private const val ContractCodeIntentKey = "contractCode"
 
 /* intent keys */
 private const val RequestTypeIntentKey = "request_type"
@@ -1983,14 +1986,17 @@ private const val PlacementData = "placement_data"
 
 
 fun placementsContractDetailsIntent(
-    transactionId: String,
+    placementType:String,
+    transactionId: String?,
+    contractCode: String?,
     context: Context,
     source: String?= VALUE_APP_FLOW,
     forPlacement:Boolean=false,
     homePlacementsItemData: HomePlacementsItemData?=null
-
 ) = Intent(context, PlacementsContractDetailsActivity::class.java).apply {
-    putExtra(TransactionIdIntentKey, transactionId)
+    if (placementType.isNotNullOrEmpty()) putExtra(PlacementTypeIndentKey, placementType)
+    if (transactionId.isNotNullOrEmpty()) putExtra(TransactionIdIntentKey, transactionId)
+    if (contractCode.isNotNullOrEmpty()) putExtra(ContractCodeIntentKey, contractCode)
     putExtra(PROPERTY_SOURCE,source)
     putExtra(ForPlacementKey, forPlacement)
     putExtra(PlacementData, homePlacementsItemData)

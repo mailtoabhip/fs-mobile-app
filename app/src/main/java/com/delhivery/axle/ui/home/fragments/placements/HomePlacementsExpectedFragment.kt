@@ -36,6 +36,7 @@ import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
+import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
 import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
@@ -164,16 +165,18 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
                 userPrefs.setPreviousScreen(this.javaClass.name)
                 if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name ||data.loadType==LoadTypes.orionFixed.name){
                     val transactionId = data.transactionId
+                    val contractCode = data.contractCode
                     val context = this.context
                     if (transactionId != null && context != null) {
-                        val intent = placementsBidDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
+                        val intent = placementsBidDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
                 }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ){
                     val transactionId = data.transactionId
+                    val contractCode = data.contractCode
                     val context = this.context
                     if (transactionId != null && context != null) {
-                        val intent = placementsContractDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
+                        val intent = placementsContractDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
                 }

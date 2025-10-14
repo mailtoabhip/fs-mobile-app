@@ -3,17 +3,23 @@ package com.delhivery.axle.ui.biddetails
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract
 import android.text.Editable
-import android.text.Layout
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.View
-import android.view.animation.AnimationUtils
+import android.view.ViewGroup
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -22,75 +28,71 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
 import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
-import com.delhivery.axle.data.bids.TransactionBid
-import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
-import com.delhivery.axle.data.home.trucks.TruckFrequentItem
-import com.delhivery.axle.databinding.*
-import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
-import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.databinding.ActivityLoadBidDetailsBinding
+import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.ui.bids.userBidsIntent
-import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType
-import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
+import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.AutoCompleteUtils
+import com.delhivery.axle.utils.BidSuccessInterface
+import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
+import com.delhivery.axle.utils.EVENT_ADD_TRUCK_INITIATE
+import com.delhivery.axle.utils.EVENT_BID_REVISE_INITIATED
+import com.delhivery.axle.utils.EVENT_ORDER_DETAILS_BID_INITIATE
+import com.delhivery.axle.utils.PROPERTY_BID_COUNT
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_SUB_SOURCE
 import com.delhivery.axle.utils.StringUtils.capitalize
+import com.delhivery.axle.utils.VALUE_APP_FLOW
+import com.delhivery.axle.utils.VALUE_BANNER
+import com.delhivery.axle.utils.extensions.focusClick
+import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import android.database.Cursor
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import android.provider.ContactsContract
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.Window
-import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
-import com.delhivery.axle.data.home.placements.HomePlacementsItemData
-import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
-import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
-import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
-import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
-import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
-import com.delhivery.axle.utils.AutoCompleteUtils
-import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
-import com.delhivery.axle.utils.extensions.focusClick
-import com.delhivery.axle.utils.extensions.getSerializableExtra
-import com.google.gson.Gson
-import java.util.regex.Pattern
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import java.lang.StringBuilder
+import com.google.gson.Gson
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import java.util.regex.Pattern
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 /**
  * Bid detail screen
  */
-class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface,BidSuccessInterface {
+class PlacementsBidDetailsActivity :
+    BaseActivity<ActivityLoadBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface,
+    BidSuccessInterface {
 
     init {
         hasInlineProgress = true
     }
 
-    @Inject lateinit var userPrefs: UserPrefs
-    @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+    @Inject
+    lateinit var userPrefs: UserPrefs
+
+    @Inject
+    lateinit var autoCompleteUtils: AutoCompleteUtils
 
     private var isValidVehicleNumber = false
     private var isValidDriverName = false
@@ -127,20 +129,21 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
     private var isFirstResume = true
     private var amount = 0
     private var pmtRate = 0
-    private var forPlacement =  false
+    private var forPlacement = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activitySetupTrace = FirebasePerformance.getInstance().newTrace("PlacementsBidDetailsActivity_SetupTime")
+        activitySetupTrace =
+            FirebasePerformance.getInstance().newTrace("PlacementsBidDetailsActivity_SetupTime")
         activitySetupTrace?.start()
         /* validate intent */
         try {
             require(
-                !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
-            ) { "Required data $TransactionIdIntentKey not found" }
+                !(intent == null || !intent.hasExtra(TransactionIdIntentKey) || !intent.hasExtra(ContractCodeIntentKey))
+            ) { "Required data $TransactionIdIntentKey or $ContractCodeIntentKey not found" }
         } catch (e: Exception) {
             finish()
         }
-        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 userPrefs.setPreviousScreen(this.javaClass.name)
                 finish()
@@ -148,15 +151,24 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         })
         viewModel.restrictEventTrigger = true
         /* set transaction id */
-        viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
+        viewModel.placementType = intent.getStringExtra(PlacementTypeIndentKey)?:""
+        viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey)?:""
+        viewModel.contractCode = intent.getStringExtra(ContractCodeIntentKey)?:""
         viewModel.dmtStatus = intent.getStringExtra(RequestTypeIntentKey) ?: ""
         viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
         viewModel.active = intent.getBooleanExtra(ActiveBid, false)
         source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
         subSource = intent.getStringExtra(PROPERTY_SUB_SOURCE) ?: "NA"
-        forPlacement =   intent.getBooleanExtra(ForPlacementKey, false)
-        if (intent?.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java) != null)
-            homePlacementsItemData = intent.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java)
+        forPlacement = intent.getBooleanExtra(ForPlacementKey, false)
+        if (intent?.extras?.getSerializableExtra(
+                PlacementData,
+                HomePlacementsItemData::class.java
+            ) != null
+        )
+            homePlacementsItemData = intent.extras?.getSerializableExtra(
+                PlacementData,
+                HomePlacementsItemData::class.java
+            )
         val addressDetailAdapter: AddressDetailAdapter = AddressDetailAdapter(uploadArray)
         binding.cvRouteSection.addresslist.apply {
             layoutManager = LinearLayoutManager(applicationContext)
@@ -171,16 +183,17 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             isFirstResume = false
         }
     }
+
     private fun setTimer(bidEndingTime: String) {
 
         if (!bidEndingTime.equals("null")) {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            format.setTimeZone(TimeZone.getTimeZone("IST"));
+            format.timeZone = TimeZone.getTimeZone("IST")
             val date1: Date = format.parse(format.format(Date()))
             val date2: Date = format.parse(bidEndingTime)
             if (date2.compareTo(date1) > 0) {
 //        binding.timerLayout.visibility = View.VISIBLE
-                val mills: Long = date2.getTime() - date1.getTime()
+                val mills: Long = date2.time - date1.time
                 object : CountDownTimer(mills, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                         try {
@@ -217,13 +230,13 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = ""//""Order ID - " + viewModel.transactionId
-        if(homePlacementsItemData?.status== PlacementTypes.Delayed.name){
+        if (homePlacementsItemData?.status == PlacementTypes.Delayed.name) {
             binding.toolbarEndText.visibility = View.VISIBLE
             binding.toolbarEndText.text =
                 "Delayed"
             binding.toolbarEndText.background =
                 ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
-        }else{
+        } else {
             binding.toolbarEndText.visibility = View.GONE
 
         }
@@ -260,15 +273,17 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         })
         viewModel.successBidLiveData.observe(this) {
             if (it.first) {
-                val dialog =  dialogUtils.showSuccessBidDialog(this,
-                    resources.getString(R.string.bid_placed_sucessfully),
-                    resources.getString(R.string.check_your_bid_status)
+                val dialog = dialogUtils.showSuccessBidDialog(
+                    this,
+                    resources.getString(string.bid_placed_sucessfully),
+                    resources.getString(string.check_your_bid_status)
                 )
                 navigateToBid(dialog)
-            }else if(it.second){
-                val dialog =  dialogUtils.showSuccessBidDialog(this,
-                    resources.getString(R.string.bid_revised_sucessfully),
-                    resources.getString(R.string.check_your_bid_revise_status)
+            } else if (it.second) {
+                val dialog = dialogUtils.showSuccessBidDialog(
+                    this,
+                    resources.getString(string.bid_revised_sucessfully),
+                    resources.getString(string.check_your_bid_revise_status)
                 )
                 navigateToBid(dialog)
 
@@ -302,7 +317,8 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         if (oldAmountbids.isNullOrEmpty()) {
                             oldAmountbids = transactionBid.bidAmount.toString()
                         } else {
-                            oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
+                            oldAmountbids =
+                                oldAmountbids + "," + transactionBid.bidAmount.toString()
                         }
                     }
                     analyticsUtil.moEngageTrackEvent(
@@ -335,9 +351,16 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                 }
                 if (it.second.truckUUID != null) {
                     BulkBidDetailsCreateEditDialog(
-                        this@PlacementsBidDetailsActivity, it.second, it.second.bulkTransactionBids, it.first,
-                        viewModel, it.second.unAllocatedVolume!!, analyticsUtil = analyticsUtil,
-                        userPrefs = userPrefs, fromPage = "load_detail", pageTitle = pageTitle
+                        this@PlacementsBidDetailsActivity,
+                        it.second,
+                        it.second.bulkTransactionBids,
+                        it.first,
+                        viewModel,
+                        it.second.unAllocatedVolume!!,
+                        analyticsUtil = analyticsUtil,
+                        userPrefs = userPrefs,
+                        fromPage = "load_detail",
+                        pageTitle = pageTitle
                     ).show()
                 } else {
                     Toast.makeText(this, "No Vehicle Types Found", Toast.LENGTH_SHORT)
@@ -387,7 +410,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                     uploadArray.clear()
 
                     if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
-                        uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+                        uploadArray.add(
+                            Pair(
+                                "Pickup Address",
+                                binding.transaction?.pickupLocationAddress
+                            )
+                        )
                     } else if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
                         uploadArray.add(
                             Pair(
@@ -402,7 +430,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                     val j = 0
                     for (i in sortedList) {
                         j + 1
-                        uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", i.second + " " + i.third))
+                        uploadArray.add(
+                            Pair(
+                                "Intermediary Stop (Additional Pickup)",
+                                i.second + " " + i.third
+                            )
+                        )
                     }
 
                     if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
@@ -464,18 +497,23 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             if (pmtRate > userPrefs.maxPMTRate) {
                                 enablePlaceBid(false)
                                 binding.cardInput.bidError.visibility = View.VISIBLE
-                                binding.cardInput.bidError.text = "*Rate should be less than ${userPrefs.maxPMTRate}/MT"
+                                binding.cardInput.bidError.text =
+                                    "*Rate should be less than ${userPrefs.maxPMTRate}/MT"
                                 // throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
                             }
                             amount = (input * data.requestedCapacityMg).toInt()
                             //  binding.labelBid.text = "Your minimum payout will be ₹ $amount"
 
                             if (data.transactionBid != null) {
-                                if (abs((input * data.requestedCapacityMg) - (data.transactionBid?.pmtRate
-                                        ?: 0.0)) < 500) {
+                                if (abs(
+                                        (input * data.requestedCapacityMg) - (data.transactionBid?.pmtRate
+                                            ?: 0.0)
+                                    ) < 500
+                                ) {
                                     enablePlaceBid(false)
                                     binding.cardInput.bidError.visibility = View.VISIBLE
-                                    binding.cardInput.bidError.text = "*Bid difference should be more than ₹500"
+                                    binding.cardInput.bidError.text =
+                                        "*Bid difference should be more than ₹500"
 
                                     //  throw Exception("*Bid difference should be more than ₹500")
                                 }
@@ -485,10 +523,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             amount = input
                             if (data.transactionBid != null) {
                                 enablePlaceBid(data.transactionBid!!.bidAmount.toInt() != input)
-                            }else{
-                                if(input>0){
+                            } else {
+                                if (input > 0) {
                                     enablePlaceBid(true)
-                                }else{
+                                } else {
                                     enablePlaceBid(false)
                                 }
                             }
@@ -507,7 +545,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
 //            binding.tilAmount.error = e.message
                         amount = 0
                     }
-                }else{
+                } else {
                     enablePlaceBid(false)
                 }
             }
@@ -545,18 +583,32 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         if (viewModel.transaction.transactionBid == null) {
                             uiUtils.showProgress()
                             viewModel.createBid(
-                                viewModel.transaction.isPMTIndent(), viewModel.transaction.key(), amount, pmtRate,
+                                viewModel.transaction.isPMTIndent(),
+                                viewModel.transaction.key(),
+                                amount,
+                                pmtRate,
                                 viewModel.transaction.biddingType
-                                    ?: "FTL",null,null,null
+                                    ?: "FTL",
+                                null,
+                                null,
+                                null
                             )
                         } else {
                             uiUtils.showProgress()
                             viewModel.editBid(
-                                viewModel.transaction.isPMTIndent(),  viewModel.transaction.key(),  viewModel.transaction!!.transactionBid!!.key(),
-                                amount, pmtRate, viewModel.transaction.biddingType ?: "FTL",null,null,null
+                                viewModel.transaction.isPMTIndent(),
+                                viewModel.transaction.key(),
+                                viewModel.transaction.transactionBid!!.key(),
+                                amount,
+                                pmtRate,
+                                viewModel.transaction.biddingType ?: "FTL",
+                                null,
+                                null,
+                                null
                             )
                         }
                     }
+
                     UNAPPROVED -> {
                         dialogUtils.showBasicConfirmDialog(
                             string.title_dialog_supplier_not_approved,
@@ -565,6 +617,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             { callHelpline() }, { sendMail() }
                         )
                     }
+
                     DISABLED -> {
                         dialogUtils.showBasicConfirmDialog(
                             string.title_dialog_supplier_disabled,
@@ -589,9 +642,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         refreshData()
     }
 
-    fun enablePlaceBid(enable:Boolean){
+    fun enablePlaceBid(enable: Boolean) {
         binding.cardInput.placeBidButton.isEnabled = enable
     }
+
     private fun refreshData() {
         binding.error = false
         viewModel.fetchPlacementDetails()
@@ -608,7 +662,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         uploadArray.clear()
     }
 
-    fun navigateToBid(dialog: Dialog){
+    fun navigateToBid(dialog: Dialog) {
         var dialogCancelled = false
         dialog.setOnCancelListener {
             dialogCancelled = true
@@ -629,17 +683,19 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             }
         }, 5000)
     }
+
     /**
      * Progress observer
      */
     inner class ProgressObserver : Observer<Boolean> {
-        override fun onChanged(t: Boolean?) {
-            t?.let {
+        override fun onChanged(t: Boolean) {
+            t.let {
                 when (t) {
                     true -> {
                         binding.refreshLayout.isRefreshing = true
                         binding.refreshing = true
                     }
+
                     false -> {
                         binding.refreshLayout.isRefreshing = false
                         /* if (buttonVisible) {
@@ -659,7 +715,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
      * Transaction details and UI updation Observer
      */
     inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData?) {
+        override fun onChanged(t: HomeBidsRequestItemData) {
             if (t != null) {
                 t.let { _transaction ->
                     binding.cardInput.etBidAmount.isFocusable = true
@@ -697,7 +753,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
 
                     if (binding.transaction?.indentHaltCenters.isNullOrEmpty()) {
                         if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
-                            uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+                            uploadArray.add(
+                                Pair(
+                                    "Pickup Address",
+                                    binding.transaction?.pickupLocationAddress
+                                )
+                            )
                         } else if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
                             uploadArray.add(
                                 Pair(
@@ -758,7 +819,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                     var total = 0
 
                     if (binding.transaction?.pickupLocationAddress.isNotNullOrEmpty()) {
-                        uploadArray.add(Pair("Pickup Address", binding.transaction?.pickupLocationAddress))
+                        uploadArray.add(
+                            Pair(
+                                "Pickup Address",
+                                binding.transaction?.pickupLocationAddress
+                            )
+                        )
                     } else {
                         var uData = StringBuilder()
                         if (binding.transaction?.loadingLocationPincode.isNotNullOrEmpty()) {
@@ -787,7 +853,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         //   binding.textViaDestination.city1.text = citNam
 
                         if (binding.transaction?.pickup1Address.isNotNullOrEmpty()) {
-                            uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup1Address))
+                            uploadArray.add(
+                                Pair(
+                                    "Intermediary Stop (Additional Pickup)",
+                                    binding.transaction?.pickup1Address
+                                )
+                            )
                         } else {
                             var uData = StringBuilder()
                             if (binding.transaction?.pickup1AddressPin.isNotNullOrEmpty()) {
@@ -798,7 +869,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             }
 
                             if (uData.toString().isNotNullOrEmpty()) {
-                                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
+                                uploadArray.add(
+                                    Pair(
+                                        "Intermediary Stop (Additional Pickup)",
+                                        uData.toString()
+                                    )
+                                )
                             }
                         }
                     }
@@ -816,7 +892,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         //   binding.textViaDestination.city2.text = citNam
 
                         if (binding.transaction?.pickup2Address.isNotNullOrEmpty()) {
-                            uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", binding.transaction?.pickup2Address))
+                            uploadArray.add(
+                                Pair(
+                                    "Intermediary Stop (Additional Pickup)",
+                                    binding.transaction?.pickup2Address
+                                )
+                            )
                         } else {
 
                             var uData = StringBuilder()
@@ -828,7 +909,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             }
 
                             if (uData.toString().isNotNullOrEmpty()) {
-                                uploadArray.add(Pair("Intermediary Stop (Additional Pickup)", uData.toString()))
+                                uploadArray.add(
+                                    Pair(
+                                        "Intermediary Stop (Additional Pickup)",
+                                        uData.toString()
+                                    )
+                                )
                             }
 
                         }
@@ -852,7 +938,8 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         if (binding.transaction?.intermediaryStop1Address.isNotNullOrEmpty()) {
                             uploadArray.add(
                                 Pair(
-                                    "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop1Address
+                                    "Intermediary Stop (Partial Drop)",
+                                    binding.transaction?.intermediaryStop1Address
                                 )
                             )
                         } else {
@@ -865,7 +952,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             }
 
                             if (uData.toString().isNotNullOrEmpty()) {
-                                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
+                                uploadArray.add(
+                                    Pair(
+                                        "Intermediary Stop (Partial Drop)",
+                                        uData.toString()
+                                    )
+                                )
                             }
 
                         }
@@ -886,7 +978,8 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         if (binding.transaction?.intermediaryStop2Address.isNotNullOrEmpty()) {
                             uploadArray.add(
                                 Pair(
-                                    "Intermediary Stop (Partial Drop)", binding.transaction?.intermediaryStop2Address
+                                    "Intermediary Stop (Partial Drop)",
+                                    binding.transaction?.intermediaryStop2Address
                                 )
                             )
                         } else {
@@ -900,7 +993,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             }
 
                             if (uData.toString().isNotNullOrEmpty()) {
-                                uploadArray.add(Pair("Intermediary Stop (Partial Drop)", uData.toString()))
+                                uploadArray.add(
+                                    Pair(
+                                        "Intermediary Stop (Partial Drop)",
+                                        uData.toString()
+                                    )
+                                )
                             }
                         }
                     }
@@ -913,7 +1011,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                       }*/
 
                     if (binding.transaction?.dropLocationAddress.isNotNullOrEmpty()) {
-                        uploadArray.add(Pair("Drop Address", binding.transaction?.dropLocationAddress))
+                        uploadArray.add(
+                            Pair(
+                                "Drop Address",
+                                binding.transaction?.dropLocationAddress
+                            )
+                        )
                     } else {
 
                         var uData = StringBuilder()
@@ -957,7 +1060,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         }
     }
 
-    fun enableKeyboard(){
+    fun enableKeyboard() {
         binding.cardInput.etBidAmount.requestFocus()
 
         // Delay to ensure the window is ready before showing the keyboard
@@ -966,6 +1069,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             imm.showSoftInput(binding.cardInput.etBidAmount, InputMethodManager.SHOW_IMPLICIT)
         }
     }
+
     /**
      * Transaction bid details UI updation observer
      */
@@ -1008,6 +1112,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                 }*//*
               }*/
                     }
+
                     is BidDetailsUserBidState_PlaceBid -> {
                         binding.mainCl.visibility = View.VISIBLE
                         binding.cardInput.root.visibility = View.VISIBLE
@@ -1072,23 +1177,30 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
              //   binding.status.visibility = View.GONE
               }*/
                     }
+
                     is BidDetailsUserBidState_EditBid -> {
 
                         binding.mainCl.visibility = View.VISIBLE
                         val data = binding.transaction as HomeBidsRequestItemData
-                        if(!data.isLoadBiddingOpen()){
+                        if (!data.isLoadBiddingOpen()) {
                             binding.cardInput.editBidCl.visibility = View.GONE
                             binding.cardInput.root.visibility = View.VISIBLE
                             binding.cardInput.awaitingBidCl.root.visibility = View.VISIBLE
                             binding.cardInput.awaitingBidCl.title = "Awaiting Result"
-                            binding.cardInput.awaitingBidCl.subTitle = "We’ll notify you once the results are out"
+                            binding.cardInput.awaitingBidCl.subTitle =
+                                "We’ll notify you once the results are out"
                             binding.cardInput.awaitingBidCl.actionLabel = "Explore New Bids"
                             binding.cardInput.awaitingBidCl.btnAction.setOnClickListener {
-                                startActivity(homeActivityIntent("load", this@PlacementsBidDetailsActivity))
+                                startActivity(
+                                    homeActivityIntent(
+                                        "load",
+                                        this@PlacementsBidDetailsActivity
+                                    )
+                                )
 
                                 // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
                             }
-                        }else{
+                        } else {
                             binding.cardInput.root.visibility = View.VISIBLE
                             binding.cardInput.editBidCl.visibility = View.VISIBLE
                             binding.cardInput.confirmedBidCl.root.visibility = View.GONE
@@ -1100,7 +1212,11 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             if (data.isPMTIndent()) {
                                 //  binding.tilAmount.hint = context.getString(R.string.hint_enter_pmt_rate_value)
                                 data.transactionBid?.bidAmount?.let {
-                                    binding.cardInput.etBidAmount?.setText(DecimalFormat("#########").format(it))
+                                    binding.cardInput.etBidAmount.setText(
+                                        DecimalFormat("#########").format(
+                                            it
+                                        )
+                                    )
                                 }
                                 data.transactionBid?.pmtRate?.let {
 //                binding.labelBid.text =
@@ -1109,7 +1225,11 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             } else {
                                 //  binding.tilAmount.hint = context.getString(R.string.hint_enter_bid_value)
                                 data.transactionBid?.bidAmount?.let {
-                                    binding.cardInput.etBidAmount.setText(DecimalFormat("#########").format(it))
+                                    binding.cardInput.etBidAmount.setText(
+                                        DecimalFormat("#########").format(
+                                            it
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -1366,33 +1486,42 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                              binding.status.setTextColor(ContextCompat.getColor(this@PlacementsBidDetailsActivity, R.color.status_active))
                            }*/
                     }
+
                     is BidDetailsUserBidState_LoadingBids -> {
                         binding.cardInput.root.visibility = View.GONE
                         /* ViewBidDetailsLoadingBidsBinding.inflate(
                            layoutInflater, binding.containerActions, false
                          )*/
                     }
+
                     is BidDetailsUserBidState_ConfirmedBid -> {
-                        if(forPlacement){
+                        if (forPlacement) {
                             binding.mainCl.visibility = View.VISIBLE
                             binding.cardInput.editBidCl.visibility = View.GONE
                             binding.cardInput.root.visibility = View.VISIBLE
                             binding.cardInput.placementCl.root.visibility = View.VISIBLE
                             placementInput()
-                        }else{
+                        } else {
                             binding.mainCl.visibility = View.VISIBLE
                             binding.cardInput.editBidCl.visibility = View.GONE
                             binding.cardInput.root.visibility = View.VISIBLE
                             binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
-                            binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+DecimalFormat("#########").format(binding.transaction?.transactionBid?.bidAmount)
-                            binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+                            binding.cardInput.confirmedBidCl.title =
+                                "Bid Confirmed for ₹" + DecimalFormat("#########").format(binding.transaction?.transactionBid?.bidAmount)
+                            binding.cardInput.confirmedBidCl.subTitle =
+                                "Provide the driver and vehicle details"
                             binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
                             binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                                startActivity(homeActivityIntent("placement", this@PlacementsBidDetailsActivity))
+                                startActivity(
+                                    homeActivityIntent(
+                                        "placement",
+                                        this@PlacementsBidDetailsActivity
+                                    )
+                                )
 
                                 // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
                             }
-                            val data = viewModel.transaction as HomeBidsRequestItemData
+                            val data = viewModel.transaction
                             if (data.clientConfirmationPending == false) {
                                 binding.bottomLay.visibility = View.GONE
                             } else {
@@ -1400,7 +1529,8 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                                 binding.btnTripView.setOnClickListener {
                                     startActivity(
                                         tripDetailsIntent(
-                                            viewModel.transaction.uuid.toString(), this@PlacementsBidDetailsActivity
+                                            viewModel.transaction.uuid.toString(),
+                                            this@PlacementsBidDetailsActivity
                                         )
                                     )
                                 }
@@ -1408,69 +1538,30 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                             }
                         }
 
-                        /* ViewBidDetailsConfirmedBidBinding.inflate(
-                           layoutInflater, binding.containerActions, false
-                         )
-                           .apply {
-                             binding.timerLayout.visibility = View.GONE
-                             pickUpLocation =
-                               StringUtils.capitalize(state.pickupLocation)
-                                 ?: getString(string.not_available)
-                             vehicleNumber = state.vehicleNumber ?: getString(string.not_available)
-                             driverPhone =
-                               state.driverDetails?.driverPhoneNo ?: getString(string.not_available)
-                             if (viewModel.refreshCalled == false)
-                               analyticsUtil.moEngageTrackEvent(
-                                 EVENT_PAGE_LOAD_ORDER_DETAILS_WITH_EXISTING_BID,
-                                 mutableListOf(PROPERTY_ORDER_ID, PROPERTY_SOURCE, PROPERTY_SUB_SOURCE),
-                                 mutableListOf(viewModel.transactionId, source, subSource)
-                               )
 
-                             binding.status.visibility = View.VISIBLE
-                             val data = viewModel.transaction as HomeBidsRequestItemData
-
-                             if (data.clientConfirmationPending == false) {
-                               binding.status.text = resources.getString(R.string.label_pending)
-                               binding.status.setTextColor(ContextCompat.getColor(this@PlacementsBidDetailsActivity, R.color.pending))
-                               binding.bottomLay.visibility = View.GONE
-                             } else {
-                               binding.status.text = resources.getString(R.string.label_confirm)
-                               binding.buttonConfirm.text = "View Trip"
-                               binding.status.setBackground(
-                                 ContextCompat.getDrawable(this@PlacementsBidDetailsActivity,
-                                   R.drawable.bg_all_round_corner_light_green_12
-                                 )
-                               )
-                               binding.status.setTextColor(ContextCompat.getColor(this@PlacementsBidDetailsActivity, R.color.bid_placed_green))
-                               binding.bidLay.visibility = View.GONE
-                               binding.numLay.visibility = View.GONE
-                               binding.bottomLay.visibility = View.VISIBLE
-                               binding.buttonConfirm.setOnClickListener {
-                                 startActivity(
-                                   tripDetailsIntent(
-                                     viewModel.transaction.uuid.toString(), this@PlacementsBidDetailsActivity
-                                   )
-                                 )
-                               }
-
-                             }
-                           }*/
                     }
+
                     is BidDetailsUserBidState_RejectedBid -> {
                         binding.mainCl.visibility = View.VISIBLE
-                        Log.d("called","BidDetailsUserBidState_RejectedBid")
+                        Log.d("called", "BidDetailsUserBidState_RejectedBid")
                         binding.cardInput.root.visibility = View.VISIBLE
                         binding.cardInput.editBidCl.visibility = View.GONE
                         binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
                         binding.cardInput.rejectedBidCl.title = "Bid not selected"
-                        try{
-                            binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid?.bidAmount?.toInt())}"
-                        }catch (e:Exception){
+                        try {
+                            binding.cardInput.rejectedBidCl.subTitle =
+                                "Winning bid price is ₹${DecimalFormat("#########").format(state.acceptedBid.bidAmount?.toInt())}"
+                        } catch (e: Exception) {
                         }
                         binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
                         binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
                             //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@PlacementsBidDetailsActivity)
-                            startActivity(homeActivityIntent("load", this@PlacementsBidDetailsActivity))
+                            startActivity(
+                                homeActivityIntent(
+                                    "load",
+                                    this@PlacementsBidDetailsActivity
+                                )
+                            )
 
                             // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
                         }
@@ -1506,19 +1597,26 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                               binding.bottomLay.visibility = View.GONE
                             }*/
                     }
+
                     is BidDetailsUserBidState_CancelledBid -> {
                         binding.mainCl.visibility = View.VISIBLE
-                        Log.d("called","BidDetailsUserBidState_CancelledBid")
+                        Log.d("called", "BidDetailsUserBidState_CancelledBid")
                         binding.cardInput.root.visibility = View.VISIBLE
 
                         binding.cardInput.editBidCl.visibility = View.GONE
                         binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
                         binding.cardInput.rejectedBidCl.title = "Demand cancelled"
-                        binding.cardInput.rejectedBidCl.subTitle = "The demand was cancelled by the client"
+                        binding.cardInput.rejectedBidCl.subTitle =
+                            "The demand was cancelled by the client"
                         binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
                         binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
                             // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@PlacementsBidDetailsActivity)
-                            startActivity(homeActivityIntent("load", this@PlacementsBidDetailsActivity))
+                            startActivity(
+                                homeActivityIntent(
+                                    "load",
+                                    this@PlacementsBidDetailsActivity
+                                )
+                            )
                             //action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
                         }
                         /* ViewBidDetailsCancelledBidBinding.inflate(
@@ -1682,14 +1780,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                               viewModel.restrictEventTrigger = false
                             }*/
                     }
+
                     else -> null
                 }?.let { _binding ->
-                    /* bidding ended */
-//          binding.textBidEnded.visible(_binding is ViewBidDetailsRejectedBidBinding)
-                    /* binding.containerActions.apply {
-                       removeAllViews()
-                       addView(_binding.root)
-                     }*/
+
                 }
             }
         }
@@ -1700,84 +1794,21 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         super.onBackPressed()
     }
 
-    /**
-     * Create/edit bid dialog
-     */
-//  private fun bidDialog(bid: TransactionBid? = null) {
-//    when (viewModel.userPrefs.canBid()) {
-//      APPROVED -> {
-//        binding.transaction?.let {
-//          if (viewModel.dmtStatus == "dmt" || it.isDMTIndent()) {
-//            uiUtils.showProgress()
-//            viewModel.fetchTruckType(it);
-//          } else {
-//            if (it.transactionBid == null) {
-//              analyticsUtil.moEngageTrackEvent(
-//                EVENT_ORDER_DETAILS_BID_INITIATE,
-//                mutableListOf(
-//                  PROPERTY_ORDER_ID,
-//                  PROPERTY_BID_COUNT,
-//                  PROPERTY_SOURCE,
-//                  PROPERTY_SUB_SOURCE
-//                ),
-//                mutableListOf(it?.uuid ?: "", viewModel.bidCount.toString(), source, subSource)
-//              )
-//              reviseInitiated = false
-//            } else {
-//              analyticsUtil.moEngageTrackEvent(
-//                EVENT_BID_REVISE_INITIATED,
-//                mutableListOf(
-//                  PROPERTY_ORDER_ID,
-//                  PROPERTY_BID_COUNT,
-//                  PROPERTY_ORDER_LOWEST_BID_VALUE,
-//                  PROPERTY_SOURCE,
-//                  PROPERTY_SUB_SOURCE
-//                ),
-//                mutableListOf(
-//                  it?.uuid.toString(), viewModel.bidCount.toString(),
-//                  viewModel.lowestBid.toString(), source, subSource
-//                )
-//              )
-//              reviseInitiated = true
-//            }
-//            BidDetailsCreateEditDialog(
-//              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs,
-//              fromPage = "load_detail"
-//            ).show()
-//          }
-//        }
-//      }
-//      UNAPPROVED -> {
-//        dialogUtils.showBasicConfirmDialog(
-//            string.title_dialog_supplier_not_approved,
-//            string.msg_dialog_supplier_not_approved,
-//            getString(string.label_call_us), getString(string.label_mail_us),
-//            { callHelpline() }, { sendMail() }
-//        )
-//      }
-//      DISABLED -> {
-//        dialogUtils.showBasicConfirmDialog(
-//            string.title_dialog_supplier_disabled,
-//            string.msg_dialog_supplier_disabled,
-//            getString(string.label_call_us), getString(string.label_mail_us),
-//            { callHelpline() }, { sendMail() }
-//        )
-//      }
-//    }
-//  }
 
     override fun handleAction(
         actionId: String,
         position: Int,
         item: BaseBulkBidSummaryRVAdapterItem<*>
     ) {
-        when(actionId){
+        when (actionId) {
             EXPAND_CARD -> {
                 val bidData = item.data as BulkBidSummaryItemData
                 bidData.expanded = !bidData.expanded
-                BidDetailsViewModel.truckNumTextViewAdded = !BidDetailsViewModel.truckNumTextViewAdded
+                BidDetailsViewModel.truckNumTextViewAdded =
+                    !BidDetailsViewModel.truckNumTextViewAdded
                 adapter.notifyItemChanged(position)
             }
+
             OPEN_CONFIRMED_BID -> {
 
             }
@@ -1785,18 +1816,17 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
     }
 
 
-
     fun placementInput() {
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-        if(homePlacementsItemData?.loadType==LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType==LoadTypes.intracityRegular.name){
+        if (homePlacementsItemData?.loadType == LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType == LoadTypes.intracityRegular.name) {
             viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
             binding.cardInput.routeAddress.visibility = View.VISIBLE
             binding.cardInput.mapText.visibility = View.VISIBLE
             binding.cardInput.mapText.setOnClickListener {
                 navigateToMap()
             }
-        }else{
+        } else {
             binding.cardInput.routeAddress.visibility = View.GONE
             binding.cardInput.mapText.visibility = View.GONE
 
@@ -1805,25 +1835,25 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
         })
         viewModel.updateVehicleDetails.observe(this, Observer {
-            if(it){
+            if (it) {
                 uiUtils.hideProgress()
                 REFRESH_ON_BACK_PLACEMENT = true
-                when(homePlacementsItemData?.loadType){
+                when (homePlacementsItemData?.loadType) {
                     LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
                     else -> showSuccessEditDialog("Submitted successfully!")
                 }
-            }else{
+            } else {
                 uiUtils.hideProgress()
             }
         })
 
-        autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
+        autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks) {
             // Ensure UI operations run on main thread
             binding.cardInput.placementCl.editAutoCompleteTrucks.post {
-                if(it=="Add New Truck"){
+                if (it == "Add New Truck") {
                     binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
-                    this?.let {showAddTruckBottomSheet()}
-                }else if(validateTruckNumber(it)){
+                    this.let { showAddTruckBottomSheet() }
+                } else if (validateTruckNumber(it)) {
                     isValidVehicleNumber = true
                     binding.cardInput.placementCl.vehicleError.visibility = View.GONE
                     binding.cardInput.placementCl.editTextVehicleNumber.text = it
@@ -1832,7 +1862,8 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                     // Don't call enableSubmitPlacement here - let TextWatcher handle it
                 } else {
                     binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
-                    binding.cardInput.placementCl.vehicleError.text = "Please enter valid vehicle Number"
+                    binding.cardInput.placementCl.vehicleError.text =
+                        "Please enter valid vehicle Number"
                     isValidVehicleNumber = false
                     // Don't call enableSubmitPlacement here - let TextWatcher handle it
                 }
@@ -1847,9 +1878,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             enableSubmitPlacement()
         }
 
-        binding.cardInput.placementCl.editTextVehicleNumber.addTextChangedListener(object : TextWatcher {
+        binding.cardInput.placementCl.editTextVehicleNumber.addTextChangedListener(object :
+            TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
@@ -1861,9 +1895,12 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         }
 
         // Simple TextWatcher for manual typing validation
-        binding.cardInput.placementCl.editAutoCompleteDriverName.addTextChangedListener(object : TextWatcher {
+        binding.cardInput.placementCl.editAutoCompleteDriverName.addTextChangedListener(object :
+            TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val text = s?.toString() ?: ""
                 if (text.length >= 2) {
@@ -1873,7 +1910,8 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                     isValidDriverName = false
                     if (hasUserInteractedWithDriverName && text.isNotEmpty()) {
                         binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
-                        binding.cardInput.placementCl.driverNameError.text = "Please enter valid driver name"
+                        binding.cardInput.placementCl.driverNameError.text =
+                            "Please enter valid driver name"
                     } else {
                         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
                     }
@@ -1908,14 +1946,14 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             enableSubmitPlacement()
         }
 
-        if (homePlacementsItemData?.status=="Marked-in"){
+        if (homePlacementsItemData?.status == "Marked-in") {
             binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
             binding.cardInput.placementCl.editAutoCompleteDriverName.isEnabled = false
             binding.cardInput.placementCl.editDriverNumber.isEnabled = false
             disableSubmitPlcButton()
         }
 
-        binding.cardInput.placementCl.btnSubmit.setOnClickListener{
+        binding.cardInput.placementCl.btnSubmit.setOnClickListener {
             submitPlacementDetails()
         }
 
@@ -1923,10 +1961,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         autoCompleteUtils.autoCompleteDriverNameWithPhone(
             binding.cardInput.placementCl.editAutoCompleteDriverName,
             { binding.cardInput.placementCl.editTextVehicleNumber.text.toString() }
-        ){ driverData ->
+        ) { driverData ->
 
             driverData.driverName?.let {
-                isValidDriverName = it.length>=2
+                isValidDriverName = it.length >= 2
             }
             // Populate phone number when driver is selected from dropdown
             driverData.driverPhone?.let {
@@ -1936,19 +1974,18 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             enableSubmitPlacement()
         }
 
-        binding.cardInput.placementCl.editDriverNumber?.addTextChangedListener(object : TextWatcher {
+        binding.cardInput.placementCl.editDriverNumber.addTextChangedListener(object :
+            TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s != null && s.isNotEmpty() && s.isNotBlank()) {
                     val input = s.trim().toString()
-                    if(input.length==10 && validatePhoneNumber(input)){
-                        isValidDriverNumber = true
-                    } else {
-                        isValidDriverNumber = false
-                    }
+                    isValidDriverNumber = input.length == 10 && validatePhoneNumber(input)
                     // Don't call enableSubmitPlacement here - let TextWatcher handle it
-                }else{
+                } else {
                     isValidDriverNumber = false
                     // Don't call enableSubmitPlacement here - let TextWatcher handle it
                 }
@@ -1956,13 +1993,16 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         })
 
         binding.cardInput.placementCl.btnContactPicker.setOnClickListener {
-            val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+            val pickContactIntent =
+                Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
             startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
         }
     }
-    private fun navigateToMap(){
+
+    private fun navigateToMap() {
         try {
-            val gmmIntentUri = Uri.parse("geo:0,0?q=${homePlacementsItemData?.originCenterLat},${homePlacementsItemData?.originCenterLong}"+"(" + homePlacementsItemData?.originCenterName+ ")")
+            val gmmIntentUri =
+                Uri.parse("geo:0,0?q=${homePlacementsItemData?.originCenterLat},${homePlacementsItemData?.originCenterLong}" + "(" + homePlacementsItemData?.originCenterName + ")")
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
             mapIntent.setPackage("com.google.android.apps.maps")
             startActivity(mapIntent)
@@ -1970,6 +2010,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             Toast.makeText(this, "Unable to open map", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun showAddTruckBottomSheet() {
         val dialog = AddTruckBottomSheetDialog(
             this,
@@ -1988,7 +2029,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         dialog.show()
     }
 
-    private fun  enableSubmitPlacement(){
+    private fun enableSubmitPlacement() {
         // DEBOUNCE PROTECTION - Prevent rapid calls to enableSubmitPlacement (reduced from 500ms to 100ms)
         /* val currentTime = System.currentTimeMillis()
          val timeSinceLastCall = currentTime - lastEnableSubmitTime
@@ -1999,51 +2040,61 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
          lastEnableSubmitTime = currentTime*/
 
         // Re-validate all conditions
-        isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
+        isValidVehicleNumber =
+            validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
 
         // Re-validate driver name
-        val driverNameText = binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString()
+        val driverNameText =
+            binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString()
         isValidDriverName = driverNameText.length >= 2
 
         // Re-validate driver phone
         val driverPhoneText = binding.cardInput.placementCl.editDriverNumber.text.toString()
         isValidDriverNumber = driverPhoneText.length == 10 && validatePhoneNumber(driverPhoneText)
 
-        val errorVisibility = if(binding.cardInput.placementCl.driverNameError.visibility == View.VISIBLE) "VISIBLE" else "GONE"
-        Log.i("validate", "DriverName: '$driverNameText', length: ${driverNameText.length}, isValidDriverName: $isValidDriverName, isValidVehicleNumber: $isValidVehicleNumber, isValidDriverNumber: $isValidDriverNumber, hasUserInteracted: $hasUserInteractedWithDriverName, errorVisibility: $errorVisibility")
+        val errorVisibility =
+            if (binding.cardInput.placementCl.driverNameError.visibility == View.VISIBLE) "VISIBLE" else "GONE"
+        Log.i(
+            "validate",
+            "DriverName: '$driverNameText', length: ${driverNameText.length}, isValidDriverName: $isValidDriverName, isValidVehicleNumber: $isValidVehicleNumber, isValidDriverNumber: $isValidDriverNumber, hasUserInteracted: $hasUserInteractedWithDriverName, errorVisibility: $errorVisibility"
+        )
 
         val isMarkedIn = homePlacementsItemData?.status == "Marked-in"
-        val allValid = isValidDriverName && isValidVehicleNumber && isValidDriverNumber && !isMarkedIn
+        val allValid =
+            isValidDriverName && isValidVehicleNumber && isValidDriverNumber && !isMarkedIn
 
-        Log.i("validate", "All conditions: driverName=$isValidDriverName, vehicle=$isValidVehicleNumber, phone=$isValidDriverNumber, markedIn=$isMarkedIn, allValid=$allValid")
+        Log.i(
+            "validate",
+            "All conditions: driverName=$isValidDriverName, vehicle=$isValidVehicleNumber, phone=$isValidDriverNumber, markedIn=$isMarkedIn, allValid=$allValid"
+        )
 
-        if(allValid){
+        if (allValid) {
             enableSubmitPlcButton()
-        }else{
+        } else {
             disableSubmitPlcButton()
         }
     }
 
-    private fun disableSubmitPlcButton(){
+    private fun disableSubmitPlcButton() {
         binding.cardInput.placementCl.btnSubmit.isEnabled = false
     }
 
-    private fun enableSubmitPlcButton(){
+    private fun enableSubmitPlcButton() {
         binding.cardInput.placementCl.btnSubmit.isEnabled = true
     }
 
-    private fun validateTruckNumber(number: String): Boolean{
+    private fun validateTruckNumber(number: String): Boolean {
         val pattern = Pattern.compile(
             "^[a-zA-Z]{2}(((0?[1-9]{1}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}$|^[a-zA-Z]{3}[0-9]{4}$"
         )
         return pattern.matcher(number).matches()
     }
 
-    private fun validatePhoneNumber(number:String):Boolean{
+    private fun validatePhoneNumber(number: String): Boolean {
         val sameDigitsReg = "^([0-9])\\1*$"
         var result = false
         val sameDigitsPattern = Pattern.compile(sameDigitsReg)
-        if(!sameDigitsPattern.matcher(number).matches()){
+        if (!sameDigitsPattern.matcher(number).matches()) {
             val standardNumberPattern = Pattern.compile("^[6-9]{1}[0-9]{9}$")
             result = standardNumberPattern.matcher(number).matches()
         }
@@ -2065,19 +2116,29 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
             binding.cardInput.placementCl.vehicleError.visibility = View.GONE
 
             try {
-                val isOrionType = homePlacementsItemData?.loadType?.toLowerCase()?.contains("orion") ?: false
+                val isOrionType =
+                    homePlacementsItemData?.loadType?.lowercase(Locale.getDefault())
+                        ?.contains("orion") ?: false
 
-                val vehicleType = if (isOrionType ) {null} else if (homePlacementsItemData?.loadType?.toLowerCase()?.contains("adhoc") ?: false) {
+                val vehicleType = if (isOrionType) {
+                    null
+                } else if (homePlacementsItemData?.loadType?.lowercase(Locale.getDefault())
+                        ?.contains("adhoc") == true
+                ) {
                     "adhoc"
                 } else {
                     "regular"
                 }
-                val contractType = if (isOrionType ) {null} else if  (homePlacementsItemData?.loadType!!.toLowerCase().contains("ftl")) {
+                val contractType = if (isOrionType) {
+                    null
+                } else if (homePlacementsItemData?.loadType!!.lowercase(Locale.getDefault())
+                        .contains("ftl")
+                ) {
                     "ftl"
                 } else {
                     "intracity"
                 }
-                val action = if(isOrionType) {
+                val action = if (isOrionType) {
                     "placement_on_orion"
                 } else if (homePlacementsItemData?.vehicleNumber == null) {
                     "add_placement"
@@ -2094,19 +2155,19 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         vehicleType,
                         homePlacementsItemData?.vehicleType ?: "",
                         homePlacementsItemData?.transporterSupplierId ?: "",
-                        if(isOrionType) null else homePlacementsItemData?.contractId,
+                        if (isOrionType) null else homePlacementsItemData?.contractId,
                         homePlacementsItemData?.transporterId ?: 0,
                         action,
-                        if(isOrionType) null else homePlacementsItemData?.reportingTime ?: "",
-                        if(isOrionType)null else homePlacementsItemData?.originCenterCode ?: "",
-                        if(isOrionType)null else homePlacementsItemData?.vehicleNumber,
-                        if(isOrionType)null else homePlacementsItemData?.vehicleId,
-                        if(isOrionType)null else homePlacementsItemData?.driverName,
-                        if(isOrionType)null else homePlacementsItemData?.driverPhone,
+                        if (isOrionType) null else homePlacementsItemData?.reportingTime ?: "",
+                        if (isOrionType) null else homePlacementsItemData?.originCenterCode ?: "",
+                        if (isOrionType) null else homePlacementsItemData?.vehicleNumber,
+                        if (isOrionType) null else homePlacementsItemData?.vehicleId,
+                        if (isOrionType) null else homePlacementsItemData?.driverName,
+                        if (isOrionType) null else homePlacementsItemData?.driverPhone,
                         homePlacementsItemData?.transactionId
                     )
                     viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     uiUtils.showToast("Something went wrong")
                     uiUtils.hideProgress()
                 }
@@ -2117,18 +2178,18 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         }
     }
 
-    private fun showIntracityAdhocSuccessDialog(){
-        val title = getString(R.string.title_dialog_success)
-        val subTittle = getString(R.string.sub_title_dialog_success)
-        val playStoreLink = getString(R.string.driver_app_link)
-        val hindiVideoLink = getString(R.string.hindi_video_link)
-        val englishVideoLink = getString(R.string.english_video_link)
+    private fun showIntracityAdhocSuccessDialog() {
+        val title = getString(string.title_dialog_success)
+        val subTittle = getString(string.sub_title_dialog_success)
+        val playStoreLink = getString(string.driver_app_link)
+        val hindiVideoLink = getString(string.hindi_video_link)
+        val englishVideoLink = getString(string.english_video_link)
 
         val placementData = homePlacementsItemData
         Log.d("placementData=====>>>>", Gson().toJson(placementData))
         val ticketId = placementData?.transactionId ?: ""
         val reportingCentre = generateReportingCentreLink(placementData!!)
-        val reportingTime = formatReportingTime(placementData?.reportingTime)
+        val reportingTime = formatReportingTime(placementData.reportingTime)
 
         dialogUtils.showDetailsSubmittedSuccessDialog(
             title = title,
@@ -2168,10 +2229,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
     private fun formatReportingTime(reportingTime: String?): String {
         return if (!reportingTime.isNullOrEmpty()) {
             try {
-                val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
-                val outputFormat = java.text.SimpleDateFormat("dd MMM, hh:mm a")
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+                val outputFormat = SimpleDateFormat("dd MMM, hh:mm a")
                 val date = inputFormat.parse(reportingTime)
-                outputFormat.format(date ?: java.util.Date())
+                outputFormat.format(date ?: Date())
             } catch (e: Exception) {
                 "--:--"
             }
@@ -2180,7 +2241,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         }
     }
 
-    private fun showSuccessEditDialog(msg:String){
+    private fun showSuccessEditDialog(msg: String) {
         val dialog = Dialog(this)
         val bindingDialog = DialogPlacementDetailsEditBinding.inflate(layoutInflater)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -2189,7 +2250,7 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
         bindingDialog.closeBtn.setOnClickListener {
             dialog.dismiss()
         }
-        if(!this.isFinishing)
+        if (!this.isFinishing)
             dialog.show()
 //    if(!this.isFinishing)
 //      Handler(Looper.myLooper()!!).postDelayed({
@@ -2197,7 +2258,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
 //        REFRESH_ON_BACK_PLACEMENT = true
 //        finish()
 //      }, 2000)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
@@ -2214,11 +2278,15 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                         val cursor: Cursor? = contentResolver.query(it, null, null, null, null)
                         cursor?.use { c ->
                             if (c.moveToFirst()) {
-                                val numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                                val numberIndex =
+                                    c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                                 if (numberIndex != -1) {
                                     val phoneNumber = c.getString(numberIndex)
-                                    val trimmedNumber = phoneNumber?.replace("+91", "")?.replaceFirst("^0+".toRegex(), "")?.trim()
-                                    binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
+                                    val trimmedNumber = phoneNumber?.replace("+91", "")
+                                        ?.replaceFirst("^0+".toRegex(), "")?.trim()
+                                    binding.cardInput.placementCl.editDriverNumber.setText(
+                                        trimmedNumber
+                                    )
                                 }
                             }
                         }
@@ -2226,8 +2294,10 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
                 }
             }
         }
-    }override fun bidPlacedSuccess(success: Boolean) {
-        if(success)
+    }
+
+    override fun bidPlacedSuccess(success: Boolean) {
+        if (success)
             startActivity(homeActivityIntent("load", this@PlacementsBidDetailsActivity))
 
     }
@@ -2235,37 +2305,42 @@ class PlacementsBidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding,
 }
 
 /* intent keys */
+private const val PlacementTypeIndentKey = "placementType"
 private const val TransactionIdIntentKey = "transaction_id"
+private const val ContractCodeIntentKey = "contractCode"
 
 /* intent keys */
 private const val RequestTypeIntentKey = "request_type"
 private const val FromPage = "from_page"
-private const val ActiveBid= "active_bid"
-private const val ForPlacementKey= "for_placement"
+private const val ActiveBid = "active_bid"
+private const val ForPlacementKey = "for_placement"
 private const val PlacementData = "placement_data"
 
 /**
  * Bid details intent
  */
 fun placementsBidDetailsIntent(
-    transactionId: String,
+    placementType:String,
+    transactionId: String?,
+    contractCode: String?,
     context: Context,
-    requestType:String?=null,
-    fromBidsPage:Boolean = false,
-    active:Boolean = false,
-    source:String?= VALUE_APP_FLOW,
-    subSource:String?="NA",
-    forPlacement:Boolean = false,
+    requestType: String? = null,
+    fromBidsPage: Boolean = false,
+    active: Boolean = false,
+    source: String? = VALUE_APP_FLOW,
+    subSource: String? = "NA",
+    forPlacement: Boolean = false,
     homePlacementsItemData: HomePlacementsItemData? = null
 ) = Intent(context, PlacementsBidDetailsActivity::class.java).apply {
-    putExtra(TransactionIdIntentKey, transactionId)
-    if(requestType!=null)
-        putExtra(RequestTypeIntentKey, requestType)
-    putExtra(FromPage,fromBidsPage)
-    putExtra(ActiveBid,active)
-    putExtra(PROPERTY_SOURCE,source)
-    putExtra(PROPERTY_SUB_SOURCE,subSource)
-    putExtra(ForPlacementKey,forPlacement)
+    if (placementType.isNotNullOrEmpty()) putExtra(PlacementTypeIndentKey, placementType)
+    if (contractCode.isNotNullOrEmpty()) putExtra(ContractCodeIntentKey, contractCode)
+    if (contractCode.isNotNullOrEmpty()) putExtra(ContractCodeIntentKey, contractCode)
+    if (requestType != null) putExtra(RequestTypeIntentKey, requestType)
+    putExtra(FromPage, fromBidsPage)
+    putExtra(ActiveBid, active)
+    putExtra(PROPERTY_SOURCE, source)
+    putExtra(PROPERTY_SUB_SOURCE, subSource)
+    putExtra(ForPlacementKey, forPlacement)
     putExtra(PlacementData, homePlacementsItemData)
 }
 

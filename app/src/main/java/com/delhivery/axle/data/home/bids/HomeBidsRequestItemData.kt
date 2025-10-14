@@ -12,8 +12,10 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.CostDataObject
 import com.delhivery.axle.data.IndentHaltCenters
-import com.delhivery.axle.data.TruckModel
+import com.delhivery.axle.data.RouteInformation
+import com.delhivery.axle.data.VehicleModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -146,13 +148,13 @@ data class HomeBidsRequestItemData(
   @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
   @SerializedName("intracity_lob")val intracityLob:String?=null,
 
-  //New Placement Details API Response keys
+  //Added New Placement Details API Response keys
   @SerializedName("contract_id")val contractId:String?=null,
-  //transaction_id - already present in this class
+  //transaction_id - already present above in this class
   @SerializedName("contract_code")val contractCode:String?=null,
-  @SerializedName("vehicle_info")val vehicleInfo: TruckModel?=null,
-  @SerializedName("route_info")val routeInfo: TruckModel?=null,
-  @SerializedName("cost_data")val costData: TruckModel?=null,
+  @SerializedName("vehicle_info")val vehicleInfo: VehicleModel?=null,
+  @SerializedName("route_info")val routeInfo: RouteInformation?=null,
+  @SerializedName("cost_data")val costData: CostDataObject?=null,
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
