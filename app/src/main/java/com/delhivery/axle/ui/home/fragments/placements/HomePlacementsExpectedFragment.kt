@@ -24,7 +24,9 @@ import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
 import com.delhivery.axle.databinding.DialogDurationFiltersBinding
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.placementsBidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
+import com.delhivery.axle.ui.contractDetails.placementsContractDetailsIntent
 import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
 import com.delhivery.axle.ui.placementdetails.FilterDurationAdapter
@@ -164,14 +166,14 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
                     val transactionId = data.transactionId
                     val context = this.context
                     if (transactionId != null && context != null) {
-                        val intent = bidDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
+                        val intent = placementsBidDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
                 }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ){
                     val transactionId = data.transactionId
                     val context = this.context
                     if (transactionId != null && context != null) {
-                        val intent = contractDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
+                        val intent = placementsContractDetailsIntent(transactionId, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
                 }

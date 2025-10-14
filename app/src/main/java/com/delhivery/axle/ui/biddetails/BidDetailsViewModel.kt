@@ -106,6 +106,29 @@ class BidDetailsViewModel @Inject constructor(
           }
         }
   }
+
+    /**
+     * Fetch placement details
+     */
+    /**
+     * Fetch transaction details
+     */
+    fun fetchPlacementDetails() {
+        compositeDisposable += transactionsRepository.getPlacementDetails(placementType = "abc", transactionId = "xyz", contractCode = "123")
+            .onBackground()
+            .progress()
+            .subscribe { _tRes, error ->
+                if (!error) {
+                    transaction = _tRes
+                    transactionLiveData.postValue(_tRes)
+                    //fetchTransactionBids()
+                } else {
+                    transactionLiveData.postValue(null)
+                }
+            }
+    }
+
+
     fun fetchTruckType(data :HomeBidsRequestItemData) {
         compositeDisposable += truckRepository.getTruckType()
             .onBackground()

@@ -1,23 +1,19 @@
 package com.delhivery.axle.data.home.bids
 
-import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
-import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.IndentHaltCenters
+import com.delhivery.axle.data.TruckModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -37,7 +33,6 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.LoggingMXBean
 
 /**
  *
@@ -129,14 +124,14 @@ data class HomeBidsRequestItemData(
   @SerializedName("vehicle_count_per_route") var vehicleCountPerRoute:Int? =  null,
   @SerializedName("operating_days") var operatingDays:Int? =  null,
   @SerializedName("slab_payout_details") var paymentSlabs:JsonObject? =  null,
-  @SerializedName("reporting_time") var reportingTime:String? =  null ,
-  @SerializedName("intracity_days") var intracityDays:String? =  null ,
-  @SerializedName("intracity_hours") var intracityHours:String? =  null ,
-  @SerializedName("intracity_kms") var intracityKms:String? =  null ,
-  @SerializedName("intracity_extra_km_rate") var intracityExtraKmRate:String? =  null ,
-  @SerializedName("intracity_extra_hour_rate") var intracityExtraHourRate:String? =  null ,
-  @SerializedName("intracity_extra_day_rate") var intracityExtraDayRate:String? =  null ,
-  @SerializedName("nep_required") var nepRequired:Boolean? =  false ,
+  @SerializedName("reporting_time") var reportingTime:String? =  null,
+  @SerializedName("intracity_days") var intracityDays:String? =  null,
+  @SerializedName("intracity_hours") var intracityHours:String? =  null,
+  @SerializedName("intracity_kms") var intracityKms:String? =  null,
+  @SerializedName("intracity_extra_km_rate") var intracityExtraKmRate:String? =  null,
+  @SerializedName("intracity_extra_hour_rate") var intracityExtraHourRate:String? =  null,
+  @SerializedName("intracity_extra_day_rate") var intracityExtraDayRate:String? =  null,
+  @SerializedName("nep_required") var nepRequired:Boolean? =  false,
   @SerializedName("origin_longitude")val longitude:String?,
   @SerializedName("origin_latitude")val latitude:String?,
   @SerializedName("demand_type")val demandType:String?,
@@ -150,6 +145,14 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_states")val nepState:String?=null,
   @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
   @SerializedName("intracity_lob")val intracityLob:String?=null,
+
+  //New Placement Details API Response keys
+  @SerializedName("contract_id")val contractId:String?=null,
+  //transaction_id - already present in this class
+  @SerializedName("contract_code")val contractCode:String?=null,
+  @SerializedName("vehicle_info")val vehicleInfo: TruckModel?=null,
+  @SerializedName("route_info")val routeInfo: TruckModel?=null,
+  @SerializedName("cost_data")val costData: TruckModel?=null,
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
