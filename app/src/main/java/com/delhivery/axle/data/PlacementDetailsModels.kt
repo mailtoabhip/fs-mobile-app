@@ -50,6 +50,11 @@ data class CostDataObject(
     @SerializedName("nep") val nep: Int?,
 )
 
+data class Misc(
+    @SerializedName("client_name") val clientName: String?,
+    @SerializedName("material_type") val materialType: String?
+)
+
 
 data class HaltCenters(
     @SerializedName("center_code") val centerCode: String?,

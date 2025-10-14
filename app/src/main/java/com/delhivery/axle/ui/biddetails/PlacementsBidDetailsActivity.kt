@@ -35,6 +35,7 @@ import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.databinding.ActivityLoadBidDetailsBinding
+import com.delhivery.axle.databinding.ActivityPlacementsBidDetailsBinding
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
@@ -82,7 +83,7 @@ import kotlin.math.abs
  * Bid detail screen
  */
 class PlacementsBidDetailsActivity :
-    BaseActivity<ActivityLoadBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface,
+    BaseActivity<ActivityPlacementsBidDetailsBinding, BidDetailsViewModel>(), BulkBidsRVAdapterInterface,
     BidSuccessInterface {
 
     init {
@@ -720,7 +721,8 @@ class PlacementsBidDetailsActivity :
             if (t != null) {
                 t.let { _transaction ->
                     binding.cardInput.etBidAmount.isFocusable = true
-                    binding.detailsContent.request = _transaction
+                    binding.placementDetailsContent.placementListingData = homePlacementsItemData
+                    binding.placementDetailsContent.request = _transaction
                     binding.error = false
                     binding.transaction = _transaction
                     binding.cardInput.request = _transaction
@@ -2165,7 +2167,7 @@ class PlacementsBidDetailsActivity :
                         if (isOrionType) null else homePlacementsItemData?.vehicleId,
                         if (isOrionType) null else homePlacementsItemData?.driverName,
                         if (isOrionType) null else homePlacementsItemData?.driverPhone,
-                        transactionId = if (LoadTypeUtils.isTransactionIdRequired(homePlacementsItemData?.loadType?:"")) homePlacementsItemData?.transactionId else null,
+                        transactionId = if (LoadTypeUtils.isTransactionIdRequired(homePlacementsItemData?.loadType?:"")) homePlacementsItemData?.transactionId else null
                     )
                     viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
                 } catch (e: Exception) {

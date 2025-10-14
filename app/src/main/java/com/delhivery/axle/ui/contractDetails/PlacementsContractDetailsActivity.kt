@@ -99,15 +99,17 @@ import android.database.Cursor
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.WindowManager
+import com.delhivery.axle.databinding.ActivityPlacementsContractDetailsBinding
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
+import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 
-class PlacementsContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
+class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
 
     init {
         hasInlineProgress = true
@@ -1737,7 +1739,25 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityContractDetailsBin
                 try {
                     uiUtils.showProgress()
                     //  pushMoengageEvent(false)
-                    val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString(), binding.cardInput.placementCl.editDriverNumber.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
+                    val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(
+                        binding.cardInput.placementCl.editTextVehicleNumber.text.toString(),
+                        binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString(),
+                        binding.cardInput.placementCl.editDriverNumber.text.toString(),
+                        contractType,
+                        vehicleType,
+                        homePlacementsItemData?.vehicleType!!,
+                        homePlacementsItemData?.transporterSupplierId!!,
+                        contractId = if (LoadTypeUtils.isContractCodeRequired(homePlacementsItemData?.loadType?:"")) homePlacementsItemData?.contractId else null,
+                        homePlacementsItemData?.transporterId!!,
+                        action,
+                        if(isOrionType) null else homePlacementsItemData?.reportingTime!!,
+                        if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,
+                        if(isOrionType)null else homePlacementsItemData?.vehicleNumber,
+                        if(isOrionType)null else homePlacementsItemData?.vehicleId,
+                        if(isOrionType)null else homePlacementsItemData?.driverName,
+                        if(isOrionType)null else homePlacementsItemData?.driverPhone,
+                        transactionId = if (LoadTypeUtils.isTransactionIdRequired(homePlacementsItemData?.loadType?:"")) homePlacementsItemData?.transactionId else null
+                    )
                     viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
                 }catch (e:Exception){
                     uiUtils.showToast("Something went wrong")
@@ -1751,7 +1771,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityContractDetailsBin
     }
     override fun getViewModelClass()= ContractDetailsViewModel::class.java
 
-    override fun layoutId(): Int= R.layout.activity_contract_details
+    override fun layoutId(): Int= R.layout.activity_placements_contract_details
     override fun requireConnection(): Boolean = true
 
     private fun refreshData() {

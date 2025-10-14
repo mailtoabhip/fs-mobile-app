@@ -14,6 +14,7 @@ import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.data.CostDataObject
 import com.delhivery.axle.data.IndentHaltCenters
+import com.delhivery.axle.data.Misc
 import com.delhivery.axle.data.RouteInformation
 import com.delhivery.axle.data.VehicleModel
 import com.delhivery.axle.data.bids.TransactionBid
@@ -155,6 +156,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("vehicle_info")val vehicleInfo: VehicleModel?=null,
   @SerializedName("route_info")val routeInfo: RouteInformation?=null,
   @SerializedName("cost_data")val costData: CostDataObject?=null,
+  @SerializedName("misc")val misc: Misc?=null,
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -330,6 +332,30 @@ data class HomeBidsRequestItemData(
 
   fun delLoadVisibility() = if (indentOrigin.equals("LH")) {
     View.GONE
+  } else {
+    View.GONE
+  }
+
+  fun isMaterialTypeAvailable() = if (misc?.materialType.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isClientNameAvailable() = if (misc?.clientName.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isTruckNameAvailable() = if (vehicleInfo?.truckDisplayName.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isTruckTypeAvailable() = if (vehicleInfo?.truckType.isNotNullOrEmpty()) {
+    View.VISIBLE
   } else {
     View.GONE
   }
@@ -823,6 +849,12 @@ data class HomeBidsRequestItemData(
 
 
   fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
+
+  //fetch truck name
+  fun getTruckName() = vehicleInfo?.truckDisplayName?:""
+
+  //fetch truck type
+  fun getFormattedTruckType() = capitalize(vehicleInfo?.truckType?:"")+ " Truck"
 
   fun originCentreName()= StringUtils.capitalize(originCenterName)?:" "
   fun additionalKMsRates()= "${intracityExtraKmRate()} per extra KM | ${intracityExtraHourRate()} per extra hour"

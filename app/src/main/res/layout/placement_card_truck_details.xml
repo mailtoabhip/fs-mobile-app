@@ -7,6 +7,11 @@
             name="request"
             type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
             />
+
+        <variable
+            name="placementListingData"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData"
+            />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/constraintLayout"
@@ -45,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Today, 02:30 PM"
-                android:text="@{request.requiredAtWithTime()}"
+                android:text="@{placementListingData.onlyFormatReportingTime()}"
                 android:textSize="12sp"
                 android:textColor="#000000"
                 app:layout_constraintTop_toBottomOf="@id/detailsHeader"
@@ -58,7 +63,8 @@
                 tools:text="14FTSXL"
                 android:textSize="12sp"
                 android:textColor="#000000"
-                android:text="@{request.truckTypeWithMT()}"
+                android:visibility="@{request.isTruckNameAvailable()}"
+                android:text="@{request.getTruckName()}"
                 app:layout_constraintTop_toTopOf="@id/detailsTime"
                 app:layout_constraintStart_toEndOf="@id/detailsTime"
                 android:layout_marginStart="16dp" />
@@ -70,8 +76,8 @@
                 android:textSize="12sp"
                 android:textColor="#000000"
                 app:layout_constraintStart_toEndOf="@id/detailsTruckType"
-                android:visibility="@{request.nonDelLoadVisibility()}"
-                android:text="@{request.materialType}"
+                android:visibility="@{request.isMaterialTypeAvailable()}"
+                android:text='@{request.misc.materialType != null ? request.misc.materialType : ""}'
                 app:layout_constraintTop_toTopOf="@id/detailsTime"
                 android:layout_marginStart="16dp" />
 
@@ -94,7 +100,8 @@
                 tools:text="Closed Truck"
                 android:lineHeight="@dimen/size_16dp"
                 android:textSize="10sp"
-                android:text="@{request.formattedTruckType()}"
+                android:text="@{request.getFormattedTruckType()}"
+                android:visibility="@{request.isTruckTypeAvailable()}"
                 android:textColor="#8F9198"
                 app:layout_constraintTop_toBottomOf="@id/detailsTruckType"
                 app:layout_constraintStart_toStartOf="@id/detailsTruckType"
@@ -108,7 +115,7 @@
                 android:textSize="10sp"
                 android:text="Material Type"
                 android:textColor="#8F9198"
-                android:visibility="@{request.nonDelLoadVisibility()}"
+                android:visibility="@{request.isMaterialTypeAvailable()}"
                 app:layout_constraintTop_toBottomOf="@id/materialType"
                 app:layout_constraintStart_toStartOf="@id/materialType"
                 />
@@ -117,10 +124,9 @@
                 android:id="@+id/client_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Closed Truck"
                 android:lineHeight="@dimen/size_16dp"
                 android:textSize="10sp"
-                android:visibility="@{request.nonDelLoadVisibility()}"
+                android:visibility="@{request.isClientNameAvailable()}"
                 android:text="Client Name"
                 android:textColor="#8F9198"
                 app:layout_constraintStart_toStartOf="@id/clientName"
@@ -133,10 +139,10 @@
                 android:lineHeight="@dimen/size_16dp"
                 tools:text="Havells"
                 android:layout_marginTop="16dp"
-                android:text="@{request.clientName}"
+                android:text='@{request.misc.clientName != null ? request.misc.clientName : ""}'
                 android:textSize="12sp"
                 android:textColor="#000000"
-                android:visibility="@{request.nonDelLoadVisibility()}"
+                android:visibility="@{request.isClientNameAvailable()}"
                 app:layout_constraintTop_toBottomOf="@id/label_reporting_time"
                 app:layout_constraintBottom_toTopOf="@id/client_label"
                 app:layout_constraintStart_toStartOf="@id/label_reporting_time"
