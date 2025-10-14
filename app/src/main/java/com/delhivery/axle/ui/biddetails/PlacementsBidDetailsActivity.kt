@@ -49,6 +49,7 @@ import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.EVENT_ADD_TRUCK_INITIATE
 import com.delhivery.axle.utils.EVENT_BID_REVISE_INITIATED
 import com.delhivery.axle.utils.EVENT_ORDER_DETAILS_BID_INITIATE
+import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.PROPERTY_BID_COUNT
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
@@ -109,7 +110,7 @@ class PlacementsBidDetailsActivity :
 
     override fun getViewModelClass() = BidDetailsViewModel::class.java
 
-    override fun layoutId() = R.layout.activity_load_bid_details
+    override fun layoutId() = R.layout.activity_placements_bid_details
 
     override fun requireConnection() = true
 
@@ -2155,7 +2156,7 @@ class PlacementsBidDetailsActivity :
                         vehicleType,
                         homePlacementsItemData?.vehicleType ?: "",
                         homePlacementsItemData?.transporterSupplierId ?: "",
-                        if (isOrionType) null else homePlacementsItemData?.contractId,
+                        contractId = if (LoadTypeUtils.isContractCodeRequired(homePlacementsItemData?.loadType?:"")) homePlacementsItemData?.contractId else null,
                         homePlacementsItemData?.transporterId ?: 0,
                         action,
                         if (isOrionType) null else homePlacementsItemData?.reportingTime ?: "",
@@ -2164,7 +2165,7 @@ class PlacementsBidDetailsActivity :
                         if (isOrionType) null else homePlacementsItemData?.vehicleId,
                         if (isOrionType) null else homePlacementsItemData?.driverName,
                         if (isOrionType) null else homePlacementsItemData?.driverPhone,
-                        homePlacementsItemData?.transactionId
+                        transactionId = if (LoadTypeUtils.isTransactionIdRequired(homePlacementsItemData?.loadType?:"")) homePlacementsItemData?.transactionId else null,
                     )
                     viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
                 } catch (e: Exception) {
