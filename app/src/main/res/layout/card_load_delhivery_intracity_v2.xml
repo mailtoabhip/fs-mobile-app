@@ -63,7 +63,6 @@
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_delhivery_bolt"
                         android:text="Delhivery Load"
-                        android:textStyle="bold"
                         android:drawablePadding="5.5dp"
                         android:drawableTint="#7C3AED"
                         android:textColor="#7C3AED"/>
@@ -132,7 +131,7 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Advance Payment"
-                    android:text="@{request.getPaymentModeDisplay}"
+                    android:text="@{request.getPaymentModeDisplay()}"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:paddingTop="@dimen/size_4dp"
@@ -164,6 +163,7 @@
                     android:layout_marginTop="@dimen/size_12dp"
                     android:layout_gravity="center_vertical"
                     app:layout_constraintTop_toBottomOf="@id/truckInfo"
+                    app:request="@{request}"
                     tools:visibility="visible"
                     />
 

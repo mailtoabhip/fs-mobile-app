@@ -28,8 +28,6 @@
             android:id="@+id/rv_loads"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginEnd="@dimen/size_8dp"
             android:saveEnabled="false"
             android:paddingBottom="16dp"
             android:clipToPadding="false"

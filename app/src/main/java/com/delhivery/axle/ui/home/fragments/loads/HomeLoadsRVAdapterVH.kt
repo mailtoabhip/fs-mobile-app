@@ -93,6 +93,7 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
 
     if(item.data.subRequestType == SUB_REQUEST_TYPE_INTRACITY){
         binding.layoutIntracity.request = item.data
+        binding.layoutIntracity.containerError.request = item.data
         binding.layoutIntracity.root.visibility = View.VISIBLE
         binding.cvIntercity.visibility = View.GONE
         
@@ -154,6 +155,9 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.layoutIntracity.containerError.placeBidButtonMaxWidth.visibility = View.VISIBLE
             binding.layoutIntracity.containerError.placeBidButtonMaxWidth.text = "Accept For ${item.data.formatedTargetPrice()}"
             binding.layoutIntracity.containerError.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
+            
+            // Force updates
+            binding.layoutIntracity.containerError.executePendingBindings()
         } else {
             // Show reporting time section
             binding.layoutIntracity.containerError.labelReporting.visibility = View.VISIBLE
@@ -165,6 +169,10 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.layoutIntracity.containerError.placeBidButtonMaxWidth.visibility = View.GONE
             binding.layoutIntracity.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_AcceptBid, item, bindingAdapterPosition, _interface)
         }
+        
+        // Force data binding updates to be applied immediately
+        binding.layoutIntracity.containerError.executePendingBindings()
+        binding.layoutIntracity.executePendingBindings()
         
 //        includedBinding.placeBidButton1.rootView.setOnClickListener {
 //            Log.d("Intracity Card Clicked1", "rjrfv")
@@ -302,6 +310,9 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
             binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
         }
+        
+        // Force data binding updates to be applied immediately
+        binding.executePendingBindings()
     }
 
 //    binding.viewBidInfo.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface

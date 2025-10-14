@@ -67,7 +67,6 @@
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_truck_small"
                         android:text="Delhivery Load"
-                        android:textStyle="bold"
                         android:drawablePadding="@dimen/size_2dp"
                         android:drawableTint="#7C3AED"
                         android:textColor="#7C3AED"/>

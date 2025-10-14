@@ -12,7 +12,6 @@
       android:layout_marginStart="@dimen/size_12dp"
       android:layout_marginEnd="@dimen/size_12dp"
       android:layout_marginTop="@dimen/size_8dp"
-      android:layout_marginBottom="@dimen/size_10dp"
       android:clickable="true"
       android:focusable="true"
       android:foreground="?attr/selectableItemBackgroundBorderless"

@@ -9,17 +9,23 @@
         />
 
   </data>
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/white"
+      android:paddingBottom="12dp">
   <HorizontalScrollView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="@dimen/size_12dp"
       android:layout_marginEnd="@dimen/size_12dp"
-      android:scrollbars="none">
+      android:scrollbars="none"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent">
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-      android:layout_marginTop="@dimen/size_12dp"
-      android:layout_marginBottom="@dimen/size_12dp">
+      android:layout_marginTop="@dimen/size_4dp">
   <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/intracityToggle"
       android:layout_width="wrap_content"
@@ -31,6 +37,7 @@
       android:background="@drawable/bg_all_round_corner_red_solid_selector"
       app:layout_constraintStart_toStartOf="parent"
       android:text="@string/intracity"
+      android:textStyle="bold"
       app:layout_constraintTop_toTopOf="parent"
       />
     <androidx.appcompat.widget.AppCompatTextView
@@ -39,6 +46,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/intracityToggle"
         android:text="@string/intercity"
+        android:textStyle="bold"
         android:paddingTop="@dimen/size_6dp"
         android:paddingBottom="@dimen/size_6dp"
         android:paddingStart="@dimen/size_10dp"
@@ -50,4 +58,5 @@
 
 </androidx.constraintlayout.widget.ConstraintLayout>
   </HorizontalScrollView>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

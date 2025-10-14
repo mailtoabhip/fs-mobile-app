@@ -145,6 +145,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
   @SerializedName("intracity_lob")val intracityLob:String?=null,
   @SerializedName("payment_mode")var paymentMode:String?=null,
+  @SerializedName("indent_payment_mode")var indentPaymentMode:String?=null,
   @SerializedName("advance_percentage")var advancePercentage:String?=null,
   @SerializedName("bid_suggestion")var bidSuggestion: Boolean = false,
   @SerializedName("message")var suggestedBidMessage: String? = null,
@@ -221,10 +222,12 @@ data class HomeBidsRequestItemData(
    * get formatted payment mode display text
    */
   fun getPaymentModeDisplay(): String {
-    return when (paymentMode?.lowercase()) {
+    // Use indentPaymentMode first, fall back to paymentMode for backward compatibility
+    val mode = indentPaymentMode
+    return when (mode?.lowercase()) {
       "credit" -> "Credit Payment"
       "advance" -> "Advance Payment"
-      else -> paymentMode?.replaceFirstChar { it.uppercase() } ?: "N/A"
+      else -> mode?.replaceFirstChar { it.uppercase() } ?: "N/A"
     }
   }
 
