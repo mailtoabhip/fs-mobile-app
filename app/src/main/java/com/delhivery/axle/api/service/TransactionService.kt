@@ -73,17 +73,6 @@ interface TransactionService {
     @Query("skip_od_in_halts")skipODInHalts:Boolean=true
   ): Single<BaseResponse<HomeBidsRequestItemData>>
 
-
-  /**
-   * PlacementDetails Wrapper API
-   */
-  @GET("/placement-dashboard/get_placement_contract_details/")
-  fun getPlacementDetails(
-    @Query("placement_type") placementType: String,
-    @Query("transaction_id") transactionId:String?=null,
-    @Query("contract_code") contractCode:String?=null
-  ): Single<BaseResponse<HomeBidsRequestItemData>>
-
   /**
    * Bulk transaction ids
    *

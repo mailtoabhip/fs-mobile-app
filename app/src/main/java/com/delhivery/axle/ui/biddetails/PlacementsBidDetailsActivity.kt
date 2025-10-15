@@ -657,7 +657,7 @@ class PlacementsBidDetailsActivity :
         binding.error = false
         viewModel.fetchPlacementDetails()
         //fetching bids data
-        viewModel.fetchTransactionBids()
+        //viewModel.fetchTransactionBids()
 
         binding.executePendingBindings()
         /*  if (binding.buttonConfirm.visibility == View.VISIBLE) {

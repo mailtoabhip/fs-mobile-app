@@ -105,12 +105,6 @@ class TransactionsRepository @Inject constructor(
   fun transactionDetails(id: String, spId:String?=null) = transactionService.transactionDetails(id,spId).convertResponse()
 
   /**
-   * Placement details
-   */
-  fun getPlacementDetails(placementType: String, transactionId: String?=null, contractCode: String?=null) = 
-    transactionService.getPlacementDetails(placementType, transactionId, contractCode).convertResponse()
-
-  /**
    * Transaction trip meter
    */
   fun transactionTripMeter() =

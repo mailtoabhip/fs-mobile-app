@@ -111,24 +111,29 @@ class BidDetailsViewModel @Inject constructor(
      * Fetch placement details
      */
     fun fetchPlacementDetails() {
+        Log.d("PlacementDetails", "Fetching placement details with params: placementType='$placementType', transactionId='$transactionId', contractCode='$contractCode'")
+        
         compositeDisposable += tpsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
             .onBackground()
             .subscribe({ _tRes ->
-                Log.d("_tRes=====>>>>>>>", _tRes?.toString() ?: "null")
+                Log.d("PlacementDetails", "_tRes received: ${_tRes?.toString() ?: "null"}")
+                Log.d("PlacementDetails", "_tRes type: ${_tRes?.javaClass?.simpleName ?: "null"}")
+                
                 if (_tRes != null) {
-                    //Log.d("_tRes====>>>>>>>>", Gson().toJson(_tRes))
+                    Log.d("PlacementDetails", "Successfully received placement details")
                     transaction = _tRes
                     transactionLiveData.postValue(_tRes)
                     //fetching bids data - don't uncomment
                     //moved this call to refreshData function
-                    //fetchTransactionBids()
+                    fetchTransactionBids()
                 } else {
-                    Log.d("PlacementDetails", "Response is null")
+                    Log.e("PlacementDetails", "Response is null - this indicates an issue with the API response parsing")
                     transactionLiveData.postValue(null)
                 }
             }, { error ->
-                Log.d("Error=====>>>>>>>", error?.toString() ?: "null")
-                Log.d("PlacementDetails", "Error occurred: $error")
+                Log.e("PlacementDetails", "Error occurred: ${error?.toString() ?: "null"}")
+                Log.e("PlacementDetails", "Error type: ${error?.javaClass?.simpleName ?: "null"}")
+                error?.printStackTrace()
                 transactionLiveData.postValue(null)
             })
     }

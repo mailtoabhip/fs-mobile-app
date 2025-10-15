@@ -36,8 +36,8 @@ data class Destination(
 )
 
 data class Coordinates(
-    @SerializedName("lat") val lat: Int?,
-    @SerializedName("lon") val lon: Int?,
+    @SerializedName("lat") val lat: Double?,
+    @SerializedName("lon") val lon: Double?,
 )
 
 data class CostDataObject(
@@ -47,7 +47,7 @@ data class CostDataObject(
     @SerializedName("rpd") val rpd: Int?,
     @SerializedName("rpk") val rpk: Int?,
     @SerializedName("rph") val rph: Int?,
-    @SerializedName("nep") val nep: Int?,
+    @SerializedName("nep") val nep: Boolean,
 )
 
 data class Misc(
