@@ -125,7 +125,8 @@ class BidDetailsViewModel @Inject constructor(
                     transactionLiveData.postValue(_tRes)
                     //fetching bids data - don't uncomment
                     //moved this call to refreshData function
-                    fetchTransactionBids()
+                    //No need ot this api call anymore
+                    //fetchTransactionBids()
                 } else {
                     Log.e("PlacementDetails", "Response is null - this indicates an issue with the API response parsing")
                     transactionLiveData.postValue(null)

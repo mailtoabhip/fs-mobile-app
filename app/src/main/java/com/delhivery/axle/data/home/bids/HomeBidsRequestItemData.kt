@@ -32,6 +32,7 @@ import com.delhivery.axle.utils.DrawableProviderUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
@@ -548,6 +549,21 @@ data class HomeBidsRequestItemData(
   }
 
   /**
+   * Placement route details
+   */
+  fun placementRouteOriginDes(): String {
+    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true){
+      capitalize(routeInfo.origin.centerName) ?: ""
+    }else {
+      val stopBuilder = StringBuilder()
+      stopBuilder.append(capitalize(routeInfo?.origin?.centerName))
+        .append(" -> ")
+      stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
+      stopBuilder.toString()
+    }
+  }
+
+  /**
    * @return is trips is multi drop
    */
   fun isMultiDrop() = (stop1City.isNotNullOrEmpty() || stop2City.isNotNullOrEmpty())
@@ -861,7 +877,7 @@ data class HomeBidsRequestItemData(
 
   fun reportingCenters(): String{
     val reportingCenters = StringBuilder()
-       reportingCenters.append(origin)
+    reportingCenters.append(origin)
     if(secondaryReportingCenters?.isNotEmpty() == true){
       reportingCenters.append(", ")
       reportingCenters.append(secondaryReportingCenters[0].originCenterName)

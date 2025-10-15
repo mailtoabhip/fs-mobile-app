@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             tools:text = "Navi Mumbai -> Jaisalmer"
-            android:text="@{request.tripRouteOriginDes()}"
+            android:text="@{request.placementRouteOriginDes()}"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#000000"
