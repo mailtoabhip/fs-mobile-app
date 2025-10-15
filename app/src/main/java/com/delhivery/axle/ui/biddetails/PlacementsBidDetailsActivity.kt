@@ -1107,24 +1107,28 @@ class PlacementsBidDetailsActivity :
     fun placementInput() {
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
-        if (homePlacementsItemData?.loadType == LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType == LoadTypes.intracityRegular.name) {
-            if(viewModel.transaction.isIntracity()) viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
-            //
-            binding.cardInput.routeAddress.visibility = View.VISIBLE
-            //
-            binding.cardInput.mapText.visibility = View.VISIBLE
-            //
-            binding.cardInput.mapText.setOnClickListener {
-                navigateToMap()
-            }
-        } else {
-            binding.cardInput.routeAddress.visibility = View.GONE
-            binding.cardInput.mapText.visibility = View.GONE
+        //
+        binding.cardInput.routeAddress.visibility = View.GONE
+        binding.cardInput.mapText.visibility = View.GONE
 
-        }
-        viewModel.addressLiveData.observe(this, Observer {
-            binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
-        })
+//        if (homePlacementsItemData?.loadType == LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType == LoadTypes.intracityRegular.name) {
+//            //if(viewModel.transaction.isIntracity()) viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+//            //
+//            binding.cardInput.routeAddress.visibility = View.VISIBLE
+//            //
+//            binding.cardInput.mapText.visibility = View.VISIBLE
+//            //
+//            binding.cardInput.mapText.setOnClickListener {
+//                navigateToMap()
+//            }
+//        } else {
+//            binding.cardInput.routeAddress.visibility = View.GONE
+//            binding.cardInput.mapText.visibility = View.GONE
+//
+//        }
+//        viewModel.addressLiveData.observe(this, Observer {
+//            binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
+//        })
         viewModel.updateVehicleDetails.observe(this, Observer {
             if (it) {
                 uiUtils.hideProgress()

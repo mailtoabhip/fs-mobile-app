@@ -548,14 +548,14 @@ data class HomeBidsRequestItemData(
     }
   }
 
-  fun isIntracity() : Boolean{
-    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true
-      || routeInfo?.destination?.centerCode.isNullOrEmpty()){
-      true
-    } else {
-      false
-    }
-  }
+//  fun isIntracity() : Boolean{
+//    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true
+//      || routeInfo?.destination?.centerCode.isNullOrEmpty()){
+//      true
+//    } else {
+//      false
+//    }
+//  }
 
   /**
    * Placement route details
@@ -571,6 +571,16 @@ data class HomeBidsRequestItemData(
       stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
       stopBuilder.toString()
     }
+  }
+
+  /**
+   * Placement route details
+   */
+  fun getOriginAndDestinationName(): String {
+    val stopBuilder = StringBuilder()
+    stopBuilder.append(capitalize(routeInfo?.origin?.centerName)).append(" -> ")
+    stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
+    return stopBuilder.toString()
   }
 
   /**
