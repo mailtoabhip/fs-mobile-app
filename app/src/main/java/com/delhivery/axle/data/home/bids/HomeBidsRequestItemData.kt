@@ -232,6 +232,16 @@ data class HomeBidsRequestItemData(
   }
 
   /**
+   * Check if payment mode should be displayed
+   * Returns true only for valid payment modes (Credit or Advance)
+   */
+  fun shouldShowPaymentMode(): Boolean {
+    if (indentPaymentMode.isNullOrEmpty()) return false
+    val mode = indentPaymentMode?.lowercase()
+    return mode.equals("credit",true)  || mode.equals("advance",true)
+  }
+
+  /**
    * get formatted advance payment percentage
    */
   fun getAdvancePaymentPercentage(): String {

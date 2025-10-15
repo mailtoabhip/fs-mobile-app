@@ -337,7 +337,7 @@ class HomeLoadsViewModel @Inject constructor(
                                         )
                                     )*/
 
-                        if (total == 0  && searchAfter != null) {
+                        if (total == 0 && !paginate) {
                             add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                         }
                             for ((index, load) in loads.toMutableList().withIndex()) {

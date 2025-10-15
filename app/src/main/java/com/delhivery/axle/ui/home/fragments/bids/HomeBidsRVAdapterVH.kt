@@ -435,6 +435,15 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
     
     // For intercity bids: always hide distance view (distance is only shown in intracity contracts)
     binding.distance.visibility = View.GONE
+    
+    // Handle payment mode visibility: only show for loads (not contracts) with valid payment modes
+    if (!isContract && item.data.shouldShowPaymentMode()) {
+      binding.paymentType.visibility = View.VISIBLE
+      binding.advancePaymentPercentage.visibility = View.VISIBLE
+    } else {
+      binding.paymentType.visibility = View.GONE
+      binding.advancePaymentPercentage.visibility = View.GONE
+    }
   }
 }
 
@@ -512,12 +521,13 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
         binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
       }
 
-      // For loads: show payment mode, hide distance
+      // For loads: show payment mode only if valid, hide distance
       binding.distance.visibility = View.GONE
-      binding.paymentType.visibility = View.VISIBLE
-      if (item.data.paymentMode != null) {
+      if (item.data.shouldShowPaymentMode() && !item.data.isItContract()) {
+        binding.paymentType.visibility = View.VISIBLE
         binding.advancePaymentPercentage.visibility = View.VISIBLE
       } else {
+        binding.paymentType.visibility = View.GONE
         binding.advancePaymentPercentage.visibility = View.GONE
       }
     }

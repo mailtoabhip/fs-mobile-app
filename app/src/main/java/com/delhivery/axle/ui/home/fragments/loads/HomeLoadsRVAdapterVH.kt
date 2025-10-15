@@ -197,14 +197,16 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
         binding.request = item.data
         binding.containerError.request = item.data
         
-        // Set payment mode display
-        if (item.data.paymentMode != null) {
+        // Set payment mode display - only show for valid payment modes
+        if (item.data.shouldShowPaymentMode()) {
+            binding.paymentType.visibility = View.VISIBLE
             binding.paymentType.text = item.data.getPaymentModeDisplay()
+            binding.advancePaymentPercentage.visibility = View.VISIBLE
+            binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
         } else {
             binding.paymentType.visibility = View.GONE
             binding.advancePaymentPercentage.visibility = View.GONE
         }
-        binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
         if (demandType == "Delhivery Load") {
             binding.demandLoadType.text = "Delhivery Load"
             binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
