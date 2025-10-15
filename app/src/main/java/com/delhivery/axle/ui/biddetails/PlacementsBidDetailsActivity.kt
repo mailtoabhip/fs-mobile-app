@@ -1108,9 +1108,12 @@ class PlacementsBidDetailsActivity :
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
         if (homePlacementsItemData?.loadType == LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType == LoadTypes.intracityRegular.name) {
-            viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+            if(viewModel.transaction.isIntracity()) viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+            //
             binding.cardInput.routeAddress.visibility = View.VISIBLE
+            //
             binding.cardInput.mapText.visibility = View.VISIBLE
+            //
             binding.cardInput.mapText.setOnClickListener {
                 navigateToMap()
             }

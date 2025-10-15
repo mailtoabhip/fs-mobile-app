@@ -548,12 +548,22 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  fun isIntracity() : Boolean{
+    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true
+      || routeInfo?.destination?.centerCode.isNullOrEmpty()){
+      true
+    } else {
+      false
+    }
+  }
+
   /**
    * Placement route details
    */
   fun placementRouteOriginDes(): String {
-    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true){
-      capitalize(routeInfo.origin.centerName) ?: ""
+    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true
+      || routeInfo?.destination?.centerCode.isNullOrEmpty()){
+      capitalize(routeInfo?.origin?.centerName) ?: ""
     }else {
       val stopBuilder = StringBuilder()
       stopBuilder.append(capitalize(routeInfo?.origin?.centerName))
