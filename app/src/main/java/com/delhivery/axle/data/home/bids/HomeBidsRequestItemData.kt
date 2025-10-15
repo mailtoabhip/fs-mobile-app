@@ -242,6 +242,16 @@ data class HomeBidsRequestItemData(
   }
 
   /**
+   * Check if advance payment percentage should be displayed
+   * Returns true only for advance payment mode
+   */
+  fun shouldShowAdvancePercentage(): Boolean {
+    if (indentPaymentMode.isNullOrEmpty()) return false
+    val mode = indentPaymentMode?.lowercase()
+    return mode.equals("advance",true)
+  }
+
+  /**
    * get formatted advance payment percentage
    */
   fun getAdvancePaymentPercentage(): String {
@@ -254,7 +264,8 @@ data class HomeBidsRequestItemData(
 
   fun getDemandTypeByLoad() : String {
     Log.d("Demand Type ","$demandType")
-    if (demandType == "Internal" || demandType == "Intracity") {
+    if (demandType?.equals("Internal", ignoreCase = true) == true || 
+        demandType?.equals("Intracity", ignoreCase = true) == true) {
       return "Delhivery Load"
     } else return "Client Load"
   }

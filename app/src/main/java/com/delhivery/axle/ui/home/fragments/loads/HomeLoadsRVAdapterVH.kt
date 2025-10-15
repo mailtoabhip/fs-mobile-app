@@ -132,6 +132,22 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.layoutIntracity.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
         }
         
+        // Set payment mode display for intracity loads - only show for valid payment modes
+        if (item.data.shouldShowPaymentMode()) {
+            binding.layoutIntracity.paymentType.visibility = View.VISIBLE
+            binding.layoutIntracity.paymentType.text = item.data.getPaymentModeDisplay()
+            // Only show advance percentage for advance payment mode
+            if (item.data.shouldShowAdvancePercentage()) {
+                binding.layoutIntracity.advancePaymentPercentage.visibility = View.VISIBLE
+                binding.layoutIntracity.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
+            } else {
+                binding.layoutIntracity.advancePaymentPercentage.visibility = View.GONE
+            }
+        } else {
+            binding.layoutIntracity.paymentType.visibility = View.GONE
+            binding.layoutIntracity.advancePaymentPercentage.visibility = View.GONE
+        }
+        
 //        binding.layoutIntracity.containerRowBidFor1.placeBidButton1.rootView.
 //        binding.nonIntracityLayout.visibility = View.GONE
 //        binding.layoutIntracity.layoutTransaction.navigate.visibility = View.VISIBLE
@@ -201,8 +217,13 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
         if (item.data.shouldShowPaymentMode()) {
             binding.paymentType.visibility = View.VISIBLE
             binding.paymentType.text = item.data.getPaymentModeDisplay()
-            binding.advancePaymentPercentage.visibility = View.VISIBLE
-            binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
+            // Only show advance percentage for advance payment mode
+            if (item.data.shouldShowAdvancePercentage()) {
+                binding.advancePaymentPercentage.visibility = View.VISIBLE
+                binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
+            } else {
+                binding.advancePaymentPercentage.visibility = View.GONE
+            }
         } else {
             binding.paymentType.visibility = View.GONE
             binding.advancePaymentPercentage.visibility = View.GONE

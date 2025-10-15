@@ -439,7 +439,12 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
     // Handle payment mode visibility: only show for loads (not contracts) with valid payment modes
     if (!isContract && item.data.shouldShowPaymentMode()) {
       binding.paymentType.visibility = View.VISIBLE
-      binding.advancePaymentPercentage.visibility = View.VISIBLE
+      // Only show advance percentage for advance payment mode
+      if (item.data.shouldShowAdvancePercentage()) {
+        binding.advancePaymentPercentage.visibility = View.VISIBLE
+      } else {
+        binding.advancePaymentPercentage.visibility = View.GONE
+      }
     } else {
       binding.paymentType.visibility = View.GONE
       binding.advancePaymentPercentage.visibility = View.GONE
@@ -525,7 +530,12 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       binding.distance.visibility = View.GONE
       if (item.data.shouldShowPaymentMode() && !item.data.isItContract()) {
         binding.paymentType.visibility = View.VISIBLE
-        binding.advancePaymentPercentage.visibility = View.VISIBLE
+        // Only show advance percentage for advance payment mode
+        if (item.data.shouldShowAdvancePercentage()) {
+          binding.advancePaymentPercentage.visibility = View.VISIBLE
+        } else {
+          binding.advancePaymentPercentage.visibility = View.GONE
+        }
       } else {
         binding.paymentType.visibility = View.GONE
         binding.advancePaymentPercentage.visibility = View.GONE
