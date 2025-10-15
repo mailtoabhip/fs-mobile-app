@@ -7,6 +7,7 @@ import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.api.response.PlacementsLoadDataResponse
 import com.delhivery.axle.api.response.RecommendedDriverResponse
 import com.delhivery.axle.api.response.TPSBaseResponse
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import io.reactivex.Single
 import org.json.JSONObject
 import retrofit2.http.Body
@@ -31,6 +32,16 @@ interface TPSService{
     @GET("placement_dashboard/drivers/recommended")
     fun getRecentDriverNameOnVehicle(@Query("vehicle_registration_number") vehicleNumber: String)
             : Single<TPSBaseResponse<RecommendedDriverResponse>>?
+
+    /**
+     * PlacementDetails Wrapper API
+     */
+    @GET("/placement_dashboard/contracts/get_placement_details")
+    fun getPlacementDetails(
+        @Query("placement_type") placementType: String,
+        @Query("transaction_id") transactionId:String?=null,
+        @Query("contract_code") contractCode:String?=null
+    ): Single<TPSBaseResponse<HomeBidsRequestItemData>>
 }
 
 

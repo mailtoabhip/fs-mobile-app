@@ -161,6 +161,8 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
                 if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name ||data.loadType==LoadTypes.orionFixed.name){
                     val transactionId = data.transactionId
                     val contractCode = data.contractCode
+                    Log.d("transactionId", "$transactionId")
+                    Log.d("contractCode", "$contractCode")
                     val context = this.context
                     if ((transactionId.isNotNullOrEmpty() || contractCode.isNotNullOrEmpty()) && context != null) {
                         val intent = placementsBidDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)

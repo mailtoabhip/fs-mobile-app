@@ -23,6 +23,7 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.perf.ktx.performance
+import com.google.gson.Gson
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
@@ -110,18 +111,26 @@ class BidDetailsViewModel @Inject constructor(
      * Fetch placement details
      */
     fun fetchPlacementDetails() {
-        compositeDisposable += transactionsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
+        compositeDisposable += tpsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
             .onBackground()
-            .progress()
-            .subscribe { _tRes, error ->
-                if (!error) {
+            .subscribe({ _tRes ->
+                Log.d("_tRes=====>>>>>>>", _tRes?.toString() ?: "null")
+                if (_tRes != null) {
+                    //Log.d("_tRes====>>>>>>>>", Gson().toJson(_tRes))
                     transaction = _tRes
                     transactionLiveData.postValue(_tRes)
+                    //fetching bids data - don't uncomment
+                    //moved this call to refreshData function
                     //fetchTransactionBids()
                 } else {
+                    Log.d("PlacementDetails", "Response is null")
                     transactionLiveData.postValue(null)
                 }
-            }
+            }, { error ->
+                Log.d("Error=====>>>>>>>", error?.toString() ?: "null")
+                Log.d("PlacementDetails", "Error occurred: $error")
+                transactionLiveData.postValue(null)
+            })
     }
 
 

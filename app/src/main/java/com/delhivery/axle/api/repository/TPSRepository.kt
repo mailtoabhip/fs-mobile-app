@@ -28,4 +28,10 @@ class TPSRepository@Inject constructor(
             updateVehicleDetailsRequest).
         convertTPSResponse()
 
+    /**
+     * Placement details
+     */
+    fun getPlacementDetails(placementType: String, transactionId: String?=null, contractCode: String?=null) =
+        tpsService.getPlacementDetails(placementType, transactionId, contractCode).convertTPSResponse()
+
 }

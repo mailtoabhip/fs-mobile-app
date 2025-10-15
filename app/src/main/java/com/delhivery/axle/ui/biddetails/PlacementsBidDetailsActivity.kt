@@ -134,13 +134,18 @@ class PlacementsBidDetailsActivity :
     private var forPlacement = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        Log.d("onCreate","onCreate")
+
+
         activitySetupTrace =
             FirebasePerformance.getInstance().newTrace("PlacementsBidDetailsActivity_SetupTime")
         activitySetupTrace?.start()
         /* validate intent */
         try {
             require(
-                !(intent == null || !intent.hasExtra(TransactionIdIntentKey) || !intent.hasExtra(ContractCodeIntentKey))
+                !(intent == null || (!intent.hasExtra(TransactionIdIntentKey) && !intent.hasExtra(ContractCodeIntentKey)))
             ) { "Required data $TransactionIdIntentKey or $ContractCodeIntentKey not found" }
         } catch (e: Exception) {
             finish()
@@ -651,6 +656,8 @@ class PlacementsBidDetailsActivity :
     private fun refreshData() {
         binding.error = false
         viewModel.fetchPlacementDetails()
+        //fetching bids data
+        viewModel.fetchTransactionBids()
 
         binding.executePendingBindings()
         /*  if (binding.buttonConfirm.visibility == View.VISIBLE) {
@@ -717,7 +724,7 @@ class PlacementsBidDetailsActivity :
      * Transaction details and UI updation Observer
      */
     inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData) {
+        override fun onChanged(t: HomeBidsRequestItemData?) {
             if (t != null) {
                 t.let { _transaction ->
                     binding.cardInput.etBidAmount.isFocusable = true
@@ -2335,8 +2342,9 @@ fun placementsBidDetailsIntent(
     forPlacement: Boolean = false,
     homePlacementsItemData: HomePlacementsItemData? = null
 ) = Intent(context, PlacementsBidDetailsActivity::class.java).apply {
+    Log.d("placementsBidDetailsIntent","placementsBidDetailsIntent")
     if (placementType.isNotNullOrEmpty()) putExtra(PlacementTypeIndentKey, placementType)
-    if (contractCode.isNotNullOrEmpty()) putExtra(ContractCodeIntentKey, contractCode)
+    if (transactionId.isNotNullOrEmpty()) putExtra(TransactionIdIntentKey, transactionId)
     if (contractCode.isNotNullOrEmpty()) putExtra(ContractCodeIntentKey, contractCode)
     if (requestType != null) putExtra(RequestTypeIntentKey, requestType)
     putExtra(FromPage, fromBidsPage)
