@@ -42,6 +42,7 @@ enum class LoadTypes {
     orionFixed,
     orionSpot
 }
+
 /**
  * Base Home Placements type adapter item
  */

@@ -90,6 +90,8 @@ class PlacementsBidDetailsActivity :
         hasInlineProgress = true
     }
 
+    private val TAG = PlacementsBidDetailsActivity::class.java.simpleName
+
     @Inject
     lateinit var userPrefs: UserPrefs
 
@@ -132,15 +134,12 @@ class PlacementsBidDetailsActivity :
     private var amount = 0
     private var pmtRate = 0
     private var forPlacement = false
+    private var addressDetailAdapter : AddressDetailAdapter?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         Log.d("onCreate","onCreate")
-
-
-        activitySetupTrace =
-            FirebasePerformance.getInstance().newTrace("PlacementsBidDetailsActivity_SetupTime")
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("PlacementsBidDetailsActivity_SetupTime")
         activitySetupTrace?.start()
         /* validate intent */
         try {
@@ -176,12 +175,6 @@ class PlacementsBidDetailsActivity :
                 PlacementData,
                 HomePlacementsItemData::class.java
             )
-
-        val addressDetailAdapter: AddressDetailAdapter = AddressDetailAdapter(uploadArray)
-        binding.cvRouteSection.addresslist.apply {
-            layoutManager = LinearLayoutManager(applicationContext)
-            adapter = addressDetailAdapter
-        }
     }
 
     override fun onResume() {
@@ -189,45 +182,6 @@ class PlacementsBidDetailsActivity :
         if (activitySetupTrace != null && isFirstResume) {
             activitySetupTrace?.stop()
             isFirstResume = false
-        }
-    }
-
-    private fun setTimer(bidEndingTime: String) {
-
-        if (!bidEndingTime.equals("null")) {
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            format.timeZone = TimeZone.getTimeZone("IST")
-            val date1: Date = format.parse(format.format(Date()))
-            val date2: Date = format.parse(bidEndingTime)
-            if (date2.compareTo(date1) > 0) {
-//        binding.timerLayout.visibility = View.VISIBLE
-                val mills: Long = date2.time - date1.time
-                object : CountDownTimer(mills, 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        try {
-                            val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
-                            val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
-                            val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
-                            val format = "%1$02d"
-                            val hrs = String.format(format, hours)
-                            val ms = String.format(format, mins)
-                            val sec = String.format(format, secs)
-                            val diff = "$hrs:$ms:$sec" + "s"
-//              binding.timerTime.setText(diff)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-
-                    override fun onFinish() {
-//            binding.timerLayout.visibility = View.GONE
-                    }
-                }.start()
-            } else {
-//        binding.timerLayout.visibility = View.GONE
-            }
-        } else {
-//      binding.timerLayout.visibility = View.GONE
         }
     }
 
@@ -240,13 +194,10 @@ class PlacementsBidDetailsActivity :
         title = ""//""Order ID - " + viewModel.transactionId
         if (homePlacementsItemData?.status == PlacementTypes.Delayed.name) {
             binding.toolbarEndText.visibility = View.VISIBLE
-            binding.toolbarEndText.text =
-                "Delayed"
-            binding.toolbarEndText.background =
-                ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
+            binding.toolbarEndText.text = "Delayed"
+            binding.toolbarEndText.background = ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
         } else {
             binding.toolbarEndText.visibility = View.GONE
-
         }
         /* setup live data observers */
         viewModel.progressLiveData.observe(this, ProgressObserver())
@@ -463,14 +414,14 @@ class PlacementsBidDetailsActivity :
                     }
 
                     if (!uploadArray.isEmpty()) {
-                        binding.cvRouteSection.addressLay.visibility = View.VISIBLE
-                        val addressDetailAdapter = AddressDetailAdapter(uploadArray)
-                        binding.cvRouteSection.addresslist.apply {
-                            layoutManager = LinearLayoutManager(applicationContext)
-                            adapter = addressDetailAdapter
-                        }
+                        //binding.cvRouteSection.addressLay.visibility = View.VISIBLE
+//                        val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+//                        binding.cvRouteSection.addresslist.apply {
+//                            layoutManager = LinearLayoutManager(applicationContext)
+//                            adapter = addressDetailAdapter
+//                        }
                     } else {
-                        binding.cvRouteSection.addressLay.visibility = View.GONE
+                        //binding.cvRouteSection.addressLay.visibility = View.GONE
                     }
 
                 }
@@ -722,6 +673,43 @@ class PlacementsBidDetailsActivity :
         }
     }
 
+    fun triggerPickupAndDestinationAddressCall(pickupCenterCode:String, destinationCenterCode:String){
+        viewModel.pickupAddressLiveData.observe(this, Observer {
+            Log.d(TAG, "pickupAddressLiveData")
+            viewModel.pickupAddress = it.propertyAddressDetails?.address
+            //pickup centre name and address
+            //uploadArray.clear()
+            uploadArray.add(Pair(binding.transaction?.routeInfo?.origin?.centerName?:"", viewModel.pickupAddress))
+        })
+        //
+        viewModel.destinationAddressLiveData.observe(this, Observer {
+            Log.d(TAG, "destinationAddressLiveData")
+            viewModel.destinationAddress = it.propertyAddressDetails?.address
+            //destination centre name and address
+            uploadArray.add(Pair(binding.transaction?.routeInfo?.destination?.centerName?:"", viewModel.destinationAddress))
+            //notify adapter
+            if (uploadArray.isNotEmpty()) {
+                Log.d(TAG, "uploadArray.isNotEmpty")
+                addressDetailAdapter = AddressDetailAdapter(uploadArray)
+                binding.cvRouteSection.addresslist.apply {
+                    layoutManager = LinearLayoutManager(applicationContext)
+                    adapter = addressDetailAdapter
+                }
+            } else {
+                //hide route details section
+                binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
+            }
+        })
+
+        //trigger pickup api call and destination api call will be triggered in sequence post pickup successful response
+        viewModel.getPlacementFacilityAddress(
+            pickupCenterCode= pickupCenterCode,
+            destinationCenterCode = destinationCenterCode,
+            facilityType = "pickup")
+        //
+        //viewModel.getPlacementFacilityAddress(destinationCenterCode, "destination")
+    }
+
     /**
      * Transaction details and UI updation Observer
      */
@@ -729,7 +717,8 @@ class PlacementsBidDetailsActivity :
         override fun onChanged(t: HomeBidsRequestItemData?) {
             if (t != null) {
                 t.let { _transaction ->
-                    //binding.cardInput.etBidAmount.isFocusable = true
+                    //assign placementtype to loadType var to distinguish b/w different types of loads in "HomeBidsRequestItemData" class and its functions
+                    _transaction.loadType = viewModel.placementType
                     binding.placementDetailsContent.placementListingData = homePlacementsItemData
                     binding.placementDetailsContent.request = _transaction
                     binding.error = false
@@ -741,6 +730,43 @@ class PlacementsBidDetailsActivity :
                     binding.cardInput.root.visibility = View.VISIBLE
                     binding.cardInput.placementCl.root.visibility = View.VISIBLE
                     placementInput()
+                }
+
+
+                Log.d("$TAG::placementType==>>", ""+viewModel.placementType)
+
+                /**
+                 * New address adapter code
+                 */
+                //if(viewModel.transaction.isIntracity()){
+                if(false){
+                    //hide route details section
+                    binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
+                }else{
+                    //
+                    binding.cvRouteSection.cvRouteContainer.visibility = View.VISIBLE
+                    //init observer trigger pickup and destination address call
+                    triggerPickupAndDestinationAddressCall(
+                        pickupCenterCode = binding.transaction?.routeInfo?.origin?.centerCode?:"",
+                        destinationCenterCode = binding.transaction?.routeInfo?.destination?.centerCode?:"")
+                    //
+                    //binding.cvRouteSection.cvRouteContainer.visibility = View.VISIBLE
+                    //setup adapter data based on pickup
+                    //pickup centre name and address
+                    //uploadArray.add(Pair(binding.transaction?.routeInfo?.origin?.centerName?:"", viewModel.pickupAddress))
+                    //destination centre name and address
+                    //uploadArray.add(Pair(binding.transaction?.routeInfo?.destination?.centerName?:"", viewModel.destinationAddress))
+                    //
+//                    if (!uploadArray.isEmpty()) {
+//                        addressDetailAdapter = AddressDetailAdapter(uploadArray)
+//                        binding.cvRouteSection.addresslist.apply {
+//                            layoutManager = LinearLayoutManager(applicationContext)
+//                            adapter = addressDetailAdapter
+//                        }
+//                    } else {
+//                        //hide route details section
+//                        binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
+//                    }
                 }
 
 
@@ -789,14 +815,14 @@ class PlacementsBidDetailsActivity :
                             )
                         }
                         if (!uploadArray.isEmpty()) {
-                            binding.cvRouteSection.addressLay.visibility = View.VISIBLE
-                            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
-                            binding.cvRouteSection.addresslist.apply {
-                                layoutManager = LinearLayoutManager(applicationContext)
-                                adapter = addressDetailAdapter
-                            }
+                            //binding.cvRouteSection.addressLay.visibility = View.VISIBLE
+//                            val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+//                            binding.cvRouteSection.addresslist.apply {
+//                                layoutManager = LinearLayoutManager(applicationContext)
+//                                adapter = addressDetailAdapter
+//                            }
                         } else {
-                            binding.cvRouteSection.addressLay.visibility = View.GONE
+                            //binding.cvRouteSection.addressLay.visibility = View.GONE
                         }
                     } else {
 
@@ -1043,14 +1069,14 @@ class PlacementsBidDetailsActivity :
                     }
 
                     if (!uploadArray.isEmpty()) {
-                        binding.cvRouteSection.addressLay.visibility = View.VISIBLE
-                        val addressDetailAdapter = AddressDetailAdapter(uploadArray)
-                        binding.cvRouteSection.addresslist.apply {
-                            layoutManager = LinearLayoutManager(applicationContext)
-                            adapter = addressDetailAdapter
-                        }
+                        //binding.cvRouteSection.addressLay.visibility = View.VISIBLE
+//                        val addressDetailAdapter = AddressDetailAdapter(uploadArray)
+//                        binding.cvRouteSection.addresslist.apply {
+//                            layoutManager = LinearLayoutManager(applicationContext)
+//                            adapter = addressDetailAdapter
+//                        }
                     } else {
-                        binding.cvRouteSection.addressLay.visibility = View.GONE
+                        //binding.cvRouteSection.addressLay.visibility = View.GONE
                     }
                 }
 
@@ -1109,27 +1135,34 @@ class PlacementsBidDetailsActivity :
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
         //
-        binding.cardInput.routeAddress.visibility = View.GONE
-        binding.cardInput.mapText.visibility = View.GONE
+        //Log.d("$TAG::isIntracity", ""+viewModel.transaction.isIntracity())
+        //Log.d("$TAG::viewModel.transaction", ""+Gson().toJson(viewModel.transaction))
+        if (viewModel.transaction.isIntracity()) {
+            //
+            viewModel.addressLiveData.observe(this, Observer {
+                binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
+            })
+            //
+            viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+            //
+            binding.cardInput.routeAddress.visibility = View.VISIBLE
+            //
+            binding.cardInput.mapText.visibility = View.VISIBLE
+            //
+            binding.cardInput.mapText.setOnClickListener {
+                navigateToMap()
+            }
+        } else {
+            binding.cardInput.routeAddress.visibility = View.GONE
+            binding.cardInput.mapText.visibility = View.GONE
 
-//        if (homePlacementsItemData?.loadType == LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType == LoadTypes.intracityRegular.name) {
-//            //if(viewModel.transaction.isIntracity()) viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
-//            //
-//            binding.cardInput.routeAddress.visibility = View.VISIBLE
-//            //
-//            binding.cardInput.mapText.visibility = View.VISIBLE
-//            //
-//            binding.cardInput.mapText.setOnClickListener {
-//                navigateToMap()
-//            }
-//        } else {
-//            binding.cardInput.routeAddress.visibility = View.GONE
-//            binding.cardInput.mapText.visibility = View.GONE
-//
-//        }
+        }
+
 //        viewModel.addressLiveData.observe(this, Observer {
 //            binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
 //        })
+        //
+
         viewModel.updateVehicleDetails.observe(this, Observer {
             if (it) {
                 uiUtils.hideProgress()

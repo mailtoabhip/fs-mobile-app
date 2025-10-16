@@ -24,11 +24,13 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.DrawableProviderUtils
+import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -159,6 +161,9 @@ data class HomeBidsRequestItemData(
   @SerializedName("cost_data")val costData: CostDataObject?=null,
   @SerializedName("misc")val misc: Misc?=null,
 
+  //for Placement details
+  var loadType: String?=null,
+  //
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -548,39 +553,37 @@ data class HomeBidsRequestItemData(
     }
   }
 
-//  fun isIntracity() : Boolean{
-//    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true
-//      || routeInfo?.destination?.centerCode.isNullOrEmpty()){
-//      true
-//    } else {
-//      false
-//    }
-//  }
-
-  /**
-   * Placement route details
-   */
-  fun placementRouteOriginDes(): String {
-    return if(routeInfo?.origin?.centerCode?.equals(routeInfo.destination?.centerCode, ignoreCase = true) == true
-      || routeInfo?.destination?.centerCode.isNullOrEmpty()){
-      capitalize(routeInfo?.origin?.centerName) ?: ""
-    }else {
-      val stopBuilder = StringBuilder()
-      stopBuilder.append(capitalize(routeInfo?.origin?.centerName))
-        .append(" -> ")
-      stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
-      stopBuilder.toString()
+  fun isIntracity() : Boolean{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityAdhoc.name), ignoreCase = true) == true
+      || loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true){
+      true
+    } else {
+      false
     }
   }
 
   /**
    * Placement route details
    */
+//  fun getOriginAndDestinationName(): String {
+//    val stopBuilder = StringBuilder()
+//    stopBuilder.append(capitalize(routeInfo?.origin?.centerName)).append(" -> ")
+//    stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
+//    return stopBuilder.toString()
+//  }
+
+  /**
+   * Placement route details
+   */
   fun getOriginAndDestinationName(): String {
-    val stopBuilder = StringBuilder()
-    stopBuilder.append(capitalize(routeInfo?.origin?.centerName)).append(" -> ")
-    stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
-    return stopBuilder.toString()
+    return if(isIntracity()){
+      capitalize(routeInfo?.origin?.centerName) ?: ""
+    }else{
+      val stopBuilder = StringBuilder()
+      stopBuilder.append(capitalize(routeInfo?.origin?.centerName)).append(" -> ")
+      stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
+      stopBuilder.toString()
+    }
   }
 
   /**

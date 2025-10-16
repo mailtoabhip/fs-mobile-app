@@ -158,7 +158,7 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
                 )
 
                 userPrefs.setPreviousScreen(this.javaClass.name)
-                if(data.loadType==LoadTypes.orionSpot.name  || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name ||data.loadType==LoadTypes.orionFixed.name){
+                if(data.loadType==LoadTypes.orionSpot.name || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name ||data.loadType==LoadTypes.orionFixed.name){
                     val transactionId = data.transactionId
                     val contractCode = data.contractCode
                     Log.d("transactionId", "$transactionId")

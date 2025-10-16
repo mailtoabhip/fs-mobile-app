@@ -115,7 +115,7 @@
 
                     <include
                         android:id="@+id/cv_route_section"
-                        layout="@layout/card_cv_routes"
+                        layout="@layout/placements_card_cv_routes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_16dp"

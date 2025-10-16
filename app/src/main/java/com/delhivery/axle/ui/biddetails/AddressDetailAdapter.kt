@@ -2,6 +2,7 @@
 package com.delhivery.axle.ui.biddetails
 
 import android.content.res.Resources
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,9 @@ class AddressDetailAdapter(private val dataList: ArrayList<Pair<String, String?>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Log.d("AddressDetailAdapter", ""+dataList[position].first)
+        Log.d("AddressDetailAdapter", ""+dataList[position].second)
+        //
         holder.add1.text =  dataList[position].first
         holder.add2.text =  dataList[position].second
 

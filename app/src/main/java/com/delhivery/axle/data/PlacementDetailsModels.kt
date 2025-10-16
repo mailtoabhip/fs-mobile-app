@@ -4,40 +4,40 @@ import com.google.gson.annotations.SerializedName
 
 data class VehicleModel(
     @SerializedName("truck_display_name") val truckDisplayName: String?,
-    @SerializedName("truck_type") val truckType: String?,
+    @SerializedName("truck_type") val truckType: String?
 )
 
 
 data class RouteInformation(
-    @SerializedName("origin") val origin: Origin?,
-    @SerializedName("destination") val destination: Destination?,
+    @SerializedName("origin") val origin: Center?,
+    @SerializedName("destination") val destination: Center?,
     @SerializedName("halt_centers") val haltCenters: List<HaltCenters>?,
-    @SerializedName("route_days_of_week") val routeDaysOfWeek: List<Int>?,
+    @SerializedName("route_days_of_week") val routeDaysOfWeek: List<Int>?
 )
 
-data class Origin(
+data class Center(
     @SerializedName("center_code") val centerCode: String?,
     @SerializedName("center_name") val centerName: String?,
     @SerializedName("center_state") val centerState: String?,
     @SerializedName("coordinates") val coordinates: Coordinates?,
     @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
     @SerializedName("rel_eta") val relETA: String?,
-    @SerializedName("rel_etd") val relETD: String?,
+    @SerializedName("rel_etd") val relETD: String?
 )
 
-data class Destination(
-    @SerializedName("center_code") val centerCode: String?,
-    @SerializedName("center_name") val centerName: String?,
-    @SerializedName("center_state") val centerState: String?,
-    @SerializedName("coordinates") val coordinates: Coordinates?,
-    @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
-    @SerializedName("rel_eta") val relETA: String?,
-    @SerializedName("rel_etd") val relETD: String?,
-)
+//data class Destination(
+//    @SerializedName("center_code") val centerCode: String?,
+//    @SerializedName("center_name") val centerName: String?,
+//    @SerializedName("center_state") val centerState: String?,
+//    @SerializedName("coordinates") val coordinates: Coordinates?,
+//    @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
+//    @SerializedName("rel_eta") val relETA: String?,
+//    @SerializedName("rel_etd") val relETD: String?,
+//)
 
 data class Coordinates(
     @SerializedName("lat") val lat: Double?,
-    @SerializedName("lon") val lon: Double?,
+    @SerializedName("lon") val lon: Double?
 )
 
 data class CostDataObject(
@@ -47,7 +47,7 @@ data class CostDataObject(
     @SerializedName("rpd") val rpd: Int?,
     @SerializedName("rpk") val rpk: Int?,
     @SerializedName("rph") val rph: Int?,
-    @SerializedName("nep") val nep: Boolean,
+    @SerializedName("nep") val nep: Boolean
 )
 
 data class Misc(

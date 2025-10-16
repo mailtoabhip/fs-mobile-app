@@ -17,6 +17,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -41,7 +42,10 @@ class BidDetailsViewModel @Inject constructor(
   val userPrefs: UserPrefs
 ) : BaseViewModel(), BulkBidsCreateEditInterface, BidConfirmReviseDialogInterface {
 
-  /* transaction id */
+    var pickupAddress: String?=null
+    var destinationAddress: String?=null
+
+    /* transaction id */
     var transactionId: String?=null
     //contract code
     var contractCode: String?=null
@@ -121,6 +125,7 @@ class BidDetailsViewModel @Inject constructor(
                 
                 if (_tRes != null) {
                     Log.d("PlacementDetails", "Successfully received placement details")
+                    _tRes.loadType = placementType
                     transaction = _tRes
                     transactionLiveData.postValue(_tRes)
                     //fetching bids data - don't uncomment
@@ -587,6 +592,8 @@ class BidDetailsViewModel @Inject constructor(
         }
   }
     var addressLiveData = MutableLiveData<FacilityAddressResponse>()
+    var pickupAddressLiveData = MutableLiveData<FacilityAddressResponse>()
+    var destinationAddressLiveData = MutableLiveData<FacilityAddressResponse>()
 
     fun getFacilityAddress(originCenterCode:String?) {
         if(originCenterCode!=null)
@@ -597,6 +604,31 @@ class BidDetailsViewModel @Inject constructor(
                         Log.i("Address", _tRes.toString())
                         addressLiveData.postValue(_tRes)
                     }else{ error.handle()
+                    }
+                }
+    }
+
+    fun getPlacementFacilityAddress(pickupCenterCode:String, destinationCenterCode:String, facilityType:String) {
+        if(pickupCenterCode.isNotNullOrEmpty() && destinationCenterCode.isNotNullOrEmpty())
+            compositeDisposable += tpsRepository.getFacilityAddress(pickupCenterCode)
+                .onBackground()
+                .subscribe { _tRes, error ->
+                    if (!error && _tRes != null) {
+                        Log.i("Address", _tRes.toString())
+                        if(facilityType.equals("pickup")) {
+                            pickupAddressLiveData.postValue(_tRes)
+                            Log.d("getPlacementFacilityAddress", "pickupAddressLiveData")
+                            //trigger destination api call only when pickup address is recevd
+                            getPlacementFacilityAddress(
+                                pickupCenterCode= pickupCenterCode,
+                                destinationCenterCode = destinationCenterCode,
+                                facilityType = "destination")
+                        } else if(facilityType.equals("destination")) {
+                            destinationAddressLiveData.postValue(_tRes)
+                            Log.d("getPlacementFacilityAddress", "destinationAddressLiveData")
+                        }
+                    } else {
+                        error.handle()
                     }
                 }
     }
