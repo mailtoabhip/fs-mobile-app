@@ -808,7 +808,8 @@ class PlacementsBidDetailsActivity :
                             )
                         }
                     }
-                } else {
+                }
+                else {
 
                     /*  if (binding.transaction?.orderCreationRemarks.isNotNullOrEmpty()) {
                         binding.remarks.visibility = View.VISIBLE
