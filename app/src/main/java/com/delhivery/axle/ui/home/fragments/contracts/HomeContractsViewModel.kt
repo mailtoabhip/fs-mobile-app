@@ -226,8 +226,9 @@ class HomeContractsViewModel@Inject constructor(
               }
               
               // Calculate counts from filtered data
-              val expressCount = filteredIntercityTransactions.count { it.isExpress() }
-              val nonExpressCount = filteredIntercityTransactions.count { !it.isExpress() }
+              // Express = LH_FTL contracts, Non-Express = FRC contracts
+              val expressCount = filteredIntercityTransactions.count { it.contractType == ContractType.LH_FTL.type }
+              val nonExpressCount = filteredIntercityTransactions.count { it.contractType == ContractType.FRC.type }
               val intraCityCount = filteredIntracityTransactions.size
               
               // Calculate total active count for legacy purposes
