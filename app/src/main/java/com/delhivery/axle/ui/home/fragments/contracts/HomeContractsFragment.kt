@@ -94,7 +94,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeContractsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else{DemandType.Corporate.type}
+    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ "${DemandType.Internal.type},${DemandType.Corporate.type}" }else if (userPrefs.demandType.contains(DemandType.Others.type)){"${DemandType.Internal.type},${DemandType.Corporate.type}"} else{"${DemandType.Internal.type},${DemandType.Corporate.type}"}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -194,8 +194,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       }
       HomeContractsFilterExpress -> {
         // Merged functionality: now handles both Internal (express) and Corporate (non-express) demand types
-        // This will show all intercity contracts (both LH_FTL and FRC types)
-        demandType = DemandType.Corporate.type // Use Corporate to represent intercity contracts
+        demandType = "${DemandType.Internal.type},${DemandType.Corporate.type}"
         contractType = null
         isflexible = null
         includeFlexibleContract= null

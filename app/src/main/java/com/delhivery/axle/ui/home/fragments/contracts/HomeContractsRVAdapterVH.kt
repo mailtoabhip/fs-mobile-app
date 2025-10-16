@@ -330,7 +330,7 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
         binding.intracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type)&&item.data.userContractDemand)View.VISIBLE else View.GONE
 
     when (item.data.filterType) {
-     "Corporate", "Internal" -> {
+     "Corporate", "Internal", "Internal,Corporate" -> {
         binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.expressToggle.isSelected = true

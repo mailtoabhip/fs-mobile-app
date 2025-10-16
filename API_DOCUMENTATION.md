@@ -191,7 +191,7 @@ GET /transactions/loadboard/contracts
 | `sp_id` | string | Supplier ID |
 | `offset` | int | Pagination offset |
 | `limit` | int | Number of records (default: 25) |
-| `demand_types` | string | Contract types (Internal/Corporate) |
+| `demand_types` | string | Contract types - Use `Internal` for LH_FTL (Express), `Corporate` for FRC (Non-Express), `Intracity` for intracity contracts, or comma-separated values like `Internal,Corporate` for both intercity types |
 | `all_active_fetched` | boolean | Whether all active contracts fetched |
 | `match_lane_pref_origin_cities` | boolean | Match lane preference cities |
 | `is_flexible` | boolean | Filter flexible contracts |
@@ -576,7 +576,7 @@ This section documents the APIs used to fetch counts for each section and sub-se
 |-----------|------|-------------|
 | `only_contract_counts` | string | Fetch only counts (default: "yes") |
 | `sp_id` | string | Supplier ID |
-| `demand_types` | string | Contract types (Internal/Corporate) |
+| `demand_types` | string | Contract types - Use `Internal` for LH_FTL (Express), `Corporate` for FRC (Non-Express), `Intracity` for intracity contracts, or comma-separated values like `Internal,Corporate` for both intercity types |
 | `match_lane_pref_origin_cities` | boolean | Match lane preference cities (default: true) |
 | `include_flexible_contracts` | boolean | Include flexible contracts (default: true) |
 | `loads_with_bid_active` | boolean | Include contracts with active bids (default: true) |
@@ -607,7 +607,7 @@ This section documents the APIs used to fetch counts for each section and sub-se
 |-----------|------|-------------|
 | `only_contract_counts` | string | Fetch only counts (default: "yes") |
 | `sp_id` | string | Supplier ID |
-| `demand_types` | string | Specific contract type (Internal/Corporate) |
+| `demand_types` | string | Contract types - Use `Internal` for LH_FTL (Express), `Corporate` for FRC (Non-Express), `Intracity` for intracity contracts, or comma-separated values like `Internal,Corporate` for both intercity types |
 | `contract_type` | string | Contract subtype (LH_FTL/FRC/INTRACITY) |
 
 **Response:**
