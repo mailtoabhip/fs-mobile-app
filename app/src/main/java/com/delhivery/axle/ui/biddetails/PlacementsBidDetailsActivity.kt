@@ -695,6 +695,8 @@ class PlacementsBidDetailsActivity :
                     layoutManager = LinearLayoutManager(applicationContext)
                     adapter = addressDetailAdapter
                 }
+                //hide progressbar
+                binding.cvRouteSection.pbRouteDetails.visibility = View.GONE
             } else {
                 //hide route details section
                 binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
@@ -738,8 +740,8 @@ class PlacementsBidDetailsActivity :
                 /**
                  * New address adapter code
                  */
-                //if(viewModel.transaction.isIntracity()){
-                if(false){
+                if(viewModel.transaction.isIntracity()){
+                //if(false){
                     //hide route details section
                     binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
                 }else{
@@ -1141,9 +1143,12 @@ class PlacementsBidDetailsActivity :
             //
             viewModel.addressLiveData.observe(this, Observer {
                 binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
+                binding.cardInput.pbIntracityAddress.visibility = View.GONE
             })
             //
             viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+            //
+            binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
             //
             binding.cardInput.routeAddress.visibility = View.VISIBLE
             //
@@ -1153,6 +1158,7 @@ class PlacementsBidDetailsActivity :
                 navigateToMap()
             }
         } else {
+            binding.cardInput.pbIntracityAddress.visibility = View.GONE
             binding.cardInput.routeAddress.visibility = View.GONE
             binding.cardInput.mapText.visibility = View.GONE
 

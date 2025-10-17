@@ -64,6 +64,19 @@
                     app:layout_constraintTop_toTopOf="@+id/routeTitle"
                     tools:visibility="visible" />
 
+                <ProgressBar
+                    android:id="@+id/pb_intracity_address"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/multi_select_hint"
+                    app:layout_constraintBottom_toBottomOf="@id/routeAddress"
+                    app:layout_constraintStart_toStartOf="@id/routeAddress"
+                    app:layout_constraintTop_toTopOf="@id/routeAddress"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="4dp"/>
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/routeAddress"
                     android:layout_width="0dp"
