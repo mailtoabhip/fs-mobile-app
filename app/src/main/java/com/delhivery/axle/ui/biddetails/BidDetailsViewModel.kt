@@ -119,6 +119,7 @@ class BidDetailsViewModel @Inject constructor(
         
         compositeDisposable += tpsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
             .onBackground()
+            .progress()
             .subscribe({ _tRes ->
                 Log.d("PlacementDetails", "_tRes received: ${_tRes?.toString() ?: "null"}")
                 Log.d("PlacementDetails", "_tRes type: ${_tRes?.javaClass?.simpleName ?: "null"}")

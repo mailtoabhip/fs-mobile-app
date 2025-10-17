@@ -200,158 +200,8 @@ class PlacementsBidDetailsActivity :
             binding.toolbarEndText.visibility = View.GONE
         }
         /* setup live data observers */
-        viewModel.progressLiveData.observe(this, ProgressObserver())
-        viewModel.transactionLiveData.observe(this, TransactionObserver())
-        //viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
-        viewModel.errorBiddingLiveData.observe(this) {
-            uiUtils.hideProgress()
-        }
-        viewModel.bidPriceLiveData.observe(this, Observer {
-            if (it != null) {
-                binding.transaction?.transactionBid = it
-                val visibility =
-                    if (binding.transaction?.bidAmount()
-                            .isNullOrEmpty()
-                    ) View.GONE else View.VISIBLE
-                /*  binding.priceLay.visibility = visibility
-                  binding.textTargetPrice.visibility = visibility
-                  binding.textTargetPriceLabel.visibility = visibility
-                  if (visibility == View.VISIBLE) {
-                    binding.priceLay.visibility = View.VISIBLE
-                    if (binding.transaction?.isPMTIndent() == true) {
-                      binding.textTargetPrice.text = binding.transaction?.bidAmount() + "/MT"
-                    } else {
-                      binding.textTargetPrice.text = binding.transaction?.bidAmount()
-
-                    }
-                    binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
-                  } else {
-                    binding.priceLay.visibility = View.GONE
-                  }*/
-            }
-        })
-        viewModel.successBidLiveData.observe(this) {
-            if (it.first) {
-                val dialog = dialogUtils.showSuccessBidDialog(
-                    this,
-                    resources.getString(string.bid_placed_sucessfully),
-                    resources.getString(string.check_your_bid_status)
-                )
-                navigateToBid(dialog)
-            } else if (it.second) {
-                val dialog = dialogUtils.showSuccessBidDialog(
-                    this,
-                    resources.getString(string.bid_revised_sucessfully),
-                    resources.getString(string.check_your_bid_revise_status)
-                )
-                navigateToBid(dialog)
-
-            }
-        }
-        viewModel.reviseBidLiveData.observe(this, Observer {
-            if (it.first) {
-//           bidDialog(it.second)
-            }
-        })
-        viewModel.userBidsData.observe(this, Observer {
-            if (it != null) {
-                adapter.operation(it)
-            }
-        })
-        viewModel.statusConfirmationPending.observe(this, Observer {
-            if (it) {
-//        binding.status.visibility = View.VISIBLE
-//        binding.status.text = resources.getString(R.string.label_pending)
-//        binding.status.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.pending_bg))
-//        binding.status.setTextColor(ContextCompat.getColor(applicationContext, R.color.pending_status))
-            }
-        })
-        viewModel.truckGetLiveData.observe(this, Observer {
-            uiUtils.hideProgress()
-            if (it != null) {
-                val pageTitle =
-                    if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
-                if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
-                    for (transactionBid in it.second.bulkTransactionBids) {
-                        if (oldAmountbids.isNullOrEmpty()) {
-                            oldAmountbids = transactionBid.bidAmount.toString()
-                        } else {
-                            oldAmountbids =
-                                oldAmountbids + "," + transactionBid.bidAmount.toString()
-                        }
-                    }
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_BID_REVISE_INITIATED,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-                            PROPERTY_SOURCE,
-                            PROPERTY_SUB_SOURCE
-                        ),
-                        mutableListOf(
-                            it.second.uuid.toString(), viewModel.bidCount.toString(),
-                            viewModel.lowestBid.toString(), source, subSource
-                        )
-                    )
-                    reviseInitiated = true
-                } else {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_ORDER_DETAILS_BID_INITIATE,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
-                            PROPERTY_SUB_SOURCE
-                        ),
-                        mutableListOf(
-                            it.second.uuid.toString(),
-                            viewModel.bidCount.toString(),
-                            source,
-                            subSource
-                        )
-                    )
-                }
-                if (it.second.truckUUID != null) {
-                    BulkBidDetailsCreateEditDialog(
-                        this@PlacementsBidDetailsActivity,
-                        it.second,
-                        it.second.bulkTransactionBids,
-                        it.first,
-                        viewModel,
-                        it.second.unAllocatedVolume!!,
-                        analyticsUtil = analyticsUtil,
-                        userPrefs = userPrefs,
-                        fromPage = "load_detail",
-                        pageTitle = pageTitle
-                    ).show()
-                } else {
-                    Toast.makeText(this, "No Vehicle Types Found", Toast.LENGTH_SHORT)
-                        .show()
-
-                }
-            }
-        })
-
-        viewModel.editBulkLiveData.observe(this, Observer {
-            if (it.first == 10) {
-                Toast.makeText(this, "Bids Created Successfully", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            if (it.first == 20) {
-                viewModel.refreshCalled = true
-                refreshData()
-                Toast.makeText(this, "Bids Updated Successfully", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            if (it.first == 30) {
-                viewModel.refreshCalled = true
-                refreshData()
-                Toast.makeText(this, "Bids Deleted Successfully", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
-                viewModel.fetchTransactionBids()
-                viewModel.editFlg = mutableListOf(false, false, false)
-            }
-        })
-
+        setupLiveDataObservers()
+        //
         binding.containerError.btnAction.setOnClickListener {
             refreshData()
         }
@@ -601,6 +451,166 @@ class PlacementsBidDetailsActivity :
         refreshData()
     }
 
+    private fun setupLiveDataObservers() {
+        viewModel.progressLiveData.observe(this, ProgressObserver())
+        //
+        viewModel.transactionLiveData.observe(this, TransactionObserver())
+        //viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
+        viewModel.errorBiddingLiveData.observe(this) {
+            uiUtils.hideProgress()
+        }
+        viewModel.bidPriceLiveData.observe(this, Observer {
+            if (it != null) {
+                binding.transaction?.transactionBid = it
+                val visibility =
+                    if (binding.transaction?.bidAmount()
+                            .isNullOrEmpty()
+                    ) View.GONE else View.VISIBLE
+                /*  binding.priceLay.visibility = visibility
+                  binding.textTargetPrice.visibility = visibility
+                  binding.textTargetPriceLabel.visibility = visibility
+                  if (visibility == View.VISIBLE) {
+                    binding.priceLay.visibility = View.VISIBLE
+                    if (binding.transaction?.isPMTIndent() == true) {
+                      binding.textTargetPrice.text = binding.transaction?.bidAmount() + "/MT"
+                    } else {
+                      binding.textTargetPrice.text = binding.transaction?.bidAmount()
+
+                    }
+                    binding.textTargetPriceLabel.text = binding.transaction?.amountLabel()
+                  } else {
+                    binding.priceLay.visibility = View.GONE
+                  }*/
+            }
+        })
+        //
+        viewModel.successBidLiveData.observe(this) {
+            if (it.first) {
+                val dialog = dialogUtils.showSuccessBidDialog(
+                    this,
+                    resources.getString(string.bid_placed_sucessfully),
+                    resources.getString(string.check_your_bid_status)
+                )
+                navigateToBid(dialog)
+            } else if (it.second) {
+                val dialog = dialogUtils.showSuccessBidDialog(
+                    this,
+                    resources.getString(string.bid_revised_sucessfully),
+                    resources.getString(string.check_your_bid_revise_status)
+                )
+                navigateToBid(dialog)
+
+            }
+        }
+        //
+        viewModel.reviseBidLiveData.observe(this, Observer {
+            if (it.first) {
+//           bidDialog(it.second)
+            }
+        })
+        //
+        viewModel.userBidsData.observe(this, Observer {
+            if (it != null) {
+                adapter.operation(it)
+            }
+        })
+        //
+        viewModel.statusConfirmationPending.observe(this, Observer {
+            if (it) {
+//        binding.status.visibility = View.VISIBLE
+//        binding.status.text = resources.getString(R.string.label_pending)
+//        binding.status.setBackgroundColor(ContextCompat.getColor(applicationContext, R.color.pending_bg))
+//        binding.status.setTextColor(ContextCompat.getColor(applicationContext, R.color.pending_status))
+            }
+        })
+        //
+        viewModel.truckGetLiveData.observe(this, Observer {
+            uiUtils.hideProgress()
+            if (it != null) {
+                val pageTitle =
+                    if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+                if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
+                    for (transactionBid in it.second.bulkTransactionBids) {
+                        if (oldAmountbids.isNullOrEmpty()) {
+                            oldAmountbids = transactionBid.bidAmount.toString()
+                        } else {
+                            oldAmountbids =
+                                oldAmountbids + "," + transactionBid.bidAmount.toString()
+                        }
+                    }
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_BID_REVISE_INITIATED,
+                        mutableListOf(
+                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                            PROPERTY_SOURCE,
+                            PROPERTY_SUB_SOURCE
+                        ),
+                        mutableListOf(
+                            it.second.uuid.toString(), viewModel.bidCount.toString(),
+                            viewModel.lowestBid.toString(), source, subSource
+                        )
+                    )
+                    reviseInitiated = true
+                } else {
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_ORDER_DETAILS_BID_INITIATE,
+                        mutableListOf(
+                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_SOURCE,
+                            PROPERTY_SUB_SOURCE
+                        ),
+                        mutableListOf(
+                            it.second.uuid.toString(),
+                            viewModel.bidCount.toString(),
+                            source,
+                            subSource
+                        )
+                    )
+                }
+                if (it.second.truckUUID != null) {
+                    BulkBidDetailsCreateEditDialog(
+                        this@PlacementsBidDetailsActivity,
+                        it.second,
+                        it.second.bulkTransactionBids,
+                        it.first,
+                        viewModel,
+                        it.second.unAllocatedVolume!!,
+                        analyticsUtil = analyticsUtil,
+                        userPrefs = userPrefs,
+                        fromPage = "load_detail",
+                        pageTitle = pageTitle
+                    ).show()
+                } else {
+                    Toast.makeText(this, "No Vehicle Types Found", Toast.LENGTH_SHORT)
+                        .show()
+
+                }
+            }
+        })
+        //
+        viewModel.editBulkLiveData.observe(this, Observer {
+            if (it.first == 10) {
+                Toast.makeText(this, "Bids Created Successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            if (it.first == 20) {
+                viewModel.refreshCalled = true
+                refreshData()
+                Toast.makeText(this, "Bids Updated Successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            if (it.first == 30) {
+                viewModel.refreshCalled = true
+                refreshData()
+                Toast.makeText(this, "Bids Deleted Successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
+                viewModel.fetchTransactionBids()
+                viewModel.editFlg = mutableListOf(false, false, false)
+            }
+        })
+    }
+
     fun enablePlaceBid(enable: Boolean) {
         binding.cardInput.placeBidButton.isEnabled = enable
     }
@@ -622,6 +632,12 @@ class PlacementsBidDetailsActivity :
             bottomLayVisible = false
           }*/
         uploadArray.clear()
+        //clear intracity address livedata as well
+        viewModel.addressLiveData.value = null
+        //
+        viewModel.pickupAddressLiveData.value = null
+        //
+        viewModel.destinationAddressLiveData.value = null
     }
 
     fun navigateToBid(dialog: Dialog) {
@@ -674,32 +690,42 @@ class PlacementsBidDetailsActivity :
     }
 
     fun triggerPickupAndDestinationAddressCall(pickupCenterCode:String, destinationCenterCode:String){
+        //
+        viewModel.pickupAddressLiveData.removeObservers(this@PlacementsBidDetailsActivity)
+        //
+        viewModel.destinationAddressLiveData.removeObservers(this@PlacementsBidDetailsActivity)
+        //
         viewModel.pickupAddressLiveData.observe(this, Observer {
             Log.d(TAG, "pickupAddressLiveData")
-            viewModel.pickupAddress = it.propertyAddressDetails?.address
-            //pickup centre name and address
-            //uploadArray.clear()
-            uploadArray.add(Pair(binding.transaction?.routeInfo?.origin?.centerName?:"", viewModel.pickupAddress))
+            it?.propertyAddressDetails?.address?.let { address ->
+                viewModel.pickupAddress = address
+                //pickup centre name and address
+                //uploadArray.clear()
+                uploadArray.add(Pair(binding.transaction?.routeInfo?.origin?.centerName?:"", viewModel.pickupAddress))
+            }
         })
         //
         viewModel.destinationAddressLiveData.observe(this, Observer {
             Log.d(TAG, "destinationAddressLiveData")
-            viewModel.destinationAddress = it.propertyAddressDetails?.address
-            //destination centre name and address
-            uploadArray.add(Pair(binding.transaction?.routeInfo?.destination?.centerName?:"", viewModel.destinationAddress))
-            //notify adapter
-            if (uploadArray.isNotEmpty()) {
-                Log.d(TAG, "uploadArray.isNotEmpty")
-                addressDetailAdapter = AddressDetailAdapter(uploadArray)
-                binding.cvRouteSection.addresslist.apply {
-                    layoutManager = LinearLayoutManager(applicationContext)
-                    adapter = addressDetailAdapter
+            //
+            it?.propertyAddressDetails?.address?.let { address ->
+                viewModel.destinationAddress = address
+                //destination centre name and address
+                uploadArray.add(Pair(binding.transaction?.routeInfo?.destination?.centerName?:"", viewModel.destinationAddress))
+                //notify adapter
+                if (uploadArray.isNotEmpty()) {
+                    Log.d(TAG, "uploadArray.isNotEmpty")
+                    addressDetailAdapter = AddressDetailAdapter(uploadArray)
+                    binding.cvRouteSection.addresslist.apply {
+                        layoutManager = LinearLayoutManager(applicationContext)
+                        adapter = addressDetailAdapter
+                    }
+                    //hide progressbar
+                    binding.cvRouteSection.pbRouteDetails.visibility = View.GONE
+                } else {
+                    //hide route details section
+                    binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
                 }
-                //hide progressbar
-                binding.cvRouteSection.pbRouteDetails.visibility = View.GONE
-            } else {
-                //hide route details section
-                binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
             }
         })
 
@@ -740,8 +766,8 @@ class PlacementsBidDetailsActivity :
                 /**
                  * New address adapter code
                  */
-                if(viewModel.transaction.isIntracity()){
-                //if(false){
+                //if(viewModel.transaction.isIntracity()){
+                if(false){
                     //hide route details section
                     binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
                 }else{
@@ -1132,6 +1158,13 @@ class PlacementsBidDetailsActivity :
         }
     }
 
+    fun triggerFacilityAddress(originCenterCode:String?){
+        //
+        //binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
+        //
+        viewModel.getFacilityAddress(originCenterCode)
+    }
+
 
     fun placementInput() {
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
@@ -1141,14 +1174,15 @@ class PlacementsBidDetailsActivity :
         //Log.d("$TAG::viewModel.transaction", ""+Gson().toJson(viewModel.transaction))
         if (viewModel.transaction.isIntracity()) {
             //
-            viewModel.addressLiveData.observe(this, Observer {
-                binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
-                binding.cardInput.pbIntracityAddress.visibility = View.GONE
+            viewModel.addressLiveData.removeObservers(this@PlacementsBidDetailsActivity)
+            viewModel.addressLiveData.observe(this@PlacementsBidDetailsActivity, Observer {
+                it?.propertyAddressDetails?.address?.let { address ->
+                    binding.cardInput.pbIntracityAddress.visibility = View.GONE
+                    binding.cardInput.routeAddress.text = address
+                }
             })
             //
-            viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
-            //
-            binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
+            triggerFacilityAddress(homePlacementsItemData?.originCenterCode)
             //
             binding.cardInput.routeAddress.visibility = View.VISIBLE
             //
