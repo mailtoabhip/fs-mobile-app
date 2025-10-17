@@ -355,8 +355,8 @@ class PlacementsBidDetailsActivity :
                 /**
                  * New address adapter code
                  */
-                //if(viewModel.transaction.isIntracity()){
-                if(false){
+                if(viewModel.transaction.isIntracity()){
+                //if(false){
                     //hide route details section
                     binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
                 }else{
