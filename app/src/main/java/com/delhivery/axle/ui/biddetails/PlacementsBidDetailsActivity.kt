@@ -699,9 +699,6 @@ class PlacementsBidDetailsActivity :
             Log.d(TAG, "pickupAddressLiveData")
             it?.propertyAddressDetails?.address?.let { address ->
                 viewModel.pickupAddress = address
-                //pickup centre name and address
-                //uploadArray.clear()
-                uploadArray.add(Pair(binding.transaction?.routeInfo?.origin?.centerName?:"", viewModel.pickupAddress))
             }
         })
         //
@@ -710,22 +707,15 @@ class PlacementsBidDetailsActivity :
             //
             it?.propertyAddressDetails?.address?.let { address ->
                 viewModel.destinationAddress = address
+                //Add pickup centre name and address
+                uploadArray.clear()
+                uploadArray.add(Pair(binding.transaction?.routeInfo?.origin?.centerName?:"", viewModel.pickupAddress))
+                //add halt centers if any, then add destination
+                addHaltCenters()
                 //destination centre name and address
                 uploadArray.add(Pair(binding.transaction?.routeInfo?.destination?.centerName?:"", viewModel.destinationAddress))
                 //notify adapter
-                if (uploadArray.isNotEmpty()) {
-                    Log.d(TAG, "uploadArray.isNotEmpty")
-                    addressDetailAdapter = AddressDetailAdapter(uploadArray)
-                    binding.cvRouteSection.addresslist.apply {
-                        layoutManager = LinearLayoutManager(applicationContext)
-                        adapter = addressDetailAdapter
-                    }
-                    //hide progressbar
-                    binding.cvRouteSection.pbRouteDetails.visibility = View.GONE
-                } else {
-                    //hide route details section
-                    binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
-                }
+                notifyRouteDetailsAdapter()
             }
         })
 
@@ -736,6 +726,28 @@ class PlacementsBidDetailsActivity :
             facilityType = "pickup")
         //
         //viewModel.getPlacementFacilityAddress(destinationCenterCode, "destination")
+    }
+
+    private fun addHaltCenters() {
+        binding.transaction?.routeInfo?.haltCenters?.forEach{ item ->
+            uploadArray.add(Pair(item.centerName?:"", item.address?:""))
+        }
+    }
+
+    private fun notifyRouteDetailsAdapter(){
+        if (uploadArray.isNotEmpty()) {
+            Log.d(TAG, "uploadArray.isNotEmpty")
+            addressDetailAdapter = AddressDetailAdapter(uploadArray)
+            binding.cvRouteSection.addresslist.apply {
+                layoutManager = LinearLayoutManager(applicationContext)
+                adapter = addressDetailAdapter
+            }
+            //hide progressbar
+            binding.cvRouteSection.pbRouteDetails.visibility = View.GONE
+        } else {
+            //hide route details section
+            binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
+        }
     }
 
     /**
