@@ -168,7 +168,10 @@ class AutoCompleteUtils @Inject constructor(
                     // Load drivers for the vehicle
                     loadDriversForVehicle(vehicleNumber, editText, action)
                 } else {
-                    editText.post { editText.dismissDropDown() }
+                    editText.post {
+                        editText.progress(false)
+                        editText.dismissDropDown()
+                    }
                 }
             }, {
                 android.util.Log.e("AutoCompleteUtils", "Error in text changes", it)

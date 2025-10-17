@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,7 +73,7 @@ class DelhiveryDriverNameAutoEditText(
             }
         } else if (error && hasFocus()) {
             canvas?.apply {
-                drawCircle(width - RightGap - DotRadius, height / 2f, DotRadius, errorPaint)
+                //drawCircle(width - RightGap - DotRadius, height / 2f, DotRadius, errorPaint)
             }
         }
     }
@@ -81,8 +82,10 @@ class DelhiveryDriverNameAutoEditText(
         if (start == progress) return
         progress = start
         if (progress) {
+            Log.d("Anime::progress", "start")
             _anim.start()
         } else {
+            Log.d("Anime::progress", "cancel")
             _anim.cancel()
             invalidate()
         }
