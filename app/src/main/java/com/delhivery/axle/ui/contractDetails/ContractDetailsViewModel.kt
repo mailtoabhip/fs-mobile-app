@@ -53,7 +53,14 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
 
 
   /* transaction id */
-  lateinit var transactionId: String
+  //lateinit var transactionId: String
+
+  /* transaction id */
+  var transactionId: String?=null
+  //contract code
+  var contractCode: String?=null
+  //placement type for placements details page
+  var placementType: String?=null
 
   /* transaction id */
   lateinit var requestType: String
@@ -94,6 +101,41 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
       }
   }
 
+
+
+  /**
+   * Fetch placement details
+   */
+  fun fetchPlacementDetails() {
+    Log.d("PlacementDetails", "Fetching placement details with params: placementType='$placementType', transactionId='$transactionId', contractCode='$contractCode'")
+
+    compositeDisposable += tpsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
+      .onBackground()
+      .progress()
+      .subscribe({ _tRes ->
+        Log.d("PlacementDetails", "_tRes received: ${_tRes?.toString() ?: "null"}")
+        Log.d("PlacementDetails", "_tRes type: ${_tRes?.javaClass?.simpleName ?: "null"}")
+
+        if (_tRes != null) {
+          Log.d("PlacementDetails", "Successfully received placement details")
+          _tRes.loadType = placementType
+          transaction = _tRes
+          transactionLiveData.postValue(_tRes)
+          //fetching bids data - don't uncomment
+          //moved this call to refreshData function
+          //No need ot this api call anymore
+          //fetchTransactionBids()
+        } else {
+          Log.e("PlacementDetails", "Response is null - this indicates an issue with the API response parsing")
+          transactionLiveData.postValue(null)
+        }
+      }, { error ->
+        Log.e("PlacementDetails", "Error occurred: ${error?.toString() ?: "null"}")
+        Log.e("PlacementDetails", "Error type: ${error?.javaClass?.simpleName ?: "null"}")
+        error?.printStackTrace()
+        transactionLiveData.postValue(null)
+      })
+  }
 
 
 

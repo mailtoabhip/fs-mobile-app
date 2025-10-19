@@ -149,10 +149,11 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
         activitySetupTrace = FirebasePerformance.getInstance().newTrace("PlacementsContractDetailsActivity_SetupTime")
         activitySetupTrace?.start()
+        /* validate intent */
         try {
             require(
-                !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
-            ) { "Required data $TransactionIdIntentKey not found" }
+                !(intent == null || (!intent.hasExtra(TransactionIdIntentKey) && !intent.hasExtra(ContractCodeIntentKey)))
+            ) { "Required data ${TransactionIdIntentKey} or ${ContractCodeIntentKey} not found" }
         } catch (e: Exception) {
             finish()
         }
@@ -574,10 +575,12 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     private fun disableSubmitButton(){
         binding.cardInput.placeBidButton.isEnabled = false
     }
+
     private fun enableSubmitButton(){
         binding.cardInput.placeBidButton.isEnabled = true
 
     }
+
     private fun submit(transaction: HomeBidsRequestItemData) {
         try {
             uiUtils.showProgress()
@@ -633,7 +636,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         /* setup live data observers */
         viewModel.progressLiveData.observe(this, ProgressObserver())
         viewModel.transactionLiveData.observe(this, TransactionObserver())
-        viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
+        //viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
         viewModel.bidPriceLiveData.observe(this, Observer {
             if (it != null) {
                 binding.transaction?.transactionBid = it
@@ -675,7 +678,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
         binding.refreshLayout.setOnRefreshListener {
             binding.mainCl.visibility = View.GONE
-            refreshData()
+            ()
         }
         /*  binding.buttonConfirm.setOnClickListener {
             bidDialog()
@@ -797,6 +800,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             imm.showSoftInput(binding.cardInput.etBidAmount, InputMethodManager.SHOW_IMPLICIT)
         }
     }
+
     inner class ProgressObserver : Observer<Boolean> {
         override fun onChanged(t: Boolean) {
             t.let {
@@ -818,17 +822,18 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
      * Transaction details and UI updation Observer
      */
     inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData) {
-
+        override fun onChanged(t: HomeBidsRequestItemData?) {
             if (t != null) {
                 t.let { _transaction ->
+                    //assign placementtype to loadType var to distinguish b/w different types of loads in "HomeBidsRequestItemData" class and its functions
+                    _transaction.loadType = viewModel.placementType
+                    //
                     binding.error = false
                     binding.transaction = _transaction
                     binding.routeDetails.nonExpRouteDetails.visibility = t.isFRCContract()
                     binding.routeDetails.routeDetails.visibility =  t.isLHContract()
                     binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityFixedContract()
                     binding.routeDetails.intraCityAdHocRouteDetails.visibility =  t.isIntraCityFlexibleContract()
-
                     binding.vehicleDetails.visibility = View.VISIBLE
 
                     // Capture event
@@ -844,6 +849,18 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                             _transaction.contractType?:"",source,_transaction.isFlexible.toString()
                         )
                     )
+
+
+                    //setup new placement details code
+                    binding.cardInput.editBidCl.visibility = View.GONE
+                    binding.cardInput.root.visibility = View.VISIBLE
+                    binding.cardInput.placementCl.root.visibility = View.VISIBLE
+                    placementInput()
+
+
+                    /**
+                     * Delete below onselate code
+                     */
                     // for FRC contract
                     if(t.isItFRContract()){
                         if(t.transactionStatus==TransactionStatus.Cancelled.statusId){
@@ -1436,7 +1453,18 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         }
        }*/
     fun placementInput(){
+        //
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
+        binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+        //
+        //insert your code below this
+        //complete if block
+        if (viewModel.transaction.isIntracity()) {
+
+        }
+        //
+
+
         if(homePlacementsItemData?.loadType==LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType==LoadTypes.intracityRegular.name){
             viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
             binding.cardInput.routeAddress.visibility = View.VISIBLE
@@ -1444,14 +1472,22 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             binding.cardInput.mapText.setOnClickListener {
                 navigateToMap()
             }
-
         }else{
             binding.cardInput.routeAddress.visibility = View.GONE
             binding.cardInput.mapText.visibility = View.GONE
         }
+        //
         viewModel.addressLiveData.observe(this, Observer {
             binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
         })
+
+
+
+
+
+        //insert your code above this
+
+        //
         viewModel.updateVehicleDetails.observe(this, Observer {
             if(it){
                 REFRESH_ON_BACK_PLACEMENT = true
@@ -1469,6 +1505,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                 uiUtils.hideProgress()
             }
         })
+        //
         autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
             if(it=="Add New Truck"){
                 binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
@@ -1487,11 +1524,18 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                 enableSubmitPlacement()
             }
         }
+        //
         binding.cardInput.placementCl.editTextVehicleNumber.setOnClickListener {
             binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.GONE
+            //
             binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.VISIBLE
-            binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+            //
+            //binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+            //
+            binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
+            //
             isValidVehicleNumber = false
+            //
             enableSubmitPlacement()
         }
 
@@ -1506,6 +1550,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                 enableSubmitPlacement()
             }
         })
+
         // Driver name field click handling - no need to force focus
         binding.cardInput.placementCl.editAutoCompleteDriverName.setOnClickListener {
             hasUserInteractedWithDriverName = true
@@ -1534,7 +1579,6 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             }
         })
 
-
         // Text change handling is now managed by the AutoCompleteUtils
         homePlacementsItemData?.vehicleNumber?.let {
             Log.i("vehicleNumber",it)
@@ -1544,12 +1588,14 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
             binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
         }
+        //
         homePlacementsItemData?.driverName?.let {
             Log.i("DriverNameValidation", "Initial setup: Found existing driver name: '${it}'")
             isValidDriverName = true
             binding.cardInput.placementCl.editAutoCompleteDriverName.setText(it)
             binding.cardInput.placementCl.driverNameError.visibility = View.GONE
         }
+        //
         homePlacementsItemData?.driverPhone?.let {
             isValidDriverNumber = true
             val trimmedNumber = it?.replace("+91", "")?.replaceFirst("^0+".toRegex(), "")?.trim()
@@ -1558,6 +1604,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
         // Call enableSubmitPlacement after initial data setup
         enableSubmitPlacement()
+        //
         if (homePlacementsItemData?.status=="Marked-in"){
             binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
             binding.cardInput.placementCl.editAutoCompleteDriverName.isEnabled = false
@@ -1565,9 +1612,11 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             binding.cardInput.placementCl.btnContactPicker.isEnabled = false
             disableSubmitPlcButton()
         }
+        //
         binding.cardInput.placementCl.btnSubmit.setOnClickListener{
             submitPlacementDetails()
         }
+
         // Simple driver name autocomplete
         autoCompleteUtils.autoCompleteDriverNameWithPhone(
             binding.cardInput.placementCl.editAutoCompleteDriverName,
@@ -1776,11 +1825,18 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
     private fun refreshData() {
         binding.error = false
-        viewModel.fetchTransactionDetails()
+        //fetch placement details data
+        viewModel.fetchPlacementDetails()
+        //execuite pending bundings
         binding.executePendingBindings()
+        //clear arrays
         routesArray.clear()
+        //
         flexibleReportingCentersArray.clear()
     }
+
+
+
 
     fun navigateToBid(dialog: Dialog){
         var dialogCancelled = false
