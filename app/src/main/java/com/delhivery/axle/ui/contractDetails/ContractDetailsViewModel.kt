@@ -87,7 +87,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
    * Fetch transaction details
    */
   fun fetchTransactionDetails() {
-    compositeDisposable += transactionsRepository.transactionDetails(transactionId, if(requestType==RequestType.Contract.type) userPrefs.userId()else null)
+    compositeDisposable += transactionsRepository.transactionDetails(transactionId?:"", if(requestType==RequestType.Contract.type) userPrefs.userId()else null)
       .onBackground()
       .progress()
       .subscribe { _tRes, error ->
@@ -142,7 +142,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
   /* Fetch transaction bids and update UI as per response
   */
   fun fetchTransactionBids( action: Boolean = false) {
-    compositeDisposable += bidsRepository.transactionBids(transactionId,true)
+    compositeDisposable += bidsRepository.transactionBids(transactionId?:"",true)
       .onBackground()
       .subscribe { _bRes, error ->
         if (!error) {
