@@ -422,7 +422,7 @@ data class HomeBidsRequestItemData(
   fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
 
 
-  fun setTruckTypeText() = capitalize(truckType!!) ?: ""
+  fun setTruckTypeText() = capitalize(truckType) ?: ""
 
   fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 

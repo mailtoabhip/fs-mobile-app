@@ -336,9 +336,11 @@ class PlacementsBidDetailsActivity :
                 t.let { _transaction ->
                     //assign placementtype to loadType var to distinguish b/w different types of loads in "HomeBidsRequestItemData" class and its functions
                     _transaction.loadType = viewModel.placementType
+                    //
                     binding.placementDetailsContent.placementListingData = homePlacementsItemData
                     binding.placementDetailsContent.request = _transaction
                     binding.error = false
+                    //
                     binding.transaction = _transaction
                     binding.cardInput.request = _transaction
                     //setup placement details specific views
@@ -454,10 +456,7 @@ class PlacementsBidDetailsActivity :
 
         }
 
-//        viewModel.addressLiveData.observe(this, Observer {
-//            binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
-//        })
-        //
+        //old working code below done by Rahul - no change
 
         viewModel.updateVehicleDetails.observe(this, Observer {
             if (it) {

@@ -100,6 +100,8 @@
                     android:paddingLeft="@dimen/size_12dp"
                     android:paddingRight="@dimen/size_12dp"
                     android:paddingBottom="@dimen/size_12dp"
+                    tools:visibility="gone"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/routeAddress">
                     <!-- Bid Amount Label -->
@@ -363,7 +365,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/size_12dp"
                     android:padding="@dimen/size_12dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
+                    tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/routeAddress" />
 

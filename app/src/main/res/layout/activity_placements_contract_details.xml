@@ -99,7 +99,7 @@
             >
 
           <include
-              android:visibility="gone"
+              android:visibility="visible"
               android:id="@+id/card_input"
               layout="@layout/card_new_placement_bid_input"
               android:layout_width="match_parent"
