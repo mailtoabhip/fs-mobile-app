@@ -324,9 +324,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //
                     binding.error = false
                     binding.transaction = _transaction
+                    binding.cardInput.request = _transaction
                     //set default items to visible
                     binding.vehicleDetails.visibility = View.VISIBLE
-                    //
                     binding.cardInput.editBidCl.visibility = View.GONE
                     binding.cardInput.root.visibility = View.VISIBLE
                     binding.cardInput.placementCl.root.visibility = View.VISIBLE
@@ -508,7 +508,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
         // Driver name field click handling - no need to force focus
         binding.cardInput.placementCl.editAutoCompleteDriverName.setOnClickListener {
+            Log.d(TAG,"editAutoCompleteDriverName-LISTENER")
             hasUserInteractedWithDriverName = true
+            //binding.cardInput.placementCl.editAutoCompleteDriverName.requestFocus()
             // Don't call enableSubmitPlacement here - let TextWatcher handle it
         }
 
