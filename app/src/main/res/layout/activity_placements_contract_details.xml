@@ -94,9 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_16dp"
             android:id="@+id/mainCl"
-            android:paddingBottom="@dimen/size_16dp"
-            android:visibility="@{!refreshing &amp;&amp; !error ? View.VISIBLE : View.GONE }"
-            >
+            android:paddingBottom="@dimen/size_16dp">
 
           <include
               android:visibility="visible"

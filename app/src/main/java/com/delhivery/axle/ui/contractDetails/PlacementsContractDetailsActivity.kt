@@ -101,6 +101,7 @@ import android.view.Gravity
 import android.view.WindowManager
 import com.delhivery.axle.databinding.ActivityPlacementsContractDetailsBinding
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
+import com.delhivery.axle.ui.biddetails.PlacementsBidDetailsActivity
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
@@ -110,6 +111,8 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 
 class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
+
+    private val TAG = PlacementsContractDetailsActivity::class.java.simpleName
 
     init {
         hasInlineProgress = true
@@ -154,7 +157,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         /* validate intent */
         validateIntentData()
 
-       //fetch intent data
+        //fetch intent data
         fetchIntentData()
 
         //setup live data observers
@@ -181,7 +184,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //
         viewModel.transactionLiveData.observe(this, TransactionObserver())
         //
-        viewModel.bidPriceLiveData.observe(this, Observer {
+        /*viewModel.bidPriceLiveData.observe(this, Observer {
             if (it != null) {
                 binding.transaction?.transactionBid = it
                 val visibility =
@@ -189,9 +192,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                             .isNullOrEmpty()
                     ) View.GONE else View.VISIBLE
             }
-        })
+        })*/
         //
-        viewModel.errorBiddingLiveData.observe(this) {
+/*        viewModel.errorBiddingLiveData.observe(this) {
             uiUtils.hideProgress()
         }
         // show Success Bid Dialog
@@ -213,7 +216,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                 navigateToBid(dialog)
 
             }
-        }
+        }*/
         //
         viewModel.hideProgress.observe(this, Observer {
             if(it){
@@ -281,8 +284,6 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-
-
     }
 
     override fun onResume() {
@@ -317,6 +318,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         override fun onChanged(t: HomeBidsRequestItemData?) {
             if (t != null) {
                 t.let { _transaction ->
+                    Log.d(TAG, "TransactionObserver-START")
                     //assign placementtype to loadType var to distinguish b/w different types of loads in "HomeBidsRequestItemData" class and its functions
                     _transaction.loadType = viewModel.placementType
                     //
@@ -376,82 +378,6 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //
 
                     //Insert code above this
-
-
-                    /**
-                     * Delete below obselete code
-                     */
-                    // for FRC contract
-                    if(t.isItFRContract()){
-                        if(t.transactionStatus==TransactionStatus.Cancelled.statusId){
-                            binding.routeDetails.nonExpHubIcon.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_black_hub))
-                            binding.routeDetails.nonExpHubIcon2.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_black_hub))
-                            binding.routeDetails.clNonExpTimeInterval1.background = ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.bg_all_round_corner_light_grey)
-                            binding.routeDetails.nonExpTimeInterval1.setTextColor(ContextCompat.getColor(this@PlacementsContractDetailsActivity,R.color.heading_black))
-                        }else{
-                            binding.routeDetails.nonExpHubIcon.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_hub_route))
-                            binding.routeDetails.nonExpHubIcon2.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_hub_route))
-                            binding.routeDetails.clNonExpTimeInterval1.background = ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.bg_all_round_corner_light_blue)
-                            binding.routeDetails.nonExpTimeInterval1.setTextColor(ContextCompat.getColor(this@PlacementsContractDetailsActivity,R.color.dark_blue))
-                        }
-                        binding.routeDetails.nonExpTvHubCity.text = t.clientName()
-                        binding.routeDetails.nonExpTvCity.text =  t.originCityName()
-                        binding.routeDetails.nonExpTvState.text =  ", "+t.originState
-                        binding.routeDetails.nonExpTvHubCity2.text = t.destinationCityName()
-                        binding.routeDetails.nonExpTvState2.text = t.destinationState
-                        binding.routeDetails.nonExpTimeInterval1.text  =
-                            t.tentativeTripCount?.let { Integer.toString(it) } +" Trips in "+ t.contractValidity+" weeks"
-                    }else if(t.isItIntraCityContract() && !t.isFlexible){
-                        if(t.transactionStatus== TransactionStatus.Cancelled.statusId){
-                            binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_black_hub))
-                            binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_time_grey))
-                        }else{
-                            binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_hub_route))
-                            binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@PlacementsContractDetailsActivity,R.drawable.ic_time))
-                        }
-                        binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
-                        binding.routeDetails.intraCityTvState.text = t.originState
-                        binding.routeDetails.intraCityTvCity.text = capitalize(t.originCity)
-                        binding.routeDetails.intraCityTvHubCity.text = t.origin
-                        binding.routeDetails.intraCityTvMapView.setOnClickListener{
-                            try {
-                                val gmmIntentUri = Uri.parse("geo:0,0?q=${t.latitude},${t.longitude}"+"(" + t.origin+ ")")
-                                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                                mapIntent.setPackage("com.google.android.apps.maps")
-                                startActivity(mapIntent)
-                            } catch (e: Exception) {
-                                Toast.makeText(this@PlacementsContractDetailsActivity, "Unable to open map", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                    binding.contractRules.nonExpRules.visibility = t.isFRCContract()
-                    binding.contractRules.rules.visibility = t.isLHContract()
-                    binding.contractRules.intraCityRules.visibility = t.isIntraCityContract()
-                    binding.tripDetails.visibility = t.isLHContract()
-                    // For LH contract listing recycleview with halt centers
-                    if(_transaction.haltCenters!=null) {
-                        for (item in _transaction.haltCenters!!) {
-                            routesArray.add(item)
-                        }
-                        val contractsRouteDetailsAdapter  = ContractsRouteDetailsAdapter(routesArray,_transaction,this@PlacementsContractDetailsActivity)
-                        binding.routeDetails.rvContracts.apply {
-                            layoutManager = LinearLayoutManager(applicationContext)
-                            adapter = contractsRouteDetailsAdapter
-                        }
-                    }
-                    if(_transaction.secondaryReportingCenters!=null) {
-                        val originReportingCenters = SecondaryReportingCenters(_transaction.origin,_transaction.originCityName(),_transaction.originState,_transaction.longitude,_transaction.latitude)
-                        flexibleReportingCentersArray.add(originReportingCenters)
-                        for (item in _transaction.secondaryReportingCenters!!) {
-                            flexibleReportingCentersArray.add(item)
-                        }
-                        val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(flexibleReportingCentersArray,_transaction,this@PlacementsContractDetailsActivity)
-                        binding.routeDetails.rvIntracityFlexibleContracts.apply {
-                            layoutManager = LinearLayoutManager(applicationContext)
-                            adapter = contractIntracityFlexibleRCAdapter
-                        }
-                    }
-                    // binding.seperator.visibility = View.VISIBLE
                 }
                 binding.executePendingBindings()
             } else {
@@ -473,6 +399,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
 
     fun placementInput(){
+        Log.d(TAG, "placementInput-START")
         //
         binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
@@ -480,11 +407,14 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //insert your code below this
         //complete if block
         if (viewModel.transaction.isIntracity()) {
+            Log.d(TAG, "if-isIntracity-START")
+            //
             viewModel.addressLiveData.removeObservers(this@PlacementsContractDetailsActivity)
             viewModel.addressLiveData.observe(this, Observer {
                 it.propertyAddressDetails?.address?.let { address ->
                     binding.cardInput.pbIntracityAddress.visibility = View.GONE
                     binding.cardInput.routeAddress.text = address
+                    Log.d(TAG, "if-addressLiveData-START")
                 }
             })
             //fetch facility address
@@ -660,7 +590,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         }
 
 
-        binding.cardInput.placementCl.editDriverNumber?.addTextChangedListener(object : TextWatcher {
+        binding.cardInput.placementCl.editDriverNumber.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit
             override fun beforeTextChanged(
                 s: CharSequence?,
@@ -699,7 +629,6 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
         // Contact picker functionality
         binding.cardInput.placementCl.btnContactPicker.setOnClickListener {
-
             val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
             startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
         }
@@ -855,9 +784,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //execuite pending bundings
         binding.executePendingBindings()
         //clear arrays
-        routesArray.clear()
+        //routesArray.clear()
         //
-        flexibleReportingCentersArray.clear()
+        //flexibleReportingCentersArray.clear()
     }
 
 

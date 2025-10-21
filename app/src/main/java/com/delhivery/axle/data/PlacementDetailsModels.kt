@@ -41,12 +41,12 @@ data class Coordinates(
 )
 
 data class CostDataObject(
-    @SerializedName("kpm") val kpm: Int?,
-    @SerializedName("hpd") val hpd: Int?,
-    @SerializedName("dpm") val dpm: Int?,
-    @SerializedName("rpd") val rpd: Int?,
-    @SerializedName("rpk") val rpk: Int?,
-    @SerializedName("rph") val rph: Int?,
+    @SerializedName("kpm") val kpm: Double?,
+    @SerializedName("hpd") val hpd: Double?,
+    @SerializedName("dpm") val dpm: Double?,
+    @SerializedName("rpd") val rpd: Double?,
+    @SerializedName("rpk") val rpk: Double?,
+    @SerializedName("rph") val rph: Double?,
     @SerializedName("nep") val nep: Boolean
 )
 

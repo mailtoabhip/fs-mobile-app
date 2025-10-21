@@ -82,6 +82,7 @@
         android:textSize="@dimen/text_12sp"
         android:paddingTop="@dimen/size_4dp"
         android:visibility="gone"
+        tools:visibility="visible"
         android:text="@string/invalid_amount_out_of_range"/>
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/driverNameLabel"
