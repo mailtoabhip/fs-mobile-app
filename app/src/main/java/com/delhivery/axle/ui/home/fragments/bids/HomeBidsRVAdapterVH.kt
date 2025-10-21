@@ -362,8 +362,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
     if (item.data.bidType == BidType.ConfirmedBid) {
       // Hide strongBidCard for Closed tab (won/lost/cancelled bids)
       binding.strongBidCard.strongBidCard.visibility = View.GONE
-    } else if (item.data.getBidSuggestionValue()) {
-      // Show bid suggestion message with custom styling
+    } else if (item.data.getSuggestedBidAmount() != null) {
+      // Show bid suggestion message with custom styling (when suggested_amount is not null)
       binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
       binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
       binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
@@ -371,9 +371,9 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
       binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bid_suggestion_background))
       binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.bid_suggestion_text))
     } else {
-      // Show strong bid message (leave as is - default from XML)
+      // Show strong bid message (when suggested_amount is null - positive message)
       binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
-      binding.strongBidCard.strongBidMessage.text = "You have high chances of winning!"
+      binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
       binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up, 0, 0, 0)
       // Keep card background color for strong bid (green)
       binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_confirmed_bg))
@@ -628,8 +628,8 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
     if (item.data.bidType == BidType.ConfirmedBid) {
       // Hide strongBidCard for Closed tab (won/lost/cancelled bids)
       binding.strongBidCard.strongBidCard.visibility = View.GONE
-    } else if (item.data.getBidSuggestionValue()) {
-      // Show bid suggestion message with custom styling
+    } else if (item.data.getSuggestedBidAmount() != null) {
+      // Show bid suggestion message with custom styling (when suggested_amount is not null)
       binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
       binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
       binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
@@ -637,9 +637,9 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bid_suggestion_background))
       binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.bid_suggestion_text))
     } else {
-      // Show strong bid message (leave as is - default from XML)
+      // Show strong bid message (when suggested_amount is null - positive message)
       binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
-      binding.strongBidCard.strongBidMessage.text = "You have high chances of winning!"
+      binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
       binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up, 0, 0, 0)
       // Keep card background color for strong bid (green)
       binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_confirmed_bg))
