@@ -1823,10 +1823,16 @@ data class HomeBidsRequestItemData(
     }
 
   fun vehicleOperatingDays():String=if(isItIntraCityContract()){"~"+intracityKms+ " Kms"} else "$operatingDays days a week"
+
   fun vehicleOperatingDaysLabel():String=if(isItIntraCityContract()){"Per Month"} else "Operating Days"
+
+
+  fun placementsVehicleOperatingDaysLabel():String=if(isIntracity()){"Per Month"} else "Operating Days"
 
   fun vehicleOperatingDaysPerMonth()= intracityDays?.toString()+" days"
   fun vehicleOperatingDaysPerMonthLabel():String=if(isItIntraCityContract()){"Per Month"} else "Tentative Total vehicles"
+
+  fun placementsVehicleOperatingHrsPerDays()="${costData?.hpd?.toInt()} h"
 
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
 
@@ -1880,12 +1886,22 @@ data class HomeBidsRequestItemData(
   } else {
     View.VISIBLE
   }
+
   fun vehiclePermitRequiredText():String=
    if(nepRequired!=null) {
      if (nepRequired!!) "Required " else "Not required "
    }else{
      ""
    }
+
+  fun placementVehiclePermitRequiredText():String=
+    if(costData != null) {
+      if (costData.nep) "Not required" else "Required"
+    }else{
+      ""
+    }
+
+
   fun totalVehicleCountOnList():String=
     if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
       "(X "+(vehicleCountCCLane!! * vehicleCountPerRoute!!).toString()+" Veh.)"

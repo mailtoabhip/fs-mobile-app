@@ -1,0 +1,312 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="transaction"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+
+        <variable
+            name="placementListingData"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/vehicleDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_16dp"
+        android:paddingTop="@dimen/size_16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/routeDetails"
+        app:layout_constraintTop_toBottomOf="@id/view_margin_vehicle_payment"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vehicleDetailsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vehicle_requirement"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vehicleType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@{transaction.getTruckName()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="@{transaction.isTruckNameAvailable()}"
+            app:layout_constraintStart_toEndOf="@+id/vehicleIcon"
+            app:layout_constraintTop_toBottomOf="@id/vehicleDetailsLabel"
+            tools:text="32FTXL" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/bodyType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{transaction.getFormattedTruckType()}"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isTruckTypeAvailable()}"
+            app:layout_constraintStart_toStartOf="@id/vehicleType"
+            app:layout_constraintTop_toBottomOf="@id/vehicleType"
+            tools:text="closed" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/vehicleIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@id/bodyType"
+            app:layout_constraintEnd_toStartOf="@id/vehicleType"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/vehicleType"
+            app:srcCompat="@{transaction.vehicleCloseOpenDrawable()}" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/vehicleNumberIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            android:visibility="@{transaction.isLHIntraCityVehicleVisible()}"
+            app:layout_constraintBottom_toBottomOf="@id/operateRoute"
+            app:layout_constraintEnd_toStartOf="@id/vehicleNumber"
+            app:layout_constraintTop_toTopOf="@id/vehicleNumber"
+            app:srcCompat="@{transaction.vehicleCloseOpenOperatingPerMonthDrawable()}" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/operationalDaysIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/operationalDaysText"
+            app:layout_constraintEnd_toStartOf="@id/operatingDays"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/operatingDays"
+            app:srcCompat="@{transaction.vehicleOperationDrawableKmPerMonth()}"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/operatingHrPerDayIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            android:visibility="@{transaction.isIntraCityContract()}"
+            app:layout_constraintBottom_toBottomOf="@id/operatingHrPerDayText"
+            app:layout_constraintEnd_toStartOf="@id/operatingHrPerDay"
+            app:layout_constraintTop_toTopOf="@id/operatingHrPerDay"
+            app:srcCompat="@{transaction.vehicleOperationDrawablePerHrs()}"
+            tools:visibility="visible" />
+
+
+
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vehicleNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@{transaction.totalVehicleCountOperationDays()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="@{transaction.isLHIntraCityVehicleVisible()}"
+            app:layout_constraintStart_toStartOf="@id/operateRoute"
+            app:layout_constraintTop_toBottomOf="@id/vehicleDetailsLabel"
+            tools:text="20 vehicles" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/operateRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_16dp"
+            android:text="@{transaction.vehicleOperatingDaysPerMonthLabel()}"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isLHIntraCityVehicleVisible()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vehicleNumber"
+            tools:text="@string/tentative_total_vehicles" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vehiclePerDepartureValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:layout_marginEnd="@dimen/size_2dp"
+            android:text="@{transaction.vehicleRouteCount()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="@{transaction.isLHVehicleVisible()}"
+            app:layout_constraintEnd_toStartOf="@id/bodyType"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bodyType" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dailyDepApproxValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:layout_marginEnd="@dimen/size_2dp"
+            android:paddingStart="@dimen/size_2dp"
+            android:text="@{transaction.vehicleCCCount()}"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="@{transaction.isLHVehicleVisible()}"
+            app:layout_constraintEnd_toStartOf="@id/dailyDepApprox"
+            app:layout_constraintStart_toEndOf="@+id/bodyType"
+            app:layout_constraintTop_toBottomOf="@id/operateRoute" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/dailyDepApprox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_2dp"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:paddingStart="@dimen/size_2dp"
+            android:paddingTop="@dimen/size_2dp"
+            android:text="@{transaction.vehicleDepText()}"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isLHVehicleVisible()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/dailyDepApproxValue"
+            app:layout_constraintTop_toBottomOf="@id/operateRoute" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/operatingDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/operationalDaysIcon"
+            app:layout_constraintTop_toBottomOf="@id/bodyType"
+            tools:text="4 days a week" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/operationalDaysText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:text="@{transaction.placementsVehicleOperatingDaysLabel()}"
+            app:layout_constraintStart_toEndOf="@+id/operationalDaysIcon"
+            app:layout_constraintTop_toBottomOf="@id/operatingDays"
+            tools:text="@string/operating_days" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/operatingHrPerDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:text="@{transaction.placementsVehicleOperatingHrsPerDays()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@+id/operatingHrPerDayText"
+            app:layout_constraintTop_toBottomOf="@id/operateRoute"
+            tools:text="14h" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/operatingHrPerDayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_16dp"
+            android:text="@string/per_day"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isIntraCityContract()}"
+            app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
+            app:layout_constraintTop_toBottomOf="@id/operatingHrPerDay" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/permitRequirementIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/permitRequirementLabel"
+            app:layout_constraintEnd_toStartOf="@id/permitRequirementText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/permitRequirementText"
+            app:srcCompat="@{transaction.nepDrawable()}"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/permitRequirementText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:text="@{transaction.placementVehiclePermitRequiredText()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/permitRequirementIcon"
+            app:layout_constraintTop_toBottomOf="@id/operationalDaysText"
+            tools:text="Not Required" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/permitRequirementLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_entry_permit_label"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/permitRequirementIcon"
+            app:layout_constraintTop_toBottomOf="@id/permitRequirementText"
+            tools:text="No Entry Permit" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/vehicleUsageIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            android:visibility="@{transaction.isIntraCityFixedContract()}"
+            app:layout_constraintBottom_toBottomOf="@id/VehicleUsageLabel"
+            app:layout_constraintEnd_toStartOf="@id/vehicleUsageType"
+            app:layout_constraintTop_toTopOf="@id/vehicleUsageType"
+            app:srcCompat="@{transaction.vehicleUsageDrawable()}"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vehicleUsageType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_18dp"
+            android:text="@{transaction.contractUsage}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/operatingHrPerDayText"
+            app:layout_constraintTop_toBottomOf="@id/operationalDaysText"
+            tools:text="LM" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/VehicleUsageLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_16dp"
+            android:text="@string/usage_label"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
+            app:layout_constraintTop_toBottomOf="@id/vehicleUsageType" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

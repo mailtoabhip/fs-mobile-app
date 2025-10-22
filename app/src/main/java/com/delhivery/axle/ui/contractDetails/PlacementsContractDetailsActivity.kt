@@ -324,8 +324,10 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     binding.error = false
                     binding.transaction = _transaction
                     binding.cardInput.request = _transaction
+                    binding.vehicleDetails.transaction = _transaction
+                    binding.vehicleDetails.placementListingData = homePlacementsItemData
                     //set default items to visible
-                    binding.vehicleDetails.visibility = View.VISIBLE
+                    binding.vehicleDetails.vehicleDetails.visibility = View.VISIBLE
                     binding.cardInput.editBidCl.visibility = View.GONE
                     binding.cardInput.root.visibility = View.VISIBLE
                     binding.cardInput.placementCl.root.visibility = View.VISIBLE
@@ -422,6 +424,26 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //insert route schedule adapter with arrival and departure time - for intercity case
 
                     //insert vehicle details section
+                    binding.vehicleDetails.vehicleDetailsLabel.visibility = View.VISIBLE
+                    //nep
+                    binding.vehicleDetails.permitRequirementText.visibility = View.VISIBLE
+                    //hpd
+                    binding.vehicleDetails.operatingHrPerDay.visibility = View.VISIBLE
+
+                    //operating days and no. of days in a week
+                    //for "intracity" - no. of days a week
+                    //for everything else - operating days
+                    binding.vehicleDetails.operationalDaysText.visibility = View.VISIBLE
+                    binding.vehicleDetails.operatingDays.visibility = View.VISIBLE
+                    if(_transaction.isIntracity()){
+                        //for "intracity" - no. of days a week
+                        binding.vehicleDetails.operatingDays.text = "~ ${_transaction.costData?.kpm?.toInt()} Kms"
+                    }else{
+                        //for everything else - operating days
+                        binding.vehicleDetails.operatingDays.text = "${_transaction.routeInfo?.routeDaysOfWeek?.size} days a week"
+                    }
+
+
 
                     //insert payment information section
 
