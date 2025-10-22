@@ -233,6 +233,7 @@ class PlacementsBidDetailsActivity :
         uploadArray.clear()
         //clear intracity address livedata as well
         viewModel.addressLiveData.value = null
+        binding.cardInput.routeAddress.text = ""
         //
         viewModel.pickupAddressLiveData.value = null
         //
@@ -418,7 +419,7 @@ class PlacementsBidDetailsActivity :
 
     private fun triggerFacilityAddress(originCenterCode:String?){
         //
-        //binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
+        binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
         //
         viewModel.getFacilityAddress(originCenterCode)
     }

@@ -166,6 +166,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //
         binding.refreshLayout.setOnRefreshListener {
             binding.mainCl.visibility = View.GONE
+            fetchData()
         }
 
         //
@@ -327,6 +328,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     binding.vehicleDetails.transaction = _transaction
                     binding.vehicleDetails.placementListingData = homePlacementsItemData
                     //set default items to visible
+                    binding.mainCl.visibility = View.VISIBLE
                     binding.vehicleDetails.vehicleDetails.visibility = View.VISIBLE
                     binding.cardInput.editBidCl.visibility = View.GONE
                     binding.cardInput.root.visibility = View.VISIBLE
@@ -414,7 +416,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
                         //set reporting time visible
                         binding.routeDetails.intraCityReportingTime.visibility = View.VISIBLE
-                        binding.routeDetails.intraCityReportingTime.text = homePlacementsItemData?.onlyFormatReportingTime()
+                        binding.routeDetails.intraCityReportingTime.text = homePlacementsItemData?.placementsOnlyFormatReportingTime()
                     }else{
 
                         //hide intracity route details section
@@ -426,15 +428,19 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //insert vehicle details section
                     binding.vehicleDetails.vehicleDetailsLabel.visibility = View.VISIBLE
                     //nep
-                    binding.vehicleDetails.permitRequirementText.visibility = View.VISIBLE
+                    //binding.vehicleDetails.permitRequirementText.visibility = View.VISIBLE
                     //hpd
-                    binding.vehicleDetails.operatingHrPerDay.visibility = View.VISIBLE
+                    //binding.vehicleDetails.operatingHrPerDay.visibility = View.VISIBLE
+                    //dpm
+                    //binding.vehicleDetails.perMonthTv.visibility = View.VISIBLE
+                    //
+                    //binding.vehicleDetails.perMonthTv.text = "${_transaction?.costData?.dpm?.toInt()} days"
 
                     //operating days and no. of days in a week
                     //for "intracity" - no. of days a week
                     //for everything else - operating days
-                    binding.vehicleDetails.operationalDaysText.visibility = View.VISIBLE
-                    binding.vehicleDetails.operatingDays.visibility = View.VISIBLE
+                    //binding.vehicleDetails.operationalDaysText.visibility = View.VISIBLE
+                    //binding.vehicleDetails.operatingDays.visibility = View.VISIBLE
                     if(_transaction.isIntracity()){
                         //for "intracity" - no. of days a week
                         binding.vehicleDetails.operatingDays.text = "~ ${_transaction.costData?.kpm?.toInt()} Kms"
@@ -466,7 +472,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
     private fun triggerFacilityAddress(originCenterCode:String?){
         //
-        //binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
+        binding.cardInput.pbIntracityAddress.visibility = View.VISIBLE
         //
         viewModel.getFacilityAddress(originCenterCode)
     }
@@ -490,7 +496,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     viewModel.propertyAddressData = it
                 }
                 //set full property address
-                it.propertyAddressDetails?.address?.let { address ->
+                it?.propertyAddressDetails?.address?.let { address ->
                     binding.cardInput.pbIntracityAddress.visibility = View.GONE
                     binding.cardInput.routeAddress.text = address
                     Log.d(TAG, "if-addressLiveData-START")
@@ -864,6 +870,12 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         viewModel.fetchPlacementDetails()
         //execuite pending bundings
         binding.executePendingBindings()
+        //
+        viewModel.addressLiveData.value = null
+        //
+        viewModel.propertyAddressData = null
+        //
+        binding.cardInput.routeAddress.text = ""
         //clear arrays
         //routesArray.clear()
         //

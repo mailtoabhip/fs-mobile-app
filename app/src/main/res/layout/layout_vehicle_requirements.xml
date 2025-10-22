@@ -77,10 +77,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="@dimen/size_8dp"
-            android:visibility="@{transaction.isLHIntraCityVehicleVisible()}"
+            android:visibility="@{transaction.isPerMonthVisible()}"
             app:layout_constraintBottom_toBottomOf="@id/operateRoute"
-            app:layout_constraintEnd_toStartOf="@id/vehicleNumber"
-            app:layout_constraintTop_toTopOf="@id/vehicleNumber"
+            app:layout_constraintEnd_toStartOf="@id/per_month_tv"
+            app:layout_constraintTop_toTopOf="@id/per_month_tv"
             app:srcCompat="@{transaction.vehicleCloseOpenOperatingPerMonthDrawable()}" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="@dimen/size_8dp"
-            android:visibility="@{transaction.isIntraCityContract()}"
+            android:visibility="@{transaction.isHoursPerDayVisible()}"
             app:layout_constraintBottom_toBottomOf="@id/operatingHrPerDayText"
             app:layout_constraintEnd_toStartOf="@id/operatingHrPerDay"
             app:layout_constraintTop_toTopOf="@id/operatingHrPerDay"
@@ -113,30 +113,30 @@
 
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/vehicleNumber"
+            android:id="@+id/per_month_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_8dp"
-            android:text="@{transaction.totalVehicleCountOperationDays()}"
             android:textColor="@color/background_dark_grey"
             android:textSize="@dimen/text_16sp"
-            android:visibility="@{transaction.isLHIntraCityVehicleVisible()}"
+            android:text="@{transaction.getDaysPerMonth()}"
+            android:visibility="@{transaction.isPerMonthVisible()}"
             app:layout_constraintStart_toStartOf="@id/operateRoute"
             app:layout_constraintTop_toBottomOf="@id/vehicleDetailsLabel"
-            tools:text="20 vehicles" />
+            tools:text="10 days" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/operateRoute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="@dimen/size_16dp"
-            android:text="@{transaction.vehicleOperatingDaysPerMonthLabel()}"
+            android:text="@string/per_month"
             android:textColor="@color/color_hint"
             android:textSize="@dimen/text_12sp"
-            android:visibility="@{transaction.isLHIntraCityVehicleVisible()}"
+            android:visibility="@{transaction.isPerMonthVisible()}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/vehicleNumber"
-            tools:text="@string/tentative_total_vehicles" />
+            app:layout_constraintTop_toBottomOf="@id/per_month_tv"
+            tools:text="@string/per_month" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/vehiclePerDepartureValue"
@@ -215,7 +215,7 @@
             android:text="@{transaction.placementsVehicleOperatingHrsPerDays()}"
             android:textColor="@color/background_dark_grey"
             android:textSize="@dimen/text_16sp"
-            android:visibility="visible"
+            android:visibility="@{transaction.isHoursPerDayVisible()}"
             app:layout_constraintStart_toStartOf="@+id/operatingHrPerDayText"
             app:layout_constraintTop_toBottomOf="@id/operateRoute"
             tools:text="14h" />
@@ -228,8 +228,8 @@
             android:text="@string/per_day"
             android:textColor="@color/color_hint"
             android:textSize="@dimen/text_12sp"
-            android:visibility="@{transaction.isIntraCityContract()}"
-            app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
+            android:visibility="@{transaction.isHoursPerDayVisible()}"
+            app:layout_constraintStart_toStartOf="@+id/per_month_tv"
             app:layout_constraintTop_toBottomOf="@id/operatingHrPerDay" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -237,7 +237,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="@dimen/size_8dp"
-            android:visibility="visible"
+            android:visibility="@{transaction.isNoPermitVisible()}"
             app:layout_constraintBottom_toBottomOf="@id/permitRequirementLabel"
             app:layout_constraintEnd_toStartOf="@id/permitRequirementText"
             app:layout_constraintStart_toStartOf="parent"
@@ -253,7 +253,7 @@
             android:text="@{transaction.placementVehiclePermitRequiredText()}"
             android:textColor="@color/background_dark_grey"
             android:textSize="@dimen/text_16sp"
-            android:visibility="visible"
+            android:visibility="@{transaction.isNoPermitVisible()}"
             app:layout_constraintStart_toEndOf="@+id/permitRequirementIcon"
             app:layout_constraintTop_toBottomOf="@id/operationalDaysText"
             tools:text="Not Required" />
@@ -265,7 +265,7 @@
             android:text="@string/no_entry_permit_label"
             android:textColor="@color/color_hint"
             android:textSize="@dimen/text_12sp"
-            android:visibility="visible"
+            android:visibility="@{transaction.isNoPermitVisible()}"
             app:layout_constraintStart_toEndOf="@+id/permitRequirementIcon"
             app:layout_constraintTop_toBottomOf="@id/permitRequirementText"
             tools:text="No Entry Permit" />
@@ -304,7 +304,7 @@
             android:textColor="@color/color_hint"
             android:textSize="@dimen/text_12sp"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/vehicleNumber"
+            app:layout_constraintStart_toStartOf="@+id/per_month_tv"
             app:layout_constraintTop_toBottomOf="@id/vehicleUsageType" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

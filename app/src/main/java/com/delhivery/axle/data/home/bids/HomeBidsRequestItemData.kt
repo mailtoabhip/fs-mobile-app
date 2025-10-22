@@ -1779,6 +1779,32 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun getDaysPerMonth() =
+    if(costData?.dpm?.toInt() == 1){
+        "${costData.dpm.toInt()} day"
+    }else{
+      "${costData?.dpm?.toInt()} days"
+    }
+
+
+  fun isPerMonthVisible() = if (costData?.dpm?.toInt() == 0) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun isNoPermitVisible() = if (costData?.nep == null) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun isHoursPerDayVisible() = if (costData?.hpd?.toInt() == 0) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
   fun isLHContinousContract() = if (continuousConnection == true) {
     View.VISIBLE
   } else {
@@ -1808,6 +1834,8 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+
 
   fun totalVehicleCountOperationDays():String=
     if(contractType==ContractType.INTRACITY.type){

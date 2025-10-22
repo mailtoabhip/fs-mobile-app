@@ -94,6 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/size_16dp"
             android:id="@+id/mainCl"
+            android:visibility="gone"
             android:paddingBottom="@dimen/size_16dp">
 
           <include
