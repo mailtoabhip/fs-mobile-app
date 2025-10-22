@@ -339,6 +339,7 @@
                 android:id="@+id/rvIntracityFlexibleContracts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:listitem="@layout/view_intracity_flexible_reporting_centers"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/intraCityAdHocRouteScheduleLabel" />
 

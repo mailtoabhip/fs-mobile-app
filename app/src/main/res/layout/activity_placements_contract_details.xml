@@ -189,7 +189,7 @@
               android:textColor="@color/background_dark_grey"
               android:textSize="@dimen/text_16sp"
               android:textStyle="bold"
-              tools:visibility="gone"
+              tools:visibility="visible"
               android:visibility="@{transaction.paymentSlabsVisibility()}"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/view_margin_paymentInfo"
@@ -206,7 +206,7 @@
               android:textColor="@color/dark_blue"
               android:textSize="@dimen/text_14sp"
               android:textStyle="bold"
-              tools:visibility="gone"
+              tools:visibility="visible"
               android:visibility="gone"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/rvPaymentSlabs"
@@ -224,11 +224,12 @@
               android:textAlignment="viewStart"
               android:textColor="@color/background_dark_grey"
               android:textSize="@dimen/text_12sp"
-              tools:visibility="gone"
+              tools:visibility="visible"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintTop_toBottomOf="@+id/paymentSlabsMoreSlab"
               android:visibility="@{transaction.paymentSlabsVisibility()}"
               />
+
           <androidx.constraintlayout.widget.ConstraintLayout
               android:id="@+id/vehicleDetails"
               android:layout_width="match_parent"

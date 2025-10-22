@@ -562,6 +562,10 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  fun isIntracityRegular() : Boolean{
+    return loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true
+  }
+
   /**
    * Placement route details
    */

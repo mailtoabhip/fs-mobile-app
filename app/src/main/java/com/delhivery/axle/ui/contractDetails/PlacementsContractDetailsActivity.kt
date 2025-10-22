@@ -76,7 +76,6 @@ import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
 import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
 import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.VALUE_BANNER
@@ -97,6 +96,7 @@ import javax.inject.Inject
 import kotlin.math.abs
 import android.database.Cursor
 import android.graphics.drawable.ColorDrawable
+import android.text.method.TextKeyListener.Capitalize
 import android.view.Gravity
 import android.view.WindowManager
 import com.delhivery.axle.databinding.ActivityPlacementsContractDetailsBinding
@@ -148,17 +148,17 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //set Actionbar
-        setupActionBar()
-
-        //init firebase performance
-        initFirebasePerformance()
-
         /* validate intent */
         validateIntentData()
 
         //fetch intent data
         fetchIntentData()
+
+        //init firebase performance
+        initFirebasePerformance()
+
+        //set Actionbar
+        setupActionBar()
 
         //setup live data observers
         setupLiveDataObservers()
@@ -238,7 +238,6 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             binding.toolbarEndText.background = ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
         }else{
             binding.toolbarEndText.visibility = View.GONE
-
         }
     }
 
@@ -337,7 +336,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //binding.routeDetails.routeDetails.visibility =  t.isLHContract()
                     //binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityFixedContract()
                     //binding.routeDetails.intraCityAdHocRouteDetails.visibility =  t.isIntraCityFlexibleContract()
-                    //
+
 
                     //TODO
                     // Check the correct and updated fields to be sent to capture event
@@ -360,11 +359,51 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //Insert code below for managing other sections of the page
                     if(viewModel.transaction.isIntracity()){
                         //insert intracity specific reporting city section with city and reporting time
+                        binding.routeDetails.root.visibility = View.VISIBLE
+                        binding.routeDetails.intraCityRouteDetails.visibility = View.VISIBLE
+
+                        //set reporting city name and other details
+                        //binding.routeDetails.intraCityTvHubCity.text = _transaction.routeInfo?.origin?.centerName?:""
+                        binding.routeDetails.intraCityTvHubCity.text = StringUtils.capitalize(_transaction.routeInfo?.origin?.centerName)
+
+                        //binding.routeDetails.intraCityTvCity.text = homePlacementsItemData?.origin?:""
+                        Log.d("homePlacementsItemData", ""+Gson().toJson(homePlacementsItemData))
+                        binding.routeDetails.intraCityTvCity.text = StringUtils.capitalize(homePlacementsItemData?.origin)
+
+                        //binding.routeDetails.intraCityTvState.text = _transaction.routeInfo?.origin?.centerState?:""
+                        binding.routeDetails.intraCityTvState.text = StringUtils.capitalize(_transaction.routeInfo?.origin?.centerState)
+
+                        //handle map navigation UI view
+                        //set visible map text view
+                        binding.routeDetails.intraCityTvMapView.visibility = View.VISIBLE
+                        //set click listener on map
+                        binding.routeDetails.intraCityTvMapView.setOnClickListener {
+                            navigateToMap()
+                        }
 
                         //handle flexible and fixed reporting tag
+                        //check if intracity regular - show fixed reporting tag
+                        if(viewModel.transaction.isIntracityRegular()) {
+                            //show fixed reporting tag
+                            binding.routeDetails.fixedIntracityTv.visibility = View.VISIBLE
+                            binding.routeDetails.fixedIntracityTv.text = StringUtils.capitalize(getString(string.action_fixed_intracity))
+                        }else if(homePlacementsItemData?.ticketFlexibleContractId != null){
+                            //if "ticket_flexible_contract_id" != null - show flexible reporting tag
+                            //show flexible reporting tag
+                            binding.routeDetails.fixedIntracityTv.text = StringUtils.capitalize(getString(string.action_flexible_intracity))
+                        }else {
+                            //if "ticket_flexible_contract_id" == null - Don't show flexible reporting tag
+                            //hide tag
+                            binding.routeDetails.fixedIntracityTv.visibility = View.GONE
+                        }
 
+                        //set reporting time visible
+                        binding.routeDetails.intraCityReportingTime.visibility = View.VISIBLE
+                        binding.routeDetails.intraCityReportingTime.text = homePlacementsItemData?.onlyFormatReportingTime()
                     }else{
 
+                        //hide intracity route details section
+                        binding.routeDetails.intraCityRouteDetails.visibility = View.GONE
                     }
 
                     //insert route schedule adapter with arrival and departure time - for intercity case
