@@ -133,6 +133,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/text_12sp"
                         tools:text="3 stops"
+                        android:text="@{request.getIntermediateStops()}"
                         android:layout_marginStart="@dimen/size_4dp"
                         android:paddingTop="@dimen/size_2dp"
                         android:gravity="center"
