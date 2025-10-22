@@ -62,6 +62,8 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
   //placement type for placements details page
   var placementType: String?=null
 
+  var propertyAddressData : FacilityAddressResponse? = null
+
   /* transaction id */
   lateinit var requestType: String
 

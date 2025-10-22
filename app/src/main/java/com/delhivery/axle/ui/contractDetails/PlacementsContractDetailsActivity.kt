@@ -368,7 +368,14 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
                         //binding.routeDetails.intraCityTvCity.text = homePlacementsItemData?.origin?:""
                         Log.d("homePlacementsItemData", ""+Gson().toJson(homePlacementsItemData))
-                        binding.routeDetails.intraCityTvCity.text = StringUtils.capitalize(homePlacementsItemData?.origin)
+
+                        //check if reporting city is present or else hide the field
+                        if(viewModel.propertyAddressData?.propertyCity.isNotNullOrEmpty()){
+                            binding.routeDetails.intraCityTvCity.visibility = View.VISIBLE
+                            binding.routeDetails.intraCityTvCity.text = StringUtils.capitalize(viewModel.propertyAddressData?.propertyCity)
+                        }else{
+                            binding.routeDetails.intraCityTvCity.visibility = View.GONE
+                        }
 
                         //binding.routeDetails.intraCityTvState.text = _transaction.routeInfo?.origin?.centerState?:""
                         binding.routeDetails.intraCityTvState.text = StringUtils.capitalize(_transaction.routeInfo?.origin?.centerState)
@@ -387,10 +394,16 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                             //show fixed reporting tag
                             binding.routeDetails.fixedIntracityTv.visibility = View.VISIBLE
                             binding.routeDetails.fixedIntracityTv.text = StringUtils.capitalize(getString(string.action_fixed_intracity))
+                            //set fixed reporting icon
+                            binding.routeDetails.fixedIntracityTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place,0,0,0)
                         }else if(homePlacementsItemData?.ticketFlexibleContractId != null){
                             //if "ticket_flexible_contract_id" != null - show flexible reporting tag
                             //show flexible reporting tag
                             binding.routeDetails.fixedIntracityTv.text = StringUtils.capitalize(getString(string.action_flexible_intracity))
+                            //set flexible reporting icon
+                            //binding.allIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
+                            //binding.flexibleIntracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                            binding.routeDetails.fixedIntracityTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_multiple_location_blue,0,0,0)
                         }else {
                             //if "ticket_flexible_contract_id" == null - Don't show flexible reporting tag
                             //hide tag
@@ -450,6 +463,11 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             //
             viewModel.addressLiveData.removeObservers(this@PlacementsContractDetailsActivity)
             viewModel.addressLiveData.observe(this, Observer {
+                //set reporting city
+                it?.let {
+                    viewModel.propertyAddressData = it
+                }
+                //set full property address
                 it.propertyAddressDetails?.address?.let { address ->
                     binding.cardInput.pbIntracityAddress.visibility = View.GONE
                     binding.cardInput.routeAddress.text = address

@@ -196,6 +196,8 @@
                 android:layout_marginStart="@dimen/size_8dp"
                 android:background="@drawable/bg_all_round_corner_red_solid_selector"
                 android:drawableStart="@drawable/ic_place"
+                android:textColor="@color/background_dark_grey"
+                app:drawableTint="@color/background_dark_grey"
                 android:drawablePadding="@dimen/size_8dp"
                 android:paddingStart="@dimen/size_10dp"
                 android:paddingTop="@dimen/size_6dp"
