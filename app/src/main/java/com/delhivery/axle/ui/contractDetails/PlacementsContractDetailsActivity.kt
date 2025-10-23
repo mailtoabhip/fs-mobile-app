@@ -441,10 +441,25 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //for everything else - operating days
                     //binding.vehicleDetails.operationalDaysText.visibility = View.VISIBLE
                     //binding.vehicleDetails.operatingDays.visibility = View.VISIBLE
+                    //handle visibility of "operatingDays" textview and its label if response is null
+
+
                     if(_transaction.isIntracity()){
+                        //handle visibility of "operatingDays" textview and its label if response is null OR zero
+                        if(_transaction.costData?.kpm == null || _transaction.costData.kpm.toInt() == 0){
+                            binding.vehicleDetails.operatingDays.visibility = View.GONE
+                            binding.vehicleDetails.operationalDaysText.visibility = View.GONE
+                        }
+
                         //for "intracity" - no. of days a week
-                        binding.vehicleDetails.operatingDays.text = "~ ${_transaction.costData?.kpm?.toInt()} Kms"
+                        binding.vehicleDetails.operatingDays.text = "~ ${_transaction.costData?.kpm?.toInt()} kms"
                     }else{
+                        //handle visibility of "operatingDays" textview and its label if response is null OR zero
+                        if(_transaction.routeInfo?.routeDaysOfWeek == null || _transaction.routeInfo.routeDaysOfWeek.size == 0){
+                            binding.vehicleDetails.operatingDays.visibility = View.GONE
+                            binding.vehicleDetails.operationalDaysText.visibility = View.GONE
+                        }
+                        
                         //for everything else - operating days
                         binding.vehicleDetails.operatingDays.text = "${_transaction.routeInfo?.routeDaysOfWeek?.size} days a week"
                     }

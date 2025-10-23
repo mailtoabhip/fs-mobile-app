@@ -1787,7 +1787,7 @@ data class HomeBidsRequestItemData(
     }
 
 
-  fun isPerMonthVisible() = if (costData?.dpm?.toInt() == 0) {
+  fun isPerMonthVisible() = if (costData?.dpm ==null || costData.dpm.toInt() == 0) {
     View.GONE
   } else {
     View.VISIBLE
@@ -1799,7 +1799,7 @@ data class HomeBidsRequestItemData(
     View.VISIBLE
   }
 
-  fun isHoursPerDayVisible() = if (costData?.hpd?.toInt() == 0) {
+  fun isHoursPerDayVisible() = if (costData?.hpd ==null || costData.hpd.toInt() == 0) {
     View.GONE
   } else {
     View.VISIBLE
