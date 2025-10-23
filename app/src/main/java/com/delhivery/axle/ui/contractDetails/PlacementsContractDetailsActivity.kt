@@ -332,6 +332,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //set request for payment details view
                     binding.paymentInfo.transaction = _transaction
                     binding.paymentInfo.placementListingData = homePlacementsItemData
+                    //set request for guidelines view
+                    binding.layoutGuidelines.transaction = _transaction
+                    binding.layoutGuidelines.layoutGuidelines.visibility = View.VISIBLE
                     //set default items to visible
                     binding.mainCl.visibility = View.VISIBLE
                     binding.vehicleDetails.vehicleDetails.visibility = View.VISIBLE

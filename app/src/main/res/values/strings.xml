@@ -798,6 +798,7 @@
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
   <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
   <string name="load_categories">Load Categories</string>
+  <string name="placement_vehicle_type"><![CDATA[Vehicle type must match the requirement]]></string>
   <string name="vehicle_type_amp_count"><![CDATA[Vehicle type & count must match the requirement]]></string>
   <string name="follow_the_schedule_to_avoid_delay_penalties">Follow the schedule to avoid delay penalties</string>
   <string name="any_schedule_changes_will_be_informed">Any schedule changes will be informed</string>

@@ -1,9 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="transaction"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+
+        <variable
+            name="placementListingData"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_guidelines"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -14,9 +25,9 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:paddingStart="@dimen/size_16dp"
             android:paddingEnd="@dimen/size_16dp"
-            android:visibility="gone"
+            android:visibility="@{transaction.isFtlRegularVisibility()}"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/rulesLabel"
@@ -45,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:paddingEnd="@dimen/size_10dp"
-                android:text="@string/vehicle_type_amp_count"
+                android:text="@string/placement_vehicle_type"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_14sp"
                 app:layout_constraintStart_toEndOf="@id/dot1"
@@ -120,7 +131,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:paddingStart="@dimen/size_16dp"
             android:paddingEnd="@dimen/size_16dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="gone">
 
@@ -206,9 +217,9 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:paddingStart="@dimen/size_16dp"
             android:paddingEnd="@dimen/size_16dp"
-            android:visibility="gone"
+            android:visibility="@{transaction.isIntracityVisibility()}"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/intraCityRulesLabel"
@@ -288,6 +299,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\u2022  "
+                android:visibility="gone"
                 android:textColor="@color/heading_black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/intraCityRule3" />
@@ -299,6 +311,7 @@
                 android:paddingEnd="@dimen/size_10dp"
                 android:text="@string/note_that_expected_payout"
                 android:textColor="@color/heading_black"
+                android:visibility="gone"
                 android:textSize="@dimen/text_14sp"
                 app:layout_constraintStart_toEndOf="@id/intraCityRulesDot4"
                 app:layout_constraintTop_toBottomOf="@id/intraCityRule3" />

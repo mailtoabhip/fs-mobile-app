@@ -562,6 +562,15 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  fun isIntracityVisibility() : Int{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityAdhoc.name), ignoreCase = true) == true
+      || loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true){
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
   fun isIntracityRegular() : Boolean{
     return loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true
   }
@@ -1684,6 +1693,14 @@ data class HomeBidsRequestItemData(
   } else {
     View.GONE
   }
+
+  fun isFtlRegularVisibility() = if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.ftlRegular.name), ignoreCase = true) == true){
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+
 
   //use this function to identify the bid type
   fun isItContract() = requestType == RequestType.Contract.type
