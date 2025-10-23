@@ -1875,6 +1875,62 @@ data class HomeBidsRequestItemData(
   fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
   fun intracityExtraDayRate()="₹ "+ intracityExtraDayRate
 
+  /**
+   * rpk: Rate per extra kilometer
+   * rpd: Rate per extra day
+   * rph: Rate per extra hour
+   */
+  //placements flow specific function
+  fun isPlacementsExtraKmRateAvailable() = if(costData?.rpk == null || costData.rpk.toInt() == 0)
+    View.GONE
+  else
+    View.VISIBLE
+
+  fun isPlacementsExtraHourRateAvailable() = if(costData?.rph == null || costData.rph.toInt() == 0)
+    View.GONE
+  else
+    View.VISIBLE
+
+  fun isPlacementsExtraDayRateAvailable() = if(costData?.rpd == null || costData.rpd.toInt() == 0)
+    View.GONE
+  else
+    View.VISIBLE
+
+  fun isPlacementsPaymentInfoAvailable() : Int{
+    return if((costData?.rpk == null || costData.rpk.toInt() == 0)
+      && (costData?.rph == null || costData.rph.toInt() == 0)
+      && (costData?.rpd == null || costData.rpd.toInt() == 0))
+      View.GONE
+    else
+      View.VISIBLE
+  }
+
+
+  fun placementsExtraKmRate() : String{
+    return if(costData?.rpk != null){
+      "₹ "+ costData.rpk.toInt()
+    }else{
+      ""
+    }
+  }
+
+  fun placementsExtraHourRate() : String{
+    return if(costData?.rph != null){
+      "₹ "+ costData.rph.toInt()
+    }else{
+      ""
+    }
+  }
+
+  fun placementsExtraDayRate() : String{
+    return if(costData?.rpd != null){
+      "₹ "+ costData.rpd.toInt()
+    }else{
+      ""
+    }
+  }
+
+
   fun intracityContractType()=if(contractType==ContractType.INTRACITY.type && isFlexible==false){"Fixed"}else if(contractType==ContractType.INTRACITY.type && isFlexible==true){"Flexible"} else{""}
 
   fun paymentSlabsVisibility() = if (contractType==ContractType.INTRACITY.type) {

@@ -324,9 +324,14 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //
                     binding.error = false
                     binding.transaction = _transaction
+                    //set request for driver details view
                     binding.cardInput.request = _transaction
+                    //set request for vehicle details view
                     binding.vehicleDetails.transaction = _transaction
                     binding.vehicleDetails.placementListingData = homePlacementsItemData
+                    //set request for payment details view
+                    binding.paymentInfo.transaction = _transaction
+                    binding.paymentInfo.placementListingData = homePlacementsItemData
                     //set default items to visible
                     binding.mainCl.visibility = View.VISIBLE
                     binding.vehicleDetails.vehicleDetails.visibility = View.VISIBLE
@@ -459,7 +464,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                             binding.vehicleDetails.operatingDays.visibility = View.GONE
                             binding.vehicleDetails.operationalDaysText.visibility = View.GONE
                         }
-                        
+
                         //for everything else - operating days
                         binding.vehicleDetails.operatingDays.text = "${_transaction.routeInfo?.routeDaysOfWeek?.size} days a week"
                     }
@@ -467,6 +472,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
 
                     //insert payment information section
+
 
                     //insert guidelines section
 
