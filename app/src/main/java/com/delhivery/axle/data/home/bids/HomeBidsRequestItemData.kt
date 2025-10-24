@@ -1,17 +1,12 @@
 package com.delhivery.axle.data.home.bids
 
-import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
-import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
@@ -37,7 +32,6 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.LoggingMXBean
 
 /**
  *
@@ -150,6 +144,12 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_states")val nepState:String?=null,
   @SerializedName("fms_ticket_id")val fmsTicketId:String?=null,
   @SerializedName("intracity_lob")val intracityLob:String?=null,
+  @SerializedName("payment_mode")var paymentMode:String?=null,
+  @SerializedName("indent_payment_mode")var indentPaymentMode:String?=null,
+  @SerializedName("advance_percentage")var advancePercentage:String?=null,
+  @SerializedName("bid_suggestion")var bidSuggestion: Boolean = false,
+  @SerializedName("message")var suggestedBidMessage: String? = null,
+
 
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
@@ -176,13 +176,99 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  /**
+   * Returns bid suggestion availability
+   * Returns true if bid suggestion data is available
+   */
+  fun getBidSuggestionValue() : Boolean {
+    return bidSuggestion
+  }
+
+  /**
+   * Returns the suggested message if there is any
+   * Example: "Competition is tough! Lower your price by ₹20 to win the load"
+   */
+  fun getSuggestedBidMessageValue() : String {
+    return suggestedBidMessage ?: ""
+  }
+
+  /**
+   * Returns the suggested bid amount if there is any
+   */
+  fun getSuggestedBidAmount() : Int? {
+    return transactionBid?.suggestion?.suggestedAmount
+  }
+
+  /**
+   * Returns formatted suggested bid amount with currency
+   * Example: "₹1,25,000"
+   */
+  fun getFormattedSuggestedBidAmount(): String {
+    val suggestedAmount = transactionBid?.suggestion?.suggestedAmount
+    return if (suggestedAmount != null && suggestedAmount > 0) {
+      "₹${StringUtils.formatAmount(suggestedAmount.toDouble())}"
+    } else {
+      ""
+    }
+  }
+
   /****
    *
    * get Ticket Id
    */
   fun getTicketId(): String = "Ticket Id: "+fmsTicketId
 
+  /**
+   * get formatted payment mode display text
+   */
+  fun getPaymentModeDisplay(): String {
+    // Use indentPaymentMode first, fall back to paymentMode for backward compatibility
+    val mode = indentPaymentMode
+    return when (mode?.lowercase()) {
+      "credit" -> "Credit Payment"
+      "advance" -> "Advance Payment"
+      else -> mode?.replaceFirstChar { it.uppercase() } ?: "N/A"
+    }
+  }
 
+  /**
+   * Check if payment mode should be displayed
+   * Returns true only for valid payment modes (Credit or Advance)
+   */
+  fun shouldShowPaymentMode(): Boolean {
+    if (indentPaymentMode.isNullOrEmpty()) return false
+    val mode = indentPaymentMode?.lowercase()
+    return mode.equals("credit",true)  || mode.equals("advance",true)
+  }
+
+  /**
+   * Check if advance payment percentage should be displayed
+   * Returns true only for advance payment mode
+   */
+  fun shouldShowAdvancePercentage(): Boolean {
+    if (indentPaymentMode.isNullOrEmpty()) return false
+    val mode = indentPaymentMode?.lowercase()
+    return mode.equals("advance",true)
+  }
+
+  /**
+   * get formatted advance payment percentage
+   */
+  fun getAdvancePaymentPercentage(): String {
+    return if (advancePercentage != null) {
+      "(${advancePercentage}%)"
+    } else {
+      ""
+    }
+  }
+
+  fun getDemandTypeByLoad() : String {
+    Log.d("Demand Type ","$demandType")
+    if (demandType?.equals("Internal", ignoreCase = true) == true || 
+        demandType?.equals("Intracity", ignoreCase = true) == true) {
+      return "Delhivery Load"
+    } else return "Client Load"
+  }
   /**
    * get time in ist
    */
@@ -198,7 +284,7 @@ data class HomeBidsRequestItemData(
 
     val date = reportingTime?.let { inputFormat.parse(it) }
     val formattedTime = date?.let { outputFormat.format(it) }
-    return formattedTime?:"na"
+    return formattedTime?:"NA"
   }
 
   /**
@@ -410,6 +496,20 @@ data class HomeBidsRequestItemData(
   fun originStateName() = StringUtils.capitalize(originState) ?: ""
 
   /**
+   * @return formatted origin pincode and state
+   */
+  fun originPincodeState(): String {
+    val pincode = loadingLocationPincode
+    val state = originStateName()
+    return when {
+      !pincode.isNullOrEmpty() && state.isNotEmpty() -> "$pincode, $state"
+      !pincode.isNullOrEmpty() -> pincode
+      state.isNotEmpty() -> state
+      else -> ""
+    }
+  }
+
+  /**
    * @return formatted destination state name
    */
   fun destinationStateName() = StringUtils.capitalize(destinationState) ?: ""
@@ -440,6 +540,10 @@ data class HomeBidsRequestItemData(
   } else {
     destinationStateName()
   }
+
+  fun originCityState() = "${originCityName()} \n(${originStateName()})"
+
+  fun destinationCityState() = "${destinationCityName()} \n(${destinationStateName()})"
 
   /**
    * @return formatted origin district, city, state
@@ -1002,7 +1106,7 @@ data class HomeBidsRequestItemData(
   /**
    * @return true if speed is express
    */
-  fun isExpress() = speed?.compareTo("EXP") == 0
+  fun isExpress() = speed == "EXP"
 
   /**
    * @return expressText with tat

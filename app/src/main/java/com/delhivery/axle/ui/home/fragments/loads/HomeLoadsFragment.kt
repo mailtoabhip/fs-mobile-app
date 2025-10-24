@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.Gravity
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
@@ -32,6 +33,7 @@ import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.data.home.trucks.TruckFrequentItem
 import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
+import com.delhivery.axle.databinding.DialogBottomVehicleFilterBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -783,22 +785,27 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
           mutableListOf(userPrefs.userId())
         )
         selectedLoadFilter = DemandType.Internal.type
-        demandType = DemandType.Internal.type
-        refreshData()
-      }
-      HomeLoadNonDlv ->{
-        analyticsUtil.moEngageTrackEvent(
-          EVENT_NON_DELHIVERY_LOAD_CLICKED,
-          mutableListOf(PROPERTY_USER_ID),
-          mutableListOf(userPrefs.userId())
-        )
-        selectedLoadFilter = DemandType.Others.type
         demandType = userPrefs.demandType
-          .split(",")
-          .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
-          .joinToString(",")
+            .split(",")
+            .filterNot {
+                it == DemandType.Intracity.type
+            }
+            .joinToString { "," }
         refreshData()
       }
+//      HomeLoadNonDlv ->{
+//        analyticsUtil.moEngageTrackEvent(
+//          EVENT_NON_DELHIVERY_LOAD_CLICKED,
+//          mutableListOf(PROPERTY_USER_ID),
+//          mutableListOf(userPrefs.userId())
+//        )
+//        selectedLoadFilter = DemandType.Others.type
+//        demandType = userPrefs.demandType
+//          .split(",")
+//          .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+//          .joinToString(",")
+//        refreshData()
+//      }
     }
   }
 
@@ -837,69 +844,99 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
-  private fun showVehicleFilterDialog(){
-    lateinit var dialog: AlertDialog
+  private fun showVehicleFilterDialog() {
+    val dialog = Dialog(requireContext())
+    val bindingDialog = DialogBottomVehicleFilterBinding.inflate(layoutInflater)
 
-    // Initialize an array of vehicles
-    val arrayVehicle = arrayOf("open", "closed", "trailer")
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
 
-    val arrayChecked = booleanArrayOf(false, false, false, false)
-
+    // Get current filter selection
     var currentVehicleFilterList = listOf<String>()
     currentVehicleFilterList = if (viewModel.passing_vehicle_type.isNotNullOrEmpty()) {
       viewModel.passing_vehicle_type!!.split(",")
-    } else {
+    } else if (userPrefs.truckTypes != null) {
       userPrefs.truckTypes!!.split(",")
-    }
-    if (currentVehicleFilterList.isNotEmpty()) {
-      for (vehicle in currentVehicleFilterList) {
-        if (arrayVehicle.contains(vehicle))
-        {
-          arrayChecked[arrayVehicle.indexOf(vehicle)] = true
-        }
-      }
+    } else {
+      listOf()
     }
 
-    val builder = AlertDialog.Builder(context)
+    // Set initial checkbox states based on current filter
+    bindingDialog.checkboxOpen.isChecked = currentVehicleFilterList.contains("open")
+    bindingDialog.checkboxClosed.isChecked = currentVehicleFilterList.contains("closed")
+    bindingDialog.checkboxTrailer.isChecked = currentVehicleFilterList.contains("trailer")
 
-    builder.setTitle("-- Select vehicle types --")
-
-    builder.setMultiChoiceItems(arrayVehicle, arrayChecked) { _, which, isChecked ->
-      arrayChecked[which] = isChecked
-    }
-
-    builder.setPositiveButton("Filter") { _, _ ->
-
-      //Capture event
-      analyticsUtil.moEngageTrackEvent(
-              EVENT_FILTER_VEHICLE_TYPE,
-              mutableListOf(PROPERTY_USER_ID),
-              mutableListOf(userPrefs.userId())
-      )
-
-      var filterVehicleTypes = listOf<String>()
-      for (vehicle in arrayVehicle) {
-        if (arrayChecked[arrayVehicle.indexOf(vehicle)]) {
-          filterVehicleTypes  = filterVehicleTypes + vehicle
-        }
-      }
-
-      viewModel.vehicleStr = filterVehicleTypes.joinToString(separator = ",") {it}
-      viewModel.filterVehicleType = true
-      analyticsUtil.moEngageTrackEvent(
-        EVENT_LOAD_VEHICLE_TYPE_CLICKED,
-        mutableListOf(PROPERTY_VEHICLE_TYPE),
-        mutableListOf(viewModel.vehicleStr?:"No Vehicle Type")
-      )
-      refreshData()
-    }
-
-    builder.setNegativeButton("Cancel") { _, _ ->
+    // Close button listener
+    bindingDialog.closeBtn.setOnClickListener {
       dialog.dismiss()
     }
 
-    dialog = builder.create()
+    // Individual checkbox click listeners for better UX
+    bindingDialog.openVehicleLayout.setOnClickListener {
+      bindingDialog.checkboxOpen.isChecked = !bindingDialog.checkboxOpen.isChecked
+    }
+
+    bindingDialog.closedVehicleLayout.setOnClickListener {
+      bindingDialog.checkboxClosed.isChecked = !bindingDialog.checkboxClosed.isChecked
+    }
+
+    bindingDialog.trailerVehicleLayout.setOnClickListener {
+      bindingDialog.checkboxTrailer.isChecked = !bindingDialog.checkboxTrailer.isChecked
+    }
+
+    // Apply filter button
+    bindingDialog.btnApplyFilter.setOnClickListener {
+      // Capture analytics event
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_FILTER_VEHICLE_TYPE,
+        mutableListOf(PROPERTY_USER_ID),
+        mutableListOf(userPrefs.userId())
+      )
+
+      val selectedVehicleTypes = mutableListOf<String>()
+      
+      if (bindingDialog.checkboxOpen.isChecked) {
+        selectedVehicleTypes.add("open")
+      }
+      if (bindingDialog.checkboxClosed.isChecked) {
+        selectedVehicleTypes.add("closed")
+      }
+      if (bindingDialog.checkboxTrailer.isChecked) {
+        selectedVehicleTypes.add("trailer")
+      }
+
+      viewModel.vehicleStr = selectedVehicleTypes.joinToString(separator = ",") { it }
+      viewModel.filterVehicleType = true
+      
+      // Capture vehicle type selection event
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_LOAD_VEHICLE_TYPE_CLICKED,
+        mutableListOf(PROPERTY_VEHICLE_TYPE),
+        mutableListOf(viewModel.vehicleStr ?: "No Vehicle Type")
+      )
+      
+      refreshData()
+      dialog.dismiss()
+    }
+
+    // Clear filter button
+    bindingDialog.btnClearFilter.setOnClickListener {
+      bindingDialog.checkboxOpen.isChecked = false
+      bindingDialog.checkboxClosed.isChecked = false
+      bindingDialog.checkboxTrailer.isChecked = false
+      
+      viewModel.vehicleStr = null
+      viewModel.filterVehicleType = null
+      refreshData()
+      dialog.dismiss()
+    }
+
+    // Set dialog properties for bottom sheet appearance
     dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
   override fun handleAction(

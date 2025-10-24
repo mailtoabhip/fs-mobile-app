@@ -10,10 +10,7 @@
             name="ongoingCount"
             type="Integer" />
         <variable
-            name="wonCount"
-            type="Integer" />
-        <variable
-            name="lostCount"
+            name="closedCount"
             type="Integer" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,36 +55,19 @@
 
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_won"
+                android:id="@+id/tv_closed"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bg_selector_tab"
                 android:gravity="center"
-                android:text='@{"Won (" + wonCount + ")"}'
+                android:text='@{"Closed (" + closedCount + ")"}'
                 android:textColor='@color/selector_text_color'
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:layout_gravity="center_vertical"
-
                 android:layout_marginEnd="2dp"
-                tools:text="Won(3)" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_lost"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_selector_tab"
-                android:gravity="center"
-                android:text='@{"Lost (" + lostCount + ")"}'
-                android:textColor='@color/selector_text_color'
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:layout_gravity="center_vertical"
-
-                android:layout_marginEnd="2dp"
-                tools:text="Lost(3)" />
+                tools:text="Closed (3)" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout> 

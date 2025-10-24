@@ -14,6 +14,7 @@ import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.Quintuple
+import com.delhivery.axle.data.Septuple
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterItemData
@@ -33,6 +34,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.perf.ktx.performance
 import io.reactivex.Single
 import io.reactivex.functions.Function3
+import io.reactivex.functions.Function5
 import io.reactivex.schedulers.Schedulers
 
 import javax.inject.Inject
@@ -135,13 +137,50 @@ class HomeContractsViewModel@Inject constructor(
         hasMoreData = _res.searchAfterTransactionId!= null && _res.searchAfterCreationTime !=null && _res.total!=0
         allActiveFetched = _res.allActiveFetched?:false
         parallelTrace.start()
+        // Apply client-side vehicle filtering if needed
+        val filteredTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
+          val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
+          _res.transactions.filter { transaction ->
+            transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
+          }
+        } else {
+          _res.transactions
+        }
+        
+        // Update the response with filtered transactions
+        val filteredRes = _res.copy(transactions = filteredTransactions)
+        
         Single.zip(
-          bidsRepository.bidsForLoads(_res.transactions,true).subscribeOn(Schedulers.io()),
-          bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
+          bidsRepository.bidsForLoads(filteredTransactions,true).subscribeOn(Schedulers.io()),
+          bidsRepository.bulkLowestBidsForLoads(filteredTransactions).subscribeOn(Schedulers.io()),
           transactionsRepository.fetchContractsSummaryCount().subscribeOn(Schedulers.io()),
-          Function3<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse,
-              Quintuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse>> { t1, t2,t3 ->
-            Quintuple(t1.first, t1.second, t2.second,t3,_res)
+          // Fetch intercity contracts for count calculation
+          transactionsRepository.fetchContractsTransactions(
+            0, 
+            "${DemandType.Internal.type},${DemandType.Corporate.type}", 
+            allActiveFetched = false,
+            100,
+            false,
+            null,
+            null,
+            null,
+            null
+          ).subscribeOn(Schedulers.io()),
+          // Fetch intracity contracts for count calculation
+          transactionsRepository.fetchContractsTransactions(
+            0, 
+            DemandType.Intracity.type, 
+            allActiveFetched = false,
+            100,
+            true,
+            null,
+            true,
+            null,
+            null
+          ).subscribeOn(Schedulers.io()),
+          Function5<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, ContractsSummaryResponse, TransactionsResponse, TransactionsResponse,
+              Septuple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>,ContractsSummaryResponse,TransactionsResponse,TransactionsResponse,TransactionsResponse>> { t1, t2, t3, intercityRes, intracityRes ->
+            Septuple(t1.first, t1.second, t2.second, t3, intercityRes, intracityRes, filteredRes)
           })
       }
       .onBackground()
@@ -162,49 +201,41 @@ class HomeContractsViewModel@Inject constructor(
             }*/
 
             add(Pair(HomeContractsSearchItem(), AddUpdate))
-              // calculating the count based on user demand type
-              var totalActive=0
-              var expressCount =0
-              var nonExpressCount =0
-              var intraCityCount =0
-
-
-                for(item in _tRes.fourth.contractsCount.all){
-                  if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
-                    if (item.key == ContractType.LH_FTL.type) {
-                      expressCount = item.count ?: 0
-                    }
-                    if (item.key == ContractType.FRC.type) {
-                      nonExpressCount = item.count ?: 0
-                    }
-                    if (item.key == ContractType.INTRACITY.type) {
-                      intraCityCount = item.count ?: 0
-                    }
-                  }else if(userPrefs.demandType.contains(DemandType.Internal.type) && userPrefs.contractDemand){
-                    if(item.key==ContractType.LH_FTL.type){
-                      expressCount =item.count?:0
-                    }
-                    if(item.key==ContractType.FRC.type){
-                      nonExpressCount=item.count?:0
-                    }
-
-                  }else if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand){
-                    if(item.key==ContractType.INTRACITY.type){
-                      intraCityCount = item.count?:0
-                    }
-                    if(userPrefs.demandType.contains(DemandType.Others.type)){
-                      if(item.key==ContractType.FRC.type){
-                        nonExpressCount=item.count?:0
-                      }
-                    }
-                }else{
-                  if(item.key==ContractType.FRC.type){
-                    nonExpressCount=item.count?:0
-                  }
-              }}
-                for(item in _tRes.fourth.contractsCount.active){
-                  if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
-                    if(item.key==ContractType.LH_FTL.type){
+              
+              // Get intercity and intracity data from the API responses
+              val intercityTransactions = _tRes.fifth.transactions
+              val intracityTransactions = _tRes.sixth.transactions
+              
+              // Apply truck filter to both datasets
+              val filteredIntercityTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
+                val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
+                intercityTransactions.filter { transaction ->
+                  transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
+                }
+              } else {
+                intercityTransactions
+              }
+              
+              val filteredIntracityTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
+                val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
+                intracityTransactions.filter { transaction ->
+                  transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
+                }
+              } else {
+                intracityTransactions
+              }
+              
+              // Calculate counts from filtered data
+              // Express = LH_FTL contracts, Non-Express = FRC contracts
+              val expressCount = filteredIntercityTransactions.count { it.contractType == ContractType.LH_FTL.type }
+              val nonExpressCount = filteredIntercityTransactions.count { it.contractType == ContractType.FRC.type }
+              val intraCityCount = filteredIntracityTransactions.size
+              
+              // Calculate total active count for legacy purposes
+              var totalActive = 0
+              for(item in _tRes.fourth.contractsCount.active){
+                if(userPrefs.demandType.contains(DemandType.Internal.type)&& userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
+                  if(item.key==ContractType.LH_FTL.type){
                     totalActive+=item.count?:0
                   }
                   if(item.key==ContractType.FRC.type){
@@ -214,31 +245,31 @@ class HomeContractsViewModel@Inject constructor(
                     totalActive+=item.count?:0
                   }
                 }else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){
-                    if(item.key==ContractType.LH_FTL.type){
-                      totalActive+=item.count?:0
-                    }
-                    if(item.key==ContractType.FRC.type){
-                      totalActive+=item.count?:0
-                    }
+                  if(item.key==ContractType.LH_FTL.type){
+                    totalActive+=item.count?:0
+                  }
+                  if(item.key==ContractType.FRC.type){
+                    totalActive+=item.count?:0
+                  }
 
                 }else if(userPrefs.demandType.contains(DemandType.Intracity.type)&&userPrefs.contractDemand){
-                    if(item.key==ContractType.INTRACITY.type){
-                      totalActive+=item.count?:0
-                    }
-                    if(userPrefs.demandType.contains(DemandType.Others.type)){
-                      if(item.key==ContractType.FRC.type){
-                        totalActive+=item.count?:0
-                      }
-                    }
-                }else{
+                  if(item.key==ContractType.INTRACITY.type){
+                    totalActive+=item.count?:0
+                  }
+                  if(userPrefs.demandType.contains(DemandType.Others.type)){
                     if(item.key==ContractType.FRC.type){
                       totalActive+=item.count?:0
                     }
+                  }
+                }else{
+                  if(item.key==ContractType.FRC.type){
+                    totalActive+=item.count?:0
+                  }
                 }
               }
 
             val count = expressCount+nonExpressCount+intraCityCount
-            Log.d("viewmodelContract", "${expressCount} intrcityCon $intraCityCount nonDlv $nonExpressCount")
+            Log.d("viewmodelContract", "Filtered counts - expressCount: ${expressCount}, intraCityCount: ${intraCityCount}, nonExpressCount: ${nonExpressCount}")
 
             contractsCountLiveData.postValue(count)
               add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
@@ -255,10 +286,10 @@ class HomeContractsViewModel@Inject constructor(
                 //add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
               }
             //  loadsCountLiveData.postValue(totalActive)
-             if (_tRes.fifth.transactions.isEmpty() && !paginate) {
+             if (_tRes.seventh.transactions.isEmpty() && !paginate) {
                add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
               }
-              if(_tRes.fifth.transactions.isNotEmpty()){
+              if(_tRes.seventh.transactions.isNotEmpty()){
               for ((index, load) in loads.toMutableList().withIndex()) {
                 try {
                   load.transactionId?.let { txnIds.add(it) }

@@ -227,9 +227,10 @@ class BidsRepository @Inject constructor(
     statuses: String?,
     pending:Boolean?,
     contract:Boolean?,
-    onlyFrcBids:Boolean?
+    onlyFrcBids:Boolean?,
+    bidSuggestion: Boolean = false,
   ) = bidService.bidsForStatuses(userRepository.userId(),
-          UserBidsLoadLimit, offset,contract, statuses, confirmationPending = pending, onlyFRCBids = onlyFrcBids)
+          UserBidsLoadLimit, offset,contract, statuses, confirmationPending = pending, onlyFRCBids = onlyFrcBids, bidSuggestion = bidSuggestion)
       .convertResponse()
       .map { Quadruple(it.totalBids, it.bids,it.offset,it.hasNext) }
 

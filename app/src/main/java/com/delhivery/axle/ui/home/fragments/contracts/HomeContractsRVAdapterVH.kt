@@ -1,38 +1,29 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.databinding.ViewDataBinding
-import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.DemandType
-import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
-import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
-import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsFilterIntracity
-import com.delhivery.axle.data.home.contracts.HomeContractsFilterNonExpress
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterAll
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFixed
 import com.delhivery.axle.data.home.contracts.HomeContractsIntracityFilterFlexible
+import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
+import com.delhivery.axle.databinding.CardContractsIntercityTripsBidsBinding
+import com.delhivery.axle.databinding.CardsContractsIntracityTripsBidsBinding
 import com.delhivery.axle.databinding.ViewHomeContractsFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsIntracityFilterItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewSearchContractsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
-
 import com.delhivery.axle.ui.base.BaseViewHolder
-
-import com.delhivery.axle.databinding.CardCommonTripsBidsBinding
 
 
 abstract class BaseHomeContractsRVAdapterViewHolder<out B: ViewDataBinding, IT: BaseHomeContractsRVAdapterItem<*>>(binding: B):BaseViewHolder<B>(binding) {
@@ -85,8 +76,8 @@ protected fun View.action(
 /**
  * Bid request item view holder
  */
-class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
-  BaseHomeContractsRVAdapterViewHolder<CardCommonTripsBidsBinding, HomeContractsRequestItem>(
+class HomeContractsRequestItemVH(binding: CardContractsIntercityTripsBidsBinding) :
+  BaseHomeContractsRVAdapterViewHolder<CardContractsIntercityTripsBidsBinding, HomeContractsRequestItem>(
     binding
   ) {
 
@@ -94,63 +85,179 @@ class HomeContractsRequestItemVH(binding: CardCommonTripsBidsBinding) :
     item: HomeContractsRequestItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
+    // Set the request data for data binding - this will automatically bind most elements in XML
     binding.request = item.data
 
-    if(item.data.isItIntraCityContract()){
-      if(item.data.isFlexible){
-        binding.includeHeader2.tvLocationTitle.text = if(item.data.secondaryReportingCenters!=null&&item.data.secondaryReportingCenters.size>1){
-          HtmlCompat.fromHtml(context.getString(R.string.msg_more_reporting_centers,item.data.reportingCenters(),item.data.secondaryReportingCenters.size-1), HtmlCompat.FROM_HTML_MODE_LEGACY)}else item.data.reportingCenters()
-      }else{
-        binding.includeHeader2.tvLocationTitle.text =item.data.originCityName()
-      }
-    }else{
-      binding.includeHeader2.tvLocationTitle.text = item.data.originCityName()
+    // Determine contract type (same logic as loads but for contracts)
+    val demandType = item.data.getDemandTypeByLoad()
+    
+    // Set contract type display (similar to loads logic)
+    if (demandType == "Delhivery Load") {
+        binding.demandLoadType.text = "Delhivery Contract"
+        // Use background tint to preserve rounded corners
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+        
+        // Determine drawable based on speed field
+        val contractTypeDrawable = if (item.data.isExpress()) {
+            Log.d("speed Delhivery", "Express: ${item.data.isExpress()}")
+            R.drawable.ic_delhivery_bolt  // Express
+        } else {
+            Log.d("speed Delhivery", "Regular: ${item.data.isExpress()}")
+            R.drawable.ic_truck_small  // Regular (NEXP or null)
+        }
+        
+        // Set drawable start and colors
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(context, contractTypeDrawable), null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+    } else if (demandType == "Client Load") {
+        binding.demandLoadType.text = "Client Contract"
+        // Use background tint to preserve rounded corners
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+        // Set drawable start and colors
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
     }
 
-//    binding.includeBidTime6.containerError.request = item.data
-    //hide contract and live bidding tags view
-    binding.includeHeader1.includeHeader1.visibility = View.GONE
-    //hide 7 days a week view
+    // Handle the included bottom button layout - set request data first (important for visibility)
+    binding.reportingTimeButton.request = item.data
+    
+    // Make sure the container itself is visible and properly sized
+    binding.reportingTimeButton.root.visibility = View.VISIBLE
 
-      binding.includeBidTime3.tvFrequency.visibility = View.GONE
-    //hide strong/ weak bid view
-    binding.strongBidCard.strongBidCard.visibility = View.GONE
-    //
-    binding.weakBidCard.weakBidCard.visibility = View.GONE
-    //
-    binding.includeBidTime6.bidAmount.visibility = View.GONE
-    //
-    binding.includeBidTime6.labelBidAmount.visibility = View.GONE
-    //
-    binding.includeBidTime6.clReviseBid.visibility = View.GONE
-    //
-    if(item.data.reportingTime!=null) {
-      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.VISIBLE
-      binding.includeBidTime6.placeBidButton.visibility = View.GONE
+    // Handle visibility based on the same logic as XML data binding:
+    // android:text="@{request._requiredOn != null ? request.requiredAtWithTime() : request.getTimeOfContracts()}"
+    val reportingTimeText = if (item.data._requiredOn != null) {
+      item.data.requiredAtWithTime()
     } else {
-      binding.includeBidTime6.placeBidButton.visibility = View.VISIBLE
-      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.GONE
-
+      item.data.getTimeOfContracts()
     }
-    //
-
-    //Log.d("DEBUG_LOG======>>>>>>>>>", ""+Gson().toJson(item))
-    //set route details
-    //binding.includeHeader2.tvLocationTitle = item.data.
-
-
     
-    // Set up click listener for the place bid button
-    Log.d("contractTag"," required On ${item.data._requiredOn} reqTime ${item.data.requiredAtWithTime()} reportTime ${item.data.reportingTime}")
-    binding.includeBidTime6.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
-    binding.includeBidTime6.containerError.reportingTime.text = item.data.getTimeOfContracts()
-    binding.includeBidTime6.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
-    
-    // You can add more click listeners for other action buttons as needed
-    // For example, if there are other buttons in the included layouts
+    // Show max width button only if there's no meaningful reporting time
+    if (item.data._requiredOn == null && item.data.reportingTime == null) {
+      // Hide reporting time section
+      binding.reportingTimeButton.labelReporting.visibility = View.GONE
+      binding.reportingTimeButton.reportingTime.visibility = View.GONE
+      binding.reportingTimeButton.placeBidButton.visibility = View.GONE
+      
+      // Show full-width button
+      binding.reportingTimeButton.placeBidButtonMaxWidth.visibility = View.VISIBLE
+      binding.reportingTimeButton.placeBidButtonMaxWidth.text = "Place Bid"
+      binding.reportingTimeButton.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    } else {
+      // Show reporting time section
+      binding.reportingTimeButton.labelReporting.visibility = View.VISIBLE
+      binding.reportingTimeButton.reportingTime.visibility = View.VISIBLE
+      binding.reportingTimeButton.placeBidButton.visibility = View.VISIBLE
+      binding.reportingTimeButton.reportingTime.text = reportingTimeText
+      
+      // Hide full-width button
+      binding.reportingTimeButton.placeBidButtonMaxWidth.visibility = View.GONE
+      binding.reportingTimeButton.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    }
   }
 
    fun stopCounter() {
+    countDownTimer?.cancel()
+    countDownTimer = null
+  }
+
+}
+
+/**
+ * Intracity Contract request item view holder
+ */
+class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsBidsBinding) :
+  BaseHomeContractsRVAdapterViewHolder<CardsContractsIntracityTripsBidsBinding, HomeContractsRequestItem>(
+    binding
+  ) {
+
+  override fun bind(
+    item: HomeContractsRequestItem,
+    _interface: HomeContractsRVAdapterInterface
+  ) {
+
+      Log.d("test", "test")
+    // Set the request data for data binding
+    binding.request = item.data
+    binding.executePendingBindings()
+    
+    // Determine contract type
+    val demandType = item.data.getDemandTypeByLoad()
+    
+    // Set contract type display (Delhivery Contract or Client Contract)
+    if (demandType == "Delhivery Load") {
+        binding.demandLoadType.text = "Delhivery Contract"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+        
+        // Determine drawable based on speed field
+        val contractTypeDrawable = if (item.data.isExpress()) {
+            Log.d("speed Delhivery", "Express: ${item.data.isExpress()}")
+            R.drawable.ic_delhivery_bolt  // Express
+        } else {
+            Log.d("speed Delhivery", "Regular: ${item.data.isExpress()}")
+            R.drawable.ic_truck_small  // Regular (NEXP or null)
+        }
+        
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(context, contractTypeDrawable), null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+    } else {
+        binding.demandLoadType.text = "Client Contract"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+    }
+
+    // Handle the included bottom button layout - set request data first (important for visibility)
+    binding.containerError.request = item.data
+    
+    // Make sure the container itself is visible and properly sized
+    binding.containerError.root.visibility = View.VISIBLE
+
+    // Handle visibility based on the same logic as XML data binding:
+    // android:text="@{request._requiredOn != null ? request.requiredAtWithTime() : request.getTimeOfContracts()}"
+    val reportingTimeText = if (item.data._requiredOn != null) {
+      item.data.requiredAtWithTime()
+    } else {
+      item.data.getTimeOfContracts()
+    }
+    
+    // Show max width button only if there's no meaningful reporting time
+    if (item.data._requiredOn == null && item.data.reportingTime == null) {
+      // Hide reporting time section
+      binding.containerError.labelReporting.visibility = View.GONE
+      binding.containerError.reportingTime.visibility = View.GONE
+      binding.containerError.placeBidButton.visibility = View.GONE
+      
+      // Show full-width button
+      binding.containerError.placeBidButtonMaxWidth.visibility = View.VISIBLE
+      binding.containerError.placeBidButtonMaxWidth.text = "Place Bid"
+      binding.containerError.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    } else {
+      // Show reporting time section
+      binding.containerError.labelReporting.visibility = View.VISIBLE
+      binding.containerError.reportingTime.visibility = View.VISIBLE
+      binding.containerError.placeBidButton.visibility = View.VISIBLE
+      binding.containerError.reportingTime.text = reportingTimeText
+      
+      // Hide full-width button
+      binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
+      binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
+    }
+  }
+
+  fun stopCounter() {
     countDownTimer?.cancel()
     countDownTimer = null
   }
@@ -200,7 +307,8 @@ internal class HomeContractsSearchItemVH(binding: ViewSearchContractsItemBinding
     _interface: HomeContractsRVAdapterInterface
   ) {
     binding.editStickySearch.clickToAction(HomeContractsSearchAction_Search,item,_interface)
-    binding.info.clickToAction(HomeContractsFilterInfo,item,_interface)
+      binding.filterIcon.clickToAction(HomeLoadsVehicleFilterAction,item,_interface)
+    //binding.info.clickToAction(HomeContractsFilterInfo,item,_interface)
 
   }
 }
@@ -214,43 +322,29 @@ internal class HomeContractsFilterItemVH(binding: ViewHomeContractsFilterItemBin
     item: HomeContractsFilterItem,
     _interface: HomeContractsRVAdapterInterface
   ) {
-     binding.nonExpressToggle.text =  "${context.getString(R.string.action_non_express)} (${item.data.nonExpressCount})"
-     binding.expressToggle.text =   "${context.getString(string.action_express)} (${item.data.expressCount})"
-     binding.intracityToggle.text =   "${context.getString(string.action_intracity)} (${item.data.intraCity})"
-    // filter visibility based on user's demand type
-        binding.expressToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type)&&item.data.userContractDemand)View.VISIBLE else View.GONE
-        binding.nonExpressToggle.visibility = if((item.data.userDemandType.contains(DemandType.Internal.type)&&item.data.userContractDemand)||item.data.userDemandType.contains(DemandType.Others.type))View.VISIBLE else View.GONE
+     val combinedExpressCount = item.data.expressCount + item.data.nonExpressCount
+     binding.expressToggle.text =   "${context.getString(string.intercity)} ($combinedExpressCount)"
+     binding.intracityToggle.text =   "${context.getString(string.intracity)} (${item.data.intraCity})"
+
+        binding.expressToggle.visibility = if((item.data.userDemandType.contains(DemandType.Internal.type)&&item.data.userContractDemand)||item.data.userDemandType.contains(DemandType.Others.type))View.VISIBLE else View.GONE
         binding.intracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type)&&item.data.userContractDemand)View.VISIBLE else View.GONE
 
     when (item.data.filterType) {
-     "Corporate"-> {
-        binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-        binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-        binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
-        binding.expressToggle.isSelected = false
-        binding.nonExpressToggle.isSelected=true
-        binding.intracityToggle.isSelected=false
-      }
-      "Internal"-> {
+     "Corporate", "Internal", "Internal,Corporate" -> {
         binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-        binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.expressToggle.isSelected = true
-        binding.nonExpressToggle.isSelected=false
         binding.intracityToggle.isSelected=false
       }
       "Intracity" -> {
-        binding.nonExpressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.expressToggle.setTextColor(ContextCompat.getColor(context, R.color.background_dark_grey))
         binding.intracityToggle.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
         binding.expressToggle.isSelected = false
-        binding.nonExpressToggle.isSelected=false
         binding.intracityToggle.isSelected=true
       }
     }
 
     binding.expressToggle.clickToAction(HomeContractsFilterExpress, item, _interface)
-    binding.nonExpressToggle.clickToAction(HomeContractsFilterNonExpress, item, _interface)
     binding.intracityToggle.clickToAction(HomeContractsFilterIntracity, item, _interface)
    // binding.info.clickToAction(HomeContractsFilterInfo, item, _interface)
   }

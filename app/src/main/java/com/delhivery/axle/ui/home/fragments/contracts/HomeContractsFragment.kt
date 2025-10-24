@@ -1,8 +1,12 @@
 package com.delhivery.axle.ui.home.fragments.contracts
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -21,8 +25,10 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.contracts.*
 import com.delhivery.axle.data.home.loads.HomeLoadsTimeOutAction
+import com.delhivery.axle.data.home.loads.HomeLoadsVehicleFilterAction
 import com.delhivery.axle.data.home.loads.HomeLoadsWarningAction_NoLoads
 import com.delhivery.axle.data.home.trips.HomeTripsSearchAction_Search
+import com.delhivery.axle.databinding.DialogBottomVehicleFilterBinding
 import com.delhivery.axle.databinding.DialogContractsTypeInfoBinding
 import com.delhivery.axle.databinding.FragmentHomeContractsBinding
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
@@ -88,7 +94,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeContractsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ DemandType.Corporate.type }else if (userPrefs.demandType.contains(DemandType.Others.type)){DemandType.Corporate.type} else{""}
+    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ "${DemandType.Internal.type},${DemandType.Corporate.type}" }else if (userPrefs.demandType.contains(DemandType.Others.type)){"${DemandType.Internal.type},${DemandType.Corporate.type}"} else{"${DemandType.Internal.type},${DemandType.Corporate.type}"}
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -172,7 +178,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsSearchAction_Search -> {
         context?.let {
           startActivity(
-            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Internal") ContractType.LH_FTL.type else if(demandType=="Corporate") ContractType.FRC.type else ContractType.INTRACITY.type))
+            Intent(searchLoadContractsIntent(it,"contract",if(demandType=="Intracity") ContractType.INTRACITY.type else ContractType.LH_FTL.type))
           )
         }
       }
@@ -183,15 +189,12 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       HomeContractsTimeOutAction -> {
         refreshData()
       }
-      HomeContractsFilterExpress -> {
-        demandType = DemandType.Internal.type
-        contractType = null
-        isflexible = null
-        includeFlexibleContract= null
-        refreshData()
+      HomeLoadsVehicleFilterAction -> {
+        showVehicleFilterDialog()
       }
-      HomeContractsFilterNonExpress -> {
-        demandType = DemandType.Corporate.type
+      HomeContractsFilterExpress -> {
+        // Merged functionality: now handles both Internal (express) and Corporate (non-express) demand types
+        demandType = "${DemandType.Internal.type},${DemandType.Corporate.type}"
         contractType = null
         isflexible = null
         includeFlexibleContract= null
@@ -251,6 +254,86 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         ViewGroup.LayoutParams.WRAP_CONTENT
       )
     }
+  }
+
+  private fun showVehicleFilterDialog() {
+    val dialog = Dialog(requireContext())
+    val bindingDialog = DialogBottomVehicleFilterBinding.inflate(layoutInflater)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+
+    // Get current filter selection
+    var currentVehicleFilterList = listOf<String>()
+    currentVehicleFilterList = if (viewModel.passing_vehicle_type != null && viewModel.passing_vehicle_type!!.isNotEmpty()) {
+      viewModel.passing_vehicle_type!!.split(",")
+    } else if (userPrefs.truckTypes != null) {
+      userPrefs.truckTypes!!.split(",")
+    } else {
+      listOf()
+    }
+
+    // Set initial checkbox states based on current filter
+    bindingDialog.checkboxOpen.isChecked = currentVehicleFilterList.contains("open")
+    bindingDialog.checkboxClosed.isChecked = currentVehicleFilterList.contains("closed")
+    bindingDialog.checkboxTrailer.isChecked = currentVehicleFilterList.contains("trailer")
+
+    // Close button listener
+    bindingDialog.closeBtn.setOnClickListener {
+      dialog.dismiss()
+    }
+
+    // Individual checkbox click listeners for better UX
+    bindingDialog.openVehicleLayout.setOnClickListener {
+      bindingDialog.checkboxOpen.isChecked = !bindingDialog.checkboxOpen.isChecked
+    }
+
+    bindingDialog.closedVehicleLayout.setOnClickListener {
+      bindingDialog.checkboxClosed.isChecked = !bindingDialog.checkboxClosed.isChecked
+    }
+
+    bindingDialog.trailerVehicleLayout.setOnClickListener {
+      bindingDialog.checkboxTrailer.isChecked = !bindingDialog.checkboxTrailer.isChecked
+    }
+
+    // Apply filter button
+    bindingDialog.btnApplyFilter.setOnClickListener {
+      val selectedVehicleTypes = mutableListOf<String>()
+      
+      if (bindingDialog.checkboxOpen.isChecked) {
+        selectedVehicleTypes.add("open")
+      }
+      if (bindingDialog.checkboxClosed.isChecked) {
+        selectedVehicleTypes.add("closed")
+      }
+      if (bindingDialog.checkboxTrailer.isChecked) {
+        selectedVehicleTypes.add("trailer")
+      }
+
+      viewModel.vehicleStr = selectedVehicleTypes.joinToString(separator = ",") { it }
+      viewModel.filterVehicleType = true
+      refreshData()
+      dialog.dismiss()
+    }
+
+    // Clear filter button
+    bindingDialog.btnClearFilter.setOnClickListener {
+      bindingDialog.checkboxOpen.isChecked = false
+      bindingDialog.checkboxClosed.isChecked = false
+      bindingDialog.checkboxTrailer.isChecked = false
+      
+      viewModel.vehicleStr = null
+      viewModel.filterVehicleType = null
+      refreshData()
+      dialog.dismiss()
+    }
+
+    // Set dialog properties for bottom sheet appearance
+    dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
   override fun handleAction(

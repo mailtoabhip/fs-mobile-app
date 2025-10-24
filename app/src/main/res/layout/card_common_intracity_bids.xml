@@ -1,0 +1,239 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
+        app:cardCornerRadius="@dimen/size_8dp"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_intercity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/size_8dp"
+            app:cardCornerRadius="@dimen/size_8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingStart="@dimen/size_16dp"
+                android:paddingEnd="@dimen/size_16dp"
+                android:elevation="4dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/closingTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="Closes in 2 hrs 15 min"
+                    android:paddingTop="@dimen/size_4dp"
+                    app:optionalTextColor="@{request}"
+                    android:text="@{request.formattedLoadAndContractBidEndingTime()}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
+
+                <LinearLayout
+                    android:id="@+id/load_type_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/size_8dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bg_load_type_100dp_corner"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/closingTime"
+                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/demand_load_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_truck_small"
+                        android:drawablePadding="@dimen/size_2dp"
+                        tools:text="Delhivery Load"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_live_bidding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/size_20dp"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/size_2dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/size_2dp"
+                    android:visibility="@{request.isItContractAndLiveBidding()}"
+                    android:background="@drawable/bg_chip_pink"
+                    app:layout_constraintEnd_toStartOf="@id/load_type_layout"
+                    app:layout_constraintTop_toTopOf="@id/closingTime"
+                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="@dimen/size_8dp"
+                        android:background="@drawable/bg_circle_pink" />
+
+                    <TextView
+                        android:id="@+id/tv_live_bidding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Live"
+                        android:paddingEnd="@dimen/size_4dp"
+                        android:textSize="12sp"
+                        android:textColor="#ED4136"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_from_to_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_18dp"
+                    app:layout_constraintTop_toBottomOf="@id/closingTime"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <!-- 1. FromCity - Sticks to left side -->
+                    <TextView
+                        android:id="@+id/fromCity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_14sp"
+                        android:text="@{request.originCityName()}"
+                        tools:text ="Navi Mumbai"
+                        android:textColor="#121A31"
+                        android:maxLines="2"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/pincode_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/size_2dp"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        android:textSize="@dimen/text_12sp"
+                        android:text="@{request.originPincodeState()}"
+                        tools:text ="110006, Delhi"
+                        android:textColor="#8F9198"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/fromCity"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/truckInfo"
+                    android:layout_width="wrap_content"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:paddingEnd="@dimen/size_11dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    android:text="@{request.getTruckTypeAndNo()}"
+                    tools:text ="Open 32FTXXL18 MT"
+                    android:textColor="#505361"
+                    android:drawableStart="@drawable/ic_truck_small"
+                    app:layout_constraintTop_toBottomOf="@id/cl_from_to_city"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="~1000km/month"
+                    android:text="@{request.intracityKms()}"
+                    android:textColor="#505361"
+                    android:visibility="gone"
+                    tools:visibility="@{request.isItContract() ? View.VISIBLE : View.GONE}"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:drawableStart="@drawable/route"
+                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintTop_toTopOf="@id/truckInfo"
+                    app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/paymentType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="Advance Payment"
+                    android:text="@{request.getPaymentModeDisplay()}"
+                    android:textColor="#505361"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:drawableStart="@drawable/money_bill_wave"
+                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintTop_toTopOf="@id/truckInfo"
+                    app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/advance_payment_percentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="(50%)"
+                    android:textColor="#505361"
+                    android:layout_marginStart="@dimen/size_2dp"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:text="@{request.getAdvancePaymentPercentage()}"
+                    app:layout_constraintStart_toEndOf="@id/paymentType"
+                    app:layout_constraintTop_toTopOf="@id/paymentType"
+                    app:layout_constraintBottom_toBottomOf="@id/paymentType" />
+
+                <include
+                    android:id="@+id/strong_BidCard"
+                    layout="@layout/card_strong_bids_v2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:layout_marginStart="@dimen/size_1dp"
+                    android:layout_marginEnd="@dimen/size_1dp"
+                    app:layout_constraintTop_toBottomOf="@+id/truckInfo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:request="@{request}" />
+
+                <include
+                    android:id="@+id/container_error"
+                    layout="@layout/common_item_place_bid_price_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    android:layout_gravity="center_vertical"
+                    app:layout_constraintTop_toBottomOf="@id/strong_BidCard"
+                    app:request="@{request}"
+                    tools:visibility="visible"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>
