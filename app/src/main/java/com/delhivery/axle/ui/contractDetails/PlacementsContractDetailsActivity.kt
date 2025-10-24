@@ -324,6 +324,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     //
                     binding.error = false
                     binding.transaction = _transaction
+                    //set request/ transaction for route details view
+                    binding.routeDetails.transaction = _transaction
+                    binding.routeDetails.placementListingData = homePlacementsItemData
                     //set request for driver details view
                     binding.cardInput.request = _transaction
                     //set request for vehicle details view
@@ -334,6 +337,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     binding.paymentInfo.placementListingData = homePlacementsItemData
                     //set request for guidelines view
                     binding.layoutGuidelines.transaction = _transaction
+                    binding.layoutGuidelines.placementListingData = homePlacementsItemData
                     binding.layoutGuidelines.layoutGuidelines.visibility = View.VISIBLE
                     //set default items to visible
                     binding.mainCl.visibility = View.VISIBLE
@@ -1062,7 +1066,10 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                                 val numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                                 if (numberIndex != -1) {
                                     val phoneNumber = c.getString(numberIndex)
-                                    val trimmedNumber = phoneNumber?.replace("+91", "")?.trim()
+                                    Log.d("phoneNumber==>>>",phoneNumber)
+                                    var trimmedNumber = phoneNumber?.replace("+91", "")?.replaceFirst("^0+".toRegex(), "")?.trim()
+                                    trimmedNumber = trimmedNumber?.replace(" ", "")?.trim()
+                                    Log.d("trimmedNumber==>>>",trimmedNumber?:"")
                                     binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
                                     enableSubmitPlacement()
                                 }

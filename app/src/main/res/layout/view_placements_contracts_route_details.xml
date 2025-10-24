@@ -3,6 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="transaction"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+
+        <variable
+            name="placementListingData"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -33,11 +44,12 @@
                 android:id="@+id/rvContracts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/routeScheduleLabel" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- No more in use        -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/nonExpRouteDetails"
             android:layout_width="match_parent"
@@ -169,14 +181,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- Used for intracity-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/intraCityRouteDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="@{transaction.isIntracityVisibility()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/intraCityRouteScheduleLabel"
@@ -301,6 +314,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- No more in use       -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/intraCityAdHocRouteDetails"
             android:layout_width="match_parent"
