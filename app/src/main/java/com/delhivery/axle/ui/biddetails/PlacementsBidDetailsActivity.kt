@@ -15,6 +15,7 @@ import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.text.method.TextKeyListener.Capitalize
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -437,7 +438,7 @@ class PlacementsBidDetailsActivity :
             viewModel.addressLiveData.observe(this@PlacementsBidDetailsActivity, Observer {
                 it?.propertyAddressDetails?.address?.let { address ->
                     binding.cardInput.pbIntracityAddress.visibility = View.GONE
-                    binding.cardInput.routeAddress.text = address
+                    binding.cardInput.routeAddress.text = capitalize(address)
                 }
             })
             //

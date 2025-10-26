@@ -46,6 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:visibility="visible"
+                android:visibility="visible"
                 tools:listitem="@layout/view_contracts_hub_item"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/routeScheduleLabel" />

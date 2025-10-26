@@ -107,6 +107,7 @@ import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.LoadTypeUtils
+import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 
@@ -334,7 +335,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     if(viewModel.transaction.isIntracity()){
                         //insert intracity specific reporting city section with city and reporting time
                         binding.routeDetails.root.visibility = View.VISIBLE
-                        binding.routeDetails.intraCityRouteDetails.visibility = View.VISIBLE
+                        //binding.routeDetails.intraCityRouteDetails.visibility = View.VISIBLE
 
                         //set reporting city name and other details
                         //binding.routeDetails.intraCityTvHubCity.text = _transaction.routeInfo?.origin?.centerName?:""
@@ -400,6 +401,14 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                         setupRouteAdapter()
                     }
 
+                    //TODO
+                    //REMOVE THIS CODE
+                    //prepare routes data if intercity and add into routes array
+                    //prepareRoutesData()
+
+                    //setup adpater
+                    //setupRouteAdapter()
+
                     //insert route schedule adapter with arrival and departure time - for intercity case
 
                     //insert vehicle details section
@@ -426,6 +435,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                         if(_transaction.costData?.kpm == null || _transaction.costData.kpm.toInt() == 0){
                             binding.vehicleDetails.operatingDays.visibility = View.GONE
                             binding.vehicleDetails.operationalDaysText.visibility = View.GONE
+                            binding.vehicleDetails.operationalDaysIcon.visibility = View.GONE
                         }
 
                         //for "intracity" - no. of days a week
@@ -435,6 +445,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                         if(_transaction.routeInfo?.routeDaysOfWeek == null || _transaction.routeInfo.routeDaysOfWeek.size == 0){
                             binding.vehicleDetails.operatingDays.visibility = View.GONE
                             binding.vehicleDetails.operationalDaysText.visibility = View.GONE
+                            binding.vehicleDetails.operationalDaysIcon.visibility = View.GONE
                         }
 
                         //for everything else - operating days
@@ -464,7 +475,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     }
 
     private fun setupRouteAdapter() {
-        val contractsRouteDetailsAdapter  = ContractsRouteDetailsAdapter(routesArray, viewModel.transaction,this@PlacementsContractDetailsActivity)
+        val contractsRouteDetailsAdapter  = PlacementsContractsRouteDetailsAdapter(routesArray, viewModel.transaction,this@PlacementsContractDetailsActivity)
         binding.routeDetails.rvContracts.apply {
             layoutManager = LinearLayoutManager(applicationContext)
             adapter = contractsRouteDetailsAdapter
@@ -540,6 +551,8 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
         //add drop into routes array
         routesArray.add(dropCenter)
+
+        //Log.d("routesArray===>>>", Gson().toJson(routesArray))
     }
 
     /**
@@ -588,7 +601,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                 //set full property address
                 it?.propertyAddressDetails?.address?.let { address ->
                     binding.cardInput.pbIntracityAddress.visibility = View.GONE
-                    binding.cardInput.routeAddress.text = address
+                    binding.cardInput.routeAddress.text = capitalize(address)
                     Log.d(TAG, "if-addressLiveData-START")
                 }
             })
@@ -958,6 +971,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         binding.error = false
         //fetch placement details data
         viewModel.fetchPlacementDetails()
+        //viewModel.fetchPlacementDetailsLocal(mContext = applicationContext)
         //execuite pending bundings
         binding.executePendingBindings()
         //

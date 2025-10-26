@@ -1,9 +1,11 @@
 package com.delhivery.axle.ui.contractDetails
 
+import android.content.Context
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TPSRepository
@@ -33,12 +35,15 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_RejectedBid
 import com.delhivery.axle.ui.home.fragments.trucks.BaseHomeTrucksRVAdapterItem
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksRequestItem
+import com.delhivery.axle.utils.JsonUtils
 import com.delhivery.axle.utils.extensions.errorTPSResponseBody
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import io.reactivex.Single
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -125,7 +130,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
           transactionLiveData.postValue(_tRes)
           //fetching bids data - don't uncomment
           //moved this call to refreshData function
-          //No need ot this api call anymore
+          //No need of this api call anymore
           //fetchTransactionBids()
         } else {
           Log.e("PlacementDetails", "Response is null - this indicates an issue with the API response parsing")
@@ -137,6 +142,43 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
         error?.printStackTrace()
         transactionLiveData.postValue(null)
       })
+  }
+
+  fun fetchPlacementDetailsLocal(mContext: Context) {
+    Log.d("PlacementDetails", "Fetching placement details with params: placementType='$placementType', transactionId='$transactionId', contractCode='$contractCode'")
+
+
+    val jsonString = JsonUtils.readJsonFromRaw(mContext, R.raw.placements_details_response)
+    val gson = Gson()
+    val type = object : TypeToken<HomeBidsRequestItemData>() {}.type
+    val mockResponse: HomeBidsRequestItemData = gson.fromJson(jsonString, type)
+    Log.d("HomeBidsRequestItemData====>>>>", ""+mockResponse)
+
+
+    // TODO -
+    // Remove this code snippet
+    // read from local json file
+    //val jsonString = JsonUtils.readJsonFromRaw(mContext, R.raw.placements_details_response) as HomeBidsRequestItemData
+    //Log.d("HomeBidsRequestItemData::jsonString====>>>>", Gson().toJson(jsonString))
+    //Log.d("HomeBidsRequestItemData::jsonString::Gson====>>>>", Gson().toJson(jsonString))
+    //var res = Gson().fromJson(jsonString, HomeBidsRequestItemData::class.java)
+    //Log.d("HomeBidsRequestItemData====>>>>", ""+res)
+
+
+
+    if (mockResponse != null) {
+      Log.d("PlacementDetails", "Successfully received placement details")
+      mockResponse.loadType = placementType
+      transaction = mockResponse
+      transactionLiveData.postValue(mockResponse)
+      //fetching bids data - don't uncomment
+      //moved this call to refreshData function
+      //No need ot this api call anymore
+      //fetchTransactionBids()
+    } else {
+      Log.e("PlacementDetails", "Response is null - this indicates an issue with the API response parsing")
+      transactionLiveData.postValue(null)
+    }
   }
 
 

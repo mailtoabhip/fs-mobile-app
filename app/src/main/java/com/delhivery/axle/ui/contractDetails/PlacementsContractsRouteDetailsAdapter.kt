@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 
 class PlacementsContractsRouteDetailsAdapter(private val dataList: List<HaltCenters>, private val transaction:HomeBidsRequestItemData?, private val context: Context) : RecyclerView.Adapter<PlacementsContractsRouteDetailsAdapter.ViewHolder>() {
 
@@ -46,24 +47,39 @@ class PlacementsContractsRouteDetailsAdapter(private val dataList: List<HaltCent
         holder.lineSep.visibility= View.VISIBLE
       }
       holder.hubCity.text = dataList[position].name?.split("(")?.get(0) ?: dataList[position].name
-      holder.hubState.text = dataList[position].state
-      val etaList = dataList[position].relEta?.split(", ")
+      //
+        if(dataList[position].state.isNotNullOrEmpty()) {
+            holder.hubState.visibility = View.VISIBLE
+            holder.hubState.text =  dataList[position].state
+        }else{
+          holder.hubState.visibility = View.GONE
+        }
+
+      val etaList = dataList[position].relEta?.split(",")
       holder.arvTime.text ="${etaList?.getOrNull(0) ?: ""}\n${etaList?.getOrNull(1) ?: ""}"
-      val etdList = dataList[position].relEtd?.split(", ")
+      val etdList = dataList[position].relEtd?.split(",")
       holder.depTime.text = "${etdList?.getOrNull(0) ?: ""}\n${etdList?.getOrNull(1) ?: ""}"
       holder.timeTravel.text = "Travel Time - "+dataList[position].pastTravelHrs+ " hrs"
       val lat = dataList[position].latitude
       val long = dataList[position].longitude
-      holder.tvMapView.setOnClickListener {
-        try {
-          val gmmIntentUri = Uri.parse("geo:0,0?q=$lat,$long"+"(" + (dataList[position].name?.split("(")?.get(0) ?: dataList[position].name )?.replace("_"," ")+ ")")
-          val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-          mapIntent.setPackage("com.google.android.apps.maps")
-          context.startActivity(mapIntent)
-        } catch (e: Exception) {
-          Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
+
+        if(lat.isNotNullOrEmpty() && long.isNotNullOrEmpty()){
+            holder.tvMapView.visibility = View.VISIBLE
+            holder.tvMapView.setOnClickListener {
+                try {
+                    val gmmIntentUri = Uri.parse("geo:0,0?q=$lat,$long"+"(" + (dataList[position].name?.split("(")?.get(0) ?: dataList[position].name )?.replace("_"," ")+ ")")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    context.startActivity(mapIntent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Unable to open map", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }else{
+            holder.tvMapView.visibility = View.GONE
         }
-      }
+
+
 
 
       if(transaction?.transactionStatus=="cancelled"){
