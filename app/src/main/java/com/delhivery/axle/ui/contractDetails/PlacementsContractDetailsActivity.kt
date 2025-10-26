@@ -631,8 +631,9 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //old working code below done by Rahul - no change
 
         //
+        viewModel.updateVehicleDetails.removeObservers(this)
         viewModel.updateVehicleDetails.observe(this, Observer {
-            if(it){
+            if(it != null){
                 REFRESH_ON_BACK_PLACEMENT = true
                 uiUtils.hideProgress()
                 // pushMoengageEvent(true)
@@ -983,6 +984,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //clear arrays
         routesArray.clear()
         //
+        viewModel.updateVehicleDetails.value = null
     }
 
 

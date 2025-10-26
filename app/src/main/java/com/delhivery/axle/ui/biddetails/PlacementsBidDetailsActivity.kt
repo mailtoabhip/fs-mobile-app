@@ -239,6 +239,8 @@ class PlacementsBidDetailsActivity :
         viewModel.pickupAddressLiveData.value = null
         //
         viewModel.destinationAddressLiveData.value = null
+        //
+        viewModel.updateVehicleDetails.value = null
     }
 
     /**
@@ -460,8 +462,9 @@ class PlacementsBidDetailsActivity :
 
         //old working code below done by Rahul - no change
 
+        viewModel.updateVehicleDetails.removeObservers(this@PlacementsBidDetailsActivity)
         viewModel.updateVehicleDetails.observe(this, Observer {
-            if (it) {
+            if (it != null) {
                 uiUtils.hideProgress()
                 REFRESH_ON_BACK_PLACEMENT = true
                 when (homePlacementsItemData?.loadType) {
