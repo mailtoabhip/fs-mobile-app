@@ -185,40 +185,6 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //
         viewModel.transactionLiveData.observe(this, TransactionObserver())
         //
-        /*viewModel.bidPriceLiveData.observe(this, Observer {
-            if (it != null) {
-                binding.transaction?.transactionBid = it
-                val visibility =
-                    if (binding.transaction?.bidAmount()
-                            .isNullOrEmpty()
-                    ) View.GONE else View.VISIBLE
-            }
-        })*/
-        //
-/*        viewModel.errorBiddingLiveData.observe(this) {
-            uiUtils.hideProgress()
-        }
-        // show Success Bid Dialog
-        viewModel.successBidLiveData.observe(this) {
-            if (it.first) {
-                uiUtils.hideProgress()
-                val dialog = dialogUtils.showSuccessBidDialog(this,
-                    resources.getString(R.string.bid_placed_sucessfully),
-                    resources.getString(R.string.check_your_bid_status)
-                )
-                navigateToBid(dialog)
-
-            }else if(it.second){
-                uiUtils.hideProgress()
-                val dialog =   dialogUtils.showSuccessBidDialog(this,
-                    resources.getString(R.string.bid_revised_sucessfully),
-                    resources.getString(R.string.check_your_bid_revise_status)
-                )
-                navigateToBid(dialog)
-
-            }
-        }*/
-        //
         viewModel.hideProgress.observe(this, Observer {
             if(it){
                 uiUtils.hideProgress()
@@ -347,16 +313,8 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     binding.cardInput.placementCl.root.visibility = View.VISIBLE
 
                     //TODO
-                    //check the below items which require visibility
-                    //binding.routeDetails.nonExpRouteDetails.visibility = t.isFRCContract()
-                    //binding.routeDetails.routeDetails.visibility =  t.isLHContract()
-                    //binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityFixedContract()
-                    //binding.routeDetails.intraCityAdHocRouteDetails.visibility =  t.isIntraCityFlexibleContract()
-
-
-                    //TODO
                     // Check the correct and updated fields to be sent to capture event
-                    analyticsUtil.moEngageTrackEvent(
+                    /*analyticsUtil.moEngageTrackEvent(
                         EVENT_HOME_CONTRACT_CARD_CLICK,
                         mutableListOf(
                             PROPERTY_USER_ID,
@@ -367,7 +325,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                             _transaction.uuid ?: " ",_transaction.contractEventStatusText(),
                             _transaction.contractType?:"",source,_transaction.isFlexible.toString()
                         )
-                    )
+                    )*/
 
                     //setup new placement details code below
                     placementInput()
@@ -431,8 +389,15 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                         binding.routeDetails.intraCityReportingTime.text = homePlacementsItemData?.placementsOnlyFormatReportingTime()
                     }else{
 
+                        //manged from data binding
                         //hide intracity route details section
-                        binding.routeDetails.intraCityRouteDetails.visibility = View.GONE
+                        //binding.routeDetails.intraCityRouteDetails.visibility = View.GONE
+
+                        //prepare routes data if intercity and add into routes array
+                        prepareRoutesData()
+
+                        //setup adpater
+                        setupRouteAdapter()
                     }
 
                     //insert route schedule adapter with arrival and departure time - for intercity case
@@ -497,6 +462,103 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             }
         }
     }
+
+    private fun setupRouteAdapter() {
+        val contractsRouteDetailsAdapter  = ContractsRouteDetailsAdapter(routesArray, viewModel.transaction,this@PlacementsContractDetailsActivity)
+        binding.routeDetails.rvContracts.apply {
+            layoutManager = LinearLayoutManager(applicationContext)
+            adapter = contractsRouteDetailsAdapter
+        }
+    }
+
+
+    /**
+     * data class Center(
+     *     @SerializedName("center_code") val centerCode: String?,
+     *     @SerializedName("center_name") val centerName: String?,
+     *     @SerializedName("center_state") val centerState: String?,
+     *     @SerializedName("coordinates") val coordinates: Coordinates?,
+     *     @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
+     *     @SerializedName("rel_eta") val relETA: String?,
+     *     @SerializedName("rel_etd") val relETD: String?
+     * )
+     */
+
+    private fun prepareRoutesData() {
+        var pickupCenter : HaltCenters? =null
+        var dropCenter : HaltCenters? =null
+        var haltCenter : HaltCenters? = HaltCenters(
+            relEtd = "",
+            relEta = "",
+            name = "",
+            state = "",
+            pastTravelHrs = "",
+            haltHrs = "",
+            longitude = "",
+            latitude = "")
+        var haltCenters : List<HaltCenters> = ArrayList()
+
+        pickupCenter = HaltCenters(
+            relEtd = viewModel.transaction.routeInfo?.origin?.relETD?:"",
+            relEta = viewModel.transaction.routeInfo?.origin?.relETA?:"",
+            name = viewModel.transaction.routeInfo?.origin?.centerName?:"",
+            state = viewModel.transaction.routeInfo?.origin?.centerState?:"",
+            pastTravelHrs = "",
+            haltHrs = "",
+            longitude = viewModel.transaction.routeInfo?.origin?.coordinates?.lon?.toString()?:"",
+            latitude = viewModel.transaction.routeInfo?.origin?.coordinates?.lat?.toString()?:"")
+
+        dropCenter = HaltCenters(
+            relEtd = viewModel.transaction.routeInfo?.destination?.relETD?:"",
+            relEta = viewModel.transaction.routeInfo?.destination?.relETA?:"",
+            name = viewModel.transaction.routeInfo?.destination?.centerName?:"",
+            state = viewModel.transaction.routeInfo?.destination?.centerState?:"",
+            pastTravelHrs = "",
+            haltHrs = "",
+            longitude = viewModel.transaction.routeInfo?.destination?.coordinates?.lon?.toString()?:"",
+            latitude = viewModel.transaction.routeInfo?.destination?.coordinates?.lat?.toString()?:"")
+
+        //add pickup into routes array
+        routesArray.clear()
+        routesArray.add(pickupCenter)
+        //
+        viewModel.transaction.routeInfo?.haltCenters?.forEach({
+            haltCenter = HaltCenters(
+                relEtd = it.relETD,
+                relEta = it.relETA?:"",
+                name = it.centerName?:"",
+                state = it.centerState?:"",
+                pastTravelHrs = it.pastTravelHrs?.toString()?:"",
+                haltHrs = it.haltHours?.toString()?:"",
+                longitude = it.coordinates?.lon?.toString()?:"",
+                latitude = it.coordinates?.lat?.toString()?:"")
+
+            haltCenter?.let { innerIt ->
+                routesArray.add(innerIt)
+            }
+        })
+
+        //add drop into routes array
+        routesArray.add(dropCenter)
+    }
+
+    /**
+     * data class HaltCenters(
+     *     @SerializedName("center_code") val centerCode: String?,
+     *     @SerializedName("center_name") val centerName: String?,
+     *     @SerializedName("center_state") val centerState: String?,
+     *     @SerializedName("coordinates") val coordinates: Coordinates?,
+     *     //
+     *     @SerializedName("halt_hrs") val haltHours: Int?,
+     *     @SerializedName("position") val position: Int?,
+     *     @SerializedName("address") val address: String?,
+     *     @SerializedName("city") val city: String?,
+     *     //
+     *     @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
+     *     @SerializedName("rel_eta") val relETA: String?,
+     *     @SerializedName("rel_etd") val relETD: String?
+     * )
+     */
 
     private fun triggerFacilityAddress(originCenterCode:String?){
         //
@@ -905,9 +967,8 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //
         binding.cardInput.routeAddress.text = ""
         //clear arrays
-        //routesArray.clear()
+        routesArray.clear()
         //
-        //flexibleReportingCentersArray.clear()
     }
 
 
@@ -937,11 +998,11 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
     private fun showIntracityAdhocSuccessDialog(){
         // prepare dialog UI's and whatsapp share data
-        val title = getString(R.string.title_dialog_success)
-        val subTittle = getString(R.string.sub_title_dialog_success)
-        val playStoreLink = getString(R.string.driver_app_link)
-        val hindiVideoLink = getString(R.string.hindi_video_link)
-        val englishVideoLink = getString(R.string.english_video_link)
+        val title = getString(string.title_dialog_success)
+        val subTittle = getString(string.sub_title_dialog_success)
+        val playStoreLink = getString(string.driver_app_link)
+        val hindiVideoLink = getString(string.hindi_video_link)
+        val englishVideoLink = getString(string.english_video_link)
 
         // Extract data from the placement item
         val placementData = homePlacementsItemData
@@ -1011,10 +1072,10 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         return if (!reportingTime.isNullOrEmpty()) {
             try {
                 // Parse the time and format it
-                val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
-                val outputFormat = java.text.SimpleDateFormat("dd MMM, hh:mm a")
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+                val outputFormat = SimpleDateFormat("dd MMM, hh:mm a")
                 val date = inputFormat.parse(reportingTime)
-                outputFormat.format(date ?: java.util.Date())
+                outputFormat.format(date ?: Date())
             } catch (e: Exception) {
                 "--:--" // Default time if parsing fails
             }

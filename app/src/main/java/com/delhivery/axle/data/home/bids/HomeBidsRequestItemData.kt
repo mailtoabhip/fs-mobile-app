@@ -571,6 +571,24 @@ data class HomeBidsRequestItemData(
     }
   }
 
+  fun isPlacementsIntracityVisibility() : Int{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityAdhoc.name), ignoreCase = true) == true
+      || loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true){
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
+  fun isPlacementsIntercityVisibility() : Int{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.ftlRegular.name), ignoreCase = true) == true){
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
+
   fun isIntracityRegular() : Boolean{
     return loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true
   }

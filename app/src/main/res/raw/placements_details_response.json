@@ -1,0 +1,57 @@
+{
+  "contract_code": "vrdWFT14250001C",
+  "contract_id": "fms::contract::e403b5d1-7a0d-46e3-9fe9-e36cdb6e7fe8",
+  "cost_data": {
+    "dpm": null,
+    "hpd": null,
+    "kpm": null,
+    "nep": null,
+    "rpd": null,
+    "rph": null,
+    "rpk": null
+  },
+  "misc": {
+    "client_name": null,
+    "material_type": null
+  },
+  "route_info": {
+    "destination": {
+      "center_code": "INHRAGJQ",
+      "center_name": "Gurgaon_Tauru_GW",
+      "center_state": "Haryana",
+      "coordinates": {
+        "lat": 28.268738,
+        "lon": 76.899343
+      },
+      "past_travel_hrs": 1.0,
+      "rel_eta": "1:00:00",
+      "rel_etd": "1:30:00"
+    },
+    "halt_centers": [],
+    "origin": {
+      "center_code": "IND403726AAA",
+      "center_name": "Goa_Hub",
+      "center_state": "Haryana",
+      "coordinates": {
+        "lat": 28.455008,
+        "lon": 77.070212
+      },
+      "past_travel_hrs": 0.0,
+      "rel_eta": "0:00:00",
+      "rel_etd": "0:00:00"
+    },
+    "route_days_of_week": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "transaction_id": null,
+  "vehicle_info": {
+    "truck_display_name": "14FTSXL",
+    "truck_type": "closed"
+  }
+}

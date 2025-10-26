@@ -42,6 +42,7 @@ import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
 import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -167,7 +168,9 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
                     val transactionId = data.transactionId
                     val contractCode = data.contractCode
                     val context = this.context
-                    if (transactionId != null && context != null) {
+                    Log.d("transactionId", "$transactionId")
+                    Log.d("contractCode", "$contractCode")
+                    if ((transactionId.isNotNullOrEmpty() || contractCode.isNotNullOrEmpty()) && context != null) {
                         val intent = placementsBidDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
@@ -175,7 +178,7 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
                     val transactionId = data.transactionId
                     val contractCode = data.contractCode
                     val context = this.context
-                    if (transactionId != null && context != null) {
+                    if ((transactionId.isNotNullOrEmpty() || contractCode.isNotNullOrEmpty()) && context != null) {
                         val intent = placementsContractDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
                         startActivity(intent)
                     }
