@@ -1972,6 +1972,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
   }
   private fun showAddTruckBottomSheet() {
     val dialog = AddTruckBottomSheetDialogFragment.newInstance(
+      truckNumber= binding.cardInput.placementCl.editAutoCompleteTrucks.text?.toString()?:"",
       viewModelFactory,
       userPrefs,
       autoCompleteUtils,

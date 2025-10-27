@@ -1629,6 +1629,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   }
   private fun showAddTruckBottomSheet() {
     val dialog = AddTruckBottomSheetDialogFragment.newInstance(
+      truckNumber= binding.cardInput.placementCl.editAutoCompleteTrucks.text?.toString()?:"",
       viewModelFactory,
       userPrefs,
       autoCompleteUtils,

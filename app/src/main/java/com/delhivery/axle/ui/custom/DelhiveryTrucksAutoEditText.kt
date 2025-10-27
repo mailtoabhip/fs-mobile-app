@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +18,7 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
-import com.delhivery.axle.data.home.trucks.names
+
 
 
 class DelhiveryTrucksAutoEditText(
@@ -111,7 +111,10 @@ class DelhiveryTrucksAutoEditText(
         setAdapter(adapter)
         setOnItemClickListener { _, _, i, _ ->
             isSelectionInProgress = true
+            //check the selected value, if equals "Add New Truck" don't set in edit text view
+            Log.d("Add_truck_value==>>", trucks[i])
             setText(trucks[i])
+            //
             selected(trucks[i])
             dismissDropDown()
             // Reset flag after a short delay

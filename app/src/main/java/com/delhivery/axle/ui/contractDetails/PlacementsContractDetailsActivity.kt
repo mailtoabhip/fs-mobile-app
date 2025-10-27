@@ -110,6 +110,7 @@ import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
+import androidx.core.view.isVisible
 
 class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
 
@@ -851,6 +852,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
     private fun showAddTruckBottomSheet() {
         val dialog = AddTruckBottomSheetDialogFragment.newInstance(
+            truckNumber= binding.cardInput.placementCl.editAutoCompleteTrucks.text?.toString()?:"",
             viewModelFactory,
             userPrefs,
             autoCompleteUtils,
@@ -925,7 +927,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         return result
     }
     private fun submitPlacementDetails() {
-        if (binding.cardInput.placementCl.editAutoCompleteTrucks.visibility == View.VISIBLE) {
+        if (binding.cardInput.placementCl.editAutoCompleteTrucks.isVisible) {
             binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
             binding.cardInput.placementCl.vehicleError.text = "Please select a valid vehicle number"
             isValidVehicleNumber = false

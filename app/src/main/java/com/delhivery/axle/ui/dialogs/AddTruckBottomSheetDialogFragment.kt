@@ -35,6 +35,7 @@ import java.util.regex.Pattern
 
 class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
+    private var truckNumber: String?=null
     private var onTruckAdded: ((String) -> Unit)? = null
     private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var userPrefs: UserPrefs
@@ -70,6 +71,7 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_AUTOCOMPLETE_UTILS = "autocomplete_utils"
 
         fun newInstance(
+            truckNumber:String,
             viewModelFactory: ViewModelProvider.Factory,
             userPrefs: UserPrefs,
             autoCompleteUtils: AutoCompleteUtils,
@@ -80,6 +82,7 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
             fragment.userPrefs = userPrefs
             fragment.autoCompleteUtils = autoCompleteUtils
             fragment.onTruckAdded = onTruckAdded
+            fragment.truckNumber = truckNumber
             return fragment
         }
     }
@@ -135,6 +138,12 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
         // Add progress bar setup
         binding.progressBar.visibility = View.GONE
+        binding.rlProgressBar.visibility = View.GONE
+
+        //set truck no
+        this.truckNumber?.let {
+            binding.editTruckNumber.setText(it)
+        }
     }
 
     private fun setupClickListeners() {
@@ -219,12 +228,14 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private fun showProgress(message: String = "Adding truck...") {
         binding.progressBar.visibility = View.VISIBLE
+        binding.rlProgressBar.visibility = View.VISIBLE
         binding.btnAddTruck.isEnabled = false
         binding.btnAddTruck.text = "Add Truck"
     }
 
     private fun hideProgress() {
         binding.progressBar.visibility = View.GONE
+        binding.rlProgressBar.visibility = View.GONE
         binding.btnAddTruck.isEnabled = true
         binding.btnAddTruck.text = "Add Truck"
     }
@@ -247,15 +258,20 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
         var flag = true
 
-        if (viewModel.truckType.isEmpty()) {
+        if(viewModel.truckOwnership.isBlank()){
             flag = false
-            Toast.makeText(requireContext(), "Select body type", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Select Ownership", Toast.LENGTH_SHORT).show()
+        }
+
+        if (viewModel.truckType.isBlank()) {
+            flag = false
+            Toast.makeText(requireContext(), "Select Body Type", Toast.LENGTH_SHORT).show()
         }
 
         if (viewModel.truckCapacity != 0.0) {
             binding.capacityError.visibility = View.GONE
         } else {
-            binding.capacityError.text = "This field is required"
+            binding.capacityError.text = "Truck Capacity field is required"
             binding.capacityError.visibility = View.VISIBLE
             flag = false
         }
@@ -267,7 +283,7 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
             binding.numberError.visibility = View.VISIBLE
             flag = false
         } else {
-            binding.numberError.text = "This field is required"
+            binding.numberError.text = "Vehicle Number field is required"
             binding.numberError.visibility = View.VISIBLE
             flag = false
         }
@@ -275,7 +291,7 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
         if (viewModel.truckSize.isNotEmpty()) {
             binding.sizeError.visibility = View.GONE
         } else {
-            binding.sizeError.text = "This field is required"
+            binding.sizeError.text = "Truck Size field is required"
             binding.sizeError.visibility = View.VISIBLE
             flag = false
         }
@@ -283,7 +299,7 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
         if (viewModel.truckCity != null) {
             binding.originError.visibility = View.GONE
         } else {
-            binding.originError.text = "This field is required"
+            binding.originError.text = "Current City field is required"
             binding.originError.visibility = View.VISIBLE
             flag = false
         }
@@ -291,7 +307,7 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
         if (viewModel.truckDestination != null) {
             binding.destinationError.visibility = View.GONE
         } else {
-            binding.destinationError.text = "This field is required"
+            binding.destinationError.text = "Unloading Destination field is required"
             binding.destinationError.visibility = View.VISIBLE
             flag = false
         }

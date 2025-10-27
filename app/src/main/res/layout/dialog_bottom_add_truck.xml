@@ -1,13 +1,39 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_bottom_dialog"
         android:orientation="vertical">
 
+        <!-- Add Truck Button -->
+        <!-- Progress Bar -->
         <RelativeLayout
+            android:id="@+id/rl_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha=".7"
+            android:background="@color/light_grey"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:elevation="2dp"
+            android:clickable="true">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:elevation="4dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -38,12 +64,14 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_4dp"
+            android:layout_below="@+id/rl_header"
             app:srcCompat="@drawable/seperator_line" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="600dp">
+            android:maxHeight="600dp"
+            android:layout_below="@+id/rl_header">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -56,7 +84,7 @@
                     android:id="@+id/label_vehicle_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Vehicle Number"
+                    android:text="Vehicle Number*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -72,13 +100,25 @@
                     android:padding="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp" />
 
+                <!-- Error Messages -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/number_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Number error"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
                 <!-- Body Type Selection -->
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_body_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Body Type"
+                    android:text="Body Type*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -96,6 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Open"
+                        android:checked="true"
                         android:textColor="@color/heading_black"
                         android:textSize="@dimen/text_14sp" />
 
@@ -125,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Truck Size"
+                    android:text="Truck Size*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -151,13 +192,24 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/size_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Size error"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
                 <!-- Truck Capacity Field -->
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_truck_capacity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Truck Capacity"
+                    android:text="Truck Capacity*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -183,13 +235,24 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/capacity_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    tools:text="Capacity error"
+                    android:textSize="@dimen/text_12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
                 <!-- Current City Field -->
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_current_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Current City"
+                    android:text="Current City*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -218,13 +281,24 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/origin_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Current city error"
+                    tools:visibility="visible"
+                    android:visibility="gone" />
+
                 <!-- Unloading Destination Field -->
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_unloading_destination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Unloading Destination"
+                    android:text="Unloading Destination*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -253,13 +327,24 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/destination_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Destination city error"
+                    tools:visibility="visible"
+                    android:visibility="gone" />
+
                 <!-- Ownership Selection -->
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_ownership"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Ownership"
+                    android:text="Ownership*"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -275,8 +360,9 @@
                         android:id="@+id/btn_radio_own_truck"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         android:layout_weight="1"
-                        android:text="Own Truck"
+                        android:text="Owned Truck"
                         android:textColor="@color/heading_black"
                         android:textSize="@dimen/text_14sp" />
 
@@ -297,7 +383,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:text="Price"
+                    android:text="Price(optional)"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_14sp"
                     android:textStyle="bold" />
@@ -314,60 +400,6 @@
                     android:textSize="@dimen/text_14sp" />
 
                 <!-- Error Messages -->
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/number_error"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:textColor="@color/destructive_red"
-                    android:textSize="@dimen/text_12sp"
-                    android:visibility="gone" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/size_error"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:textColor="@color/destructive_red"
-                    android:textSize="@dimen/text_12sp"
-                    android:visibility="gone" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/capacity_error"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:textColor="@color/destructive_red"
-                    android:textSize="@dimen/text_12sp"
-                    android:visibility="gone" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/origin_error"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:textColor="@color/destructive_red"
-                    android:textSize="@dimen/text_12sp"
-                    android:visibility="gone" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/destination_error"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_4dp"
-                    android:textColor="@color/destructive_red"
-                    android:textSize="@dimen/text_12sp"
-                    android:visibility="gone" />
-
-                <!-- Add Truck Button -->
-                <!-- Progress Bar -->
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="@dimen/size_16dp"
-                    android:visibility="gone" />
 
                 <!-- Add Truck Button -->
                 <androidx.appcompat.widget.AppCompatButton
@@ -385,6 +417,8 @@
 
         </ScrollView>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </RelativeLayout>
 
 </layout>

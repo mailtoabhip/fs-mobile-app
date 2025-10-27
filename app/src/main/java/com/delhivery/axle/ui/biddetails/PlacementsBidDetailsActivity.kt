@@ -79,6 +79,7 @@ import java.util.TimeZone
 import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.math.abs
+import androidx.core.view.isVisible
 
 /**
  * Bid detail screen
@@ -670,6 +671,7 @@ class PlacementsBidDetailsActivity :
 
     private fun showAddTruckBottomSheet() {
         val dialog = AddTruckBottomSheetDialogFragment.newInstance(
+            truckNumber= binding.cardInput.placementCl.editAutoCompleteTrucks.text?.toString()?:"",
             viewModelFactory,
             userPrefs,
             autoCompleteUtils,
@@ -764,7 +766,7 @@ class PlacementsBidDetailsActivity :
             uiUtils.showToast("Placement data not available")
             return
         }
-        if (binding.cardInput.placementCl.editAutoCompleteTrucks.visibility == View.VISIBLE) {
+        if (binding.cardInput.placementCl.editAutoCompleteTrucks.isVisible) {
             binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
             binding.cardInput.placementCl.vehicleError.text = "Please select a valid vehicle number"
             isValidVehicleNumber = false
