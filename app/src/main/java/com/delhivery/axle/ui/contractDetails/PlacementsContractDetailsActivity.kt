@@ -55,7 +55,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
-import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -654,21 +654,24 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         })
         //
         autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
-            if(it=="Add New Truck"){
-                binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
-                this?.let {showAddTruckBottomSheet()}
-            }else if(validateTruckNumber(it)){
-                isValidVehicleNumber = true
-                binding.cardInput.placementCl.vehicleError.visibility = View.GONE
-                binding.cardInput.placementCl.editTextVehicleNumber.text = it
-                binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
-                binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.VISIBLE
-                enableSubmitPlacement()
-            } else {
-                binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
-                binding.cardInput.placementCl.vehicleError.text ="Please enter valid vehicle Number"
-                isValidVehicleNumber = false
-                enableSubmitPlacement()
+            // Ensure UI operations run on main thread
+            binding.cardInput.placementCl.editAutoCompleteTrucks.post {
+                if(it=="Add New Truck"){
+                    //binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+                    this.let {showAddTruckBottomSheet()}
+                }else if(validateTruckNumber(it)){
+                    isValidVehicleNumber = true
+                    binding.cardInput.placementCl.vehicleError.visibility = View.GONE
+                    binding.cardInput.placementCl.editTextVehicleNumber.text = it
+                    binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+                    binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.VISIBLE
+                    enableSubmitPlacement()
+                } else {
+                    binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+                    binding.cardInput.placementCl.vehicleError.text ="Please enter valid vehicle Number"
+                    isValidVehicleNumber = false
+                    enableSubmitPlacement()
+                }
             }
         }
         //
@@ -847,8 +850,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     }
 
     private fun showAddTruckBottomSheet() {
-        val dialog = AddTruckBottomSheetDialog(
-            this,
+        val dialog = AddTruckBottomSheetDialogFragment.newInstance(
             viewModelFactory,
             userPrefs,
             autoCompleteUtils,
@@ -856,13 +858,14 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                 showSuccessEditDialog("Truck added successfully!")
                 // Populate the vehicle number field with the newly added truck
                 binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
+                binding.cardInput.placementCl.editAutoCompleteTrucks.setText(truckNumber)
                 binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
                 binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
                 isValidVehicleNumber = true
                 enableSubmitPlacement()
             }
         )
-        dialog.show()
+        dialog.show(supportFragmentManager, "AddTruckBottomSheetDialogFragment")
     }
     private fun  enableSubmitPlacement(){
         // DEBOUNCE PROTECTION - Prevent rapid calls to enableSubmitPlacement (reduced from 500ms to 100ms)

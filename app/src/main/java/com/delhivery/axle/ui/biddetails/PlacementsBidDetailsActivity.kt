@@ -39,7 +39,7 @@ import com.delhivery.axle.databinding.ActivityLoadBidDetailsBinding
 import com.delhivery.axle.databinding.ActivityPlacementsBidDetailsBinding
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
@@ -483,7 +483,7 @@ class PlacementsBidDetailsActivity :
             // Ensure UI operations run on main thread
             binding.cardInput.placementCl.editAutoCompleteTrucks.post {
                 if (it == "Add New Truck") {
-                    binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+                    //binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
                     this.let { showAddTruckBottomSheet() }
                 } else if (validateTruckNumber(it)) {
                     isValidVehicleNumber = true
@@ -669,21 +669,21 @@ class PlacementsBidDetailsActivity :
     }
 
     private fun showAddTruckBottomSheet() {
-        val dialog = AddTruckBottomSheetDialog(
-            this,
+        val dialog = AddTruckBottomSheetDialogFragment.newInstance(
             viewModelFactory,
             userPrefs,
             autoCompleteUtils,
             onTruckAdded = { truckNumber ->
                 showSuccessEditDialog("Truck added successfully!")
                 binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
+                binding.cardInput.placementCl.editAutoCompleteTrucks.setText(truckNumber)
                 binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
                 binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
                 isValidVehicleNumber = true
                 // Don't call enableSubmitPlacement here - let TextWatcher handle it
             }
         )
-        dialog.show()
+        dialog.show(supportFragmentManager, "AddTruckBottomSheetDialogFragment")
     }
 
     private fun enableSubmitPlacement() {

@@ -1,12 +1,12 @@
 package com.delhivery.axle.ui.dialogs
 
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -28,16 +28,16 @@ import com.delhivery.axle.ui.trucks.TruckViewModel
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.regex.Pattern
 
-class AddTruckBottomSheetDialog(
-    private val context: Context,
-    private val viewModelFactory: ViewModelProvider.Factory,
-    private val userPrefs: UserPrefs,
-    private val autoCompleteUtils: AutoCompleteUtils,
-    private val onTruckAdded: (String) -> Unit
-) : Dialog(context) {
+class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
+
+    private var onTruckAdded: ((String) -> Unit)? = null
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var userPrefs: UserPrefs
+    private lateinit var autoCompleteUtils: AutoCompleteUtils
 
     private lateinit var binding: DialogBottomAddTruckBinding
     private lateinit var viewModel: TruckViewModel
@@ -64,31 +64,53 @@ class AddTruckBottomSheetDialog(
 
     companion object {
         private const val REQCODE_SELECT_CITY = 1001
+        private const val ARG_VIEWMODEL_FACTORY = "viewmodel_factory"
+        private const val ARG_USER_PREFS = "user_prefs"
+        private const val ARG_AUTOCOMPLETE_UTILS = "autocomplete_utils"
+
+        fun newInstance(
+            viewModelFactory: ViewModelProvider.Factory,
+            userPrefs: UserPrefs,
+            autoCompleteUtils: AutoCompleteUtils,
+            onTruckAdded: (String) -> Unit
+        ): AddTruckBottomSheetDialogFragment {
+            val fragment = AddTruckBottomSheetDialogFragment()
+            fragment.viewModelFactory = viewModelFactory
+            fragment.userPrefs = userPrefs
+            fragment.autoCompleteUtils = autoCompleteUtils
+            fragment.onTruckAdded = onTruckAdded
+            return fragment
+        }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = DialogBottomAddTruckBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = DialogBottomAddTruckBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
         // Initialize ViewModel
-        viewModel = ViewModelProvider(context as DaggerAppCompatActivity, viewModelFactory).get(TruckViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(TruckViewModel::class.java)
 
         setupDialog()
         setupClickListeners()
         setupObservers()
         fetchTruckTypes()
-
+        
         // Register broadcast receiver for city selection
-        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
     }
 
     private fun setupDialog() {
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        window?.setGravity(Gravity.BOTTOM)
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.setGravity(Gravity.BOTTOM)
 
         // Add progress bar setup
         binding.progressBar.visibility = View.GONE
@@ -100,11 +122,11 @@ class AddTruckBottomSheetDialog(
         }
 
         binding.editCurrentCity.setOnClickListener {
-            context.startActivity(searchCityIntent(context, "origin", true))
+            requireContext().startActivity(searchCityIntent(requireContext(), "origin", true))
         }
 
         binding.editUnloadingDestination.setOnClickListener {
-            context.startActivity(searchCityIntent(context, "destination", true))
+            requireContext().startActivity(searchCityIntent(requireContext(), "destination", true))
         }
 
         binding.editTruckSize.setOnClickListener {
@@ -118,10 +140,10 @@ class AddTruckBottomSheetDialog(
                 if (type != "") {
                     showTruckSizeDialog(type)
                 } else {
-                    Toast.makeText(context, "Select body type first", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Select body type first", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(context, "No Truck Types Found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No Truck Types Found", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -129,7 +151,7 @@ class AddTruckBottomSheetDialog(
             if (binding.textTruckSize.text.isNotEmpty()) {
                 showTruckCapacityDialog()
             } else {
-                Toast.makeText(context, "Select Truck Size First", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Select Truck Size First", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -145,22 +167,30 @@ class AddTruckBottomSheetDialog(
     }
 
     private fun setupObservers() {
-        viewModel.truckGetLiveData.observe(context as DaggerAppCompatActivity, Observer {
+        viewModel.truckGetLiveData.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 truckItems.addAll(it)
             }
+
+            viewModel.truckGetLiveData.value = null
         })
 
-        viewModel.addTruckLiveData.observe(context as DaggerAppCompatActivity, Observer {
+        viewModel.addTruckLiveData.observe(viewLifecycleOwner, Observer {
+            Log.d("viewModel.addTruckLiveData", "I am present")
             if (it == true) {
                 hideProgress()
-                // Toast.makeText(context, "Truck added successfully", Toast.LENGTH_SHORT).show()
-                onTruckAdded(viewModel.truckNumber)
+               // Toast.makeText(requireContext(), "Truck added successfully", Toast.LENGTH_SHORT).show()
+                onTruckAdded?.invoke(viewModel.truckNumber)
                 //
                 dismiss()
+                //
+                //make livedata value as null to eliminate future invocations
+                //viewModel.addTruckLiveData.value = null
+                viewModel.addTruckLiveData.value = null
             } else if (it == false) {
                 hideProgress()
-                Toast.makeText(context, "Failed to add truck", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Failed to add truck", Toast.LENGTH_SHORT).show()
+                viewModel.addTruckLiveData.value = null
             }
         })
     }
@@ -183,10 +213,10 @@ class AddTruckBottomSheetDialog(
 
     private fun validateFieldsAndAddTruck() {
         viewModel.truckOwnership = if (binding.btnRadioMarketTruck.isChecked) "market_truck" else "owns_truck"
-        viewModel.truckCapacity = if (binding.textTruckCapacity.text.isNotEmpty())
+        viewModel.truckCapacity = if (binding.textTruckCapacity.text.isNotEmpty()) 
             binding.textTruckCapacity.text.toString().split("\\s+".toRegex())[0].toDouble() else 0.0
         viewModel.truckSize = if (binding.textTruckSize.text.isNotEmpty()) binding.textTruckSize.text.toString() else ""
-        viewModel.truckNumber = if (binding.editTruckNumber.text != null && binding.editTruckNumber.text.toString().isNotEmpty())
+        viewModel.truckNumber = if (binding.editTruckNumber.text != null && binding.editTruckNumber.text.toString().isNotEmpty()) 
             binding.editTruckNumber.text.toString() else ""
         viewModel.truckType = when {
             binding.btnRadioContainer.isChecked -> "closed"
@@ -194,14 +224,14 @@ class AddTruckBottomSheetDialog(
             binding.btnRadioTrailer.isChecked -> "trailer"
             else -> ""
         }
-        viewModel.truckPrice = if (binding.editPriceAddTruck.text != null && binding.editPriceAddTruck.text.toString().isNotEmpty())
+        viewModel.truckPrice = if (binding.editPriceAddTruck.text != null && binding.editPriceAddTruck.text.toString().isNotEmpty()) 
             binding.editPriceAddTruck.text.toString().toInt().toDouble() else 0.0
 
         var flag = true
 
         if (viewModel.truckType.isEmpty()) {
             flag = false
-            Toast.makeText(context, "Select body type", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Select body type", Toast.LENGTH_SHORT).show()
         }
 
         if (viewModel.truckCapacity != 0.0) {
@@ -262,7 +292,7 @@ class AddTruckBottomSheetDialog(
     }
 
     private fun showTruckSizeDialog(type: String) {
-        val dialog = Dialog(context)
+        val dialog = android.app.Dialog(requireContext())
         val bindingDialog = com.delhivery.axle.databinding.DialogBottomTruckValueBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -307,7 +337,7 @@ class AddTruckBottomSheetDialog(
     }
 
     private fun showTruckCapacityDialog() {
-        val dialog = Dialog(context)
+        val dialog = android.app.Dialog(requireContext())
         val bindingDialog = com.delhivery.axle.databinding.DialogBottomTruckValueBinding.inflate(layoutInflater)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -316,7 +346,7 @@ class AddTruckBottomSheetDialog(
         bindingDialog.selectText.text = "Select Truck Capacity"
         bindingDialog.closeBtn.setOnClickListener { dialog.dismiss() }
 
-        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, capacityArr)
+        val adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, capacityArr)
         bindingDialog.truckList.adapter = adapter
         bindingDialog.truckList.setOnItemClickListener { parent, view, position, id ->
             binding.textTruckCapacity.text = adapter.getItem(position)
@@ -331,8 +361,8 @@ class AddTruckBottomSheetDialog(
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(mMessageReceiver)
     }
 }
