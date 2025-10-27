@@ -30,6 +30,9 @@ import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.regex.Pattern
 
@@ -107,32 +110,42 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
         setupObservers()
         fetchTruckTypes()
         
+        // Handle system UI insets to prevent overflow
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, systemBars.top, 0, systemBars.bottom)
+            insets
+        }
+        
         // Register broadcast receiver for city selection
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
     }
 
     override fun onStart() {
         super.onStart()
-        // Set the bottom sheet to take maximum height
+        // Set the bottom sheet to take maximum height but respect system UI
         dialog?.let { dialog ->
             val bottomSheetDialog = dialog as com.google.android.material.bottomsheet.BottomSheetDialog
             val bottomSheetInternal = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             bottomSheetInternal?.let { bottomSheet ->
                 val layoutParams = bottomSheet.layoutParams
-                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                // Use WRAP_CONTENT instead of MATCH_PARENT to prevent overflow
+                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 bottomSheet.layoutParams = layoutParams
             }
             
-            // Alternative: Set behavior to expand to full height
+            // Set behavior to expand but not to full height
             val behavior = bottomSheetDialog.behavior
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
             behavior.isDraggable = true
             behavior.peekHeight = 0
+            // Add padding to respect status bar
+            behavior.skipCollapsed = true
         }
     }
 
     private fun setupDialog() {
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.setGravity(Gravity.BOTTOM)
 

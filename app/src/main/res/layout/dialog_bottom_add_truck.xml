@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_bottom_dialog"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
 
         <!-- Add Truck Button -->
         <!-- Progress Bar -->
@@ -70,8 +71,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="600dp"
-            android:layout_below="@+id/rl_header">
+            android:maxHeight="500dp"
+            android:layout_below="@+id/rl_header"
+            android:fillViewport="true">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
