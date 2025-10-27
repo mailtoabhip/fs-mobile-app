@@ -60,7 +60,7 @@ import android.view.Window
 import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
-import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
@@ -1971,8 +1971,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     }
   }
   private fun showAddTruckBottomSheet() {
-    val dialog = AddTruckBottomSheetDialog(
-      this,
+    val dialog = AddTruckBottomSheetDialogFragment.newInstance(
       viewModelFactory,
       userPrefs,
       autoCompleteUtils,
@@ -1985,7 +1984,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
         // Don't call enableSubmitPlacement here - let TextWatcher handle it
       }
     )
-    dialog.show()
+    dialog.show(supportFragmentManager, "AddTruckBottomSheetDialogFragment")
   }
 
   private fun  enableSubmitPlacement(){

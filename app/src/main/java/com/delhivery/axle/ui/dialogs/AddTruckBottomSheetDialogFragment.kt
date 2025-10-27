@@ -29,6 +29,7 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.regex.Pattern
 
@@ -107,8 +108,28 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mMessageReceiver, IntentFilter("get_selected_city"))
     }
 
+    override fun onStart() {
+        super.onStart()
+        // Set the bottom sheet to take maximum height
+        dialog?.let { dialog ->
+            val bottomSheetDialog = dialog as com.google.android.material.bottomsheet.BottomSheetDialog
+            val bottomSheetInternal = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheetInternal?.let { bottomSheet ->
+                val layoutParams = bottomSheet.layoutParams
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                bottomSheet.layoutParams = layoutParams
+            }
+            
+            // Alternative: Set behavior to expand to full height
+            val behavior = bottomSheetDialog.behavior
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.isDraggable = true
+            behavior.peekHeight = 0
+        }
+    }
+
     private fun setupDialog() {
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.setGravity(Gravity.BOTTOM)
 
@@ -167,32 +188,29 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupObservers() {
-        viewModel.truckGetLiveData.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
+        viewModel.truckGetLiveData.observe(viewLifecycleOwner) { truckList ->
+            truckList?.let {
+                truckItems.clear()
                 truckItems.addAll(it)
             }
+        }
 
-            viewModel.truckGetLiveData.value = null
-        })
-
-        viewModel.addTruckLiveData.observe(viewLifecycleOwner, Observer {
-            Log.d("viewModel.addTruckLiveData", "I am present")
-            if (it == true) {
-                hideProgress()
-               // Toast.makeText(requireContext(), "Truck added successfully", Toast.LENGTH_SHORT).show()
-                onTruckAdded?.invoke(viewModel.truckNumber)
-                //
-                dismiss()
-                //
-                //make livedata value as null to eliminate future invocations
-                //viewModel.addTruckLiveData.value = null
-                viewModel.addTruckLiveData.value = null
-            } else if (it == false) {
-                hideProgress()
-                Toast.makeText(requireContext(), "Failed to add truck", Toast.LENGTH_SHORT).show()
-                viewModel.addTruckLiveData.value = null
+        viewModel.addTruckLiveData.observe(viewLifecycleOwner) { isSuccess ->
+            when (isSuccess) {
+                true -> {
+                    hideProgress()
+                    onTruckAdded?.invoke(viewModel.truckNumber)
+                    dismiss()
+                }
+                false -> {
+                    hideProgress()
+                    Toast.makeText(requireContext(), "Failed to add truck", Toast.LENGTH_SHORT).show()
+                }
+                null -> {
+                    // Do nothing for null values
+                }
             }
-        })
+        }
     }
 
     private fun fetchTruckTypes() {
@@ -363,6 +381,21 @@ class AddTruckBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(mMessageReceiver)
+        try {
+            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(mMessageReceiver)
+        } catch (e: Exception) {
+            // Receiver might already be unregistered
+        }
+        
+        // Clear collections to prevent memory leaks
+        truckItems.clear()
+        capacityArr.clear()
+
+        //clear the livedata
+        
+        // Clear binding reference
+        if (::binding.isInitialized) {
+            // Clear any potential memory leaks from binding
+        }
     }
 }

@@ -55,7 +55,7 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.userBidsIntent
-import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialog
+import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -1628,8 +1628,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
   }
   private fun showAddTruckBottomSheet() {
-    val dialog = AddTruckBottomSheetDialog(
-      this,
+    val dialog = AddTruckBottomSheetDialogFragment.newInstance(
       viewModelFactory,
       userPrefs,
       autoCompleteUtils,
@@ -1643,7 +1642,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
         enableSubmitPlacement()
       }
     )
-    dialog.show()
+    dialog.show(supportFragmentManager, "AddTruckBottomSheetDialogFragment")
   }
   private fun  enableSubmitPlacement(){
     // DEBOUNCE PROTECTION - Prevent rapid calls to enableSubmitPlacement (reduced from 500ms to 100ms)
