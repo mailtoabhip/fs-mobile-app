@@ -505,10 +505,22 @@ class PlacementsBidDetailsActivity :
         binding.cardInput.placementCl.editTextVehicleNumber.setOnClickListener {
             binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.GONE
             binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.VISIBLE
+            //binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+            //
+            //binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
             binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+            //move cursor to the end of text in vehicle number
+            binding.cardInput.placementCl.editAutoCompleteTrucks.setSelection(binding.cardInput.placementCl.editTextVehicleNumber.text.length)
+            // showkeyboard
+            Handler().postDelayed({
+                showKeyboard()
+            }, 100)
+            //
             isValidVehicleNumber = false
             enableSubmitPlacement()
         }
+
+
 
         binding.cardInput.placementCl.editTextVehicleNumber.addTextChangedListener(object :
             TextWatcher {
@@ -629,6 +641,18 @@ class PlacementsBidDetailsActivity :
             val pickContactIntent =
                 Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
             startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
+        }
+    }
+
+
+    private fun showKeyboard() {
+
+        binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
+
+        // Delay to ensure the window is ready before showing the keyboard
+        binding.cardInput.placementCl.editAutoCompleteTrucks.post {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.cardInput.placementCl.editAutoCompleteTrucks, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 

@@ -677,9 +677,16 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             //
             binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.VISIBLE
             //
-            //binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+            binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
             //
-            binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
+            //move cursor to the end of text in vehicle number
+            binding.cardInput.placementCl.editAutoCompleteTrucks.setSelection(binding.cardInput.placementCl.editTextVehicleNumber.text.length)
+            //
+            Handler().postDelayed({
+                showKeyboard()
+            }, 100)
+            //
+            //binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
             //
             isValidVehicleNumber = false
             //
@@ -827,6 +834,18 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
         }
     }
+
+    private fun showKeyboard() {
+
+        binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
+
+        // Delay to ensure the window is ready before showing the keyboard
+        binding.cardInput.placementCl.editAutoCompleteTrucks.post {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.cardInput.placementCl.editAutoCompleteTrucks, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
     private fun showAddTruckBottomSheet() {
         val dialog = AddTruckBottomSheetDialog(
             this,

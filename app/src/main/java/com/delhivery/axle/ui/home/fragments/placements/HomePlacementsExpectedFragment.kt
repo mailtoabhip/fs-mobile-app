@@ -131,6 +131,7 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
             isFirstResume = false
         }
         if(REFRESH_ON_BACK_PLACEMENT){
+            REFRESH_ON_BACK_PLACEMENT = false
             refreshData()
         }
     }
