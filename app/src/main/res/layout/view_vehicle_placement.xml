@@ -41,13 +41,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/placementLoadType"
-                app:layout_constraintTop_toTopOf="@+id/tv_status_duration"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_status_duration"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:paddingHorizontal="@dimen/size_4dp"
-                android:paddingVertical="@dimen/size_4dp"
+                tool:background="@drawable/bg_all_rounded_delhivery"
+                tool:drawableStart="@drawable/ic_delhivery_load_flash"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_12sp"
                 tool:text="Delhivery Load"
