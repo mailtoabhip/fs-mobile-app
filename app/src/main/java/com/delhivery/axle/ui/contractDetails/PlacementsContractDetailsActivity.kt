@@ -533,7 +533,10 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         routesArray.clear()
         routesArray.add(pickupCenter)
         //
-        viewModel.transaction.routeInfo?.haltCenters?.forEach({
+        //sort halt centers based on position in ascending order and keeping all the items with null as "position" in the end of the sorted list.
+        val sortedList = viewModel.transaction.routeInfo?.haltCenters?.sortedWith(compareBy(nullsLast()) { it.position })
+        //
+        sortedList?.forEach({
             haltCenter = HaltCenters(
                 relEtd = it.relETD,
                 relEta = it.relETA?:"",
@@ -633,7 +636,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         //
         viewModel.updateVehicleDetails.removeObservers(this)
         viewModel.updateVehicleDetails.observe(this, Observer {
-            if(it != null){
+            if (it != null && it == true) {
                 REFRESH_ON_BACK_PLACEMENT = true
                 uiUtils.hideProgress()
                 // pushMoengageEvent(true)

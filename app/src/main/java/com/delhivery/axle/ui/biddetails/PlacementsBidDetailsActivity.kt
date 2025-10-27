@@ -310,7 +310,10 @@ class PlacementsBidDetailsActivity :
     }
 
     private fun addHaltCenters() {
-        binding.transaction?.routeInfo?.haltCenters?.forEach{ item ->
+        //sort halt centers based on position in ascending order and keeping all the items with null as "position" in the end of the sorted list.
+        val sortedList = binding.transaction?.routeInfo?.haltCenters?.sortedWith(compareBy(nullsLast()) { it.position })
+
+        sortedList?.forEach{ item ->
             uploadArray.add(Pair(item.centerName?:"", item.address?:""))
         }
     }
@@ -464,7 +467,7 @@ class PlacementsBidDetailsActivity :
 
         viewModel.updateVehicleDetails.removeObservers(this@PlacementsBidDetailsActivity)
         viewModel.updateVehicleDetails.observe(this, Observer {
-            if (it != null) {
+            if (it != null && it == true) {
                 uiUtils.hideProgress()
                 REFRESH_ON_BACK_PLACEMENT = true
                 when (homePlacementsItemData?.loadType) {

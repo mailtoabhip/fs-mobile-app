@@ -55,11 +55,20 @@ class PlacementsContractsRouteDetailsAdapter(private val dataList: List<HaltCent
           holder.hubState.visibility = View.GONE
         }
 
-      val etaList = dataList[position].relEta?.split(",")
-      holder.arvTime.text ="${etaList?.getOrNull(0) ?: ""}\n${etaList?.getOrNull(1) ?: ""}"
-      val etdList = dataList[position].relEtd?.split(",")
-      holder.depTime.text = "${etdList?.getOrNull(0) ?: ""}\n${etdList?.getOrNull(1) ?: ""}"
-      holder.timeTravel.text = "Travel Time - "+dataList[position].pastTravelHrs+ " hrs"
+      //val etaList = dataList[position].relEta?.split(",")
+      //holder.arvTime.text ="${etaList?.getOrNull(0) ?: ""}\n${etaList?.getOrNull(1) ?: ""}"
+
+        holder.arvTime.text = transaction?.getTimeOfContractsForPlacements(dataList[position].relEta?:"")
+
+
+
+      //val etdList = dataList[position].relEtd?.split(",")
+      //holder.depTime.text = "${etdList?.getOrNull(0) ?: ""}\n${etdList?.getOrNull(1) ?: ""}"
+
+
+        holder.depTime.text = transaction?.getTimeOfContractsForPlacements(dataList[position].relEtd?:"")
+
+        holder.timeTravel.text = "Travel Time - "+dataList[position].pastTravelHrs+ " hrs"
       val lat = dataList[position].latitude
       val long = dataList[position].longitude
 

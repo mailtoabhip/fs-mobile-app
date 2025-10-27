@@ -214,6 +214,22 @@ data class HomeBidsRequestItemData(
     return formattedTime?:"na"
   }
 
+    fun getTimeOfContractsForPlacements(time: String): String {
+        val ist = TimeZone.getTimeZone("Asia/Kolkata")
+
+        val inputFormat = SimpleDateFormat("HH:mm:ss")
+        inputFormat.timeZone = ist
+
+        val outputFormat = SimpleDateFormat("hh:mm a")
+        outputFormat.timeZone = ist
+
+        val date = time.let { inputFormat.parse(it) }
+        val formattedTime = date?.let { outputFormat.format(it) }
+        return formattedTime?:"na"
+    }
+
+    fun placementsOnlyFormatReportingTime(time: String):String?= time.let { DateUtils.daysDiffWithDateTimeStr(it, "HH:mm") }
+
   /**
    * Returns formatted bid amount with commas but without decimal places
    * Example: ₹1,25,000

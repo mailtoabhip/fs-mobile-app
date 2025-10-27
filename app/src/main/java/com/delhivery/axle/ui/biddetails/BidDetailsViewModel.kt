@@ -17,6 +17,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
+import com.delhivery.axle.utils.extensions.errorTPSResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -584,14 +585,22 @@ class BidDetailsViewModel @Inject constructor(
     compositeDisposable += tpsRepository.updateVehicleDetails(updateVehicleDetailsRequest)
         .onBackground()
         .subscribe { _res, error ->
-            if (!error) {
+            if (!error && _res != null) {
                 updateVehicleDetails.postValue(true)
             } else {
                 updateVehicleDetails.postValue(false)
-                error.handle()
+                val errorBody = error.errorTPSResponseBody()
+                    ?.messageBody
+                if (errorBody != null) {
+                    Throwable(errorBody.toString()).handle()
+                } else {
+                    error?.handle()
+                }
             }
         }
   }
+
+
     var addressLiveData = MutableLiveData<FacilityAddressResponse>()
     var pickupAddressLiveData = MutableLiveData<FacilityAddressResponse>()
     var destinationAddressLiveData = MutableLiveData<FacilityAddressResponse>()
