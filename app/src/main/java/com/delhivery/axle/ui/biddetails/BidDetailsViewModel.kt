@@ -1,13 +1,13 @@
 package com.delhivery.axle.ui.biddetails
 
-import android.content.Context
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.repository.TPSRepository
+import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
 import com.delhivery.axle.api.request.WarehouseRequest
+import com.delhivery.axle.api.response.FacilityAddressResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.api.response.WarehouseIndentResponse
 import com.delhivery.axle.data.biddetail.BulkBidSummaryItemData
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -17,7 +17,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialogInterface
-import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.utils.extensions.errorTPSResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -25,10 +25,10 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.perf.ktx.performance
+import com.google.gson.Gson
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
-import kotlin.math.log
 
 /**
  * View model for [BidDetailsActivity]
@@ -39,12 +39,20 @@ class BidDetailsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   private val truckRepository: TruckRepository,
   private val warehouseRepository: WarehouseRepository,
+  private val tpsRepository: TPSRepository,
   val userPrefs: UserPrefs
-) : BaseViewModel(), BulkBidsCreateEditInterface,
-  BidConfirmReviseDialogInterface {
+) : BaseViewModel(), BulkBidsCreateEditInterface, BidConfirmReviseDialogInterface {
 
-  /* transaction id */
-  lateinit var transactionId: String
+    var pickupAddress: String?=null
+    var destinationAddress: String?=null
+
+    /* transaction id */
+    var transactionId: String?=null
+    //contract code
+    var contractCode: String?=null
+    //placement type for placements details page
+    var placementType: String?=null
+    //
     lateinit var dmtStatus: String
     var fromPage: Boolean = false
     var active = false
@@ -71,10 +79,10 @@ class BidDetailsViewModel @Inject constructor(
   /* revise bid live data */
   var reviseBidLiveData = MutableLiveData<Pair<Boolean, TransactionBid?>>()
 
-    companion object{
+  companion object{
     var truckNumTextViewAdded :Boolean=false
     val indentMap = ArrayList<Triple<Pair<Int,String?>, String?, String?>>()
-   }
+  }
 
     lateinit var transaction: HomeBidsRequestItemData
 
@@ -90,7 +98,7 @@ class BidDetailsViewModel @Inject constructor(
    * Fetch transaction details
    */
   fun fetchTransactionDetails() {
-    compositeDisposable += transactionsRepository.transactionDetails(transactionId)
+    compositeDisposable += transactionsRepository.transactionDetails(transactionId?:"")
         .onBackground()
         .progress()
         .subscribe { _tRes, error ->
@@ -103,6 +111,42 @@ class BidDetailsViewModel @Inject constructor(
           }
         }
   }
+
+    /**
+     * Fetch placement details
+     */
+    fun fetchPlacementDetails() {
+        Log.d("PlacementDetails", "Fetching placement details with params: placementType='$placementType', transactionId='$transactionId', contractCode='$contractCode'")
+        
+        compositeDisposable += tpsRepository.getPlacementDetails(placementType = placementType?:"", transactionId = transactionId, contractCode = contractCode)
+            .onBackground()
+            .progress()
+            .subscribe({ _tRes ->
+                Log.d("PlacementDetails", "_tRes received: ${_tRes?.toString() ?: "null"}")
+                Log.d("PlacementDetails", "_tRes type: ${_tRes?.javaClass?.simpleName ?: "null"}")
+                
+                if (_tRes != null) {
+                    Log.d("PlacementDetails", "Successfully received placement details")
+                    _tRes.loadType = placementType
+                    transaction = _tRes
+                    transactionLiveData.postValue(_tRes)
+                    //fetching bids data - don't uncomment
+                    //moved this call to refreshData function
+                    //No need ot this api call anymore
+                    //fetchTransactionBids()
+                } else {
+                    Log.e("PlacementDetails", "Response is null - this indicates an issue with the API response parsing")
+                    transactionLiveData.postValue(null)
+                }
+            }, { error ->
+                Log.e("PlacementDetails", "Error occurred: ${error?.toString() ?: "null"}")
+                Log.e("PlacementDetails", "Error type: ${error?.javaClass?.simpleName ?: "null"}")
+                error?.printStackTrace()
+                transactionLiveData.postValue(null)
+            })
+    }
+
+
     fun fetchTruckType(data :HomeBidsRequestItemData) {
         compositeDisposable += truckRepository.getTruckType()
             .onBackground()
@@ -122,7 +166,7 @@ class BidDetailsViewModel @Inject constructor(
    * Fetch transaction bids and update UI as per response
    */
   fun fetchTransactionBids( action: Boolean = false) {
-    compositeDisposable += bidsRepository.transactionBids(transactionId)
+    compositeDisposable += bidsRepository.transactionBids(transactionId?:"")
         .onBackground()
         .subscribe { _bRes, error ->
           if (!error) {
@@ -217,7 +261,7 @@ class BidDetailsViewModel @Inject constructor(
   private fun fetchTripDetails() {
     val parallelTrace = Firebase.performance.newTrace("trips_and_transaction_details_parallel")
     parallelTrace.start()
-    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId)
+    compositeDisposable += tripsRepository.tripAndTransactionDetails(transactionId?:"")
         .onBackground()
         .bidsProgress()
         .subscribe { _res, error ->
@@ -253,7 +297,7 @@ class BidDetailsViewModel @Inject constructor(
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
+          if (!error) {
                openConfirmBid= true
               successBidLiveData.postValue(Pair(true,false))
               fetchTransactionBids(true)
@@ -282,7 +326,7 @@ class BidDetailsViewModel @Inject constructor(
         .delay(BidsUpdateDelay, SECONDS)
         .onBackground()
         .subscribe { _res, error ->
-          if (!error && _res.isSuccess) {
+          if (!error) {
               openConfirmBid= true
               successBidLiveData.postValue(Pair(false,true))
               fetchTransactionBids(true)
@@ -535,7 +579,70 @@ class BidDetailsViewModel @Inject constructor(
   override fun reviseBid(transactionBid: TransactionBid?, position: Int) {
     reviseBidLiveData.postValue(Pair(true, transactionBid))
   }
+  var updateVehicleDetails = MutableLiveData<Boolean>()
+
+  fun updateVehicleDetails(updateVehicleDetailsRequest: UpdateVehicleDetailsRequest) {
+    compositeDisposable += tpsRepository.updateVehicleDetails(updateVehicleDetailsRequest)
+        .onBackground()
+        .subscribe { _res, error ->
+            if (!error && _res != null) {
+                updateVehicleDetails.postValue(true)
+            } else {
+                updateVehicleDetails.postValue(false)
+                val errorBody = error.errorTPSResponseBody()
+                    ?.messageBody
+                if (errorBody != null) {
+                    Throwable(errorBody.toString()).handle()
+                } else {
+                    error?.handle()
+                }
+            }
+        }
+  }
+
+
+    var addressLiveData = MutableLiveData<FacilityAddressResponse>()
+    var pickupAddressLiveData = MutableLiveData<FacilityAddressResponse>()
+    var destinationAddressLiveData = MutableLiveData<FacilityAddressResponse>()
+
+    fun getFacilityAddress(originCenterCode:String?) {
+        if(originCenterCode!=null)
+            compositeDisposable += tpsRepository.getFacilityAddress(originCenterCode)
+                .onBackground()
+                .subscribe { _tRes, error ->
+                    if (!error && _tRes != null) {
+                        Log.i("Address", _tRes.toString())
+                        addressLiveData.postValue(_tRes)
+                    }else{ error.handle()
+                    }
+                }
+    }
+
+    fun getPlacementFacilityAddress(pickupCenterCode:String, destinationCenterCode:String, facilityType:String) {
+        if(pickupCenterCode.isNotNullOrEmpty() && destinationCenterCode.isNotNullOrEmpty())
+            compositeDisposable += tpsRepository.getFacilityAddress(pickupCenterCode)
+                .onBackground()
+                .subscribe { _tRes, error ->
+                    if (!error && _tRes != null) {
+                        Log.i("Address", _tRes.toString())
+                        if(facilityType.equals("pickup")) {
+                            pickupAddressLiveData.postValue(_tRes)
+                            Log.d("getPlacementFacilityAddress", "pickupAddressLiveData")
+                            //trigger destination api call only when pickup address is recevd
+                            getPlacementFacilityAddress(
+                                pickupCenterCode= pickupCenterCode,
+                                destinationCenterCode = destinationCenterCode,
+                                facilityType = "destination")
+                        } else if(facilityType.equals("destination")) {
+                            destinationAddressLiveData.postValue(_tRes)
+                            Log.d("getPlacementFacilityAddress", "destinationAddressLiveData")
+                        }
+                    } else {
+                        error.handle()
+                    }
+                }
+    }
 
 }
 
-private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating
+  private const val BidsUpdateDelay = 1L // Delay in fetching bids after creating/updating

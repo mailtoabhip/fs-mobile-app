@@ -97,11 +97,13 @@
   <color name="bid_hint">#A3AAC2</color>
   <color name="bid_under_review">#7C3AED</color>
   <color name="bid_under_review_bg">#F5F3FF</color>
+  <color name="delhivery_load_bg">#F5EFFE</color>
   <color name="grey_500">#666666</color>
   <color name="light_grey_bg">#F9F9FB</color>
 
   <color name="custom_blue">#5B80F7</color>
   <color name="light_red_bg">#FFF6F6</color>
+  <color name="placement_light_grey_bg">#F6F7F8</color>
   <color name="light_orange_color">#EA580C</color>
   <color name="placement_grey_bg">#F8F9FC</color>
   <color name="light_grey_v2">#646873</color>
@@ -116,7 +118,11 @@
   <color name="text_grey_v3">#505361</color>
   <color name="bg_light_grey">#F6F7F8</color>
   <color name="bg_light_grey_v1">#F4F4F4</color>
+  <color name="bg_light_grey_v2">#E3E3E5</color>
   <color name="text_grey_v4">#373737</color>
+  <color name="text_red_v1">#8E2720</color>
+  <color name="text_blue_v1">#4657B9</color>
+
 
   <color name="text_grey">#8F9198</color>
 
@@ -126,7 +132,18 @@
   <color name="whatsapp_green">#25D366</color>
   <color name="beige_border">#FDECCE</color>
   <color name="text_black_v1">#32353D</color>
+  <color name="text_black_v2">#121A31</color>
 
+
+<!-- Delayed Placement Card Colors -->
+<color name="badge_background">#F3F4F6</color>
+<color name="dot_color">#6B7280</color>
+<color name="icon_color">#374151</color>
+<color name="divider_color">#E5E7EB</color>
+<color name="button_outline_color">#D1D5DB</color>
+<color name="button_pressed_background">#F9FAFB</color>
+<color name="button_disabled_background">#F9FAFB</color>
+<color name="button_disabled_outline">#E5E7EB</color>
   <!-- Load type colors -->
   <color name="delhivery_load_bg">#F5EFFE</color>
   <color name="delhivery_load_color">#7C3AED</color>

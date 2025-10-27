@@ -13,6 +13,7 @@
         app:tabInlineLabel="true"
         app:tabPaddingStart="0dp"
         app:tabPaddingEnd="0dp"
+        app:tabIndicatorColor="@color/colorDelhiveryRed"
         app:tabIconTint="@drawable/selector_bottom_nav_colors"
         android:id="@+id/tabLayout"/>
     <com.delhivery.axle.ui.custom.DelhiverViewPager

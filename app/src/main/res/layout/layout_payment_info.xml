@@ -1,0 +1,146 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="transaction"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+
+        <variable
+            name="placementListingData"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/paymentInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_16dp"
+        android:visibility="@{transaction.isPlacementsPaymentInfoAvailable()}"
+        app:layout_constraintStart_toStartOf="@id/seperator4"
+        app:layout_constraintTop_toBottomOf="@id/seperator4"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/paymentInfoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/payment_info"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/extraKmIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@id/extraKmLabel"
+            app:layout_constraintEnd_toStartOf="@id/extraKm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/extraKm"
+            app:srcCompat="@{transaction.vehicleRateDrawable()}" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/extraHourIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@id/extraHourTypeLabel"
+            app:layout_constraintEnd_toStartOf="@id/extraHourTypeLabel"
+            app:layout_constraintTop_toTopOf="@id/extraHourType"
+            app:srcCompat="@{transaction.vehicleRateDrawable()}" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/extraDayIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="@id/extraDayTypeLabel"
+            app:layout_constraintEnd_toStartOf="@id/extraDayType"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/extraDayType"
+            app:srcCompat="@{transaction.vehicleRateDrawable()}" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/extraKm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@{transaction.placementsExtraKmRate()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="@{transaction.isPlacementsExtraKmRateAvailable()}"
+            app:layout_constraintStart_toEndOf="@+id/extraKmIcon"
+            app:layout_constraintTop_toBottomOf="@id/paymentInfoLabel"
+            tools:text="₹ 3000" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/extraKmLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/per_extra_km"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isPlacementsExtraKmRateAvailable()}"
+            app:layout_constraintStart_toStartOf="@id/extraKm"
+            app:layout_constraintTop_toBottomOf="@id/extraKm" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/extraHourType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@{transaction.placementsExtraHourRate()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="@{transaction.isPlacementsExtraHourRateAvailable()}"
+            app:layout_constraintStart_toStartOf="@id/extraHourTypeLabel"
+            app:layout_constraintTop_toBottomOf="@id/paymentInfoLabel"
+            tools:text="₹ 2000" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/extraHourTypeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_16dp"
+            android:text="@string/per_extra_hour"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isPlacementsExtraHourRateAvailable()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/extraHourType" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/extraDayType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:text="@{transaction.placementsExtraDayRate()}"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_16sp"
+            android:visibility="@{transaction.isPlacementsExtraDayRateAvailable()}"
+            app:layout_constraintStart_toEndOf="@+id/extraDayIcon"
+            app:layout_constraintTop_toBottomOf="@id/extraKmLabel"
+            tools:text="₹ 4000" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/extraDayTypeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/per_extra_day"
+            android:textColor="@color/color_hint"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="@{transaction.isPlacementsExtraDayRateAvailable()}"
+            app:layout_constraintStart_toStartOf="@id/extraDayType"
+            app:layout_constraintTop_toBottomOf="@id/extraDayType" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

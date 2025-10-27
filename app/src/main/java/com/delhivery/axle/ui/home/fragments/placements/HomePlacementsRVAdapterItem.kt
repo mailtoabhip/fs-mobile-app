@@ -11,17 +11,14 @@ import com.delhivery.axle.data.home.placements.HomePlacementsTypeItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsWarningItemData
 
 enum class HomePlacementsRVAdapterItemType(val typeId: Int) {
-    IntracityContracts(0),
-    IntracityAdhoc(1),
-    IntercityContracts(2),
-    IntercityAdhoc(3),
-    NonDelay(4),
-    Duration(5),
-    Header(6),
-    Filters(7),
-    Progress(8),
-    Warning(9),
-    Timeout(10);
+   PlacementItem(1),
+    NonDelay(2),
+    Duration(3),
+    Header(4),
+    Filters(5),
+    Progress(6),
+    Warning(7),
+    Timeout(8);
 
     companion object {
         /**
@@ -41,8 +38,11 @@ enum class LoadTypes {
     ftlAdhoc,
     ftlRegular,
     intracityAdhoc,
-    intracityRegular
+    intracityRegular,
+    orionFixed,
+    orionSpot
 }
+
 /**
  * Base Home Placements type adapter item
  */
@@ -56,18 +56,8 @@ abstract class BaseHomePlacementsRVAdapterItem<D : BaseKeyTypeModel<String>>(
 /**
  * Load request item
  */
-class HomePlacementsIntracityContractsRequestItem(data: HomePlacementsItemData) :
-    BaseHomePlacementsRVAdapterItem<HomePlacementsItemData>(HomePlacementsRVAdapterItemType.IntracityContracts, data)
-
-class HomePlacementsIntercityContractsRequestItem(data: HomePlacementsItemData) :
-    BaseHomePlacementsRVAdapterItem<HomePlacementsItemData>(HomePlacementsRVAdapterItemType.IntercityContracts, data)
-
-class HomePlacementsIntracityAdhocRequestItem(data: HomePlacementsItemData) :
-    BaseHomePlacementsRVAdapterItem<HomePlacementsItemData>(HomePlacementsRVAdapterItemType.IntracityAdhoc, data)
-
-class HomePlacementsIntercityAdhocRequestItem(data: HomePlacementsItemData) :
-    BaseHomePlacementsRVAdapterItem<HomePlacementsItemData>(HomePlacementsRVAdapterItemType.IntercityAdhoc, data)
-
+class HomeVehiclePlacementsRequestItem(data: HomePlacementsItemData) :
+    BaseHomePlacementsRVAdapterItem<HomePlacementsItemData>(HomePlacementsRVAdapterItemType.PlacementItem, data)
 class HomePlacementsDurationItem(
     data: HomePlacementsDurationItemData = HomePlacementsDurationItemData()
 ) : BaseHomePlacementsRVAdapterItem<HomePlacementsDurationItemData>(HomePlacementsRVAdapterItemType.Duration, data)

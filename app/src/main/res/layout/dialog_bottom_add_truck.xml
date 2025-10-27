@@ -1,0 +1,424 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_dialog"
+        android:orientation="vertical">
+
+        <!-- Add Truck Button -->
+        <!-- Progress Bar -->
+        <RelativeLayout
+            android:id="@+id/rl_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha=".7"
+            android:background="@color/light_grey"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:elevation="2dp"
+            android:clickable="true">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:elevation="4dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_14dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/size_12dp"
+                app:srcCompat="@drawable/ic_close_black" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/select_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="6dp"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:text="Add New Truck"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_4dp"
+            android:layout_below="@+id/rl_header"
+            app:srcCompat="@drawable/seperator_line" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="600dp"
+            android:layout_below="@+id/rl_header">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Vehicle Number Field -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_vehicle_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vehicle Number*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edit_truck_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@drawable/bg_login_edit"
+                    android:hint="Enter vehicle number"
+                    android:inputType="textCapCharacters"
+                    android:padding="@dimen/size_12dp"
+                    android:textSize="@dimen/text_14sp" />
+
+                <!-- Error Messages -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/number_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Number error"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+                <!-- Body Type Selection -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_body_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Body Type*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <android.widget.RadioGroup
+                    android:id="@+id/body_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/btn_radio_open"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Open"
+                        android:checked="true"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/btn_radio_container"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Container"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/btn_radio_trailer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Trailer"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                </android.widget.RadioGroup>
+
+                <!-- Truck Size Field -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_truck_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Truck Size*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/edit_truck_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@drawable/bg_login_edit"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/size_12dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_truck_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:hint="Select truck size"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/size_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Size error"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+                <!-- Truck Capacity Field -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_truck_capacity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Truck Capacity*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/edit_truck_capacity"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@drawable/bg_login_edit"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/size_12dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_truck_capacity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:hint="Select truck capacity"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/capacity_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    tools:text="Capacity error"
+                    android:textSize="@dimen/text_12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+                <!-- Current City Field -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_current_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Current City*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/edit_current_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@drawable/bg_login_edit"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/size_12dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_current_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_search_black"
+                        android:drawablePadding="@dimen/size_4dp"
+                        android:gravity="center_vertical"
+                        android:hint="Select current city"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/origin_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Current city error"
+                    tools:visibility="visible"
+                    android:visibility="gone" />
+
+                <!-- Unloading Destination Field -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_unloading_destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Unloading Destination*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/edit_unloading_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@drawable/bg_login_edit"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/size_12dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_unloading_destination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_search_black"
+                        android:drawablePadding="@dimen/size_4dp"
+                        android:gravity="center_vertical"
+                        android:hint="Select unloading destination"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/destination_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:textColor="@color/destructive_red"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="Destination city error"
+                    tools:visibility="visible"
+                    android:visibility="gone" />
+
+                <!-- Ownership Selection -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_ownership"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Ownership*"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <android.widget.RadioGroup
+                    android:id="@+id/ownership_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/btn_radio_own_truck"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:layout_weight="1"
+                        android:text="Owned Truck"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/btn_radio_market_truck"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Market Truck"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp" />
+
+                </android.widget.RadioGroup>
+
+                <!-- Price Field -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/label_price_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="Price(optional)"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edit_price_add_truck"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@drawable/bg_login_edit"
+                    android:hint="Enter price"
+                    android:inputType="numberDecimal"
+                    android:padding="@dimen/size_12dp"
+                    android:textSize="@dimen/text_14sp" />
+
+                <!-- Error Messages -->
+
+                <!-- Add Truck Button -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_add_truck"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_42dp"
+                    android:layout_marginTop="@dimen/size_24dp"
+                    android:background="@drawable/bg_all_round_corner_solid_black"
+                    android:text="Add Truck"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+
+
+    </RelativeLayout>
+
+</layout>

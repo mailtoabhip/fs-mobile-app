@@ -62,6 +62,9 @@ class TruckViewModel @Inject constructor(
     var spSecondaryId:String?=null
     var spSecondaryName:String?=null
 
+    //var for maintaining the api vehicle update response<boolean> in placements details activity from add truck dialog
+    var isVehicleUpdated : Boolean = false
+
     fun addNewTruck(sourcedAs: String){
         if(truckCity!!.orionDbCityCode!=null && truckDestination!!.orionDbCityCode!=null ){
             compositeDisposable += inventoryRepository.getOriginDestinationCluster(truckCity!!.orionDbCityCode?:"", truckDestination!!.orionDbCityCode?:"")

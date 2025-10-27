@@ -293,7 +293,7 @@
                                 android:background="@drawable/checkbox_selection"
                                  />
 
-                            <RadioButton
+                            <androidx.appcompat.widget.AppCompatRadioButton
                                 android:id="@+id/omc_iocl_icon"
                                 android:layout_width="@dimen/size_64dp"
                                 android:layout_height="@dimen/size_48dp"

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="transaction"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+
+        <variable
+            name="placementListingData"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <!-- Used for intercity    -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/routeDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{transaction.isPlacementsIntercityVisibility()}"
+            tools:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/routeScheduleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/route_schedule"
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                tools:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvContracts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                android:visibility="visible"
+                tools:listitem="@layout/view_contracts_hub_item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/routeScheduleLabel" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- No more in use        -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/nonExpRouteDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nonExpRouteScheduleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/route_details"
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/nonExpHubIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/size_4dp"
+                app:layout_constraintBottom_toBottomOf="@id/nonExpTvState"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nonExpTvHubCity"
+                app:srcCompat="@drawable/ic_hub_route" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nonExpTvHubCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintStart_toEndOf="@+id/nonExpHubIcon"
+                app:layout_constraintTop_toBottomOf="@+id/nonExpRouteScheduleLabel"
+                tools:text="HUL Pvt. Ltd." />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nonExpTvCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/nonExpHubIcon"
+                app:layout_constraintStart_toStartOf="@id/nonExpTvHubCity"
+                app:layout_constraintTop_toBottomOf="@+id/nonExpTvHubCity"
+                tools:text="Haryana" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nonExpTvState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_hint"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/nonExpTvCity"
+                app:layout_constraintTop_toBottomOf="@+id/nonExpTvHubCity"
+                tools:text="Haryana" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/nonExpLineSep1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="@+id/nonExpHubIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nonExpTvState"
+                app:srcCompat="@drawable/ic_line_double_arrow" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clNonExpTimeInterval1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_all_round_corner_light_blue"
+                android:paddingStart="@dimen/size_12dp"
+                android:paddingTop="@dimen/size_6dp"
+                android:paddingEnd="@dimen/size_12dp"
+                android:paddingBottom="@dimen/size_6dp"
+                app:layout_constraintBottom_toBottomOf="@id/nonExpLineSep1"
+                app:layout_constraintStart_toStartOf="@+id/nonExpTvHubCity"
+                app:layout_constraintTop_toTopOf="@id/nonExpLineSep1">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/nonExpTimeInterval1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="30 Trips for 4 weeks" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/nonExpHubIcon2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/size_4dp"
+                app:layout_constraintBottom_toBottomOf="@id/nonExpTvState2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nonExpTvHubCity2"
+                app:srcCompat="@drawable/ic_hub_route" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nonExpTvHubCity2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintStart_toEndOf="@+id/nonExpHubIcon2"
+                app:layout_constraintTop_toBottomOf="@+id/nonExpLineSep1"
+                tools:text="Gurgaon_Tauru_GW" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nonExpTvState2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_hint"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/nonExpHubIcon2"
+                app:layout_constraintStart_toStartOf="@id/nonExpTvHubCity2"
+                app:layout_constraintTop_toBottomOf="@+id/nonExpTvHubCity2"
+                tools:text="Haryana" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Used for intracity    -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/intraCityRouteDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{transaction.isPlacementsIntracityVisibility()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityRouteScheduleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reporting_center"
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/fixedIntracityTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:background="@drawable/bg_all_round_corner_red_solid_selector"
+                android:drawableStart="@drawable/ic_place"
+                android:textColor="@color/background_dark_grey"
+                app:drawableTint="@color/background_dark_grey"
+                android:drawablePadding="@dimen/size_8dp"
+                android:paddingStart="@dimen/size_10dp"
+                android:paddingTop="@dimen/size_6dp"
+                android:paddingEnd="@dimen/size_12dp"
+                android:paddingBottom="@dimen/size_6dp"
+                android:text="@string/action_fixed_intracity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/intraCityHubIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/size_4dp"
+                app:layout_constraintBottom_toBottomOf="@id/intraCityTvState"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/intraCityTvHubCity"
+                app:srcCompat="@drawable/ic_hub_route" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityTvHubCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintStart_toEndOf="@+id/intraCityHubIcon"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityRouteScheduleLabel"
+                tools:text="HUL Pvt. Ltd." />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityTvCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_hint"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/intraCityHubIcon"
+                app:layout_constraintStart_toStartOf="@id/intraCityTvHubCity"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityTvHubCity"
+                tools:text="Hisag " />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityTvState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/intraCityHubIcon"
+                app:layout_constraintStart_toStartOf="@id/intraCityTvCity"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityTvCity"
+                tools:text="Haryana" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityTvMapView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_navigate"
+                android:paddingTop="@dimen/size_2dp"
+                android:paddingEnd="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_2dp"
+                android:text="@string/view_on_map"
+                android:textColor="@color/dark_blue"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/intraCityHubIcon"
+                app:layout_constraintStart_toStartOf="@id/intraCityTvCity"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityTvState"
+                tools:text="@string/view_on_map" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/intraCityReportingIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/size_4dp"
+                app:layout_constraintBottom_toBottomOf="@id/intraCityReportingTv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/intraCityReportingTime"
+                app:srcCompat="@drawable/ic_time" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityReportingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintStart_toEndOf="@+id/intraCityReportingIcon"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityTvMapView"
+                tools:text="10:30 AM" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityReportingTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reporting_time"
+                android:textColor="@color/color_hint"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintStart_toEndOf="@+id/intraCityReportingIcon"
+                app:layout_constraintStart_toStartOf="@id/intraCityReportingTime"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityReportingTime"
+                tools:text="Reporting Time" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- No more in use       -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/intraCityAdHocRouteDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/intraCityAdHocRouteScheduleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reporting_center"
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/flexibleIntracityTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:background="@drawable/bg_all_round_corner_red_solid_selector"
+                android:drawableStart="@drawable/ic_multiple_location"
+                android:drawablePadding="8dp"
+                android:paddingStart="@dimen/size_10dp"
+                android:paddingTop="@dimen/size_6dp"
+                android:paddingEnd="@dimen/size_12dp"
+                android:paddingBottom="@dimen/size_6dp"
+                android:text="@string/action_flexible_intracity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvIntracityFlexibleContracts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/view_intracity_flexible_reporting_centers"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/intraCityAdHocRouteScheduleLabel" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

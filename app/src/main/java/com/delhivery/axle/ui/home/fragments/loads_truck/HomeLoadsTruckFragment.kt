@@ -213,6 +213,7 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                 val fragmentType = (action as NavigateHomeFragmentAction).fragmentType
                 binding.viewpager.setCurrentItem(fragmentType.position, true)
             }
+            else->{}
         }
     }
 

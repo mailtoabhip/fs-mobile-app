@@ -78,4 +78,7 @@
     <dimen name="size_5dp">5dp</dimen>
 
 
+<!-- Delayed Placement Card Dimensions -->
+<dimen name="text_size_12sp">12sp</dimen>
+<dimen name="text_size_14sp">14sp</dimen>
 </resources>

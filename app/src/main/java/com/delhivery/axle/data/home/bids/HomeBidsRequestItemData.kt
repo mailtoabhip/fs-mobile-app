@@ -12,7 +12,11 @@ import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.data.BaseKeyTypeModel
+import com.delhivery.axle.data.CostDataObject
 import com.delhivery.axle.data.IndentHaltCenters
+import com.delhivery.axle.data.Misc
+import com.delhivery.axle.data.RouteInformation
+import com.delhivery.axle.data.VehicleModel
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
@@ -20,14 +24,17 @@ import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
 import com.delhivery.axle.data.bids.TransactionBidStatus.Rejected
 import com.delhivery.axle.ui.bids.BidType
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DateUtils.formatDate
 import com.delhivery.axle.utils.DrawableProviderUtils
+import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
@@ -123,14 +130,14 @@ data class HomeBidsRequestItemData(
   @SerializedName("vehicle_count_per_route") var vehicleCountPerRoute:Int? =  null,
   @SerializedName("operating_days") var operatingDays:Int? =  null,
   @SerializedName("slab_payout_details") var paymentSlabs:JsonObject? =  null,
-  @SerializedName("reporting_time") var reportingTime:String? =  null ,
-  @SerializedName("intracity_days") var intracityDays:String? =  null ,
-  @SerializedName("intracity_hours") var intracityHours:String? =  null ,
-  @SerializedName("intracity_kms") var intracityKms:String? =  null ,
-  @SerializedName("intracity_extra_km_rate") var intracityExtraKmRate:String? =  null ,
-  @SerializedName("intracity_extra_hour_rate") var intracityExtraHourRate:String? =  null ,
-  @SerializedName("intracity_extra_day_rate") var intracityExtraDayRate:String? =  null ,
-  @SerializedName("nep_required") var nepRequired:Boolean? =  false ,
+  @SerializedName("reporting_time") var reportingTime:String? =  null,
+  @SerializedName("intracity_days") var intracityDays:String? =  null,
+  @SerializedName("intracity_hours") var intracityHours:String? =  null,
+  @SerializedName("intracity_kms") var intracityKms:String? =  null,
+  @SerializedName("intracity_extra_km_rate") var intracityExtraKmRate:String? =  null,
+  @SerializedName("intracity_extra_hour_rate") var intracityExtraHourRate:String? =  null,
+  @SerializedName("intracity_extra_day_rate") var intracityExtraDayRate:String? =  null,
+  @SerializedName("nep_required") var nepRequired:Boolean? =  false,
   @SerializedName("origin_longitude")val longitude:String?,
   @SerializedName("origin_latitude")val latitude:String?,
   @SerializedName("demand_type")val demandType:String?,
@@ -151,6 +158,18 @@ data class HomeBidsRequestItemData(
   @SerializedName("message")var suggestedBidMessage: String? = null,
 
 
+  //Added New Placement Details API Response keys
+  @SerializedName("contract_id")val contractId:String?=null,
+  //transaction_id - already present above in this class
+  @SerializedName("contract_code")val contractCode:String?=null,
+  @SerializedName("vehicle_info")val vehicleInfo: VehicleModel?=null,
+  @SerializedName("route_info")val routeInfo: RouteInformation?=null,
+  @SerializedName("cost_data")val costData: CostDataObject?=null,
+  @SerializedName("misc")val misc: Misc?=null,
+
+  //for Placement details
+  var loadType: String?=null,
+  //
   var lowestBid: Double? = 0.0,
   var numBids: Int = 0,
   var transactionBid: TransactionBid? = null,
@@ -287,6 +306,22 @@ data class HomeBidsRequestItemData(
     return formattedTime?:"NA"
   }
 
+    fun getTimeOfContractsForPlacements(time: String): String {
+        val ist = TimeZone.getTimeZone("Asia/Kolkata")
+
+        val inputFormat = SimpleDateFormat("HH:mm:ss")
+        inputFormat.timeZone = ist
+
+        val outputFormat = SimpleDateFormat("hh:mm a")
+        outputFormat.timeZone = ist
+
+        val date = time.let { inputFormat.parse(it) }
+        val formattedTime = date?.let { outputFormat.format(it) }
+        return formattedTime?:"na"
+    }
+
+    fun placementsOnlyFormatReportingTime(time: String):String?= time.let { DateUtils.daysDiffWithDateTimeStr(it, "HH:mm") }
+
   /**
    * Returns formatted bid amount with commas but without decimal places
    * Example: ₹1,25,000
@@ -415,6 +450,30 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isMaterialTypeAvailable() = if (misc?.materialType.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isClientNameAvailable() = if (misc?.clientName.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isTruckNameAvailable() = if (vehicleInfo?.truckDisplayName.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+  fun isTruckTypeAvailable() = if (vehicleInfo?.truckType.isNotNullOrEmpty()) {
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
   fun nonDelLoadVisibility() = if (!demandType.equals(DemandType.Internal.type)) {
     View.VISIBLE
   } else {
@@ -471,7 +530,7 @@ data class HomeBidsRequestItemData(
   fun setDmtValue() = "${requestedCapacityMg.toInt()} MT"
 
 
-  fun setTruckTypeText() = capitalize(truckType!!) ?: ""
+  fun setTruckTypeText() = capitalize(truckType) ?: ""
 
   fun setUnAllocatedText()= if (unAllocatedVolume!=null && unAllocatedVolume != 0.0 ) "Unallocated Load: ${unAllocatedVolume.toInt()} MT" else ""
 
@@ -616,6 +675,70 @@ data class HomeBidsRequestItemData(
       stopBuilder.append(originCityName())
         .append(" -> ")
       stopBuilder.append(destinationCityName())
+      stopBuilder.toString()
+    }
+  }
+
+  fun isIntracity() : Boolean{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityAdhoc.name), ignoreCase = true) == true
+      || loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true){
+      true
+    } else {
+      false
+    }
+  }
+
+  fun isIntracityVisibility() : Int{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityAdhoc.name), ignoreCase = true) == true
+      || loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true){
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
+  fun isPlacementsIntracityVisibility() : Int{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityAdhoc.name), ignoreCase = true) == true
+      || loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true){
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
+  fun isPlacementsIntercityVisibility() : Int{
+    return if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.ftlRegular.name), ignoreCase = true) == true){
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
+
+  fun isIntracityRegular() : Boolean{
+    return loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.intracityRegular.name), ignoreCase = true) == true
+  }
+
+  /**
+   * Placement route details
+   */
+//  fun getOriginAndDestinationName(): String {
+//    val stopBuilder = StringBuilder()
+//    stopBuilder.append(capitalize(routeInfo?.origin?.centerName)).append(" -> ")
+//    stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
+//    return stopBuilder.toString()
+//  }
+
+  /**
+   * Placement route details
+   */
+  fun getOriginAndDestinationName(): String {
+    return if(isIntracity()){
+      capitalize(routeInfo?.origin?.centerName) ?: ""
+    }else{
+      val stopBuilder = StringBuilder()
+      stopBuilder.append(capitalize(routeInfo?.origin?.centerName)).append(" -> ")
+      stopBuilder.append(capitalize(routeInfo?.destination?.centerName))
       stopBuilder.toString()
     }
   }
@@ -923,12 +1046,18 @@ data class HomeBidsRequestItemData(
 
   fun truckTypeWithMT()= truckSpecification?.let { it.truckDispName + "(" + StringUtils.formatAmount(requestedCapacityMg) + " MT)"}
 
+  //fetch truck name
+  fun getTruckName() = vehicleInfo?.truckDisplayName?:""
+
+  //fetch truck type
+  fun getFormattedTruckType() = capitalize(vehicleInfo?.truckType?:"")+ " Truck"
+
   fun originCentreName()= StringUtils.capitalize(originCenterName)?:" "
   fun additionalKMsRates()= "${intracityExtraKmRate()} per extra KM | ${intracityExtraHourRate()} per extra hour"
 
   fun reportingCenters(): String{
     val reportingCenters = StringBuilder()
-       reportingCenters.append(origin)
+    reportingCenters.append(origin)
     if(secondaryReportingCenters?.isNotEmpty() == true){
       reportingCenters.append(", ")
       reportingCenters.append(secondaryReportingCenters[0].originCenterName)
@@ -1709,6 +1838,14 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun isFtlRegularVisibility() = if(loadType?.equals(LoadTypeUtils.getLoadType(LoadTypes.ftlRegular.name), ignoreCase = true) == true){
+    View.VISIBLE
+  } else {
+    View.GONE
+  }
+
+
+
   //use this function to identify the bid type
   fun isItContract() = requestType == RequestType.Contract.type
 
@@ -1803,6 +1940,32 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+  fun getDaysPerMonth() =
+    if(costData?.dpm?.toInt() == 1){
+        "${costData.dpm.toInt()} day"
+    }else{
+      "${costData?.dpm?.toInt()} days"
+    }
+
+
+  fun isPerMonthVisible() = if (costData?.dpm ==null || costData.dpm.toInt() == 0) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun isNoPermitVisible() = if (costData?.nep == null) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
+  fun isHoursPerDayVisible() = if (costData?.hpd ==null || costData.hpd.toInt() == 0) {
+    View.GONE
+  } else {
+    View.VISIBLE
+  }
+
   fun isLHContinousContract() = if (continuousConnection == true) {
     View.VISIBLE
   } else {
@@ -1833,6 +1996,8 @@ data class HomeBidsRequestItemData(
     View.GONE
   }
 
+
+
   fun totalVehicleCountOperationDays():String=
     if(contractType==ContractType.INTRACITY.type){
       vehicleOperatingDaysPerMonth()
@@ -1847,10 +2012,16 @@ data class HomeBidsRequestItemData(
     }
 
   fun vehicleOperatingDays():String=if(isItIntraCityContract()){"~"+intracityKms+ " Kms"} else "$operatingDays days a week"
+
   fun vehicleOperatingDaysLabel():String=if(isItIntraCityContract()){"Per Month"} else "Operating Days"
+
+
+  fun placementsVehicleOperatingDaysLabel():String=if(isIntracity()){"Per Month"} else "Operating Days"
 
   fun vehicleOperatingDaysPerMonth()= intracityDays?.toString()+" days"
   fun vehicleOperatingDaysPerMonthLabel():String=if(isItIntraCityContract()){"Per Month"} else "Tentative Total vehicles"
+
+  fun placementsVehicleOperatingHrsPerDays()="${costData?.hpd?.toInt()} h"
 
   fun vehicleOperatingHrsPerDays()="$intracityHours h"
 
@@ -1864,6 +2035,62 @@ data class HomeBidsRequestItemData(
   fun intracityExtraKmRate()="₹ "+ intracityExtraKmRate
   fun intracityExtraHourRate()="₹ "+ intracityExtraHourRate
   fun intracityExtraDayRate()="₹ "+ intracityExtraDayRate
+
+  /**
+   * rpk: Rate per extra kilometer
+   * rpd: Rate per extra day
+   * rph: Rate per extra hour
+   */
+  //placements flow specific function
+  fun isPlacementsExtraKmRateAvailable() = if(costData?.rpk == null || costData.rpk.toInt() == 0)
+    View.GONE
+  else
+    View.VISIBLE
+
+  fun isPlacementsExtraHourRateAvailable() = if(costData?.rph == null || costData.rph.toInt() == 0)
+    View.GONE
+  else
+    View.VISIBLE
+
+  fun isPlacementsExtraDayRateAvailable() = if(costData?.rpd == null || costData.rpd.toInt() == 0)
+    View.GONE
+  else
+    View.VISIBLE
+
+  fun isPlacementsPaymentInfoAvailable() : Int{
+    return if((costData?.rpk == null || costData.rpk.toInt() == 0)
+      && (costData?.rph == null || costData.rph.toInt() == 0)
+      && (costData?.rpd == null || costData.rpd.toInt() == 0))
+      View.GONE
+    else
+      View.VISIBLE
+  }
+
+
+  fun placementsExtraKmRate() : String{
+    return if(costData?.rpk != null){
+      "₹ "+ costData.rpk.toInt()
+    }else{
+      ""
+    }
+  }
+
+  fun placementsExtraHourRate() : String{
+    return if(costData?.rph != null){
+      "₹ "+ costData.rph.toInt()
+    }else{
+      ""
+    }
+  }
+
+  fun placementsExtraDayRate() : String{
+    return if(costData?.rpd != null){
+      "₹ "+ costData.rpd.toInt()
+    }else{
+      ""
+    }
+  }
+
 
   fun intracityContractType()=if(contractType==ContractType.INTRACITY.type && isFlexible==false){"Fixed"}else if(contractType==ContractType.INTRACITY.type && isFlexible==true){"Flexible"} else{""}
 
@@ -1904,12 +2131,22 @@ data class HomeBidsRequestItemData(
   } else {
     View.VISIBLE
   }
+
   fun vehiclePermitRequiredText():String=
    if(nepRequired!=null) {
      if (nepRequired!!) "Required " else "Not required "
    }else{
      ""
    }
+
+  fun placementVehiclePermitRequiredText():String=
+    if(costData != null) {
+      if (costData.nep) "Not required" else "Required"
+    }else{
+      ""
+    }
+
+
   fun totalVehicleCountOnList():String=
     if(vehicleCountCCLane!=null&& vehicleCountPerRoute!=null){
       "(X "+(vehicleCountCCLane!! * vehicleCountPerRoute!!).toString()+" Veh.)"

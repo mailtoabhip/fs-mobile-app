@@ -1,76 +1,43 @@
 package com.delhivery.axle.ui.home.fragments.placements
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
-import com.delhivery.axle.data.home.placements.HomePlacementsFilterDelay
-import com.delhivery.axle.data.home.placements.HomePlacementsFilterExpected
-import com.delhivery.axle.data.home.placements.HomePlacementsFilterMissing
-import com.delhivery.axle.data.home.placements.HomePlacementsItemData
-import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
-import com.delhivery.axle.databinding.DialogDurationFiltersBinding
-import com.delhivery.axle.databinding.FragmentHomePlacementsBinding
+import com.delhivery.axle.databinding.FragmentHomePlacementsV3Binding
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.placementdetails.FilterDurationAdapter
-import com.delhivery.axle.ui.placementdetails.FilterItemOnClickListener
-import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
-import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DELAYED_TAB
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DETAIL_MISSING
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
+import com.delhivery.axle.ui.home.fragments.HomePlacementsFragmentType
+import com.delhivery.axle.ui.home.fragments.HomePlacementsFragmentsAdapter
+import com.delhivery.axle.ui.home.fragments.UpdatePlacementBadgeAction
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_TAB
-import com.delhivery.axle.utils.EVENT_HOME_TOTAL_PLACEMENT
-import com.delhivery.axle.utils.PROPERTY_DELAYED_TOTAL_COUNT
-import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
-import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
-import com.delhivery.axle.utils.PROPERTY_EXPECTED_TOTAL_COUNT
-import com.delhivery.axle.utils.PROPERTY_FTL_ADHOC_COUNT
-import com.delhivery.axle.utils.PROPERTY_FTL_CONTRACT_COUNT
-import com.delhivery.axle.utils.PROPERTY_INTRACITY_ADHOC_COUNT
-import com.delhivery.axle.utils.PROPERTY_INTRACITY_CONTRACT_COUNT
-import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
-import com.delhivery.axle.utils.PROPERTY_MISSING_TOTAL_COUNT
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 
 /**
- * All bids screen on home
+ * All placements screen on home with view pager for Delayed and Expected tabs
  */
-class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, HomePlacementsViewModel>(),
-    HomePlacementsRVAdapterInterface, TitleProvider, FilterItemOnClickListener
-{
+class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding, HomePlacementsViewModel>(),
+    TitleProvider {
 
     private var _title: String = "Placements"
     @Inject lateinit var userPrefs: UserPrefs
-    private var placementType: String = ""
-    private var filterItem = ""
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
-    private var currentItems = mutableListOf<BaseHomePlacementsRVAdapterItem<*>>()
+
     override val title: CharSequence
         get() = _title
 
@@ -82,16 +49,15 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
     companion object {
         /* singleton instance */
         val _instance: HomePlacementsFragment by lazy { HomePlacementsFragment() }
+        private const val TAG = "HomePlacementsFragment"
     }
 
     override fun getViewModelClass() = HomePlacementsViewModel::class.java
 
-    override fun layoutId() = R.layout.fragment_home_placements
+    override fun layoutId() = R.layout.fragment_home_placements_v3
 
-     /* RV adapter */
-     private val adapter: HomePlacementsRVAdapter by lazy {
-         HomePlacementsRVAdapter(this)
-      }
+    /* home fragments pager adapter */
+    private lateinit var pagerAdapter: HomePlacementsFragmentsAdapter
 
     override fun onViewCreated(
         view: View,
@@ -100,279 +66,138 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsBinding, H
         super.onViewCreated(view, savedInstanceState)
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsFragment_SetupTime")
         fragmentSetupTrace?.start()
-        placementType = PlacementTypes.Delayed.name
 
-        binding.refreshLayout.setOnRefreshListener {
-            binding.refreshLayout.isRefreshing = false
-            refreshData()
+        pagerAdapter = HomePlacementsFragmentsAdapter(childFragmentManager)
+
+        binding.viewPager.apply {
+            offscreenPageLimit = HomePlacementsFragmentType.count()
+            adapter = pagerAdapter
+        }
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+
+        // Setup tab custom views with counts
+        val tab1 = binding.tabLayout.getTabAt(0)
+        val tab2 = binding.tabLayout.getTabAt(1)
+
+        tab1?.setCustomView(R.layout.badge_tab)?.setText("Delayed")
+        tab2?.setCustomView(R.layout.badge_tab)?.setText("Expected")
+
+        // Set initial selected tab styling
+        if (tab1?.isSelected == true) {
+            tab1.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+            }
+            tab1.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+            }
         }
 
-        /* setup recycler view */
-        binding.rvLoads.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = this@HomePlacementsFragment.adapter
-       //     addOnScrollListener(HomeContractsRVScrollListener(binding.editStickySearch))
-        //    addOnScrollListener(PaginationInterface())
-        }
-        binding.rvLoads.itemAnimator = null;
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(context!!, R.color.colorDelhiveryRed))
+                }
+                tab?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+                }
+            }
 
-        viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
-            isLoadingData = it ?: false
-        })
-        viewModel.missingDataLiveData.reobserve(viewLifecycleOwner, Observer {
-            it?.let {
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO,
-                                PROPERTY_FTL_ADHOC_COUNT,
-                                PROPERTY_FTL_CONTRACT_COUNT,
-                                PROPERTY_INTRACITY_ADHOC_COUNT,
-                                PROPERTY_INTRACITY_CONTRACT_COUNT,
-                                PROPERTY_MISSING_TOTAL_COUNT
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:"",
-                                it.first.first.toString(),
-                                it.first.second.toString(),
-                                it.first.third.toString(),
-                                it.first.fourth.toString(),
-                                it.second.toString()
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(context!!, R.color.color_hint))
+                }
+                tab?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
+                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_hint))
+                }
+            }
 
-                        )
-                )
+            override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
-        viewModel.totalPlacementLiveData.reobserve(viewLifecycleOwner, Observer {
-            it?.let {
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_TOTAL_PLACEMENT,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO,
-                                PROPERTY_DELAYED_TOTAL_COUNT,
-                                PROPERTY_MISSING_TOTAL_COUNT,
-                                PROPERTY_EXPECTED_TOTAL_COUNT
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:"",
-                               it.first.toString(),
-                                it.second.toString(),
-                                it.third.toString()
 
-                        )
-                )
+        // Observe placement counts and update tab counts
+        Log.d(TAG, "Setting up observer for totalPlacementLiveData")
+        viewModel.totalPlacementLiveData.observe(viewLifecycleOwner, Observer { placementData ->
+            Log.d(TAG, "Observer triggered with data: $placementData")
+            placementData?.let { (delayedCount, _, expectedCount) ->
+                Log.d(TAG, "Updating tab counts - Delayed: $delayedCount, Expected: $expectedCount")
+                updateTabCounts(delayedCount, expectedCount)
             }
         })
-        viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
-            it?.let { _items -> adapter.operation(_items) }
-        })
-        viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
-            it?.let { _items -> adapter.operation(_items) }
-        })
 
-
-        refreshData()
+        // Trigger data fetch to get initial counts
+        Log.d(TAG, "Triggering initial data fetch")
+        viewModel.fetchPlacementLoads("Initial")
     }
 
     override fun onResume() {
         super.onResume()
-
-        if (REFRESH_ON_BACK_PLACEMENT) {
-            refreshData()
-            REFRESH_ON_BACK_PLACEMENT = false
-        }
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
             isFirstResume = false
         }
-    }
-    private fun refreshData() {
-        adapter.resetStaticData()
-       viewModel.fetchPlacementLoads(placementType)
-    }
 
-    override fun handleAction(actionId: String, item: BaseHomePlacementsRVAdapterItem<*>) {
-        when (actionId) {
-            HomePlacementRequested_ViewDetails -> {
-                val data = item.data as HomePlacementsItemData
-                val missingDetails = data.vehicleNumber==null || data.driverName==null || data.driverPhone==null
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO,
-                                PROPERTY_DEMAND_TYPE,
-                                PROPERTY_EXPECTED_TIME,
-                                PROPERTY_MISSING_FLAG
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:"",
-                                data.loadType?:"",
-                                data.reportingTime?:"",
-                                missingDetails.toString()
-                        )
-                )
-                context?.let {
-                    userPrefs.setPreviousScreen(this.javaClass.name)
-                    startActivity(placementDetailsIntent(data, it))
-                }
-            }
-            HomePlacementsFilterDelay ->{
-                placementType = PlacementTypes.Delayed.name
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_PLACEMENT_DELAYED_TAB,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:""
-                        )
-                )
-                refreshData()
-            }
-            HomePlacementsFilterExpected ->{
-
-                placementType = PlacementTypes.Expected.name
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_PLACEMENT_EXPECTED_TAB,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:""
-                        )
-                )
-                refreshData()
-            }
-            HomePlacementsFilterMissing ->{
-                placementType = PlacementTypes.MissingDetails.name
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_PLACEMENT_DETAIL_MISSING,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:""
-                        )
-                )
-                refreshData()
-            }
-            HomePlacementsTimeoutItemAction ->{
-                refreshData()
-            }
-        }
-    }
-
-    override fun handleAction(
-        actionId: String,
-        item: BaseHomePlacementsRVAdapterItem<*>,
-        position: Int
-    ) {
-        TODO("Not yet implemented")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_call, menu)
     }
+
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         // Hide the menu item
         menu.findItem(R.id.nav_call).isVisible = true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+/*  override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_filter -> {
                 analyticsUtil.moEngageTrackEvent(
-                        EVENT_HOME_PLACEMENT_FILTER,
-                        mutableListOf(
-                                PROPERTY_USER_ID,
-                                PROPERTY_PHONE_NO
-                        ),
-                        mutableListOf(
-                                userPrefs.userId(),
-                                userPrefs.phoneNumber?:""
-                        )
+                    EVENT_HOME_PLACEMENT_FILTER,
+                    mutableListOf(
+                        PROPERTY_USER_ID,
+                        PROPERTY_PHONE_NO
+                    ),
+                    mutableListOf(
+                        userPrefs.userId(),
+                        userPrefs.phoneNumber ?: ""
+                    )
                 )
-                showDurationFilter()
+                // Filter functionality can be implemented in child fragments if needed
                 true
             }
             else -> {
                 super.onOptionsItemSelected(item)
             }
         }
-    }
+    }*/
 
-    private fun scrollToDuration() {
+    /**
+     * Update tab counts for Delayed and Expected tabs
+     */
+    fun updateTabCounts(delayedCount: Int, expectedCount: Int) {
         try {
-            val position  = adapter.itemsList().indexOfFirst { it.data.key()== filterItem+" hrs"
-            }
-            val smoothScroller: LinearSmoothScroller = object : LinearSmoothScroller(context) {
-                override fun getVerticalSnapPreference(): Int {
-                    return SNAP_TO_START
-                }
-            }
+            Log.d(TAG, "updateTabCounts called with Delayed: $delayedCount, Expected: $expectedCount")
+            
+            // Update bottom navigation badge for placement icon
+            action(UpdatePlacementBadgeAction(delayedCount))
+            // Update Delayed tab count
+            binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
+                if (delayedCount > 0) " ($delayedCount)" else ""
 
-            smoothScroller.targetPosition = position
-            binding.rvLoads.layoutManager?.startSmoothScroll(smoothScroller)
-
-        }catch (e:Exception){
-            Log.i("filter", "no bucket found")
+            // Update Expected tab count
+            binding.tabLayout.getTabAt(1)?.customView?.findViewById<TextView>(R.id.tvCount)?.text =
+                if (expectedCount > 0) " ($expectedCount)" else ""
+            
+            Log.d(TAG, "Tab counts updated successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating tab counts", e)
         }
-
-    }
-
-    private fun showDurationFilter() {
-        val dialog = Dialog(requireContext())
-        val bindingDialog= DialogDurationFiltersBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialog.root)
-        val dataItemList = ArrayList<Pair<String,Boolean>>()
-        for (item in resources.getStringArray(R.array.array_duration).asList()){
-            dataItemList.add(Pair(item,false))
-        }
-        val durationItemAdapter = FilterDurationAdapter(requireContext(),dataItemList, this@HomePlacementsFragment)
-        bindingDialog.rvTime.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = durationItemAdapter
-        }
-
-        bindingDialog.cancel.setOnClickListener{
-            dialog.dismiss()
-        }
-
-        bindingDialog.btnSubmit.setOnClickListener{
-            scrollToDuration()
-            dialog.dismiss()
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
-    override fun handleItemClick(item: Pair<String, Boolean?>) {
-        filterItem = item.first.split(" ")[0]
     }
 }

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel"
+        />
+    <variable
+        name="activity"
+        type="com.delhivery.axle.ui.contractDetails.ContractDetailsActivity"
+        />
+
+    <variable
+        name="transaction"
+        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+        />
+
+    <variable
+        name="refreshing"
+        type="Boolean"
+        />
+
+    <variable
+        name="error"
+        type="Boolean"
+        />
+    <import type="android.view.View" />
+  </data>
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:animateLayoutChanges="true"
+      android:layout_marginBottom="@dimen/size_12dp"
+      android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        bind:shadow="@{ @dimen/size_4dp }"
+        android:background="@android:color/white"
+        >
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/toolbarEndText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:gravity="center"
+            android:textColor="#935F07"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_12sp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:paddingTop="@dimen/size_4dp"
+            android:paddingBottom="@dimen/size_4dp"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingEnd="@dimen/size_8dp" />
+    </androidx.appcompat.widget.Toolbar>
+
+  <include
+      android:id="@+id/container_error"
+      layout="@layout/view_warning_item"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center_vertical"
+      android:visibility="@{error ? View.VISIBLE : View.GONE }"
+      tools:visibility="gone"
+      />
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:id="@+id/refresh_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:visibility="@{!error ? View.VISIBLE : View.GONE }"
+      tools:visibility="visible">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+      <androidx.core.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="1.0"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintVertical_bias="1.0"
+          >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:id="@+id/mainCl"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:paddingBottom="@dimen/size_16dp">
+
+          <include
+              android:visibility="visible"
+              android:id="@+id/card_input"
+              layout="@layout/card_new_placement_bid_input"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              tools:visibility="visible" />
+
+          <include
+              layout="@layout/view_placements_contracts_route_details"
+              android:id="@+id/routeDetails"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/size_16dp"
+              android:layout_marginLeft="@dimen/size_16dp"
+              android:layout_marginRight="@dimen/size_16dp"
+              android:layout_marginTop="@dimen/size_16dp"
+              android:visibility="visible"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/view_margin_route"
+              tools:visibility="visible"
+              />
+
+          <View
+              android:id="@+id/view_margin_route"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/size_10dp"
+              android:layout_marginTop="@dimen/size_16dp"
+              android:background="@color/transparent_white"
+              android:visibility="gone"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/card_input"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/seperator2"
+              android:layout_width="match_parent"
+              android:layout_height="5dp"
+              android:layout_margin="@dimen/size_16dp"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              android:visibility="@{transaction.routeVehicleMarginVisibility()}"
+              app:layout_constraintTop_toBottomOf="@+id/routeDetails"
+              app:srcCompat="@drawable/dotted"
+              />
+
+            <include
+                android:id="@+id/vehicleDetails"
+                layout="@layout/layout_vehicle_requirements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_margin="@dimen/size_16dp"
+                app:layout_constraintStart_toStartOf="@id/routeDetails"
+                app:layout_constraintTop_toBottomOf="@id/routeDetails"
+                tools:visibility="visible" />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/seperator3"
+              android:layout_width="match_parent"
+              android:layout_height="5dp"
+              android:layout_margin="@dimen/size_16dp"
+              android:visibility="@{transaction.isPlacementsPaymentInfoAvailable()}"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/vehicleDetails"
+              app:srcCompat="@drawable/dotted"
+              />
+
+            <include
+                android:id="@+id/paymentInfo"
+                layout="@layout/layout_payment_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_margin="@dimen/size_16dp"
+                app:layout_constraintStart_toStartOf="@id/seperator3"
+                app:layout_constraintTop_toBottomOf="@id/seperator3"
+                tools:visibility="visible"/>
+
+          <View
+              android:id="@+id/view_margin_without_result"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/size_10dp"
+              android:layout_marginTop="@dimen/size_16dp"
+              android:background="@color/transparent_white"
+              android:visibility="visible"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/paymentInfo"
+              />
+
+          <include
+              layout="@layout/layout_placements_guidelines"
+              android:id="@+id/layout_guidelines"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              tools:visibility="visible"
+              android:visibility="visible"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@+id/view_margin_without_result"
+              />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+      </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

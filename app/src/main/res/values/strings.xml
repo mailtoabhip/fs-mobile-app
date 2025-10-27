@@ -798,6 +798,7 @@
   <string name="entry_permit_for_required">Entry permit for %1$s required</string>
   <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
   <string name="load_categories">Load Categories</string>
+  <string name="placement_vehicle_type"><![CDATA[Vehicle type must match the requirement]]></string>
   <string name="vehicle_type_amp_count"><![CDATA[Vehicle type & count must match the requirement]]></string>
   <string name="follow_the_schedule_to_avoid_delay_penalties">Follow the schedule to avoid delay penalties</string>
   <string name="any_schedule_changes_will_be_informed">Any schedule changes will be informed</string>
@@ -897,4 +898,20 @@
     <item>12–18 Hours</item>
   </string-array>
 
+
+<!-- Delayed Placement Card Strings -->
+<string name="placement_card_content_description">Placement card with delay information and details</string>
+<string name="delay_status_content_description">Delay status</string>
+<string name="client_badge_icon_content_description">Client badge icon</string>
+<string name="client_badge_text_content_description">Client badge text</string>
+<string name="close_content_description">Close</string>
+<string name="route_content_description">Route information</string>
+<string name="stops_content_description">Number of stops</string>
+<string name="fill_details">Fill Details</string>
+<string name="fill_details_content_description">Fill placement details</string>
+<string name="share_details">Share Details</string>
+<string name="share_details_content_description">Share placement details</string>
+<string name="call">Call</string>
+<string name="call_content_description">Call driver</string>
+  <string name="view_on_map_html"><u>View on map</u></string>
 </resources>

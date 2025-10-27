@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +18,7 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
-import com.delhivery.axle.data.home.trucks.names
+
 
 
 class DelhiveryTrucksAutoEditText(
@@ -50,6 +50,7 @@ class DelhiveryTrucksAutoEditText(
 
     private var progress = false
     private var error = false
+    private var isSelectionInProgress = false
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -105,16 +106,23 @@ class DelhiveryTrucksAutoEditText(
             trucks: List<String>,
             selected: (String) -> Unit
     ) {
-        if (!isPerformingCompletion) {
-            progress(false)
-            val adapter = CustomAdapter(context, R.layout.view_truck_item, trucks)
-            setAdapter(adapter)
-            setOnItemClickListener { _, _, i, _ ->
-                setText(trucks[i])
-                selected(trucks[i])
-                dismissDropDown()
-            }
+        progress(false)
+        val adapter = CustomAdapter(context, R.layout.view_truck_item, trucks)
+        setAdapter(adapter)
+        setOnItemClickListener { _, _, i, _ ->
+            isSelectionInProgress = true
+            //check the selected value, if equals "Add New Truck" don't set in edit text view
+            Log.d("Add_truck_value==>>", trucks[i])
+            setText(trucks[i])
+            //
+            selected(trucks[i])
+            dismissDropDown()
+            // Reset flag after a short delay
+            postDelayed({
+                isSelectionInProgress = false
+            }, 100)
         }
+        
         if (trucks.isEmpty()) {
             error = true
             dismissDropDown()
@@ -128,6 +136,11 @@ class DelhiveryTrucksAutoEditText(
         val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
         this.startAnimation(shake)
     }
+    
+    // Check if selection is in progress
+    fun isSelectionInProgress(): Boolean {
+        return isSelectionInProgress
+    }
 
     class CustomAdapter(context: Context?, resource: Int, items: List<String?>?) : ArrayAdapter<String?>(context!!, resource, items!!) {
         override fun getView(position: Int, view: View?, parent: ViewGroup): View {
@@ -139,8 +152,8 @@ class DelhiveryTrucksAutoEditText(
 
             tvVehicleNumber?.text = getItem(position)
             if(tvVehicleNumber?.text=="Add New Truck"){
-                tvVehicleNumber.setTextColor(ContextCompat.getColor(context,R.color.colorAccent))
-                tvVehicleNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context,R.drawable.ic_add),null,null,null)
+                tvVehicleNumber.setTextColor(ContextCompat.getColor(context,R.color.text_blue_v1))
+                tvVehicleNumber.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context,R.drawable.ic_plus_blue),null,null,null)
                 tvVehicleNumber.background =ContextCompat.getDrawable(context,R.drawable.bg_all_round_corner_white)
             }else{
                 tvVehicleNumber?.elevation = 8.0f

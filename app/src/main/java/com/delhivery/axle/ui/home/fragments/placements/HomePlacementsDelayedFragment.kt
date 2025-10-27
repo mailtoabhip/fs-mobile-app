@@ -1,0 +1,227 @@
+package com.delhivery.axle.ui.home.fragments.placements
+
+import android.Manifest
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.delhivery.axle.R
+import com.delhivery.axle.databinding.FragmentHomePlacementsDelayedBinding
+import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
+import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
+import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
+import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
+import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.placementsBidDetailsIntent
+import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
+import com.delhivery.axle.ui.contractDetails.placementsContractDetailsIntent
+import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
+import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
+import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DELAYED_TAB
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
+import com.delhivery.axle.utils.LoadTypeUtils
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
+import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import javax.inject.Inject
+
+/**
+ * Delayed placements fragment
+ */
+class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDelayedBinding, HomePlacementsViewModel>(),
+    HomePlacementsRVAdapterInterface {
+
+    @Inject lateinit var userPrefs: UserPrefs
+    @Inject lateinit var dialogUtils: DialogUtils
+
+    private var fragmentSetupTrace: Trace? = null
+    private var isFirstResume = true
+
+    companion object {
+        /* singleton instance */
+        val _instance: HomePlacementsDelayedFragment by lazy { HomePlacementsDelayedFragment() }
+    }
+
+    override fun getViewModelClass() = HomePlacementsViewModel::class.java
+
+    override fun layoutId() = R.layout.fragment_home_placements_delayed
+
+    /* RV adapter */
+    private val adapter: HomePlacementsRVAdapter by lazy {
+        HomePlacementsRVAdapter(this)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
+        fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsDelayedFragment_SetupTime")
+        fragmentSetupTrace?.start()
+
+        binding.refreshLayout.setOnRefreshListener {
+            binding.refreshLayout.isRefreshing = false
+            refreshData()
+        }
+
+        /* setup recycler view */
+        binding.rvLoads.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = this@HomePlacementsDelayedFragment.adapter
+        }
+        binding.rvLoads.itemAnimator = null
+
+        viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+            isLoadingData = it ?: false
+        })
+
+        viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
+            it?.let { _items -> adapter.operation(_items) }
+        })
+
+        viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
+            it?.let { _items -> adapter.operation(_items) }
+        })
+
+        // Track analytics for delayed tab
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_HOME_PLACEMENT_DELAYED_TAB,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PHONE_NO
+            ),
+            mutableListOf(
+                userPrefs.userId(),
+                userPrefs.phoneNumber ?: ""
+            )
+        )
+
+        refreshData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (fragmentSetupTrace != null && isFirstResume) {
+            fragmentSetupTrace?.stop()
+            isFirstResume = false
+        }
+        if(REFRESH_ON_BACK_PLACEMENT){
+            REFRESH_ON_BACK_PLACEMENT = false
+            refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        adapter.resetStaticData()
+        viewModel.fetchPlacementLoads(PlacementTypes.Delayed.name)
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        menu.removeItem(R.id.nav_filter)
+
+    }
+
+    override fun handleAction(actionId: String, item: BaseHomePlacementsRVAdapterItem<*>) {
+        when (actionId) {
+            HomePlacementRequested_ViewDetails -> {
+                val data = item.data as HomePlacementsItemData
+                val missingDetails = data.vehicleNumber == null || data.driverName == null || data.driverPhone == null
+                analyticsUtil.moEngageTrackEvent(
+                    EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED,
+                    mutableListOf(
+                        PROPERTY_USER_ID,
+                        PROPERTY_PHONE_NO,
+                        PROPERTY_DEMAND_TYPE,
+                        PROPERTY_EXPECTED_TIME,
+                        PROPERTY_MISSING_FLAG
+                    ),
+                    mutableListOf(
+                        userPrefs.userId(),
+                        userPrefs.phoneNumber ?: "",
+                        data.loadType ?: "",
+                        data.reportingTime ?: "",
+                        missingDetails.toString()
+                    )
+                )
+
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                if(data.loadType==LoadTypes.orionSpot.name || data.loadType==LoadTypes.intracityAdhoc.name || data.loadType==LoadTypes.ftlAdhoc.name ||data.loadType==LoadTypes.orionFixed.name){
+                    val transactionId = data.transactionId
+                    val contractCode = data.contractCode
+                    Log.d("transactionId", "$transactionId")
+                    Log.d("contractCode", "$contractCode")
+                    val context = this.context
+                    if ((transactionId.isNotNullOrEmpty() || contractCode.isNotNullOrEmpty()) && context != null) {
+                        val intent = placementsBidDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
+                        startActivity(intent)
+                    }
+                }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ){
+                    val transactionId = data.transactionId
+                    val contractCode = data.contractCode
+                    val context = this.context
+                    if ((transactionId.isNotNullOrEmpty() || contractCode.isNotNullOrEmpty()) && context != null) {
+                        val intent = placementsContractDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
+                        startActivity(intent)
+                    }
+                }
+
+            }
+            HomePlacementsCallDriver ->{
+                val data = item.data as HomePlacementsItemData
+                Log.i("callDriver", data.driverPhone?:"")
+                callDriver(data.driverPhone?:"")
+
+            }
+            HomePlacementsShareOnWhatsapp ->{
+                val data = item.data as HomePlacementsItemData
+                dialogUtils.shareOnWhatsApp(dialogUtils.generatePlacementWhatsappContent(data))
+            }
+            HomePlacementsTimeoutItemAction -> {
+                refreshData()
+            }
+        }
+    }
+
+    private fun callDriver(phoneNumber:String?){
+        compositeDisposable += requestPermission(Manifest.permission.CALL_PHONE)
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    when (phoneNumber?.let { it1 ->
+                        contactUtils.callDriver(
+                            it1
+                        )
+                    }) {
+                        false -> {
+                            uiUtils.showSnackbar("Unable to place call")
+                        }
+                        else -> {
+                        }
+                    }
+                } else {
+                    uiUtils.showSnackbar(getString(R.string.msg_call_permission))
+                }
+            }
+    }
+    override fun handleAction(
+        actionId: String,
+        item: BaseHomePlacementsRVAdapterItem<*>,
+        position: Int
+    ) {
+        // Not implemented for this fragment
+    }
+} 

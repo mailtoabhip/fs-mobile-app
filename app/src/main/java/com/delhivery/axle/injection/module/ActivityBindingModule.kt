@@ -11,10 +11,12 @@ import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
+import com.delhivery.axle.ui.biddetails.PlacementsBidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
+import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -126,6 +128,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
   internal abstract fun bindBidDetailsActivity(): BidDetailsActivity
+
+  /* New Placements Bid Details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPlacementsBidDetailsActivityModule::class])
+  internal abstract fun bindPlacementsBidDetailsActivity(): PlacementsBidDetailsActivity
 
   /* Search Load activity */
   @ActivityScope
@@ -344,6 +351,10 @@ abstract class ActivityBindingModule {
   internal abstract fun bindContractDetailsActivity(): ContractDetailsActivity
 
   @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPlacementsContractDetailsActivityModule::class])
+  internal abstract fun bindPlacementsContractDetailsActivity(): PlacementsContractDetailsActivity
+
+  @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementDetailsActivityModule::class])
   internal abstract fun bindPlacementDetailsActivity(): PlacementDetailsActivity
 }
@@ -383,6 +394,12 @@ internal abstract class AbsTripsActivityModule : ActivityModule<TripsActivity>()
 
 @Module
 internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
+
+@Module
+internal abstract class AbsPlacementsBidDetailsActivityModule : ActivityModule<PlacementsBidDetailsActivity>()
+
+@Module
+internal abstract class AbsPlacementsContractDetailsActivityModule : ActivityModule<PlacementsContractDetailsActivity>()
 
 @Module
 internal abstract class AbsSearchLoadActivityModule : ActivityModule<SearchLoadActivity>()

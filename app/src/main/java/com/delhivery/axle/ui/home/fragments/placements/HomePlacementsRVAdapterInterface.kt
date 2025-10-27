@@ -9,7 +9,7 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType
 interface HomePlacementsRVAdapterInterface :
     BaseDataRVAdapter.ItemClickListener<BaseHomePlacementsRVAdapterItem<*>> {
     override fun onItemClicked(item: BaseHomePlacementsRVAdapterItem<*>) {
-        if (item.type == HomePlacementsRVAdapterItemType.IntracityAdhoc || item.type == HomePlacementsRVAdapterItemType.IntracityContracts || item.type == HomePlacementsRVAdapterItemType.IntercityAdhoc||item.type == HomePlacementsRVAdapterItemType.IntercityContracts) {
+        if (item.type == HomePlacementsRVAdapterItemType.PlacementItem ) {
             handleAction(HomePlacementRequested_ViewDetails, item)
         }
     }

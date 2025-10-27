@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tool="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="request"
@@ -12,87 +11,16 @@
         <import type="android.view.View" />
     </data>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-   >
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/originCenter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/size_8dp"
+        android:id="@+id/originDestinationText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="none"
+        android:singleLine="false"
+        android:scrollHorizontally="false"
+        android:inputType="textMultiLine"
+        android:textColor="@color/text_black_v2"
+        android:textSize="@dimen/text_14sp"
         android:fontFamily="sans-serif-medium"
-        android:textStyle="bold"
-        android:textSize="@dimen/text_12sp"
-        tool:text="Delhi_Airport_GW"
-        android:text="@{request.originCenterName}"/>
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/originCenterCity"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/originCenter"
-        android:layout_width="wrap_content"
-        android:paddingBottom="@dimen/size_8dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:textSize="@dimen/text_10sp"
-        tool:text = "Delhi"
-        android:text="@{request.originCenterState}"/>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/stops"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/originCenter"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/size_8dp"
-        android:layout_marginTop="@dimen/size_8dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:textColor="@color/background_dark_grey"
-        android:textSize="@dimen/text_10sp"
-        tool:text="2 stops"
-        android:text="@{request.haltStops()}"/>
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/stopsIco"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/originCenterCity"
-        app:layout_constraintTop_toBottomOf="@+id/stops"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/size_8dp"
-        android:paddingBottom="@dimen/size_8dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:textSize="@dimen/text_12sp"
-        android:src="@drawable/route_connection_icon"
-        />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/destinationCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/size_4dp"
-        android:layout_marginTop="@dimen/size_8dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:textStyle="bold"
-        android:textSize="@dimen/text_12sp"
-        tool:text = "Delhi_Airport_GW"
-        android:text="@{request.destinationCenterName}"/>
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/destinationCenterCity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/destinationCenter"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/size_4dp"
-        android:paddingBottom="@dimen/size_8dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        tool:text="Delhi"
-        android:textSize="@dimen/text_10sp"
-        android:text="@{request.destinationCenterState}"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        tools:text="Delhi_Airport_GW → Mumbai_Very_Long_Name_Should_Wrap 2 stops"/>
 </layout>

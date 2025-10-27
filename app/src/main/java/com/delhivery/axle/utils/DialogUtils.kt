@@ -24,9 +24,11 @@ import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.delhivery.axle.R
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.databinding.*
 import com.delhivery.axle.injection.scope.ActivityScope
 import com.delhivery.axle.ui.dialogs.ErrorDialog
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.RewardStartDate
 import com.delhivery.axle.ui.profile.raterewards.fragments.rewards.RewardStartDateCalender
@@ -749,7 +751,7 @@ English - $englishVideoLink
 Thank you!"""
     }
     
-    private fun shareOnWhatsApp(text: String) {
+    public fun shareOnWhatsApp(text: String) {
         try {
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
@@ -767,6 +769,64 @@ Thank you!"""
         }
     }
 
+    public fun generatePlacementWhatsappContent(
+      itemData: HomePlacementsItemData
+
+    ): String {
+        val haltStop = if(itemData.haltStops().isNotEmpty()){"(${itemData.haltStops()})"}else{""}
+        val intercity = itemData.loadType == LoadTypes.orionFixed.name || itemData.loadType == LoadTypes.orionSpot.name || itemData.loadType == LoadTypes.ftlRegular.name || itemData.loadType == LoadTypes.ftlAdhoc.name
+        val reportingCentre  = if (intercity) {
+            "🛣️ Trip: "+"${itemData.formattedOriginCity()} → ${itemData.formattedDestinationCity()} ${haltStop} "
+        }else{
+            "📍 Site Location: "+StringUtils.capitalize(itemData.originCenterName)
+        }
+        val reportingTime: String = itemData.onlyFormatReportingTime()?:""
+        val vehicleAndType: String = if(itemData.vehicleNumber!=null){itemData.vehicleNumber+" | "+ itemData.vehicleType}else{itemData.vehicleType?:""}
+        val origin = if(itemData.loadType == LoadTypes.orionFixed.name || itemData.loadType == LoadTypes.orionSpot.name){
+            if(itemData.pickupLocationCoordinates!=null && itemData.dropLocationCoordinates!=null){
+                "${itemData.pickupLocationCoordinates?.latitude},${itemData.pickupLocationCoordinates?.longitude}"
+            }else{
+                ""
+            }
+        }else "${itemData.originCenterLat},${itemData.originCenterLong}"
+        val destination = if(itemData.loadType == LoadTypes.orionFixed.name || itemData.loadType == LoadTypes.orionSpot.name){
+            if(itemData.pickupLocationCoordinates!=null && itemData.dropLocationCoordinates!=null){
+                "${itemData.dropLocationCoordinates?.latitude},${itemData.dropLocationCoordinates?.longitude}"
+            }else{
+                ""
+            }} else "${itemData.destinationCenterLat},${itemData.destinationCenterLong}"
+
+        val waypoints = itemData.haltCenters
+            ?.drop(1)                       // remove origin
+            ?.dropLast(1)                   // remove destination
+            ?.filter { !it.latitude.isNullOrBlank() && !it.longitude.isNullOrBlank() }
+            ?.joinToString("|") { "${it.latitude},${it.longitude}" }
+            .orEmpty()
+// Suppose haltCenters is a list of lat/longs
+        val routeMapLink=  if(origin.isEmpty() || destination.isEmpty()){
+            ""
+        }else if(!intercity){
+            "📌 View Site Location on Map: "+"https://www.google.com/maps/dir/?api=1" +
+            "&origin=$origin"
+        }else if(waypoints.isNotEmpty()){
+            "📌 View Route on Map: "+"https://www.google.com/maps/dir/?api=1" +
+                    "&origin=$origin" +
+                    "&destination=$destination" +
+                    "&waypoints=$waypoints"
+        }else{
+            "📌 View Route on Map: "+"https://www.google.com/maps/dir/?api=1" +
+                    "&origin=$origin" +
+                    "&destination=$destination"
+        }
+
+        return """Hi, please find the trip details.
+            
+$reportingCentre
+🚚 Vehicle: $vehicleAndType
+🕒 Reporting Time: $reportingTime
+
+ $routeMapLink"""
+    }
  /* fun confirmDialog(
     homeBidsRequestItemData: HomeBidsRequestItemData,
     state: BidDetailsUserBidState_EditBid,
