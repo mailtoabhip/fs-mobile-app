@@ -75,6 +75,11 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.progressStepLayout.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+    }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
 

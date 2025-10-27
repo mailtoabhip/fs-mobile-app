@@ -82,6 +82,7 @@ import com.delhivery.axle.utils.VALUE_APP_FLOW
 import com.delhivery.axle.utils.VALUE_BANNER
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getSerializableExtra
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -614,6 +615,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     super.onPostCreate(savedInstanceState)
 
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = ""//""Order ID - " + viewModel.transactionId
     if(homePlacementsItemData?.status==PlacementTypes.Delayed.name){
@@ -795,7 +801,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     }
   }
   inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean?) {
+    override fun onChanged(t: Boolean) {
       t?.let {
         when (t) {
           true -> {
@@ -815,7 +821,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
    * Transaction details and UI updation Observer
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-    override fun onChanged(t: HomeBidsRequestItemData?) {
+    override fun onChanged(t: HomeBidsRequestItemData) {
 
       if (t != null) {
         t.let { _transaction ->
@@ -928,7 +934,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
    * Transaction bid details UI updation observer
    */
   inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
-    override fun onChanged(t: BidDetailsUserBidState?) {
+    override fun onChanged(t: BidDetailsUserBidState) {
       binding.refreshing = false
       t?.let { state ->
         when (state) {

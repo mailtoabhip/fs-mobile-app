@@ -76,6 +76,11 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title =  "Profile Details"
 

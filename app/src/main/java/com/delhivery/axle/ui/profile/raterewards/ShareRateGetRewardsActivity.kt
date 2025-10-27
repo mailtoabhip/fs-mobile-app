@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFr
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentAdapter
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentType.RewardsFragment
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -49,6 +50,11 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = "Share & Earn reward"
     pagerAdapter = ShareRateGetRewardsFragmentAdapter(supportFragmentManager)

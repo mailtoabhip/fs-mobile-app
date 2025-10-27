@@ -3,7 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.firebase-perf'
 android {
-  compileSdk 34
+  namespace 'com.delhivery.axle'
+  compileSdk 35
   signingConfigs {
     release {
       keyAlias 'axle_delhivery'
@@ -15,7 +16,7 @@ android {
   defaultConfig {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
-    targetSdkVersion 34
+    targetSdkVersion 35
     versionCode 134
     versionName "2.133.1"
     multiDexEnabled true
@@ -67,6 +68,9 @@ android {
   dataBinding {
     enabled = true
   }
+  buildFeatures {
+    buildConfig = true
+  }
   lintOptions {
     checkReleaseBuilds false
     // Or, if you prefer, you can continue to check for errors in release builds,
@@ -75,11 +79,11 @@ android {
   }
   android {
     compileOptions {
-      sourceCompatibility JavaVersion.VERSION_1_8
-      targetCompatibility JavaVersion.VERSION_1_8
+      sourceCompatibility JavaVersion.VERSION_11
+      targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-      jvmTarget = '1.8'
+      jvmTarget = '11'
     }
   }
   applicationVariants.all { variant ->
@@ -101,6 +105,17 @@ android {
           formattedDate +
           ".apk"
       outputFileName = new File(newApkName)
+    }
+  }
+
+  // Fix for Google Services task dependency issue in Gradle 8.x
+  afterEvaluate {
+    tasks.matching { it.name.startsWith('merge') && it.name.endsWith('Resources') }.configureEach { task ->
+      def variantName = task.name.substring(5, task.name.length() - 9) // Remove 'merge' and 'Resources'
+      def googleServicesTask = tasks.findByName("process${variantName}GoogleServices")
+      if (googleServicesTask) {
+        task.dependsOn googleServicesTask
+      }
     }
   }
 }

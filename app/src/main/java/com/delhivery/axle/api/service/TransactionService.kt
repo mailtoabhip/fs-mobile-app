@@ -82,7 +82,8 @@ interface TransactionService {
   fun bulkTransactions(
     @Query("transactions_ids") transactionIds: String,
     @Query("include_adhoc_intracity") includeAdhocIntracity: Boolean = true,
-    @Query("skip_od_in_halts") skipOnInHalts:Boolean = true
+    @Query("skip_od_in_halts") skipOnInHalts:Boolean = true,
+    @Query("include_payment_mode") includePaymentMode:Boolean = true,
 //    @Query("loads_with_bid_active") loadActive:Boolean =true
   ): Single<BaseResponse<TransactionsResponse>>
 

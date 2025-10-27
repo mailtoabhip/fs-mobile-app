@@ -18,6 +18,8 @@ data class TransactionsResponse(
   @SerializedName("search_after") val searchAfter: SearchAfter?,
   @SerializedName("search_after_creation_time") val searchAfterCreationTime: String?,
   @SerializedName("search_after_transaction_id") val searchAfterTransactionId: String?,
+  @SerializedName("speed") val speed: String?,
+  @SerializedName("indent_payment_mode") val indentPaymentMode: String?,
 )
 
 /**

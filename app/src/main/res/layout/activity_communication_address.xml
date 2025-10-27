@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_red_bg"
-        android:orientation="vertical">
+        android:orientation="vertical"
+      android:fitsSystemWindows="true">
       <include
           android:id="@+id/progress_step_layout"
           android:layout_width="match_parent"
@@ -94,7 +95,8 @@
                     bind:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="@dimen/size_32dp"
                     bind:layout_constraintTop_toBottomOf="@+id/address_error"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+      android:fitsSystemWindows="true">
                         <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                             android:id="@+id/edit_flat"
                             android:layout_width="match_parent"

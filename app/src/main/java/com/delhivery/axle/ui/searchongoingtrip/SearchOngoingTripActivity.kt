@@ -58,6 +58,11 @@ class SearchOngoingTripActivity : BaseActivity<ActivitySearchOngoingTripBinding,
     super.onPostCreate(savedInstanceState)
 
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Search Ongoing Trips"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){

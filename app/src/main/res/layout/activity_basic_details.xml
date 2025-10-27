@@ -30,7 +30,8 @@
                     android:layout_height="wrap_content"
                     bind:layout_constraintStart_toStartOf="parent"
                     bind:layout_constraintTop_toTopOf="parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+      android:fitsSystemWindows="true">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

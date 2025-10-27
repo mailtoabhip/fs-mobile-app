@@ -100,7 +100,7 @@ interface BidService {
   /**
    * List of trips
    */
-  @GET("bids/")
+  @GET("bids/axle")
   fun bidsForStatuses(
     @Query("supplier_id") userId: String,
     @Query("limit") limit: Int,
@@ -110,7 +110,8 @@ interface BidService {
     @Query("confirmation_pending") confirmationPending: Boolean?,
     @Query("only_frc_bids") onlyFRCBids: Boolean?=null,
     @Query("include_adhoc_intracity_bid")includeAdhocIntracityBid:Boolean=true,
-    @Query("include_all_bid_types") includeAllBidType:Boolean=true
+    @Query("include_all_bid_types") includeAllBidType:Boolean=true,
+    @Query("bid_suggestion") bidSuggestion:Boolean=false,
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**

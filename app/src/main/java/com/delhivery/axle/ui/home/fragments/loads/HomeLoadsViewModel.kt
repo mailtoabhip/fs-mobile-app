@@ -15,6 +15,8 @@ import com.delhivery.axle.api.response.SearchAfter
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.Quintuple
+import com.delhivery.axle.data.UserModel
+import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.bids.BulkBidCreateRequest
 import com.delhivery.axle.data.bids.BulkBidRemoveRequest
 import com.delhivery.axle.data.bids.BulkBidUpdateRequest
@@ -132,6 +134,8 @@ class HomeLoadsViewModel @Inject constructor(
   var loadsCount:Int =0
     var searchAfter: SearchAfter?=null
 
+    var user: UserModel? = null
+
 
 
     /**
@@ -155,6 +159,16 @@ class HomeLoadsViewModel @Inject constructor(
     get() = userPrefs.fromNotification
     set(value) {
       userPrefs.fromNotification = value
+    }
+
+    /**
+     * Helper method to populate payment fields from user data
+     */
+    private fun populatePaymentFields(load: HomeBidsRequestItemData) {
+        user?.supplierDetails?.let { supplier ->
+            load.paymentMode = supplier.paymentMode
+            load.advancePercentage = supplier.advancePercentage
+        }
     }
 
     /**
@@ -189,6 +203,33 @@ class HomeLoadsViewModel @Inject constructor(
         }
 
         dataLoadingLiveData.postValue(true)
+        
+        // Fetch user data first if not available
+        if (user == null) {
+            compositeDisposable += userRepository.getUser(false)
+                .onBackground()
+                .subscribe { userModel, error ->
+                    if (!error && userModel != null) {
+                        this.user = userModel
+                        // Now proceed with fetching loads
+                        fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                    } else {
+                        error?.handle()
+                        dataLoadingLiveData.postValue(false)
+                    }
+                }
+        } else {
+            // User data already available, proceed with loads
+            fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+        }
+    }
+    
+    /**
+     * Fetch loads data (separated from user data fetching)
+     */
+    private fun fetchLoadsData(
+        paginate: Boolean, demandType: String, selectedFilter: String, 
+        infoSearch: Boolean, excludeTruckTypes: String?) {
         val mainTrace = Firebase.performance.newTrace("fetch_recommended_transactions")
         val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_recommended_transactions_parallel")
         mainTrace.start()
@@ -214,11 +255,16 @@ class HomeLoadsViewModel @Inject constructor(
             loadPricePercent = _res.loadPricePercent
             more_default_loads = _res.more_loads
             loadsCountLiveData.postValue(total)
+            
+            // Speed is already set in each transaction from API response
+            // No need to override: _res.transactions.forEach { it.speed = _res.speed }
 
             transactionsRepository.fetchRecommTransactions(
                 offset,
                 userPrefs.demandType
                     .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
                     .filterNot { it == DemandType.Intracity.type}
                     .joinToString(","),
                 vehicleTypes,
@@ -291,7 +337,7 @@ class HomeLoadsViewModel @Inject constructor(
                                         )
                                     )*/
 
-                        if (total == 0  && searchAfter != null) {
+                        if (total == 0 && !paginate) {
                             add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                         }
                             for ((index, load) in loads.toMutableList().withIndex()) {
@@ -301,6 +347,8 @@ class HomeLoadsViewModel @Inject constructor(
                                 } catch (e: Exception) {
                                     Log.d("No Bid found for: ", load.transactionId ?: "")
                                 }
+                                // Populate payment fields from user data
+                                populatePaymentFields(load)
                                 add(Pair(HomeLoadsRequestItem(load), Add))
                             }
 
@@ -322,7 +370,12 @@ class HomeLoadsViewModel @Inject constructor(
 
             compositeDisposable += transactionsRepository.fetchRecommTransactions(
                 offset,
-                demandType,
+                userPrefs.demandType
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .filterNot { it == DemandType.Intracity.type }
+                    .joinToString(","),
                 vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
@@ -361,6 +414,8 @@ class HomeLoadsViewModel @Inject constructor(
                             offset,
                             userPrefs.demandType
                                 .split(",")
+                                .map { it.trim() }
+                                .filter { it.isNotEmpty() }
                                 .filterNot { it == DemandType.Intracity.type }
                                 .joinToString(","),
                             vehicleTypes,
@@ -484,6 +539,8 @@ class HomeLoadsViewModel @Inject constructor(
                                     } catch (e: Exception) {
                                         Log.d("No Bid found for: ", load.transactionId ?: "")
                                     }
+                                    // Populate payment fields from user data
+                                    populatePaymentFields(load)
                                     if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
                                         add(Pair(HomeLoadsAddTruckItem(), Add))
                                     }
@@ -547,6 +604,33 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
     dataLoadingLiveData.postValue(true)
+    
+    // Fetch user data first if not available
+    if (user == null) {
+        compositeDisposable += userRepository.getUser(false)
+            .onBackground()
+            .subscribe { userModel, error ->
+                if (!error && userModel != null) {
+                    this.user = userModel
+                    // Now proceed with fetching supplier loads
+                    fetchSupplierLoadsData(paginate, selectedFilter, demandType, infoSearch, excludeTruckTypes)
+                } else {
+                    error?.handle()
+                    dataLoadingLiveData.postValue(false)
+                }
+            }
+    } else {
+        // User data already available, proceed with supplier loads
+        fetchSupplierLoadsData(paginate, selectedFilter, demandType, infoSearch, excludeTruckTypes)
+    }
+  }
+  
+  /**
+   * Fetch supplier loads data (separated from user data fetching)
+   */
+  private fun fetchSupplierLoadsData(
+    paginate: Boolean, selectedFilter: String, demandType: String,
+    infoSearch: Boolean, excludeTruckTypes: String?) {
 
       compositeDisposable += transactionsRepository.fetchLoadBoardTransactions(offsetFetch, demandType, vehicleTypes, excludeTruckTypes, filterVehicleType, true, transactionIds)
                               .flatMap { t ->
@@ -627,6 +711,8 @@ class HomeLoadsViewModel @Inject constructor(
                       } catch (e: Exception) {
                           Log.d("No Bid found for: ", load.transactionId ?: "")
                       }*/
+                      // Populate payment fields from user data
+                      populatePaymentFields(load)
                       if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
                           add(Pair(HomeLoadsAddTruckItem(), Add))
                       }
@@ -688,6 +774,18 @@ class HomeLoadsViewModel @Inject constructor(
           }
         }
   }
+
+    fun getUser() {
+        compositeDisposable += userRepository.getUser(false)
+            .onBackground()
+            .subscribe { _user, error ->
+                if (!error && _user != null) {
+                    user = _user
+                } else {
+                    error?.handle()
+                }
+            }
+    }
   fun fetchTruckType(data :HomeBidsRequestItemData) {
     compositeDisposable += truckRepository.getTruckType()
       .onBackground()

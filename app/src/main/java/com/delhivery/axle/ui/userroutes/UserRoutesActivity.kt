@@ -35,6 +35,7 @@ import com.delhivery.axle.ui.selectroute.activity.selectRouteIntent
 import com.delhivery.axle.utils.REQCODE_ADD_ROUTES
 import com.delhivery.axle.utils.REQCODE_DELETE_ROUTES
 import com.delhivery.axle.utils.REQCODE_EDIT_ROUTE
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -72,6 +73,11 @@ class UserRoutesActivity : BaseActivity<ActivityUserRoutesBinding, UserRoutesVie
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "My Routes"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

@@ -52,6 +52,7 @@ import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_NO
 import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getSerializableExtra
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -106,6 +107,11 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
         viewModel.homePlacementsItemData.detailVisible = true
         viewModel.getFacilityAddress()
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Vehicle Details"
         /* setup live data observers */

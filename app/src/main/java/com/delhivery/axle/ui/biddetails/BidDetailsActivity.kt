@@ -215,6 +215,11 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
     /* setup toolbar */
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = ""//""Order ID - " + viewModel.transactionId
     if(homePlacementsItemData?.status== PlacementTypes.Delayed.name){
@@ -633,7 +638,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
    * Progress observer
    */
   inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean?) {
+    override fun onChanged(t: Boolean) {
       t?.let {
         when (t) {
           true -> {
@@ -659,7 +664,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
    * Transaction details and UI updation Observer
    */
   inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-    override fun onChanged(t: HomeBidsRequestItemData?) {
+    override fun onChanged(t: HomeBidsRequestItemData) {
       if (t != null) {
         t.let { _transaction ->
           binding.cardInput.etBidAmount.isFocusable = true
@@ -970,7 +975,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
    * Transaction bid details UI updation observer
    */
   inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
-    override fun onChanged(t: BidDetailsUserBidState?) {
+    override fun onChanged(t: BidDetailsUserBidState) {
       binding.refreshing = false
     //  binding.mainCl.visibility = View.VISIBLE
       uiUtils.hideProgress()

@@ -25,7 +25,8 @@ enum class HomeBidsRVAdapterItemType(val typeId: Int) {
   Warning(3),
   Progress(4),
   Timeout(5),
-  Contracts(6);
+  Contracts(6),
+  IntracityBids(7);
 
   companion object {
     /**

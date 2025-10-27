@@ -24,6 +24,7 @@ import com.delhivery.axle.databinding.ViewSearchLoadHistoryItemBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.searchongoingtrip.SearchOngoingTripRVAdapter
 import com.delhivery.axle.utils.REQCODE_SELECT_CITY
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.visible
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -69,6 +70,11 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
         super.onPostCreate(savedInstanceState)
 
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = if(viewModel.cityType == "origin") "Search Origin City" else "Search Destination City"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -146,7 +152,7 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
      * Search load history observer
      */
     inner class SearchCityHistoryObserver : Observer<List<SearchCityEntity>> {
-        override fun onChanged(t: List<SearchCityEntity>?) {
+        override fun onChanged(t: List<SearchCityEntity>) {
             t?.let { items ->
                 binding.containerHistory.removeAllViews()
                 items.forEachIndexed { index, item ->

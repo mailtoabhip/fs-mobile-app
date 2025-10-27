@@ -5,30 +5,24 @@ import androidx.databinding.ViewDataBinding
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
-import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.*
-import com.delhivery.axle.databinding.CardCommonBidsBinding
-import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
+import com.delhivery.axle.databinding.CardCommonBidsV2Binding
+import com.delhivery.axle.databinding.CardCommonIntracityBidsBinding
 import com.delhivery.axle.databinding.ViewBidsHeaderNewItemBinding
 import com.delhivery.axle.databinding.ViewBidsSearchbarNewItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
-import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
-import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.utils.extensions.underline
 
 /**
  * Base Home bids RV adapter view holder
  */
 abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : BaseHomeBidsRVAdapterItem<*>>(binding: B) :
-    BaseViewHolder<B>(binding) {
+  BaseViewHolder<B>(binding) {
   abstract fun bind(
     item: IT,
     _interface: HomeBidsRVAdapterInterface,
@@ -69,7 +63,7 @@ abstract class BaseHomeBidsRVAdapterViewHolder<out B : ViewDataBinding, IT : Bas
  * Header item view holder
  */
 internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewBidsHeaderNewItemBinding, HomeBidsHeaderItem>(binding) {
+  BaseHomeBidsRVAdapterViewHolder<ViewBidsHeaderNewItemBinding, HomeBidsHeaderItem>(binding) {
   override fun bind(
     item: HomeBidsHeaderItem,
     _interface: HomeBidsRVAdapterInterface,
@@ -94,58 +88,32 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
     }
 
     //
-    binding.wonCount = item.data.confirmedBid
+    binding.closedCount = item.data.confirmedBid + item.data.lostBids
     if (isLoadingData) {
       // Disable tab clicks when loading
-      binding.tvWon.setOnClickListener(null)
-      binding.tvWon.isEnabled = false
+      binding.tvClosed.setOnClickListener(null)
+      binding.tvClosed.isEnabled = false
       //binding.tvWon.alpha = 0.5f
       // Add loading indicator text
-      binding.tvWon.text = "Won (${item.data.confirmedBid})..."
+      binding.tvClosed.text = "Won (${item.data.confirmedBid})..."
     } else {
       // Enable tab clicks when not loading
-      binding.tvWon.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
-      binding.tvWon.isEnabled = true
-      binding.tvWon.alpha = 1.0f
+      binding.tvClosed.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeConfirmed, item, _interface)
+      binding.tvClosed.isEnabled = true
+      binding.tvClosed.alpha = 1.0f
       // Remove loading indicator text
-      binding.tvWon.text = "Won (${item.data.confirmedBid})"
-    }
-
-    //
-    binding.lostCount = item.data.lostBids
-    if (isLoadingData) {
-      // Disable tab clicks when loading
-      binding.tvLost.setOnClickListener(null)
-      binding.tvLost.isEnabled = false
-      //binding.tvLost.alpha = 0.5f
-      // Add loading indicator text
-      binding.tvLost.text = "Lost (${item.data.lostBids})..."
-    } else {
-      // Enable tab clicks when not loading
-      binding.tvLost.clickToActionWithStateSelection(HomeBidsHeaderAction_TabChangeLost, item, _interface)
-      binding.tvLost.isEnabled = true
-      binding.tvLost.alpha = 1.0f
-      // Remove loading indicator text
-      binding.tvLost.text = "Lost (${item.data.lostBids})"
+      binding.tvClosed.text = "Won (${item.data.confirmedBid})"
     }
 
     when(item.data.bidType){
       BidType.ActiveBid -> {
         binding.tvOngoing.isSelected = true
-        binding.tvWon.isSelected = false
-        binding.tvLost.isSelected = false
+        binding.tvClosed.isSelected = false
       }
 
       BidType.ConfirmedBid -> {
         binding.tvOngoing.isSelected = false
-        binding.tvWon.isSelected = true
-        binding.tvLost.isSelected = false
-      }
-
-      BidType.LostBid -> {
-        binding.tvOngoing.isSelected = false
-        binding.tvWon.isSelected = false
-        binding.tvLost.isSelected = true
+        binding.tvClosed.isSelected = true
       }
 
       else -> {
@@ -161,7 +129,7 @@ internal class HomeBidsHeaderItemVH(binding: ViewBidsHeaderNewItemBinding) :
  * Search item view holder
  */
 internal class HomeBidsSearchItemVH(binding: ViewBidsSearchbarNewItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewBidsSearchbarNewItemBinding, HomeBidsSearchItem>(binding) {
+  BaseHomeBidsRVAdapterViewHolder<ViewBidsSearchbarNewItemBinding, HomeBidsSearchItem>(binding) {
 
   private var textWatcher: android.text.TextWatcher? = null
   private var searchRunnable: Runnable? = null
@@ -236,91 +204,447 @@ internal class HomeBidsSearchItemVH(binding: ViewBidsSearchbarNewItemBinding) :
 }
 
 /**
- * Bid request item view holder
+ * Intercity Bid request item view holder
  */
-class HomeBidsRequestItemVH(binding: CardCommonBidsBinding) :
-    BaseHomeBidsRVAdapterViewHolder<CardCommonBidsBinding, HomeBidsRequestItem>(binding) {
+class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
+  BaseHomeBidsRVAdapterViewHolder<CardCommonBidsV2Binding, HomeBidsRequestItem>(binding) {
   override fun bind(
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface,
     isLoadingData: Boolean
   ) {
     binding.request = item.data
+    // Also set request for the included layouts explicitly
+    binding.containerError.request = item.data
+    binding.strongBidCard.request = item.data
+    binding.executePendingBindings()
 
-      //hide the placebid section for Bids
-      binding.includeBidTime6.containerError.clPlaceBidReportTime.visibility = View.GONE
+    // Debug: Check live bidding visibility
+    val isContract = item.data.isItContract()
+    val bidStatusKey = item.data.bidStatus().statusKey
+    val isLiveBidding = item.data.isLiveBidding()
+    val liveBiddingVisibility = item.data.isItContractAndLiveBidding()
+    val demandType = item.data.getDemandTypeByLoad()
+    val requestType = item.data.requestType
+    val contractBiddingEndTime = item.data.contractBiddingEndTime
+    val bidEndingTime = item.data.bidEndingTime
+    val isBidOpen = item.data.isBidOpen()
+    
+    Log.d("LiveBiddingDebug", """
+        TransactionId: ${item.data.transactionId}
+        IsContract: $isContract
+        RequestType: $requestType
+        BidStatus: $bidStatusKey
+        IsBidOpen: $isBidOpen
+        IsLiveBidding: $isLiveBidding
+        ContractBiddingEndTime: $contractBiddingEndTime
+        BidEndingTime: $bidEndingTime
+        LiveBiddingVisibility: $liveBiddingVisibility (${if (liveBiddingVisibility == View.VISIBLE) "VISIBLE" else "GONE"})
+        DemandType: $demandType
+    """.trimIndent())
 
-    //binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
-    //set button or bid status visibility based on ongoing/ won/ lost tab and bid cancelled/ bid lost/ awaiting result
+    // Manually set live bidding chip visibility (in addition to data binding)
+    // This helps verify if the logic is working correctly
+    try {
+        val llLiveBidding = binding.root.findViewById<View>(R.id.ll_live_bidding)
+        llLiveBidding?.visibility = liveBiddingVisibility
+        Log.d("LiveBiddingDebug", "Manually set ll_live_bidding visibility to: ${if (liveBiddingVisibility == View.VISIBLE) "VISIBLE" else "GONE"}")
+    } catch (e: Exception) {
+        Log.e("LiveBiddingDebug", "Error setting live bidding visibility: ${e.message}")
+    }
 
-    when(item.data.bidStatus().statusKey.lowercase()){
+    // Show the place bid section for ongoing bids
+    binding.containerError.clPlaceBidReportTime.visibility = View.VISIBLE
+
+    // Handle place bid button state based on bid open status
+    when(item.data.bidStatus().statusKey.lowercase()) {
       TransactionBidStatus.Open.statusKey.lowercase() -> {
-        if(item.data.isBidOpen()){
-          //Bid Open status - Can be revised
-          binding.includeBidTime6.tvReviseBid.visibility = View.VISIBLE
-          binding.includeBidTime6.tvReviseBid.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
-          binding.includeBidTime6.ivBidStatus.visibility = View.GONE
-          binding.includeBidTime6.tvBidStatus.visibility = View.GONE
-          //show closes/ closed time
-          binding.includeBidTime3.closingTime.visibility = item.data.isBidEndingTimeExist()
-        }else{
-          //Awaiting Result status - can't be revised
-          binding.includeBidTime6.tvReviseBid.visibility = View.GONE
-          binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
-          binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
-
-          //set image
-          binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_wait)
-          //set text
-          binding.includeBidTime6.tvBidStatus.text = "Awaiting Result"
-          binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.orange_v3))
-          //show closes/ closed time
-          binding.includeBidTime3.closingTime.visibility = item.data.isBidEndingTimeExist()
+        if (item.data.isBidOpen()) {
+          // Bid is open - show normal "Revise To Win" button
+          binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
+          binding.containerError.placeBidTv.text = "Revise To Win"
+          binding.containerError.placeBidTv.setTextColor(
+            ContextCompat.getColor(
+              context,
+              android.R.color.white
+            )
+          )
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+            0,
+            0,
+            R.drawable.ic_arrow_right,
+            0
+          )
+          binding.containerError.placeBidButton.isClickable = true
+          binding.containerError.placeBidButton.clickToAction(
+            HomeBidsRequestAction_ReviseBid,
+            item,
+            _interface
+          )
+        } else {
+          // Bid is not open - show "Awaiting Result" state
+          binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+          binding.containerError.placeBidTv.text = "Awaiting Result"
+          binding.containerError.placeBidTv.setTextColor(
+            ContextCompat.getColor(
+              context,
+              R.color.text_grey
+            )
+          )
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_hourglass_grey,
+            0,
+            0,
+            0
+          )
+          binding.containerError.placeBidButton.isClickable = false
+          binding.containerError.placeBidButton.setOnClickListener(null)
         }
       }
 
       TransactionBidStatus.Accepted.statusKey.lowercase() -> {
-        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
-        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
-        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
-        //set image
-        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_check_confirmed)
-        //set text
-        binding.includeBidTime6.tvBidStatus.text = "Bid Confirmed"
-        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
-        //check if bid ending time is in future - hide this
-        if(item.data.isBidOpen()) binding.includeBidTime3.closingTime.visibility = View.GONE
+        // Bid Confirmed - show confirmation button with green background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.status_confirmed_bg)
+        binding.containerError.placeBidTv.text = "Bid Confirmed"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.bid_placed_green)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_check_confirmed,
+          0,
+          0,
+          0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
       }
 
       TransactionBidStatus.Rejected.statusKey.lowercase() -> {
-        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
-        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
-        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
-        //set image
-        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
-        //set text
-        binding.includeBidTime6.tvBidStatus.text = "Bid Lost"
-        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
-        //check if bid ending time is in future - hide this
-        if(item.data.isBidOpen()) binding.includeBidTime3.closingTime.visibility = View.GONE
+        // Bid Lost - show rejection button with grey background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+        binding.containerError.placeBidTv.text = "Bid Lost"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.text_grey)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_cross,
+          0,
+          0,
+          0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
       }
 
       TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
-        binding.includeBidTime6.tvReviseBid.visibility = View.GONE
-        binding.includeBidTime6.ivBidStatus.visibility = View.VISIBLE
-        binding.includeBidTime6.tvBidStatus.visibility = View.VISIBLE
-        //set image
-        binding.includeBidTime6.ivBidStatus.setImageResource(R.drawable.ic_cross)
-        //set text
-        binding.includeBidTime6.tvBidStatus.text = "Demand Cancelled"
-        binding.includeBidTime6.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.text_grey_v3))
-        //check if bid ending time is in future - hide this
-        if(item.data.isBidOpen()) binding.includeBidTime3.closingTime.visibility = View.GONE
+        // Demand Cancelled - show cancellation button with grey background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+        binding.containerError.placeBidTv.text = "Demand Cancelled"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.text_grey)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_cross,
+          0,
+          0,
+          0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
       }
 
       else -> {
         //this space is intentionally left blank
       }
+    }
+
+    // Handle strongBidCard - only show for Ongoing/Active bids, hide for Closed bids
+    if (item.data.bidType == BidType.ConfirmedBid) {
+      // Hide strongBidCard for Closed tab (won/lost/cancelled bids)
+      binding.strongBidCard.strongBidCard.visibility = View.GONE
+    } else if (item.data.getSuggestedBidAmount() != null) {
+      // Show bid suggestion message with custom styling (when suggested_amount is not null)
+      binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
+      binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
+      binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
+      // Set custom background and text color for bid suggestion
+      binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bid_suggestion_background))
+      binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.bid_suggestion_text))
+    } else {
+      // Show strong bid message (when suggested_amount is null - positive message)
+      binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
+      binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
+      binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up, 0, 0, 0)
+      // Keep card background color for strong bid (green)
+      binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_confirmed_bg))
+      // Reset text color to default
+      binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
+    }
+
+    if (isContract) {
+      // It's a Contract - no bolt icon for contracts
+      if (demandType == "Delhivery Load") {
+        binding.demandLoadType.text = "Delhivery Contract"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          ContextCompat.getDrawable(context, R.drawable.ic_truck_small), null, null, null
+        )
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+      } else {
+        binding.demandLoadType.text = "Client Contract"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+      }
+    } else {
+      // It's a Load - show bolt icon only for Express loads
+      if (demandType == "Delhivery Load") {
+        binding.demandLoadType.text = "Delhivery Load"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+        // Show bolt icon only for Express loads, otherwise show truck icon
+        val iconDrawable = if (item.data.isExpress()) {
+          ContextCompat.getDrawable(context, R.drawable.ic_delhivery_bolt)
+        } else {
+          ContextCompat.getDrawable(context, R.drawable.ic_truck)
+        }
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          iconDrawable, null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+      } else {
+        binding.demandLoadType.text = "Client Load"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+        // Show bolt icon for Express client loads, otherwise show user icon
+        val iconDrawable = if (item.data.isExpress()) {
+          ContextCompat.getDrawable(context, R.drawable.ic_delhivery_bolt)
+        } else {
+          ContextCompat.getDrawable(context, R.drawable.ic_user)
+        }
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          iconDrawable, null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+      }
+    }
+    
+    // For intercity bids: always hide distance view (distance is only shown in intracity contracts)
+    binding.distance.visibility = View.GONE
+    
+    // Handle payment mode visibility: only show for loads (not contracts) with valid payment modes
+    if (!isContract && item.data.shouldShowPaymentMode()) {
+      binding.paymentType.visibility = View.VISIBLE
+      // Only show advance percentage for advance payment mode
+      if (item.data.shouldShowAdvancePercentage()) {
+        binding.advancePaymentPercentage.visibility = View.VISIBLE
+      } else {
+        binding.advancePaymentPercentage.visibility = View.GONE
+      }
+    } else {
+      binding.paymentType.visibility = View.GONE
+      binding.advancePaymentPercentage.visibility = View.GONE
+    }
+  }
+}
+
+
+/**
+ * Intracity Bid request item view holder (for both loads and contracts)
+ */
+class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
+  BaseHomeBidsRVAdapterViewHolder<CardCommonIntracityBidsBinding, HomeBidsRequestItem>(binding) {
+  override fun bind(
+    item: HomeBidsRequestItem,
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
+  ) {
+    binding.request = item.data
+    binding.executePendingBindings()
+
+    val isContract = item.data.isItContract()
+    val demandType = item.data.getDemandTypeByLoad()
+
+    // Set load/contract type display
+    if (isContract) {
+      // It's a Contract - no bolt icon for contracts
+      if (demandType == "Delhivery Load") {
+        binding.demandLoadType.text = "Delhivery Contract"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          ContextCompat.getDrawable(context, R.drawable.ic_truck_small), null, null, null
+        )
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+      } else {
+        binding.demandLoadType.text = "Client Contract"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          ContextCompat.getDrawable(context, R.drawable.ic_user), null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+      }
+
+      // For contracts: show distance, hide payment mode
+      binding.distance.visibility = View.VISIBLE
+      binding.paymentType.visibility = View.GONE
+      binding.advancePaymentPercentage.visibility = View.GONE
+    } else {
+      // It's a Load - show bolt icon only for Express loads
+      if (demandType == "Delhivery Load") {
+        binding.demandLoadType.text = "Delhivery Load"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
+        // Show bolt icon only for Express loads, otherwise show truck icon
+        val iconDrawable = if (item.data.isExpress()) {
+          ContextCompat.getDrawable(context, R.drawable.ic_delhivery_bolt)
+        } else {
+          ContextCompat.getDrawable(context, R.drawable.ic_truck)
+        }
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          iconDrawable, null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+      } else {
+        binding.demandLoadType.text = "Client Load"
+        binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
+        // Show bolt icon for Express client loads, otherwise show user icon
+        val iconDrawable = if (item.data.isExpress()) {
+          ContextCompat.getDrawable(context, R.drawable.ic_delhivery_bolt)
+        } else {
+          ContextCompat.getDrawable(context, R.drawable.ic_user)
+        }
+        binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+          iconDrawable, null, null, null
+        )
+        binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.client_load_color))
+        binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
+      }
+
+      // For loads: show payment mode only if valid, hide distance
+      binding.distance.visibility = View.GONE
+      if (item.data.shouldShowPaymentMode() && !item.data.isItContract()) {
+        binding.paymentType.visibility = View.VISIBLE
+        // Only show advance percentage for advance payment mode
+        if (item.data.shouldShowAdvancePercentage()) {
+          binding.advancePaymentPercentage.visibility = View.VISIBLE
+        } else {
+          binding.advancePaymentPercentage.visibility = View.GONE
+        }
+      } else {
+        binding.paymentType.visibility = View.GONE
+        binding.advancePaymentPercentage.visibility = View.GONE
+      }
+    }
+
+    // Also set request for the included layouts explicitly
+    binding.containerError.request = item.data
+    binding.strongBidCard.request = item.data
+
+    // Handle place bid button state based on bid status
+    when(item.data.bidStatus().statusKey.lowercase()) {
+      TransactionBidStatus.Open.statusKey.lowercase() -> {
+        if (item.data.isBidOpen()) {
+          // Bid is open - show normal "Revise To Win" button
+          binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
+          binding.containerError.placeBidTv.text = "Revise To Win"
+          binding.containerError.placeBidTv.setTextColor(ContextCompat.getColor(context, android.R.color.white))
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_right, 0)
+          binding.containerError.placeBidButton.isClickable = true
+          binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
+        } else {
+          // Bid is not open - show "Awaiting Result" state
+          binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+          binding.containerError.placeBidTv.text = "Awaiting Result"
+          binding.containerError.placeBidTv.setTextColor(ContextCompat.getColor(context, R.color.text_grey))
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_hourglass_grey, 0, 0, 0)
+          binding.containerError.placeBidButton.isClickable = false
+          binding.containerError.placeBidButton.setOnClickListener(null)
+        }
+      }
+
+      TransactionBidStatus.Accepted.statusKey.lowercase() -> {
+        // Bid Confirmed - show confirmation button with green background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.status_confirmed_bg)
+        binding.containerError.placeBidTv.text = "Bid Confirmed"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.bid_placed_green)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_check_confirmed,
+          0,
+          0,
+          0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
+      }
+
+      TransactionBidStatus.Rejected.statusKey.lowercase() -> {
+        // Bid Lost - show rejection button with grey background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+        binding.containerError.placeBidTv.text = "Bid Lost"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.text_grey_v3)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_cross,
+          0,
+          0,
+          0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
+      }
+
+      TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
+        // Demand Cancelled - show cancellation button with grey background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+        binding.containerError.placeBidTv.text = "Demand Cancelled"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.text_grey_v3)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_cross,
+          0,
+          0,
+          0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
+      }
+
+      else -> {
+        // This is left empty
+      }
+    }
+
+    // Handle strongBidCard - only show for Ongoing/Active bids, hide for Closed bids
+    if (item.data.bidType == BidType.ConfirmedBid) {
+      // Hide strongBidCard for Closed tab (won/lost/cancelled bids)
+      binding.strongBidCard.strongBidCard.visibility = View.GONE
+    } else if (item.data.getSuggestedBidAmount() != null) {
+      // Show bid suggestion message with custom styling (when suggested_amount is not null)
+      binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
+      binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
+      binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_down, 0, 0, 0)
+      // Set custom background and text color for bid suggestion
+      binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bid_suggestion_background))
+      binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.bid_suggestion_text))
+    } else {
+      // Show strong bid message (when suggested_amount is null - positive message)
+      binding.strongBidCard.strongBidCard.visibility = View.VISIBLE
+      binding.strongBidCard.strongBidMessage.text = item.data.getSuggestedBidMessageValue()
+      binding.strongBidCard.strongBidMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up, 0, 0, 0)
+      // Keep card background color for strong bid (green)
+      binding.strongBidCard.strongBidCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.status_confirmed_bg))
+      // Reset text color to default
+      binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
     }
   }
 }
@@ -343,8 +667,8 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_under_review)
       binding.tvBidStatus.compoundDrawablePadding =8
     }else if(item.data.bidStatus().statusKey.lowercase().equals("accepted")){
-        binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
-        binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_won)
+      binding.tvBidStatus.setTextColor(ContextCompat.getColor(context, R.color.bid_placed_green))
+      binding.tvBidStatus.text = context.resources.getString(R.string.label_contract_won)
       binding.tvBidStatus.background = ContextCompat.getDrawable(context,R.drawable.bg_all_rounded_won)
       binding.tvBidStatus.compoundDrawablePadding =8
       binding.tvBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumbs_up_green, 0, 0, 0)
@@ -373,7 +697,7 @@ class HomeContractsBidsRequestItemVH(binding: ViewContractsBidItemBinding) :
  * Bids warning item view holder
  */
 internal class HomeBidsWarningItemVH(binding: ViewWarningItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewWarningItemBinding, HomeBidsWarningItem>(binding) {
+  BaseHomeBidsRVAdapterViewHolder<ViewWarningItemBinding, HomeBidsWarningItem>(binding) {
   override fun bind(
     item: HomeBidsWarningItem,
     _interface: HomeBidsRVAdapterInterface,
@@ -390,7 +714,7 @@ internal class HomeBidsWarningItemVH(binding: ViewWarningItemBinding) :
  * Bids timeout view holder
  */
 internal class HomeBidsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeBidsTimeoutItem>(binding) {
+  BaseHomeBidsRVAdapterViewHolder<ViewTimeOutItemBinding, HomeBidsTimeoutItem>(binding) {
   override fun bind(
     item: HomeBidsTimeoutItem,
     _interface: HomeBidsRVAdapterInterface,
@@ -407,9 +731,9 @@ internal class HomeBidsTimeOutItemVH(binding: ViewTimeOutItemBinding) :
  * Progress inline viewholder
  */
 internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) :
-    BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, HomeBidsProgressItem>(
-        binding
-    ) {
+  BaseHomeBidsRVAdapterViewHolder<ViewHomeBidsProgressItemBinding, HomeBidsProgressItem>(
+    binding
+  ) {
   override fun bind(
     item: HomeBidsProgressItem,
     _interface: HomeBidsRVAdapterInterface,

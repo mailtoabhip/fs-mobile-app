@@ -304,7 +304,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
    * Search load history observer
    */
   inner class SearchLoadHistoryObserver : Observer<List<SearchLoadHistoryEntity>> {
-    override fun onChanged(t: List<SearchLoadHistoryEntity>?) {
+    override fun onChanged(t: List<SearchLoadHistoryEntity>) {
       t?.let { items ->
         binding.containerHistory.removeAllViews()
         items.forEachIndexed { index, item ->
@@ -330,7 +330,7 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
    * Progress observer
    */
   inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean?) {
+    override fun onChanged(t: Boolean) {
       t?.let {
         when (t) {
           true -> uiUtils.showDelhiveryProgress(

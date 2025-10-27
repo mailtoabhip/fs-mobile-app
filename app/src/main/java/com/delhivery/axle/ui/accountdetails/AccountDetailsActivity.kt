@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.lifecycle.Observer
+
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.databinding.ActivityAccountDetailsBinding
@@ -24,9 +24,11 @@ import javax.inject.Inject
 import android.text.method.LinkMovementMethod
 
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.Observer
 import com.delhivery.axle.utils.extensions.focusClick
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
     init {
@@ -59,6 +61,11 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
             }
         })
         setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
@@ -152,7 +159,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
     }
 
     inner class StateObserver : Observer<AuthenticationUIState> {
-        override fun onChanged(it: AuthenticationUIState?) {
+        override fun onChanged(it: AuthenticationUIState) {
             it?.let { state ->
                 when (state) {
                     AuthenticationUIState.PhoneNo -> { }

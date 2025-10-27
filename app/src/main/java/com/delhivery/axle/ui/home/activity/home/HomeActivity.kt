@@ -140,6 +140,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           }
           supportActionBar?.setDisplayShowTitleEnabled(false)
           binding.toolbarTitle.text = title
+          
+          /* Handle window insets for edge-to-edge display (API 35+) */
+          if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.bottomNav)
+          }
           /* setup view pager */
           binding.viewpager.apply {
             offscreenPageLimit = HomeFragmentType.count()

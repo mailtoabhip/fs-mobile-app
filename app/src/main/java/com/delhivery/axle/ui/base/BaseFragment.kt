@@ -16,7 +16,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.delhivery.axle.BR
 import com.delhivery.axle.R.string
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -67,7 +66,7 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
 
     AndroidSupportInjection.inject(this)
 
-    viewModel = ViewModelProviders.of(this, viewModelFactory)
+    viewModel = ViewModelProvider(this, viewModelFactory)
         .get(getViewModelClass())
   }
 

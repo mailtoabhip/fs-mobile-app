@@ -92,6 +92,11 @@ class BidsActivity : BaseActivity<ActivityBidsBinding, BidsViewModel>(),
     setSupportActionBar(binding.toolbar)
     title = viewModel.bidType.toolbarTitle()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
 
     viewModel.progressLiveData.observe(
         this, Observer { if (it == true) searchItem?.isVisible = false })

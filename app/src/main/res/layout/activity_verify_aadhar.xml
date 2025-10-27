@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_red_bg"
-        android:orientation="vertical">
+        android:orientation="vertical"
+      android:fitsSystemWindows="true">
 
         <include
             android:id="@+id/progress_step_layout"

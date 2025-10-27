@@ -81,42 +81,57 @@ class HomeBidsViewModel @Inject constructor(
   var confirmedBids= ""
   var lostBids= ""
   var contractBids= ""
+  var bidSuggestion = false
 
   //
   var bidType : BidType = BidType.ActiveBid
+  
+  // Store user data for payment fields
+  var user: com.delhivery.axle.data.UserModel? = null
+  
+  /**
+   * Helper method to populate payment fields from user data
+   */
+  private fun populatePaymentFields(transaction: HomeBidsRequestItemData) {
+    user?.supplierDetails?.let { supplier ->
+      transaction.paymentMode = supplier.paymentMode
+      transaction.advancePercentage = supplier.advancePercentage
+    }
+  }
+  
   /**
    * Fetch bids summary
    */
   fun fetchBidsSummary(bidType: BidType) {
     compositeDisposable += bidsRepository.userBidsSummary()
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            activeBids=_res.myBids.toString()
-            confirmedBids=_res.confirmedBids.toString()
-            lostBids=_res.lostBids.toString()
-            contractBids = _res.contractBids.toString()
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(
-                  Pair(
-                      HomeBidsHeaderItem(
-                          HomeBidsHeaderItemData(
-                              _res.myBids,
-                              _res.confirmedBids,
-                              _res.lostBids,
-                            _res.contractBids,
-                            bidType
-                          )
-                      ), Update
+      .onBackground()
+      .subscribe { _res, error ->
+        if (!error) {
+          activeBids=_res.myBids.toString()
+          confirmedBids=_res.confirmedBids.toString()
+          lostBids=_res.lostBids.toString()
+          contractBids = _res.contractBids.toString()
+          mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            /* remove progress item */
+            add(
+              Pair(
+                HomeBidsHeaderItem(
+                  HomeBidsHeaderItemData(
+                    _res.myBids,
+                    _res.confirmedBids,
+                    _res.lostBids,
+                    _res.contractBids,
+                    bidType
                   )
+                ), Update
               )
-            }
-                .let { userBidsData.postValue(it) }
-          } else {
-            error.handle()
+            )
           }
+            .let { userBidsData.postValue(it) }
+        } else {
+          error.handle()
         }
+      }
   }
 
   /**
@@ -139,25 +154,63 @@ class HomeBidsViewModel @Inject constructor(
 
     //Send ONE AT A TIME
     val statuses = mutableListOf<String>().apply {
-      if (bidType == BidType.LostBid) {
-        add(BidType.LostBid.status.statusKey)
-        add(TransactionBidStatus.Cancelled.statusKey)
-      }else {
-        add(bidType.status.statusKey)
+      when (bidType) {
+        BidType.ActiveBid -> {
+          // Ongoing tab - fetch only "open" status bids
+          add(TransactionBidStatus.Open.statusKey)
+          bidSuggestion = true
+        }
+        BidType.ConfirmedBid -> {
+          // Closed tab - fetch rejected, cancelled, and accepted status bids
+          add(TransactionBidStatus.Rejected.statusKey)   // "rejected"
+          add(TransactionBidStatus.Cancelled.statusKey)  // "cancelled"
+          add(TransactionBidStatus.Accepted.statusKey)   // "accepted"
+        }
+        BidType.LostBid -> {
+          // Lost bids - fetch rejected and cancelled
+          add(BidType.LostBid.status.statusKey)
+          add(TransactionBidStatus.Cancelled.statusKey)
+        }
+        else -> {
+          // Default - use the status from bidType
+          add(bidType.status.statusKey)
+        }
       }
-//      add(BidType.ActiveBid.status.statusKey)
-//      add(BidType.ConfirmedBid.status.statusKey)
-//      add(BidType.LostBid.status.statusKey)
     }
-        .joinToString(separator = ",") { it }
+      .joinToString(separator = ",") { it }
 
     dataLoadingLiveData.postValue(true)
+    
+    // Fetch user data first if not available
+    if (user == null) {
+      compositeDisposable += userRepository.getUser(false)
+        .onBackground()
+        .subscribe { userModel, error ->
+          if (!error && userModel != null) {
+            this.user = userModel
+            // Now proceed with fetching bids
+            fetchBidsData(bidType, paginate, statuses)
+          } else {
+            error?.handle()
+            dataLoadingLiveData.postValue(false)
+          }
+        }
+    } else {
+      // User data already available, proceed with bids
+      fetchBidsData(bidType, paginate, statuses)
+    }
+  }
+  
+  /**
+   * Fetch bids data (separated from user data fetching)
+   */
+  private fun fetchBidsData(bidType: BidType, paginate: Boolean, statuses: String) {
     val mainTrace = Firebase.performance.newTrace("fetch_bids_placed_by_supplier")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_placed_and_lowest_bids_on_txns_parallel")
     mainTrace.start()
     //Fetching all user bids from server
     //sending the contract param as null will include "contract" type bids into the response
-    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null)
+    compositeDisposable += bidsRepository.userBids(offset, statuses, true,null,null,bidSuggestion)
       .flatMap { _res ->
         total = _res.first
         offset = _res.third
@@ -183,80 +236,92 @@ class HomeBidsViewModel @Inject constructor(
             })
         }
       }
-        .onBackground()
-        .subscribe { _res, error ->
-          if(error != null) mainTrace.putAttribute("error_response_received",error.message.toString())
-          parallelTrace.stop()
-          mainTrace.stop()
-          if (!error) {
+      .onBackground()
+      .subscribe { _res, error ->
+        if(error != null) mainTrace.putAttribute("error_response_received",error.message.toString())
+        parallelTrace.stop()
+        mainTrace.stop()
+        if (!error) {
 
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomeBidsProgressItem(), Remove))
-              Log.d("bidsview","$paginate $total")
-              /* edit route prefs, if fresh fetch n total == 0 */
-              if (!paginate && total == 0) {
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              }
-              /* post all transactions mapped to bids as add */
-              else {
-                add(Pair(HomeBidsSearchItem(), AddUpdate))
+          mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            /* remove progress item */
+            add(Pair(HomeBidsProgressItem(), Remove))
+            Log.d("bidsview","$paginate $total")
+            /* edit route prefs, if fresh fetch n total == 0 */
+            if (!paginate && total == 0) {
+              add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+            }
+            /* post all transactions mapped to bids as add */
+            else {
+              add(Pair(HomeBidsSearchItem(), AddUpdate))
 
-                val bids = _res.first
-                val transactions = _res.second.transactions
-                val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
-                for (bid in _res.fifth) {
-                  val key: String = bid.transactionId
-                  if (map.containsKey(key)) {
-                    val list: MutableList<TransactionBid>? = map[key]
-                    list!!.add(bid)
-                  } else {
-                    val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
-                    list.add(bid)
-                    map[key] = list
-                  }
-                }
-                for (transaction in transactions) {
-                  try {
-                    val lowestBid = _res.third.filter { b ->
-                      b.transactionId.safeEquals(transaction.transactionId)
-                    }[0]
-                    transaction.numBids = lowestBid.numBids
-                    transaction.lowestBid = lowestBid.minBid
-                    transaction.loadPricePercent = _res.second.loadPricePercent
-                    //set bidType as well
-                    transaction.bidType = bidType
-                    transaction.transactionBid = bids.filter { b ->
-                      b.transactionId.safeEquals(transaction.transactionId)
-                    }[0]
-                    transaction.bulkTransactionBids = map[transaction.transactionId]!!
-                  } catch (e: Exception) {
-                    transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
-                  }
-                  add(Pair(HomeBidsRequestItem(transaction), Add))
+              val bids = _res.first
+              val transactions = _res.second.transactions
+              val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
+              for (bid in _res.fifth) {
+                val key: String = bid.transactionId
+                if (map.containsKey(key)) {
+                  val list: MutableList<TransactionBid>? = map[key]
+                  list!!.add(bid)
+                } else {
+                  val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
+                  list.add(bid)
+                  map[key] = list
                 }
               }
-            }
-                .let { userBidsData.postValue(it) }
-          } else {
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomeBidsProgressItem(), Remove))
-              /* remove search item */
-              add(Pair(HomeBidsSearchItem(), Remove))
-              if (error is NoBidsFoundException &&!paginate) {
-                /* add no bids warning item */
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              } else if(!paginate){
-                /* add api time out item */
-                add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
+              for (transaction in transactions) {
+                try {
+                  val lowestBid = _res.third.filter { b ->
+                    b.transactionId.safeEquals(transaction.transactionId)
+                  }[0]
+                  transaction.numBids = lowestBid.numBids
+                  transaction.lowestBid = lowestBid.minBid
+                  transaction.loadPricePercent = _res.second.loadPricePercent
+                  //set bidType as well
+                  transaction.bidType = bidType
+                  transaction.transactionBid = bids.filter { b ->
+                    b.transactionId.safeEquals(transaction.transactionId)
+                  }[0]
+                  
+                  // Sync bid suggestion values from transactionBid to transaction fields
+                  transaction.transactionBid?.suggestion?.let { suggestion ->
+                    transaction.bidSuggestion = true
+                    transaction.suggestedBidMessage = suggestion.message
+                  } ?: run {
+                    transaction.bidSuggestion = false
+                    transaction.suggestedBidMessage = null
+                  }
+                  
+                  transaction.bulkTransactionBids = map[transaction.transactionId]!!
+                } catch (e: Exception) {
+                  transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
+                }
+                // Populate payment fields from user data
+                populatePaymentFields(transaction)
+                add(Pair(HomeBidsRequestItem(transaction), Add))
               }
             }
-                .let { userBidsData.postValue(it) }
           }
-
-          dataLoadingLiveData.postValue(false)
+            .let { userBidsData.postValue(it) }
+        } else {
+          mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            /* remove progress item */
+            add(Pair(HomeBidsProgressItem(), Remove))
+            /* remove search item */
+            add(Pair(HomeBidsSearchItem(), Remove))
+            if (error is NoBidsFoundException &&!paginate) {
+              /* add no bids warning item */
+              add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
+            } else if(!paginate){
+              /* add api time out item */
+              add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
+            }
+          }
+            .let { userBidsData.postValue(it) }
         }
+
+        dataLoadingLiveData.postValue(false)
+      }
   }
 
   override fun getUserBulkBidsAgainstTrans(userBids: List<TransactionBid>?): ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? {
@@ -330,7 +395,7 @@ class HomeBidsViewModel @Inject constructor(
         confirmedStat=("$confirmedStatus Confirmed")
       }
       val bulkBidsItem = BulkBidSummaryItemData(key, bidAmt, truckCount!!,openStat!!, lowestBidStatus = false, expanded = false, confirmedStatus = confirmedStat,
-              lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![0].childTransactionId)
+        lostStatus = lostStat, vehicleNumber = vehicleNumberLoc, childTransactionId = map[key]!![0].childTransactionId)
       bulkBidSummaryItemDataList.add(bulkBidsItem)
       bulkBidSummaryItemList.add(Pair(BulkBidSummaryItem(bulkBidsItem), DataRVAdapterOperationType.Add))
     }

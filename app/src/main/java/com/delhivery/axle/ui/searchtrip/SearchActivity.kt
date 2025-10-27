@@ -35,6 +35,7 @@ import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.google.firebase.perf.FirebasePerformance
@@ -72,6 +73,11 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
     super.onPostCreate(savedInstanceState)
 
     setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     title = "Search Trips"
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
