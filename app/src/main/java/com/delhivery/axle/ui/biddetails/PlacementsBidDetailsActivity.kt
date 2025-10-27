@@ -80,6 +80,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.math.abs
 import androidx.core.view.isVisible
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 /**
  * Bid detail screen
@@ -140,6 +141,12 @@ class PlacementsBidDetailsActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /* Handle window insets for edge-to-edge display (API 35+) */
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+        }
+
         Log.d("onCreate","onCreate")
         activitySetupTrace = FirebasePerformance.getInstance().newTrace("PlacementsBidDetailsActivity_SetupTime")
         activitySetupTrace?.start()
@@ -339,7 +346,7 @@ class PlacementsBidDetailsActivity :
      * Transaction details and UI updation Observer
      */
     inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData?) {
+        override fun onChanged(t: HomeBidsRequestItemData) {
             if (t != null) {
                 t.let { _transaction ->
                     //assign placementtype to loadType var to distinguish b/w different types of loads in "HomeBidsRequestItemData" class and its functions

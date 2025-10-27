@@ -111,6 +111,7 @@ import com.delhivery.axle.utils.StringUtils.capitalize
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 import androidx.core.view.isVisible
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
 
@@ -149,6 +150,11 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     private var homePlacementsItemData:HomePlacementsItemData?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /* Handle window insets for edge-to-edge display (API 35+) */
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+        }
 
         /* validate intent */
         validateIntentData()
@@ -283,7 +289,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
      * Transaction details and UI updation Observer
      */
     inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData?) {
+        override fun onChanged(t: HomeBidsRequestItemData) {
             if (t != null) {
                 t.let { _transaction ->
                     Log.d(TAG, "TransactionObserver-START")
