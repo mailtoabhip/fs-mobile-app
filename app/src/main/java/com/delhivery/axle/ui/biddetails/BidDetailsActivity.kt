@@ -1826,7 +1826,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
       // Ensure UI operations run on main thread
       binding.cardInput.placementCl.editAutoCompleteTrucks.post {
         if(it=="Add New Truck"){
-          binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+          // Existing input is preserved by DelhiveryTrucksAutoEditText
           this?.let {showAddTruckBottomSheet()}
         }else if(validateTruckNumber(it)){
           isValidVehicleNumber = true

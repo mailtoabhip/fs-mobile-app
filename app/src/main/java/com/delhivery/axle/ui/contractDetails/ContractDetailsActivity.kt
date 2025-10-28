@@ -1474,7 +1474,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
     })
     autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
       if(it=="Add New Truck"){
-        binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+        // Existing input is preserved by DelhiveryTrucksAutoEditText
         this?.let {showAddTruckBottomSheet()}
       }else if(validateTruckNumber(it)){
         isValidVehicleNumber = true

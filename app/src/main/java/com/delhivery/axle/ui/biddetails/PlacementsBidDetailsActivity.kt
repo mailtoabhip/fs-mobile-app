@@ -491,7 +491,7 @@ class PlacementsBidDetailsActivity :
             // Ensure UI operations run on main thread
             binding.cardInput.placementCl.editAutoCompleteTrucks.post {
                 if (it == "Add New Truck") {
-                    //binding.cardInput.placementCl.editAutoCompleteTrucks.text.clear()
+                    // Existing input is preserved by DelhiveryTrucksAutoEditText
                     this.let { showAddTruckBottomSheet() }
                 } else if (validateTruckNumber(it)) {
                     isValidVehicleNumber = true
@@ -518,7 +518,10 @@ class PlacementsBidDetailsActivity :
             //binding.cardInput.placementCl.editAutoCompleteTrucks.requestFocus()
             binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
             //move cursor to the end of text in vehicle number
-            binding.cardInput.placementCl.editAutoCompleteTrucks.setSelection(binding.cardInput.placementCl.editTextVehicleNumber.text.length)
+//            binding.cardInput.placementCl.editTextVehicleNumber.text.trim().length.let {
+//                if(it>0)
+//                    binding.cardInput.placementCl.editAutoCompleteTrucks.setSelection(it)
+//            }
             // showkeyboard
             Handler().postDelayed({
                 showKeyboard()

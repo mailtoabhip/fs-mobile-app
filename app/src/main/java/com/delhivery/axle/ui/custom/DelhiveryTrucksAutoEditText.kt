@@ -51,6 +51,7 @@ class DelhiveryTrucksAutoEditText(
     private var progress = false
     private var error = false
     private var isSelectionInProgress = false
+    private var textBeforeSelection: String = ""
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -102,6 +103,12 @@ class DelhiveryTrucksAutoEditText(
                 }
     }
 
+    override fun showDropDown() {
+        // Always save the current text before dropdown is shown
+        textBeforeSelection = text.toString()
+        super.showDropDown()
+    }
+    
     fun setItems(
             trucks: List<String>,
             selected: (String) -> Unit
@@ -109,11 +116,22 @@ class DelhiveryTrucksAutoEditText(
         progress(false)
         val adapter = CustomAdapter(context, R.layout.view_truck_item, trucks)
         setAdapter(adapter)
+        
         setOnItemClickListener { _, _, i, _ ->
             isSelectionInProgress = true
             //check the selected value, if equals "Add New Truck" don't set in edit text view
             Log.d("Add_truck_value==>>", trucks[i])
-            setText(trucks[i])
+            
+            // Only set text if NOT "Add New Truck" to preserve existing input
+            if(trucks[i] != "Add New Truck") {
+                // Text is already set by AutoCompleteTextView, no need to set again
+                // Clear saved text for next dropdown
+                textBeforeSelection = ""
+            } else {
+                // Restore the text that was there before selection
+                setText(textBeforeSelection)
+                textBeforeSelection = ""
+            }
             //
             selected(trucks[i])
             dismissDropDown()
@@ -121,6 +139,13 @@ class DelhiveryTrucksAutoEditText(
             postDelayed({
                 isSelectionInProgress = false
             }, 100)
+        }
+        
+        // Reset flag if dropdown is dismissed without selection
+        setOnDismissListener {
+            if (!isSelectionInProgress) {
+                textBeforeSelection = ""
+            }
         }
         
         if (trucks.isEmpty()) {

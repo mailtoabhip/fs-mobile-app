@@ -120,7 +120,7 @@ class PlacementDetailsActivity: BaseActivity<ActivityPlacementsDetailsBinding, P
 
         autoCompleteUtils.autoCompleteTruck(binding.editAutoCompleteTrucks){
             if(it=="Add New Truck"){
-                binding.editAutoCompleteTrucks.text.clear()
+                // Existing input is preserved by DelhiveryTrucksAutoEditText
                 this?.let { startActivityForResult(truckIntent(this, source = VALUE_ADD_TRUCK_PLACEMENT), REQCODE_ADD_TRUCK) }
             }else if(validateTruckNumber(it)){
                         isValidVehicleNumber = true
