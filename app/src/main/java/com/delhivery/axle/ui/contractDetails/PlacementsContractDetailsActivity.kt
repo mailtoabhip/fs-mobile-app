@@ -594,7 +594,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     fun placementInput(){
         Log.d(TAG, "placementInput-START")
         //
-        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
+        //binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
         //
         //insert your code below this

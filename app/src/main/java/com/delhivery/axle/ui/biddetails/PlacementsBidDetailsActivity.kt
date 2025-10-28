@@ -440,7 +440,7 @@ class PlacementsBidDetailsActivity :
 
 
     fun placementInput() {
-        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        //binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
         binding.cardInput.placementCl.driverNameError.visibility = View.GONE
         //
         //Log.d("$TAG::isIntracity", ""+viewModel.transaction.isIntracity())

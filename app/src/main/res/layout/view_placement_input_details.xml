@@ -49,6 +49,7 @@
         <com.delhivery.axle.ui.custom.DelhiveryTrucksAutoEditText
             android:id="@+id/edit_auto_complete_trucks"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:textSize="@dimen/text_16sp"
             android:hint="Select Vehicle Number"
             android:drawablePadding="@dimen/size_4dp"
