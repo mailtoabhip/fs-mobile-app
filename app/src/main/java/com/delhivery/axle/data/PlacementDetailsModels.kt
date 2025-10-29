@@ -20,7 +20,7 @@ data class Center(
     @SerializedName("center_name") val centerName: String?,
     @SerializedName("center_state") val centerState: String?,
     @SerializedName("coordinates") val coordinates: Coordinates?,
-    @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
+    @SerializedName("past_travel_hrs") val pastTravelHrs: Double?,
     @SerializedName("rel_eta") val relETA: String?,
     @SerializedName("rel_etd") val relETD: String?
 )
@@ -67,7 +67,7 @@ data class HaltCenters(
     @SerializedName("address") val address: String?,
     @SerializedName("city") val city: String?,
     //
-    @SerializedName("past_travel_hrs") val pastTravelHrs: Int?,
+    @SerializedName("past_travel_hrs") val pastTravelHrs: Double?,
     @SerializedName("rel_eta") val relETA: String?,
     @SerializedName("rel_etd") val relETD: String?
 )
