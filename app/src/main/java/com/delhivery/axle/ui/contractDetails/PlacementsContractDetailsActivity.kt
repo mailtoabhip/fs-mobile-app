@@ -531,7 +531,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
             relEta = viewModel.transaction.routeInfo?.destination?.relETA?:"",
             name = viewModel.transaction.routeInfo?.destination?.centerName?:"",
             state = viewModel.transaction.routeInfo?.destination?.centerState?:"",
-            pastTravelHrs = "",
+            pastTravelHrs = viewModel.transaction.routeInfo?.destination?.pastTravelHrs?.toString()?:"",
             haltHrs = "",
             longitude = viewModel.transaction.routeInfo?.destination?.coordinates?.lon?.toString()?:"",
             latitude = viewModel.transaction.routeInfo?.destination?.coordinates?.lat?.toString()?:"")
@@ -615,15 +615,22 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     Log.d(TAG, "if-addressLiveData-START")
                 }
             })
-            //fetch facility address
-            triggerFacilityAddress(homePlacementsItemData?.originCenterCode)
-            //set visible intracity address view
-            binding.cardInput.routeAddress.visibility = View.VISIBLE
-            ////set visible map text view
-            binding.cardInput.mapText.visibility = View.VISIBLE
-            //set click listener on map
-            binding.cardInput.mapText.setOnClickListener {
-                navigateToMap()
+
+            if(homePlacementsItemData?.originCenterCode.isNotNullOrEmpty()){
+                //fetch facility address
+                triggerFacilityAddress(homePlacementsItemData?.originCenterCode)
+                //set visible intracity address view
+                binding.cardInput.routeAddress.visibility = View.VISIBLE
+                ////set visible map text view
+                binding.cardInput.mapText.visibility = View.VISIBLE
+                //set click listener on map
+                binding.cardInput.mapText.setOnClickListener {
+                    navigateToMap()
+                }
+            }else{
+                binding.cardInput.pbIntracityAddress.visibility = View.GONE
+                binding.cardInput.routeAddress.visibility = View.GONE
+                binding.cardInput.mapText.visibility = View.GONE
             }
         }else{
             binding.cardInput.pbIntracityAddress.visibility = View.GONE
