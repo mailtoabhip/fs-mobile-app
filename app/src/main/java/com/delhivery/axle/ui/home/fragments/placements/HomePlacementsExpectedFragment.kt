@@ -108,6 +108,18 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
             it?.let { _items -> adapter.operation(_items) }
         })
 
+        // Observe placement counts and update tab counts
+        viewModel.totalPlacementLiveData.reobserve(viewLifecycleOwner, Observer { placementData ->
+            Log.d("totalPlacementLiveData", "Observer triggered with data: $placementData")
+            placementData?.let { (delayedCount, _, expectedCount) ->
+                Log.d("totalPlacementLiveData", "Updating tab counts - Delayed: $delayedCount, Expected: $expectedCount")
+                //send data to parent fragment to set it into the tabs
+                val tabCountConcatValue = "$delayedCount:$expectedCount"
+                Log.d("tabCountConcatValue", tabCountConcatValue)
+                sendResultToParentFragment(tabCountConcatValue)
+            }
+        })
+
         // Track analytics for expected tab
         analyticsUtil.moEngageTrackEvent(
             EVENT_HOME_PLACEMENT_EXPECTED_TAB,
@@ -122,6 +134,13 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
         )
 
         refreshData()
+    }
+
+    fun sendResultToParentFragment(tabCount: String) {
+        val bundle = Bundle().apply {
+            putString("tabCountValue", tabCount)
+        }
+        parentFragmentManager.setFragmentResult("tabCountDataKey", bundle)
     }
 
     override fun onResume() {

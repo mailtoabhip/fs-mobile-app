@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.home.fragments.UpdatePlacementBadgeAction
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.perf.FirebasePerformance
@@ -67,6 +68,9 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsFragment_SetupTime")
         fragmentSetupTrace?.start()
 
+        //setup fragment result listener for child fragment's result
+        setupFragmentListener()
+        //
         pagerAdapter = HomePlacementsFragmentsAdapter(childFragmentManager)
 
         binding.viewPager.apply {
@@ -128,6 +132,23 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
         // Trigger data fetch to get initial counts
         Log.d(TAG, "Triggering initial data fetch")
         viewModel.fetchPlacementLoads("Initial")
+    }
+
+    private fun setupFragmentListener() {
+        // Listen for results from a child fragment
+        childFragmentManager.setFragmentResultListener("tabCountDataKey", this) { requestKey, bundle ->
+            // Handle the result here
+            val result = bundle.getString("tabCountValue")?.split(":")
+            val delayedCount = result?.get(0)?:""
+            val expectedCount = result?.get(1)?:""
+
+            if(delayedCount.isNotNullOrEmpty() && expectedCount.isNotNullOrEmpty()){
+                //update tabs count
+                updateTabCounts(delayedCount.toInt(), expectedCount.toInt())
+            }
+
+            Log.d("ParentFragment", "Received result from child: $result")
+        }
     }
 
     override fun onResume() {
