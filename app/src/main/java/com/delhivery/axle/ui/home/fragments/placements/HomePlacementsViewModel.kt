@@ -86,36 +86,7 @@ class HomePlacementsViewModel @Inject constructor(
                         loads.loadType= LoadTypes.orionSpot.name
                         segregateLoadType(loads)
                 }
-//                var ftlAdhocMissingCount =0
-//                var ftlContractMissingCount =0
-//                var intracityAdhocMissingCount =0
-//                var intracityContractMissingCount =0
-//                for(load in missingDetailsExpectedPlacementList){
-//                        when(load.loadType){
-//                                LoadTypes.ftlAdhoc.name->  {
-//                                        ftlAdhocMissingCount++ }
-//                                LoadTypes.ftlRegular.name-> {
-//                                        ftlContractMissingCount++ }
-//                                LoadTypes.intracityRegular.name->  {
-//                                        intracityContractMissingCount++ }
-//                                LoadTypes.intracityAdhoc.name->  {
-//                                        intracityAdhocMissingCount++ }
-//
-//                        }
-//                }
-//                for (load in missingDetailsDelayedPlacementList){
-//                        when(load.loadType){
-//                                LoadTypes.ftlAdhoc.name->
-//                                        ftlAdhocMissingCount++
-//                                LoadTypes.ftlRegular.name->
-//                                        ftlContractMissingCount++
-//                                LoadTypes.intracityRegular.name->
-//                                        intracityContractMissingCount++
-//                                LoadTypes.intracityAdhoc.name->
-//                                        intracityAdhocMissingCount++
-//                        }
-//                }
-//                missingDataLiveData.postValue(Pair(Quadruple(ftlAdhocMissingCount,ftlContractMissingCount,intracityAdhocMissingCount,intracityContractMissingCount),missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size))
+                //
                 Log.d("HomePlacementsViewModel", "Posting totalPlacementLiveData - Delayed: ${delayedPlacementList.size}, Expected: ${expectedPlacementList.size}")
                 totalPlacementLiveData.postValue(Triple(delayedPlacementList.size,missingDetailsDelayedPlacementList.size+missingDetailsExpectedPlacementList.size,expectedPlacementList.size))
                 mutableListOf<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
