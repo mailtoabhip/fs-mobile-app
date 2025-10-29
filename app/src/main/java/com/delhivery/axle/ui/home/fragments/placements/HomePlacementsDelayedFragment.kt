@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomePlacementsDelayedBinding
@@ -53,15 +52,12 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
 
-    private var childViewModel : HomePlacementsViewModel? = null
-
     companion object {
         /* singleton instance */
         val _instance: HomePlacementsDelayedFragment by lazy { HomePlacementsDelayedFragment() }
     }
 
     override fun getViewModelClass() = HomePlacementsViewModel::class.java
-
 
     override fun layoutId() = R.layout.fragment_home_placements_delayed
 
@@ -76,8 +72,6 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePlacementsDelayedFragment_SetupTime")
         fragmentSetupTrace?.start()
 
-        initViewModel()
-
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
             refreshData()
@@ -90,15 +84,15 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
         }
         binding.rvLoads.itemAnimator = null
 
-        childViewModel?.dataLoadingLiveData?.reobserve(viewLifecycleOwner, Observer {
+        viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
             isLoadingData = it ?: false
         })
 
-        childViewModel?.userLoadsData?.reobserve(viewLifecycleOwner, Observer {
+        viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items -> adapter.operation(_items) }
         })
 
-        childViewModel?.userLoadsDataFetch?.reobserve(viewLifecycleOwner, Observer {
+        viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items -> adapter.operation(_items) }
         })
 
@@ -118,15 +112,6 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
         refreshData()
     }
 
-
-    private fun initViewModel() {
-
-        // create shared viewmodel from parent fragment
-        childViewModel =
-            (parentFragment as? HomePlacementsFragment)?.viewModel
-                ?: ViewModelProvider(this, viewModelFactory).get(getViewModelClass())
-    }
-
     override fun onResume() {
         super.onResume()
         if (fragmentSetupTrace != null && isFirstResume) {
@@ -140,9 +125,8 @@ class HomePlacementsDelayedFragment : HomeBaseFragment<FragmentHomePlacementsDel
     }
 
     private fun refreshData() {
-        Log.d("DelayedFragment", "refreshData() called - using shared ViewModel instance")
         adapter.resetStaticData()
-        childViewModel?.fetchPlacementLoads(PlacementTypes.Delayed.name)
+        viewModel.fetchPlacementLoads(PlacementTypes.Delayed.name)
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
