@@ -114,11 +114,12 @@ class PlacementsContractsRouteDetailsAdapter(private val dataList: List<HaltCent
       }
 
 
+       //This logic is no more required as destination pas travel time will be used
       //check if array size only 2 as only pickup and drop are present - hide the travel time field
-      if(dataList.size == 2) {
-        holder.clTravelTime.visibility= View.GONE
-        holder.timeTravel.visibility = View.GONE
-      }
+//      if(dataList.size == 2) {
+//        holder.clTravelTime.visibility= View.GONE
+//        holder.timeTravel.visibility = View.GONE
+//      }
     }
     override fun getItemCount(): Int {
       return dataList.size
