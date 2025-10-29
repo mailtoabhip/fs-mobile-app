@@ -372,18 +372,27 @@ class PlacementsBidDetailsActivity :
                 /**
                  * New address adapter code
                  */
-                if(viewModel.transaction.isIntracity()){
-                //if(false){
-                    //hide route details section
+                //*******************
+                val transaction = viewModel.transaction
+                val routeInfo = binding.transaction?.routeInfo
+
+                if (transaction.isIntracity()) {
+                    // Hide route details section for intracity transactions
                     binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
-                }else{
-                    //
-                    binding.cvRouteSection.cvRouteContainer.visibility = View.VISIBLE
-                    //init observer trigger pickup and destination address call
-                    triggerPickupAndDestinationAddressCall(
-                        pickupCenterCode = binding.transaction?.routeInfo?.origin?.centerCode?:"",
-                        destinationCenterCode = binding.transaction?.routeInfo?.destination?.centerCode?:"")
+                } else {
+                    val originCode = routeInfo?.origin?.centerCode
+                    val destinationCode = routeInfo?.destination?.centerCode
+
+                    //check if any centercode is not available - hide the route details section
+                    if (originCode.isNotNullOrEmpty() && destinationCode.isNotNullOrEmpty()) {
+                        binding.cvRouteSection.cvRouteContainer.visibility = View.VISIBLE
+                        triggerPickupAndDestinationAddressCall(
+                            pickupCenterCode = originCode?:"",
+                            destinationCenterCode = destinationCode?:""
+                        )
+                    }
                 }
+                //*******************
             } else {
                 binding.error = true
                 binding.containerError.title = "Session Time Out"
@@ -454,21 +463,27 @@ class PlacementsBidDetailsActivity :
                     binding.cardInput.routeAddress.text = capitalize(address)
                 }
             })
-            //
-            triggerFacilityAddress(homePlacementsItemData?.originCenterCode)
-            //
-            binding.cardInput.routeAddress.visibility = View.VISIBLE
-            //
-            binding.cardInput.mapText.visibility = View.VISIBLE
-            //
-            binding.cardInput.mapText.setOnClickListener {
-                navigateToMap()
+            //check if center code is available else hide address and map section
+            if(homePlacementsItemData?.originCenterCode.isNotNullOrEmpty()){
+                //
+                triggerFacilityAddress(homePlacementsItemData?.originCenterCode)
+                //
+                binding.cardInput.routeAddress.visibility = View.VISIBLE
+                //
+                binding.cardInput.mapText.visibility = View.VISIBLE
+                //
+                binding.cardInput.mapText.setOnClickListener {
+                    navigateToMap()
+                }
+            }else{
+                binding.cardInput.pbIntracityAddress.visibility = View.GONE
+                binding.cardInput.routeAddress.visibility = View.GONE
+                binding.cardInput.mapText.visibility = View.GONE
             }
         } else {
             binding.cardInput.pbIntracityAddress.visibility = View.GONE
             binding.cardInput.routeAddress.visibility = View.GONE
             binding.cardInput.mapText.visibility = View.GONE
-
         }
 
         //old working code below done by Rahul - no change
