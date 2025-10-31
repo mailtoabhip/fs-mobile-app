@@ -372,6 +372,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
                         //handle flexible and fixed reporting tag
                         //check if intracity regular - show fixed reporting tag
+                        //for "intracity_adhoc" - refer "ticket_flexible_contract_id" logics below
                         if(viewModel.transaction.isIntracityRegular()) {
                             //show fixed reporting tag
                             binding.routeDetails.fixedIntracityTv.visibility = View.VISIBLE

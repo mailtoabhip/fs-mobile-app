@@ -390,6 +390,9 @@ class PlacementsBidDetailsActivity :
                             pickupCenterCode = originCode?:"",
                             destinationCenterCode = destinationCode?:""
                         )
+                    }else{
+                        // Hide route details section when origin or destination "centerCode" is null or empty
+                        binding.cvRouteSection.cvRouteContainer.visibility = View.GONE
                     }
                 }
                 //*******************
