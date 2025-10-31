@@ -140,7 +140,7 @@ class HomeContractsViewModel@Inject constructor(
         // Apply client-side vehicle filtering if needed
         val filteredTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
           val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
-          _res.transactions.filter { transaction ->
+          _res.transactions?.filter { transaction ->
             transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
           }
         } else {
@@ -209,7 +209,7 @@ class HomeContractsViewModel@Inject constructor(
               // Apply truck filter to both datasets
               val filteredIntercityTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
                 val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
-                intercityTransactions.filter { transaction ->
+                intercityTransactions?.filter { transaction ->
                   transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
                 }
               } else {
@@ -218,7 +218,7 @@ class HomeContractsViewModel@Inject constructor(
               
               val filteredIntracityTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
                 val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
-                intracityTransactions.filter { transaction ->
+                intracityTransactions?.filter { transaction ->
                   transaction.truckType?.lowercase() in selectedVehicleTypes.map { it.lowercase() }
                 }
               } else {
@@ -227,9 +227,9 @@ class HomeContractsViewModel@Inject constructor(
               
               // Calculate counts from filtered data
               // Express = LH_FTL contracts, Non-Express = FRC contracts
-              val expressCount = filteredIntercityTransactions.count { it.contractType == ContractType.LH_FTL.type }
-              val nonExpressCount = filteredIntercityTransactions.count { it.contractType == ContractType.FRC.type }
-              val intraCityCount = filteredIntracityTransactions.size
+              val expressCount = filteredIntercityTransactions?.count { it.contractType == ContractType.LH_FTL.type }
+              val nonExpressCount = filteredIntercityTransactions?.count { it.contractType == ContractType.FRC.type }
+              val intraCityCount = filteredIntracityTransactions?.size
               
               // Calculate total active count for legacy purposes
               var totalActive = 0
@@ -268,11 +268,11 @@ class HomeContractsViewModel@Inject constructor(
                 }
               }
 
-            val count = expressCount+nonExpressCount+intraCityCount
+            val count = (expressCount ?: 0) + (nonExpressCount ?: 0) + (intraCityCount ?: 0)
             Log.d("viewmodelContract", "Filtered counts - expressCount: ${expressCount}, intraCityCount: ${intraCityCount}, nonExpressCount: ${nonExpressCount}")
 
             contractsCountLiveData.postValue(count)
-              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ,nonExpressCount, intraCityCount,userPrefs.demandType,userPrefs.contractDemand)), AddUpdate))
+              add(Pair(HomeContractsFilterItem(HomeContractsFilterItemData(demandType, expressCount ?: 0, nonExpressCount ?: 0, intraCityCount ?: 0, userPrefs.demandType, userPrefs.contractDemand)), AddUpdate))
              // Handle filter for intracity contract type
 
 
@@ -286,10 +286,10 @@ class HomeContractsViewModel@Inject constructor(
                 //add(Pair(HomeContractsIntracityFilterItem(HomeContractsIntracityFilterItemData(intracityContractType)), AddUpdate))
               }
             //  loadsCountLiveData.postValue(totalActive)
-             if (_tRes.seventh.transactions.isEmpty() && !paginate) {
+             if (_tRes.seventh.transactions?.isEmpty() != false && !paginate) {
                add(Pair(HomeContractsWarningItem_NoLoads, AddUpdate))
               }
-              if(_tRes.seventh.transactions.isNotEmpty()){
+              if(_tRes.seventh.transactions?.isNotEmpty() == true){
               for ((index, load) in loads.toMutableList().withIndex()) {
                 try {
                   load.transactionId?.let { txnIds.add(it) }

@@ -120,7 +120,7 @@ class BidsRepository @Inject constructor(
    * Bulk call to fetch bids
    */
   fun bidsForLoads(
-    transactions: List<HomeBidsRequestItemData>,
+    transactions: List<HomeBidsRequestItemData>?,
     contractBids: Boolean?=null
   ) = bidService.bidsForLoads(
       userRepository.userId(),
@@ -130,7 +130,7 @@ class BidsRepository @Inject constructor(
   )
       .convertResponse()
       .map {
-        Pair(transactions, it.bids)
+        Pair(transactions ?: emptyList(), it.bids)
       }!!
 
     /**
@@ -250,13 +250,13 @@ class BidsRepository @Inject constructor(
   /**
    * Get lowest bid for loads
    */
-  fun bulkLowestBidsForLoads(transactions: List<HomeBidsRequestItemData>) =
+  fun bulkLowestBidsForLoads(transactions: List<HomeBidsRequestItemData>?) =
     bidService.bulkLowestBidsForTransactions(
-        transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+        if (transactions.isNullOrEmpty()) "" else transactions.map { it.transactionId }.joinToString(",") { it.toString() }
     )
         .convertResponse()
         .map {
-          Pair(transactions, it)
+          Pair(transactions ?: emptyList(), it)
         }!!
 }
 

@@ -54,6 +54,15 @@ class TransactionsRepository @Inject constructor(
     ).convertResponse()
 
   /**
+   * Get spot marketplace transactions
+   */
+  fun fetchSpotMarketplaceTransactions(onlyCount: Boolean = false, limit: Int = UserTripsLoadLimit) =
+    transactionService.spotMarketplaceTransactions(
+      onlyCount = onlyCount,
+      limit = limit
+    ).convertResponse()
+
+  /**
    * Get contracts transactions
    */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null, searchAfterCreationTime:String? = null, searchAfterTransactionId:String? = null) =

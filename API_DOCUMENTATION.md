@@ -8,12 +8,13 @@ This document provides comprehensive documentation for the API calls triggered i
 
 1. [API Call Triggers](#api-call-triggers)
 2. [Loads Section](#loads-section)
-3. [Contracts Section](#contracts-section)
-4. [MyBids Section](#mybids-section)
-5. [Bid Management APIs](#bid-management-apis)
-6. [Count Fetching APIs](#count-fetching-apis)
-7. [API Call Counts Summary](#api-call-counts-summary)
-8. [Request/Response Models](#requestresponse-models)
+3. [Marketplace Loads Section](#marketplace-loads-section)
+4. [Contracts Section](#contracts-section)
+5. [MyBids Section](#mybids-section)
+6. [Bid Management APIs](#bid-management-apis)
+7. [Count Fetching APIs](#count-fetching-apis)
+8. [API Call Counts Summary](#api-call-counts-summary)
+9. [Request/Response Models](#requestresponse-models)
 
 ---
 
@@ -145,6 +146,329 @@ GET /transactions/loadboard/
 | `exclude_trip_ids` | string | Excluded trip IDs |
 | `exclude_union_area` | boolean | Exclude union areas (default: true) |
 | `loads_with_bid_active` | boolean | Include loads with active bids (default: true) |
+
+---
+
+## Marketplace Loads Section
+
+### Overview
+The Marketplace Loads section displays spot marketplace loads available for bidding. This is a new filter tab added to the Loads section that shows loads from the spot marketplace.
+
+### Features
+- **Marketplace Filter Tab**: New filter option alongside Intracity and Intercity tabs
+- **Dynamic Count Display**: Shows real-time count of marketplace loads
+- **Parallel Bid Fetching**: Fetches bids for marketplace loads in parallel
+- **Payment Fields**: Automatically populates payment mode and advance percentage
+- **Pagination Support**: Supports infinite scroll for loading more marketplace loads
+
+### API Call Flow
+
+#### 1. Marketplace Loads Fetch
+**Method**: `HomeLoadsViewModel.fetchSpotMarketplaceLoads()`
+
+```kotlin
+transactionsRepository.fetchSpotMarketplaceTransactions(
+    onlyCount = false, 
+    limit = 20
+)
+```
+
+#### 2. Parallel API Calls
+After fetching marketplace loads, the following parallel calls are made:
+
+```kotlin
+Single.zip(
+    bidsRepository.bidsForLoads(transactions),
+    bidsRepository.bulkLowestBidsForLoads(transactions),
+    BiFunction { bids, lowestBids -> Pair(bids, lowestBids) }
+)
+```
+
+### API Endpoint
+
+#### Spot Marketplace Transactions
+```
+GET /spot_marketplace/loads
+```
+
+**Service**: TransactionService  
+**Base URL (UAT)**: `http://orion-transaction-api-uat.delhivery.com`  
+**Base URL (Dev)**: `https://orion-transaction-api-dev.delhivery.com`  
+**Base URL (Prod)**: `https://orion-transaction-api.delhivery.com`
+
+**Query Parameters:**
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `only_count` | boolean | No | false | Whether to fetch only counts |
+| `limit` | int | Yes | 20 | Number of records to fetch |
+
+**Full URL Example (UAT):**
+```
+http://orion-transaction-api-uat.delhivery.com/spot_marketplace/loads?only_count=false&limit=20
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "transactions": [
+      {
+        "transaction_id": "string",
+        "origin_city": "string",
+        "destination_city": "string",
+        "truck_type": "string",
+        "load_weight": 1000,
+        "target_price": 1500,
+        "pickup_date": "timestamp",
+        "delivery_date": "timestamp",
+        "status": "string",
+        "payment_mode": "Advance|ToPay|Credit",
+        "advance_percentage": 20,
+        "speed": "EXP|NEXP"
+      }
+    ],
+    "total": 50,
+    "offset": 0,
+    "hasNext": true,
+    "searchAfter": {
+      "creation_time": "timestamp",
+      "transaction_id": "string"
+    },
+    "loadPricePercent": 85,
+    "more_loads": true
+  }
+}
+```
+
+### User Interface Implementation
+
+#### Filter Tab Display
+```kotlin
+// In HomeLoadsFilterItemVH
+binding.dlvMarketplaceToggle.text = "Market Place (${item.data.marketplaceCount})"
+binding.dlvMarketplaceToggle.visibility = View.VISIBLE
+binding.dlvMarketplaceToggle.isSelected = (item.data.filterType == "Marketplace")
+```
+
+#### Click Handler
+```kotlin
+// In HomeLoadsFragment
+HomeLoadMarketplace -> {
+    analyticsUtil.moEngageTrackEvent(
+        "EVENT_LOAD_MARKETPLACE_CLICKED",
+        mutableListOf(PROPERTY_USER_ID),
+        mutableListOf(userPrefs.userId())
+    )
+    selectedLoadFilter = "Marketplace"
+    viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 20)
+}
+```
+
+### Data Flow
+
+1. **User Action**: User clicks on "Market Place" filter tab
+2. **Analytics**: Track marketplace filter click event
+3. **ViewModel**: Call `fetchSpotMarketplaceLoads()`
+4. **User Data Fetch**: Fetch user data if not available (for payment fields)
+5. **Repository Call**: Make API call via `TransactionService.spotMarketplaceTransactions()`
+6. **Network Request**: `GET http://orion-transaction-api-uat.delhivery.com/spot_marketplace/loads?only_count=false&limit=20`
+7. **Response Processing**:
+   - Parse marketplace loads
+   - Fetch bids for loads in parallel
+   - Populate payment fields from user data
+   - Set lowest bid information
+8. **UI Update**: Update RecyclerView with marketplace loads
+9. **Filter Update**: Update filter tab with marketplace count
+
+### Implementation Details
+
+#### Service Layer
+```kotlin
+// TransactionService.kt
+@GET("/spot_marketplace/loads")
+fun spotMarketplaceTransactions(
+    @Query("only_count") onlyCount: Boolean = false,
+    @Query("limit") limit: Int
+): Single<BaseResponse<TransactionsResponse>>
+```
+
+#### Repository Layer
+```kotlin
+// TransactionsRepository.kt
+fun fetchSpotMarketplaceTransactions(onlyCount: Boolean = false, limit: Int = UserTripsLoadLimit) =
+    transactionService.spotMarketplaceTransactions(
+        onlyCount = onlyCount,
+        limit = limit
+    ).convertResponse()
+```
+
+#### ViewModel Layer
+```kotlin
+// HomeLoadsViewModel.kt
+fun fetchSpotMarketplaceLoads(
+    paginate: Boolean = false,
+    onlyCount: Boolean = false,
+    limit: Int = 20
+) {
+    // Reset pagination for new fetch
+    if (!paginate) {
+        offset = 0
+        searchAfter = null
+        hasMoreData = true
+    }
+    
+    // Fetch user data first if not available
+    if (user == null) {
+        userRepository.getUser(false)
+            .onBackground()
+            .subscribe { userModel, error ->
+                if (!error && userModel != null) {
+                    this.user = userModel
+                    fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+                }
+            }
+    } else {
+        fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+    }
+}
+```
+
+### Payment Information Display
+
+The marketplace loads display payment information fetched from user's supplier details:
+
+#### Payment Modes
+- **Advance**: Partial payment upfront
+- **ToPay**: Full payment on delivery
+- **Credit**: Payment on credit terms
+
+#### Advance Percentage Display
+- Only shown for Advance payment mode
+- Example: "Advance (20%)" - means 20% advance payment required
+
+### Error Handling
+
+#### Network Errors
+- Display error message to user
+- Retry option available
+- Use cached data if available
+
+#### Empty State
+- Display "No marketplace loads available" message
+- Show info banner for searching more loads
+
+#### API Timeout
+- 30 seconds connection timeout
+- Automatic retry with exponential backoff
+
+### Performance Optimizations
+
+#### Parallel Processing
+```kotlin
+Single.zip(
+    bidsRepository.bidsForLoads(loads),
+    bidsRepository.bulkLowestBidsForLoads(loads)
+) { bids, lowestBids ->
+    // Process both results together
+}
+```
+
+#### Firebase Performance Tracking
+```kotlin
+val mainTrace = Firebase.performance.newTrace("fetch_spot_marketplace_transactions")
+mainTrace.start()
+// API call
+mainTrace.stop()
+```
+
+### Pagination
+
+#### Infinite Scroll
+- Automatically loads more data when user scrolls to bottom
+- Uses `hasMoreData` flag to prevent unnecessary API calls
+- Shows loading indicator during pagination
+
+#### Pagination Parameters
+- Initial load: `limit = 20`, `offset = 0`
+- Subsequent loads: Increment offset by number of loaded items
+- Stop condition: `hasMoreData = false`
+
+### Analytics Events
+
+#### Marketplace Click Event
+```kotlin
+analyticsUtil.moEngageTrackEvent(
+    "EVENT_LOAD_MARKETPLACE_CLICKED",
+    mutableListOf(PROPERTY_USER_ID),
+    mutableListOf(userPrefs.userId())
+)
+```
+
+#### Tracked Metrics
+- Marketplace filter click count
+- Marketplace loads fetch count
+- Marketplace loads display count
+- User engagement time on marketplace loads
+
+### API Call Counts
+
+#### Per Marketplace Load Fetch
+- **Total API Calls**: 3 per marketplace load fetch
+  - 1x `spotMarketplaceTransactions()` - Fetch marketplace loads
+  - 1x `bidsForLoads()` - Fetch user's bids for these loads
+  - 1x `bulkLowestBidsForLoads()` - Fetch lowest bids for comparison
+- **Optional**: 1x `getUser()` - If user data not cached
+
+#### Pagination
+- Each pagination action triggers 3 additional API calls
+- Total API calls for 3 pages: 9 calls (3 per page)
+
+### Testing Checklist
+
+#### Functional Testing
+- [ ] Marketplace filter tab displays correctly
+- [ ] Click on marketplace tab fetches marketplace loads
+- [ ] Marketplace count displays correctly in filter tab
+- [ ] Payment information displays correctly
+- [ ] Bid information displays correctly
+- [ ] Lowest bid information displays correctly
+- [ ] Pagination works correctly
+- [ ] Empty state displays when no loads available
+- [ ] Error state displays on API failure
+
+#### Network Testing
+- [ ] Verify correct base URL is used (via Chucker)
+- [ ] Verify query parameters are correct
+- [ ] Test with slow network connection
+- [ ] Test with no network connection
+- [ ] Verify retry mechanism works
+
+#### UI Testing
+- [ ] Filter tab selection state updates correctly
+- [ ] Other filter tabs remain functional
+- [ ] Marketplace loads display with correct layout
+- [ ] Loading indicator displays during fetch
+- [ ] Refresh functionality works
+
+#### Analytics Testing
+- [ ] Marketplace click event is tracked
+- [ ] Event includes correct user ID
+- [ ] Firebase performance traces are recorded
+
+### Migration Notes
+
+#### From RecommendationService to TransactionService
+- **Previous**: API was in `RecommendationService` with base URL `https://orion-recommendation-api-uat.delhivery.com`
+- **Current**: API is in `TransactionService` with base URL `http://orion-transaction-api-uat.delhivery.com`
+- **Reason**: Marketplace loads are transaction-based, should use Transaction Service
+
+#### Breaking Changes
+- None - This is a new feature, no breaking changes to existing functionality
+
+#### Backward Compatibility
+- Feature is additive - does not affect existing Intracity and Intercity filters
+- Other filters continue to work as before
 
 ---
 
@@ -826,6 +1150,14 @@ binding.bidsHeader.text = "Active Bids (${activeBidsCount})"
   - 1x `bidsForLoads()`
   - 1x `bulkLowestBidsForLoads()`
   - 1x `fetchIntracityRecommTransactions()` (for intracity counts)
+
+#### Marketplace Loads
+- **Total API Calls**: 3 per marketplace load fetch
+  - 1x `spotMarketplaceTransactions()` - Fetch marketplace loads
+  - 1x `bidsForLoads()` - Fetch user's bids for these loads
+  - 1x `bulkLowestBidsForLoads()` - Fetch lowest bids for comparison
+- **Optional**: 1x `getUser()` - If user data not cached
+- **Pagination**: 3 additional API calls per page
 
 ### Contracts Section
 - **Total API Calls**: 3-4 per contract fetch

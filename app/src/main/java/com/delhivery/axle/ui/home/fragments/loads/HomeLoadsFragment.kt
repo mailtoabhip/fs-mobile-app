@@ -146,7 +146,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
 
     viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
-      it?.let { _items -> adapter.operation(_items) }
+      it?.let { _items -> 
+        Log.d("MarketplaceDebug", "Fragment received ${_items.size} items from userLoadsData")
+        _items.forEach { item ->
+          Log.d("MarketplaceDebug", "Item type: ${item.first.type}, operation: ${item.second}")
+        }
+        adapter.operation(_items) 
+      }
     })
     viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
@@ -792,6 +798,21 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             }
             .joinToString { "," }
         refreshData()
+      }
+      HomeLoadMarketplace ->{
+        analyticsUtil.moEngageTrackEvent(
+          "EVENT_LOAD_MARKETPLACE_CLICKED",
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
+        selectedLoadFilter = "Marketplace"
+        // Reset adapter and pagination before fetching marketplace data
+        viewModel.paginateCount = 0
+        viewModel.hasOrionLoadOnce = false
+        viewModel.routeUpdated = false
+        adapter.resetStaticData()
+        // Call the new marketplace loads function
+        viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 20)
       }
 //      HomeLoadNonDlv ->{
 //        analyticsUtil.moEngageTrackEvent(

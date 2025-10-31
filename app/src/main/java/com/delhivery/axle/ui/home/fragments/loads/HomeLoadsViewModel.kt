@@ -133,6 +133,7 @@ class HomeLoadsViewModel @Inject constructor(
 
   var loadsCount:Int =0
     var searchAfter: SearchAfter?=null
+    var cachedMarketplaceCount:Int = 0
 
     var user: UserModel? = null
 
@@ -245,7 +246,7 @@ class HomeLoadsViewModel @Inject constructor(
             ).flatMap {_res ->
 
             offset = _res.offset?:0
-            total = _res.transactions.size?:0
+            total = _res.transactions?.size?:0
                 searchAfter =  _res.searchAfter
                         if(total ==0) {
                             searchAfter = null
@@ -257,24 +258,31 @@ class HomeLoadsViewModel @Inject constructor(
             loadsCountLiveData.postValue(total)
             
             // Speed is already set in each transaction from API response
-            // No need to override: _res.transactions.forEach { it.speed = _res.speed }
+            // No need to override: _res.transactions?.forEach { it.speed = _res.speed }
 
-            transactionsRepository.fetchRecommTransactions(
-                offset,
-                userPrefs.demandType
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                    .filterNot { it == DemandType.Intracity.type}
-                    .joinToString(","),
-                vehicleTypes,
-                excludeTruckTypes,
-                filterVehicleType,
-                true, splitViewCount = true,
-                searchAfter = searchAfter
-            ).map {
-                    Triple(_res.transactions,_res.total, it)
+            Single.zip(
+                transactionsRepository.fetchRecommTransactions(
+                    offset,
+                    userPrefs.demandType
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+                        .filterNot { it == DemandType.Intracity.type}
+                        .joinToString(","),
+                    vehicleTypes,
+                    excludeTruckTypes,
+                    filterVehicleType,
+                    true, splitViewCount = true,
+                    searchAfter = searchAfter
+                ),
+                transactionsRepository.fetchSpotMarketplaceTransactions(
+                    onlyCount = true,
+                    limit = 10
+                ).subscribeOn(Schedulers.io()),
+                BiFunction { recommTrans, marketplaceTrans ->
+                    Triple(_res.transactions, _res.total, Pair(recommTrans, marketplaceTrans))
                 }
+            )
 
         }
             .onBackground()
@@ -284,12 +292,13 @@ class HomeLoadsViewModel @Inject constructor(
                         /* remove progress item */
                         add(Pair(HomeLoadsProgressItem(), Remove))
 
-                        val loads = _tRes.first
+                        val loads = _tRes.first ?: emptyList()
                         var intercityCount =0
                         var nonDlvCount = 0
+                        var marketplaceCount = 0
                         try {
-                            if(_tRes.third.loadCounts!=null){
-                                for(item in _tRes.third.loadCounts!!.all){
+                            if(_tRes.third.first.loadCounts!=null){
+                                for(item in _tRes.third.first.loadCounts!!.all){
                                     if (item.key == "INTERCITY") {
                                         intercityCount = item.count?:0
                                     }else if(item.key == "NON_DELHIVERY"){
@@ -301,6 +310,14 @@ class HomeLoadsViewModel @Inject constructor(
                         }catch (e:Exception){
                             Log.e("Errpr",e.toString())
                         }
+                        
+                        // Extract marketplace count from the pair
+                        try {
+                            marketplaceCount = _tRes.third.second?.getCount() ?: 0
+                            cachedMarketplaceCount = marketplaceCount
+                        }catch (e:Exception){
+                            Log.e("MarketplaceCount",e.toString())
+                        }
 
 
                             add(
@@ -310,7 +327,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 )
                             )
                         val count = _tRes.second+intercityCount+nonDlvCount
-                        Log.d("viewmodel", "${_tRes.second} intrcity $intercityCount nonDlv $nonDlvCount")
+                        Log.d("viewmodel", "${_tRes.second} intrcity $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
                         Log.d("count",count.toString())
                         fullLoadsCountLiveData.postValue(count)
                             add(
@@ -321,6 +338,7 @@ class HomeLoadsViewModel @Inject constructor(
                                             _tRes.second,
                                             intercityCount,
                                             nonDlvCount,
+                                            marketplaceCount,
                                             userDemandType = userPrefs.demandType
                                         )
                                     ), AddUpdate
@@ -425,14 +443,20 @@ class HomeLoadsViewModel @Inject constructor(
                             splitViewCount = true,
                             searchAfter = searchAfter
                         ).subscribeOn(Schedulers.io()),
+                        transactionsRepository.fetchSpotMarketplaceTransactions(
+                            onlyCount = true,
+                            limit = 10
+                        ).subscribeOn(Schedulers.io()),
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
-                        { t1, t2, t3, t4 ->
-                            Quintuple(
+                        { t1, t2, t3, t4, t5 ->
+                            data class SixTuple<A, B, C, D, E, F>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E, val sixth: F)
+                            SixTuple(
                                 t1.first,
                                 t1.second,
                                 t2.second,
                                 t3,
-                                t4
+                                t4,
+                                t5
                             )
                         }
                     )
@@ -448,7 +472,7 @@ class HomeLoadsViewModel @Inject constructor(
                             /* remove progress item */
                             add(Pair(HomeLoadsProgressItem(), Remove))
                            // val loadsWithBids = _tRes.first
-                            val loads = _tRes.first
+                            val loads = _tRes.first ?: emptyList()
                             val bids = _tRes.second
                             val bidTransactionIds = bids.map { it.transactionId }.toSet()
                            /* val loads = loadsWithBids.filter { load ->
@@ -456,6 +480,7 @@ class HomeLoadsViewModel @Inject constructor(
                             }*/
                                 var nonDlvCount = 0
                                 var intercityCount = 0
+                                var marketplaceCount = 0
 
                                 try {
                                     if(_tRes.fifth.loadCounts!=null){
@@ -471,6 +496,15 @@ class HomeLoadsViewModel @Inject constructor(
                                 }catch (e:Exception){
                                  Log.e("Errpr",e.toString())
                                 }
+                                
+                                // Extract marketplace count from the 6th element
+                                try {
+                                    marketplaceCount = _tRes.sixth?.getCount() ?: 0
+                                    cachedMarketplaceCount = marketplaceCount
+                                }catch (e:Exception){
+                                    Log.e("MarketplaceCount",e.toString())
+                                }
+                                
                                 var count = 0
                                 if(selectedFilter==DemandType.Internal.type){
                                     count = intercityCount
@@ -485,7 +519,7 @@ class HomeLoadsViewModel @Inject constructor(
                                         AddUpdate
                                     )
                                 )
-                            Log.d("LoadView", "${_tRes.fourth.total} inter $intercityCount nonDlv $nonDlvCount")
+                            Log.d("LoadView", "${_tRes.fourth.total} inter $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
                             val count1 = _tRes.fourth.total + intercityCount + nonDlvCount
                             fullLoadsCountLiveData.postValue(count1)
 
@@ -497,6 +531,7 @@ class HomeLoadsViewModel @Inject constructor(
                                                 _tRes.fourth.total,
                                                 intercityCount,
                                                 nonDlvCount,
+                                                marketplaceCount,
                                                 userDemandType = userPrefs.demandType
                                             )
                                         ), AddUpdate
@@ -663,7 +698,7 @@ class HomeLoadsViewModel @Inject constructor(
               /* remove progress item */
               add(Pair(HomeLoadsProgressItem(), Remove))
 
-                val loadsWithBids = _tRes.first
+                val loadsWithBids = _tRes.first ?: emptyList()
                 val bids = _tRes.second
                 val bidTransactionIds = bids.map { it.transactionId }.toSet()
 
@@ -673,15 +708,30 @@ class HomeLoadsViewModel @Inject constructor(
 
                     var intercityCount =0
                     var nonDlvCount = 0
+                    var marketplaceCount = 0
                     if(demandType==DemandType.Internal.type){
                         intercityCount = _tRes.fifth.total
                     }else{
                         nonDlvCount = _tRes.fifth.total
                     }
+                    
+                    // Fetch marketplace count inline
+                    compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
+                        onlyCount = true,
+                        limit = 10
+                    ).onBackground()
+                    .subscribe { marketplaceRes, marketplaceError ->
+                        if (!marketplaceError) {
+                            marketplaceCount = marketplaceRes?.getCount() ?: 0
+                            cachedMarketplaceCount = marketplaceCount
+                            Log.d("MarketplaceCount", "Fetched: $marketplaceCount")
+                        }
+                    }
+                    
                   add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
                 val count = _tRes.fourth.total+intercityCount+nonDlvCount
                 fullLoadsCountLiveData.postValue(count)
-                  add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(selectedFilter,_tRes.fourth.total,intercityCount,nonDlvCount,userPrefs.demandType)), AddUpdate))
+                  add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(selectedFilter,_tRes.fourth.total,intercityCount,nonDlvCount,marketplaceCount,userPrefs.demandType)), AddUpdate))
                   if(!paginate) {
 //                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
@@ -758,6 +808,265 @@ class HomeLoadsViewModel @Inject constructor(
 
           dataLoadingLiveData.postValue(false)
         }
+  }
+
+  /**
+   * Fetch spot marketplace transactions
+   */
+  fun fetchSpotMarketplaceLoads(
+    paginate: Boolean = false,
+    onlyCount: Boolean = false,
+    limit: Int = 20
+  ) {
+    if (!paginate) {
+      offset = 0
+      searchAfter = null
+      hasMoreData = true
+    } else if (paginate && !hasMoreData) {
+      return
+    }
+
+    if (paginate) {
+      paginateCount += 1
+      Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
+    }
+
+    dataLoadingLiveData.postValue(true)
+
+    // Fetch user data first if not available
+    if (user == null) {
+      compositeDisposable += userRepository.getUser(false)
+        .onBackground()
+        .subscribe { userModel, error ->
+          if (!error && userModel != null) {
+            this.user = userModel
+            // Now proceed with fetching marketplace loads
+            fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+          } else {
+            error?.handle()
+            dataLoadingLiveData.postValue(false)
+          }
+        }
+    } else {
+      // User data already available, proceed with marketplace loads
+      fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+    }
+  }
+
+  /**
+   * Fetch marketplace loads data (separated from user data fetching)
+   */
+  private fun fetchMarketplaceLoadsData(
+    paginate: Boolean,
+    onlyCount: Boolean,
+    limit: Int
+  ) {
+    val mainTrace = Firebase.performance.newTrace("fetch_spot_marketplace_transactions")
+    mainTrace.start()
+
+    // First call: Get count only
+    compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
+      onlyCount = true,
+      limit = limit
+    ).flatMap { countRes ->
+      Log.d("MarketplaceDebug", "Count API Response - count: ${countRes.count}, total: ${countRes.total}")
+      
+      // Store the count
+      total = countRes.getCount()
+      cachedMarketplaceCount = total
+      loadsCountLiveData.postValue(total)
+      
+      // Second call: Get actual data with only_count=false
+      transactionsRepository.fetchSpotMarketplaceTransactions(
+        onlyCount = false,
+        limit = limit
+      )
+    }.flatMap { _res ->
+      Log.d("MarketplaceDebug", "Data API Response - transactions: ${_res.transactions?.size ?: 0}, total: ${_res.total}, count: ${_res.count}")
+      offset = _res.offset ?: 0
+      searchAfter = _res.searchAfter
+      if (total == 0) {
+        searchAfter = null
+        hasMoreData = false
+      }
+      fecthToCalled = _res.offset < _res.total
+      loadPricePercent = _res.loadPricePercent
+      more_default_loads = _res.more_loads
+      Log.d("MarketplaceDebug", "About to fetch bids for ${_res.transactions?.size ?: 0} transactions")
+
+      Single.zip(
+        bidsRepository.bidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
+        bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
+        BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, Pair<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>>> { t1, t2 ->
+          Pair(t1, t2)
+        }
+      ).map { result ->
+        Triple(_res.transactions, result.first.second, result.second.second)
+      }
+    }
+      .onBackground()
+      .subscribe { _tRes, error ->
+        mainTrace.stop()
+        Log.d("MarketplaceDebug", "Subscribe callback - error: $error, data: ${_tRes != null}")
+        if (!error && _tRes != null) {
+          Log.d("MarketplaceDebug", "Processing marketplace data - loads count: ${_tRes.first?.size ?: 0}, bids: ${_tRes.second?.size ?: 0}, lowestBids: ${_tRes.third?.size ?: 0}")
+          mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+            /* remove progress item */
+            add(Pair(HomeLoadsProgressItem(), Remove))
+
+            val loads = _tRes.first ?: emptyList()
+            val bids = _tRes.second
+            val lowestBids = _tRes.third
+            Log.d("MarketplaceDebug", "Loads list size: ${loads.size}")
+
+            add(
+              Pair(
+                HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)),
+                AddUpdate
+              )
+            )
+
+            fullLoadsCountLiveData.postValue(total)
+            
+            // Cache the marketplace count (already set from the API response)
+            cachedMarketplaceCount = total
+
+            // Fetch other counts for filter display
+            compositeDisposable += Single.zip(
+                transactionsRepository.fetchIntracityRecommTransactions(
+                    offset, userPrefs.demandType, vehicleTypes, null, 
+                    filterVehicleType, true, onlyCount = true
+                ).subscribeOn(Schedulers.io()),
+                transactionsRepository.fetchRecommTransactions(
+                    offset,
+                    userPrefs.demandType
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() }
+                        .filterNot { it == DemandType.Intracity.type }
+                        .joinToString(","),
+                    vehicleTypes, null, filterVehicleType, true, 
+                    splitViewCount = true, searchAfter = null
+                ).subscribeOn(Schedulers.io()),
+                BiFunction { intracityRes, intercityRes ->
+                    Pair(intracityRes.total, intercityRes)
+                }
+            ).onBackground()
+            .subscribe { otherCounts, error ->
+                if (!error) {
+                    val intracityCount = otherCounts.first
+                    var intercityCount = 0
+                    var nonDlvCount = 0
+                    try {
+                        if(otherCounts.second.loadCounts!=null) {
+                            otherCounts.second.loadCounts?.let {
+                                for (item in it.all) {
+                                    if (item.key == "INTERCITY") {
+                                        intercityCount = item.count ?: 0
+                                    } else if (item.key == "NON_DELHIVERY") {
+                                        nonDlvCount = item.count ?: 0
+                                    }
+                                }
+                            }
+                        }
+                    }catch (e:Exception){
+                        Log.e("CountError",e.toString())
+                    }
+                    
+                    // Update filter with all counts
+                    val filterItem = HomeLoadsFilterItem(
+                        HomeLoadsFilterItemData(
+                            "Marketplace",
+                            intracityCount,
+                            intercityCount,
+                            nonDlvCount,
+                            cachedMarketplaceCount,
+                            userPrefs.demandType
+                        )
+                    )
+                    userLoadsData.postValue(listOf(Pair(filterItem, AddUpdate)))
+                }
+            }
+
+            // Add filter item with marketplace count (initial with 0 for other counts)
+            add(
+              Pair(
+                HomeLoadsFilterItem(
+                  HomeLoadsFilterItemData(
+                    "Marketplace",
+                    0, // intracity count - will be updated
+                    0, // intercity count - will be updated
+                    0, // non-dlv count - will be updated
+                    cachedMarketplaceCount, // marketplace count
+                    userPrefs.demandType
+                  )
+                ), AddUpdate
+              )
+            )
+
+            if (!paginate) {
+              add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
+            }
+
+            if (total == 0 && !paginate) {
+              add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+            }
+
+            for ((index, load) in loads.toMutableList().withIndex()) {
+              try {
+                load.transactionId?.let { txnIds.add(it) }
+
+                // Find and set lowest bid for this load
+                val lowestBid = lowestBids.firstOrNull { b ->
+                  b.transactionId.safeEquals(load.transactionId)
+                }
+                lowestBid?.let {
+                  load.lowestBid = it.minBid
+                  load.numBids = it.numBids
+                }
+                load.loadPricePercent = loadPricePercent
+
+                // Find and set transaction bid
+                val transactionBid = bids.firstOrNull { b ->
+                  b.transactionId.safeEquals(load.transactionId)
+                }
+                load.transactionBid = transactionBid
+
+              } catch (e: Exception) {
+                Log.d("No Bid found for: ", load.transactionId ?: "")
+              }
+              
+              // Populate payment fields from user data
+              populatePaymentFields(load)
+              
+              if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
+                add(Pair(HomeLoadsAddTruckItem(), Add))
+              }
+              // Use HomeLoadsMarketplaceItem for marketplace loads
+              add(Pair(HomeLoadsMarketplaceItem(load), Add))
+              Log.d("MarketplaceDebug", "Added marketplace item ${index + 1}: transactionId=${load.transactionId}")
+            }
+
+            if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+              add(Pair(HomeLoadsInfoItem(), AddUpdate))
+            }
+            add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+            
+            Log.d("MarketplaceDebug", "Total items to post: ${this.size}")
+
+          }.let { 
+            Log.d("MarketplaceDebug", "Posting ${it.size} items to userLoadsData")
+            userLoadsData.postValue(it) 
+          }
+
+        } else {
+          Log.e("MarketplaceDebug", "Error in marketplace data fetch: $error")
+          error?.handle()
+        }
+
+        dataLoadingLiveData.postValue(false)
+        Log.d("MarketplaceDebug", "Data loading completed")
+      }
   }
 
   /**

@@ -143,4 +143,13 @@ interface TransactionService {
     @Query("only_display_names") displayNames: String="yes",
     @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true
   ): Single<BaseResponse<TruckDisplayNamesResponse>>
+
+  /**
+   * Spot marketplace transactions
+   */
+  @GET("/v2/spot-marketplace/loads/")
+  fun spotMarketplaceTransactions(
+    @Query("only_count") onlyCount: Boolean = false,
+    @Query("limit") limit: Int = 25,
+  ): Single<BaseResponse<TransactionsResponse>>
 }

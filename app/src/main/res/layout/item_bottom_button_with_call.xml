@@ -1,0 +1,102 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_place_bid_report_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="@dimen/size_16dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/label_reporting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reporting time"
+            android:textColor="#888888"
+            android:textSize="10sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/reporting_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{request._requiredOn != null ? request.requiredAtWithTime() : request.getTimeOfContracts()}"
+            android:textColor="#121A31"
+            android:textStyle="bold"
+            tools:text="Tomorrow, 3:30 PM"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/label_reporting"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="33dp"
+            android:layout_height="40dp"
+            android:background="@drawable/white_background_4dp_padding"
+            android:src="@drawable/call_icon_hollow"
+            android:scaleType="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="@dimen/size_8dp"
+            app:layout_constraintEnd_toStartOf="@id/place_bid_button"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/place_bid_button"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_place_bid_radius_6px"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/place_bid_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Place Bid"
+                android:textColor="#FFFFFF"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                android:drawablePadding="@dimen/size_14dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/placeBidButton_maxWidth"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_40dp"
+            android:text="Place Bid"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="#000000"
+            android:textColor="@android:color/white"
+            android:background="@drawable/bg_place_bid"
+            android:drawablePadding="8dp"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            tools:visibility="gone"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

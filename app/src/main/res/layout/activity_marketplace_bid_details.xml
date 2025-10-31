@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsViewModel" />
+
+        <variable
+            name="activity"
+            type="com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@color/bg_light_grey">
+
+        <!-- Top Bar -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="@dimen/size_1dp"
+            app:elevation="@dimen/size_1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Back Arrow -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:src="@drawable/ic_back_arrow"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="@color/heading_black" />
+
+                <!-- Closing Time Badge -->
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/badge_closing_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_all_round_corner_light_red"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/size_8dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:paddingTop="@dimen/size_2dp"
+                    android:paddingBottom="@dimen/size_2dp"
+                    android:layout_marginEnd="@dimen/size_18dp"
+                    app:layout_constraintEnd_toStartOf="@id/btn_share"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_closing_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Closes in 2 hrs 15 min"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/text_12sp"
+                        android:fontFamily="sans-serif-medium" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <!-- Share Button -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_share"
+                    android:layout_width="@dimen/size_14dp"
+                    android:layout_height="@dimen/size_14dp"
+                    android:src="@drawable/ic_share"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="@color/heading_black" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Main Content ScrollView -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/size_12dp"
+                android:paddingBottom="@dimen/size_12dp">
+
+                <!-- Bid Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:layout_marginEnd="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/size_16dp">
+
+                        <!-- Route Header -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/size_20dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/origin_city"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                tools:text="Navi Mumbai"
+                                android:textColor="@color/info_title"
+                                android:textSize="@dimen/text_20sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/arrow"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="➔"
+                                android:textColor="@color/info_title"
+                                android:textSize="@dimen/text_20sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:layout_marginStart="@dimen/size_4dp"
+                                app:layout_constraintStart_toEndOf="@id/origin_city"
+                                app:layout_constraintTop_toTopOf="parent"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/destination_city"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                tools:text="Jaisalmer"
+                                android:textColor="@color/info_title"
+                                android:textSize="@dimen/text_20sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textStyle="bold"
+                                android:layout_marginStart="@dimen/size_4dp"
+                                app:layout_constraintStart_toEndOf="@id/arrow"
+                                app:layout_constraintTop_toTopOf="parent"/>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <!-- Bid Amount Label -->
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bid Amount"
+                            android:textColor="@color/heading_black"
+                            android:textSize="@dimen/text_14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:layout_marginBottom="@dimen/size_4dp" />
+
+                        <!-- Bid Amount Input -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/bid_amount_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_bid_amount_input"
+                            android:layout_marginBottom="@dimen/size_16dp">
+
+                            <!-- Currency Symbol Section -->
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/currency_symbol"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="₹"
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_16sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:gravity="center"
+                                android:paddingStart="@dimen/size_16dp"
+                                android:paddingEnd="@dimen/size_16dp"
+                                android:background="@drawable/bg_bid_amount_currency_section"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+
+                            <!-- Amount EditText -->
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edit_bid_amount"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:hint="35,000"
+                                android:textColorHint="@color/text_grey"
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_16sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:inputType="number"
+                                android:background="@android:color/transparent"
+                                android:paddingStart="@dimen/size_16dp"
+                                android:paddingEnd="@dimen/size_16dp"
+                                android:gravity="start|center_vertical"
+                                app:layout_constraintStart_toEndOf="@id/currency_symbol"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <!-- Place Bid Button -->
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_place_bid"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_40dp"
+                            android:text="Place Bid"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="@drawable/bg_place_bid_radius_6px"
+                            android:foreground="?attr/selectableItemBackgroundBorderless" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Contact Shipper Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:layout_marginEnd="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/size_16dp">
+
+                        <!-- Contact Shipper Title -->
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contact Shipper"
+                            android:textColor="@color/info_title"
+                            android:textSize="@dimen/text_16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:layout_marginBottom="@dimen/size_16dp" />
+
+                        <!-- Contact Details -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <!-- Avatar -->
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/text_avatar"
+                                android:layout_width="@dimen/size_36dp"
+                                android:layout_height="@dimen/size_36dp"
+                                tools:text="MA"
+                                android:textColor="@color/bid_placed_green"
+                                android:textSize="@dimen/text_14sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:gravity="center"
+                                android:background="@drawable/bg_all_round_corner_green_light"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                            <!-- Name and Phone -->
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/layout_contact_info"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:layout_marginEnd="@dimen/size_12dp"
+                                app:layout_constraintStart_toEndOf="@id/text_avatar"
+                                app:layout_constraintEnd_toStartOf="@id/btn_whatsapp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_shipper_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Mohan Aggarwal"
+                                    android:textColor="@color/info_title"
+                                    android:textSize="@dimen/text_12sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_shipper_phone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="98762*****"
+                                    android:textColor="@color/text_grey_v3"
+                                    android:textSize="@dimen/text_12sp"
+                                    android:fontFamily="sans-serif" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <!-- WhatsApp Button -->
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btn_whatsapp"
+                                android:layout_width="@dimen/size_40dp"
+                                android:layout_height="@dimen/size_40dp"
+                                android:src="@drawable/ic_whatsapp_disabled"
+                                android:padding="@dimen/size_8dp"
+                                android:background="@drawable/bg_call_button"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:layout_marginEnd="@dimen/size_8dp"
+                                app:layout_constraintEnd_toStartOf="@id/btn_call"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                            <!-- Call Button -->
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/btn_call"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/size_40dp"
+                                android:orientation="horizontal"
+                                android:background="@drawable/bg_call_button"
+                                android:gravity="center"
+                                android:paddingStart="@dimen/size_8dp"
+                                android:paddingEnd="@dimen/size_8dp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:layout_width="@dimen/size_20dp"
+                                    android:layout_height="@dimen/size_20dp"
+                                    android:src="@drawable/ic_call"
+                                    android:layout_marginEnd="@dimen/size_4dp"
+                                    app:tint="@color/text_grey" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Call"
+                                    android:textColor="@color/text_grey"
+                                    android:textSize="@dimen/text_14sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Details Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:layout_marginEnd="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/size_16dp">
+
+                        <!-- Details Title -->
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Details"
+                            android:textColor="@color/info_title"
+                            android:textSize="@dimen/text_16sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:layout_marginBottom="@dimen/size_16dp" />
+
+                        <!-- Details Grid -->
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="3">
+
+                            <!-- Offer Price -->
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginEnd="@dimen/size_8dp">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_offer_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="₹40,000"
+                                    android:textColor="@color/heading_black"
+                                    android:textSize="@dimen/text_12sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Offer Price \n(Negotiable)"
+                                    android:textColor="@color/text_grey"
+                                    android:textSize="@dimen/text_10sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <!-- Truck Type -->
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginEnd="@dimen/size_8dp">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_truck_type"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="32FTXXL18"
+                                    android:textColor="@color/heading_black"
+                                    android:textSize="@dimen/text_12sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_truck_type_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Open Truck"
+                                    android:textColor="@color/text_grey"
+                                    android:textSize="@dimen/text_10sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <!-- Payment -->
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/payment_method"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="Advance"
+                                        android:textColor="@color/heading_black"
+                                        android:textSize="@dimen/text_12sp"
+                                        android:fontFamily="sans-serif-medium"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"/>
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/advance_payment_percentage"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="(50%)"
+                                        android:textColor="@color/heading_black"
+                                        android:layout_marginStart="@dimen/size_4dp"
+                                        android:textSize="@dimen/text_12sp"
+                                        android:fontFamily="sans-serif-medium"
+                                        app:layout_constraintStart_toEndOf="@+id/payment_method"
+                                        app:layout_constraintTop_toTopOf="parent"/>
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Payment"
+                                    android:textColor="@color/text_grey"
+                                    android:textSize="@dimen/text_10sp"
+                                    android:fontFamily="sans-serif-medium" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Guidelines Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:layout_marginEnd="@dimen/size_16dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/size_16dp">
+
+                        <!-- Guidelines Header -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/layout_guidelines_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackgroundBorderless"
+                            android:layout_marginBottom="@dimen/size_16dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Guidelines"
+                                android:textColor="@color/info_title"
+                                android:textSize="@dimen/text_16sp"
+                                android:fontFamily="sans-serif-medium"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/icon_guidelines_toggle"
+                                android:layout_width="@dimen/size_16dp"
+                                android:layout_height="@dimen/size_16dp"
+                                android:src="@drawable/ic_arrow_up"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:tint="@color/heading_black" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <!-- Guidelines Content -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/layout_guidelines_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/dot1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="•"
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_12sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:lineSpacingMultiplier="1.3"
+                                android:layout_marginBottom="@dimen/size_8dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/guideline1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="All payments for vehicle usage will be handled directly with the client."
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_12sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:lineSpacingMultiplier="1.3"
+                                android:layout_marginStart="@dimen/size_8dp"
+                                app:layout_constraintStart_toEndOf="@id/dot1"
+                                app:layout_constraintTop_toTopOf="parent"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/dot2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="•"
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_12sp"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:lineSpacingMultiplier="1.3"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/guideline1"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/guideline2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Delhivery does not provide vehicle tracking for these trips."
+                                android:textColor="@color/heading_black"
+                                android:textSize="@dimen/text_12sp"
+                                android:fontFamily="sans-serif-medium"
+                                android:lineSpacingMultiplier="1.3"
+                                android:layout_marginTop="@dimen/size_8dp"
+                                android:layout_marginStart="@dimen/size_8dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/guideline1"/>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>
+

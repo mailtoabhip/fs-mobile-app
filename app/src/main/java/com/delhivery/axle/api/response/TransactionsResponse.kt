@@ -10,9 +10,10 @@ data class TransactionsResponse(
   @SerializedName("more_loads") val more_loads: Boolean,
   @SerializedName("load_price_percent") val loadPricePercent: Int,
   @SerializedName("total") val total: Int,
+  @SerializedName("count") val count: Int? = null,
   @SerializedName("offset") val offset: Int,
   @SerializedName("active_count") val activeCount: Int?=0,
-  @SerializedName("result") val transactions: List<HomeBidsRequestItemData>,
+  @SerializedName("result") val transactions: List<HomeBidsRequestItemData>?,
   @SerializedName("all_active_fetched") val allActiveFetched: Boolean?,
   @SerializedName("load_counts") val loadCounts:LoadCounts?,
   @SerializedName("search_after") val searchAfter: SearchAfter?,
@@ -20,7 +21,10 @@ data class TransactionsResponse(
   @SerializedName("search_after_transaction_id") val searchAfterTransactionId: String?,
   @SerializedName("speed") val speed: String?,
   @SerializedName("indent_payment_mode") val indentPaymentMode: String?,
-)
+) {
+  // Helper function to get the count value (use count if available, otherwise total)
+  fun getCount(): Int = count ?: total
+}
 
 /**
  *  data class for pagination

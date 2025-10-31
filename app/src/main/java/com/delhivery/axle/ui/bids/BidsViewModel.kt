@@ -159,7 +159,7 @@ class BidsViewModel @Inject constructor(
                 /* post all transactions mapped to bids as add */
               } else {
                 val bids = _res.first
-                val transactions = _res.second.transactions
+                val transactions = _res.second.transactions ?: emptyList()
                 val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
                 for (bid in _res.fifth) {
                   val key: String = bid.transactionId!!

@@ -149,6 +149,11 @@ data class HomeBidsRequestItemData(
   @SerializedName("advance_percentage")var advancePercentage:String?=null,
   @SerializedName("bid_suggestion")var bidSuggestion: Boolean = false,
   @SerializedName("message")var suggestedBidMessage: String? = null,
+  @SerializedName("vendor_advance_percent")var vendorAdvancePercent: Int? = null,
+  @SerializedName("shipper_name")var shipperName: String? = null,
+  @SerializedName("shipper_phone_number")var shipperPhoneNumber: String? = null,
+  @SerializedName("shipper_ucid")var shipperUcid: String? = null,
+  @SerializedName("shipper_price") var shipperPrice: Int? = null,
 
 
   var lowestBid: Double? = 0.0,

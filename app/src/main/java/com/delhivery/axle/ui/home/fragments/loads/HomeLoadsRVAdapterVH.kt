@@ -345,6 +345,110 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
 }
 
 /**
+ * Marketplace load item view holder
+ */
+class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<CardLoadsDelhiveryMarketplaceBinding, HomeLoadsRequestItem>(
+        binding
+    ) {
+
+  override fun bind(
+      item: HomeLoadsRequestItem,
+      _interface: HomeLoadsRVAdapterInterface
+  ) {
+    Log.d("MarketplaceCard", "Binding marketplace load: ${item.data.transactionId}")
+    
+    // Set basic data binding
+    binding.request = item.data
+    binding.containerError.request = item.data
+    
+    // Handle closing time visibility
+    if(item.data.bidEndingTime.isNullOrEmpty() || item.data.bidEndingTime.equals("null", ignoreCase = true)){
+      binding.closingTime.visibility = View.GONE
+    } else {
+      binding.closingTime.visibility = View.VISIBLE
+      binding.closingTime.text = item.data.formattedBiddingEndTime()
+    }
+    
+    // Handle stops display
+    binding.stops.text = item.data.getIntermediateStops()
+    
+    // Handle payment mode display - same logic as intercity loads
+    if (item.data.shouldShowPaymentMode()) {
+      binding.paymentType.visibility = View.VISIBLE
+      binding.paymentType.text = item.data.getPaymentModeDisplay()
+      
+      // Only show advance percentage for advance payment mode
+      if (item.data.shouldShowAdvancePercentage()) {
+        binding.advancePaymentPercentage.visibility = View.VISIBLE
+        binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
+      } else {
+        binding.advancePaymentPercentage.visibility = View.GONE
+      }
+    } else {
+      binding.paymentType.visibility = View.GONE
+      binding.advancePaymentPercentage.visibility = View.GONE
+    }
+    
+    // Handle supplier phone number - mask it for privacy (show first 4 digits + ****)
+    if (!item.data.shipperPhoneNumber.isNullOrEmpty()) {
+      binding.supplierNumber.visibility = View.VISIBLE
+      val phoneNumber = item.data.shipperPhoneNumber
+      val maskedNumber = if (phoneNumber!!.length > 4) {
+        phoneNumber.substring(0, 4) + "******"
+      } else {
+        phoneNumber
+      }
+      binding.supplierNumber.text = maskedNumber
+    } else {
+      binding.supplierNumber.visibility = View.GONE
+    }
+    
+    // Handle supplier name
+    if (!item.data.shipperName.isNullOrEmpty()) {
+      binding.supplierName.visibility = View.VISIBLE
+      binding.supplierName.text = item.data.shipperName
+    } else {
+      binding.supplierName.visibility = View.GONE
+    }
+    
+    // Handle reporting time logic - same as intercity
+    val reportingTimeText = if (item.data._requiredOn != null) {
+      item.data.requiredAtWithTime()
+    } else {
+      item.data.getTimeOfContracts()
+    }
+    
+    // Show max width button only if there's no meaningful reporting time
+    if (item.data._requiredOn == null && item.data.reportingTime == null) {
+      // Hide reporting time section
+      binding.containerError.labelReporting.visibility = View.GONE
+      binding.containerError.reportingTime.visibility = View.GONE
+      binding.containerError.placeBidButton.visibility = View.GONE
+      
+      // Show full-width button
+      binding.containerError.placeBidButtonMaxWidth.visibility = View.VISIBLE
+      binding.containerError.placeBidButtonMaxWidth.text = "Place Bid"
+      binding.containerError.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+    } else {
+      // Show reporting time section
+      binding.containerError.labelReporting.visibility = View.VISIBLE
+      binding.containerError.reportingTime.visibility = View.VISIBLE
+      binding.containerError.placeBidButton.visibility = View.VISIBLE
+      binding.containerError.reportingTime.text = reportingTimeText
+      
+      // Hide full-width button
+      binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
+      binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+    }
+    
+    // Force data binding updates to be applied immediately
+    binding.containerError.executePendingBindings()
+    binding.executePendingBindings()
+  }
+}
+
+/**
  * Progress inline view holder
  */
 internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding) :
@@ -475,30 +579,42 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
   ) {
       binding.dlvIntracityToggle.text =  "${context.getString(R.string.intracity)} (${item.data.dlvIntracityCount})"
       binding.dlvIntercityToggle.text =   "${context.getString(R.string.intercity)} (${item.data.dlvIntercityCount + item.data.nonDlvCount})"
+      binding.dlvMarketplaceToggle.text =   "${context.getString(R.string.market_place)} (${item.data.marketplaceCount})"
       //binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
       binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
       binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
+      // Marketplace is always visible
+      binding.dlvMarketplaceToggle.visibility = View.VISIBLE
 
       when (item.data.filterType) {
           DemandType.Intracity.type-> {
               binding.dlvIntracityToggle.isSelected = true
               binding.dlvIntercityToggle.isSelected = false
+              binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = false
           }
           DemandType.Internal.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = true
+              binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = false
           }
           DemandType.Others.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = false
+              binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = true
+          }
+          "Marketplace"-> {
+              binding.dlvIntracityToggle.isSelected = false
+              binding.dlvIntercityToggle.isSelected = false
+              binding.dlvMarketplaceToggle.isSelected = true
           }
       }
       binding.dlvIntracityToggle.clickToAction(HomeLoadDlvIntracity, item, _interface)
       binding.dlvIntercityToggle.clickToAction(HomeLoadDlvIntercity, item, _interface)
+      binding.dlvMarketplaceToggle.clickToAction(HomeLoadMarketplace, item, _interface)
       //binding.nonDlvToggle.clickToAction(HomeLoadNonDlv, item, _interface)
   }
 }
