@@ -116,8 +116,11 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     /* start splash animation */
     userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+      userPrefs.jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik9sZF85MTk3NTgxNDE3MDJOIiwicGhvbmVfbnVtYmVyIjoiKzkxOTc1ODE0MTcwMiIsImxhc3RfbmFtZSI6Ikd1cHRhIiwicGluIjpmYWxzZSwicmVhZF9hbGxfY2VudGVycyI6dHJ1ZSwidXNlcl90eXBlIjoiRlRMU1AiLCJpYXQiOjE3NjIwNzU3MDUsInRlbmFudCI6IkRlbGhpdmVyeSIsImF1ZCI6Ikd2REt6b2Q2YU9JTTNMY3lhOUJqZkJiOGJ2RmtZVFh5IiwiZmlyc3RfbmFtZSI6IlZpa2FzaCIsInN1YiI6InVtczo6dXNlcjo6ZjkyMzFjMWUtMjk3ZS0xMWYwLTk2OGYtMDIzMmY5YmI4MzQ1IiwiZGVzaWduYXRpb24iOiJRQSBFbmdpbmVlciIsIndyaXRlX2FsbF9jZW50ZXJzIjp0cnVlLCJpZGxlIjoxNzYyNjgwNTA1LCJleHAiOjE3NjIxNjIxMDUsImRhcndpbl9maWQiOiJJTkQxMjJBQUEiLCJ0b2tlbl9pZCI6ImE3NmMyZjNmLWY0MDctNDE0ZC05ZmM5LTI0YmFkYTE2ZjE2OSIsImVtYWlsIjoidmlrYXNoLmd1cHRhMkBkZWxoaXZlcnkuY29tIiwiYXBpX3ZlcnNpb24iOiJ2MSIsInRvZSI6MTc2MjA3NTcwNX0.4AKU1qMCp35RjnqsNdWk-3GdY7Oe6sD6Lr_KtSsObNk"
+      //postAnimate(Home)
     animate()
     checkForDynamicLinks()
+      userPrefs.hasLoggedIn = true
     if(!userPrefs.hasLoggedIn) {
       compositeDisposable += requestPermission(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
         .onBackground()
@@ -143,7 +146,9 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     binding.btnGetStarted.visibility = View.GONE
     binding.btnGetStarted.setOnClickListener {
       if(ifUpdateFalse) {
-        postAnimate(isAuthenticated)
+          userPrefs.jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik9sZF85MTk3NTgxNDE3MDJOIiwicGhvbmVfbnVtYmVyIjoiKzkxOTc1ODE0MTcwMiIsImxhc3RfbmFtZSI6Ikd1cHRhIiwicGluIjpmYWxzZSwicmVhZF9hbGxfY2VudGVycyI6dHJ1ZSwidXNlcl90eXBlIjoiRlRMU1AiLCJpYXQiOjE3NjIwNzU3MDUsInRlbmFudCI6IkRlbGhpdmVyeSIsImF1ZCI6Ikd2REt6b2Q2YU9JTTNMY3lhOUJqZkJiOGJ2RmtZVFh5IiwiZmlyc3RfbmFtZSI6IlZpa2FzaCIsInN1YiI6InVtczo6dXNlcjo6ZjkyMzFjMWUtMjk3ZS0xMWYwLTk2OGYtMDIzMmY5YmI4MzQ1IiwiZGVzaWduYXRpb24iOiJRQSBFbmdpbmVlciIsIndyaXRlX2FsbF9jZW50ZXJzIjp0cnVlLCJpZGxlIjoxNzYyNjgwNTA1LCJleHAiOjE3NjIxNjIxMDUsImRhcndpbl9maWQiOiJJTkQxMjJBQUEiLCJ0b2tlbl9pZCI6ImE3NmMyZjNmLWY0MDctNDE0ZC05ZmM5LTI0YmFkYTE2ZjE2OSIsImVtYWlsIjoidmlrYXNoLmd1cHRhMkBkZWxoaXZlcnkuY29tIiwiYXBpX3ZlcnNpb24iOiJ2MSIsInRvZSI6MTc2MjA3NTcwNX0.4AKU1qMCp35RjnqsNdWk-3GdY7Oe6sD6Lr_KtSsObNk"
+          postAnimate(Home)
+        //postAnimate(isAuthenticated)
       }
     }
   }
@@ -191,7 +196,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             ifUpdateFalse=true
             if(ifUpdateFalse && userPrefs.hasLoggedIn){
               binding.btnGetStarted.visibility = View.GONE
-              postAnimate(isAuthenticated)
+              postAnimate(Home)
             }else{
               splashScreen.setKeepOnScreenCondition { false }
               binding.btnGetStarted.visibility = View.VISIBLE

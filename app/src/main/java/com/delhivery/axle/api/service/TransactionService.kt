@@ -6,6 +6,7 @@ import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ContractsSummaryResponse
+import com.delhivery.axle.api.response.SpotMarketplaceLoadsResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
 import com.delhivery.axle.api.response.TruckDisplayNamesResponse
@@ -151,5 +152,5 @@ interface TransactionService {
   fun spotMarketplaceTransactions(
     @Query("only_count") onlyCount: Boolean = false,
     @Query("limit") limit: Int = 25,
-  ): Single<BaseResponse<TransactionsResponse>>
+  ): Single<BaseResponse<SpotMarketplaceLoadsResponse>>
 }

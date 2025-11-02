@@ -313,7 +313,7 @@ class HomeLoadsViewModel @Inject constructor(
                         
                         // Extract marketplace count from the pair
                         try {
-                            marketplaceCount = _tRes.third.second?.getCount() ?: 0
+                            marketplaceCount = _tRes.third.second?.spotMarketplaceResponse?.count ?: 0
                             cachedMarketplaceCount = marketplaceCount
                         }catch (e:Exception){
                             Log.e("MarketplaceCount",e.toString())
@@ -499,7 +499,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 
                                 // Extract marketplace count from the 6th element
                                 try {
-                                    marketplaceCount = _tRes.sixth?.getCount() ?: 0
+                                    marketplaceCount = _tRes.sixth?.spotMarketplaceResponse?.count ?: 0
                                     cachedMarketplaceCount = marketplaceCount
                                 }catch (e:Exception){
                                     Log.e("MarketplaceCount",e.toString())
@@ -722,7 +722,7 @@ class HomeLoadsViewModel @Inject constructor(
                     ).onBackground()
                     .subscribe { marketplaceRes, marketplaceError ->
                         if (!marketplaceError) {
-                            marketplaceCount = marketplaceRes?.getCount() ?: 0
+                            marketplaceCount = marketplaceRes?.spotMarketplaceResponse?.count ?: 0
                             cachedMarketplaceCount = marketplaceCount
                             Log.d("MarketplaceCount", "Fetched: $marketplaceCount")
                         }
@@ -869,10 +869,11 @@ class HomeLoadsViewModel @Inject constructor(
       onlyCount = true,
       limit = limit
     ).flatMap { countRes ->
-      Log.d("MarketplaceDebug", "Count API Response - count: ${countRes.count}, total: ${countRes.total}")
+      val count = countRes.spotMarketplaceResponse?.count ?: 0
+      Log.d("MarketplaceDebug", "Count API Response - count: $count")
       
       // Store the count
-      total = countRes.getCount()
+      total = count
       cachedMarketplaceCount = total
       loadsCountLiveData.postValue(total)
       
@@ -882,26 +883,25 @@ class HomeLoadsViewModel @Inject constructor(
         limit = limit
       )
     }.flatMap { _res ->
-      Log.d("MarketplaceDebug", "Data API Response - transactions: ${_res.transactions?.size ?: 0}, total: ${_res.total}, count: ${_res.count}")
-      offset = _res.offset ?: 0
-      searchAfter = _res.searchAfter
+      val transactions = _res.spotMarketplaceResponse?.transactions
+      val resOffset = _res.spotMarketplaceResponse?.offset ?: 0
+      val resCount = _res.spotMarketplaceResponse?.count ?: 0
+      Log.d("MarketplaceDebug", "Data API Response - transactions: ${transactions?.size ?: 0}, count: $resCount")
+      offset = resOffset
       if (total == 0) {
-        searchAfter = null
         hasMoreData = false
       }
-      fecthToCalled = _res.offset < _res.total
-      loadPricePercent = _res.loadPricePercent
-      more_default_loads = _res.more_loads
-      Log.d("MarketplaceDebug", "About to fetch bids for ${_res.transactions?.size ?: 0} transactions")
+      hasMoreData = _res.spotMarketplaceResponse?.hasNext ?: false
+      Log.d("MarketplaceDebug", "About to fetch bids for ${transactions?.size ?: 0} transactions")
 
       Single.zip(
-        bidsRepository.bidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
-        bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
+        bidsRepository.bidsForLoads(transactions).subscribeOn(Schedulers.io()),
+        bidsRepository.bulkLowestBidsForLoads(transactions).subscribeOn(Schedulers.io()),
         BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, Pair<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>>> { t1, t2 ->
           Pair(t1, t2)
         }
       ).map { result ->
-        Triple(_res.transactions, result.first.second, result.second.second)
+        Triple(transactions, result.first.second, result.second.second)
       }
     }
       .onBackground()

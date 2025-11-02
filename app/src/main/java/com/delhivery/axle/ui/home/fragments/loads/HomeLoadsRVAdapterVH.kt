@@ -373,11 +373,10 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
     // Handle stops display
     binding.stops.text = item.data.getIntermediateStops()
     
-    // Handle payment mode display - same logic as intercity loads
+    // Handle payment mode display - COPIED FROM INTERCITY LOGIC
     if (item.data.shouldShowPaymentMode()) {
       binding.paymentType.visibility = View.VISIBLE
       binding.paymentType.text = item.data.getPaymentModeDisplay()
-      
       // Only show advance percentage for advance payment mode
       if (item.data.shouldShowAdvancePercentage()) {
         binding.advancePaymentPercentage.visibility = View.VISIBLE
@@ -390,26 +389,18 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
       binding.advancePaymentPercentage.visibility = View.GONE
     }
     
-    // Handle supplier phone number - mask it for privacy (show first 4 digits + ****)
-    if (!item.data.shipperPhoneNumber.isNullOrEmpty()) {
-      binding.supplierNumber.visibility = View.VISIBLE
-      val phoneNumber = item.data.shipperPhoneNumber
-      val maskedNumber = if (phoneNumber!!.length > 4) {
-        phoneNumber.substring(0, 4) + "******"
-      } else {
-        phoneNumber
-      }
-      binding.supplierNumber.text = maskedNumber
-    } else {
-      binding.supplierNumber.visibility = View.GONE
-    }
-    
-    // Handle supplier name
+    // Handle supplier name - hide if empty
     if (!item.data.shipperName.isNullOrEmpty()) {
       binding.supplierName.visibility = View.VISIBLE
-      binding.supplierName.text = item.data.shipperName
     } else {
       binding.supplierName.visibility = View.GONE
+    }
+    
+    // Handle supplier phone number - use as-is from API (already masked)
+    if (!item.data.shipperPhoneNumber.isNullOrEmpty()) {
+      binding.supplierNumber.visibility = View.VISIBLE
+    } else {
+      binding.supplierNumber.visibility = View.GONE
     }
     
     // Handle reporting time logic - same as intercity

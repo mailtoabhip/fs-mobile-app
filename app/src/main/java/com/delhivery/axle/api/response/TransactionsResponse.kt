@@ -73,3 +73,22 @@ data class MonthlyEarning(
 data class TruckDisplayNameItem(
   @SerializedName("key") val truckDisplayName:String
 )
+
+/**
+ * Response for spot marketplace loads API
+ */
+data class SpotMarketplaceLoadsResponse(
+  @SerializedName("data") val spotMarketplaceResponse: SpotMarketplaceLoadsData?,
+  @SerializedName("success") val success: Boolean
+)
+
+/**
+ * Data wrapper for spot marketplace loads
+ */
+data class SpotMarketplaceLoadsData(
+  @SerializedName("count") val count: Int,
+  @SerializedName("limit") val limit: Int,
+  @SerializedName("offset") val offset: Int,
+  @SerializedName("has_next") val hasNext: Boolean,
+  @SerializedName("data") val transactions: List<HomeBidsRequestItemData>?
+)
