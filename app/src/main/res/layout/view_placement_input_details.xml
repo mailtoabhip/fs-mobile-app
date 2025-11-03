@@ -103,7 +103,7 @@
         android:textSize="@dimen/text_16sp"
         android:hint="Enter/Select Driver Name"
         android:drawablePadding="@dimen/size_4dp"
-        android:inputType="textCapCharacters"
+        android:inputType="textPersonName"
         android:textColor="@color/text_grey_v3"
         android:layout_marginTop="@dimen/size_8dp"
         android:drawableEnd="@drawable/bg_spinner"
