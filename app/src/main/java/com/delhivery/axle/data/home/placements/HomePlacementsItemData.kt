@@ -112,6 +112,7 @@ data class HomePlacementsItemData(
     }
 
     fun formatReportingTime():String?= "Report "+reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
+    fun placementsFormatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
     fun onlyFormatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
 
     fun placementsFormatReportingDateAndTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd HH:mm") }

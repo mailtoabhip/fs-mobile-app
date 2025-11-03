@@ -395,7 +395,7 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
 
                         //set reporting time visible
                         binding.routeDetails.intraCityReportingTime.visibility = View.VISIBLE
-                        binding.routeDetails.intraCityReportingTime.text = homePlacementsItemData?.placementsOnlyFormatReportingTime()
+                        binding.routeDetails.intraCityReportingTime.text = homePlacementsItemData?.placementsFormatReportingTime()
                     }else{
 
                         //manged from data binding
