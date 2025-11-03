@@ -12,9 +12,10 @@ This document provides comprehensive documentation for the API calls triggered i
 4. [Contracts Section](#contracts-section)
 5. [MyBids Section](#mybids-section)
 6. [Bid Management APIs](#bid-management-apis)
-7. [Count Fetching APIs](#count-fetching-apis)
-8. [API Call Counts Summary](#api-call-counts-summary)
-9. [Request/Response Models](#requestresponse-models)
+7. [Spot Bidding Service APIs](#spot-bidding-service-apis)
+8. [Count Fetching APIs](#count-fetching-apis)
+9. [API Call Counts Summary](#api-call-counts-summary)
+10. [Request/Response Models](#requestresponse-models)
 
 ---
 
@@ -787,6 +788,391 @@ POST /trips/accept
   "driver_name": "string"               // Driver name
 }
 ```
+
+---
+
+## Spot Bidding Service APIs
+
+### Overview
+These APIs handle marketplace-specific operations, particularly for initiating calls between vendors and shippers through a bridge number system. This service is specifically designed for the spot marketplace bidding feature.
+
+### Service Configuration
+
+**Service Name**: `SpotBiddingService`
+
+**Base URLs**:
+- **Production**: `https://orion-user-loadboard-api.delhivery.com/spot/bidding`
+- **Development**: `https://orion-user-loadboard-api-dev.delhivery.com/spot/bidding`
+- **UAT**: `https://orion-user-loadboard-api-uat.delhivery.com/spot/bidding`
+
+**Service File**: `app/src/main/java/com/delhivery/axle/api/service/SpotBiddingService.kt`
+
+**Repository**: `SpotBiddingRepository`
+
+### API Endpoints
+
+#### 1. Initiate Marketplace Call
+```
+POST /marketplace/initiate-call
+```
+
+This endpoint is used to obtain a bridge number for connecting vendors with shippers in the marketplace. Instead of directly sharing personal phone numbers, the system provides a temporary bridge number that expires after a certain time.
+
+**Service**: SpotBiddingService  
+**Base URL (UAT)**: `https://orion-user-loadboard-api-uat.delhivery.com/spot/bidding`  
+**Full URL (UAT)**: `https://orion-user-loadboard-api-uat.delhivery.com/spot/bidding/marketplace/initiate-call`
+
+**Request Payload:**
+```json
+{
+  "source": "axle_marketplace",       // Source identifier (fixed value)
+  "transaction_id": "string",         // Transaction ID from marketplace load
+  "bid_id": "string"                  // Bid ID for the marketplace transaction
+}
+```
+
+**Request Parameters:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `source` | string | Yes | Source of the call initiation. Default: "axle_marketplace" |
+| `transaction_id` | string | Yes | Unique identifier of the marketplace transaction |
+| `bid_id` | string | Yes | Unique identifier of the bid |
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "bridge_number": "+919876543210",    // Bridge phone number for calling
+      "vendor": "vendor_name",              // Vendor identifier
+      "expiry": 1699876543000               // Expiry timestamp in milliseconds
+    }
+  ]
+}
+```
+
+**Response Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | boolean | Indicates if the request was successful |
+| `data` | array | Array containing bridge number details |
+| `data[].bridge_number` | string | Temporary phone number to dial for connecting with shipper |
+| `data[].vendor` | string | Vendor/shipper identifier |
+| `data[].expiry` | number | Unix timestamp (milliseconds) when the bridge number expires |
+
+**Success Response Example:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "bridge_number": "+919876543210",
+      "vendor": "shipper_abc_123",
+      "expiry": 1699876543000
+    }
+  ]
+}
+```
+
+**Error Response Example:**
+```json
+{
+  "success": false,
+  "data": null
+}
+```
+
+### Implementation
+
+#### Repository Layer
+```kotlin
+// SpotBiddingRepository.kt
+@Singleton
+class SpotBiddingRepository @Inject constructor(
+    private val spotBiddingService: SpotBiddingService
+) : BaseRepository() {
+
+    fun initiateMarketplaceCall(
+        transactionId: String,
+        bidId: String,
+        source: String = "axle_marketplace"
+    ): Single<InitiateCallResponse> {
+        val request = InitiateCallRequest(
+            source = source,
+            transactionId = transactionId,
+            bidId = bidId
+        )
+        return spotBiddingService.initiateMarketplaceCall(request)
+    }
+}
+```
+
+#### Usage in ViewModel
+```kotlin
+class MarketPlaceBidDetailsViewModel @Inject constructor(
+    private val spotBiddingRepository: SpotBiddingRepository
+) : BaseViewModel() {
+    
+    val callInitiationLiveData = MutableLiveData<InitiateCallResponse>()
+    val errorLiveData = MutableLiveData<String>()
+    
+    fun initiateMarketplaceCall(transactionId: String, bidId: String) {
+        spotBiddingRepository.initiateMarketplaceCall(
+            transactionId = transactionId,
+            bidId = bidId
+        )
+        .onBackground()
+        .subscribe({ response ->
+            if (response.success && !response.data.isNullOrEmpty()) {
+                callInitiationLiveData.postValue(response)
+            } else {
+                errorLiveData.postValue("Failed to initiate call")
+            }
+        }, { error ->
+            errorLiveData.postValue(error.message ?: "Unknown error occurred")
+        })
+    }
+}
+```
+
+#### Usage in Activity
+```kotlin
+class MarketPlaceBidDetailsActivity : BaseActivity() {
+    
+    private fun setupCallButton() {
+        binding.btnCall.setOnClickListener {
+            viewModel.initiateMarketplaceCall(
+                transactionId = transaction.transactionId,
+                bidId = bid.bidId
+            )
+        }
+    }
+    
+    private fun observeCallInitiation() {
+        viewModel.callInitiationLiveData.observe(this) { response ->
+            response.data?.firstOrNull()?.let { bridgeData ->
+                val bridgeNumber = bridgeData.bridgeNumber
+                val expiry = bridgeData.expiry
+                
+                // Make call using bridge number
+                makePhoneCall(bridgeNumber)
+                
+                // Show expiry info to user
+                showExpiryInfo(expiry)
+            }
+        }
+        
+        viewModel.errorLiveData.observe(this) { error ->
+            showError(error)
+        }
+    }
+    
+    private fun makePhoneCall(phoneNumber: String?) {
+        phoneNumber?.let {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:$it")
+            }
+            startActivity(intent)
+        }
+    }
+}
+```
+
+### Use Cases
+
+#### Primary Use Case: Marketplace Load Contact
+1. **Scenario**: User views a marketplace load and wants to contact the shipper
+2. **User Action**: Clicks "Call Shipper" button in MarketPlace Bid Details screen
+3. **API Call**: `POST /marketplace/initiate-call` with transaction_id and bid_id
+4. **Response**: Bridge number is received
+5. **Action**: Phone dialer opens with bridge number
+6. **Security**: Personal numbers are protected; call expires after set time
+
+#### Integration Points
+- **MarketPlace Bid Details Screen** (`MarketPlaceBidDetailsActivity.kt`)
+  - Primary usage: Contact shipper button
+  - Shows bridge number expiry time
+  
+- **Home Loads Fragment - Marketplace Tab** (`HomeLoadsRVAdapterVH.kt`)
+  - Quick call action from load card
+  - Shows call availability status
+
+### Data Models
+
+#### Request Model
+```kotlin
+// InitiateCallRequest.kt
+data class InitiateCallRequest(
+    @SerializedName("source")
+    val source: String = "axle_marketplace",
+    
+    @SerializedName("transaction_id")
+    val transactionId: String,
+    
+    @SerializedName("bid_id")
+    val bidId: String
+)
+```
+
+#### Response Models
+```kotlin
+// InitiateCallResponse.kt
+data class InitiateCallResponse(
+    @SerializedName("success")
+    val success: Boolean,
+    
+    @SerializedName("data")
+    val data: List<BridgeNumberData>?
+)
+
+data class BridgeNumberData(
+    @SerializedName("bridge_number")
+    val bridgeNumber: String?,
+    
+    @SerializedName("vendor")
+    val vendor: String?,
+    
+    @SerializedName("expiry")
+    val expiry: Long?
+)
+```
+
+### Error Handling
+
+#### Common Error Scenarios
+
+1. **Invalid Transaction ID**
+   - Response: `success: false`
+   - Action: Show error message to user
+   - Retry: Not recommended
+
+2. **Invalid Bid ID**
+   - Response: `success: false`
+   - Action: Verify bid exists and belongs to transaction
+   - Retry: Not recommended
+
+3. **Bridge Number Unavailable**
+   - Response: `success: true` but empty data
+   - Action: Show "Unable to connect" message
+   - Retry: Allow after 30 seconds
+
+4. **Network Error**
+   - Response: Exception thrown
+   - Action: Show network error message
+   - Retry: Automatic retry with exponential backoff
+
+5. **Bridge Number Expired**
+   - Detection: Compare current time with expiry timestamp
+   - Action: Request new bridge number
+   - Retry: Automatic
+
+### Best Practices
+
+#### Security
+- Never store bridge numbers beyond their expiry time
+- Clear bridge number data after call is made
+- Do not display bridge numbers in logs
+
+#### User Experience
+- Show bridge number expiry countdown to user
+- Provide clear feedback when bridge number expires
+- Auto-refresh bridge number if needed before expiry
+
+#### Performance
+- Cache bridge numbers until expiry
+- Prefetch bridge number when user enters details screen
+- Use single instance for multiple call attempts within expiry window
+
+### Analytics Events
+
+Track the following events for monitoring and analysis:
+
+```kotlin
+// Bridge number request initiated
+analyticsUtil.trackEvent(
+    "EVENT_MARKETPLACE_CALL_INITIATED",
+    mapOf(
+        "transaction_id" to transactionId,
+        "bid_id" to bidId,
+        "source" to "axle_marketplace"
+    )
+)
+
+// Bridge number received successfully
+analyticsUtil.trackEvent(
+    "EVENT_MARKETPLACE_CALL_SUCCESS",
+    mapOf(
+        "transaction_id" to transactionId,
+        "bridge_number_expiry" to expiry
+    )
+)
+
+// Call made using bridge number
+analyticsUtil.trackEvent(
+    "EVENT_MARKETPLACE_CALL_PLACED",
+    mapOf(
+        "transaction_id" to transactionId,
+        "time_to_expiry" to (expiry - currentTime)
+    )
+)
+
+// Bridge number expired
+analyticsUtil.trackEvent(
+    "EVENT_MARKETPLACE_BRIDGE_EXPIRED",
+    mapOf(
+        "transaction_id" to transactionId,
+        "was_used" to wasCallPlaced
+    )
+)
+```
+
+### Testing
+
+#### Unit Tests
+```kotlin
+@Test
+fun `test initiate marketplace call success`() {
+    val response = InitiateCallResponse(
+        success = true,
+        data = listOf(
+            BridgeNumberData(
+                bridgeNumber = "+919876543210",
+                vendor = "test_vendor",
+                expiry = System.currentTimeMillis() + 3600000
+            )
+        )
+    )
+    
+    // Test response parsing
+    assertThat(response.success).isTrue()
+    assertThat(response.data).isNotEmpty()
+    assertThat(response.data?.first()?.bridgeNumber).isNotNull()
+}
+```
+
+#### Integration Tests
+- Test with valid transaction_id and bid_id
+- Test with invalid IDs
+- Test network failure scenarios
+- Test bridge number expiry handling
+
+#### Manual Testing via Chucker
+1. Run app in debug mode
+2. Navigate to marketplace bid details
+3. Click "Call Shipper"
+4. Open Chucker notification
+5. Verify request URL: `https://orion-user-loadboard-api-uat.delhivery.com/spot/bidding/marketplace/initiate-call`
+6. Verify request body contains correct transaction_id and bid_id
+7. Verify response contains bridge_number and expiry
+
+### API Call Count
+
+#### Per Call Initiation
+- **Total API Calls**: 1 per initiation
+- **Optional Retry**: 1 additional call if expired and user retries
 
 ---
 

@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.*
+import com.delhivery.axle.databinding.CardBidsDelhiveryMarketplaceBinding
 import com.delhivery.axle.databinding.CardCommonBidsV2Binding
 import com.delhivery.axle.databinding.CardCommonIntracityBidsBinding
 import com.delhivery.axle.databinding.ViewBidsHeaderNewItemBinding
@@ -545,7 +546,7 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
     // Also set request for the included layouts explicitly
     binding.containerError.request = item.data
     binding.strongBidCard.request = item.data
-
+    
     // Handle place bid button state based on bid status
     when(item.data.bidStatus().statusKey.lowercase()) {
       TransactionBidStatus.Open.statusKey.lowercase() -> {
@@ -740,5 +741,108 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
     isLoadingData: Boolean
   ) {
 
+  }
+}
+
+/**
+ * Marketplace Bid request item view holder (for spot request type)
+ */
+class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBinding) :
+  BaseHomeBidsRVAdapterViewHolder<CardBidsDelhiveryMarketplaceBinding, HomeBidsRequestItem>(binding) {
+  override fun bind(
+    item: HomeBidsRequestItem,
+    _interface: HomeBidsRVAdapterInterface,
+    isLoadingData: Boolean
+  ) {
+    binding.request = item.data
+    binding.executePendingBindings()
+
+    // Set up call icon click listener
+    binding.containerError.callIcon.clickToAction(
+      HomeBidsRequestAction_InitiateCall,
+      item,
+      _interface
+    )
+
+    // Handle place bid button state based on bid status
+    when(item.data.bidStatus().statusKey.lowercase()) {
+      TransactionBidStatus.Open.statusKey.lowercase() -> {
+        if (item.data.isBidOpen()) {
+          // Bid is open - show normal "Place Bid" button
+          binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
+          binding.containerError.placeBidTv.text = "Place Bid"
+          binding.containerError.placeBidTv.setTextColor(
+            ContextCompat.getColor(context, android.R.color.white)
+          )
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+            0, 0, R.drawable.ic_arrow_right, 0
+          )
+          binding.containerError.placeBidButton.isClickable = true
+          binding.containerError.placeBidButton.clickToAction(
+            HomeBidsRequestAction_PlaceBid,
+            item,
+            _interface
+          )
+        } else {
+          // Bid is not open - show "Bidding Closed" state
+          binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+          binding.containerError.placeBidTv.text = "Bidding Closed"
+          binding.containerError.placeBidTv.setTextColor(
+            ContextCompat.getColor(context, R.color.text_grey)
+          )
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_hourglass_grey, 0, 0, 0
+          )
+          binding.containerError.placeBidButton.isClickable = false
+          binding.containerError.placeBidButton.setOnClickListener(null)
+        }
+      }
+
+      TransactionBidStatus.Accepted.statusKey.lowercase() -> {
+        // Bid Confirmed - show confirmation button with green background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.status_confirmed_bg)
+        binding.containerError.placeBidTv.text = "Bid Confirmed"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.bid_placed_green)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_check_confirmed, 0, 0, 0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
+      }
+
+      TransactionBidStatus.Rejected.statusKey.lowercase() -> {
+        // Bid Lost - show rejection button with grey background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+        binding.containerError.placeBidTv.text = "Bid Lost"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.text_grey)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_cross, 0, 0, 0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
+      }
+
+      TransactionBidStatus.Cancelled.statusKey.lowercase() -> {
+        // Demand Cancelled - show cancellation button with grey background
+        binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
+        binding.containerError.placeBidTv.text = "Demand Cancelled"
+        binding.containerError.placeBidTv.setTextColor(
+          ContextCompat.getColor(context, R.color.text_grey)
+        )
+        binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_cross, 0, 0, 0
+        )
+        binding.containerError.placeBidButton.isClickable = false
+        binding.containerError.placeBidButton.setOnClickListener(null)
+      }
+
+      else -> {
+        // Default state
+      }
+    }
   }
 }

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -46,6 +45,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   var _title: String = "My Bids"
   var launch : Boolean =true
   @Inject lateinit var userPrefs: UserPrefs
+  @Inject lateinit var dialogUtils: DialogUtils
   // In any existing activity
   @Inject
   lateinit var dialogUsageExample: DialogUsageExample
@@ -144,6 +144,39 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
       adapter.setLoadingState(isLoadingData)
     })
 
+    // Observe marketplace call initiation success
+    viewModel.callInitiationLiveData.reobserve(this, Observer { response ->
+      response.data?.firstOrNull()?.let { bridgeData ->
+        bridgeData.bridgeNumber?.let { number ->
+          // Make phone call with bridge number
+          makePhoneCall(number)
+          
+          // Track analytics
+          analyticsUtil.moEngageTrackEvent(
+            "EVENT_MARKETPLACE_CALL_SUCCESS",
+            mutableListOf(PROPERTY_USER_ID, "bridge_number_received"),
+            mutableListOf(userPrefs.userId(), "true")
+          )
+        }
+      }
+    })
+
+    // Observe marketplace call initiation errors
+    viewModel.callInitiationErrorLiveData.reobserve(this, Observer { errorMessage ->
+      // Show error dialog with countdown
+      dialogUtils.showErrorDialog(
+        errorMessage,
+        5L // 5 seconds countdown
+      )
+      
+      // Track analytics
+      analyticsUtil.moEngageTrackEvent(
+        "EVENT_MARKETPLACE_CALL_ERROR",
+        mutableListOf(PROPERTY_USER_ID, "error_message"),
+        mutableListOf(userPrefs.userId(), errorMessage)
+      )
+    })
+
     /* attach sticky search with adapter */
     //binding.editStickySearch.attachWithAdapter(adapter, this)
 
@@ -238,6 +271,31 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
 
         }
+      }
+
+      HomeBidsRequestAction_InitiateCall -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Validate transaction ID and bid ID
+        val transactionId = _item.transactionId
+        val bidId = _item.transactionBid?.id
+        
+        if (transactionId.isNullOrEmpty() || bidId.isNullOrEmpty()) {
+          dialogUtils.showErrorDialog(
+            "Unable to initiate call. Missing information.",
+            3L // 3 seconds countdown
+          )
+          return@handleAction
+        }
+        
+        // Track analytics
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID, "action"),
+          mutableListOf(VALUE_BID, transactionId, "initiate_call")
+        )
+        
+        // Initiate marketplace call
+        viewModel.initiateMarketplaceCall(transactionId, bidId)
       }
 
       HomeBidsHeaderAction_TabChangeActive -> {
@@ -450,5 +508,23 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
       }
     }
+  }
+
+  /**
+   * Make phone call with the provided phone number
+   */
+  private fun makePhoneCall(phoneNumber: String) {
+    val intent = Intent(Intent.ACTION_DIAL).apply {
+      data = android.net.Uri.parse("tel:$phoneNumber")
+    }
+    startActivity(intent)
+  }
+
+  /**
+   * Format expiry timestamp to readable time
+   */
+  private fun formatExpiryTime(timestamp: Long): String {
+    val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
   }
 }

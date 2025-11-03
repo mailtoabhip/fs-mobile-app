@@ -148,6 +148,7 @@ enum class RequestType(val type: String) {
   Contract("contract"),
   Load("load"),
   Spot("spot"),
+  SpotMarketplace("spot_marketplace"),
   Fixed("fixed")
 }
 enum class DemandType(val type: String) {

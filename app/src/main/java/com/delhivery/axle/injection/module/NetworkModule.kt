@@ -357,4 +357,16 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.RecommendationService).create(
           RecommendationService::class.java
   )
+
+  /**
+   * Provide [SpotBiddingService]
+   */
+  @Provides
+  @Singleton
+  fun provideSpotBiddingService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.SpotBiddingService).create(
+          SpotBiddingService::class.java
+  )
 }

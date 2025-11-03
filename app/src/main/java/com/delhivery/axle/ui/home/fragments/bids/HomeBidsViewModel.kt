@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.LoadCycleRepository
+import com.delhivery.axle.api.repository.SpotBiddingRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.FrequentTripsResponse
+import com.delhivery.axle.api.response.InitiateCallResponse
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.Quintuple
@@ -60,6 +62,7 @@ class HomeBidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
+  private val spotBiddingRepository: SpotBiddingRepository,
   private val appDatabase: AppDatabase
 ) : BaseViewModel(),BulkBidDetailsDialog.BulkBidDetailsDialogInterface {
 
@@ -72,6 +75,12 @@ class HomeBidsViewModel @Inject constructor(
 
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  /* marketplace call initiation live data */
+  var callInitiationLiveData = MutableLiveData<InitiateCallResponse>()
+  
+  /* marketplace call error live data */
+  var callInitiationErrorLiveData = MutableLiveData<String>()
 
   /* pagination params */
   var total = 0
@@ -97,6 +106,33 @@ class HomeBidsViewModel @Inject constructor(
       transaction.paymentMode = supplier.paymentMode
       transaction.advancePercentage = supplier.advancePercentage
     }
+  }
+  
+  /**
+   * Initiate marketplace call to get bridge number
+   *
+   * @param transactionId Transaction ID from marketplace load
+   * @param bidId Bid ID for the transaction
+   */
+  fun initiateMarketplaceCall(transactionId: String, bidId: String) {
+    compositeDisposable += spotBiddingRepository.initiateMarketplaceCall(
+      transactionId = transactionId,
+      bidId = bidId,
+      source = "axle_marketplace"
+    )
+      .onBackground()
+      .subscribe({ response ->
+        if (response.success && !response.data.isNullOrEmpty()) {
+          callInitiationLiveData.postValue(response)
+        } else {
+          callInitiationErrorLiveData.postValue("Unable to initiate call. Please try again.")
+        }
+      }, { error ->
+        Log.e("HomeBidsViewModel", "Error initiating marketplace call: ${error.message}", error)
+        callInitiationErrorLiveData.postValue(
+          error.message ?: "Failed to initiate call. Please check your connection."
+        )
+      })
   }
   
   /**
