@@ -27,7 +27,7 @@ class HomePlacementsViewModel @Inject constructor(
         MutableLiveData<List<Pair<BaseHomePlacementsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
         /* data loading live data */
-        var dataLoadingLiveData = MutableLiveData<Boolean>()
+        var dataLoadingLiveData = MutableLiveData<Boolean>(null)
 
         var missingDataLiveData = MutableLiveData<Pair<Quadruple<Int,Int,Int,Int>,Int>>()
         var totalPlacementLiveData = MutableLiveData<Triple<Int,Int,Int>>()
@@ -61,6 +61,8 @@ class HomePlacementsViewModel @Inject constructor(
                 _6_12hoursPlacementList.clear()
                 _12_18hoursPlacementList.clear()
 
+
+                Log.d("fetchPlacementLoads===>>>", ""+_0_2hoursPlacementList.size)
 
                 for (loads in _tRes.ftlAdhoc ){
                         loads.loadType= LoadTypes.ftlAdhoc.name
@@ -158,6 +160,7 @@ class HomePlacementsViewModel @Inject constructor(
 //                                    }
 //                            }
                             PlacementTypes.Expected.name -> {
+                                    Log.d("fetchPlacementLoads===>>>", "Expected.name")
                                   //  add(Pair(HomePlacementsTypeItem(HomePlacementsTypeItemData("Expected")), DataRVAdapterOperationType.Add))
                                     for(load in expectedPlacementList)
                                             segregateBasedOnTimeInterval(load)

@@ -97,6 +97,15 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
         binding.rvLoads.itemAnimator = null
 
         viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+            if(it!=null && it == true){
+                Log.d("refreshLayout===>>","disabled")
+                binding.refreshLayout.isEnabled = false
+            }else{
+                //
+                Log.d("refreshLayout===>>","enabled")
+                binding.refreshLayout.isEnabled = true
+            }
+            //
             isLoadingData = it ?: false
         })
 
