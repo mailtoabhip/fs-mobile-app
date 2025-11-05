@@ -147,7 +147,6 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/truckInfo"
                     android:layout_width="wrap_content"
-                    android:paddingTop="@dimen/size_4dp"
                     android:paddingEnd="@dimen/size_11dp"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
@@ -170,7 +169,6 @@
                     android:text="@{request.getPaymentModeDisplay()}"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_4dp"
                     android:drawableStart="@drawable/money_bill_wave"
                     app:layout_constraintStart_toEndOf="@id/truckInfo"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
@@ -185,7 +183,6 @@
                     tools:text ="(50%)"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_2dp"
-                    android:paddingTop="@dimen/size_4dp"
                     android:text="@{request.getAdvancePaymentPercentage()}"
                     app:layout_constraintStart_toEndOf="@id/paymentType"
                     app:layout_constraintTop_toTopOf="@id/paymentType"
