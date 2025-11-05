@@ -344,6 +344,12 @@ class HomeLoadsViewModel @Inject constructor(
                                     ), AddUpdate
                                 )
                             )
+                            
+                            // Add KYC pending card if user is UNAPPROVED
+                            if (!paginate && userPrefs.verificationStatus.equals("failed")) {
+                                add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
+                            }
+                            
                             if (!paginate) {
                                 add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                             }
@@ -537,6 +543,12 @@ class HomeLoadsViewModel @Inject constructor(
                                         ), AddUpdate
                                     )
                                 )
+                                
+                                // Add KYC pending card if user is UNAPPROVED
+                                if (!paginate && userPrefs.verificationStatus.equals("failed")) {
+                                    add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
+                                }
+                                
                                 if (!paginate) {
                                     add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                                 }
@@ -1003,6 +1015,11 @@ class HomeLoadsViewModel @Inject constructor(
                 ), AddUpdate
               )
             )
+            
+            // Add KYC pending card if user is UNAPPROVED
+            if (!paginate && userPrefs.verificationStatus.equals("failed")) {
+              add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
+            }
 
             if (!paginate) {
               add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))

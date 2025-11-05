@@ -59,8 +59,8 @@ class HomeLoadsMarketplaceItem(data: HomeBidsRequestItemData) :
 /**
  * KycCard item
  */
-class HomeLoadsKycPendingItem(data: HomeBidsRequestItemData) :
-  BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(KycCard, data)
+class HomeLoadsKycPendingItem(data: HomeLoadsKycPendingItemData = HomeLoadsKycPendingItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsKycPendingItemData>(KycCard, data)
 
 /**
  * Inventory banner item
