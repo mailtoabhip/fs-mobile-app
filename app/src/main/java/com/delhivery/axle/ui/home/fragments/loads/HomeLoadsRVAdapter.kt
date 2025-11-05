@@ -55,6 +55,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     ShareRate -> ViewShareLayoutBannerBinding.inflate(inflater, parent, false)
     LoadCategories -> ViewHomeLoadCategoriesItemBinding.inflate(inflater, parent, false)
     Marketplace -> CardLoadsDelhiveryMarketplaceBinding.inflate(inflater, parent, false)
+    KycCard -> CardKycPendingBannerBinding.inflate(inflater, parent, false)
     else -> LoadDelhiveryIntercityV2Binding.inflate(inflater, parent, false)
   }
 
@@ -72,6 +73,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewShareLayoutBannerBinding->HomeLoadsShareRateItemVH(binding)
     is ViewHomeLoadCategoriesItemBinding->HomeLoadsCategoriesItemVH(binding)
     is CardLoadsDelhiveryMarketplaceBinding -> HomeLoadsMarketplaceItemVH(binding)
+    is CardKycPendingBannerBinding -> HomeLoadsKycPendingItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as LoadDelhiveryIntercityV2Binding)
   }
 
@@ -124,7 +126,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
       items.filter {
-        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Marketplace || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate || it.type==LoadCategories
+        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Marketplace || it.type == KycCard || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate || it.type==LoadCategories
       }
           .map { Pair(it, Remove) }
           .let {

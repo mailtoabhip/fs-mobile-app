@@ -14,6 +14,8 @@
         android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/size_8dp">
 
@@ -151,11 +153,10 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/supplierName"
                     android:layout_width="wrap_content"
-                    android:paddingTop="@dimen/size_4dp"
                     android:paddingEnd="@dimen/size_11dp"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
-                    android:layout_marginTop="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_8dp"
                     android:drawablePadding="@dimen/size_4dp"
                     android:text="@{request.shipperName}"
                     tools:text ="Mohan Aggarwal"
@@ -173,8 +174,7 @@
                     tools:text ="******8989"
                     android:text="@{request.shipperPhoneNumber}"
                     android:textColor="#505361"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:layout_marginTop="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_8dp"
                     android:drawableStart="@drawable/ic_call_12dp"
                     app:layout_constraintStart_toStartOf="@id/paymentType"
                     app:layout_constraintTop_toBottomOf="@id/paymentType" />

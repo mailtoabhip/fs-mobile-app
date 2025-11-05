@@ -23,7 +23,8 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Priority(10),
   ShareRate(11),
   LoadCategories(12),
-  Marketplace(13);
+  Marketplace(13),
+  KycCard(14);
 
   companion object {
     /**
@@ -54,6 +55,12 @@ class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
  */
 class HomeLoadsMarketplaceItem(data: HomeBidsRequestItemData) :
     BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Marketplace, data)
+
+/**
+ * KycCard item
+ */
+class HomeLoadsKycPendingItem(data: HomeBidsRequestItemData) :
+  BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(KycCard, data)
 
 /**
  * Inventory banner item

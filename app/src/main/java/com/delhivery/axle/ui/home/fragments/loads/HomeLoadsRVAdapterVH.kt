@@ -413,6 +413,21 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
   }
 }
 
+
+/**
+ * Kyc pending view holder
+ */
+internal class HomeLoadsKycPendingItemVH(binding: CardKycPendingBannerBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<CardKycPendingBannerBinding, HomeLoadsKycPendingItem>(
+        binding
+    ) {
+    override fun bind(
+        item: HomeLoadsKycPendingItem,
+        _interface: HomeLoadsRVAdapterInterface
+    ) {
+    }
+}
+
 /**
  * Progress inline view holder
  */
