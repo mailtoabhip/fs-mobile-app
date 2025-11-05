@@ -348,39 +348,38 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
  * Marketplace load item view holder
  */
 class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) :
-    BaseHomeLoadsRVAdapterViewHolder<CardLoadsDelhiveryMarketplaceBinding, HomeLoadsRequestItem>(
+    BaseHomeLoadsRVAdapterViewHolder<CardLoadsDelhiveryMarketplaceBinding, HomeLoadsMarketplaceItem>(
         binding
     ) {
 
   override fun bind(
-      item: HomeLoadsRequestItem,
+      item: HomeLoadsMarketplaceItem,
       _interface: HomeLoadsRVAdapterInterface
   ) {
     Log.d("MarketplaceCard", "Binding marketplace load: ${item.data.transactionId}")
+    Log.d("MarketplaceCard", "Shipper price: ${item.data.shipperPrice}")
+    Log.d("MarketplaceCard", "Formatted shipper price: ${item.data.getFormattedShipperPrice()}")
     
     // Set basic data binding
     binding.request = item.data
     binding.containerError.request = item.data
     
-    // Handle closing time visibility
-    if(item.data.bidEndingTime.isNullOrEmpty() || item.data.bidEndingTime.equals("null", ignoreCase = true)){
+    // Handle closing time visibility - Use contractBiddingEndTime for marketplace loads
+    if(item.data.contractBiddingEndTime.isNullOrEmpty() || item.data.contractBiddingEndTime.equals("null", ignoreCase = true)){
       binding.closingTime.visibility = View.GONE
     } else {
       binding.closingTime.visibility = View.VISIBLE
-      binding.closingTime.text = item.data.formattedBiddingEndTime()
+      binding.closingTime.text = item.data.formattedContractBiddingEndTime()
     }
     
-    // Handle stops display
-    binding.stops.text = item.data.getIntermediateStops()
-    
-    // Handle payment mode display - COPIED FROM INTERCITY LOGIC
-    if (item.data.shouldShowPaymentMode()) {
+    // Handle payment mode display - MARKETPLACE SPECIFIC LOGIC
+    if (item.data.shouldShowMarketplacePaymentMode()) {
       binding.paymentType.visibility = View.VISIBLE
-      binding.paymentType.text = item.data.getPaymentModeDisplay()
+      binding.paymentType.text = item.data.getMarketplacePaymentModeDisplay()
       // Only show advance percentage for advance payment mode
-      if (item.data.shouldShowAdvancePercentage()) {
+      if (item.data.shouldShowMarketplaceAdvancePercentage()) {
         binding.advancePaymentPercentage.visibility = View.VISIBLE
-        binding.advancePaymentPercentage.text = item.data.getAdvancePaymentPercentage()
+        binding.advancePaymentPercentage.text = item.data.getMarketplaceAdvancePaymentPercentage()
       } else {
         binding.advancePaymentPercentage.visibility = View.GONE
       }
@@ -393,7 +392,7 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
     if (!item.data.shipperName.isNullOrEmpty()) {
       binding.supplierName.visibility = View.VISIBLE
     } else {
-      binding.supplierName.visibility = View.GONE
+      binding.supplierName.visibility = View.INVISIBLE
     }
     
     // Handle supplier phone number - use as-is from API (already masked)
@@ -402,36 +401,11 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
     } else {
       binding.supplierNumber.visibility = View.GONE
     }
-    
-    // Handle reporting time logic - same as intercity
-    val reportingTimeText = if (item.data._requiredOn != null) {
-      item.data.requiredAtWithTime()
-    } else {
-      item.data.getTimeOfContracts()
-    }
-    
-    // Show max width button only if there's no meaningful reporting time
-    if (item.data._requiredOn == null && item.data.reportingTime == null) {
-      // Hide reporting time section
-      binding.containerError.labelReporting.visibility = View.GONE
-      binding.containerError.reportingTime.visibility = View.GONE
-      binding.containerError.placeBidButton.visibility = View.GONE
-      
-      // Show full-width button
-      binding.containerError.placeBidButtonMaxWidth.visibility = View.VISIBLE
-      binding.containerError.placeBidButtonMaxWidth.text = "Place Bid"
-      binding.containerError.placeBidButtonMaxWidth.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
-    } else {
-      // Show reporting time section
-      binding.containerError.labelReporting.visibility = View.VISIBLE
-      binding.containerError.reportingTime.visibility = View.VISIBLE
-      binding.containerError.placeBidButton.visibility = View.VISIBLE
-      binding.containerError.reportingTime.text = reportingTimeText
-      
-      // Hide full-width button
-      binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
-      binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
-    }
+      // MARKETPLACE SPECIFIC: Always show shipper price and place bid button
+    binding.containerError.labelReporting.visibility = View.VISIBLE
+    binding.containerError.placeBidButton.visibility = View.VISIBLE
+    binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
+    binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
     
     // Force data binding updates to be applied immediately
     binding.containerError.executePendingBindings()

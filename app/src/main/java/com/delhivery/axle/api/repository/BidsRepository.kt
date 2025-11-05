@@ -160,11 +160,12 @@ class BidsRepository @Inject constructor(
     expectedArrivalTimePickupRemark:String?,
       tentativeTripsCount:Int?,
       vehicleNumber:String?=null,
-      placementDays:String?=null
+      placementDays:String?=null,
+      demandType:String?=null
   ) = CreateTransactionBidRequest.getRequest(
       isPMT, transactionId, userRepository.userId(),
       "${userPrefs.userName} ${userPrefs.pancard}",
-      amount, pmtRate, commercialType, userPrefs.isTestUser, expectedArrivalTimePickup, expectedArrivalTimePickupRemark,tentativeTripsCount,vehicleNumber,placementDays
+      amount, pmtRate, commercialType, userPrefs.isTestUser, expectedArrivalTimePickup, expectedArrivalTimePickupRemark,tentativeTripsCount,vehicleNumber,placementDays,demandType
   ).let { bidService.createTransactionBid(it) }
 
   /**

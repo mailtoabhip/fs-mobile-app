@@ -41,7 +41,7 @@
                     tools:text ="Closes in 2 hrs 15 min"
                     android:textColor="#ED4136"
                     android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.formattedBiddingEndTime()}"
+                    android:text="@{request.formattedContractBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
 
@@ -122,20 +122,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@id/fromCity_toCity_arrow" />
 
-                    <TextView
-                        android:id="@+id/stops"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_12sp"
-                        tools:text="3 stops"
-                        android:text="@{request.getIntermediateStops()}"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        android:paddingTop="@dimen/size_2dp"
-                        android:gravity="center"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/toCity" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -162,6 +148,7 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Advance Payment"
+                    android:text="@{request.getMarketplacePaymentModeDisplay()}"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:paddingTop="@dimen/size_4dp"
@@ -177,6 +164,7 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="9876******"
+                    android:text="@{request.getContactPhoneNumber()}"
                     android:textColor="#505361"
                     android:paddingTop="@dimen/size_4dp"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -194,7 +182,7 @@
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_2dp"
                     android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.getAdvancePaymentPercentage()}"
+                    android:text="@{request.getMarketplaceAdvancePaymentPercentage()}"
                     app:layout_constraintStart_toEndOf="@id/paymentType"
                     app:layout_constraintTop_toTopOf="@id/paymentType"
                     app:layout_constraintBottom_toBottomOf="@id/paymentType" />
@@ -208,7 +196,7 @@
                     android:textSize="12sp"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:drawablePadding="@dimen/size_4dp"
-                    android:text="@{request.getTruckTypeAndNo()}"
+                    android:text="@{request.getContactDisplayName()}"
                     tools:text ="Mohan Aggarwal"
                     android:textColor="#505361"
                     android:drawableStart="@drawable/ic_user"
@@ -222,6 +210,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:layout_gravity="center_vertical"
+                    app:request="@{request}"
                     app:layout_constraintTop_toBottomOf="@id/supplierName"
                     tools:visibility="visible"
                     />

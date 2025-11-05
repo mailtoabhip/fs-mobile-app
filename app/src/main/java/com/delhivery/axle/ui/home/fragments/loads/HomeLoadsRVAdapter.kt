@@ -81,7 +81,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   ) {
     when (holder) {
       is HomeLoadsRequestItemVH -> holder.bind(item as HomeLoadsRequestItem, _interface)
-      is HomeLoadsMarketplaceItemVH -> holder.bind(item as HomeLoadsRequestItem, _interface)
+      is HomeLoadsMarketplaceItemVH -> holder.bind(item as HomeLoadsMarketplaceItem, _interface)
       is HomeLoadsProgressItemVH -> holder.bind(item as HomeLoadsProgressItem, _interface)
       is HomeLoadsSearchItemVH -> holder.bind(item as HomeLoadsSearchItem, _interface)
       is HomeLoadsWarningItemVH -> holder.bind(item as HomeLoadsWarningItem, _interface)

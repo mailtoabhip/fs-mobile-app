@@ -132,9 +132,9 @@ enum class UrlConfig(
         "https://tps-bk-dev.delhivery.com"
     ),
   SpotBiddingService(
-        "https://orion-user-loadboard-api.delhivery.com/spot/bidding/",
-        "https://orion-user-loadboard-api-dev.delhivery.com/spot/bidding/",
-        "https://orion-user-loadboard-api-uat.delhivery.com/spot/bidding/"
+        "https://orion-user-onboarding-api.delhivery.com/",
+        "https://orion-user-onboarding-api-dev.delhivery.com/",
+        "https://orion-user-onboarding-api-uat.delhivery.com/"
   ),
   AppID(
   "83", "371", "371"

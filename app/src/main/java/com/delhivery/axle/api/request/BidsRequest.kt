@@ -18,7 +18,8 @@ data class CreateTransactionBidRequest(
   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark:String? = "",
   @SerializedName("tentative_trip_count") val tentativeTripCount:Int?,
   @SerializedName("vehicle_number") val vehicleNumber:String?,
-  @SerializedName("placement_days") val placementDays:String?
+  @SerializedName("placement_days") val placementDays:String?,
+  @SerializedName("demand_type") val demandType: String? = null
 ) {
 
   companion object {
@@ -38,20 +39,23 @@ data class CreateTransactionBidRequest(
       expectedArrivalTimePickupRemark:String?,
       tentativeTripCount: Int?,
       vehicleNumber: String?,
-      placementDays: String?
+      placementDays: String?,
+      demandType: String? = null
     ) = if (isPMT)
       CreateTransactionBidRequest(
           transactionId = transactionId, supplierId = supplierId,
           supplierName = supplierName, freightCost = bidAmount, testUser = testUser,
           bidAmount = pmtRate, commercialType = commercialType, expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays
+              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays,
+              demandType = demandType
       )
     else
       CreateTransactionBidRequest(
           transactionId = transactionId, supplierId = supplierId, supplierName = supplierName,
           bidAmount = bidAmount, freightCost = bidAmount, testUser = testUser,
           commercialType = commercialType,expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark,tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays
+              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark,tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays,
+              demandType = demandType
       )
   }
 }

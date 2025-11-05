@@ -18,6 +18,7 @@ import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
@@ -144,6 +145,13 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
       adapter.setLoadingState(isLoadingData)
     })
 
+    // Observe marketplace call loading state
+    viewModel.callLoadingStateLiveData.reobserve(this, Observer { loadingStateMap ->
+      loadingStateMap?.forEach { (transactionId, isLoading) ->
+        adapter.updateCallLoadingState(transactionId, isLoading)
+      }
+    })
+
     // Observe marketplace call initiation success
     viewModel.callInitiationLiveData.reobserve(this, Observer { response ->
       response.data?.firstOrNull()?.let { bridgeData ->
@@ -228,15 +236,25 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         )
         Log.i("itemDailog", "clicked")
         //
-        if(_item.requestType==RequestType.Contract.type){
-          startActivity(_item.transactionId?.let { context?.let { it1 ->
-            contractDetailsIntent(it,
-              it1
+        context?.let { ctx ->
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          
+          // Check if this is a marketplace load
+          if (_item.isMarketplaceLoad()) {
+            // Open MarketPlaceBidDetailsActivity for marketplace loads
+            MarketPlaceBidDetailsActivity.start(
+              ctx,
+              _item.transactionId ?: _item.uuid ?: "",
+              _item.origin ?: "",
+              _item.destination ?: ""
             )
-          } })
-        }else{
-          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
-
+          } else if(_item.requestType==RequestType.Contract.type){
+            startActivity(_item.transactionId?.let {
+              contractDetailsIntent(it, ctx)
+            })
+          } else {
+            startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) })
+          }
         }
       }
 
@@ -249,7 +267,6 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
-        bidDialog(_item)
       }
 
       HomeBidsRequestAction_ReviseBid -> {
@@ -261,15 +278,26 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
-        if(_item.requestType==RequestType.Contract.type){
-          startActivity(_item.transactionId?.let { context?.let { it1 ->
-            contractDetailsIntent(it,
-              it1
+        
+        context?.let { ctx ->
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          
+          // Check if this is a marketplace load
+          if (_item.isMarketplaceLoad()) {
+            // Open MarketPlaceBidDetailsActivity for marketplace loads
+            MarketPlaceBidDetailsActivity.start(
+              ctx,
+              _item.transactionId ?: _item.uuid ?: "",
+              _item.origin ?: "",
+              _item.destination ?: ""
             )
-          } })
-        }else{
-          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
-
+          } else if(_item.requestType==RequestType.Contract.type){
+            startActivity(_item.transactionId?.let {
+              contractDetailsIntent(it, ctx)
+            })
+          } else {
+            startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) })
+          }
         }
       }
 
@@ -526,5 +554,11 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   private fun formatExpiryTime(timestamp: Long): String {
     val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
     return sdf.format(java.util.Date(timestamp))
+  }
+  
+  override fun onDestroyView() {
+    super.onDestroyView()
+    // Clear ViewHolder references to prevent memory leaks
+    adapter.clearViewHolderReferences()
   }
 }

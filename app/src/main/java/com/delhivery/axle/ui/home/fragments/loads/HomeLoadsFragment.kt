@@ -41,6 +41,7 @@ import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -613,9 +614,36 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
         if(data.subRequestType!=SUB_REQUEST_TYPE_INTRACITY)
-        context?.let {
+        context?.let { ctx ->
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
+          
+          // Check if this is a marketplace load
+          if (data.isMarketplaceLoad()) {
+            // Open MarketPlaceBidDetailsActivity for marketplace loads
+            val closingTime = try {
+              if (!data.bidEndingTime.isNullOrEmpty() && !data.bidEndingTime.equals("null", ignoreCase = true)) {
+                val format = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+                format.timeZone = java.util.TimeZone.getTimeZone("IST")
+                format.parse(data.bidEndingTime)?.time ?: 0L
+              } else {
+                0L
+              }
+            } catch (e: Exception) {
+              Log.e("HomeLoadsFragment", "Error parsing closing time: ${e.message}")
+              0L
+            }
+            
+            MarketPlaceBidDetailsActivity.start(
+              ctx,
+              data.transactionId ?: data.uuid ?: "",
+              data.origin ?: "",
+              data.destination ?: "",
+            )
+          } else {
+            // Open regular BidDetailsActivity for non-marketplace loads
+            startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else ""))
+          }
+        }
       }
 
       HomeLoadsSearchAction_Search -> {
@@ -1001,9 +1029,24 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 ).show()
               }
             }*/
-            context?.let {
+            context?.let { ctx ->
               userPrefs.setPreviousScreen(this.javaClass.name)
-              startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
+              
+              // Check if this is a marketplace load
+              if (data.isMarketplaceLoad()) {
+                // Open MarketPlaceBidDetailsActivity for marketplace loads
+                // Closing time will be fetched from API
+                MarketPlaceBidDetailsActivity.start(
+                  ctx,
+                  data.transactionId ?: data.uuid ?: "",
+                  data.origin ?: "",
+                  data.destination ?: ""
+                )
+              } else {
+                // Open regular BidDetailsActivity for non-marketplace loads
+                startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else ""))
+              }
+            }
 
         }
           HomeBidsRequestAction_AcceptBid -> {

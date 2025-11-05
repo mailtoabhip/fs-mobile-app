@@ -39,18 +39,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/call_icon"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/call_icon_container"
             android:layout_width="33dp"
             android:layout_height="40dp"
             android:background="@drawable/white_background_4dp_padding"
-            android:src="@drawable/call_icon_hollow"
-            android:scaleType="center"
             android:clickable="true"
             android:focusable="true"
             android:layout_marginEnd="@dimen/size_8dp"
             app:layout_constraintEnd_toStartOf="@id/place_bid_button"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/call_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/call_icon_hollow"
+                android:scaleType="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <ProgressBar
+                android:id="@+id/call_progress_bar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/place_bid_button"
@@ -67,7 +89,7 @@
                 android:id="@+id/place_bid_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Place Bid"
+                android:text="Revise to Win"
                 android:textColor="#FFFFFF"
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:drawablePadding="@dimen/size_14dp"

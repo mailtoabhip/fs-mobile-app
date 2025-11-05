@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import android.util.Log
 import com.delhivery.axle.api.request.InitiateCallRequest
 import com.delhivery.axle.api.response.InitiateCallResponse
 import com.delhivery.axle.api.service.SpotBiddingService
@@ -20,20 +21,27 @@ class SpotBiddingRepository @Inject constructor(
      *
      * @param transactionId The transaction ID
      * @param bidId The bid ID
-     * @param source The source (default: "axle_marketplace")
+     * @param source The source mode: "marketplace" (default) or "default"
+     * @param deviceSimNumbers Optional device SIM numbers (max 2)
      * @return Single with bridge number response
      */
     fun initiateMarketplaceCall(
         transactionId: String,
         bidId: String,
-        source: String = "axle_marketplace"
+        source: String = "marketplace",
+        deviceSimNumbers: List<String>? = null
     ): Single<InitiateCallResponse> {
         val request = InitiateCallRequest(
             source = source,
             transactionId = transactionId,
-            bidId = bidId
+            bidId = bidId,
+            deviceSimNumbers = deviceSimNumbers
         )
+        
         return spotBiddingService.initiateMarketplaceCall(request)
+            .doOnError { error ->
+                Log.e("SpotBiddingRepository", "Marketplace call initiation failed: ${error.message}", error)
+            }
     }
 }
 

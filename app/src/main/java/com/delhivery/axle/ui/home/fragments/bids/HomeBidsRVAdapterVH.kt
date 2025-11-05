@@ -749,6 +749,9 @@ internal class HomeBidsProgressItemVH(binding: ViewHomeBidsProgressItemBinding) 
  */
 class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBinding) :
   BaseHomeBidsRVAdapterViewHolder<CardBidsDelhiveryMarketplaceBinding, HomeBidsRequestItem>(binding) {
+  
+  private var callLoadingState: Boolean = false
+  
   override fun bind(
     item: HomeBidsRequestItem,
     _interface: HomeBidsRVAdapterInterface,
@@ -757,12 +760,15 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
     binding.request = item.data
     binding.executePendingBindings()
 
-    // Set up call icon click listener
-    binding.containerError.callIcon.clickToAction(
+    // Set up call icon container click listener (not individual icon)
+    binding.containerError.callIconContainer.clickToAction(
       HomeBidsRequestAction_InitiateCall,
       item,
       _interface
     )
+    
+    // Update progress bar visibility based on loading state
+    updateCallProgressBar(callLoadingState)
 
     // Handle place bid button state based on bid status
     when(item.data.bidStatus().statusKey.lowercase()) {
@@ -770,7 +776,7 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
         if (item.data.isBidOpen()) {
           // Bid is open - show normal "Place Bid" button
           binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
-          binding.containerError.placeBidTv.text = "Place Bid"
+          binding.containerError.placeBidTv.text = "Revise to Win"
           binding.containerError.placeBidTv.setTextColor(
             ContextCompat.getColor(context, android.R.color.white)
           )
@@ -779,7 +785,7 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
           )
           binding.containerError.placeBidButton.isClickable = true
           binding.containerError.placeBidButton.clickToAction(
-            HomeBidsRequestAction_PlaceBid,
+            HomeBidsRequestAction_ReviseBid,
             item,
             _interface
           )
@@ -843,6 +849,33 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
       else -> {
         // Default state
       }
+    }
+  }
+  
+  /**
+   * Update call button loading state
+   */
+  fun setCallLoadingState(isLoading: Boolean) {
+    callLoadingState = isLoading
+    updateCallProgressBar(isLoading)
+  }
+  
+  /**
+   * Update progress bar and icon visibility
+   */
+  private fun updateCallProgressBar(isLoading: Boolean) {
+    if (isLoading) {
+      // Show progress bar, hide icon, disable clicks
+      binding.containerError.callProgressBar.visibility = View.VISIBLE
+      binding.containerError.callIcon.visibility = View.GONE
+      binding.containerError.callIconContainer.isClickable = false
+      binding.containerError.callIconContainer.isFocusable = false
+    } else {
+      // Hide progress bar, show icon, enable clicks
+      binding.containerError.callProgressBar.visibility = View.GONE
+      binding.containerError.callIcon.visibility = View.VISIBLE
+      binding.containerError.callIconContainer.isClickable = true
+      binding.containerError.callIconContainer.isFocusable = true
     }
   }
 }

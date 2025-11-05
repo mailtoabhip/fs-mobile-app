@@ -86,9 +86,9 @@ data class SpotMarketplaceLoadsResponse(
  * Data wrapper for spot marketplace loads
  */
 data class SpotMarketplaceLoadsData(
-  @SerializedName("count") val count: Int,
-  @SerializedName("limit") val limit: Int,
-  @SerializedName("offset") val offset: Int,
-  @SerializedName("has_next") val hasNext: Boolean,
+  @SerializedName("count") val totalCount: Int?,
+  @SerializedName("limit") val limit: Int?,
+  @SerializedName("offset") val offset: Int?,
+  @SerializedName("has_next") val hasNext: Boolean?,
   @SerializedName("data") val transactions: List<HomeBidsRequestItemData>?
 )

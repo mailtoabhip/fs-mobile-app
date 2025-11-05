@@ -17,7 +17,7 @@ interface SpotBiddingService {
      * @param request Request containing source, transaction_id, and bid_id
      * @return Response with bridge number details
      */
-    @POST("/marketplace/initiate-call")
+    @POST("marketplace/initiate-call")
     fun initiateMarketplaceCall(
         @Body request: InitiateCallRequest
     ): Single<InitiateCallResponse>

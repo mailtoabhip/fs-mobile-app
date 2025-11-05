@@ -51,6 +51,9 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
 
   private var currentFilterQuery: String? = null
   private var isLoadingData: Boolean = false
+  
+  // Store ViewHolder references by transaction ID for call loading state updates
+  private val marketplaceViewHolders = mutableMapOf<String, HomeBidsMarketplaceRequestItemVH>()
 
   override fun getItemViewType(position: Int): Int {
     val item = itemsList()[position]
@@ -75,7 +78,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
    * Check if a bid request is marketplace/spot type
    */
   private fun isMarketplaceBid(data: HomeBidsRequestItemData): Boolean {
-    return data.requestType?.lowercase() == RequestType.SpotMarketplace.type
+    return data.demandType?.lowercase() == RequestType.SpotMarketplace.type
   }
 
   /**
@@ -148,7 +151,14 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
       //intracity bids (loads + contracts)
       is HomeBidsIntracityRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface, isLoadingData)
       //marketplace bids (spot request type)
-      is HomeBidsMarketplaceRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface, isLoadingData)
+      is HomeBidsMarketplaceRequestItemVH -> {
+        val requestItem = item as HomeBidsRequestItem
+        holder.bind(requestItem, _interface, isLoadingData)
+        // Store ViewHolder reference for call loading state updates
+        requestItem.data.transactionId?.let { transactionId ->
+          marketplaceViewHolders[transactionId] = holder
+        }
+      }
       is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface, isLoadingData)
       is HomeBidsTimeOutItemVH -> holder.bind(item as HomeBidsTimeoutItem, _interface, isLoadingData)
       //contract bids
@@ -243,6 +253,20 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     isLoadingData = loading
     // Notify all items to update their states
     notifyDataSetChanged()
+  }
+  
+  /**
+   * Update call loading state for a specific transaction
+   */
+  fun updateCallLoadingState(transactionId: String, isLoading: Boolean) {
+    marketplaceViewHolders[transactionId]?.setCallLoadingState(isLoading)
+  }
+  
+  /**
+   * Clear ViewHolder references when adapter is detached
+   */
+  fun clearViewHolderReferences() {
+    marketplaceViewHolders.clear()
   }
 
   /**

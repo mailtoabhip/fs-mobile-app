@@ -11,6 +11,7 @@ import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
+import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
@@ -126,6 +127,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
   internal abstract fun bindBidDetailsActivity(): BidDetailsActivity
+
+  /* MarketPlace Bid Details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsMarketPlaceBidDetailsActivityModule::class])
+  internal abstract fun bindMarketPlaceBidDetailsActivity(): MarketPlaceBidDetailsActivity
 
   /* Search Load activity */
   @ActivityScope
@@ -383,6 +389,9 @@ internal abstract class AbsTripsActivityModule : ActivityModule<TripsActivity>()
 
 @Module
 internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
+
+@Module
+internal abstract class AbsMarketPlaceBidDetailsActivityModule : ActivityModule<MarketPlaceBidDetailsActivity>()
 
 @Module
 internal abstract class AbsSearchLoadActivityModule : ActivityModule<SearchLoadActivity>()

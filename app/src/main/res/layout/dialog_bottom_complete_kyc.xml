@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bottom_dialog">
+
+        <!-- Header with close button -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:paddingTop="@dimen/size_24dp"
+            android:paddingStart="@dimen/size_16dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close_btn"
+                android:layout_width="@dimen/size_16dp"
+                android:layout_height="@dimen/size_16dp"
+                app:srcCompat="@drawable/ic_close_black"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <!-- Content Section -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="@dimen/size_16dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_8dp">
+
+            <!-- Warning Icon -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_circle_exclamation"
+                android:tint="#ED4136"
+                android:layout_marginBottom="@dimen/size_8dp"/>
+
+            <!-- Title -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KYC Incomplete!"
+                android:textColor="#3D445C"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/size_4dp"/>
+
+            <!-- Subtitle -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Complete your KYC to continue and place a bid."
+                android:textColor="#3D445C"
+                android:textSize="@dimen/text_14sp"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/size_16dp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <!-- Action Buttons -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_16dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_search_white_load_minimal_padding"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginEnd="@dimen/size_8dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_complete_kyc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_place_bid_radius_6px"
+                android:text="Complete KYC"
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginStart="@dimen/size_8dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>
+
+

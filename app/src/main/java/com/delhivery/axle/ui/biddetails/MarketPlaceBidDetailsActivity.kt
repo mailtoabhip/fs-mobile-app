@@ -42,20 +42,17 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         private const val EXTRA_BID_ID = "extra_bid_id"
         private const val EXTRA_SOURCE_CITY = "extra_source_city"
         private const val EXTRA_DESTINATION_CITY = "extra_destination_city"
-        private const val EXTRA_CLOSING_TIME = "extra_closing_time"
 
         fun start(
             context: Context,
             bidId: String,
-            sourceCity: String,
-            destinationCity: String,
-            closingTime: Long
+            sourceCity: String = "",
+            destinationCity: String = ""
         ) {
             val intent = Intent(context, MarketPlaceBidDetailsActivity::class.java).apply {
                 putExtra(EXTRA_BID_ID, bidId)
                 putExtra(EXTRA_SOURCE_CITY, sourceCity)
                 putExtra(EXTRA_DESTINATION_CITY, destinationCity)
-                putExtra(EXTRA_CLOSING_TIME, closingTime)
             }
             context.startActivity(intent)
         }
@@ -74,23 +71,12 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         bidId = intent.getStringExtra(EXTRA_BID_ID)
         sourceCity = intent.getStringExtra(EXTRA_SOURCE_CITY)
         destinationCity = intent.getStringExtra(EXTRA_DESTINATION_CITY)
-        val closingTime = intent.getLongExtra(EXTRA_CLOSING_TIME, 0L)
 
         setupViews()
         setupListeners()
         setupObservers()
 
-        // Set route text
-        if (sourceCity.isNotNullOrEmpty() && destinationCity.isNotNullOrEmpty()) {
-            //binding.textRoute.text = "$sourceCity → $destinationCity"
-        }
-
-        // Start countdown timer
-        if (closingTime > 0) {
-            startCountdownTimer(closingTime)
-        }
-
-        // Load bid details
+        // Load bid details - closing time will be parsed from API response
         bidId?.let {
             viewModel.loadBidDetails(it)
         }
@@ -150,18 +136,29 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
     }
 
     private fun setupObservers() {
-        // Observe bid details
-        viewModel.bidDetailsLiveData.observe(this, Observer { bidDetails ->
-            bidDetails?.let {
-                updateUIWithBidDetails(it)
+        // Observe loading state
+        viewModel.isLoadingLiveData.observe(this, Observer { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        })
+
+        // Observe transaction details
+        viewModel.transactionLiveData.observe(this, Observer { transaction ->
+            transaction?.let {
+                updateUIWithTransactionDetails(it)
             }
+        })
+
+        // Observe user's existing bid
+        viewModel.userBidLiveData.observe(this, Observer { existingBid ->
+            updateUIForBidState(existingBid)
         })
 
         // Observe bid placement result
         viewModel.bidPlacementResultLiveData.observe(this, Observer { result ->
             result?.let {
                 if (it.success) {
-                    Toast.makeText(this, "Bid placed successfully!", Toast.LENGTH_SHORT).show()
+                    val message = it.message ?: "Bid placed successfully!"
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
                     Toast.makeText(this, it.errorMessage ?: "Failed to place bid", Toast.LENGTH_SHORT).show()
@@ -202,9 +199,71 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         }.start()
     }
 
-    private fun updateUIWithBidDetails(bidDetails: Any) {
-        // TODO: Update UI with actual bid details from API
-        // This is a placeholder - update with actual implementation based on your data model
+    private fun updateUIForBidState(existingBid: com.delhivery.axle.data.bids.TransactionBid?) {
+        if (existingBid != null) {
+            // User has an existing bid - show it and change button text
+            binding.editBidAmount.setText(existingBid.bidAmount.toInt().toString())
+            binding.btnPlaceBid.text = "Revise Bid"
+            
+            // Show a hint that this is a revision
+            Toast.makeText(this, "You have an existing bid of ₹${existingBid.bidAmount.toInt()}", Toast.LENGTH_SHORT).show()
+        } else {
+            // No existing bid - keep default state
+            binding.editBidAmount.setText("")
+            binding.btnPlaceBid.text = "Place Bid"
+        }
+    }
+
+    private fun updateUIWithTransactionDetails(transaction: com.delhivery.axle.data.home.bids.HomeBidsRequestItemData) {
+        // Update origin and destination
+        binding.originCity.text = transaction.origin.capitalize()
+        binding.destinationCity.text = transaction.destination.capitalize()
+        
+        // Update truck type
+        binding.textTruckType.text = transaction.getMarketplaceTruckInfo()
+        
+        // Update offer price using target_price
+        val formattedPrice = if (transaction.targetPrice != null && transaction.targetPrice!! > 0) {
+            "₹${com.delhivery.axle.utils.StringUtils.formatAmount(transaction.targetPrice!!)}"
+        } else {
+            "₹0"
+        }
+        binding.textOfferPrice.text = formattedPrice
+        
+        // Update shipper/POC information
+        val displayName = transaction.getContactDisplayName()
+        if (displayName.isNotEmpty()) {
+            binding.textShipperName.text = displayName
+            binding.textAvatar.text = transaction.getShipperInitials()
+        }
+        
+        val phoneNumber = transaction.getContactPhoneNumber()
+        if (phoneNumber.isNotEmpty()) {
+            binding.textShipperPhone.text = phoneNumber
+        }
+        
+        // Update payment mode
+        if (transaction.shouldShowMarketplacePaymentMode()) {
+            val paymentText = if (transaction.shouldShowMarketplaceAdvancePercentage()) {
+                "${transaction.getMarketplacePaymentModeDisplay()} ${transaction.getMarketplaceAdvancePaymentPercentage()}"
+            } else {
+                transaction.getMarketplacePaymentModeDisplay()
+            }
+            binding.paymentMethod.text = paymentText
+        }
+        
+        // Parse and start countdown timer from bidding_end_time
+        transaction.contractBiddingEndTime?.let { endTime ->
+            try {
+                val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+                val date = sdf.parse(endTime)
+                date?.let {
+                    startCountdownTimer(it.time)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun validateBidAmount(amount: String?) {

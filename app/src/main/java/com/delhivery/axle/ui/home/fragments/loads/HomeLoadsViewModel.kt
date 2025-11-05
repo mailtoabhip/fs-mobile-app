@@ -313,7 +313,7 @@ class HomeLoadsViewModel @Inject constructor(
                         
                         // Extract marketplace count from the pair
                         try {
-                            marketplaceCount = _tRes.third.second?.spotMarketplaceResponse?.count ?: 0
+                            marketplaceCount = _tRes.third.second?.let { data -> data.totalCount } ?: 0
                             cachedMarketplaceCount = marketplaceCount
                         }catch (e:Exception){
                             Log.e("MarketplaceCount",e.toString())
@@ -499,7 +499,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 
                                 // Extract marketplace count from the 6th element
                                 try {
-                                    marketplaceCount = _tRes.sixth?.spotMarketplaceResponse?.count ?: 0
+                                    marketplaceCount = _tRes.sixth?.let { data -> data.totalCount } ?: 0
                                     cachedMarketplaceCount = marketplaceCount
                                 }catch (e:Exception){
                                     Log.e("MarketplaceCount",e.toString())
@@ -722,7 +722,7 @@ class HomeLoadsViewModel @Inject constructor(
                     ).onBackground()
                     .subscribe { marketplaceRes, marketplaceError ->
                         if (!marketplaceError) {
-                            marketplaceCount = marketplaceRes?.spotMarketplaceResponse?.count ?: 0
+                            marketplaceCount = marketplaceRes?.let { data -> data.totalCount } ?: 0
                             cachedMarketplaceCount = marketplaceCount
                             Log.d("MarketplaceCount", "Fetched: $marketplaceCount")
                         }
@@ -869,7 +869,7 @@ class HomeLoadsViewModel @Inject constructor(
       onlyCount = true,
       limit = limit
     ).flatMap { countRes ->
-      val count = countRes.spotMarketplaceResponse?.count ?: 0
+      val count = countRes.let { data -> data.totalCount } ?: 0
       Log.d("MarketplaceDebug", "Count API Response - count: $count")
       
       // Store the count
@@ -883,15 +883,15 @@ class HomeLoadsViewModel @Inject constructor(
         limit = limit
       )
     }.flatMap { _res ->
-      val transactions = _res.spotMarketplaceResponse?.transactions
-      val resOffset = _res.spotMarketplaceResponse?.offset ?: 0
-      val resCount = _res.spotMarketplaceResponse?.count ?: 0
+      val transactions = _res.transactions
+      val resOffset = _res.let { data -> data.offset } ?: 0
+      val resCount = _res.let { data -> data.totalCount } ?: 0
       Log.d("MarketplaceDebug", "Data API Response - transactions: ${transactions?.size ?: 0}, count: $resCount")
       offset = resOffset
       if (total == 0) {
         hasMoreData = false
       }
-      hasMoreData = _res.spotMarketplaceResponse?.hasNext ?: false
+      hasMoreData = _res.let { data -> data.hasNext } ?: false
       Log.d("MarketplaceDebug", "About to fetch bids for ${transactions?.size ?: 0} transactions")
 
       Single.zip(
