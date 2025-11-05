@@ -12,7 +12,12 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityMarketplaceBidDetailsBinding
+import com.delhivery.axle.databinding.ViewBidStatusAwaitingBinding
+import com.delhivery.axle.databinding.ViewBidStatusConfirmedBinding
+import com.delhivery.axle.databinding.ViewBidStatusRejectedBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.data.bids.TransactionBidStatus
+import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
@@ -112,11 +117,6 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 makePhoneCall()
             }
 
-            // WhatsApp button
-            btnWhatsapp.setOnClickListener {
-                openWhatsApp()
-            }
-
             // Guidelines toggle
             layoutGuidelinesHeader.setOnClickListener {
                 toggleGuidelines()
@@ -139,12 +139,17 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         // Observe loading state
         viewModel.isLoadingLiveData.observe(this, Observer { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.marketplaceBidDetailLayout.visibility = if (isLoading) View.GONE else View.VISIBLE
+            binding.textClosingTime.visibility = if (isLoading) View.GONE else View.VISIBLE
+            binding.btnShare.visibility = if (isLoading) View.GONE else View.VISIBLE
         })
 
         // Observe transaction details
         viewModel.transactionLiveData.observe(this, Observer { transaction ->
             transaction?.let {
                 updateUIWithTransactionDetails(it)
+                // Update status cards based on transaction details
+                updateStatusCards(it)
             }
         })
 
@@ -162,6 +167,76 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                     finish()
                 } else {
                     Toast.makeText(this, it.errorMessage ?: "Failed to place bid", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+        // Observe call button active state
+        viewModel.isCallButtonActiveLiveData.observe(this, Observer { isActive ->
+            binding.btnCall.isEnabled = isActive
+            binding.btnCall.alpha = if (isActive) 1.0f else 0.5f
+            
+            // Toggle icon visibility
+            if (isActive) {
+                binding.disabledCallIv.visibility = View.GONE
+                binding.enabledCallIv.visibility = View.VISIBLE
+                binding.callText.setTextColor(android.graphics.Color.parseColor("#121A31"))
+            } else {
+                binding.disabledCallIv.visibility = View.VISIBLE
+                binding.enabledCallIv.visibility = View.GONE
+                binding.callText.setTextColor(android.graphics.Color.parseColor("#8F9198"))
+            }
+        })
+
+        // Observe call initiation success
+        viewModel.callInitiationLiveData.observe(this, Observer { response ->
+            response?.let {
+                if (it.success && !it.data.isNullOrEmpty()) {
+                    val bridgeNumber = it.data.firstOrNull()?.bridgeNumber
+                    if (bridgeNumber != null) {
+                        // Successfully got bridge number, now make the call
+                        dialPhoneNumber(bridgeNumber)
+                        Toast.makeText(this, "Connecting call...", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Unable to get bridge number", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+
+        // Observe call initiation error
+        viewModel.callInitiationErrorLiveData.observe(this, Observer { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        })
+
+        // Observe call loading state
+        viewModel.isCallLoadingLiveData.observe(this, Observer { isLoading ->
+            if (isLoading) {
+                // Show progress bar and hide icons
+                binding.callProgressBar.visibility = View.VISIBLE
+                binding.disabledCallIv.visibility = View.GONE
+                binding.enabledCallIv.visibility = View.GONE
+                binding.btnCall.isEnabled = false
+                binding.btnCall.alpha = 0.7f
+            } else {
+                // Hide progress bar
+                binding.callProgressBar.visibility = View.GONE
+                // Restore button state based on isCallButtonActiveLiveData
+                val isActive = viewModel.isCallButtonActiveLiveData.value ?: false
+                binding.btnCall.isEnabled = isActive
+                binding.btnCall.alpha = if (isActive) 1.0f else 0.5f
+                
+                // Restore icon visibility
+                if (isActive) {
+                    binding.disabledCallIv.visibility = View.GONE
+                    binding.enabledCallIv.visibility = View.VISIBLE
+                    binding.callText.setTextColor(android.graphics.Color.parseColor("#121A31"))
+                } else {
+                    binding.disabledCallIv.visibility = View.VISIBLE
+                    binding.enabledCallIv.visibility = View.GONE
+                    binding.callText.setTextColor(android.graphics.Color.parseColor("#8F9198"))
                 }
             }
         })
@@ -287,16 +362,34 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
     }
 
     private fun makePhoneCall() {
-        val phoneNumber = binding.textShipperPhone.text.toString()
-        if (phoneNumber.isNotEmpty()) {
-            try {
-                val intent = Intent(Intent.ACTION_DIAL).apply {
-                    data = Uri.parse("tel:$phoneNumber")
-                }
-                startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(this, "Unable to make call", Toast.LENGTH_SHORT).show()
+        // Use call masking API to get bridge number
+        val transactionId = viewModel.transactionId
+        val userBidId = viewModel.userExistingBid?.key()
+        
+        if (transactionId.isEmpty()) {
+            Toast.makeText(this, "Transaction ID not available", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        if (userBidId.isNullOrEmpty()) {
+            Toast.makeText(this, "Please place a bid before making a call", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        viewModel.initiateMarketplaceCall(transactionId, userBidId)
+    }
+
+    /**
+     * Dial the provided phone number (typically a bridge number from call masking)
+     */
+    private fun dialPhoneNumber(phoneNumber: String) {
+        try {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:$phoneNumber")
             }
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Unable to make call", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -315,12 +408,35 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
     }
 
     private fun shareBidDetails() {
+        // Get route information
+        val origin = binding.originCity.text.toString()
+        val destination = binding.destinationCity.text.toString()
+        val route = "$origin → $destination"
+        
+        // Get vehicle type
+        val vehicleType = binding.textTruckType.text.toString()
+        
+        // Get shipper price
+        val shipperPrice = binding.textOfferPrice.text.toString()
+        
+        // Get closing time
+        val closingTime = binding.textClosingTime.text.toString()
+        
+        // Construct deep link with bid ID
+        val deepLink = getString(R.string.axle_app_link)
+//            if (bidId != null) {
+//            "axleapp://marketplace/bid/$bidId"
+//        } else {
+//            "axleapp://marketplace"
+//        }
+        
         val shareText = buildString {
-            append("Bid Details\n\n")
-            //append("Route: ${binding.textRoute.text}\n")
-            append("Offer Price: ${binding.textOfferPrice.text}\n")
-            append("Truck Type: ${binding.textTruckType.text}\n")
-            //append("Payment: ${binding.textPayment.text}\n")
+            append("🚛 New Load Alert – Spot Marketplace\n\n")
+            append("📍 Route: $route\n")
+            append("🚚 Vehicle: $vehicleType\n")
+            append("💰 Shipper Price: $shipperPrice (Negotiable)\n")
+            append("⏰ $closingTime\n\n")
+            append("👉 Tap to bid: $deepLink")
         }
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -337,6 +453,111 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         // Rotate icon
         val rotation = if (isGuidelinesExpanded) 0f else 180f
         binding.iconGuidelinesToggle.animate().rotation(rotation).setDuration(200).start()
+    }
+
+    /**
+     * Update status cards based on transaction and bid status
+     */
+    private fun updateStatusCards(transaction: com.delhivery.axle.data.home.bids.HomeBidsRequestItemData) {
+        // Hide all status cards initially
+        binding.confirmedBidCl.root.visibility = View.GONE
+        binding.rejectedBidCl.root.visibility = View.GONE
+        binding.awaitingBidCl.root.visibility = View.GONE
+        binding.bidCard.visibility = View.VISIBLE
+
+        // Get bid status
+        val bidStatus = transaction.bidStatus()
+        val isLoadBiddingOpen = transaction.isLoadBiddingOpen()
+
+        when (bidStatus) {
+            TransactionBidStatus.Accepted -> {
+                // Show confirmed bid card
+                binding.confirmedBidCl.root.visibility = View.VISIBLE
+                binding.bidCard.visibility = View.GONE
+                
+                // Set data binding variables
+                val bidAmount = transaction.transactionBid?.bidAmount?.toInt() ?: 0
+                binding.confirmedBidCl.title = "Bid Confirmed for ₹${DecimalFormat("#########").format(bidAmount)}"
+                binding.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+                binding.confirmedBidCl.actionLabel = "Go To Placement Tab"
+                binding.confirmedBidCl.executePendingBindings()
+                
+                // Set click listener for action button
+                binding.confirmedBidCl.btnAction.setOnClickListener {
+                    startActivity(homeActivityIntent("placement", this@MarketPlaceBidDetailsActivity))
+                }
+            }
+            
+            TransactionBidStatus.Rejected -> {
+                // Show rejected bid card
+                binding.rejectedBidCl.root.visibility = View.VISIBLE
+                binding.bidCard.visibility = View.GONE
+                
+                // Set data binding variables
+                binding.rejectedBidCl.title = "Bid not selected"
+                
+                // Try to get the winning bid amount if available
+                val winningBidAmount = transaction.lowestBid?.toInt()
+                binding.rejectedBidCl.subTitle = if (winningBidAmount != null && winningBidAmount > 0) {
+                    "Winning bid price is ₹${DecimalFormat("#########").format(winningBidAmount)}"
+                } else {
+                    "Your bid was not selected for this load"
+                }
+                
+                binding.rejectedBidCl.actionLabel = "Explore New Bids"
+                binding.rejectedBidCl.executePendingBindings()
+                
+                // Set click listener for action button
+                binding.rejectedBidCl.btnAction.setOnClickListener {
+                    startActivity(homeActivityIntent("load", this@MarketPlaceBidDetailsActivity))
+                }
+            }
+            
+            TransactionBidStatus.Cancelled -> {
+                // Show rejected bid card with cancelled message
+                binding.rejectedBidCl.root.visibility = View.VISIBLE
+                binding.bidCard.visibility = View.GONE
+                
+                // Set data binding variables
+                binding.rejectedBidCl.title = "Demand cancelled"
+                binding.rejectedBidCl.subTitle = "The demand was cancelled by the client"
+                binding.rejectedBidCl.actionLabel = "Explore New Bids"
+                binding.rejectedBidCl.executePendingBindings()
+                
+                // Set click listener for action button
+                binding.rejectedBidCl.btnAction.setOnClickListener {
+                    startActivity(homeActivityIntent("load", this@MarketPlaceBidDetailsActivity))
+                }
+            }
+            
+            TransactionBidStatus.Open -> {
+                // Check if bidding has ended but no result yet
+                if (!isLoadBiddingOpen && transaction.transactionBid != null) {
+                    // Show awaiting result card
+                    binding.awaitingBidCl.root.visibility = View.VISIBLE
+                    binding.bidCard.visibility = View.GONE
+                    
+                    // Set data binding variables
+                    binding.awaitingBidCl.title = "Awaiting Result"
+                    binding.awaitingBidCl.subTitle = "We'll notify you once the results are out"
+                    binding.awaitingBidCl.actionLabel = "Explore New Bids"
+                    binding.awaitingBidCl.executePendingBindings()
+                    
+                    // Set click listener for action button
+                    binding.awaitingBidCl.btnAction.setOnClickListener {
+                        startActivity(homeActivityIntent("load", this@MarketPlaceBidDetailsActivity))
+                    }
+                } else {
+                    // Bidding is still open, show the bid card
+                    binding.bidCard.visibility = View.VISIBLE
+                }
+            }
+            
+            else -> {
+                // Default case: show bid card
+                binding.bidCard.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onDestroy() {

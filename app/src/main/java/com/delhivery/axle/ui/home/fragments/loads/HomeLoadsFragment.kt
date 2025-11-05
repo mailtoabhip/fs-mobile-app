@@ -591,6 +591,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.routeUpdated = false
     adapter.resetStaticData()
     viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
+
   }
 
   override fun handleAction(

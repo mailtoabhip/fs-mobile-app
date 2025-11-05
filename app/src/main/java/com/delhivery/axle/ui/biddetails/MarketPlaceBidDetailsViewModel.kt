@@ -1,9 +1,12 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.SpotBiddingRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
+import com.delhivery.axle.api.response.InitiateCallResponse
 import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -17,7 +20,8 @@ import javax.inject.Inject
  */
 class MarketPlaceBidDetailsViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
-    private val bidsRepository: BidsRepository
+    private val bidsRepository: BidsRepository,
+    private val spotBiddingRepository: SpotBiddingRepository
 ) : BaseViewModel() {
 
     private val _transactionLiveData = MutableLiveData<HomeBidsRequestItemData?>()
@@ -31,6 +35,18 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
 
     private val _isLoadingLiveData = MutableLiveData<Boolean>()
     val isLoadingLiveData: LiveData<Boolean> = _isLoadingLiveData
+
+    private val _callInitiationLiveData = MutableLiveData<InitiateCallResponse?>()
+    val callInitiationLiveData: LiveData<InitiateCallResponse?> = _callInitiationLiveData
+
+    private val _callInitiationErrorLiveData = MutableLiveData<String?>()
+    val callInitiationErrorLiveData: LiveData<String?> = _callInitiationErrorLiveData
+
+    private val _isCallLoadingLiveData = MutableLiveData<Boolean>()
+    val isCallLoadingLiveData: LiveData<Boolean> = _isCallLoadingLiveData
+
+    private val _isCallButtonActiveLiveData = MutableLiveData<Boolean>()
+    val isCallButtonActiveLiveData: LiveData<Boolean> = _isCallButtonActiveLiveData
 
     var transactionId: String = ""
     var userExistingBid: TransactionBid? = null
@@ -77,10 +93,14 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
                     val userBid = _bRes.first.first
                     userExistingBid = userBid
                     _userBidLiveData.postValue(userBid)
+                    // Enable call button if user has placed a bid
+                    _isCallButtonActiveLiveData.postValue(userBid != null)
                 } else {
                     // If error or no bid found, set to null
                     userExistingBid = null
                     _userBidLiveData.postValue(null)
+                    // Disable call button if no bid
+                    _isCallButtonActiveLiveData.postValue(false)
                 }
                 isUserBidsLoaded = true
                 updateLoadingState()
@@ -131,6 +151,8 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             .progress()
             .subscribe { response, error ->
                 if (!error && response.isSuccess) {
+                    // Enable call button immediately after successful bid placement
+                    _isCallButtonActiveLiveData.postValue(true)
                     _bidPlacementResultLiveData.postValue(
                         BidPlacementResult(success = true, message = "Bid placed successfully")
                     )
@@ -176,6 +198,8 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             .progress()
             .subscribe { response, error ->
                 if (!error && response.isSuccess) {
+                    // Keep call button enabled after successful bid revision
+                    _isCallButtonActiveLiveData.postValue(true)
                     _bidPlacementResultLiveData.postValue(
                         BidPlacementResult(success = true, message = "Bid revised successfully")
                     )
@@ -191,6 +215,96 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
                     )
                 }
             }
+    }
+
+    /**
+     * Initiate marketplace call using call masking API
+     */
+    fun initiateMarketplaceCall(transactionId: String, bidId: String) {
+        Log.d("MarketPlaceBidDetailsViewModel", "==================== INITIATING CALL ====================")
+        Log.d("MarketPlaceBidDetailsViewModel", "Transaction ID: $transactionId")
+        Log.d("MarketPlaceBidDetailsViewModel", "Bid ID: $bidId")
+        Log.d("MarketPlaceBidDetailsViewModel", "Source: marketplace")
+        Log.d("MarketPlaceBidDetailsViewModel", "========================================================")
+        
+        // Set loading state to true
+        _isCallLoadingLiveData.postValue(true)
+        
+        compositeDisposable += spotBiddingRepository.initiateMarketplaceCall(
+            transactionId = transactionId,
+            bidId = bidId,
+            source = "marketplace"
+        )
+            .onBackground()
+            .subscribe({ response ->
+                Log.d("MarketPlaceBidDetailsViewModel", "==================== CALL INITIATION SUCCESS ====================")
+                Log.d("MarketPlaceBidDetailsViewModel", "Response Success: ${response.success}")
+                Log.d("MarketPlaceBidDetailsViewModel", "Bridge Numbers Count: ${response.data?.size ?: 0}")
+                response.data?.forEachIndexed { index, bridgeData ->
+                    Log.d("MarketPlaceBidDetailsViewModel", "Bridge #${index + 1}:")
+                    Log.d("MarketPlaceBidDetailsViewModel", "  - Number: ${bridgeData.bridgeNumber}")
+                    Log.d("MarketPlaceBidDetailsViewModel", "  - Vendor: ${bridgeData.vendor}")
+                    Log.d("MarketPlaceBidDetailsViewModel", "  - Expiry: ${bridgeData.expiry}")
+                }
+                Log.d("MarketPlaceBidDetailsViewModel", "================================================================")
+                
+                // Set loading state to false
+                _isCallLoadingLiveData.postValue(false)
+                
+                if (response.success && !response.data.isNullOrEmpty()) {
+                    _callInitiationLiveData.postValue(response)
+                } else {
+                    Log.w("MarketPlaceBidDetailsViewModel", "Response success was false or data was empty")
+                    _callInitiationErrorLiveData.postValue("Unable to initiate call. Please try again.")
+                }
+            }, { error ->
+                // Log complete error details for debugging
+                Log.e("MarketPlaceBidDetailsViewModel", "==================== CALL INITIATION ERROR ====================")
+                Log.e("MarketPlaceBidDetailsViewModel", "Error Type: ${error.javaClass.name}")
+                Log.e("MarketPlaceBidDetailsViewModel", "Error Message: ${error.message}")
+                Log.e("MarketPlaceBidDetailsViewModel", "Error Cause: ${error.cause?.message}")
+                Log.e("MarketPlaceBidDetailsViewModel", "Error Stack Trace:", error)
+                
+                // Log request details
+                Log.e("MarketPlaceBidDetailsViewModel", "Request Details:")
+                Log.e("MarketPlaceBidDetailsViewModel", "  - Transaction ID: $transactionId")
+                Log.e("MarketPlaceBidDetailsViewModel", "  - Bid ID: $bidId")
+                Log.e("MarketPlaceBidDetailsViewModel", "  - Source: marketplace")
+                Log.e("MarketPlaceBidDetailsViewModel", "===============================================================")
+                
+                // Provide more specific error messages based on error type
+                val errorMessage = when {
+                    error is java.net.UnknownHostException -> {
+                        Log.e("MarketPlaceBidDetailsViewModel", "DNS Error: Unable to resolve hostname - ${error.message}")
+                        "Network error: Unable to reach server. Please check your VPN connection and internet connectivity."
+                    }
+                    error is java.net.SocketTimeoutException -> {
+                        Log.e("MarketPlaceBidDetailsViewModel", "Timeout Error: ${error.message}")
+                        "Request timed out. Please check your internet connection and try again."
+                    }
+                    error is java.net.ConnectException -> {
+                        Log.e("MarketPlaceBidDetailsViewModel", "Connection Error: ${error.message}")
+                        "Unable to connect to server. Please check your network connection."
+                    }
+                    error is java.io.IOException -> {
+                        Log.e("MarketPlaceBidDetailsViewModel", "IO Error: ${error.message}")
+                        "Network error: ${error.message ?: "Unable to connect to server"}"
+                    }
+                    error is retrofit2.HttpException -> {
+                        Log.e("MarketPlaceBidDetailsViewModel", "HTTP Error: Code=${error.code()}, Message=${error.message()}")
+                        "Server error: ${error.message()}"
+                    }
+                    else -> {
+                        Log.e("MarketPlaceBidDetailsViewModel", "Unknown Error: ${error.javaClass.name} - ${error.message}")
+                        error.message ?: "Failed to initiate call. Please check your connection."
+                    }
+                }
+                
+                // Set loading state to false
+                _isCallLoadingLiveData.postValue(false)
+                
+                _callInitiationErrorLiveData.postValue(errorMessage)
+            })
     }
 }
 

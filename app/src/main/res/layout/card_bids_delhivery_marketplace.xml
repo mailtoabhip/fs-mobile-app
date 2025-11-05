@@ -39,7 +39,7 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Closes in 2 hrs 15 min"
-                    android:textColor="#ED4136"
+                    app:optionalTextColor="@{request}"
                     android:paddingTop="@dimen/size_4dp"
                     android:text="@{request.formattedContractBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"

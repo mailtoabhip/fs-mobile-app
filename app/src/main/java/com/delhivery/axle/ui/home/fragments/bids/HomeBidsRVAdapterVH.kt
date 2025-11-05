@@ -774,7 +774,7 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
     when(item.data.bidStatus().statusKey.lowercase()) {
       TransactionBidStatus.Open.statusKey.lowercase() -> {
         if (item.data.isBidOpen()) {
-          // Bid is open - show normal "Place Bid" button
+          // Bid is open - show normal "Revise to Win" button
           binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
           binding.containerError.placeBidTv.text = "Revise to Win"
           binding.containerError.placeBidTv.setTextColor(
@@ -790,9 +790,9 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
             _interface
           )
         } else {
-          // Bid is not open - show "Bidding Closed" state
+          // Bid is not open - show "Awaiting Result" state (consistent with other bid types)
           binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.bg_light_grey)
-          binding.containerError.placeBidTv.text = "Bidding Closed"
+          binding.containerError.placeBidTv.text = "Awaiting Result"
           binding.containerError.placeBidTv.setTextColor(
             ContextCompat.getColor(context, R.color.text_grey)
           )
