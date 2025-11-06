@@ -48,6 +48,9 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
     private val _isCallButtonActiveLiveData = MutableLiveData<Boolean>()
     val isCallButtonActiveLiveData: LiveData<Boolean> = _isCallButtonActiveLiveData
 
+    private val _isBidPlacementLoadingLiveData = MutableLiveData<Boolean>()
+    val isBidPlacementLoadingLiveData: LiveData<Boolean> = _isBidPlacementLoadingLiveData
+
     var transactionId: String = ""
     var userExistingBid: TransactionBid? = null
     private var isTransactionDetailsLoaded = false
@@ -134,6 +137,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
      * Create a new bid
      */
     private fun createNewBid(bidId: String, bidAmount: Int) {
+        _isBidPlacementLoadingLiveData.postValue(true)
         compositeDisposable += bidsRepository.createBid(
             isPMT = false,
             transactionId = bidId,
@@ -150,6 +154,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             .onBackground()
             .progress()
             .subscribe { response, error ->
+                _isBidPlacementLoadingLiveData.postValue(false)
                 if (!error && response.isSuccess) {
                     // Enable call button immediately after successful bid placement
                     _isCallButtonActiveLiveData.postValue(true)
@@ -181,6 +186,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             return
         }
 
+        _isBidPlacementLoadingLiveData.postValue(true)
         compositeDisposable += bidsRepository.editBid(
             isPMT = false,
             transactionId = bidId,
@@ -197,6 +203,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             .onBackground()
             .progress()
             .subscribe { response, error ->
+                _isBidPlacementLoadingLiveData.postValue(false)
                 if (!error && response.isSuccess) {
                     // Keep call button enabled after successful bid revision
                     _isCallButtonActiveLiveData.postValue(true)

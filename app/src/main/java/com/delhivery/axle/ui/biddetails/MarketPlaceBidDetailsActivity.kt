@@ -1,13 +1,19 @@
 package com.delhivery.axle.ui.biddetails
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -17,6 +23,7 @@ import com.delhivery.axle.databinding.ViewBidStatusConfirmedMarketplaceBinding
 import com.delhivery.axle.databinding.ViewBidStatusRejectedBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.data.bids.TransactionBidStatus
+import com.delhivery.axle.databinding.DialogBidRevisedSuccessBinding
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -162,9 +169,9 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         viewModel.bidPlacementResultLiveData.observe(this, Observer { result ->
             result?.let {
                 if (it.success) {
-                    val message = it.message ?: "Bid placed successfully!"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                    finish()
+                    // Determine if it's a new bid or revision
+                    val isRevision = it.message?.contains("revised", ignoreCase = true) == true
+                    showBidSuccessDialog(isRevision)
                 } else {
                     Toast.makeText(this, it.errorMessage ?: "Failed to place bid", Toast.LENGTH_SHORT).show()
                 }
@@ -240,6 +247,18 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 }
             }
         })
+
+        // Observe bid placement loading state
+        viewModel.isBidPlacementLoadingLiveData.observe(this, Observer { isLoading ->
+            if (isLoading) {
+                // Show progress bar and hide button text
+                binding.progressBar.visibility = View.VISIBLE
+                binding.marketplaceBidDetailLayout.visibility = View.GONE
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.marketplaceBidDetailLayout.visibility = View.VISIBLE
+            }
+        })
     }
 
     private fun startCountdownTimer(closingTimeMillis: Long) {
@@ -279,13 +298,16 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
             // User has an existing bid - show it and change button text
             binding.editBidAmount.setText(existingBid.bidAmount.toInt().toString())
             binding.btnPlaceBid.text = "Revise Bid"
-            
-            // Show a hint that this is a revision
-            Toast.makeText(this, "You have an existing bid of ₹${existingBid.bidAmount.toInt()}", Toast.LENGTH_SHORT).show()
+            // Enable button since we have an amount
+            binding.btnPlaceBid.isEnabled = true
+            binding.btnPlaceBid.alpha = 1.0f
         } else {
             // No existing bid - keep default state
             binding.editBidAmount.setText("")
             binding.btnPlaceBid.text = "Place Bid"
+            // Disable button initially until amount is entered
+            binding.btnPlaceBid.isEnabled = false
+            binding.btnPlaceBid.alpha = 0.5f
         }
     }
 
@@ -344,6 +366,8 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
     private fun validateBidAmount(amount: String?) {
         val isValid = !amount.isNullOrEmpty() && amount.toIntOrNull() != null && amount.toInt() > 0
         binding.btnPlaceBid.isEnabled = isValid
+        // Update visual appearance based on validity
+        binding.btnPlaceBid.alpha = if (isValid) 1.0f else 0.5f
     }
 
     private fun placeBid() {
@@ -390,20 +414,6 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
             startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(this, "Unable to make call", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun openWhatsApp() {
-        val phoneNumber = binding.textShipperPhone.text.toString()
-        if (phoneNumber.isNotEmpty()) {
-            try {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://wa.me/$phoneNumber")
-                }
-                startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(this, "WhatsApp not installed", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -553,6 +563,38 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 binding.bidCard.visibility = View.VISIBLE
             }
         }
+    }
+
+    /**
+     * Show success bottom sheet dialog after bid placement/revision
+     */
+    private fun showBidSuccessDialog(isRevision: Boolean) {
+        val dialog = Dialog(this)
+        val bindingDialog = DialogBidRevisedSuccessBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        // Update dialog text based on whether it's a revision or new bid
+        if (isRevision) {
+            bindingDialog.textTitle.text = "Bid revised successfully!"
+            bindingDialog.textMessage.text = "Your bid is now the lowest and you're in the best position to win."
+        } else {
+            bindingDialog.textTitle.text = "Bid placed successfully!"
+            bindingDialog.textMessage.text = "Your bid has been submitted. We'll notify you once the results are out."
+        }
+
+        // Close button listener
+        bindingDialog.btnClose.setOnClickListener {
+            dialog.dismiss()
+            finish()
+        }
+
+        dialog.show()
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
     override fun onDestroy() {
