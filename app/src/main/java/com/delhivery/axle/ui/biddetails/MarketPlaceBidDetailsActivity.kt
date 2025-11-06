@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityMarketplaceBidDetailsBinding
 import com.delhivery.axle.databinding.ViewBidStatusAwaitingBinding
-import com.delhivery.axle.databinding.ViewBidStatusConfirmedBinding
+import com.delhivery.axle.databinding.ViewBidStatusConfirmedMarketplaceBinding
 import com.delhivery.axle.databinding.ViewBidStatusRejectedBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.data.bids.TransactionBidStatus
@@ -424,11 +424,6 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         
         // Construct deep link with bid ID
         val deepLink = getString(R.string.axle_app_link)
-//            if (bidId != null) {
-//            "axleapp://marketplace/bid/$bidId"
-//        } else {
-//            "axleapp://marketplace"
-//        }
         
         val shareText = buildString {
             append("🚛 New Load Alert – Spot Marketplace\n\n")
@@ -460,7 +455,7 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
      */
     private fun updateStatusCards(transaction: com.delhivery.axle.data.home.bids.HomeBidsRequestItemData) {
         // Hide all status cards initially
-        binding.confirmedBidCl.root.visibility = View.GONE
+        binding.confirmedBidClMarketplace.root.visibility = View.GONE
         binding.rejectedBidCl.root.visibility = View.GONE
         binding.awaitingBidCl.root.visibility = View.GONE
         binding.bidCard.visibility = View.VISIBLE
@@ -472,19 +467,19 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         when (bidStatus) {
             TransactionBidStatus.Accepted -> {
                 // Show confirmed bid card
-                binding.confirmedBidCl.root.visibility = View.VISIBLE
+                binding.confirmedBidClMarketplace.root.visibility = View.VISIBLE
                 binding.bidCard.visibility = View.GONE
                 
                 // Set data binding variables
                 val bidAmount = transaction.transactionBid?.bidAmount?.toInt() ?: 0
-                binding.confirmedBidCl.title = "Bid Confirmed for ₹${DecimalFormat("#########").format(bidAmount)}"
-                binding.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
-                binding.confirmedBidCl.actionLabel = "Go To Placement Tab"
-                binding.confirmedBidCl.executePendingBindings()
+                binding.confirmedBidClMarketplace.title = "Bid Confirmed for ₹${DecimalFormat("#########").format(bidAmount)}"
+                binding.confirmedBidClMarketplace.subTitle = "Provide the driver and vehicle details"
+                binding.confirmedBidClMarketplace.actionLabel = "Call Shipper"
+                binding.confirmedBidClMarketplace.executePendingBindings()
                 
                 // Set click listener for action button
-                binding.confirmedBidCl.btnAction.setOnClickListener {
-                    startActivity(homeActivityIntent("placement", this@MarketPlaceBidDetailsActivity))
+                binding.confirmedBidClMarketplace.callShipper.setOnClickListener {
+                    makePhoneCall()
                 }
             }
             

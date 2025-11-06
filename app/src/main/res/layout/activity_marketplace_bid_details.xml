@@ -124,13 +124,58 @@
                 android:paddingTop="@dimen/size_12dp"
                 android:paddingBottom="@dimen/size_12dp">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:layout_marginEnd="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_20dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/origin_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Navi Mumbai"
+                        android:textColor="@color/info_title"
+                        android:textSize="@dimen/text_20sp"
+                        android:textStyle="bold"
+
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="➔"
+                        android:textColor="@color/info_title"
+                        android:textSize="@dimen/text_20sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        app:layout_constraintStart_toEndOf="@id/origin_city"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/destination_city"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Jaisalmer"
+                        android:textColor="@color/info_title"
+                        android:textSize="@dimen/text_20sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="@dimen/size_4dp"
+                        app:layout_constraintStart_toEndOf="@id/arrow"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <!-- Status Cards -->
                 <include
-                    android:id="@+id/confirmedBidCl"
+                    android:id="@+id/confirmedBidClMarketplace"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    layout="@layout/view_bid_status_confirmed"/>
+                    layout="@layout/view_bid_status_confirmed_marketplace"/>
                 
                 <include
                     android:id="@+id/rejectedBidCl"
@@ -151,8 +196,6 @@
                     android:id="@+id/bid_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_16dp"
-                    android:layout_marginEnd="@dimen/size_16dp"
                     android:layout_marginBottom="@dimen/size_12dp"
                     app:cardCornerRadius="@dimen/size_12dp"
                     app:cardElevation="0dp"
@@ -164,50 +207,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="@dimen/size_16dp">
-
-                        <!-- Route Header -->
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/size_20dp">
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/origin_city"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                tools:text="Navi Mumbai"
-                                android:textColor="@color/info_title"
-                                android:textSize="@dimen/text_20sp"
-                                android:textStyle="bold"
-
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"/>
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/arrow"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="➔"
-                                android:textColor="@color/info_title"
-                                android:textSize="@dimen/text_20sp"
-                                android:textStyle="bold"
-                                android:layout_marginStart="@dimen/size_4dp"
-                                app:layout_constraintStart_toEndOf="@id/origin_city"
-                                app:layout_constraintTop_toTopOf="parent"/>
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/destination_city"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                tools:text="Jaisalmer"
-                                android:textColor="@color/info_title"
-                                android:textSize="@dimen/text_20sp"
-                                android:textStyle="bold"
-                                android:layout_marginStart="@dimen/size_4dp"
-                                app:layout_constraintStart_toEndOf="@id/arrow"
-                                app:layout_constraintTop_toTopOf="parent"/>
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <!-- Bid Amount Label -->
                         <androidx.appcompat.widget.AppCompatTextView
@@ -284,8 +283,6 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_16dp"
-                    android:layout_marginEnd="@dimen/size_16dp"
                     android:layout_marginBottom="@dimen/size_12dp"
                     app:cardCornerRadius="@dimen/size_12dp"
                     app:cardElevation="0dp"
@@ -426,8 +423,6 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_16dp"
-                    android:layout_marginEnd="@dimen/size_16dp"
                     android:layout_marginBottom="@dimen/size_12dp"
                     app:cardCornerRadius="@dimen/size_12dp"
                     app:cardElevation="0dp"
@@ -502,7 +497,7 @@
                                     android:id="@+id/text_truck_type_label"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    tools:text="Open Truck"
+                                    android:text="Open Truck"
                                     android:textColor="@color/text_grey"
                                     android:textSize="@dimen/text_10sp" />
 
@@ -551,8 +546,6 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_16dp"
-                    android:layout_marginEnd="@dimen/size_16dp"
                     app:cardCornerRadius="@dimen/size_12dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/white">
