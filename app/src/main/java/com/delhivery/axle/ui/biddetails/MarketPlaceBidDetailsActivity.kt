@@ -23,6 +23,7 @@ import com.delhivery.axle.databinding.ViewBidStatusConfirmedMarketplaceBinding
 import com.delhivery.axle.databinding.ViewBidStatusRejectedBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.data.bids.TransactionBidStatus
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidRevisedSuccessBinding
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -155,8 +156,13 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         viewModel.transactionLiveData.observe(this, Observer { transaction ->
             transaction?.let {
                 updateUIWithTransactionDetails(it)
-                // Update status cards based on transaction details
-                updateStatusCards(it)
+            }
+        })
+
+        // Observe bid status from transaction bids API
+        viewModel.bidStatusLiveData.observe(this, Observer { bidStatus ->
+            bidStatus?.let {
+                updateStatusCardsFromBidStatus(it)
             }
         })
 
@@ -461,27 +467,51 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
     }
 
     /**
-     * Update status cards based on transaction and bid status
+     * Update status cards based on bid status from transaction bids API
+     * This ensures we use the latest bid status from the bids API, not transaction details API
      */
-    private fun updateStatusCards(transaction: com.delhivery.axle.data.home.bids.HomeBidsRequestItemData) {
+    private fun updateStatusCardsFromBidStatus(bidStatus: MarketplaceBidStatus) {
         // Hide all status cards initially
         binding.confirmedBidClMarketplace.root.visibility = View.GONE
         binding.rejectedBidCl.root.visibility = View.GONE
         binding.awaitingBidCl.root.visibility = View.GONE
         binding.bidCard.visibility = View.VISIBLE
 
-        // Get bid status
-        val bidStatus = transaction.bidStatus()
-        val isLoadBiddingOpen = transaction.isLoadBiddingOpen()
-
         when (bidStatus) {
-            TransactionBidStatus.Accepted -> {
-                // Show confirmed bid card
+            is MarketplaceBidStatus.NoBid -> {
+                // No bid placed yet - show bid card
+                binding.bidCard.visibility = View.VISIBLE
+            }
+            
+            is MarketplaceBidStatus.Active -> {
+                // Bid is active and can be revised - show bid card
+                binding.bidCard.visibility = View.VISIBLE
+            }
+            
+            is MarketplaceBidStatus.AwaitingResult -> {
+                // Bidding closed, awaiting result
+                binding.awaitingBidCl.root.visibility = View.VISIBLE
+                binding.bidCard.visibility = View.GONE
+                
+                // Set data binding variables
+                binding.awaitingBidCl.title = "Awaiting Result"
+                binding.awaitingBidCl.subTitle = "We'll notify you once the results are out"
+                binding.awaitingBidCl.actionLabel = "Explore New Bids"
+                binding.awaitingBidCl.executePendingBindings()
+                
+                // Set click listener for action button
+                binding.awaitingBidCl.btnAction.setOnClickListener {
+                    startActivity(homeActivityIntent("load", this@MarketPlaceBidDetailsActivity))
+                }
+            }
+            
+            is MarketplaceBidStatus.Confirmed -> {
+                // User's bid was confirmed/accepted
                 binding.confirmedBidClMarketplace.root.visibility = View.VISIBLE
                 binding.bidCard.visibility = View.GONE
                 
                 // Set data binding variables
-                val bidAmount = transaction.transactionBid?.bidAmount?.toInt() ?: 0
+                val bidAmount = bidStatus.bidAmount.toInt()
                 binding.confirmedBidClMarketplace.title = "Bid Confirmed for ₹${DecimalFormat("#########").format(bidAmount)}"
                 binding.confirmedBidClMarketplace.subTitle = "Provide the driver and vehicle details"
                 binding.confirmedBidClMarketplace.actionLabel = "Call Shipper"
@@ -493,8 +523,8 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 }
             }
             
-            TransactionBidStatus.Rejected -> {
-                // Show rejected bid card
+            is MarketplaceBidStatus.Rejected -> {
+                // User's bid was rejected/lost
                 binding.rejectedBidCl.root.visibility = View.VISIBLE
                 binding.bidCard.visibility = View.GONE
                 
@@ -502,9 +532,8 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 binding.rejectedBidCl.title = "Bid not selected"
                 
                 // Try to get the winning bid amount if available
-                val winningBidAmount = transaction.lowestBid?.toInt()
-                binding.rejectedBidCl.subTitle = if (winningBidAmount != null && winningBidAmount > 0) {
-                    "Winning bid price is ₹${DecimalFormat("#########").format(winningBidAmount)}"
+                binding.rejectedBidCl.subTitle = if (bidStatus.winningBidAmount != null && bidStatus.winningBidAmount > 0) {
+                    "Winning bid price is ₹${DecimalFormat("#########").format(bidStatus.winningBidAmount.toInt())}"
                 } else {
                     "Your bid was not selected for this load"
                 }
@@ -518,8 +547,8 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 }
             }
             
-            TransactionBidStatus.Cancelled -> {
-                // Show rejected bid card with cancelled message
+            is MarketplaceBidStatus.Cancelled -> {
+                // Load was cancelled
                 binding.rejectedBidCl.root.visibility = View.VISIBLE
                 binding.bidCard.visibility = View.GONE
                 
@@ -533,34 +562,6 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                 binding.rejectedBidCl.btnAction.setOnClickListener {
                     startActivity(homeActivityIntent("load", this@MarketPlaceBidDetailsActivity))
                 }
-            }
-            
-            TransactionBidStatus.Open -> {
-                // Check if bidding has ended but no result yet
-                if (!isLoadBiddingOpen && transaction.transactionBid != null) {
-                    // Show awaiting result card
-                    binding.awaitingBidCl.root.visibility = View.VISIBLE
-                    binding.bidCard.visibility = View.GONE
-                    
-                    // Set data binding variables
-                    binding.awaitingBidCl.title = "Awaiting Result"
-                    binding.awaitingBidCl.subTitle = "We'll notify you once the results are out"
-                    binding.awaitingBidCl.actionLabel = "Explore New Bids"
-                    binding.awaitingBidCl.executePendingBindings()
-                    
-                    // Set click listener for action button
-                    binding.awaitingBidCl.btnAction.setOnClickListener {
-                        startActivity(homeActivityIntent("load", this@MarketPlaceBidDetailsActivity))
-                    }
-                } else {
-                    // Bidding is still open, show the bid card
-                    binding.bidCard.visibility = View.VISIBLE
-                }
-            }
-            
-            else -> {
-                // Default case: show bid card
-                binding.bidCard.visibility = View.VISIBLE
             }
         }
     }

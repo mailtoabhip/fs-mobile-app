@@ -592,8 +592,17 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
-
+    
+    // Check which tab is active and call the appropriate fetch method
+    if (selectedLoadFilter == "Marketplace") {
+      // For Marketplace tab, call the marketplace-specific API for data
+      // This also fetches other API counts internally
+      viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 20)
+    } else {
+      // For other tabs (Intracity, Intercity, etc.), call regular transactions API
+      // This also fetches marketplace count internally
+      viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
+    }
   }
 
   override fun handleAction(

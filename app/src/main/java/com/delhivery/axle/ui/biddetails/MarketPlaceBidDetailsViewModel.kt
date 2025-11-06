@@ -33,6 +33,9 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
     private val _userBidLiveData = MutableLiveData<TransactionBid?>()
     val userBidLiveData: LiveData<TransactionBid?> = _userBidLiveData
 
+    private val _bidStatusLiveData = MutableLiveData<MarketplaceBidStatus>()
+    val bidStatusLiveData: LiveData<MarketplaceBidStatus> = _bidStatusLiveData
+
     private val _isLoadingLiveData = MutableLiveData<Boolean>()
     val isLoadingLiveData: LiveData<Boolean> = _isLoadingLiveData
 
@@ -98,16 +101,75 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
                     _userBidLiveData.postValue(userBid)
                     // Enable call button if user has placed a bid
                     _isCallButtonActiveLiveData.postValue(userBid != null)
+                    
+                    // Determine bid status based on API response
+                    determineBidStatus(userBid, _bRes.first.second.second)
                 } else {
                     // If error or no bid found, set to null
                     userExistingBid = null
                     _userBidLiveData.postValue(null)
                     // Disable call button if no bid
                     _isCallButtonActiveLiveData.postValue(false)
+                    // No bid placed state
+                    _bidStatusLiveData.postValue(MarketplaceBidStatus.NoBid)
                 }
                 isUserBidsLoaded = true
                 updateLoadingState()
             }
+    }
+
+    /**
+     * Determine bid status based on transaction bids API response
+     */
+    private fun determineBidStatus(userBid: TransactionBid?, acceptedBid: TransactionBid?) {
+        if (userBid == null) {
+            // User hasn't placed any bid
+            _bidStatusLiveData.postValue(MarketplaceBidStatus.NoBid)
+            return
+        }
+        
+        // Check bid status from API
+        when (userBid._status) {
+            "accepted" -> {
+                // User's bid was accepted/confirmed
+                _bidStatusLiveData.postValue(
+                    MarketplaceBidStatus.Confirmed(bidAmount = userBid.bidAmount)
+                )
+            }
+            "rejected" -> {
+                // User's bid was rejected/lost
+                _bidStatusLiveData.postValue(
+                    MarketplaceBidStatus.Rejected(winningBidAmount = acceptedBid?.bidAmount)
+                )
+            }
+            "cancelled" -> {
+                // Load was cancelled
+                _bidStatusLiveData.postValue(MarketplaceBidStatus.Cancelled)
+            }
+            "open" -> {
+                // Bid is still open/active
+                val transaction = _transactionLiveData.value
+                val isBiddingOpen = transaction?.isLoadBiddingOpen() ?: true
+                
+                if (isBiddingOpen) {
+                    // Bidding is still open - user can revise
+                    _bidStatusLiveData.postValue(
+                        MarketplaceBidStatus.Active(bidAmount = userBid.bidAmount)
+                    )
+                } else {
+                    // Bidding has closed, awaiting result
+                    _bidStatusLiveData.postValue(
+                        MarketplaceBidStatus.AwaitingResult(bidAmount = userBid.bidAmount)
+                    )
+                }
+            }
+            else -> {
+                // Default to active state
+                _bidStatusLiveData.postValue(
+                    MarketplaceBidStatus.Active(bidAmount = userBid.bidAmount)
+                )
+            }
+        }
     }
 
     /**
@@ -228,11 +290,6 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
      * Initiate marketplace call using call masking API
      */
     fun initiateMarketplaceCall(transactionId: String, bidId: String) {
-        Log.d("MarketPlaceBidDetailsViewModel", "==================== INITIATING CALL ====================")
-        Log.d("MarketPlaceBidDetailsViewModel", "Transaction ID: $transactionId")
-        Log.d("MarketPlaceBidDetailsViewModel", "Bid ID: $bidId")
-        Log.d("MarketPlaceBidDetailsViewModel", "Source: marketplace")
-        Log.d("MarketPlaceBidDetailsViewModel", "========================================================")
         
         // Set loading state to true
         _isCallLoadingLiveData.postValue(true)
@@ -244,16 +301,8 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
         )
             .onBackground()
             .subscribe({ response ->
-                Log.d("MarketPlaceBidDetailsViewModel", "==================== CALL INITIATION SUCCESS ====================")
-                Log.d("MarketPlaceBidDetailsViewModel", "Response Success: ${response.success}")
-                Log.d("MarketPlaceBidDetailsViewModel", "Bridge Numbers Count: ${response.data?.size ?: 0}")
                 response.data?.forEachIndexed { index, bridgeData ->
-                    Log.d("MarketPlaceBidDetailsViewModel", "Bridge #${index + 1}:")
-                    Log.d("MarketPlaceBidDetailsViewModel", "  - Number: ${bridgeData.bridgeNumber}")
-                    Log.d("MarketPlaceBidDetailsViewModel", "  - Vendor: ${bridgeData.vendor}")
-                    Log.d("MarketPlaceBidDetailsViewModel", "  - Expiry: ${bridgeData.expiry}")
                 }
-                Log.d("MarketPlaceBidDetailsViewModel", "================================================================")
                 
                 // Set loading state to false
                 _isCallLoadingLiveData.postValue(false)
@@ -261,48 +310,28 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
                 if (response.success && !response.data.isNullOrEmpty()) {
                     _callInitiationLiveData.postValue(response)
                 } else {
-                    Log.w("MarketPlaceBidDetailsViewModel", "Response success was false or data was empty")
                     _callInitiationErrorLiveData.postValue("Unable to initiate call. Please try again.")
                 }
             }, { error ->
-                // Log complete error details for debugging
-                Log.e("MarketPlaceBidDetailsViewModel", "==================== CALL INITIATION ERROR ====================")
-                Log.e("MarketPlaceBidDetailsViewModel", "Error Type: ${error.javaClass.name}")
-                Log.e("MarketPlaceBidDetailsViewModel", "Error Message: ${error.message}")
-                Log.e("MarketPlaceBidDetailsViewModel", "Error Cause: ${error.cause?.message}")
-                Log.e("MarketPlaceBidDetailsViewModel", "Error Stack Trace:", error)
-                
-                // Log request details
-                Log.e("MarketPlaceBidDetailsViewModel", "Request Details:")
-                Log.e("MarketPlaceBidDetailsViewModel", "  - Transaction ID: $transactionId")
-                Log.e("MarketPlaceBidDetailsViewModel", "  - Bid ID: $bidId")
-                Log.e("MarketPlaceBidDetailsViewModel", "  - Source: marketplace")
-                Log.e("MarketPlaceBidDetailsViewModel", "===============================================================")
                 
                 // Provide more specific error messages based on error type
                 val errorMessage = when {
                     error is java.net.UnknownHostException -> {
-                        Log.e("MarketPlaceBidDetailsViewModel", "DNS Error: Unable to resolve hostname - ${error.message}")
                         "Network error: Unable to reach server. Please check your VPN connection and internet connectivity."
                     }
                     error is java.net.SocketTimeoutException -> {
-                        Log.e("MarketPlaceBidDetailsViewModel", "Timeout Error: ${error.message}")
                         "Request timed out. Please check your internet connection and try again."
                     }
                     error is java.net.ConnectException -> {
-                        Log.e("MarketPlaceBidDetailsViewModel", "Connection Error: ${error.message}")
                         "Unable to connect to server. Please check your network connection."
                     }
                     error is java.io.IOException -> {
-                        Log.e("MarketPlaceBidDetailsViewModel", "IO Error: ${error.message}")
                         "Network error: ${error.message ?: "Unable to connect to server"}"
                     }
                     error is retrofit2.HttpException -> {
-                        Log.e("MarketPlaceBidDetailsViewModel", "HTTP Error: Code=${error.code()}, Message=${error.message()}")
                         "Server error: ${error.message()}"
                     }
                     else -> {
-                        Log.e("MarketPlaceBidDetailsViewModel", "Unknown Error: ${error.javaClass.name} - ${error.message}")
                         error.message ?: "Failed to initiate call. Please check your connection."
                     }
                 }
@@ -323,4 +352,22 @@ data class BidPlacementResult(
     val message: String? = null,
     val errorMessage: String? = null
 )
+
+/**
+ * Sealed class representing different marketplace bid states
+ * Based on transaction bids API response
+ */
+sealed class MarketplaceBidStatus {
+    object NoBid : MarketplaceBidStatus()
+
+    data class Active(val bidAmount: Double) : MarketplaceBidStatus()
+
+    data class AwaitingResult(val bidAmount: Double) : MarketplaceBidStatus()
+
+    data class Confirmed(val bidAmount: Double) : MarketplaceBidStatus()
+
+    data class Rejected(val winningBidAmount: Double?) : MarketplaceBidStatus()
+
+    object Cancelled : MarketplaceBidStatus()
+}
 
