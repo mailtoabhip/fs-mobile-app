@@ -51,6 +51,9 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   @Inject
   lateinit var dialogUsageExample: DialogUsageExample
 
+  // Track if any call is currently loading
+  private var isAnyCallLoading = false
+
   override val title: CharSequence
     get() = _title
 
@@ -150,10 +153,17 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
       loadingStateMap?.forEach { (transactionId, isLoading) ->
         adapter.updateCallLoadingState(transactionId, isLoading)
       }
+      
+      // Check if any call is currently loading
+      val anyCallLoading = loadingStateMap?.values?.any { it == true } ?: false
+      updateLoadingOverlay(anyCallLoading)
     })
 
     // Observe marketplace call initiation success
     viewModel.callInitiationLiveData.reobserve(this, Observer { response ->
+      // Hide loading overlay on success
+      updateLoadingOverlay(false)
+      
       response.data?.firstOrNull()?.let { bridgeData ->
         bridgeData.bridgeNumber?.let { number ->
           // Make phone call with bridge number
@@ -171,6 +181,9 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
     // Observe marketplace call initiation errors
     viewModel.callInitiationErrorLiveData.reobserve(this, Observer { errorMessage ->
+      // Hide loading overlay on error
+      updateLoadingOverlay(false)
+      
       // Show error dialog with countdown
       dialogUtils.showErrorDialog(
         errorMessage,
@@ -554,6 +567,20 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   private fun formatExpiryTime(timestamp: Long): String {
     val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
     return sdf.format(java.util.Date(timestamp))
+  }
+
+  /**
+   * Update loading overlay visibility to block/unblock user interactions
+   * @param isLoading true to show overlay and block interactions, false to hide overlay
+   */
+  private fun updateLoadingOverlay(isLoading: Boolean) {
+    isAnyCallLoading = isLoading
+    binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+    
+    // Disable swipe refresh when call is loading
+    binding.refreshLayout.isEnabled = !isLoading
+    
+    Log.d("CallLoading", "Loading overlay ${if (isLoading) "shown" else "hidden"}")
   }
   
   override fun onDestroyView() {

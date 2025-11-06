@@ -17,9 +17,13 @@
         android:id="@+id/popup_alert_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
         app:cardCornerRadius="@dimen/size_6dp"
         app:cardElevation="@dimen/size_2dp"
+        android:foreground="?attr/selectableItemBackground"
         app:cardBackgroundColor="@color/light_orange_v2">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,22 +70,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@{title}"
                     android:textColor="@color/orange_v3"
                     android:textSize="@dimen/text_12sp"
                     android:lineHeight="16dp"
-                    tools:text="KYC Pending!" />
+                    android:text="KYC Pending!" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="@{subtitle}"
                     android:textColor="@color/orange_v3"
                     android:textSize="@dimen/text_12sp"
                     android:lineHeight="16dp"
-                    tools:text="Please complete it to place your bid" />
+                    android:text="Please complete it to place your bid" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -92,9 +94,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_round_corner_8dp_light_orange_v2"
                 android:padding="@dimen/size_5dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
+                android:clickable="false"
+                android:focusable="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">

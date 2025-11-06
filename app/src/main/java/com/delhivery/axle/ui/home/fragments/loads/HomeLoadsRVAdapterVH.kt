@@ -425,6 +425,12 @@ internal class HomeLoadsKycPendingItemVH(binding: CardKycPendingBannerBinding) :
         item: HomeLoadsKycPendingItem,
         _interface: HomeLoadsRVAdapterInterface
     ) {
+        // Set click action for the entire card
+        binding.root.clickToAction(
+            HomeLoadsKycPendingAction,
+            item,
+            _interface
+        )
     }
 }
 
