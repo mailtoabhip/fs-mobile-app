@@ -159,7 +159,7 @@
                     android:text="@{request.shipperName}"
                     tools:text ="Mohan Aggarwal"
                     android:textColor="@color/text_grey_v3"
-                    android:drawableStart="@drawable/ic_user"
+                    android:drawableStart="@drawable/ic_user_marketplace"
                     app:layout_constraintTop_toBottomOf="@id/truckInfo"
                     app:layout_constraintStart_toStartOf="@id/truckInfo" />
 

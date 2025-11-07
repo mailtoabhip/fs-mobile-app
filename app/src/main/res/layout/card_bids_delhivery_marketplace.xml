@@ -197,7 +197,7 @@
                     android:text="@{request.getContactDisplayName()}"
                     tools:text ="Mohan Aggarwal"
                     android:textColor="#505361"
-                    android:drawableStart="@drawable/ic_user"
+                    android:drawableStart="@drawable/ic_user_marketplace"
                     app:layout_constraintTop_toBottomOf="@id/truckInfo"
                     app:layout_constraintStart_toStartOf="@id/truckInfo" />
 
