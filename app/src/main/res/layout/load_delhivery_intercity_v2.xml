@@ -43,7 +43,6 @@
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Closes in 2 hrs 15 min"
                     app:optionalTextColor="@{request}"
-                    android:paddingTop="@dimen/size_4dp"
                     android:text="@{request.formattedBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
@@ -156,6 +155,7 @@
                     tools:text ="Open 32FTXXL18 MT"
                     android:textColor="#505361"
                     android:drawableStart="@drawable/ic_truck_small"
+                    android:drawableTint="@color/text_grey_v3"
                     app:layout_constraintTop_toBottomOf="@id/cl_from_to_city"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -170,6 +170,7 @@
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:drawableStart="@drawable/money_bill_wave"
+                    android:drawableTint="@color/text_grey_v3"
                     app:layout_constraintStart_toEndOf="@id/truckInfo"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />

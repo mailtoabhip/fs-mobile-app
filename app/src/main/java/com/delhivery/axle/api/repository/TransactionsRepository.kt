@@ -155,7 +155,8 @@ enum class DemandType(val type: String) {
   Internal("Internal"),
   Others("Others"),
   Intracity("Intracity"),
-  Corporate("Corporate")
+  Corporate("Corporate"),
+  Spot_Marketplace("spot_marketplace")
 }
 val contractsMap= mapOf(
   Pair("Live Bidding", LiveBidding),
