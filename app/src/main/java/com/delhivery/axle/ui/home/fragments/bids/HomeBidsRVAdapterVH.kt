@@ -773,7 +773,8 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
     // Handle place bid button state based on bid status
     when(item.data.bidStatus().statusKey.lowercase()) {
       TransactionBidStatus.Open.statusKey.lowercase() -> {
-        if (item.data.isBidOpen()) {
+        Log.d("Bidding-End-Time", "$adapterPosition,${item.data.isBidOpen()}")
+        if (item.data.isMarketplaceBidOpen()) {
           // Bid is open - show normal "Revise to Win" button
           binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
           binding.containerError.placeBidTv.text = "Revise to Win"

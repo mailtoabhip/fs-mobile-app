@@ -259,10 +259,10 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
             if (isLoading) {
                 // Show progress bar and hide button text
                 binding.progressBar.visibility = View.VISIBLE
-                binding.marketplaceBidDetailLayout.visibility = View.GONE
+                binding.loadingOverlayTransparent.visibility = View.VISIBLE
             } else {
                 binding.progressBar.visibility = View.GONE
-                binding.marketplaceBidDetailLayout.visibility = View.VISIBLE
+                binding.loadingOverlayTransparent.visibility = View.GONE
             }
         })
     }

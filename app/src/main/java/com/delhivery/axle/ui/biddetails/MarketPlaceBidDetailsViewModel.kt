@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
+import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.SpotBiddingRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.response.InitiateCallResponse
@@ -13,6 +14,10 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 
 /**
@@ -58,6 +63,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
     var userExistingBid: TransactionBid? = null
     private var isTransactionDetailsLoaded = false
     private var isUserBidsLoaded = false
+    private var bidEndTime: Date? = null
 
     /**
      * Load bid details from API
@@ -74,10 +80,19 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             .subscribe { response, error ->
                 if (!error) {
                     _transactionLiveData.postValue(response)
-                    // After loading transaction details, fetch user's bid status
+                    bidEndTime = response?.contractBiddingEndTime?.let { endTimeStr ->
+                        try {
+                            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                            sdf.parse(endTimeStr)
+                        } catch (e: Exception) {
+                            Log.e("BidDetails", "Failed to parse bid end time: $endTimeStr", e)
+                            null
+                        }
+                    }
                     fetchTransactionBids()
                 } else {
                     error.handle()
+                    bidEndTime = null
                     _transactionLiveData.postValue(null)
                     // Still fetch bids even if transaction details fail
                     fetchTransactionBids()
@@ -122,8 +137,8 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
      * Determine bid status based on transaction bids API response
      */
     private fun determineBidStatus(userBid: TransactionBid?, acceptedBid: TransactionBid?) {
+        // User hasn't placed any bid
         if (userBid == null) {
-            // User hasn't placed any bid
             _bidStatusLiveData.postValue(MarketplaceBidStatus.NoBid)
             return
         }
@@ -148,9 +163,9 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             }
             "open" -> {
                 // Bid is still open/active
-                val transaction = _transactionLiveData.value
-                val isBiddingOpen = transaction?.isLoadBiddingOpen() ?: true
-                
+                val now = Date()
+                val isBiddingOpen = bidEndTime?.after(now) ?: true
+
                 if (isBiddingOpen) {
                     // Bidding is still open - user can revise
                     _bidStatusLiveData.postValue(

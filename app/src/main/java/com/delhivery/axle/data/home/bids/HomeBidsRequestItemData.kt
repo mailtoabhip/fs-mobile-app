@@ -169,7 +169,6 @@ data class HomeBidsRequestItemData(
 
   //Added New Placement Details API Response keys
   @SerializedName("contract_id")val contractId:String?=null,
-  //transaction_id - already present above in this class
   @SerializedName("contract_code")val contractCode:String?=null,
   @SerializedName("vehicle_info")val vehicleInfo: VehicleModel?=null,
   @SerializedName("route_info")val routeInfo: RouteInformation?=null,
@@ -1071,6 +1070,27 @@ data class HomeBidsRequestItemData(
       true // If parsing fails, assume bid is open
     }
   }
+
+  fun isMarketplaceBidOpen(): Boolean {
+
+    var endTime : String = ""
+      endTime = contractBiddingEndTime?.takeIf {
+        it.isNotBlank() && !it.equals("null", ignoreCase = true)
+      } ?: return true
+
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
+      timeZone = TimeZone.getTimeZone("IST")
+    }
+
+    return try {
+      val now = Date()
+      val endDate = format.parse(endTime)
+      endDate?.after(now) ?: true
+    } catch (e: Exception) {
+      true // If parsing fails, assume bid is open
+    }
+  }
+
 
   fun formattedLoadAndContractBidEndingTime() : String{
     if(requestType == RequestType.Contract.type){
