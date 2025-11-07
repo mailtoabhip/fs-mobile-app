@@ -819,6 +819,7 @@
   <string name="sub_title_dialog_success">Drivers are required to mark in and out using the Driver App.</string>
   <string name="copy_whatsapp_share">Share on Whatsapp</string>
   <string name="driver_app_link">https://play.google.com/store/apps/details?id=com.delhivery.fmsdriver</string>
+  <string name="axle_app_link">https://play.google.com/store/apps/details?id=com.delhivery.axle</string>
   <string name="hindi_video_link">https://youtu.be/x7YhuhHdGkA</string>
   <string name="english_video_link">https://youtu.be/RUutFvWwyQQ</string>
   <string name="intracity">Intracity</string>

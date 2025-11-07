@@ -22,7 +22,9 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   Banners(9),
   Priority(10),
   ShareRate(11),
-  LoadCategories(12);
+  LoadCategories(12),
+  Marketplace(13),
+  KycCard(14);
 
   companion object {
     /**
@@ -47,6 +49,18 @@ abstract class BaseHomeLoadsRVAdapterItem<D : BaseKeyTypeModel<String>>(
  */
 class HomeLoadsRequestItem(data: HomeBidsRequestItemData) :
     BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Request, data)
+
+/**
+ * Marketplace load item
+ */
+class HomeLoadsMarketplaceItem(data: HomeBidsRequestItemData) :
+    BaseHomeLoadsRVAdapterItem<HomeBidsRequestItemData>(Marketplace, data)
+
+/**
+ * KycCard item
+ */
+class HomeLoadsKycPendingItem(data: HomeLoadsKycPendingItemData = HomeLoadsKycPendingItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsKycPendingItemData>(KycCard, data)
 
 /**
  * Inventory banner item
@@ -120,7 +134,7 @@ class HomeLoadsMoreInfoItem(
  */
 class HomeLoadsFilterItem(
   data: HomeLoadsFilterItemData = HomeLoadsFilterItemData(
-    "", 0,0,0,""
+    "", 0,0,0,0,""
   )
 ) : BaseHomeLoadsRVAdapterItem<HomeLoadsFilterItemData>(Filters, data)
 

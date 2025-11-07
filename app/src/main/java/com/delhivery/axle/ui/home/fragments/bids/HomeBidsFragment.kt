@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,6 +18,7 @@ import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
@@ -46,9 +46,13 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   var _title: String = "My Bids"
   var launch : Boolean =true
   @Inject lateinit var userPrefs: UserPrefs
+  @Inject lateinit var dialogUtils: DialogUtils
   // In any existing activity
   @Inject
   lateinit var dialogUsageExample: DialogUsageExample
+
+  // Track if any call is currently loading
+  private var isAnyCallLoading = false
 
   override val title: CharSequence
     get() = _title
@@ -144,6 +148,56 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
       adapter.setLoadingState(isLoadingData)
     })
 
+    // Observe marketplace call loading state
+    viewModel.callLoadingStateLiveData.reobserve(this, Observer { loadingStateMap ->
+      loadingStateMap?.forEach { (transactionId, isLoading) ->
+        adapter.updateCallLoadingState(transactionId, isLoading)
+      }
+      
+      // Check if any call is currently loading
+      val anyCallLoading = loadingStateMap?.values?.any { it == true } ?: false
+      updateLoadingOverlay(anyCallLoading)
+    })
+
+    // Observe marketplace call initiation success
+    viewModel.callInitiationLiveData.reobserve(this, Observer { response ->
+      // Hide loading overlay on success
+      updateLoadingOverlay(false)
+      
+      response.data?.firstOrNull()?.let { bridgeData ->
+        bridgeData.bridgeNumber?.let { number ->
+          // Make phone call with bridge number
+          makePhoneCall(number)
+          
+          // Track analytics
+          analyticsUtil.moEngageTrackEvent(
+            "EVENT_MARKETPLACE_CALL_SUCCESS",
+            mutableListOf(PROPERTY_USER_ID, "bridge_number_received"),
+            mutableListOf(userPrefs.userId(), "true")
+          )
+        }
+      }
+    })
+
+    // Observe marketplace call initiation errors
+    viewModel.callInitiationErrorLiveData.reobserve(this, Observer { errorMessage ->
+      // Hide loading overlay on error
+      updateLoadingOverlay(false)
+      
+      // Show error dialog with countdown
+      dialogUtils.showErrorDialog(
+        errorMessage,
+        5L // 5 seconds countdown
+      )
+      
+      // Track analytics
+      analyticsUtil.moEngageTrackEvent(
+        "EVENT_MARKETPLACE_CALL_ERROR",
+        mutableListOf(PROPERTY_USER_ID, "error_message"),
+        mutableListOf(userPrefs.userId(), errorMessage)
+      )
+    })
+
     /* attach sticky search with adapter */
     //binding.editStickySearch.attachWithAdapter(adapter, this)
 
@@ -195,15 +249,25 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
         )
         Log.i("itemDailog", "clicked")
         //
-        if(_item.requestType==RequestType.Contract.type){
-          startActivity(_item.transactionId?.let { context?.let { it1 ->
-            contractDetailsIntent(it,
-              it1
+        context?.let { ctx ->
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          
+          // Check if this is a marketplace load
+          if (_item.isMarketplaceLoad()) {
+            // Open MarketPlaceBidDetailsActivity for marketplace loads
+            MarketPlaceBidDetailsActivity.start(
+              ctx,
+              _item.transactionId ?: _item.uuid ?: "",
+              _item.origin ?: "",
+              _item.destination ?: ""
             )
-          } })
-        }else{
-          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
-
+          } else if(_item.requestType==RequestType.Contract.type){
+            startActivity(_item.transactionId?.let {
+              contractDetailsIntent(it, ctx)
+            })
+          } else {
+            startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) })
+          }
         }
       }
 
@@ -216,7 +280,6 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
-        bidDialog(_item)
       }
 
       HomeBidsRequestAction_ReviseBid -> {
@@ -228,16 +291,52 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           mutableListOf(VALUE_BID, _item.transactionId ?: "")
         )
         Log.i("itemDailog", "clicked")
-        if(_item.requestType==RequestType.Contract.type){
-          startActivity(_item.transactionId?.let { context?.let { it1 ->
-            contractDetailsIntent(it,
-              it1
+        
+        context?.let { ctx ->
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          
+          // Check if this is a marketplace load
+          if (_item.isMarketplaceLoad()) {
+            // Open MarketPlaceBidDetailsActivity for marketplace loads
+            MarketPlaceBidDetailsActivity.start(
+              ctx,
+              _item.transactionId ?: _item.uuid ?: "",
+              _item.origin ?: "",
+              _item.destination ?: ""
             )
-          } })
-        }else{
-          startActivity(_item.transactionId?.let { context?.let { it1 -> bidDetailsIntent(it, it1) } })
-
+          } else if(_item.requestType==RequestType.Contract.type){
+            startActivity(_item.transactionId?.let {
+              contractDetailsIntent(it, ctx)
+            })
+          } else {
+            startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) })
+          }
         }
+      }
+
+      HomeBidsRequestAction_InitiateCall -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Validate transaction ID and bid ID
+        val transactionId = _item.transactionId
+        val bidId = _item.transactionBid?.id
+        
+        if (transactionId.isNullOrEmpty() || bidId.isNullOrEmpty()) {
+          dialogUtils.showErrorDialog(
+            "Unable to initiate call. Missing information.",
+            3L // 3 seconds countdown
+          )
+          return@handleAction
+        }
+        
+        // Track analytics
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID, "action"),
+          mutableListOf(VALUE_BID, transactionId, "initiate_call")
+        )
+        
+        // Initiate marketplace call
+        viewModel.initiateMarketplaceCall(transactionId, bidId)
       }
 
       HomeBidsHeaderAction_TabChangeActive -> {
@@ -450,5 +549,43 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
 
       }
     }
+  }
+
+  /**
+   * Make phone call with the provided phone number
+   */
+  private fun makePhoneCall(phoneNumber: String) {
+    val intent = Intent(Intent.ACTION_DIAL).apply {
+      data = android.net.Uri.parse("tel:$phoneNumber")
+    }
+    startActivity(intent)
+  }
+
+  /**
+   * Format expiry timestamp to readable time
+   */
+  private fun formatExpiryTime(timestamp: Long): String {
+    val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
+  }
+
+  /**
+   * Update loading overlay visibility to block/unblock user interactions
+   * @param isLoading true to show overlay and block interactions, false to hide overlay
+   */
+  private fun updateLoadingOverlay(isLoading: Boolean) {
+    isAnyCallLoading = isLoading
+    binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+    
+    // Disable swipe refresh when call is loading
+    binding.refreshLayout.isEnabled = !isLoading
+    
+    Log.d("CallLoading", "Loading overlay ${if (isLoading) "shown" else "hidden"}")
+  }
+  
+  override fun onDestroyView() {
+    super.onDestroyView()
+    // Clear ViewHolder references to prevent memory leaks
+    adapter.clearViewHolderReferences()
   }
 }

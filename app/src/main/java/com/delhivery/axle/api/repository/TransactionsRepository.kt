@@ -54,6 +54,15 @@ class TransactionsRepository @Inject constructor(
     ).convertResponse()
 
   /**
+   * Get spot marketplace transactions
+   */
+  fun fetchSpotMarketplaceTransactions(onlyCount: Boolean = false, limit: Int = UserTripsLoadLimit) =
+    transactionService.spotMarketplaceTransactions(
+      onlyCount = onlyCount,
+      limit = limit
+    ).convertResponse()
+
+  /**
    * Get contracts transactions
    */
   fun fetchContractsTransactions(offset: Int, demand_type: String, allActiveFetched:Boolean?,limit:Int,matchLanePrefOriginCities:Boolean?,isFlexible:Boolean?=null,includeFlexibleContracts:Boolean?=null, searchAfterCreationTime:String? = null, searchAfterTransactionId:String? = null) =
@@ -139,13 +148,15 @@ enum class RequestType(val type: String) {
   Contract("contract"),
   Load("load"),
   Spot("spot"),
+  SpotMarketplace("spot_marketplace"),
   Fixed("fixed")
 }
 enum class DemandType(val type: String) {
   Internal("Internal"),
   Others("Others"),
   Intracity("Intracity"),
-  Corporate("Corporate")
+  Corporate("Corporate"),
+  Spot_Marketplace("spot_marketplace")
 }
 val contractsMap= mapOf(
   Pair("Live Bidding", LiveBidding),

@@ -12,6 +12,7 @@ import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
 import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
 import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
+import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
 import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
@@ -189,6 +190,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(BidDetailsViewModel::class)
   abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(MarketPlaceBidDetailsViewModel::class)
+  abstract fun bindMarketPlaceBidDetailsViewModel(marketPlaceBidDetailsViewModel: MarketPlaceBidDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap

@@ -6,6 +6,7 @@ import com.delhivery.axle.api.request.FuelPayoutResponse
 import com.delhivery.axle.api.response.BaseMessageResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ContractsSummaryResponse
+import com.delhivery.axle.api.response.SpotMarketplaceLoadsData
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TripMeterResponse
 import com.delhivery.axle.api.response.TruckDisplayNamesResponse
@@ -143,4 +144,13 @@ interface TransactionService {
     @Query("only_display_names") displayNames: String="yes",
     @Query("include_flexible_contracts") includeFlexibleContracts: Boolean=true
   ): Single<BaseResponse<TruckDisplayNamesResponse>>
+
+  /**
+   * Spot marketplace transactions
+   */
+  @GET("/v2/spot-marketplace/loads/")
+  fun spotMarketplaceTransactions(
+    @Query("only_count") onlyCount: Boolean = false,
+    @Query("limit") limit: Int = 25,
+  ): Single<BaseResponse<SpotMarketplaceLoadsData>>
 }

@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.LoadCycleRepository
+import com.delhivery.axle.api.repository.SpotBiddingRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.FrequentTripsResponse
+import com.delhivery.axle.api.response.InitiateCallResponse
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.data.Quintuple
@@ -60,6 +62,7 @@ class HomeBidsViewModel @Inject constructor(
   private val bidsRepository: BidsRepository,
   private val loadCycleRepository: LoadCycleRepository,
   private val userRepository: UserRepository,
+  private val spotBiddingRepository: SpotBiddingRepository,
   private val appDatabase: AppDatabase
 ) : BaseViewModel(),BulkBidDetailsDialog.BulkBidDetailsDialogInterface {
 
@@ -72,6 +75,15 @@ class HomeBidsViewModel @Inject constructor(
 
   /* data loading live data */
   var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  /* marketplace call initiation live data */
+  var callInitiationLiveData = MutableLiveData<InitiateCallResponse>()
+  
+  /* marketplace call error live data */
+  var callInitiationErrorLiveData = MutableLiveData<String>()
+  
+  /* marketplace call loading state - maps transactionId to loading state */
+  var callLoadingStateLiveData = MutableLiveData<Map<String, Boolean>>()
 
   /* pagination params */
   var total = 0
@@ -97,6 +109,108 @@ class HomeBidsViewModel @Inject constructor(
       transaction.paymentMode = supplier.paymentMode
       transaction.advancePercentage = supplier.advancePercentage
     }
+  }
+  
+  /**
+   * Initiate marketplace call to get bridge number
+   *
+   * @param transactionId Transaction ID from marketplace load
+   * @param bidId Bid ID for the transaction
+   */
+  fun initiateMarketplaceCall(transactionId: String, bidId: String) {
+    Log.d("HomeBidsViewModel", "==================== INITIATING CALL ====================")
+    Log.d("HomeBidsViewModel", "Transaction ID: $transactionId")
+    Log.d("HomeBidsViewModel", "Bid ID: $bidId")
+    Log.d("HomeBidsViewModel", "Source: marketplace")
+    Log.d("HomeBidsViewModel", "========================================================")
+    
+    // Set loading state to true for this transaction
+    updateCallLoadingState(transactionId, true)
+    
+    compositeDisposable += spotBiddingRepository.initiateMarketplaceCall(
+      transactionId = transactionId,
+      bidId = bidId,
+      source = "marketplace"
+    )
+      .onBackground()
+      .subscribe({ response ->
+        Log.d("HomeBidsViewModel", "==================== CALL INITIATION SUCCESS ====================")
+        Log.d("HomeBidsViewModel", "Response Success: ${response.success}")
+        Log.d("HomeBidsViewModel", "Bridge Numbers Count: ${response.data?.size ?: 0}")
+        response.data?.forEachIndexed { index, bridgeData ->
+          Log.d("HomeBidsViewModel", "Bridge #${index + 1}:")
+          Log.d("HomeBidsViewModel", "  - Number: ${bridgeData.bridgeNumber}")
+          Log.d("HomeBidsViewModel", "  - Vendor: ${bridgeData.vendor}")
+          Log.d("HomeBidsViewModel", "  - Expiry: ${bridgeData.expiry}")
+        }
+        Log.d("HomeBidsViewModel", "================================================================")
+        
+        // Set loading state to false for this transaction
+        updateCallLoadingState(transactionId, false)
+        
+        if (response.success && !response.data.isNullOrEmpty()) {
+          callInitiationLiveData.postValue(response)
+        } else {
+          Log.w("HomeBidsViewModel", "Response success was false or data was empty")
+          callInitiationErrorLiveData.postValue("Unable to initiate call. Please try again.")
+        }
+      }, { error ->
+        // Log complete error details for debugging
+        Log.e("HomeBidsViewModel", "==================== CALL INITIATION ERROR ====================")
+        Log.e("HomeBidsViewModel", "Error Type: ${error.javaClass.name}")
+        Log.e("HomeBidsViewModel", "Error Message: ${error.message}")
+        Log.e("HomeBidsViewModel", "Error Cause: ${error.cause?.message}")
+        Log.e("HomeBidsViewModel", "Error Stack Trace:", error)
+        
+        // Log request details
+        Log.e("HomeBidsViewModel", "Request Details:")
+        Log.e("HomeBidsViewModel", "  - Transaction ID: $transactionId")
+        Log.e("HomeBidsViewModel", "  - Bid ID: $bidId")
+        Log.e("HomeBidsViewModel", "  - Source: marketplace")
+        Log.e("HomeBidsViewModel", "===============================================================")
+        
+        // Provide more specific error messages based on error type
+        val errorMessage = when {
+          error is java.net.UnknownHostException -> {
+            Log.e("HomeBidsViewModel", "DNS Error: Unable to resolve hostname - ${error.message}")
+            "Network error: Unable to reach server. Please check your VPN connection and internet connectivity."
+          }
+          error is java.net.SocketTimeoutException -> {
+            Log.e("HomeBidsViewModel", "Timeout Error: ${error.message}")
+            "Request timed out. Please check your internet connection and try again."
+          }
+          error is java.net.ConnectException -> {
+            Log.e("HomeBidsViewModel", "Connection Error: ${error.message}")
+            "Unable to connect to server. Please check your network connection."
+          }
+          error is java.io.IOException -> {
+            Log.e("HomeBidsViewModel", "IO Error: ${error.message}")
+            "Network error: ${error.message ?: "Unable to connect to server"}"
+          }
+          error is retrofit2.HttpException -> {
+            Log.e("HomeBidsViewModel", "HTTP Error: Code=${error.code()}, Message=${error.message()}")
+            "Server error: ${error.message()}"
+          }
+          else -> {
+            Log.e("HomeBidsViewModel", "Unknown Error: ${error.javaClass.name} - ${error.message}")
+            error.message ?: "Failed to initiate call. Please check your connection."
+          }
+        }
+        
+        // Set loading state to false for this transaction
+        updateCallLoadingState(transactionId, false)
+        
+        callInitiationErrorLiveData.postValue(errorMessage)
+      })
+  }
+  
+  /**
+   * Update call loading state for a specific transaction
+   */
+  private fun updateCallLoadingState(transactionId: String, isLoading: Boolean) {
+    val currentMap = callLoadingStateLiveData.value?.toMutableMap() ?: mutableMapOf()
+    currentMap[transactionId] = isLoading
+    callLoadingStateLiveData.postValue(currentMap)
   }
   
   /**
@@ -256,7 +370,7 @@ class HomeBidsViewModel @Inject constructor(
               add(Pair(HomeBidsSearchItem(), AddUpdate))
 
               val bids = _res.first
-              val transactions = _res.second.transactions
+              val transactions = _res.second.transactions ?: emptyList()
               val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
               for (bid in _res.fifth) {
                 val key: String = bid.transactionId

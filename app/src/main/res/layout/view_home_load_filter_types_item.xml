@@ -50,7 +50,6 @@
         style="@style/FilterButton"
         app:layout_constraintStart_toEndOf="@id/dlvIntercityToggle"
         android:text="@string/market_place"
-        android:visibility="gone"
         tools:visibility="visible"
         android:textStyle="bold"
         android:layout_marginStart="@dimen/size_8dp"

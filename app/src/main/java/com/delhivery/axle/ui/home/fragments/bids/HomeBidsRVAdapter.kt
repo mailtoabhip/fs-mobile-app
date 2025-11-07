@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.data.home.bids.HomeBidsHeaderItemData
+import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
+import com.delhivery.axle.databinding.CardBidsDelhiveryMarketplaceBinding
 import com.delhivery.axle.databinding.CardCommonBidsBinding
 import com.delhivery.axle.databinding.CardCommonBidsV2Binding
 import com.delhivery.axle.databinding.CardCommonIntracityBidsBinding
@@ -30,6 +32,7 @@ import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Contracts
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Header
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.IntracityBids
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.MarketplaceBids
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Progress
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Request
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsRVAdapterItemType.Search
@@ -48,15 +51,34 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
 
   private var currentFilterQuery: String? = null
   private var isLoadingData: Boolean = false
+  
+  // Store ViewHolder references by transaction ID for call loading state updates
+  private val marketplaceViewHolders = mutableMapOf<String, HomeBidsMarketplaceRequestItemVH>()
 
   override fun getItemViewType(position: Int): Int {
     val item = itemsList()[position]
-    // Check if it's a bid request item and if it's intracity
-    return if (item is HomeBidsRequestItem && isIntracity(item.data)) {
-      IntracityBids.typeId
+    // Check if it's a bid request item
+    return if (item is HomeBidsRequestItem) {
+      // First check for marketplace/spot request type
+      if (isMarketplaceBid(item.data)) {
+        MarketplaceBids.typeId
+      } 
+      // Then check if it's intracity
+      else if (isIntracity(item.data)) {
+        IntracityBids.typeId
+      } else {
+        item.type.typeId
+      }
     } else {
       item.type.typeId
     }
+  }
+
+  /**
+   * Check if a bid request is marketplace/spot type
+   */
+  private fun isMarketplaceBid(data: HomeBidsRequestItemData): Boolean {
+    return data.demandType?.lowercase() == RequestType.SpotMarketplace.type
   }
 
   /**
@@ -92,6 +114,8 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     Contracts -> CardCommonBidsV2Binding.inflate(inflater, parent, false)
     //intracity bids (loads + contracts) - using new intracity layout
     IntracityBids -> CardCommonIntracityBidsBinding.inflate(inflater, parent, false)
+    //marketplace bids (spot request type) - using marketplace layout
+    MarketplaceBids -> CardBidsDelhiveryMarketplaceBinding.inflate(inflater, parent, false)
     //load bids - using new v2 layout
     else -> CardCommonBidsV2Binding.inflate(inflater, parent, false)
   }
@@ -103,6 +127,8 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     is CardCommonBidsV2Binding -> HomeBidsRequestItemVH(binding)
     //intracity bids (loads + contracts) - using intracity binding
     is CardCommonIntracityBidsBinding -> HomeBidsIntracityRequestItemVH(binding)
+    //marketplace bids (spot request type) - using marketplace binding
+    is CardBidsDelhiveryMarketplaceBinding -> HomeBidsMarketplaceRequestItemVH(binding)
     //
     is ViewWarningItemBinding -> HomeBidsWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomeBidsTimeOutItemVH(binding)
@@ -124,6 +150,15 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
       is HomeBidsRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface, isLoadingData)
       //intracity bids (loads + contracts)
       is HomeBidsIntracityRequestItemVH -> holder.bind(item as HomeBidsRequestItem, _interface, isLoadingData)
+      //marketplace bids (spot request type)
+      is HomeBidsMarketplaceRequestItemVH -> {
+        val requestItem = item as HomeBidsRequestItem
+        holder.bind(requestItem, _interface, isLoadingData)
+        // Store ViewHolder reference for call loading state updates
+        requestItem.data.transactionId?.let { transactionId ->
+          marketplaceViewHolders[transactionId] = holder
+        }
+      }
       is HomeBidsWarningItemVH -> holder.bind(item as HomeBidsWarningItem, _interface, isLoadingData)
       is HomeBidsTimeOutItemVH -> holder.bind(item as HomeBidsTimeoutItem, _interface, isLoadingData)
       //contract bids
@@ -219,6 +254,20 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
     // Notify all items to update their states
     notifyDataSetChanged()
   }
+  
+  /**
+   * Update call loading state for a specific transaction
+   */
+  fun updateCallLoadingState(transactionId: String, isLoading: Boolean) {
+    marketplaceViewHolders[transactionId]?.setCallLoadingState(isLoading)
+  }
+  
+  /**
+   * Clear ViewHolder references when adapter is detached
+   */
+  fun clearViewHolderReferences() {
+    marketplaceViewHolders.clear()
+  }
 
   /**
    * Reset all data, remove all errors/transactions
@@ -229,7 +278,7 @@ class HomeBidsRVAdapter(private val _interface: HomeBidsRVAdapterInterface) :
       //commented this out to avoid the wrong tab selection during refresh if any other tab is clicked apart from the default one i.e "Ongoing"
       add(Pair(HomeBidsHeaderItem(HomeBidsHeaderItemData(myBids = Integer.parseInt(activeBidCount), confirmedBid = Integer.parseInt(confirmedBidCount), lostBids = Integer.parseInt(lostBidCount), bidType = bidType)), Update))
       add(Pair(HomeBidsProgressItem(), AddUpdate))
-      items.filter { it.type == Request || it.type == Warning || it.type == Timeout || it.type == Search || it.type==Contracts || it.type==IntracityBids }
+      items.filter { it.type == Request || it.type == Warning || it.type == Timeout || it.type == Search || it.type==Contracts || it.type==IntracityBids || it.type==MarketplaceBids }
           .map { Pair(it, Remove) }
           .let {
             addAll(it)

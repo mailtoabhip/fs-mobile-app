@@ -345,6 +345,96 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
 }
 
 /**
+ * Marketplace load item view holder
+ */
+class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<CardLoadsDelhiveryMarketplaceBinding, HomeLoadsMarketplaceItem>(
+        binding
+    ) {
+
+  override fun bind(
+      item: HomeLoadsMarketplaceItem,
+      _interface: HomeLoadsRVAdapterInterface
+  ) {
+    Log.d("MarketplaceCard", "Binding marketplace load: ${item.data.transactionId}")
+    Log.d("MarketplaceCard", "Shipper price: ${item.data.shipperPrice}")
+    Log.d("MarketplaceCard", "Formatted shipper price: ${item.data.getFormattedShipperPrice()}")
+    
+    // Set basic data binding
+    binding.request = item.data
+    binding.containerError.request = item.data
+    
+    // Handle closing time visibility - Use contractBiddingEndTime for marketplace loads
+    if(item.data.contractBiddingEndTime.isNullOrEmpty() || item.data.contractBiddingEndTime.equals("null", ignoreCase = true)){
+      binding.closingTime.visibility = View.GONE
+    } else {
+      binding.closingTime.visibility = View.VISIBLE
+      binding.closingTime.text = item.data.formattedContractBiddingEndTime()
+    }
+    
+    // Handle payment mode display - MARKETPLACE SPECIFIC LOGIC
+    if (item.data.shouldShowMarketplacePaymentMode()) {
+      binding.paymentType.visibility = View.VISIBLE
+      binding.paymentType.text = item.data.getMarketplacePaymentModeDisplay()
+      // Only show advance percentage for advance payment mode
+      if (item.data.shouldShowMarketplaceAdvancePercentage()) {
+        binding.advancePaymentPercentage.visibility = View.VISIBLE
+        binding.advancePaymentPercentage.text = item.data.getMarketplaceAdvancePaymentPercentage()
+      } else {
+        binding.advancePaymentPercentage.visibility = View.GONE
+      }
+    } else {
+      binding.paymentType.visibility = View.GONE
+      binding.advancePaymentPercentage.visibility = View.GONE
+    }
+    
+    // Handle supplier name - hide if empty
+    if (!item.data.shipperName.isNullOrEmpty()) {
+      binding.supplierName.visibility = View.VISIBLE
+    } else {
+      binding.supplierName.visibility = View.INVISIBLE
+    }
+    
+    // Handle supplier phone number - use as-is from API (already masked)
+    if (!item.data.shipperPhoneNumber.isNullOrEmpty()) {
+      binding.supplierNumber.visibility = View.VISIBLE
+    } else {
+      binding.supplierNumber.visibility = View.GONE
+    }
+      // MARKETPLACE SPECIFIC: Always show shipper price and place bid button
+    binding.containerError.labelReporting.visibility = View.VISIBLE
+    binding.containerError.placeBidButton.visibility = View.VISIBLE
+    binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
+    binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_PlaceBid, item, bindingAdapterPosition, _interface)
+    
+    // Force data binding updates to be applied immediately
+    binding.containerError.executePendingBindings()
+    binding.executePendingBindings()
+  }
+}
+
+
+/**
+ * Kyc pending view holder
+ */
+internal class HomeLoadsKycPendingItemVH(binding: CardKycPendingBannerBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<CardKycPendingBannerBinding, HomeLoadsKycPendingItem>(
+        binding
+    ) {
+    override fun bind(
+        item: HomeLoadsKycPendingItem,
+        _interface: HomeLoadsRVAdapterInterface
+    ) {
+        // Set click action for the entire card
+        binding.root.clickToAction(
+            HomeLoadsKycPendingAction,
+            item,
+            _interface
+        )
+    }
+}
+
+/**
  * Progress inline view holder
  */
 internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding) :
@@ -475,30 +565,46 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
   ) {
       binding.dlvIntracityToggle.text =  "${context.getString(R.string.intracity)} (${item.data.dlvIntracityCount})"
       binding.dlvIntercityToggle.text =   "${context.getString(R.string.intercity)} (${item.data.dlvIntercityCount + item.data.nonDlvCount})"
+      binding.dlvMarketplaceToggle.text =   "${context.getString(R.string.market_place)} (${item.data.marketplaceCount})"
       //binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
       binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
       binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
+      //TODO
+      //Uncomment the below statement after complete logic implementation
+      //binding.dlvMarketplaceToggle.visibility = if(item.data.userDemandType.contains(DemandType.Spot_Marketplace.type))View.VISIBLE else View.GONE
+      //TODO
+      //Comment below line once implementation is complete
+      binding.dlvMarketplaceToggle.visibility = View.VISIBLE
 
       when (item.data.filterType) {
           DemandType.Intracity.type-> {
               binding.dlvIntracityToggle.isSelected = true
               binding.dlvIntercityToggle.isSelected = false
+              binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = false
           }
           DemandType.Internal.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = true
+              binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = false
           }
           DemandType.Others.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = false
+              binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = true
+          }
+          "Marketplace"-> {
+              binding.dlvIntracityToggle.isSelected = false
+              binding.dlvIntercityToggle.isSelected = false
+              binding.dlvMarketplaceToggle.isSelected = true
           }
       }
       binding.dlvIntracityToggle.clickToAction(HomeLoadDlvIntracity, item, _interface)
       binding.dlvIntercityToggle.clickToAction(HomeLoadDlvIntercity, item, _interface)
+      binding.dlvMarketplaceToggle.clickToAction(HomeLoadMarketplace, item, _interface)
       //binding.nonDlvToggle.clickToAction(HomeLoadNonDlv, item, _interface)
   }
 }

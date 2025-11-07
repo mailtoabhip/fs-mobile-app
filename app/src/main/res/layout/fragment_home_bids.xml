@@ -28,5 +28,16 @@
           android:clipToPadding="false"
           />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Transparent overlay to block interactions during call API -->
+    <View
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        />
   </FrameLayout>
 </layout>

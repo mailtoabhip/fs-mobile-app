@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Tim
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Warning
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Banners
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Priority
+import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsRVAdapterItemType.Marketplace
 
 
 
@@ -53,6 +54,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     Priority -> ViewHomeLoadsTruckPriorityItemBinding.inflate(inflater, parent, false)
     ShareRate -> ViewShareLayoutBannerBinding.inflate(inflater, parent, false)
     LoadCategories -> ViewHomeLoadCategoriesItemBinding.inflate(inflater, parent, false)
+    Marketplace -> CardLoadsDelhiveryMarketplaceBinding.inflate(inflater, parent, false)
+    KycCard -> CardKycPendingBannerBinding.inflate(inflater, parent, false)
     else -> LoadDelhiveryIntercityV2Binding.inflate(inflater, parent, false)
   }
 
@@ -69,6 +72,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     is ViewHomeLoadsTruckPriorityItemBinding->HomeLoadsTruckPriorityItemVH(binding)
     is ViewShareLayoutBannerBinding->HomeLoadsShareRateItemVH(binding)
     is ViewHomeLoadCategoriesItemBinding->HomeLoadsCategoriesItemVH(binding)
+    is CardLoadsDelhiveryMarketplaceBinding -> HomeLoadsMarketplaceItemVH(binding)
+    is CardKycPendingBannerBinding -> HomeLoadsKycPendingItemVH(binding)
     else -> HomeLoadsRequestItemVH(binding as LoadDelhiveryIntercityV2Binding)
   }
 
@@ -78,6 +83,8 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   ) {
     when (holder) {
       is HomeLoadsRequestItemVH -> holder.bind(item as HomeLoadsRequestItem, _interface)
+      is HomeLoadsMarketplaceItemVH -> holder.bind(item as HomeLoadsMarketplaceItem, _interface)
+      is HomeLoadsKycPendingItemVH -> holder.bind(item as HomeLoadsKycPendingItem, _interface)
       is HomeLoadsProgressItemVH -> holder.bind(item as HomeLoadsProgressItem, _interface)
       is HomeLoadsSearchItemVH -> holder.bind(item as HomeLoadsSearchItem, _interface)
       is HomeLoadsWarningItemVH -> holder.bind(item as HomeLoadsWarningItem, _interface)
@@ -120,7 +127,7 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
       add(Pair(HomeLoadsProgressItem(), AddUpdate))
       items.filter {
-        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate || it.type==LoadCategories
+        it.type== Banners || it.type ==Priority ||it.type == Count || it.type == Request || it.type == Marketplace || it.type == KycCard || it.type == Warning || it.type == Timeout || it.type == Info || it.type == MoreInfo || it.type == Search || it.type == Filters ||it.type== ShareRate || it.type==LoadCategories
       }
           .map { Pair(it, Remove) }
           .let {

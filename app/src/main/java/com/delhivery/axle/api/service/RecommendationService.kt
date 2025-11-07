@@ -25,5 +25,4 @@ interface RecommendationService {
         @Body request: ReccomdationRequest
     ): Single<BaseResponse<TransactionsResponse>>
 
-
 }

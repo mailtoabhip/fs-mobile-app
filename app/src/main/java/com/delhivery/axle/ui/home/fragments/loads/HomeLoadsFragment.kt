@@ -32,6 +32,7 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.data.home.trucks.TruckFrequentItem
+import com.delhivery.axle.databinding.DialogBottomCompleteKycBinding
 import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
 import com.delhivery.axle.databinding.DialogBottomVehicleFilterBinding
 import com.delhivery.axle.databinding.FragmentHomeLoadsBinding
@@ -41,12 +42,14 @@ import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
 import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
+import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.trucks.truckIntent
@@ -146,7 +149,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
 
     viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
-      it?.let { _items -> adapter.operation(_items) }
+      it?.let { _items -> 
+        Log.d("MarketplaceDebug", "Fragment received ${_items.size} items from userLoadsData")
+        _items.forEach { item ->
+          Log.d("MarketplaceDebug", "Item type: ${item.first.type}, operation: ${item.second}")
+        }
+        adapter.operation(_items) 
+      }
     })
     viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
@@ -583,7 +592,17 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     viewModel.hasOrionLoadOnce = false
     viewModel.routeUpdated = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
+    
+    // Check which tab is active and call the appropriate fetch method
+    if (selectedLoadFilter == "Marketplace") {
+      // For Marketplace tab, call the marketplace-specific API for data
+      // This also fetches other API counts internally
+      viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 20)
+    } else {
+      // For other tabs (Intracity, Intercity, etc.), call regular transactions API
+      // This also fetches marketplace count internally
+      viewModel.fetchUserTransactions(false, demandType, selectedLoadFilter)
+    }
   }
 
   override fun handleAction(
@@ -607,9 +626,36 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 mutableListOf(VALUE_LOAD, data.transactionId ?: "")
         )
         if(data.subRequestType!=SUB_REQUEST_TYPE_INTRACITY)
-        context?.let {
+        context?.let { ctx ->
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
+          
+          // Check if this is a marketplace load
+          if (data.isMarketplaceLoad()) {
+            // Open MarketPlaceBidDetailsActivity for marketplace loads
+            val closingTime = try {
+              if (!data.bidEndingTime.isNullOrEmpty() && !data.bidEndingTime.equals("null", ignoreCase = true)) {
+                val format = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+                format.timeZone = java.util.TimeZone.getTimeZone("IST")
+                format.parse(data.bidEndingTime)?.time ?: 0L
+              } else {
+                0L
+              }
+            } catch (e: Exception) {
+              Log.e("HomeLoadsFragment", "Error parsing closing time: ${e.message}")
+              0L
+            }
+            
+            MarketPlaceBidDetailsActivity.start(
+              ctx,
+              data.transactionId ?: data.uuid ?: "",
+              data.origin ?: "",
+              data.destination ?: "",
+            )
+          } else {
+            // Open regular BidDetailsActivity for non-marketplace loads
+            startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else ""))
+          }
+        }
       }
 
       HomeLoadsSearchAction_Search -> {
@@ -711,12 +757,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
         ), VALUE_ADD_TRUCK_TOP_BANNER)}
           UNAPPROVED -> {
-            dialogUtils.showBasicConfirmDialog(
-                    string.title_dialog_supplier_not_approved,
-                    string.msg_dialog_supplier_not_approved,
-                    getString(string.label_call_us), getString(string.label_mail_us),
-                    { callHelpline() }, { sendMail() }
-            )
+              if (viewModel.userPrefs.verificationStatus.equals("failed")) {
+                  showCompleteKycDialog()
+              } else {
+                  dialogUtils.showBasicConfirmDialog(
+                      string.title_dialog_supplier_not_approved,
+                      string.msg_dialog_supplier_not_approved,
+                      getString(string.label_call_us), getString(string.label_mail_us),
+                      { callHelpline() }, { sendMail() }
+                  )
+              }
           }
           DISABLED -> {
             dialogUtils.showBasicConfirmDialog(
@@ -751,12 +801,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             ), VALUE_ADD_TRUCK_SCROLL_BANNER)
           }
           UNAPPROVED -> {
-            dialogUtils.showBasicConfirmDialog(
-                    string.title_dialog_supplier_not_approved,
-                    string.msg_dialog_supplier_not_approved,
-                    getString(string.label_call_us), getString(string.label_mail_us),
-                    { callHelpline() }, { sendMail() }
-            )
+              if (viewModel.userPrefs.verificationStatus.equals("failed")) {
+                  showCompleteKycDialog()
+              } else {
+                  dialogUtils.showBasicConfirmDialog(
+                      string.title_dialog_supplier_not_approved,
+                      string.msg_dialog_supplier_not_approved,
+                      getString(string.label_call_us), getString(string.label_mail_us),
+                      { callHelpline() }, { sendMail() }
+                  )
+              }
           }
           DISABLED -> {
             dialogUtils.showBasicConfirmDialog(
@@ -792,6 +846,27 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             }
             .joinToString { "," }
         refreshData()
+      }
+      HomeLoadMarketplace ->{
+        analyticsUtil.moEngageTrackEvent(
+          "EVENT_LOAD_MARKETPLACE_CLICKED",
+          mutableListOf(PROPERTY_USER_ID),
+          mutableListOf(userPrefs.userId())
+        )
+        selectedLoadFilter = "Marketplace"
+        // Reset adapter and pagination before fetching marketplace data
+        viewModel.paginateCount = 0
+        viewModel.hasOrionLoadOnce = false
+        viewModel.routeUpdated = false
+        adapter.resetStaticData()
+        // Call the new marketplace loads function
+        viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 20)
+      }
+      
+      HomeLoadsKycPendingAction -> {
+          Log.d("test-log2","test-log2")
+        // Show custom KYC completion dialog
+        showCompleteKycDialog()
       }
 //      HomeLoadNonDlv ->{
 //        analyticsUtil.moEngageTrackEvent(
@@ -939,6 +1014,49 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 
+  private fun showCompleteKycDialog() {
+    val dialog = Dialog(requireContext())
+    val bindingDialog = DialogBottomCompleteKycBinding.inflate(layoutInflater)
+    
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+    
+    // Close button listener
+    bindingDialog.closeBtn.setOnClickListener {
+      dialog.dismiss()
+    }
+    
+    // Cancel button listener
+    bindingDialog.btnCancel.setOnClickListener {
+      analyticsUtil.moEngageTrackEvent(
+        "EVENT_KYC_DIALOG_CANCEL_CLICKED",
+        mutableListOf(PROPERTY_USER_ID),
+        mutableListOf(userPrefs.userId())
+      )
+      dialog.dismiss()
+    }
+    
+    // Complete KYC button listener
+    bindingDialog.btnCompleteKyc.setOnClickListener {
+      analyticsUtil.moEngageTrackEvent(
+        "EVENT_KYC_COMPLETE_BUTTON_CLICKED",
+        mutableListOf(PROPERTY_USER_ID),
+        mutableListOf(userPrefs.userId())
+      )
+      dialog.dismiss()
+      context?.let { ctx ->
+        startActivity(Intent(ctx, MyProfileActivity::class.java))
+      }
+    }
+    
+    // Set dialog properties for bottom sheet appearance
+    dialog.show()
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
+  }
+
   override fun handleAction(
           actionId: String,
           item: BaseHomeLoadsRVAdapterItem<*>,
@@ -949,6 +1067,13 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         when (actionId) {
           HomeBidsRequestAction_PlaceBid -> {
             val data = item.data as HomeBidsRequestItemData
+            
+            // Check if verification status is failed
+            if (userPrefs.verificationStatus.equals("failed", ignoreCase = true)) {
+              showCompleteKycDialog()
+              return
+            }
+            
    /*         pos = position
             val data = item.data as HomeBidsRequestItemData
             var eventPos=pos- STATIC_ITEM_LIST
@@ -980,9 +1105,24 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                 ).show()
               }
             }*/
-            context?.let {
+            context?.let { ctx ->
               userPrefs.setPreviousScreen(this.javaClass.name)
-              startActivity(bidDetailsIntent(data.key(), it, if (data.isDMTIndent()) "dmt" else "")) }
+              
+              // Check if this is a marketplace load
+              if (data.isMarketplaceLoad()) {
+                // Open MarketPlaceBidDetailsActivity for marketplace loads
+                // Closing time will be fetched from API
+                MarketPlaceBidDetailsActivity.start(
+                  ctx,
+                  data.transactionId ?: data.uuid ?: "",
+                  data.origin ?: "",
+                  data.destination ?: ""
+                )
+              } else {
+                // Open regular BidDetailsActivity for non-marketplace loads
+                startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else ""))
+              }
+            }
 
         }
           HomeBidsRequestAction_AcceptBid -> {
@@ -1024,12 +1164,16 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
       UNAPPROVED -> {
-        dialogUtils.showBasicConfirmDialog(
-                string.title_dialog_supplier_not_approved,
-                string.msg_dialog_supplier_not_approved,
-                getString(string.label_call_us), getString(string.label_mail_us),
-                { callHelpline() }, { sendMail() }
-        )
+          if (viewModel.userPrefs.verificationStatus.equals("failed")) {
+              showCompleteKycDialog()
+          } else {
+              dialogUtils.showBasicConfirmDialog(
+                  string.title_dialog_supplier_not_approved,
+                  string.msg_dialog_supplier_not_approved,
+                  getString(string.label_call_us), getString(string.label_mail_us),
+                  { callHelpline() }, { sendMail() }
+              )
+          }
       }
       DISABLED -> {
         dialogUtils.showBasicConfirmDialog(

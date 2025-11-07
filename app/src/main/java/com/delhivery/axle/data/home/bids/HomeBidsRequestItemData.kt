@@ -52,7 +52,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("required_on") val _requiredOn: String?,
   @SerializedName("target_price") val targetPrice: Double?=0.0,
   @SerializedName("uuid") val uuid: String?,
-  @SerializedName("transaction_id") val transactionId: String?,
+  @SerializedName("transaction_id") val transactionId: String? = "122371",
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
   @SerializedName("intermediary_stop1_city") val stop1City: String,
@@ -156,6 +156,15 @@ data class HomeBidsRequestItemData(
   @SerializedName("advance_percentage")var advancePercentage:String?=null,
   @SerializedName("bid_suggestion")var bidSuggestion: Boolean = false,
   @SerializedName("message")var suggestedBidMessage: String? = null,
+  @SerializedName("vendor_advance_percent")var vendorAdvancePercent: Int? = null,
+  @SerializedName("shipper_name")var shipperName: String? = null,
+  @SerializedName("shipper_phone_number")var shipperPhoneNumber: String? = null,
+  @SerializedName("shipper_ucid")var shipperUcid: String? = null,
+  @SerializedName("shipper_price") var shipperPrice: Int? = null,
+  @SerializedName("marketplace_payment_type") var marketplacePaymentType: String? = null,
+  @SerializedName("marketplace_advance_percentage") var marketplaceAdvancePercentage: Int? = null,
+  @SerializedName("poc_name") var pocName: String? = null,
+  @SerializedName("poc_contact_no") var pocContactNo: String? = null,
 
 
   //Added New Placement Details API Response keys
@@ -178,7 +187,7 @@ data class HomeBidsRequestItemData(
   //
   var bidType : BidType? = null
 ) : BaseKeyTypeModel<String>() {
-  override fun key() = uuid ?: transactionId!!
+  override fun key() = uuid ?: transactionId ?: kotlin.random.Random.nextInt().toString()
 
   fun getBidAmount() = "₹${transactionBid?.bidAmount?.toString()?:""}"
 
@@ -248,6 +257,138 @@ data class HomeBidsRequestItemData(
       "advance" -> "Advance Payment"
       else -> mode?.replaceFirstChar { it.uppercase() } ?: "N/A"
     }
+  }
+
+  /**
+   * get formatted marketplace payment mode display text
+   * Returns formatted payment type like "Advance payment" or "To Pay"
+   */
+  fun getMarketplacePaymentModeDisplay(): String {
+    // First check new marketplace_payment_type field
+    if (!marketplacePaymentType.isNullOrEmpty()) {
+      return marketplacePaymentType!!.replace("_", " ").capitalize()
+    }
+    // Fallback to vendorAdvancePercent for backward compatibility
+    return if (vendorAdvancePercent == null || vendorAdvancePercent == 0) {
+      "To Pay"
+    } else {
+      "Advance Payment"
+    }
+  }
+
+  /**
+   * Check if marketplace payment mode should be displayed
+   */
+  fun shouldShowMarketplacePaymentMode(): Boolean {
+    return !marketplacePaymentType.isNullOrEmpty() || vendorAdvancePercent != null
+  }
+
+  /**
+   * Check if marketplace advance payment percentage should be displayed
+   */
+  fun shouldShowMarketplaceAdvancePercentage(): Boolean {
+    // First check new marketplace_advance_percentage field
+    if (marketplaceAdvancePercentage != null && marketplaceAdvancePercentage!! > 0) {
+      return true
+    }
+    // Fallback to vendorAdvancePercent
+    return vendorAdvancePercent != null && vendorAdvancePercent!! > 0
+  }
+
+  /**
+   * get formatted marketplace advance payment percentage
+   */
+  fun getMarketplaceAdvancePaymentPercentage(): String {
+    // First check new marketplace_advance_percentage field
+    if (marketplaceAdvancePercentage != null && marketplaceAdvancePercentage!! > 0) {
+      return "${marketplaceAdvancePercentage}%"
+    }
+    // Fallback to vendorAdvancePercent
+    return if (vendorAdvancePercent != null && vendorAdvancePercent!! > 0) {
+      "(${vendorAdvancePercent}%)"
+    } else {
+      ""
+    }
+  }
+
+  /**
+   * Get formatted truck type and display name for marketplace
+   * Format: "Closed 32FTMXL"
+   */
+  fun getMarketplaceTruckInfo(): String {
+    val type = truckType?.let { capitalize(it) } ?: ""
+    val displayName = when (truckDisplayName) {
+      is String -> truckDisplayName as String
+      else -> truckDisplayName?.toString() ?: ""
+    }
+    return if (type.isNotEmpty() && displayName.isNotEmpty()) {
+      "$type $displayName"
+    } else if (displayName.isNotEmpty()) {
+      displayName
+    } else if (type.isNotEmpty()) {
+      type
+    } else {
+      ""
+    }
+  }
+
+  /**
+   * Get formatted shipper price for marketplace listings
+   * Returns formatted price with rupee symbol and commas
+   * Example: ₹45,000
+   */
+  fun getFormattedShipperPrice(): String {
+    return if (shipperPrice != null && shipperPrice!! > 0) {
+      "₹${StringUtils.formatAmount(shipperPrice!!.toDouble())}"
+    } else {
+      "₹0"
+    }
+  }
+
+  /**
+   * Check if this is a marketplace load
+   * Returns true if shipper details are present (indicating marketplace load)
+   */
+  fun isMarketplaceLoad(): Boolean {
+    return demandType == RequestType.SpotMarketplace.type ||
+            !shipperName.isNullOrEmpty() ||
+            !shipperPhoneNumber.isNullOrEmpty() ||
+            shipperPrice != null ||
+            !shipperUcid.isNullOrEmpty()
+  }
+
+  /**
+   * Get initials from shipper/POC name for avatar
+   * Returns first letter of first two words (e.g., "ABC Logistics" -> "AL", "John Doe" -> "JD")
+   * Uses shipperName if available, falls back to pocName
+   */
+  fun getShipperInitials(): String {
+    // Use shipperName if available, otherwise use pocName
+    val name = shipperName ?: pocName
+    if (name.isNullOrEmpty()) return ""
+    
+    val words = name.trim().split(" ").filter { it.isNotEmpty() }
+    return when {
+      words.isEmpty() -> ""
+      words.size == 1 -> words[0].take(2).uppercase()
+      else -> "${words[0].first()}${words[1].first()}".uppercase()
+    }
+  }
+
+  /**
+   * Get display name for shipper/POC
+   * Uses shipperName if available, falls back to pocName
+   */
+  fun   getContactDisplayName(): String {
+    return shipperName ?: pocName ?: ""
+  }
+
+  /**
+   * Get phone number for shipper/POC
+   * Uses shipperPhoneNumber if available, falls back to pocContactNo
+   */
+  fun getContactPhoneNumber(): String {
+    return shipperPhoneNumber ?: pocContactNo ?: ""
   }
 
   /**
@@ -2384,6 +2525,7 @@ const val HomeBidsRequestAction_ViewOtherDetails = "bid__others_details"
 const val HomeBidsRequestAction_DeleteItem = "delete_item"
 const val HomeBidsRequestAction_AcceptBid = "accept_bid"
 const val HomeBidsRequestAction_NavigationMap = "navigate_map"
+const val HomeBidsRequestAction_InitiateCall = "initiate_call"
 
 
 

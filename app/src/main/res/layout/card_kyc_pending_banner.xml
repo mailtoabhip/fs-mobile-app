@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="subtitle"
+            type="String" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/popup_alert_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginBottom="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
+        app:cardCornerRadius="@dimen/size_6dp"
+        app:cardElevation="@dimen/size_2dp"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/light_orange_v2">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/alert_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_16dp">
+
+            <!-- Icon Container -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/icon_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_round_corner_4dp_light_orange_v2"
+                android:padding="@dimen/size_6dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon_exclamation"
+                    android:layout_width="@dimen/size_20dp"
+                    android:layout_height="@dimen/size_20dp"
+                    android:padding="@dimen/size_2dp"
+                    app:srcCompat="@drawable/ic_circle_exclamation"
+                    app:tint="@color/orange_v3" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!-- Content Container -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/content_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@+id/icon_container"
+                app:layout_constraintEnd_toStartOf="@+id/button_container"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/orange_v3"
+                    android:textSize="@dimen/text_12sp"
+                    android:lineHeight="16dp"
+                    android:text="KYC Pending!" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/orange_v3"
+                    android:textSize="@dimen/text_12sp"
+                    android:lineHeight="16dp"
+                    android:text="Please complete it to place your bid" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!-- Button Container -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/button_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_round_corner_8dp_light_orange_v2"
+                android:padding="@dimen/size_5dp"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon_arrow"
+                    android:layout_width="@dimen/size_16dp"
+                    android:layout_height="@dimen/size_16dp"
+                    android:padding="@dimen/size_2dp"
+                    app:srcCompat="@drawable/ic_arrow_right"
+                    app:tint="@color/orange_v3" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

@@ -14,7 +14,10 @@
         android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/size_16dp"
-        android:layout_height="wrap_content">
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_12dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/size_8dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_intercity"
@@ -38,9 +41,8 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Closes in 2 hrs 15 min"
-                    android:textColor="#ED4136"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.formattedBiddingEndTime()}"
+                    app:optionalTextColor="@{request}"
+                    android:text="@{request.formattedContractBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
 
@@ -103,15 +105,15 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/truckInfo"
                     android:layout_width="wrap_content"
-                    android:paddingTop="@dimen/size_4dp"
                     android:paddingEnd="@dimen/size_11dp"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:drawablePadding="@dimen/size_4dp"
-                    android:text="@{request.getTruckTypeAndNo()}"
-                    tools:text ="Open 32FTXXL18 MT"
-                    android:textColor="#505361"
+                    android:drawableTint="@color/text_grey_v3"
+                    android:text="@{request.getMarketplaceTruckInfo()}"
+                    tools:text ="Closed 32FTMXL"
+                    android:textColor="@color/text_grey_v3"
                     android:drawableStart="@drawable/ic_truck_small"
                     app:layout_constraintTop_toBottomOf="@id/cl_from_to_city"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -123,27 +125,13 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Advance Payment"
-                    android:textColor="#505361"
+                    android:text="@{request.getMarketplacePaymentModeDisplay()}"
+                    android:textColor="@color/text_grey_v3"
                     android:layout_marginStart="@dimen/size_8dp"
-                    android:paddingTop="@dimen/size_4dp"
                     android:drawableStart="@drawable/money_bill_wave"
                     app:layout_constraintStart_toEndOf="@id/truckInfo"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/supplierNumber"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:drawablePadding="@dimen/size_4dp"
-                    tools:text ="9876******"
-                    android:textColor="#505361"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:layout_marginTop="@dimen/size_12dp"
-                    android:drawableStart="@drawable/ic_call_12dp"
-                    app:layout_constraintStart_toStartOf="@id/paymentType"
-                    app:layout_constraintTop_toBottomOf="@id/paymentType" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/advance_payment_percentage"
@@ -154,15 +142,44 @@
                     tools:text ="(50%)"
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_2dp"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:text="@{request.getAdvancePaymentPercentage()}"
+                    android:text="@{request.getMarketplaceAdvancePaymentPercentage()}"
                     app:layout_constraintStart_toEndOf="@id/paymentType"
                     app:layout_constraintTop_toTopOf="@id/paymentType"
                     app:layout_constraintBottom_toBottomOf="@id/paymentType" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/supplierName"
+                    android:layout_width="wrap_content"
+                    android:paddingEnd="@dimen/size_11dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    android:drawableTint="@color/text_grey_v3"
+                    android:text="@{request.shipperName}"
+                    tools:text ="Mohan Aggarwal"
+                    android:textColor="@color/text_grey_v3"
+                    android:drawableStart="@drawable/ic_user"
+                    app:layout_constraintTop_toBottomOf="@id/truckInfo"
+                    app:layout_constraintStart_toStartOf="@id/truckInfo" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/supplierNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:drawablePadding="@dimen/size_4dp"
+                    tools:text ="******8989"
+                    android:text="@{request.shipperPhoneNumber}"
+                    android:textColor="@color/text_grey_v3"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:drawableStart="@drawable/ic_call_12dp"
+                    app:layout_constraintStart_toStartOf="@id/paymentType"
+                    app:layout_constraintTop_toBottomOf="@id/paymentType" />
+
                 <include
                     android:id="@+id/container_error"
-                    layout="@layout/item_bottom_button_v2"
+                    layout="@layout/item_bottom_button_marketplace_listing"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/size_12dp"
@@ -171,30 +188,9 @@
                     tools:visibility="visible"
                     />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/supplierName"
-                    android:layout_width="wrap_content"
-                    android:paddingTop="@dimen/size_4dp"
-                    android:paddingEnd="@dimen/size_11dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:layout_marginTop="@dimen/size_12dp"
-                    android:drawablePadding="@dimen/size_4dp"
-                    android:text="@{request.getTruckTypeAndNo()}"
-                    tools:text ="Mohan Aggarwal"
-                    android:textColor="#505361"
-                    android:drawableStart="@drawable/ic_user"
-                    app:layout_constraintTop_toBottomOf="@id/truckInfo"
-                    app:layout_constraintStart_toStartOf="@id/truckInfo" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-        <include
-            android:id="@+id/layoutIntracity"
-            tools:visibility = "gone"
-            layout="@layout/card_load_delhivery_intracity_v2"/>
     </androidx.cardview.widget.CardView>
 
 </layout>
