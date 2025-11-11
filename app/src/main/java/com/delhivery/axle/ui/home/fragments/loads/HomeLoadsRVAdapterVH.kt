@@ -570,12 +570,10 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
       // filter visibility based on user's demand type
       binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
       binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
-      //TODO
-      //Uncomment the below statement after complete logic implementation
-      //binding.dlvMarketplaceToggle.visibility = if(item.data.userDemandType.contains(DemandType.Spot_Marketplace.type))View.VISIBLE else View.GONE
-      //TODO
+      binding.dlvMarketplaceToggle.visibility = if(item.data.userDemandType.contains(DemandType.Spot_Marketplace.type))View.VISIBLE else View.GONE
+
       //Comment below line once implementation is complete
-      binding.dlvMarketplaceToggle.visibility = View.VISIBLE
+      //binding.dlvMarketplaceToggle.visibility = View.VISIBLE
 
       when (item.data.filterType) {
           DemandType.Intracity.type-> {
