@@ -56,10 +56,11 @@ class TransactionsRepository @Inject constructor(
   /**
    * Get spot marketplace transactions
    */
-  fun fetchSpotMarketplaceTransactions(onlyCount: Boolean = false, limit: Int = UserTripsLoadLimit) =
+  fun fetchSpotMarketplaceTransactions(onlyCount: Boolean = false, limit: Int = UserTripsLoadLimit, offset: Int) =
     transactionService.spotMarketplaceTransactions(
       onlyCount = onlyCount,
-      limit = limit
+      limit = limit,
+      offset = offset
     ).convertResponse()
 
   /**

@@ -277,7 +277,8 @@ class HomeLoadsViewModel @Inject constructor(
                 ),
                 transactionsRepository.fetchSpotMarketplaceTransactions(
                     onlyCount = true,
-                    limit = 10
+                    limit = 10,
+                    offset = 0
                 ).subscribeOn(Schedulers.io()),
                 BiFunction { recommTrans, marketplaceTrans ->
                     Triple(_res.transactions, _res.total, Pair(recommTrans, marketplaceTrans))
@@ -451,7 +452,8 @@ class HomeLoadsViewModel @Inject constructor(
                         ).subscribeOn(Schedulers.io()),
                         transactionsRepository.fetchSpotMarketplaceTransactions(
                             onlyCount = true,
-                            limit = 10
+                            limit = 10,
+                            offset = 0
                         ).subscribeOn(Schedulers.io()),
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
                         { t1, t2, t3, t4, t5 ->
@@ -730,7 +732,8 @@ class HomeLoadsViewModel @Inject constructor(
                     // Fetch marketplace count inline
                     compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
                         onlyCount = true,
-                        limit = 10
+                        limit = 10,
+                        offset = 0
                     ).onBackground()
                     .subscribe { marketplaceRes, marketplaceError ->
                         if (!marketplaceError) {
@@ -828,7 +831,7 @@ class HomeLoadsViewModel @Inject constructor(
   fun fetchSpotMarketplaceLoads(
     paginate: Boolean = false,
     onlyCount: Boolean = false,
-    limit: Int = 20
+    limit: Int = 10
   ) {
     if (!paginate) {
       offset = 0
@@ -879,7 +882,8 @@ class HomeLoadsViewModel @Inject constructor(
     // First call: Get count only
     compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
       onlyCount = true,
-      limit = limit
+      limit = limit,
+        offset = 0
     ).flatMap { countRes ->
       val count = countRes.let { data -> data.totalCount } ?: 0
       Log.d("MarketplaceDebug", "Count API Response - count: $count")
@@ -892,7 +896,8 @@ class HomeLoadsViewModel @Inject constructor(
       // Second call: Get actual data with only_count=false
       transactionsRepository.fetchSpotMarketplaceTransactions(
         onlyCount = false,
-        limit = limit
+        limit = limit,
+          offset = offset
       )
     }.flatMap { _res ->
       val transactions = _res.transactions
@@ -1064,10 +1069,11 @@ class HomeLoadsViewModel @Inject constructor(
               Log.d("MarketplaceDebug", "Added marketplace item ${index + 1}: transactionId=${load.transactionId}")
             }
 
-            if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
-              add(Pair(HomeLoadsInfoItem(), AddUpdate))
+            if (!hasMoreData && !hasOrionLoadOnce) {
+              //add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
             }
-            add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+
             
             Log.d("MarketplaceDebug", "Total items to post: ${this.size}")
 

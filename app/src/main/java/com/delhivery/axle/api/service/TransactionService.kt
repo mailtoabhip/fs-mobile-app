@@ -151,6 +151,7 @@ interface TransactionService {
   @GET("/v2/spot-marketplace/loads/")
   fun spotMarketplaceTransactions(
     @Query("only_count") onlyCount: Boolean = false,
-    @Query("limit") limit: Int = 25,
+    @Query("limit") limit: Int,
+    @Query("offset")  offset: Int
   ): Single<BaseResponse<SpotMarketplaceLoadsData>>
 }
