@@ -277,7 +277,7 @@ class HomeLoadsViewModel @Inject constructor(
                 ),
                 transactionsRepository.fetchSpotMarketplaceTransactions(
                     onlyCount = true,
-                    limit = 10,
+                    limit = 100,
                     offset = 0
                 ).subscribeOn(Schedulers.io()),
                 BiFunction { recommTrans, marketplaceTrans ->
@@ -452,7 +452,7 @@ class HomeLoadsViewModel @Inject constructor(
                         ).subscribeOn(Schedulers.io()),
                         transactionsRepository.fetchSpotMarketplaceTransactions(
                             onlyCount = true,
-                            limit = 10,
+                            limit = 100,
                             offset = 0
                         ).subscribeOn(Schedulers.io()),
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
@@ -732,7 +732,7 @@ class HomeLoadsViewModel @Inject constructor(
                     // Fetch marketplace count inline
                     compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
                         onlyCount = true,
-                        limit = 10,
+                        limit = 100,
                         offset = 0
                     ).onBackground()
                     .subscribe { marketplaceRes, marketplaceError ->
@@ -831,7 +831,7 @@ class HomeLoadsViewModel @Inject constructor(
   fun fetchSpotMarketplaceLoads(
     paginate: Boolean = false,
     onlyCount: Boolean = false,
-    limit: Int = 10
+    limit: Int = 100
   ) {
     if (!paginate) {
       offset = 0

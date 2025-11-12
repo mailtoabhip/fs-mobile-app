@@ -597,7 +597,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     if (selectedLoadFilter == "Marketplace") {
       // For Marketplace tab, call the marketplace-specific API for data
       // This also fetches other API counts internally
-      viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 10)
+      viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = UserTripsLoadLimit)
     } else {
       // For other tabs (Intracity, Intercity, etc.), call regular transactions API
       // This also fetches marketplace count internally
@@ -860,7 +860,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         viewModel.routeUpdated = false
         adapter.resetStaticData()
         // Call the new marketplace loads function
-        viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = 10)
+        viewModel.fetchSpotMarketplaceLoads(paginate = false, onlyCount = false, limit = UserTripsLoadLimit)
       }
       
       HomeLoadsKycPendingAction -> {
@@ -1343,10 +1343,10 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
   /**
    * Pagination interface
    */
-  inner class PaginationInterface : PaginationScrollListener(10) {
+  inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
     override fun loadMore() {
         if (selectedLoadFilter == "Marketplace") {
-            viewModel.fetchSpotMarketplaceLoads(paginate = true, onlyCount = false, limit = 10)
+            viewModel.fetchSpotMarketplaceLoads(paginate = true, onlyCount = false, limit = UserTripsLoadLimit)
         } else {
             viewModel.fetchUserTransactions(true, demandType, selectedLoadFilter)
         }
