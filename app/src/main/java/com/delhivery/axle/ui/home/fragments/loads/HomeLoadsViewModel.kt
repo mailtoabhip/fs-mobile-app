@@ -12,6 +12,7 @@ import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.response.SearchAfter
+import com.delhivery.axle.api.response.SpotMarketplaceLoadsData
 import com.delhivery.axle.api.response.TransactionsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.Quintuple
@@ -137,6 +138,8 @@ class HomeLoadsViewModel @Inject constructor(
 
     var user: UserModel? = null
 
+    val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
+
 
 
     /**
@@ -260,6 +263,21 @@ class HomeLoadsViewModel @Inject constructor(
             // Speed is already set in each transaction from API response
             // No need to override: _res.transactions?.forEach { it.speed = _res.speed }
 
+            // Check if user has marketplace access
+            val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
+
+            // Create marketplace Single conditionally
+            val marketplaceSingle = if (hasMarketplaceAccess) {
+                transactionsRepository.fetchSpotMarketplaceTransactions(
+                    onlyCount = true,
+                    limit = 100,
+                    offset = 0
+                ).subscribeOn(Schedulers.io())
+            } else {
+                // Return empty marketplace data
+                Single.just(SpotMarketplaceLoadsData(totalCount = 0, limit = 0, offset = 0, hasNext = false, transactions = emptyList()))
+            }
+
             Single.zip(
                 transactionsRepository.fetchRecommTransactions(
                     offset,
@@ -275,11 +293,7 @@ class HomeLoadsViewModel @Inject constructor(
                     true, splitViewCount = true,
                     searchAfter = searchAfter
                 ),
-                transactionsRepository.fetchSpotMarketplaceTransactions(
-                    onlyCount = true,
-                    limit = 100,
-                    offset = 0
-                ).subscribeOn(Schedulers.io()),
+                marketplaceSingle,
                 BiFunction { recommTrans, marketplaceTrans ->
                     Triple(_res.transactions, _res.total, Pair(recommTrans, marketplaceTrans))
                 }
@@ -424,6 +438,21 @@ class HomeLoadsViewModel @Inject constructor(
                     more_default_loads = _res.more_loads
                     loadsCount += total
 
+                    // Check if user has marketplace access
+                    val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
+
+                    // Create marketplace Single conditionally
+                    val marketplaceSingle = if (hasMarketplaceAccess) {
+                        transactionsRepository.fetchSpotMarketplaceTransactions(
+                            onlyCount = true,
+                            limit = 100,
+                            offset = 0
+                        ).subscribeOn(Schedulers.io())
+                    } else {
+                        // Return empty marketplace data
+                        Single.just(SpotMarketplaceLoadsData(totalCount = 0, limit = 0, offset = 0, hasNext = false, transactions = emptyList()))
+                    }
+
                     Single.zip(
                         bidsRepository.bidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
                         bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
@@ -450,11 +479,7 @@ class HomeLoadsViewModel @Inject constructor(
                             splitViewCount = true,
                             searchAfter = searchAfter
                         ).subscribeOn(Schedulers.io()),
-                        transactionsRepository.fetchSpotMarketplaceTransactions(
-                            onlyCount = true,
-                            limit = 100,
-                            offset = 0
-                        ).subscribeOn(Schedulers.io()),
+                        marketplaceSingle,
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
                         { t1, t2, t3, t4, t5 ->
                             data class SixTuple<A, B, C, D, E, F>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E, val sixth: F)
