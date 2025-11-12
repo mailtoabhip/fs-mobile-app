@@ -327,7 +327,7 @@ class HomeLoadsViewModel @Inject constructor(
                                     AddUpdate
                                 )
                             )
-                        val count = _tRes.second+intercityCount+nonDlvCount
+                        val count = _tRes.second+intercityCount+nonDlvCount+marketplaceCount
                         Log.d("viewmodel", "${_tRes.second} intrcity $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
                         Log.d("count",count.toString())
                         fullLoadsCountLiveData.postValue(count)
@@ -528,7 +528,7 @@ class HomeLoadsViewModel @Inject constructor(
                                     )
                                 )
                             Log.d("LoadView", "${_tRes.fourth.total} inter $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
-                            val count1 = _tRes.fourth.total + intercityCount + nonDlvCount
+                            val count1 = _tRes.fourth.total + intercityCount + nonDlvCount + marketplaceCount
                             fullLoadsCountLiveData.postValue(count1)
 
                             add(
@@ -744,7 +744,7 @@ class HomeLoadsViewModel @Inject constructor(
                     }
                     
                   add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
-                val count = _tRes.fourth.total+intercityCount+nonDlvCount
+                val count = _tRes.fourth.total+intercityCount+nonDlvCount+marketplaceCount
                 fullLoadsCountLiveData.postValue(count)
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(selectedFilter,_tRes.fourth.total,intercityCount,nonDlvCount,marketplaceCount,userPrefs.demandType)), AddUpdate))
                   if(!paginate) {
@@ -891,7 +891,7 @@ class HomeLoadsViewModel @Inject constructor(
       // Store the count
       total = count
       cachedMarketplaceCount = total
-      loadsCountLiveData.postValue(total)
+      loadsCountLiveData.postValue(count)
       
       // Second call: Get actual data with only_count=false
       transactionsRepository.fetchSpotMarketplaceTransactions(
@@ -942,8 +942,6 @@ class HomeLoadsViewModel @Inject constructor(
                 AddUpdate
               )
             )
-
-            fullLoadsCountLiveData.postValue(total)
             
             // Cache the marketplace count (already set from the API response)
             cachedMarketplaceCount = total
@@ -989,7 +987,10 @@ class HomeLoadsViewModel @Inject constructor(
                     }catch (e:Exception){
                         Log.e("CountError",e.toString())
                     }
-                    
+
+                    val totalAllCounts = intracityCount + intercityCount + nonDlvCount + cachedMarketplaceCount
+                    fullLoadsCountLiveData.postValue(totalAllCounts)
+
                     // Update filter with all counts
                     val filterItem = HomeLoadsFilterItem(
                         HomeLoadsFilterItemData(
