@@ -74,7 +74,9 @@ data class UpdateTransactionBidRequest(
   @SerializedName("expected_arrival_time_pickup_remark") val expectedArrivalTimePickupRemark:String? = "",
   @SerializedName("tentative_trip_count") val tentativeTripCount:Int?,
   @SerializedName("vehicle_number") val vehicleNumber:String?,
-  @SerializedName("placement_days") val placementDays:String?
+  @SerializedName("placement_days") val placementDays:String?,
+    @SerializedName("originator") val originator:String? = null,
+    @SerializedName("demand_type") val demandType: String? = null,
 
 
 ) {
@@ -95,22 +97,39 @@ data class UpdateTransactionBidRequest(
       expectedArrivalTimePickupRemark:String?,
       tentativeTripCount: Int?,
       vehicleNumber: String?,
-      placementDays: String?
-    ) = if (isPMT)
-      UpdateTransactionBidRequest(
-          transactionId = transactionId, bidId = bidId,
-          bidAmount = pmtRate, freightCost = amount,
-          supplierId = supplierId, commercialType = commercialType,
-              expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount, vehicleNumber = vehicleNumber, placementDays = placementDays
-      )
-    else
-      UpdateTransactionBidRequest(
-          transactionId = transactionId, bidId = bidId,
-          bidAmount = amount, freightCost = amount, supplierId = supplierId,
-          commercialType = commercialType,expectedArrivalTimePickup =  expectedArrivalTimePickup,
-              expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays
-      )
+      placementDays: String?,
+      demandType: String? = null,
+      originator: String? = null
+    ) = if (isPMT) {
+        UpdateTransactionBidRequest(
+            transactionId = transactionId,
+            bidId = bidId,
+            bidAmount = pmtRate,
+            freightCost = amount,
+            supplierId = supplierId,
+            commercialType = commercialType,
+            expectedArrivalTimePickup = expectedArrivalTimePickup,
+            expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark,
+            tentativeTripCount = tentativeTripCount,
+            vehicleNumber = vehicleNumber,
+            placementDays = placementDays
+        )
+    }else if (!isPMT && demandType == "spot_marketplace") {
+        UpdateTransactionBidRequest(
+            transactionId = transactionId, bidId = bidId,
+            bidAmount = amount, freightCost = amount, supplierId = supplierId,
+            commercialType = commercialType,expectedArrivalTimePickup =  expectedArrivalTimePickup,
+            expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays, demandType = demandType, originator = originator
+        )
+    }
+    else {
+        UpdateTransactionBidRequest(
+            transactionId = transactionId, bidId = bidId,
+            bidAmount = amount, freightCost = amount, supplierId = supplierId,
+            commercialType = commercialType,expectedArrivalTimePickup =  expectedArrivalTimePickup,
+            expectedArrivalTimePickupRemark = expectedArrivalTimePickupRemark, tentativeTripCount = tentativeTripCount,vehicleNumber = vehicleNumber, placementDays = placementDays
+        )
+    }
   }
 
 }

@@ -275,7 +275,9 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             expectedArrivalTimePickupRemark = null,
             tentativeTripsCount = null,
             vehicleNumber = null,
-            placementDays = null
+            placementDays = null,
+            demandType = "spot_marketplace",
+            originator = "axle-app"
         )
             .onBackground()
             .progress()
