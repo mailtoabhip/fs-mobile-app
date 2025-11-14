@@ -100,6 +100,12 @@
 -dontwarn com.amazonaws.http.**
 -dontwarn com.amazonaws.metrics.**
 
+# Suppress warnings for optional AWS Mobile Auth dependencies that are not used
+-dontwarn com.amazonaws.mobile.auth.facebook.**
+-dontwarn com.amazonaws.mobile.auth.google.**
+-dontwarn com.amazonaws.mobile.auth.ui.**
+-dontwarn com.amazonaws.mobileconnectors.cognitoauth.**
+
 -keepattributes Signature,*Annotation*
 
 -dontwarn javax.xml.stream.events.**
