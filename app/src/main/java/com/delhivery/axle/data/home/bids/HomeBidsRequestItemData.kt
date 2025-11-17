@@ -1148,6 +1148,7 @@ data class HomeBidsRequestItemData(
         format.setTimeZone(TimeZone.getTimeZone("IST"));
         val date1: Date = format.parse(format.format(Date()))
         val date2: Date = format.parse(bidEndingTime)
+          Log.d("Time-Remaing", "${DateUtils.timeDiff(date1.time,date2.time)}")
         if (date2.compareTo(date1) > 0) {
           "Closes in ${DateUtils.timeDiff(date1.time,date2.time)}"
         } else {

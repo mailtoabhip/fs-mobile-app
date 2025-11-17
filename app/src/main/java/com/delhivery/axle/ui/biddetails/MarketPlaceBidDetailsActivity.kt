@@ -29,6 +29,7 @@ import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -359,6 +360,7 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         transaction.contractBiddingEndTime?.let { endTime ->
             try {
                 val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+                sdf.timeZone = TimeZone.getTimeZone("IST")  // Set timezone to IST to match server response
                 val date = sdf.parse(endTime)
                 date?.let {
                     startCountdownTimer(it.time)

@@ -83,6 +83,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
                     bidEndTime = response?.contractBiddingEndTime?.let { endTimeStr ->
                         try {
                             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                            sdf.timeZone = TimeZone.getTimeZone("IST")  // Set timezone to IST to match server response
                             sdf.parse(endTimeStr)
                         } catch (e: Exception) {
                             Log.e("BidDetails", "Failed to parse bid end time: $endTimeStr", e)
