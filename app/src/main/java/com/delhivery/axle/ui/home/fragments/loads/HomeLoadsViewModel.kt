@@ -1048,13 +1048,15 @@ class HomeLoadsViewModel @Inject constructor(
             )
             
             // Add KYC pending card if user is UNAPPROVED
-            if (!paginate && userPrefs.verificationStatus.equals("failed")) {
+            if (!paginate){
+                if(userPrefs.verificationStatus.equals("failed")){
               add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
+          }else{
+                add(Pair(HomeMarketPlaceInfoItem(), AddUpdate))
             }
+        }
 
-            if (!paginate) {
-              add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
-            }
+
 
             if (total == 0 && !paginate) {
               add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))

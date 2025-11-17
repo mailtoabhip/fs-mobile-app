@@ -513,6 +513,20 @@ internal class HomeLoadsTruckPriorityItemVH(binding: ViewHomeLoadsTruckPriorityI
   }
 }
 
+/**
+ *   Add Marketplace info
+ */
+internal class HomeLoadMarketPlaceInfoItemVH(binding: ViewHomeMarketplaceInfoBinding) :
+    BaseHomeLoadsRVAdapterViewHolder<ViewHomeMarketplaceInfoBinding, HomeMarketPlaceInfoItem>(
+        binding
+    ) {
+    override fun bind(
+        item: HomeMarketPlaceInfoItem,
+        _interface: HomeLoadsRVAdapterInterface
+    ) {
+    }
+}
+
 
 internal class HomeLoadsShareRateItemVH(binding: ViewShareLayoutBannerBinding) :
     BaseHomeLoadsRVAdapterViewHolder<ViewShareLayoutBannerBinding, HomeLoadsShareRateItem>(

@@ -24,7 +24,10 @@ enum class HomeLoadsRVAdapterItemType(val typeId: Int) {
   ShareRate(11),
   LoadCategories(12),
   Marketplace(13),
-  KycCard(14);
+  KycCard(14),
+  MarketPlaceInfo(15);
+
+
 
   companion object {
     /**
@@ -74,6 +77,14 @@ class HomeLoadsAddTruckItem(data: HomeLoadsAddTruckItemData = HomeLoadsAddTruckI
  */
 class HomeLoadsTruckPriorityAccessItem(data: HomeLoadsTruckPriorityAccessItemData = HomeLoadsTruckPriorityAccessItemData()) :
   BaseHomeLoadsRVAdapterItem<HomeLoadsTruckPriorityAccessItemData>(Priority, data)
+
+
+
+/**
+ * MarketPlace info banner item
+ */
+class HomeMarketPlaceInfoItem(data: HomeLoadsMarketPlaceInfoItemData = HomeLoadsMarketPlaceInfoItemData()) :
+  BaseHomeLoadsRVAdapterItem<HomeLoadsMarketPlaceInfoItemData>(MarketPlaceInfo, data)
 
 /**
  * shareRate banner item
