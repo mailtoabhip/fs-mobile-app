@@ -33,6 +33,16 @@ android {
         debugSymbolLevel= "FULL"
       }
     }
+
+    //Production-like debuggable build
+    releaseDebuggable {
+      initWith release      // copy release config
+      debuggable true       // make it debuggable
+      signingConfig signingConfigs.release
+      minifyEnabled true
+      shrinkResources true
+    }
+
   }
   flavorDimensions+= "vanilla"
   productFlavors {
@@ -200,6 +210,9 @@ dependencies {
     exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel'
     exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'
   }
+
+  releaseDebuggableImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+
   releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
 
   implementation "com.google.firebase:firebase-perf-ktx:20.5.1"

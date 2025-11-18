@@ -118,3 +118,21 @@
 -keepclassmembers,allowobfuscation class * {
   @com.google.gson.annotations.SerializedName <fields>;
 }
+
+# Keep Retrofit service interfaces
+-keep interface com.delhivery.axle.api.service.** { *; }
+
+# Keep Retrofit service method signatures
+-keepclassmembers,allowobfuscation interface com.delhivery.axle.api.service.** {
+    <methods>;
+}
+
+# Keep Retrofit annotations
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-keepattributes Signature
+-keepattributes Exceptions
+
+# Keep Retrofit service implementations (generated at runtime)
+-keepclassmembers class * {
+    @retrofit2.http.* <methods>;
+}
