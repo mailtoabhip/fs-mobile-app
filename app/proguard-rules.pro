@@ -200,3 +200,69 @@
 
 # Keep all classes in the auth package that might contain lambdas
 -keep class com.delhivery.axle.ui.auth.** { *; }
+
+
+
+
+
+#New proguard rules - v2
+# Keep all data classes used by Gson (already have this, but ensure it's comprehensive)
+-keep class com.delhivery.axle.data.** { *; }
+
+# Keep UserModel and related classes with all properties
+-keep class com.delhivery.axle.data.UserModel { *; }
+-keep class com.delhivery.axle.data.SupplierModel { *; }
+-keep class com.delhivery.axle.data.ClientModel { *; }
+
+# Keep all fields in data classes (critical for Gson and property access)
+-keepclassmembers class com.delhivery.axle.data.** {
+    <fields>;
+}
+
+# Keep Kotlin data class component methods (for destructuring)
+-keepclassmembers class com.delhivery.axle.data.** {
+    public <methods>;
+}
+
+# Keep all lambda classes that implement functional interfaces
+-keep class * implements io.reactivex.functions.BiConsumer { *; }
+-keep class * implements io.reactivex.functions.Consumer { *; }
+
+# Keep synthetic methods (Kotlin generates these for lambdas)
+-keepclassmembers class * {
+    private synthetic <methods>;
+}
+
+# Keep all classes in ViewModels (they contain the lambda callbacks)
+-keep class com.delhivery.axle.ui.**.*ViewModel { *; }
+-keepclassmembers class com.delhivery.axle.ui.**.*ViewModel {
+    <methods>;
+}
+
+# Additional: Keep all classes that might be used via reflection in RxJava chains
+-keepclassmembers class * {
+    @kotlin.jvm.JvmStatic <methods>;
+}
+
+#======
+# Keep Kotlin lambda classes (they're named like ClassName$functionName$lambda$number)
+-keep class com.delhivery.axle.ui.auth.AuthenticationViewModel$* { *; }
+-keep class com.delhivery.axle.ui.**.*ViewModel$* { *; }
+
+# Keep all inner classes in ViewModels (lambdas become inner classes)
+-keep class com.delhivery.axle.ui.**.*ViewModel$*$* { *; }
+
+
+#=====
+# Gson: Keep all data classes with @SerializedName annotations
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+
+# Keep classes annotated with @SerializedName
+-keepclassmembers,allowobfuscation class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# Keep all data classes used by Gson
+-keep class com.delhivery.axle.data.** { *; }
