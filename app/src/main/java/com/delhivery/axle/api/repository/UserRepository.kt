@@ -51,10 +51,8 @@ class UserRepository @Inject constructor(
     return try {
       userPrefs.jwtToken?.let { token ->
         if (token.isBlank()) {
-          Log.d("OTP_ISSUE=======>>>>", "userId = isBlank")
           ""
         } else {
-          Log.d("OTP_ISSUE=======>>>>", "userId = JWT(token)")
           JWT(token).let { jwt ->
             jwt.claims["sub"]?.asString() ?: ""
           }
@@ -62,7 +60,6 @@ class UserRepository @Inject constructor(
       } ?: ""
     } catch (e: Exception) {
       // Handle JWT parsing errors
-      Log.d("OTP_ISSUE=======>>>>", "catch::userPrefs.jwtToken")
       userPrefs.jwtToken = null
       ""
     }
