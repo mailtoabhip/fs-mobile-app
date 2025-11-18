@@ -136,3 +136,67 @@
 -keepclassmembers class * {
     @retrofit2.http.* <methods>;
 }
+
+
+#Retrofit signature type info added
+-keepclassmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keepattributes Signature
+-keepattributes Exceptions
+
+
+#RxJava rules
+# RxJava2 rules - Add these to preserve generic type information
+-dontwarn io.reactivex.**
+-keep class io.reactivex.** { *; }
+-keep interface io.reactivex.** { *; }
+
+# Preserve generic signatures of Single, Observable, etc. for Retrofit
+-keepattributes Signature
+-keepattributes Exceptions
+
+# Keep RxJava2 classes used by Retrofit adapter
+-keepclassmembers class retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory { *; }
+-keepclassmembers class retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory$* { *; }
+
+
+
+#New rules for kotlin lamdas and rx
+# Kotlin Lambda classes for RxJava
+# Keep all classes that implement functional interfaces used by RxJava
+-keep class * implements io.reactivex.functions.Function { *; }
+-keep class * implements io.reactivex.functions.BiFunction { *; }
+-keep class * implements io.reactivex.functions.Function3 { *; }
+-keep class * implements io.reactivex.functions.Function4 { *; }
+-keep class * implements io.reactivex.functions.Function5 { *; }
+-keep class * implements io.reactivex.functions.Consumer { *; }
+-keep class * implements io.reactivex.functions.BiConsumer { *; }
+-keep class * implements io.reactivex.functions.Predicate { *; }
+
+# Keep Kotlin Triple class and its properties
+-keep class kotlin.Triple { *; }
+-keepclassmembers class kotlin.Triple {
+    public <fields>;
+    public <methods>;
+}
+
+# Keep Kotlin Pair class (also used in your code)
+-keep class kotlin.Pair { *; }
+-keepclassmembers class kotlin.Pair {
+    public <fields>;
+    public <methods>;
+}
+
+# Keep synthetic classes created for lambdas (Kotlin generates these)
+-keepclassmembers class * {
+    private synthetic <methods>;
+}
+
+# Additional rule: Keep lambda classes in ViewModels
+-keepclassmembers class com.delhivery.axle.ui.**.*ViewModel {
+    <methods>;
+}
+
+# Keep all classes in the auth package that might contain lambdas
+-keep class com.delhivery.axle.ui.auth.** { *; }
