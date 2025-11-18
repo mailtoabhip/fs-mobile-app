@@ -1249,7 +1249,26 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   /**
    * Current user id
    */
-  fun userId() = jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
+  fun userId(): String {
+    return try {
+      jwtToken?.let { token ->
+        if (token.isBlank()) {
+          // Clear invalid empty token
+          this.jwtToken = null
+          ""
+        } else {
+          JWT(token).let { jwt ->
+            jwt.claims["sub"]?.asString() ?: ""
+          }
+        }
+      } ?: ""
+    } catch (e: Exception) {
+      // Handle any JWT parsing errors (corrupted token, invalid format, etc.)
+      // Clear the invalid token to prevent future crashes
+      this.jwtToken = null
+      ""
+    }
+  }
 
   /**
    * Pref keys

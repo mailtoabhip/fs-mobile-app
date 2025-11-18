@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -347,6 +348,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   inner class ErrorObserver : Observer<Pair<AuthenticationUIError, String?>> {
     override fun onChanged(it: Pair<AuthenticationUIError, String?>) {
       it?.let { error ->
+        Log.d("OTP_ISSUE=======>>>>", "error.first = "+error.first)
+        Log.d("OTP_ISSUE=======>>>>", "error.second = "+error.second)
         /* show error message in dialog if not null || empty */
         if (error.second.isNotNullOrEmpty()) {
           dialogUtils.showErrorDialog(error.second!!,3L)

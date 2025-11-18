@@ -17,6 +17,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.Gson
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import retrofit2.HttpException
@@ -93,6 +94,10 @@ class AuthenticationViewModel @Inject constructor(
         Single.timer(500, MILLISECONDS), //add delay for animation
         BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
         .flatMap { _Res ->
+          Log.d("OTP_ISSUE=======>>>>", "flatMap"+_Res)
+          Log.d("OTP_ISSUE=======>>>>", "flatMap::_Res"+Gson().toJson(_Res))
+          Log.d("OTP_ISSUE=======>>>>", "flatMap::_Res.first"+Gson().toJson(_Res.first))
+          Log.d("OTP_ISSUE=======>>>>", "flatMap_Res.second"+Gson().toJson(_Res.second))
           userRepository.getUser(false)
               .map {
                 val msg = if (_Res.second.isNotNullOrEmpty()) {
@@ -105,33 +110,43 @@ class AuthenticationViewModel @Inject constructor(
         }
         .onBackground()
         .subscribe { _res, error ->
+          Log.d("OTP_ISSUE=======>>>>", ""+Gson().toJson(_res))
           state = if (!error && _res.first) {
             if(_res.third.supplierDetails?.isLoadBoardSupplier == false || _res.third.clientDetails?.isLoadBoardClient == false){
+              Log.d("OTP_ISSUE=======>>>>", "1")
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
+                Log.d("OTP_ISSUE=======>>>>", "2")
                 userPrefs.hasLoggedIn = false
                 Disabled
               } else{
+                Log.d("OTP_ISSUE=======>>>>", "3")
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 LoadRequest
               }
             }else{
+              Log.d("OTP_ISSUE=======>>>>", "4")
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
+                Log.d("OTP_ISSUE=======>>>>", "5")
                 userPrefs.hasLoggedIn = false
                 Disabled
               }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
+                Log.d("OTP_ISSUE=======>>>>", "6")
                 userPrefs.hasLoggedIn = false
                 AccountDetails
               }  else {
+                Log.d("OTP_ISSUE=======>>>>", "7")
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 LoadRequest
               }
             }
           } else {
+            Log.d("OTP_ISSUE=======>>>>", "8")
             if (error is HttpException) {
               userPrefs.hasLoggedIn = false
            }
+            Log.d("OTP_ISSUE=======>>>>", "9")
           errorLiveData.postValue(Pair(InvalidOTP, ""))
             OTP
           }

@@ -56,7 +56,56 @@
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
 -keep class com.delhivery.axle.api.response.** { *; }
-#-keep class com.delhivery.axle.api.request.** { *; }
+-keep class com.delhivery.axle.api.request.** { *; }
+
+
+
+
+
+
+
+-keep class com.delhivery.axle.api.response.** { *; }
+
+# CRITICAL: Keep response classes WITHOUT obfuscation for Gson to work with Kotlin data classes
+# The allowobfuscation flag breaks Kotlin data class constructor parameter matching
+-keepclassmembers class com.delhivery.axle.api.response.** {
+  <fields>;
+  <init>(...);
+}
+
+# Ensure @SerializedName annotations are preserved and fields are NOT obfuscated
+-keepclassmembers class com.delhivery.axle.api.response.** {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+
+
+
+
+
+
+# Keep LoginResponse and ensure Gson can deserialize it
+-keep class com.delhivery.axle.api.response.LoginResponse { *; }
+-keepclassmembers class com.delhivery.axle.api.response.LoginResponse {
+    <init>(...);
+    <fields>;
+}
+
+# Ensure BaseResponse generic type information is preserved
+-keep class com.delhivery.axle.api.response.BaseResponse { *; }
+-keepclassmembers class com.delhivery.axle.api.response.BaseResponse {
+    <init>(...);
+    <fields>;
+}
+
+# Additional rule: Keep all constructors for response classes (critical for Gson)
+-keepclassmembers class com.delhivery.axle.api.response.** {
+    <init>(...);
+}
+
+# Keep all fields in response classes (Gson needs these for reflection)
+-keepclassmembers class com.delhivery.axle.api.response.** {
+    <fields>;
+}
 
 -keep class com.google.gson.stream.** { *; }
 
@@ -115,9 +164,9 @@
 -keepclassmembers enum * { *; }
 -keep class com.google.code.gson.* { *; }
 -keepattributes *Annotation*, Signature, Exception
--keepclassmembers,allowobfuscation class * {
-  @com.google.gson.annotations.SerializedName <fields>;
-}
+#-keepclassmembers,allowobfuscation class * {
+#  @com.google.gson.annotations.SerializedName <fields>;
+#}
 
 # Keep Retrofit service interfaces
 -keep interface com.delhivery.axle.api.service.** { *; }
@@ -260,9 +309,30 @@
 -keepattributes EnclosingMethod
 
 # Keep classes annotated with @SerializedName
--keepclassmembers,allowobfuscation class * {
-    @com.google.gson.annotations.SerializedName <fields>;
-}
+#-keepclassmembers,allowobfuscation class * {
+#    @com.google.gson.annotations.SerializedName <fields>;
+#}
 
 # Keep all data classes used by Gson
 -keep class com.delhivery.axle.data.** { *; }
+
+#jwt
+# Keep auth0 JWT classes
+-keep class com.auth0.android.jwt.** { *; }
+-keep class com.auth0.android.jwt.JWT { *; }
+
+
+
+
+
+# Keep generic type signatures so Gson TypeToken can read them
+-keepattributes Signature
+
+# Keep annotations metadata too (optional but useful)
+-keepattributes *Annotation*
+
+# Keep Auth0 JWT library classes (prevent aggressive shrinking/obfuscation of the library)
+-keep class com.auth0.android.jwt.** { *; }
+
+# Keep Gson TypeToken class (usually not needed but safe)
+-keep class com.google.gson.reflect.TypeToken { *; }

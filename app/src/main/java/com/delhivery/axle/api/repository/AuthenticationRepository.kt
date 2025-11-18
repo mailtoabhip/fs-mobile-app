@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.OTPLoginRequest
 import com.delhivery.axle.api.request.PasswordLoginRequest
@@ -79,8 +80,26 @@ class AuthenticationRepository @Inject constructor(
    * Handle jwt token post success login
    */
   private fun handleJWTToken(jwtToken: String) {
-    userPrefs.jwtToken = jwtToken
-    networkInterceptor.updateJWT(jwtToken)
+    try {
+      // Validate token can be parsed before storing
+      // Trim whitespace and validate token is not empty
+      val trimmedToken = jwtToken.trim()
+      if (trimmedToken.isEmpty()) {
+        Log.e("Auth", "JWT token is empty after trimming")
+        return
+      }
+      Log.d("Auth", "Attempting to parse JWT token, length: ${trimmedToken.length}")
+      JWT(trimmedToken)
+      userPrefs.jwtToken = trimmedToken
+      networkInterceptor.updateJWT(trimmedToken)
+      Log.d("Auth", "JWT token successfully stored")
+    } catch (e: Exception) {
+      // Log error and don't store invalid token
+      Log.e("Auth", "Invalid JWT token received", e)
+      Log.e("Auth", "Token that failed: ${jwtToken.take(100)}...")
+      Log.e("Auth", "Exception type: ${e.javaClass.simpleName}, message: ${e.message}")
+      e.printStackTrace()
+    }
   }
 
   /**
