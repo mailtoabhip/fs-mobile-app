@@ -52,7 +52,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("required_on") val _requiredOn: String?,
   @SerializedName("target_price") val targetPrice: Double?=0.0,
   @SerializedName("uuid") val uuid: String?,
-  @SerializedName("transaction_id") val transactionId: String? = "122371",
+  @SerializedName("transaction_id") val transactionId: String?,
   @SerializedName("truck_type") val truckType: String?,
   @SerializedName("origin") val origin: String,
   @SerializedName("intermediary_stop1_city") val stop1City: String,
