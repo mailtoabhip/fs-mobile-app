@@ -17,6 +17,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.gson.Gson
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import retrofit2.HttpException
