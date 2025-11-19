@@ -71,7 +71,7 @@
           android:text="Add Team Member"
           android:textAllCaps="false"
           android:visibility="gone"
-          android:textColor="@color/white" />
+          android:textColor="@color/colorAccent" />
 
 
     </RelativeLayout>
