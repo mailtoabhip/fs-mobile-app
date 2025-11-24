@@ -334,8 +334,10 @@
 # Keep Auth0 JWT library classes (prevent aggressive shrinking/obfuscation of the library)
 -keep class com.auth0.android.jwt.** { *; }
 
-# Keep Gson TypeToken class (usually not needed but safe)
+# Keep Gson TypeToken class and all classes that extend it
+# This is critical for preserving generic type information in anonymous TypeToken subclasses
 -keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken { *; }
 
 # Keep companion object TypeToken fields to prevent ProGuard/R8 obfuscation issues
 # These are static fields that hold TypeToken instances for generic types
@@ -346,3 +348,13 @@
 -keepclassmembers class com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel$Companion {
     <fields>;
 }
+
+# Keep anonymous inner classes that extend TypeToken (created by object : TypeToken<...>() {})
+# These are critical for TypeToken.getSuperclassTypeParameter() to work correctly
+# The generic type information must be preserved via Signature attribute
+-keep class com.delhivery.axle.utils.prefs.UserPrefs$Companion$* extends com.google.gson.reflect.TypeToken { *; }
+-keep class com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel$Companion$* extends com.google.gson.reflect.TypeToken { *; }
+
+# Additional safety: Keep all anonymous classes in companion objects that might extend TypeToken
+# This ensures TypeToken.getSuperclassTypeParameter() can access the generic type via reflection
+-keepclassmembers class *$Companion$* extends com.google.gson.reflect.TypeToken { *; }
