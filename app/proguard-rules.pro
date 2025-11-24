@@ -336,3 +336,13 @@
 
 # Keep Gson TypeToken class (usually not needed but safe)
 -keep class com.google.gson.reflect.TypeToken { *; }
+
+# Keep companion object TypeToken fields to prevent ProGuard/R8 obfuscation issues
+# These are static fields that hold TypeToken instances for generic types
+-keepclassmembers class com.delhivery.axle.utils.prefs.UserPrefs$Companion {
+    <fields>;
+}
+
+-keepclassmembers class com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel$Companion {
+    <fields>;
+}
