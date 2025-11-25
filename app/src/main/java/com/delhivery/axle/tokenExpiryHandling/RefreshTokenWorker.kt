@@ -117,7 +117,7 @@ class RefreshTokenWorker(
         val response = okHttpClient.newCall(request).await()
         
         try {
-            val strResponse = response?.body?.string()
+            val strResponse = response.body()?.string()
             if (strResponse != null) {
                 val json = JSONObject(strResponse)
                 if (!json.isNull("jwt")) {
