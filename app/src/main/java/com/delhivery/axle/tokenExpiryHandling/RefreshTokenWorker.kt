@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.config.UrlConfig.AppID
@@ -35,12 +36,15 @@ class RefreshTokenWorker(
     companion object {
         const val WORK_NAME = "RefreshTokenWorker"
         private const val TAG = "RefreshTokenWorker"
+        private const val MAX_RETRY_ATTEMPTS = 3
+        const val INITIAL_BACKOFF_DELAY_MINUTES = 1L
     }
 
     override suspend fun doWork(): Result {
+        val runAttemptCount = runAttemptCount
+        Log.d(TAG, "Token refresh work started (attempt $runAttemptCount)")
+        
         return try {
-            Log.d(TAG, "Token refresh work started")
-            
             if (userPrefs.jwtToken == null) {
                 Log.d(TAG, "No JWT token found, skipping refresh")
                 return Result.success()
@@ -52,22 +56,59 @@ class RefreshTokenWorker(
                 "https://api-ums.delhivery.com/v2/refresh_token/?force=1"
             }
 
-            refreshToken(url)
-            Log.d(TAG, "Token refresh completed successfully")
+            val refreshSuccess = refreshToken(url)
+            if (refreshSuccess) {
+                Log.d(TAG, "Token refresh completed successfully, canceling periodic work")
+                // Cancel the periodic work after successful refresh
+                WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
+            } else {
+                Log.d(TAG, "Token refresh completed but token was not updated")
+            }
             Result.success()
         } catch (e: HttpException) {
-            Log.e(TAG, "HTTP error during token refresh", e)
-            Result.retry()
+            val statusCode = e.code()
+            Log.e(TAG, "HTTP error during token refresh: statusCode=$statusCode, attempt=$runAttemptCount", e)
+            
+            // Don't retry on client errors (4xx) - these are likely permanent failures
+            if (statusCode in 400..499) {
+                Log.w(TAG, "Client error ($statusCode) - not retrying")
+                return Result.failure()
+            }
+            
+            // Retry on server errors (5xx) and other HTTP errors
+            if (shouldRetry(runAttemptCount)) {
+                Log.d(TAG, "Will retry after backoff delay")
+                return Result.retry()
+            } else {
+                Log.e(TAG, "Max retry attempts reached for HTTP error")
+                return Result.failure()
+            }
         } catch (e: IOException) {
-            Log.e(TAG, "Network error during token refresh", e)
-            Result.retry()
+            Log.e(TAG, "Network error during token refresh, attempt=$runAttemptCount", e)
+            
+            // Retry network errors with backoff
+            if (shouldRetry(runAttemptCount)) {
+                Log.d(TAG, "Will retry network error after backoff delay")
+                return Result.retry()
+            } else {
+                Log.e(TAG, "Max retry attempts reached for network error")
+                return Result.failure()
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "Unexpected error during token refresh", e)
+            Log.e(TAG, "Unexpected error during token refresh, attempt=$runAttemptCount", e)
+            // Don't retry unexpected errors
             Result.failure()
         }
     }
+    
+    /**
+     * Determines if the work should be retried based on attempt count
+     */
+    private fun shouldRetry(attemptCount: Int): Boolean {
+        return attemptCount < MAX_RETRY_ATTEMPTS
+    }
 
-    private suspend fun refreshToken(url: String) = withContext(Dispatchers.IO) {
+    private suspend fun refreshToken(url: String): Boolean = withContext(Dispatchers.IO) {
         val request = Request.Builder()
             .url(url)
             .addHeader("X-APP-ID", AppID.url())
@@ -85,6 +126,7 @@ class RefreshTokenWorker(
                         userPrefs.jwtToken = jwtToken
                         authInterceptor.updateJWT(jwtToken)
                         Log.d(TAG, "JWT token updated successfully")
+                        return@withContext true
                     } else {
                         Log.w(TAG, "Received empty JWT token")
                     }
@@ -94,6 +136,7 @@ class RefreshTokenWorker(
             } else {
                 Log.w(TAG, "Response body is null")
             }
+            return@withContext false
         } finally {
             response.close()
         }

@@ -126,6 +126,11 @@ class DelhiveryFCMService : FirebaseMessagingService() {
       val repeatingRequest
               = PeriodicWorkRequestBuilder<RefreshTokenWorker>(16, TimeUnit.MINUTES)
         .setConstraints(constraints)
+        .setBackoffCriteria(
+            BackoffPolicy.LINEAR,
+            RefreshTokenWorker.INITIAL_BACKOFF_DELAY_MINUTES,
+            TimeUnit.MINUTES
+        )
         .build()
 
       WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
