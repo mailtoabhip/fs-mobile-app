@@ -16,9 +16,12 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
@@ -58,22 +61,26 @@ class RefreshTokenWorker(
             }
 
             val refreshSuccess = refreshToken(url)
-            if (refreshSuccess) {
+            if (refreshSuccess == 200) {
                 Log.d(TAG, "Token refresh completed successfully, canceling periodic work")
                 // Cancel the periodic work after successful refresh
                 WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
             } else {
-                Log.d(TAG, "Token refresh completed but token was not updated")
+                // ❗ THROW HttpException WITH STATUS CODE
+                val errorBody = ResponseBody.create(MediaType.parse("text/plain"), "Token refresh failed")
+                throw HttpException(retrofit2.Response.error<Unit>(refreshSuccess, errorBody))
             }
             Result.success()
         } catch (e: HttpException) {
             val statusCode = e.code()
             Log.e(TAG, "HTTP error during token refresh: statusCode=$statusCode, attempt=$runAttemptCount", e)
-            
+
             // Log to Firebase Crashlytics
             FirebaseCrashlytics.getInstance().apply {
                 setCustomKey("refresh_token_attempt", runAttemptCount)
                 setCustomKey("http_status_code", statusCode)
+                setCustomKey("user_id", userPrefs.userId()?:"")
+                setCustomKey("user_name", userPrefs.userName?:"")
                 recordException(e)
             }
             
@@ -98,6 +105,8 @@ class RefreshTokenWorker(
             FirebaseCrashlytics.getInstance().apply {
                 setCustomKey("refresh_token_attempt", runAttemptCount)
                 setCustomKey("error_type", "IOException")
+                setCustomKey("user_id", userPrefs.userId()?:"")
+                setCustomKey("user_name", userPrefs.userName?:"")
                 recordException(e)
             }
             
@@ -116,6 +125,8 @@ class RefreshTokenWorker(
             FirebaseCrashlytics.getInstance().apply {
                 setCustomKey("refresh_token_attempt", runAttemptCount)
                 setCustomKey("error_type", e.javaClass.simpleName)
+                setCustomKey("user_id", userPrefs.userId()?:"")
+                setCustomKey("user_name", userPrefs.userName?:"")
                 recordException(e)
             }
             
@@ -131,7 +142,7 @@ class RefreshTokenWorker(
         return attemptCount < MAX_RETRY_ATTEMPTS
     }
 
-    private suspend fun refreshToken(url: String): Boolean = withContext(Dispatchers.IO) {
+    private suspend fun refreshToken(url: String): Int = withContext(Dispatchers.IO) {
         val request = Request.Builder()
             .url(url)
             .addHeader("X-APP-ID", AppID.url())
@@ -140,8 +151,10 @@ class RefreshTokenWorker(
         val response = okHttpClient.newCall(request).await()
         
         try {
-            val strResponse = response.body()?.string()
-            if (strResponse != null) {
+            val resCode = response.code()
+            Log.d("resCode===>>>", ""+resCode)
+            if (resCode == 200) {
+                val strResponse = response.body()?.string()?:""
                 val json = JSONObject(strResponse)
                 if (!json.isNull("jwt")) {
                     val jwtToken = json.optString("jwt")
@@ -149,7 +162,7 @@ class RefreshTokenWorker(
                         userPrefs.jwtToken = jwtToken
                         authInterceptor.updateJWT(jwtToken)
                         Log.d(TAG, "JWT token updated successfully")
-                        return@withContext true
+                        return@withContext resCode
                     } else {
                         Log.w(TAG, "Received empty JWT token")
                     }
@@ -159,7 +172,7 @@ class RefreshTokenWorker(
             } else {
                 Log.w(TAG, "Response body is null")
             }
-            return@withContext false
+            return@withContext resCode
         } finally {
             response.close()
         }
