@@ -311,10 +311,12 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
           val itemBinding = historyItemBinding()
           itemBinding.data = item
           itemBinding.root.setOnClickListener {
-            searchLoad(false, item.originCity, item.destinationCity, item.truckType, item.truckDisplayName, item.status)
+            searchLoad(false, item?.originCity, item?.destinationCity, item?.truckType, item?.truckDisplayName, item?.status)
           }
           itemBinding.root.setOnLongClickListener {
-            viewModel.deleteSearchResult(item)
+            item?.let {
+                viewModel.deleteSearchResult(it)
+            }
             true
           }
           binding.containerHistory.addView(itemBinding.root, index)

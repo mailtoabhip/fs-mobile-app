@@ -153,13 +153,14 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
      */
     inner class SearchCityHistoryObserver : Observer<List<SearchCityEntity?>> {
         override fun onChanged(t: List<SearchCityEntity?>) {
-            t?.let { items ->
+            t.let { items ->
                 binding.containerHistory.removeAllViews()
+
                 items.forEachIndexed { index, item ->
                     val itemBinding = historyItemBinding()
-                    itemBinding.request = item.originCity
+                    itemBinding.request = item?.originCity
                     itemBinding.root.setOnClickListener {
-                        val data = item.originCity as CityModel
+                        val data = item?.originCity as CityModel
                         if(viewModel.fromDialog){
                             LocalBroadcastManager.getInstance(this@SearchCity)
                                 .sendBroadcast(Intent("get_selected_city").apply {
@@ -177,11 +178,14 @@ class SearchCity : BaseActivity<ActivitySearchCityBinding, SearchCityViewModel>(
                         finish()
                     }
                     itemBinding.root.setOnLongClickListener {
-                        viewModel.deleteCity(item)
+                        item?.let {
+                            viewModel.deleteCity(it)
+                        }
                         true
                     }
                     binding.containerHistory.addView(itemBinding.root, index)
                 }
+
             }
             /* title as per search results */
             binding.textHistoryTitle.visible(!t.isNullOrEmpty())

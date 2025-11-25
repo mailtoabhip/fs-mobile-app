@@ -272,6 +272,8 @@ class PlacementsBidDetailsActivity :
                            binding.bottomLay.visibility = View.VISIBLE
                          }*/
                     }
+
+                    else -> binding.refreshLayout.isRefreshing = false
                 }
             }
             binding.executePendingBindings()

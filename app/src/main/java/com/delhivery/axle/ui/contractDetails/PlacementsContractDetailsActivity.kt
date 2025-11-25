@@ -279,6 +279,8 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
                     false -> {
                         binding.refreshLayout.isRefreshing = false
                     }
+
+                    else -> binding.refreshLayout.isRefreshing = false
                 }
             }
             binding.executePendingBindings()
