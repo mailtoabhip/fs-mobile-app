@@ -254,8 +254,8 @@ class PlacementsBidDetailsActivity :
     /**
      * Progress observer
      */
-    inner class ProgressObserver : Observer<Boolean> {
-        override fun onChanged(t: Boolean) {
+    inner class ProgressObserver : Observer<Boolean?> {
+        override fun onChanged(t: Boolean?) {
             t.let {
                 when (t) {
                     true -> {
@@ -345,8 +345,8 @@ class PlacementsBidDetailsActivity :
     /**
      * Transaction details and UI updation Observer
      */
-    inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData) {
+    inner class TransactionObserver : Observer<HomeBidsRequestItemData?> {
+        override fun onChanged(t: HomeBidsRequestItemData?) {
             if (t != null) {
                 t.let { _transaction ->
                     //assign placementtype to loadType var to distinguish b/w different types of loads in "HomeBidsRequestItemData" class and its functions

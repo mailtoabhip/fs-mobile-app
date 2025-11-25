@@ -268,8 +268,8 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
         }
     }
 
-    inner class ProgressObserver : Observer<Boolean> {
-        override fun onChanged(t: Boolean) {
+    inner class ProgressObserver : Observer<Boolean?> {
+        override fun onChanged(t: Boolean?) {
             t.let {
                 when (t) {
                     true -> {
@@ -288,8 +288,8 @@ class PlacementsContractDetailsActivity: BaseActivity<ActivityPlacementsContract
     /**
      * Transaction details and UI updation Observer
      */
-    inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-        override fun onChanged(t: HomeBidsRequestItemData) {
+    inner class TransactionObserver : Observer<HomeBidsRequestItemData?> {
+        override fun onChanged(t: HomeBidsRequestItemData?) {
             if (t != null) {
                 t.let { _transaction ->
                     Log.d(TAG, "TransactionObserver-START")
