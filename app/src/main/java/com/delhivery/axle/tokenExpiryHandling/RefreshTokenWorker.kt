@@ -12,6 +12,7 @@ import com.delhivery.axle.injection.module.DaggerWorkerFactory
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -69,6 +70,13 @@ class RefreshTokenWorker(
             val statusCode = e.code()
             Log.e(TAG, "HTTP error during token refresh: statusCode=$statusCode, attempt=$runAttemptCount", e)
             
+            // Log to Firebase Crashlytics
+            FirebaseCrashlytics.getInstance().apply {
+                setCustomKey("refresh_token_attempt", runAttemptCount)
+                setCustomKey("http_status_code", statusCode)
+                recordException(e)
+            }
+            
             // Don't retry on client errors (4xx) - these are likely permanent failures
             if (statusCode in 400..499) {
                 Log.w(TAG, "Client error ($statusCode) - not retrying")
@@ -86,6 +94,13 @@ class RefreshTokenWorker(
         } catch (e: IOException) {
             Log.e(TAG, "Network error during token refresh, attempt=$runAttemptCount", e)
             
+            // Log to Firebase Crashlytics
+            FirebaseCrashlytics.getInstance().apply {
+                setCustomKey("refresh_token_attempt", runAttemptCount)
+                setCustomKey("error_type", "IOException")
+                recordException(e)
+            }
+            
             // Retry network errors with backoff
             if (shouldRetry(runAttemptCount)) {
                 Log.d(TAG, "Will retry network error after backoff delay")
@@ -96,6 +111,14 @@ class RefreshTokenWorker(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Unexpected error during token refresh, attempt=$runAttemptCount", e)
+            
+            // Log to Firebase Crashlytics
+            FirebaseCrashlytics.getInstance().apply {
+                setCustomKey("refresh_token_attempt", runAttemptCount)
+                setCustomKey("error_type", e.javaClass.simpleName)
+                recordException(e)
+            }
+            
             // Don't retry unexpected errors
             Result.failure()
         }
