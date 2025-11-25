@@ -17,7 +17,7 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
     targetSdkVersion 35
-    versionCode 135
+    versionCode 136
     versionName "2.133.4"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
