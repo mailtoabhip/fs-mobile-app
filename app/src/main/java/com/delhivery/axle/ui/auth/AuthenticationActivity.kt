@@ -260,8 +260,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   /**
    * [AuthenticationUIState] observer
    */
-  inner class StateObserver : Observer<AuthenticationUIState> {
-    override fun onChanged(it: AuthenticationUIState) {
+  inner class StateObserver : Observer<AuthenticationUIState?> {
+    override fun onChanged(it: AuthenticationUIState?) {
       it?.let { state ->
         binding.state = state
         when (state) {
@@ -345,8 +345,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
   /**
    * [AuthenticationUIError] observer
    */
-  inner class ErrorObserver : Observer<Pair<AuthenticationUIError, String?>> {
-    override fun onChanged(it: Pair<AuthenticationUIError, String?>) {
+  inner class ErrorObserver : Observer<Pair<AuthenticationUIError, String?>?> {
+    override fun onChanged(it: Pair<AuthenticationUIError, String?>?) {
       it?.let { error ->
         /* show error message in dialog if not null || empty */
         if (error.second.isNotNullOrEmpty()) {
