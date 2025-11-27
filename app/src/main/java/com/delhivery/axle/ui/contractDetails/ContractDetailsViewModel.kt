@@ -55,7 +55,10 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
                                                    private val bidsRepository: BidsRepository, private val tpsRepository: TPSRepository, val userPrefs: UserPrefs
 ): BaseViewModel(){
 
-
+  companion object {
+    // Cache TypeToken instance as static field to prevent ProGuard/R8 obfuscation issues
+    private val HOME_BIDS_REQUEST_ITEM_DATA_TYPE = object : TypeToken<HomeBidsRequestItemData>() {}.type
+  }
 
   /* transaction id */
   //lateinit var transactionId: String
@@ -150,8 +153,7 @@ class ContractDetailsViewModel @Inject constructor(private val transactionsRepos
 
     val jsonString = JsonUtils.readJsonFromRaw(mContext, R.raw.placements_details_response)
     val gson = Gson()
-    val type = object : TypeToken<HomeBidsRequestItemData>() {}.type
-    val mockResponse: HomeBidsRequestItemData = gson.fromJson(jsonString, type)
+    val mockResponse: HomeBidsRequestItemData = gson.fromJson(jsonString, HOME_BIDS_REQUEST_ITEM_DATA_TYPE)
     Log.d("HomeBidsRequestItemData====>>>>", ""+mockResponse)
 
 

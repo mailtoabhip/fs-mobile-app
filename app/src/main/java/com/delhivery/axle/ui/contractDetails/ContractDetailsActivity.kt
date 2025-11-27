@@ -800,8 +800,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
       imm.showSoftInput(binding.cardInput.etBidAmount, InputMethodManager.SHOW_IMPLICIT)
     }
   }
-  inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean) {
+  inner class ProgressObserver : Observer<Boolean?> {
+    override fun onChanged(t: Boolean?) {
       t?.let {
         when (t) {
           true -> {
@@ -820,8 +820,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   /**
    * Transaction details and UI updation Observer
    */
-  inner class TransactionObserver : Observer<HomeBidsRequestItemData> {
-    override fun onChanged(t: HomeBidsRequestItemData) {
+  inner class TransactionObserver : Observer<HomeBidsRequestItemData?> {
+    override fun onChanged(t: HomeBidsRequestItemData?) {
 
       if (t != null) {
         t.let { _transaction ->
@@ -933,8 +933,8 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
   /**
    * Transaction bid details UI updation observer
    */
-  inner class TransactionBidObserver : Observer<BidDetailsUserBidState> {
-    override fun onChanged(t: BidDetailsUserBidState) {
+  inner class TransactionBidObserver : Observer<BidDetailsUserBidState?> {
+    override fun onChanged(t: BidDetailsUserBidState?) {
       binding.refreshing = false
       t?.let { state ->
         when (state) {

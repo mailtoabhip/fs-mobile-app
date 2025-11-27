@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:text="Bid placed for"
             android:textColor="#888888"
+            tools:visibility="gone"
             android:textSize="10sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -30,6 +31,7 @@
             android:id="@+id/reporting_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            tools:visibility="gone"
             android:textColor="#121A31"
             android:textStyle="bold"
             tools:text="₹48,000"
@@ -43,6 +45,7 @@
             android:id="@+id/place_bid_button"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            tools:visibility="gone"
             android:paddingStart="@dimen/size_18dp"
             android:paddingEnd="@dimen/size_18dp"
             android:background="@drawable/bg_place_bid_radius_6px"
@@ -70,7 +73,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/placeBidButton_maxWidth"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -82,7 +85,7 @@
             android:drawablePadding="8dp"
             android:textAllCaps="false"
             android:visibility="gone"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

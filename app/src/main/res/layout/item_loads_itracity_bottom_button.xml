@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:text="Reporting time"
             android:textColor="#888888"
+            tools:visibility="gone"
             android:textSize="10sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -34,6 +35,7 @@
             android:textStyle="bold"
             tools:text="Tomorrow, 3:30 PM"
             android:textSize="14sp"
+            tools:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/label_reporting"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -45,6 +47,7 @@
             android:background="@drawable/bg_place_bid_radius_6px"
             android:clickable="true"
             android:focusable="true"
+            tools:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -64,7 +67,7 @@
                 android:textStyle="bold" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/placeBidButton_maxWidth"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_40dp"
@@ -76,7 +79,7 @@
             android:drawablePadding="8dp"
             android:textAllCaps="false"
             android:visibility="gone"
-            tools:visibility="gone"
+            tools:visibility="visible"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

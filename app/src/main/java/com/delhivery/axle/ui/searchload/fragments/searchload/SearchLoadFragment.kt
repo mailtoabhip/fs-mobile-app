@@ -303,18 +303,20 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   /**
    * Search load history observer
    */
-  inner class SearchLoadHistoryObserver : Observer<List<SearchLoadHistoryEntity>> {
-    override fun onChanged(t: List<SearchLoadHistoryEntity>) {
+  inner class SearchLoadHistoryObserver : Observer<List<SearchLoadHistoryEntity?>> {
+    override fun onChanged(t: List<SearchLoadHistoryEntity?>) {
       t?.let { items ->
         binding.containerHistory.removeAllViews()
         items.forEachIndexed { index, item ->
           val itemBinding = historyItemBinding()
           itemBinding.data = item
           itemBinding.root.setOnClickListener {
-            searchLoad(false, item.originCity, item.destinationCity, item.truckType, item.truckDisplayName, item.status)
+            searchLoad(false, item?.originCity, item?.destinationCity, item?.truckType, item?.truckDisplayName, item?.status)
           }
           itemBinding.root.setOnLongClickListener {
-            viewModel.deleteSearchResult(item)
+            item?.let {
+                viewModel.deleteSearchResult(it)
+            }
             true
           }
           binding.containerHistory.addView(itemBinding.root, index)
@@ -329,8 +331,8 @@ class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, Sea
   /**
    * Progress observer
    */
-  inner class ProgressObserver : Observer<Boolean> {
-    override fun onChanged(t: Boolean) {
+  inner class ProgressObserver : Observer<Boolean?> {
+    override fun onChanged(t: Boolean?) {
       t?.let {
         when (t) {
           true -> uiUtils.showDelhiveryProgress(

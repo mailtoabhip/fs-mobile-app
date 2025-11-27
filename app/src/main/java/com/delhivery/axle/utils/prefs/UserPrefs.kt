@@ -25,6 +25,12 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
 ) {
   override fun prefsName() = PrefNames.UserPrefs
 
+  companion object {
+    // Cache TypeToken instances as static fields to prevent ProGuard/R8 obfuscation issues
+    private val LIST_OF_ADD_ADDRESS_MODEL_TYPE: Type = object : TypeToken<List<AddAddressModel?>?>() {}.type
+    private val LIST_OF_ROUTE_MAPPING_MODEL_TYPE: Type = object : TypeToken<List<RouteMappingModel?>?>() {}.type
+  }
+
   /**
    *  JWT Token
    */
@@ -474,8 +480,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     val serializedObject: String? = prefs.getString(PrefKeys.gstAddress, null)
     if (serializedObject != null) {
       val gson = Gson()
-      val type: Type = object : TypeToken<List<AddAddressModel?>?>() {}.getType()
-      arrayItems = gson.fromJson<List<AddAddressModel>>(serializedObject, type)
+      arrayItems = gson.fromJson<List<AddAddressModel>>(serializedObject, LIST_OF_ADD_ADDRESS_MODEL_TYPE)
     }
     return arrayItems
   }
@@ -493,8 +498,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     val serializedObject: String? = prefs.getString(PrefKeys.lanesPreference, null)
     if (serializedObject != null) {
       val gson = Gson()
-      val type: Type = object : TypeToken<List<RouteMappingModel?>?>() {}.getType()
-      arrayItems = gson.fromJson<List<RouteMappingModel>>(serializedObject, type)
+      arrayItems = gson.fromJson<List<RouteMappingModel>>(serializedObject, LIST_OF_ROUTE_MAPPING_MODEL_TYPE)
     }
     return arrayItems
   }
@@ -1249,7 +1253,26 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   /**
    * Current user id
    */
-  fun userId() = jwtToken?.let { JWT(it).let { (it.claims["sub"]?.asString()!!) } } ?: ""
+  fun userId(): String {
+    return try {
+      jwtToken?.let { token ->
+        if (token.isBlank()) {
+          // Clear invalid empty token
+          this.jwtToken = null
+          ""
+        } else {
+          JWT(token).let { jwt ->
+            jwt.claims["sub"]?.asString() ?: ""
+          }
+        }
+      } ?: ""
+    } catch (e: Exception) {
+      // Handle any JWT parsing errors (corrupted token, invalid format, etc.)
+      // Clear the invalid token to prevent future crashes
+      this.jwtToken = null
+      ""
+    }
+  }
 
   /**
    * Pref keys

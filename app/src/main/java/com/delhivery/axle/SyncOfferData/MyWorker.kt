@@ -13,7 +13,6 @@ import com.delhivery.axle.api.repository.PriceRepository
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.OffersEntity
 import com.delhivery.axle.injection.module.DaggerWorkerFactory
-import com.delhivery.axle.tokenExpiryHandling.RefreshAuthTokenService
 import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not

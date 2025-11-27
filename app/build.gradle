@@ -17,8 +17,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
     targetSdkVersion 35
-    versionCode 134
-    versionName "2.133.4-qa8"
+    versionCode 137
+    versionName "2.133.4"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
@@ -33,6 +33,16 @@ android {
         debugSymbolLevel= "FULL"
       }
     }
+
+    //Production-like debuggable build
+    releaseDebuggable {
+      initWith release      // copy release config
+      debuggable true       // make it debuggable
+      signingConfig signingConfigs.release
+      minifyEnabled true
+      shrinkResources true
+    }
+
   }
   flavorDimensions+= "vanilla"
   productFlavors {
@@ -201,11 +211,9 @@ dependencies {
     exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'
   }
 
-  uatImplementation ("com.github.chuckerteam.chucker:library:3.5.2" ){
-    exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel'
-    exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'
-  }
-  productionImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+  releaseDebuggableImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
+
+  releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
 
   implementation "com.google.firebase:firebase-perf-ktx:20.5.1"
 

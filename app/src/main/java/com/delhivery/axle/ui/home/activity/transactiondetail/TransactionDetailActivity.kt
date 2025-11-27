@@ -104,8 +104,8 @@ class TransactionDetailActivity : BaseActivity<ActivityTransactionDetailBinding,
   /**
    * Observes [TransactionState]
    */
-  inner class TransactionObserver : Observer<TransactionState> {
-    override fun onChanged(t: TransactionState) {
+  inner class TransactionObserver : Observer<TransactionState?> {
+    override fun onChanged(t: TransactionState?) {
       t?.let { state ->
         when (state) {
           is TransactionStateLoading -> {
