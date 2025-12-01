@@ -33,6 +33,7 @@
   <color name="sub_heading_black">#3D445C</color>
   <color name="bid_header_bg_black">#262727</color>
   <color name="color_hint">#A3AAC2</color>
+  <color name="font_labels">#A3AAC2</color>
   <color name="white">#FFFFFF</color>
   <color name="off_white">#DEFFFFFF</color>
   <color name="bid_placed_green">#059669</color>

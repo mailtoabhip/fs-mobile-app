@@ -11,6 +11,7 @@ import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsDelayedFrag
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsExpectedFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
+import com.delhivery.axle.ui.home.fragments.pod.HomeNewPodFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 
@@ -27,7 +28,7 @@ enum class HomeFragmentType(
   PlacementsFragment(R.id.nav_placements,1, HomePlacementsFragment._instance,"Placements"),
 //  BidsFragment(R.id.nav_trips, 2, HomeBidsFragment._instance, "Bids & Requests"),
   TruckFragment(R.id.nav_trucks,2, HomeTrucksFragment._instance,"My Trucks"),
-  PodFragment(R.id.nav_pod, 3, HomePodsFragment._instance, "PODs"),
+  PodFragment(R.id.nav_pod, 3, HomeNewPodFragment._instance, "PODs"),
   TripsFragment(R.id.nav_trips, 4, HomeTripsFragment._instance, "Ongoing Trips");
   //Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),
   //ProfileFragment(R.id.nav_profile, 4, MyProfileFragment._instance, "Profile");

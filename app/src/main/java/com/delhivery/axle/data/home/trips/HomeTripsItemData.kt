@@ -973,6 +973,81 @@ data class HomeTripsItemData(
     return View.GONE
   }
 
+  /**
+   * Get POD badge text based on status
+   * Returns: "ePOD Pending", "ePOD Verified", "ePOD Under Review", "ePOD Rejected", or "HPOD Pending"
+   */
+  fun podBadgeText(): String {
+    return when (tripStatus) {
+      TruckUnloaded.statusKey -> {
+        if (epodRejectionRemark.isNotNullOrEmpty()) {
+          "ePOD Rejected"
+        } else if (podUrl.isNullOrEmpty()) {
+          "ePOD Pending"
+        } else {
+          "ePOD Pending"
+        }
+      }
+      EPodUploaded.statusKey -> {
+        if (isEpodVerified == true) {
+          "ePOD Verified"
+        } else if (isEpodVerified == false) {
+          "ePOD Rejected"
+        } else {
+          "ePOD Under Review"
+        }
+      }
+      else -> {
+        if (podUrl.isNullOrEmpty()) {
+          "HPOD Pending"
+        } else {
+          "HPOD Pending"
+        }
+      }
+    }
+  }
+
+  /**
+   * Get POD badge background color resource
+   */
+  @ColorRes
+  fun podBadgeBgColor(): Int {
+    return when {
+      podBadgeText() == "ePOD Verified" -> R.color.status_confirmed_bg
+      podBadgeText() == "ePOD Pending" -> R.color.pending_bg
+      podBadgeText() == "ePOD Rejected" -> R.color.status_lost_bg
+      podBadgeText() == "ePOD Under Review" -> R.color.custom_grey_bg
+      else -> R.color.pending_bg // HPOD Pending
+    }
+  }
+
+  /**
+   * Get POD badge text color resource
+   */
+  @ColorRes
+  fun podBadgeTextColor(): Int {
+    return when {
+      podBadgeText() == "ePOD Verified" -> R.color.bid_placed_green
+      podBadgeText() == "ePOD Pending" -> R.color.pending_status
+      podBadgeText() == "ePOD Rejected" -> R.color.bid_suggestion_text
+      podBadgeText() == "ePOD Under Review" -> R.color.heading_black
+      else -> R.color.pending_status // HPOD Pending
+    }
+  }
+
+  /**
+   * Get payment amount text for display
+   */
+  fun paymentAmountText(): String {
+    return payment?.let {
+      if (it.paymentAmount != null && it.paymentAmount!! > 0.0) {
+        "Receive ₹${StringUtils.formatAmount(it.paymentAmount!!)}"
+      } else {
+        ""
+      }
+    } ?: ""
+  }
+
 }
 
 enum class PODStatus(
