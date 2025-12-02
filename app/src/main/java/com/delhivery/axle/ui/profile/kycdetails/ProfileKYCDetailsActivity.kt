@@ -40,12 +40,13 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
     }
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+        
+        /* Handle window insets for edge-to-edge display (API 35+) - Apply BEFORE setSupportActionBar */
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+        }
+        
         setSupportActionBar(binding.toolbar)
-    
-    /* Handle window insets for edge-to-edge display (API 35+) */
-    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
-    }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {

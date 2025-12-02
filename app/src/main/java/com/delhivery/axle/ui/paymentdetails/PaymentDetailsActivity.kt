@@ -132,12 +132,12 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
+        /* Handle window insets for edge-to-edge display (API 35+) - Apply BEFORE setSupportActionBar */
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+        }
+        
         setSupportActionBar(binding.progressStepLayout.toolbar)
-    
-    /* Handle window insets for edge-to-edge display (API 35+) */
-    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
-    }        
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
         startTime = System.currentTimeMillis()
