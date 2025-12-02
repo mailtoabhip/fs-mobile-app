@@ -12,22 +12,21 @@ import com.delhivery.axle.injection.module.DaggerWorkerFactory
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.auth0.android.jwt.JWT
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-
-import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
+import okhttp3.MediaType
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class RefreshTokenWorker(
     appContext: Context,
@@ -36,7 +35,7 @@ class RefreshTokenWorker(
     private val okHttpClient: OkHttpClient,
     private val authInterceptor: DelhiveryNetworkInterceptor
 ) : CoroutineWorker(appContext, params) {
-    
+
     companion object {
         const val WORK_NAME = "RefreshTokenWorker"
         private const val TAG = "RefreshTokenWorker"
@@ -44,168 +43,238 @@ class RefreshTokenWorker(
         const val INITIAL_BACKOFF_DELAY_MINUTES = 1L
     }
 
+    // Clean URL selection
+    private val refreshUrl: String =
+        if (BuildConfig.FLAVOR in listOf("development", "uat"))
+            "https://api-stage-ums.delhivery.com/v2/refresh_token/?force=1"
+        else
+            "https://api-ums.delhivery.com/v2/refresh_token/?force=1"
+
     override suspend fun doWork(): Result {
-        val runAttemptCount = runAttemptCount
-        Log.d(TAG, "Token refresh work started (attempt $runAttemptCount)")
-        
+        val attempt = runAttemptCount
+        Log.d(TAG, "Token refresh work started (attempt $attempt)")
+
+        // No token → no refresh needed
+        val existingToken = userPrefs.jwtToken
+        if (existingToken == null) {
+            Log.d(TAG, "No JWT token found, skipping refresh")
+            return Result.success()
+        }
+
         return try {
-            if (userPrefs.jwtToken == null) {
-                Log.d(TAG, "No JWT token found, skipping refresh")
+            val status = refreshToken(refreshUrl)
+
+            if (status == 200) {
+                Log.d(TAG, "Token refresh completed successfully, canceling periodic work")
+                WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
+
+//************************************************************************************************************************************************
+//***********************************************THIS CODE IS TO TEST THE HTTP EXCEPTION FLOW*****************************************************
+//************************************************************************************************************************************************
+//                if (BuildConfig.FLAVOR.equals("uat", ignoreCase = true)){
+//                    Log.d(TAG, "UAT build configuration enabled.")
+//                    // Throw an HttpException with correct code
+//                    throw HttpException(
+//                        retrofit2.Response.error<Unit>(
+//                            401,
+//                            ResponseBody.create(MediaType.parse("text/plain"), "Token refresh failed")
+//                        )
+//                    )
+//                }
+//************************************************************************************************************************************************
+//*************************************************************END OF SECTION*********************************************************************
+//************************************************************************************************************************************************
+
                 return Result.success()
             }
 
-            val url = if (BuildConfig.FLAVOR == "development" || BuildConfig.FLAVOR == "uat") {
-                "https://api-stage-ums.delhivery.com/v2/refresh_token/?force=1"
-            } else {
-                "https://api-ums.delhivery.com/v2/refresh_token/?force=1"
-            }
+            // Throw an HttpException with correct code
+            throw HttpException(
+                retrofit2.Response.error<Unit>(
+                    status,
+                    ResponseBody.create(MediaType.parse("text/plain"), "Token refresh failed")
+                )
+            )
 
-            val refreshSuccess = refreshToken(url)
-            if (refreshSuccess == 200) {
-                Log.d(TAG, "Token refresh completed successfully, canceling periodic work")
-                // Cancel the periodic work after successful refresh
-                WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
-            } else {
-                // ❗ THROW HttpException WITH STATUS CODE
-                val errorBody = ResponseBody.create(MediaType.parse("text/plain"), "Token refresh failed")
-                throw HttpException(retrofit2.Response.error<Unit>(refreshSuccess, errorBody))
-            }
-            Result.success()
         } catch (e: HttpException) {
             val statusCode = e.code()
-            Log.e(TAG, "HTTP error during token refresh: statusCode=$statusCode, attempt=$runAttemptCount", e)
+            Log.e(TAG, "HTTP error: $statusCode", e)
 
-            // Log to Firebase Crashlytics
-            FirebaseCrashlytics.getInstance().apply {
-                setCustomKey("refresh_token_attempt", runAttemptCount)
-                setCustomKey("http_status_code", statusCode)
-                setCustomKey("user_id", userPrefs.userId()?:"")
-                setCustomKey("user_name", userPrefs.userName?:"")
-                recordException(e)
+            logError(e, "HttpException")
+
+            when {
+                statusCode in 400..499 -> {
+                    Log.w(TAG, "4xx client error – not retrying")
+                    Result.failure()
+                }
+
+                shouldRetry(attempt) -> Result.retry()
+
+                else -> Result.failure()
             }
-            
-            // Don't retry on client errors (4xx) - these are likely permanent failures
-            if (statusCode in 400..499) {
-                Log.w(TAG, "Client error ($statusCode) - not retrying")
-                return Result.failure()
-            }
-            
-            // Retry on server errors (5xx) and other HTTP errors
-            if (shouldRetry(runAttemptCount)) {
-                Log.d(TAG, "Will retry after backoff delay")
-                return Result.retry()
-            } else {
-                Log.e(TAG, "Max retry attempts reached for HTTP error")
-                return Result.failure()
-            }
+
         } catch (e: IOException) {
-            Log.e(TAG, "Network error during token refresh, attempt=$runAttemptCount", e)
-            
-            // Log to Firebase Crashlytics
-            FirebaseCrashlytics.getInstance().apply {
-                setCustomKey("refresh_token_attempt", runAttemptCount)
-                setCustomKey("error_type", "IOException")
-                setCustomKey("user_id", userPrefs.userId()?:"")
-                setCustomKey("user_name", userPrefs.userName?:"")
-                recordException(e)
-            }
-            
-            // Retry network errors with backoff
-            if (shouldRetry(runAttemptCount)) {
-                Log.d(TAG, "Will retry network error after backoff delay")
-                return Result.retry()
-            } else {
-                Log.e(TAG, "Max retry attempts reached for network error")
-                return Result.failure()
-            }
+            Log.e(TAG, "Network error during token refresh", e)
+
+            logError(e, "IOException")
+
+            if (shouldRetry(attempt)) Result.retry() else Result.failure()
+
         } catch (e: Exception) {
-            Log.e(TAG, "Unexpected error during token refresh, attempt=$runAttemptCount", e)
-            
-            // Log to Firebase Crashlytics
-            FirebaseCrashlytics.getInstance().apply {
-                setCustomKey("refresh_token_attempt", runAttemptCount)
-                setCustomKey("error_type", e.javaClass.simpleName)
-                setCustomKey("user_id", userPrefs.userId()?:"")
-                setCustomKey("user_name", userPrefs.userName?:"")
-                recordException(e)
-            }
-            
-            // Don't retry unexpected errors
+            Log.e(TAG, "Unexpected error", e)
+
+            logError(e, e.javaClass.simpleName)
+
             Result.failure()
         }
     }
-    
+
     /**
-     * Determines if the work should be retried based on attempt count
+     * Logs error details to Firebase Crashlytics
      */
-    private fun shouldRetry(attemptCount: Int): Boolean {
-        return attemptCount < MAX_RETRY_ATTEMPTS
+    private fun logError(e: Throwable, type: String) {
+        val jwtInfo = extractJWTInfo()
+        
+        FirebaseCrashlytics.getInstance().apply {
+            setCustomKey("refresh_token_attempt", runAttemptCount)
+            setCustomKey("error_type", type)
+            setCustomKey("user_id", userPrefs.userId() ?: "")
+            setCustomKey("user_name", userPrefs.userName ?: "")
+            setCustomKey("iat", jwtInfo.issuedAt)
+            setCustomKey("exp", jwtInfo.expiry)
+            setCustomKey("toe", jwtInfo.toe)
+            recordException(e)
+        }
     }
 
+    /**
+     * Extracts JWT token information (issuedAt, expiry, toe)
+     */
+    private fun extractJWTInfo(): JWTInfo {
+        return try {
+            val token = userPrefs.jwtToken
+            if (token.isNullOrEmpty()) {
+                return JWTInfo("", "", "")
+            }
+
+            val jwt = JWT(token)
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+
+            // Extract issuedAt (iat) - parse from claim value
+            val issuedAt = try {
+                val iatClaim = jwt.claims["iat"]
+                val iatTimestamp = when {
+                    iatClaim != null -> {
+                        // Try asString first, then toString as fallback
+                        iatClaim.asString()?.toLongOrNull() 
+                            ?: iatClaim.toString().toLongOrNull()
+                    }
+                    else -> null
+                }
+                iatTimestamp?.let { dateFormat.format(Date(it * 1000L)) } ?: ""
+            } catch (e: Exception) {
+                Log.e(TAG, "Error extracting JWT info", e)
+                ""
+            }
+
+            // Extract expiry (exp) - try Date property first, then claim value
+            val expiry = jwt.expiresAt?.let { dateFormat.format(it) } ?: try {
+                val expClaim = jwt.claims["exp"]
+                val expTimestamp = when {
+                    expClaim != null -> {
+                        // Try asString first, then toString as fallback
+                        expClaim.asString()?.toLongOrNull() 
+                            ?: expClaim.toString().toLongOrNull()
+                    }
+                    else -> null
+                }
+                expTimestamp?.let { dateFormat.format(Date(it * 1000L)) } ?: ""
+            } catch (e: Exception) {
+                Log.e(TAG, "Error extracting JWT info", e)
+                ""
+            }
+
+            // Extract toe (custom claim) - parse from claim value as timestamp
+            val toe = try {
+                val toeClaim = jwt.claims["toe"]
+                val toeTimestamp = when {
+                    toeClaim != null -> {
+                        // Try asString first, then toString as fallback
+                        toeClaim.asString()?.toLongOrNull() 
+                            ?: toeClaim.toString().toLongOrNull()
+                    }
+                    else -> null
+                }
+                toeTimestamp?.let { dateFormat.format(Date(it * 1000L)) } ?: ""
+            } catch (e: Exception) {
+                Log.e(TAG, "Error extracting JWT info", e)
+                ""
+            }
+
+            Log.d(TAG, "issuedAt=$issuedAt")
+            Log.d(TAG, "expiry=$expiry")
+            Log.d(TAG, "toe=$toe")
+
+            JWTInfo(issuedAt, expiry, toe)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error extracting JWT info", e)
+            JWTInfo("N/A", "N/A", "N/A")
+        }
+    }
+
+    /**
+     * Data class to hold JWT information
+     */
+    private data class JWTInfo(
+        val issuedAt: String,
+        val expiry: String,
+        val toe: String
+    )
+
+    /**
+     * Determines if retry should occur based on the attempt number
+     */
+    private fun shouldRetry(attempt: Int): Boolean = attempt < MAX_RETRY_ATTEMPTS
+
+    /**
+     * Executes the refresh token call synchronously (safe inside Dispatchers.IO)
+     */
     private suspend fun refreshToken(url: String): Int = withContext(Dispatchers.IO) {
         val request = Request.Builder()
             .url(url)
             .addHeader("X-APP-ID", AppID.url())
             .build()
 
-        val response = okHttpClient.newCall(request).await()
-        
-        try {
-            val resCode = response.code()
-            Log.d("resCode===>>>", ""+resCode)
-            if (resCode == 200) {
-                val strResponse = response.body()?.string()?:""
-                val json = JSONObject(strResponse)
-                if (!json.isNull("jwt")) {
-                    val jwtToken = json.optString("jwt")
-                    if (jwtToken.isNotNullOrEmpty()) {
-                        userPrefs.jwtToken = jwtToken
-                        authInterceptor.updateJWT(jwtToken)
-                        Log.d(TAG, "JWT token updated successfully")
-                        return@withContext resCode
-                    } else {
-                        Log.w(TAG, "Received empty JWT token")
-                    }
+        okHttpClient.newCall(request).execute().use { response ->
+            val code = response.code()
+
+            if (code == 200) {
+                val bodyStr = response.body()?.string().orEmpty()
+                val json = JSONObject(bodyStr)
+
+                val jwt = json.optString("jwt")
+                if (jwt.isNotNullOrEmpty()) {
+                    userPrefs.jwtToken = jwt
+                    authInterceptor.updateJWT(jwt)
+                    Log.d(TAG, "JWT token updated successfully")
                 } else {
-                    Log.w(TAG, "No JWT field in response")
+                    Log.w(TAG, "Missing or empty JWT in response")
                 }
             } else {
-                Log.w(TAG, "Response body is null")
+                Log.w(TAG, "Token refresh failed with code $code")
             }
-            return@withContext resCode
-        } finally {
-            response.close()
+
+            code
         }
     }
 
     /**
-     * Converts OkHttp Call to a suspend function using coroutines
+     * Factory for Dagger injection
      */
-    private suspend fun okhttp3.Call.await(): Response = suspendCancellableCoroutine { continuation ->
-        enqueue(object : okhttp3.Callback {
-            override fun onResponse(call: okhttp3.Call, response: Response) {
-                continuation.resume(response)
-            }
-
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                if (continuation.isCancelled) return
-                continuation.resumeWithException(e)
-            }
-        })
-
-        continuation.invokeOnCancellation {
-            try {
-                cancel()
-            } catch (ex: Throwable) {
-                // Ignore cancel exceptions
-            }
-        }
-    }
-
     class Factory @Inject constructor(
-        val userPrefs: UserPrefs,
-        val okHttpClient: OkHttpClient,
-        val authInterceptor: DelhiveryNetworkInterceptor
+        private val userPrefs: UserPrefs,
+        private val okHttpClient: OkHttpClient,
+        private val authInterceptor: DelhiveryNetworkInterceptor
     ) : DaggerWorkerFactory.ChildWorkerFactory {
 
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker =
