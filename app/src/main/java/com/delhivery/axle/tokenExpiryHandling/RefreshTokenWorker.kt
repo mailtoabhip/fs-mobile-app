@@ -58,6 +58,18 @@ class RefreshTokenWorker(
         val existingToken = userPrefs.jwtToken
         if (existingToken == null) {
             Log.d(TAG, "No JWT token found, skipping refresh")
+            //cancel work manager
+            WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
+            //
+            return Result.success()
+        }
+
+        // Check if token is expired before making API call
+        if (isTokenExpired(existingToken)) {
+            Log.d(TAG, "Token is expired, skipping refresh API call")
+            //cancel work manager
+            WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
+            //
             return Result.success()
         }
 
@@ -66,6 +78,7 @@ class RefreshTokenWorker(
 
             if (status == 200) {
                 Log.d(TAG, "Token refresh completed successfully, canceling periodic work")
+                //cancel work manager
                 WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
 
 //************************************************************************************************************************************************
@@ -144,6 +157,38 @@ class RefreshTokenWorker(
             setCustomKey("exp", jwtInfo.expiry)
             setCustomKey("toe", jwtInfo.toe)
             recordException(e)
+        }
+    }
+
+    /**
+     * Checks if the JWT token is expired
+     * @param token The JWT token string to check
+     * @return true if token is expired or null, false otherwise
+     */
+    private fun isTokenExpired(token: String?): Boolean {
+        if (token.isNullOrEmpty()) {
+            return true
+        }
+
+        return try {
+            val jwt = JWT(token)
+            val expiresAt = jwt.expiresAt
+            
+            if (expiresAt == null) {
+                // If expiry date cannot be extracted, consider it expired to be safe
+                Log.w(TAG, "Cannot extract expiry date from token, considering expired")
+                return true
+            }
+
+            val isExpired = expiresAt.before(Date())
+            if (isExpired) {
+                Log.d(TAG, "Token expired at: ${expiresAt}, current time: ${Date()}")
+            }
+            isExpired
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking token expiry", e)
+            // If we can't parse the token, consider it expired to be safe
+            true
         }
     }
 
