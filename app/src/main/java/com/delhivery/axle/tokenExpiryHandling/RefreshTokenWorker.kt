@@ -55,9 +55,22 @@ class RefreshTokenWorker(
         Log.d(TAG, "Token refresh work started (attempt $attempt)")
 
         // No token → no refresh needed
-        val existingToken = userPrefs.jwtToken
+        //val existingToken = userPrefs.jwtToken
+        val existingToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjkxOTU0MDAyOTU1NVQiLCJwaG9uZV9udW1iZXIiOiIrOTE5NTQwMDI5NTU1IiwibGFzdF9uYW1lIjoiVmFybWEiLCJwaW4iOmZhbHNlLCJyZWFkX2FsbF9jZW50ZXJzIjp0cnVlLCJ1c2VyX3R5cGUiOiJGVExTUCIsImlhdCI6MTc1ODYwNjk5MywidGZhX3BoIjpudWxsLCJ0ZW5hbnQiOiJEZWxoaXZlcnkiLCJhdWQiOiJHdkRLem9kNmFPSU0zTGN5YTlCamZCYjhidkZrWVRYeSIsImZpcnN0X25hbWUiOiJBbnNoIiwic3ViIjoidW1zOjp1c2VyOjo0YjRlOTFlYS1hY2ExLTExZWYtOWRiYy0wMmMyZGRlNWNjNDEiLCJkZXNpZ25hdGlvbiI6IlFBIEVuZ2luZWVyIiwid3JpdGVfYWxsX2NlbnRlcnMiOnRydWUsImlkbGUiOjE3NTkyMTE3OTMsImV4cCI6MTc1ODY5MzM5MywiZGFyd2luX2ZpZCI6IklORDEyMkFBQSIsInRva2VuX2lkIjoiOGY4ZmNlYjctYzZjOS00ZjlhLTkyYjUtZWYwNWRjMzNjYWNmIiwidGZhX3BoX3ZlcmlmaWVkIjpmYWxzZSwiZW1haWwiOiJhbnNoLnZhcm1hQGRlbGhpdmVyeS5jb20iLCJhcGlfdmVyc2lvbiI6InYxIiwidG9lIjoxNzU4NjA2OTkzfQ.iyYWAgtba237q-FHjPabaeMvpqIXEpcZHjzvkUonZJs"
         if (existingToken == null) {
             Log.d(TAG, "No JWT token found, skipping refresh")
+            //cancel work manager
+            WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
+            //
+            return Result.success()
+        }
+
+        // Check if token is expired before making API call
+        if (isTokenExpired(existingToken)) {
+            Log.d(TAG, "Token is expired, skipping refresh API call")
+            //cancel work manager
+            WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
+            //
             return Result.success()
         }
 
@@ -66,6 +79,7 @@ class RefreshTokenWorker(
 
             if (status == 200) {
                 Log.d(TAG, "Token refresh completed successfully, canceling periodic work")
+                //cancel work manager
                 WorkManager.getInstance(applicationContext).cancelUniqueWork(WORK_NAME)
 
 //************************************************************************************************************************************************
@@ -144,6 +158,38 @@ class RefreshTokenWorker(
             setCustomKey("exp", jwtInfo.expiry)
             setCustomKey("toe", jwtInfo.toe)
             recordException(e)
+        }
+    }
+
+    /**
+     * Checks if the JWT token is expired
+     * @param token The JWT token string to check
+     * @return true if token is expired or null, false otherwise
+     */
+    private fun isTokenExpired(token: String?): Boolean {
+        if (token.isNullOrEmpty()) {
+            return true
+        }
+
+        return try {
+            val jwt = JWT(token)
+            val expiresAt = jwt.expiresAt
+            
+            if (expiresAt == null) {
+                // If expiry date cannot be extracted, consider it expired to be safe
+                Log.w(TAG, "Cannot extract expiry date from token, considering expired")
+                return true
+            }
+
+            val isExpired = expiresAt.before(Date())
+            if (isExpired) {
+                Log.d(TAG, "Token expired at: ${expiresAt}, current time: ${Date()}")
+            }
+            isExpired
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking token expiry", e)
+            // If we can't parse the token, consider it expired to be safe
+            true
         }
     }
 
