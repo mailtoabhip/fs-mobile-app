@@ -55,8 +55,7 @@ class RefreshTokenWorker(
         Log.d(TAG, "Token refresh work started (attempt $attempt)")
 
         // No token → no refresh needed
-        //val existingToken = userPrefs.jwtToken
-        val existingToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjkxOTU0MDAyOTU1NVQiLCJwaG9uZV9udW1iZXIiOiIrOTE5NTQwMDI5NTU1IiwibGFzdF9uYW1lIjoiVmFybWEiLCJwaW4iOmZhbHNlLCJyZWFkX2FsbF9jZW50ZXJzIjp0cnVlLCJ1c2VyX3R5cGUiOiJGVExTUCIsImlhdCI6MTc1ODYwNjk5MywidGZhX3BoIjpudWxsLCJ0ZW5hbnQiOiJEZWxoaXZlcnkiLCJhdWQiOiJHdkRLem9kNmFPSU0zTGN5YTlCamZCYjhidkZrWVRYeSIsImZpcnN0X25hbWUiOiJBbnNoIiwic3ViIjoidW1zOjp1c2VyOjo0YjRlOTFlYS1hY2ExLTExZWYtOWRiYy0wMmMyZGRlNWNjNDEiLCJkZXNpZ25hdGlvbiI6IlFBIEVuZ2luZWVyIiwid3JpdGVfYWxsX2NlbnRlcnMiOnRydWUsImlkbGUiOjE3NTkyMTE3OTMsImV4cCI6MTc1ODY5MzM5MywiZGFyd2luX2ZpZCI6IklORDEyMkFBQSIsInRva2VuX2lkIjoiOGY4ZmNlYjctYzZjOS00ZjlhLTkyYjUtZWYwNWRjMzNjYWNmIiwidGZhX3BoX3ZlcmlmaWVkIjpmYWxzZSwiZW1haWwiOiJhbnNoLnZhcm1hQGRlbGhpdmVyeS5jb20iLCJhcGlfdmVyc2lvbiI6InYxIiwidG9lIjoxNzU4NjA2OTkzfQ.iyYWAgtba237q-FHjPabaeMvpqIXEpcZHjzvkUonZJs"
+        val existingToken = userPrefs.jwtToken
         if (existingToken == null) {
             Log.d(TAG, "No JWT token found, skipping refresh")
             //cancel work manager
