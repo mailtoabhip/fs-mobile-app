@@ -23,6 +23,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.databinding.ActivityHpodDetailsBinding
 import com.delhivery.axle.databinding.ActivityUpdateDocketBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
@@ -60,12 +61,12 @@ import javax.inject.Inject
  *
  **
  */
-class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpdateViewModel>(),
+class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpdateViewModel>(),
     OnDateSetListener, AWSProgressInterface {
 
   override fun getViewModelClass() = DocketUpdateViewModel::class.java
 
-  override fun layoutId() = R.layout.activity_update_docket
+  override fun layoutId() = R.layout.activity_hpod_details
 
   override fun requireConnection() = true
 
@@ -102,14 +103,18 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
 
-    setSupportActionBar(binding.toolbar)
+    // Set up toolbar
+    binding.btnBack.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.appBarLayout)
     }
-    title = "Dispatch Details"
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    
+    // Hide the badge for this screen
+    binding.badgeEpodPending.visibility = View.GONE
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         userPrefs.setPreviousScreen(this.javaClass.name)
@@ -118,10 +123,24 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     })
     if (viewModel.trip != null) {
       viewModel.transactionIds.add(viewModel.trip!!.transactionId)
-      binding.textTrackingNumber.setText(viewModel.trip!!.podDispatchAwbNumber)
-      binding.textDate.text = viewModel.trip!!.podDispatchDate
-      binding.containerImage.visibility = View.INVISIBLE
-      binding.containerImageAction.visibility = View.VISIBLE
+      binding.trackingNumberInput.setText(viewModel.trip!!.podDispatchAwbNumber)
+      binding.dispatchDateInput.setText(viewModel.trip!!.podDispatchDate)
+      binding.podContainerSmall.visibility = View.VISIBLE
+      binding.podContainer.visibility = View.GONE
+      // Load existing image if available
+      if (!viewModel.trip!!.podDispatchDocketImage.isNullOrEmpty()) {
+        viewModel.imageUrl = viewModel.trip!!.podDispatchDocketImage
+        binding.podImageCardSmall.visibility = View.VISIBLE
+        binding.addIconSmall.visibility = View.GONE
+        GlideApp.with(this)
+            .load(viewModel.trip!!.podDispatchDocketImage)
+            .into(binding.podImageSmall)
+        binding.podImageSmall.visibility = View.VISIBLE
+        binding.deleteButtonSmall.visibility = View.VISIBLE
+      }
+    } else {
+      binding.podContainerSmall.visibility = View.GONE
+      binding.podContainer.visibility = View.VISIBLE
     }
 
     viewModel.delegationLiveData.observe(this, Observer {
@@ -135,43 +154,48 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
       }
     })
 
-    binding.containerImage.setOnClickListener {
+    // Full width container click listener (for new upload)
+    binding.podContainer.setOnClickListener {
       val imageName = "docket_" + System.currentTimeMillis()
-      if (viewModel.imageUrl.isNullOrEmpty()) captureImage(imageName, imageName)
-      else{
+      captureImage(imageName, imageName)
+    }
+    
+    // Small container click listener (for viewing/updating existing image)
+    binding.podContainerSmall.setOnClickListener {
+      val imageName = "docket_" + System.currentTimeMillis()
+      if (viewModel.imageUrl.isNullOrEmpty()) {
+        captureImage(imageName, imageName)
+      } else {
         userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(imageViewIntent(this, viewModel.imageUrl, "Docket Image"))}
+        startActivity(imageViewIntent(this, viewModel.imageUrl, "Docket Image"))
+      }
     }
 
-    binding.deleteImage.setOnClickListener {
-      deleteImage(binding.deleteImage, binding.image)
+    binding.deleteButtonSmall.setOnClickListener {
+      deleteImage(binding.deleteButtonSmall, binding.podImageSmall)
+    }
+    
+    binding.deleteButton.setOnClickListener {
+      deleteImage(binding.deleteButton, binding.podImage)
     }
 
-    binding.textDate.setOnClickListener {
+    binding.dispatchDateInput.setOnClickListener {
+      dialogUtils.datePicker(listener = this, maxDate = 0)
+    }
+    
+    binding.dispatchDateContainer.setOnClickListener {
       dialogUtils.datePicker(listener = this, maxDate = 0)
     }
 
-    binding.imgDate.setOnClickListener {
+    binding.calendarIcon.setOnClickListener {
       dialogUtils.datePicker(listener = this, maxDate = 0)
     }
 
-    binding.btnSave.setOnClickListener {
+    binding.submitButtonMaxWidth.setOnClickListener {
       uiUtils.toggleKeyboard()
       if (isValid()) {
         viewModel.updateDispatchDetails()
       }
-    }
-
-    binding.btnView.setOnClickListener {
-      userPrefs.setPreviousScreen(this.javaClass.name)
-      startActivity(
-          imageViewIntent(this, viewModel.trip?.podDispatchDocketImage ?: "", "Docket Image")
-      )
-    }
-
-    binding.btnUpdate.setOnClickListener {
-      val imageName = "docket_" + System.currentTimeMillis()
-      captureImage(imageName, imageName)
     }
   }
 
@@ -189,11 +213,11 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
       return false
     }
 
-    if (binding.textTrackingNumber.text.toString().isNullOrEmpty()) {
-      uiUtils.showSnackbar("Enter traking number")
+    if (binding.trackingNumberInput.text.toString().isNullOrEmpty()) {
+      uiUtils.showSnackbar("Enter tracking number")
       return false
     }
-    viewModel.trackingNumber = binding.textTrackingNumber.text.toString()
+    viewModel.trackingNumber = binding.trackingNumberInput.text.toString()
 
     if (viewModel.dateOfDispatch.isNullOrEmpty()) {
       uiUtils.showSnackbar("Select dispatch date")
@@ -229,8 +253,17 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
   ) {
     viewModel.imagePath = ""
     viewModel.imageUrl = ""
-    image.setImageResource(R.drawable.ic_camera)
+    image.visibility = View.GONE
     delete.visibility = View.GONE
+    
+    // Show appropriate upload container
+    if (viewModel.trip != null) {
+      binding.podImageCardSmall.visibility = View.GONE
+      binding.addIconSmall.visibility = View.VISIBLE
+    } else {
+      binding.podImageCard.visibility = View.GONE
+      binding.addIcon.visibility = View.VISIBLE
+    }
   }
 
   private fun loadImage(
@@ -324,23 +357,36 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
     calendar.set(year, month, dayOfMonth)
     calendar.set(Calendar.HOUR_OF_DAY, 23)
     calendar.set(Calendar.MINUTE, 59)
-    binding.textDate.text =
+    binding.dispatchDateInput.setText(
       "${calendar.get(Calendar.DAY_OF_MONTH)}-${calendar.get(Calendar.MONTH) + 1}-${calendar.get(
           Calendar.YEAR
       )}"
+    )
     viewModel.dateOfDispatch = DateUtils.formatDate(calendar.toDate(), DatePatterns.PODDateFormat)
   }
 
   override fun onAWSSuccess(
     path: String
   ) {
-    binding.containerImage.visibility = View.VISIBLE
-    binding.containerImageAction.visibility = View.GONE
     uiUtils.hideProgress()
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
     viewModel.imageUrl = path
-    binding.deleteImage.visibility = View.VISIBLE
-    loadImage(viewModel.imagePath, binding.image)
+    
+    // Show image in appropriate container
+    if (viewModel.trip != null) {
+      binding.podImageCardSmall.visibility = View.VISIBLE
+      binding.addIconSmall.visibility = View.GONE
+      binding.deleteButtonSmall.visibility = View.VISIBLE
+      binding.podImageSmall.visibility = View.VISIBLE
+      loadImage(viewModel.imagePath, binding.podImageSmall)
+    } else {
+      binding.podImageCard.visibility = View.VISIBLE
+      binding.addIcon.visibility = View.GONE
+      binding.deleteButton.visibility = View.VISIBLE
+      binding.podImage.visibility = View.VISIBLE
+      loadImage(viewModel.imagePath, binding.podImage)
+    }
+    
     resetUploadData()
   }
 
