@@ -128,6 +128,7 @@
 
   <color name="text_grey">#8F9198</color>
   <color name="disabled_button_text">#989392</color>
+  <color name="label_text_color">#615655</color>
 
   <!-- New colors for updated dialog design -->
   <color name="green">#4CAF50</color>
