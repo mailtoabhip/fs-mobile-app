@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_4dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/pod_container"
+            android:layout_width="@dimen/size_72dp"
+            android:layout_height="@dimen/size_72dp"
+            android:background="@drawable/bg_upload_container"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- Progress Bar (visible when uploading) -->
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="gone"
+                tools:visibility="gone" />
+
+            <!-- Image View (visible when uploaded) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pod_image_card"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/size_2dp"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/size_8dp"
+                app:cardElevation="2dp"
+                tools:visibility="visible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/pod_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        tools:visibility="gone" />
+
+                    <!-- Delete Button (visible when uploaded) -->
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/delete_button"
+                        android:layout_width="@dimen/size_12dp"
+                        android:layout_height="@dimen/size_12dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:padding="@dimen/size_2dp"
+                        android:elevation="8dp"
+                        android:visibility="gone"
+                        android:background="@drawable/bg_circle_grey_alpha25"
+                        style="@style/style_delete_button_v2"
+                        tools:visibility="visible"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Add Icon (visible when available) -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/add_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_add_black_24dp"
+                app:tint="@color/info_title"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</layout>
+
+

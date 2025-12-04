@@ -150,6 +150,13 @@
     <item name="android:visibility">gone</item>
   </style>
 
+    <style name="style_delete_button_v2">
+        <item name="android:layout_width">@dimen/size_24dp</item>
+        <item name="android:layout_height">@dimen/size_24dp</item>
+        <item name="android:src">@drawable/ic_cross</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
   <style name="view_header_background_white">
     <item name="android:background">@drawable/bg_pending_header_white</item>
     <item name="android:clickable">true</item>

@@ -26,6 +26,7 @@
   <color name="pending">#d36a1b</color>
   <color name="pending_status">#D97706</color>
   <color name="pending_bg">#FFFBEB</color>
+  <color name="pending_font">#935F07</color>
 
   <!-- text colors-->
   <color name="black">#000000</color>
@@ -78,6 +79,7 @@
   <color name="custom_grey_bg">#E5E3E3</color>
   <color name="custom_grey">#E5E5E5</color>
     <color name="custom_dark_grey">#991C1C1C</color>
+    <color name="grey_bg_alpha25">#40E0E3EB</color>
 
   <color name="route_heading">#3D445C</color>
 
@@ -125,6 +127,7 @@
 
 
   <color name="text_grey">#8F9198</color>
+  <color name="disabled_button_text">#989392</color>
 
   <!-- New colors for updated dialog design -->
   <color name="green">#4CAF50</color>
