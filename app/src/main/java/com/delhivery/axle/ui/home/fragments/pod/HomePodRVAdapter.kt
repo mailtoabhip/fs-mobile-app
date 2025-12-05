@@ -7,6 +7,7 @@ import com.delhivery.axle.data.home.pod.HomePodHeaderItemData
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
+import com.delhivery.axle.databinding.ViewNewPodItemBinding
 import com.delhivery.axle.databinding.ViewPodItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
@@ -43,17 +44,17 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
-    else -> ViewPodItemBinding.inflate(inflater, parent, false)
+    else -> ViewNewPodItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomePodsHeaderItemBinding -> HomePodHeaderItemVH(binding)
-    is ViewPodItemBinding -> HomePodItemVH(binding)
+    is ViewNewPodItemBinding -> HomePodItemVH(binding)
     is ViewWarningItemBinding -> HomePodWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomePodTimeOutItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomePodProgressItemVH(binding)
     is ViewHomeSearchItemBinding -> HomePodSearchItemVH(binding)
-    else -> HomePodItemVH(binding as ViewPodItemBinding)
+    else -> HomePodItemVH(binding as ViewNewPodItemBinding)
   }
 
   override fun bindVH(

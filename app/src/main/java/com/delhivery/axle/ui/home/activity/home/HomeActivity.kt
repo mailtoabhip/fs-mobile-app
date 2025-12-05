@@ -677,6 +677,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       HomeFragmentActionType.Navigate -> {
         val fragmentType = (action as NavigateHomeFragmentAction).fragmentType
         binding.viewpager.setCurrentItem(fragmentType.position, true)
+        binding.bottomNav.selectedItemId = fragmentType.menuId
         binding.toolbarTitle.text = title
       }
       /* update placement badge action */

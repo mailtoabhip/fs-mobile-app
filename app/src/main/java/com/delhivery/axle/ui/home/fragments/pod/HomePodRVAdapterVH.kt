@@ -1,7 +1,14 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
@@ -12,10 +19,13 @@ import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
+import com.delhivery.axle.databinding.ViewNewPodItemBinding
 import com.delhivery.axle.databinding.ViewPodItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.utils.StringUtils
 
 /**
  * Base Home Pod RV adapter view holder
@@ -84,18 +94,77 @@ internal class HomePodSearchItemVH(binding: ViewHomeSearchItemBinding) :
 /**
  * Pod child item view holder
  */
-class HomePodItemVH(binding: ViewPodItemBinding) :
-    BaseHomePodsRVAdapterViewHolder<ViewPodItemBinding, HomePodTripItem>(binding) {
+class HomePodItemVH(binding: ViewNewPodItemBinding) :
+    BaseHomePodsRVAdapterViewHolder<ViewNewPodItemBinding, HomePodTripItem>(binding) {
   override fun bind(
     item: HomePodTripItem,
     _interface: HomePodRVAdapterInterface
   ) {
     binding.trip = item.data
+    val spannable = SpannableStringBuilder()
+    spannable.clearSpans()
+    val origin = item.data.formattedOriginCity() ?: ""
+    val originStart = spannable.length
+    spannable.append(origin)
+    val originEnd = spannable.length
+    spannable.setSpan(
+      ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
+      originStart,
+      originEnd,
+      Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    spannable.setSpan(
+      StyleSpan(Typeface.BOLD),
+      originStart,
+      originEnd,
+      Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+// Arrow as inline image
+      val arrowStart = spannable.length
+      spannable.append(" ➔ ")
+      spannable.setSpan(
+        StyleSpan(Typeface.BOLD),
+        arrowStart,
+        spannable.length,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+      )
+
+// Destination text (black, bold)
+      val destStart = spannable.length
+      val destination = item.data.formattedDestinationCity()
+      spannable.append(destination)
+      val destEnd = spannable.length
+      spannable.setSpan(
+        ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
+        destStart,
+        destEnd,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+      )
+      spannable.setSpan(
+        StyleSpan(Typeface.BOLD),
+        destStart,
+        destEnd,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+      )
+
+    binding.originDestination.originDestinationText.text = null
+    binding.originDestination.originDestinationText.movementMethod = null
+    binding.originDestination.originDestinationText.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+
+// Set the TextView safely
+    binding.originDestination.originDestinationText.apply {
+      text = spannable
+      isClickable = false
+      isFocusable = false
+      linksClickable = false
+      autoLinkMask = 0
+      movementMethod = null
+    }
     binding.root.clickToAction(
         HomeTripsRequestAction_ViewDetails, item, bindingAdapterPosition, _interface
     )
 
-    binding.btnEpod.clickToAction(
+   /* binding.btnEpod.clickToAction(
         HomeTripsRequestAction_UploadEpod, item, bindingAdapterPosition, _interface
     )
 
@@ -105,7 +174,7 @@ class HomePodItemVH(binding: ViewPodItemBinding) :
 
     binding.containerSelector.clickToAction(
         HomeTripsRequestAction_UploadTracking, item, bindingAdapterPosition, _interface
-    )
+    )*/
   }
 }
 

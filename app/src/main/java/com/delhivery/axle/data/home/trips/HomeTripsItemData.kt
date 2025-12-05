@@ -14,6 +14,7 @@ import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.TripStatus.*
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.ViewPaymentType
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.CurrentStatusFormat
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
@@ -211,6 +212,12 @@ data class HomeTripsItemData(
     destinationStateName()
   }
 
+  fun formattedOriginCity()=
+    StringUtils.capitalize(origin)+" ("+StringUtils.capitalize(originState)+")"
+
+  fun formattedDestinationCity() =
+    StringUtils.capitalize(destination)+" ("+StringUtils.capitalize(destinationState)+")"
+
   /**
    * @return loading location text
    */
@@ -362,6 +369,13 @@ data class HomeTripsItemData(
       )
     } ?: ""
 
+  fun loadedOn() =
+    updateInfo?.loadedInfo?.let {
+      "Loaded on " + DateUtils.formatDate(
+        DateUtils.parseDate(it.time, OrionDateFormat), SimpleDateFormat
+      )
+    } ?: ""
+
   /**
    * Formatted required at
    */
@@ -455,7 +469,16 @@ data class HomeTripsItemData(
   } else {
     ""
   }
-
+  /**
+   * @return count for lr
+   */
+  fun allLRSCount() = if (lr.isNotNullOrEmpty()) {
+    "1 LR"
+  } else if (!lrDetails.isNullOrEmpty()) {
+      lrDetails.size.toString()+ " LR"
+  } else {
+    "0 LR"
+  }
   /**
    * @return pod action text
    */

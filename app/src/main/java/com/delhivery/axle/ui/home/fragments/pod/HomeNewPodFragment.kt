@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -80,26 +81,17 @@ class HomeNewPodFragment : HomeBaseFragment<FragmentHomeNewPodBinding, HomePodVi
         tab2?.let { updateTabStyle(it, false) }
     }
 
-    /**
-     * Handle actions from child fragments
-     */
-    fun handleAction(
-        actionId: String,
-        position: Int,
-        item: BaseHomePodRVAdapterItem<*>
-    ) {
-        // Delegate to HomePodsFragment's handleAction logic
-        // For now, we'll need to implement similar logic here
-        // This is a placeholder - full implementation would mirror HomePodsFragment.handleAction
-    }
-
     private fun updateTabStyle(tab: TabLayout.Tab, isSelected: Boolean) {
         val color = if (isSelected) {
             ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed)
         } else {
-            ContextCompat.getColor(requireContext(), R.color.font_labels)
+            ContextCompat.getColor(requireContext(), R.color.grey_500)
         }
-        tab.customView?.findViewById<android.widget.TextView>(android.R.id.text1)?.setTextColor(color)
+        // For default tabs (without custom view), find TextView in the view hierarchy
+        val tabView = tab.view
+        val textView = tabView.findViewById<android.widget.TextView>(android.R.id.text1)
+            ?: (tabView as? android.view.ViewGroup)?.getChildAt(1) as? android.widget.TextView
+        textView?.setTextColor(color)
     }
 
     override fun onResume() {

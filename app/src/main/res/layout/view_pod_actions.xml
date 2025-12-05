@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="trip"
+            type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+            />
+        <import type="android.view.View" />
+        <import type="com.delhivery.axle.data.home.trips.TripStatus" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lrCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:text="@{trip.allLRSCount()}"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lrNumbers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_14sp"
+                android:text="@{trip.allLRS()}"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginStart="@dimen/size_16dp"
+            android:id="@+id/btnUploadEpod"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_36dp"
+            android:text="Upload ePod"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnDetails"
+            android:textColor="@color/text_black_v2"
+            android:gravity="center"
+            android:background="@drawable/bg_all_round_corner_grey_boundary"
+            android:paddingHorizontal="@dimen/size_16dp"
+            android:paddingVertical="8dp"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"/>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginStart="@dimen/size_12dp"
+            android:id="@+id/btnDetails"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_36dp"
+            android:text="Add Details"
+            android:textAllCaps="false"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_middle"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:background="@drawable/bg_dark_button"
+            android:paddingHorizontal="@dimen/size_16dp"
+            android:paddingVertical="@dimen/size_8dp"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginStart="@dimen/size_12dp"
+            android:id="@+id/updateDetails"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_36dp"
+            android:text="Update Details"
+            android:textAllCaps="false"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_middle"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/text_black_v2"
+            android:gravity="center"
+            android:background="@drawable/bg_all_round_corner_grey_boundary"
+            android:paddingHorizontal="@dimen/size_16dp"
+            android:paddingVertical="@dimen/size_8dp"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -25,13 +25,9 @@ import java.util.Calendar
 import javax.inject.Inject
 
 /**
- **
- *
- * View model class for [HomePodsFragment]
- *
- **
+ * View model class for [SubmittedPodTabFragment]
  */
-class HomePodViewModel @Inject constructor(
+class SubmittedPodViewModel @Inject constructor(
   private val userRepository: UserRepository,
   private val loadCycleRepository: LoadCycleRepository
 ) : BaseViewModel() {
@@ -40,17 +36,14 @@ class HomePodViewModel @Inject constructor(
   var userPodsData =
     MutableLiveData<List<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  /* bids count live data */
+  /* trips count live data */
   var tripsCountLiveData = MutableLiveData<Int>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
-  val selectedLiveData = MutableLiveData<Int>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   var request = SearchRequest()
-  var status: TripStatus = TruckUnloaded
-  var selectable: Boolean = false
-  var dispatch: Boolean = false
-  var selectedTransactions = mutableListOf<String>()
+  var status: TripStatus = EPodUploaded
+  var dispatch: Boolean = true // Default to true for submitted POD
   var transactionId: String = ""
   var podUrl: String = ""
   var empty = true
@@ -61,7 +54,15 @@ class HomePodViewModel @Inject constructor(
   var hasMoreData = true
 
   /**
-   * Fetch trips
+   * Cancel ongoing fetch requests
+   */
+  fun cancelOngoingRequests() {
+    compositeDisposable.clear()
+    dataLoadingLiveData.postValue(false)
+  }
+
+  /**
+   * Fetch trips for submitted POD
    */
   fun fetchTrips(paginate: Boolean = false) {
     if (!paginate) {
@@ -80,19 +81,10 @@ class HomePodViewModel @Inject constructor(
     request.offset = offset
     request.limit = UserSearchLimit
     request.vendorId = userRepository.userId()
-    if (status == TruckUnloaded) {
-      val cal = Calendar.getInstance()
-      cal.add(Calendar.DATE, -14)
-      cal.set(Calendar.HOUR_OF_DAY, 0)
-      cal.set(Calendar.MINUTE, 0)
-      cal.set(Calendar.SECOND, 0)
-      DateUtils.formatDate(cal.time, OrionDateFormat)
-      request.tripStatus = status.statusKey
-      request.value = DateUtils.formatDate(cal.time, OrionDateFormat)
-    } else if (status == EPodUploaded) {
-      request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
-      request.value = null
-    }
+    // For submitted POD, we always use EPodUploaded status
+    request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
+    request.value = null
+    
     compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
         .onBackground()
         .subscribe { _res, error ->
@@ -111,29 +103,11 @@ class HomePodViewModel @Inject constructor(
               }
               /* post all transactions mapped to bids as add */
               else {
-              //  add(Pair(HomePodSearchItem(), AddUpdate))
                 for (trip in _res.trips) {
-                  when (status) {
-                    TruckUnloaded -> {
-                      if (!trip.hasPODTracking()) {
-                        empty = false
-                        trip.selectable = selectable
-                        add(Pair(HomePodTripItem(trip), Add))
-                      }
-                    }
-                    else -> {
-                      if (dispatch) {
-                        if (trip.hasPODTracking()) {
-                          empty = false
-                          add(Pair(HomePodTripItem(trip), Add))
-                        }
-                      } else {
-                        if (!trip.hasPODTracking()) {
-                          empty = false
-                          add(Pair(HomePodTripItem(trip), Add))
-                        }
-                      }
-                    }
+                  // For submitted POD, only show items with POD tracking
+                  if (trip.hasPODTracking()) {
+                    empty = false
+                    add(Pair(HomePodTripItem(trip), Add))
                   }
                 }
                 if (empty)
@@ -145,6 +119,7 @@ class HomePodViewModel @Inject constructor(
             mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* add api time out item */
               add(Pair(HomePodWarningItem_TimeOut, AddUpdate))
+              add(Pair(HomePodWarningItem_TimeOut, AddUpdate))
             }
                 .let { userPodsData.postValue(it) }
           }
@@ -153,21 +128,7 @@ class HomePodViewModel @Inject constructor(
         }
   }
 
-  /**
-   * Get delegation token for AWS
-   */
-  fun getDelegationToken(
-    awsPath: String,
-    file: File
-  ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-          } else
-            error.handle()
-        }
-  }
+
 
 }
+
