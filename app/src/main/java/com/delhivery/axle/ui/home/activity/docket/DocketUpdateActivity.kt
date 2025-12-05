@@ -6,26 +6,27 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.DatePicker
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.data.DocketState
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.databinding.ActivityHpodDetailsBinding
-import com.delhivery.axle.databinding.ActivityUpdateDocketBinding
-import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.tripdetails.imageViewIntent
 import com.delhivery.axle.utils.AWSUtils
@@ -41,6 +42,7 @@ import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.getSerializable
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.extensions.toDate
@@ -74,11 +76,15 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private var mPhotoFile: File? = null
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
+  private var currentDocketId: Int = 1 // Currently selected docket ID
+  
   @Inject lateinit var imageUtils: ImageUtils
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var bitmapUtils: BitmapUtils
   @Inject lateinit var userPrefs: UserPrefs
+  
+  private lateinit var docketAdapter: DocketAdapter
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,33 +121,93 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     
     // Hide the badge for this screen
     binding.badgeEpodPending.visibility = View.GONE
+    
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         userPrefs.setPreviousScreen(this.javaClass.name)
         finish()
       }
     })
+    
+    // Set disabled text color for submit button programmatically
+    val disabledTextColor = ContextCompat.getColor(this, R.color.disabled_button_text)
+    val enabledTextColor = Color.WHITE
+    val colorStateList = ColorStateList(
+      arrayOf(
+        intArrayOf(-android.R.attr.state_enabled), // Disabled state
+        intArrayOf(android.R.attr.state_enabled)    // Enabled state
+      ),
+      intArrayOf(
+        disabledTextColor, // Color for disabled state
+        enabledTextColor   // Color for enabled state
+      )
+    )
+    binding.submitButtonMaxWidth.setTextColor(colorStateList)
+    
+    // Set up RecyclerView
+    setupRecyclerView()
+    
+    // Initialize dockets
+    viewModel.initializeDockets()
+    
+    // Initially show big container, hide RecyclerView
+    binding.podContainerMaxWidth.visibility = View.VISIBLE
+    binding.docketRecyclerView.visibility = View.GONE
+    
+    // Big container click listener
+    binding.podContainerMaxWidth.setOnClickListener {
+      // Start upload process to make docket available
+      viewModel.startUploadProcess()
+      
+      // Hide big container, show RecyclerView
+      binding.podContainerMaxWidth.visibility = View.GONE
+      binding.docketRecyclerView.visibility = View.VISIBLE
+      
+      // Immediately open camera/gallery dialog
+      currentDocketId = 1
+      val imageName = "docket_${viewModel.transactionIds.firstOrNull() ?: System.currentTimeMillis()}_1"
+      captureImage(imageName, imageName)
+    }
+    
     if (viewModel.trip != null) {
       viewModel.transactionIds.add(viewModel.trip!!.transactionId)
       binding.trackingNumberInput.setText(viewModel.trip!!.podDispatchAwbNumber)
       binding.dispatchDateInput.setText(viewModel.trip!!.podDispatchDate)
-      binding.podContainerSmall.visibility = View.VISIBLE
-      binding.podContainer.visibility = View.GONE
+      
+      // Set the dateOfDispatch in viewModel for validation
+      if (!viewModel.trip!!.podDispatchDate.isNullOrEmpty()) {
+        viewModel.dateOfDispatch = viewModel.trip!!.podDispatchDate.toString()
+      }
+      
       // Load existing image if available
       if (!viewModel.trip!!.podDispatchDocketImage.isNullOrEmpty()) {
-        viewModel.imageUrl = viewModel.trip!!.podDispatchDocketImage
-        binding.podImageCardSmall.visibility = View.VISIBLE
-        binding.addIconSmall.visibility = View.GONE
-        GlideApp.with(this)
-            .load(viewModel.trip!!.podDispatchDocketImage)
-            .into(binding.podImageSmall)
-        binding.podImageSmall.visibility = View.VISIBLE
-        binding.deleteButtonSmall.visibility = View.VISIBLE
+        // Show RecyclerView directly with existing image
+        binding.podContainerMaxWidth.visibility = View.GONE
+        binding.docketRecyclerView.visibility = View.VISIBLE
+        viewModel.loadExistingDocket(viewModel.trip!!.podDispatchDocketImage.toString())
       }
-    } else {
-      binding.podContainerSmall.visibility = View.GONE
-      binding.podContainer.visibility = View.VISIBLE
+      // If no existing image, big container stays visible (user clicks to start)
     }
+    // If new upload (trip == null), big container stays visible (user clicks to start)
+
+    // Observe docket items changes
+    viewModel.docketItemsLiveData.observe(this, Observer { items ->
+      docketAdapter.updateItems(items)
+      
+      // Show/hide big container vs RecyclerView based on active dockets
+      val hasActiveDockets = items.any { it.state != DocketState.EMPTY }
+      if (hasActiveDockets) {
+        binding.podContainerMaxWidth.visibility = View.GONE
+        binding.docketRecyclerView.visibility = View.VISIBLE
+      } else {
+        // Revert to initial state if no active dockets
+        binding.podContainerMaxWidth.visibility = View.VISIBLE
+        binding.docketRecyclerView.visibility = View.GONE
+      }
+      
+      // Enable/disable Submit button based on form validation
+      validateForm()
+    })
 
     viewModel.delegationLiveData.observe(this, Observer {
       uploadImage(it.first, it.second)
@@ -153,31 +219,15 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         finish()
       }
     })
-
-    // Full width container click listener (for new upload)
-    binding.podContainer.setOnClickListener {
-      val imageName = "docket_" + System.currentTimeMillis()
-      captureImage(imageName, imageName)
-    }
     
-    // Small container click listener (for viewing/updating existing image)
-    binding.podContainerSmall.setOnClickListener {
-      val imageName = "docket_" + System.currentTimeMillis()
-      if (viewModel.imageUrl.isNullOrEmpty()) {
-        captureImage(imageName, imageName)
-      } else {
-        userPrefs.setPreviousScreen(this.javaClass.name)
-        startActivity(imageViewIntent(this, viewModel.imageUrl, "Docket Image"))
+    // Add text change listener for tracking number to validate form
+    binding.trackingNumberInput.addTextChangedListener(object : android.text.TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      override fun afterTextChanged(s: android.text.Editable?) {
+        validateForm()
       }
-    }
-
-    binding.deleteButtonSmall.setOnClickListener {
-      deleteImage(binding.deleteButtonSmall, binding.podImageSmall)
-    }
-    
-    binding.deleteButton.setOnClickListener {
-      deleteImage(binding.deleteButton, binding.podImage)
-    }
+    })
 
     binding.dispatchDateInput.setOnClickListener {
       dialogUtils.datePicker(listener = this, maxDate = 0)
@@ -194,9 +244,60 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     binding.submitButtonMaxWidth.setOnClickListener {
       uiUtils.toggleKeyboard()
       if (isValid()) {
-        viewModel.updateDispatchDetails()
+        // Check if there are selected dockets to upload first
+        val selectedDockets = viewModel.getSelectedDockets()
+        if (selectedDockets.isNotEmpty()) {
+          // Upload selected dockets first, then update dispatch details
+          uploadSelectedDockets()
+        } else {
+          // No new images to upload, directly update dispatch details
+          viewModel.updateDispatchDetails()
+        }
       }
     }
+  }
+  
+  private fun setupRecyclerView() {
+    docketAdapter = DocketAdapter(
+        onDocketClick = { docketId ->
+          currentDocketId = docketId
+          val docketItem = viewModel.getDocketItems().find { it.id == docketId }
+          
+          // If already uploaded, view the image
+          if (docketItem?.state == DocketState.UPLOADED && docketItem.imageUrl != null) {
+            viewImage(docketItem.imageUrl, "Tracking Picture")
+            return@DocketAdapter
+          }
+          
+          val imageName = "docket_${viewModel.transactionIds}_$docketId"
+          captureImage(imageName, imageName)
+        },
+        onDeleteClick = { docketId ->
+          viewModel.deleteDocket(docketId)
+        },
+        bitmapUtils = bitmapUtils
+    )
+    
+    binding.docketRecyclerView.apply {
+      layoutManager = GridLayoutManager(this@DocketUpdateActivity, 4)
+      adapter = docketAdapter
+    }
+  }
+  
+  /**
+   * Validate form and enable/disable submit button
+   */
+  private fun validateForm() {
+    val docketItems = viewModel.getDocketItems()
+    val hasDocketImage = docketItems.any { 
+      it.state == DocketState.SELECTED || it.state == DocketState.UPLOADED 
+    }
+    
+    val hasTrackingNumber = !binding.trackingNumberInput.text.toString().trim().isEmpty()
+    val hasDispatchDate = !viewModel.dateOfDispatch.isNullOrEmpty()
+    
+    // Enable submit button only if all fields are filled
+    binding.submitButtonMaxWidth.isEnabled = hasDocketImage && hasTrackingNumber && hasDispatchDate
   }
 
   override fun onResume() {
@@ -208,7 +309,13 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   }
 
   private fun isValid(): Boolean {
-    if (viewModel.imageUrl.isNullOrEmpty()) {
+    // Check if docket image is selected or uploaded
+    val docketItems = viewModel.getDocketItems()
+    val hasImage = docketItems.any { 
+      it.state == DocketState.SELECTED || it.state == DocketState.UPLOADED 
+    }
+    
+    if (!hasImage) {
       uiUtils.showSnackbar("Upload Docket image")
       return false
     }
@@ -241,49 +348,34 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       when {
         items[item] == "Take Photo" -> requestImageCapturePermissions(true)
         items[item] == "Choose from Library" -> requestImageCapturePermissions(false)
-        items[item] == "Cancel" -> dialog.dismiss()
-      }
-    }
-    builder.show()
-  }
-
-  private fun deleteImage(
-    delete: AppCompatImageView,
-    image: AppCompatImageView
-  ) {
-    viewModel.imagePath = ""
-    viewModel.imageUrl = ""
-    image.visibility = View.GONE
-    delete.visibility = View.GONE
-    
-    // Show appropriate upload container
-    if (viewModel.trip != null) {
-      binding.podImageCardSmall.visibility = View.GONE
-      binding.addIconSmall.visibility = View.VISIBLE
-    } else {
-      binding.podImageCard.visibility = View.GONE
-      binding.addIcon.visibility = View.VISIBLE
-    }
-  }
-
-  private fun loadImage(
-    path: String?,
-    view: AppCompatImageView
-  ) {
-    view.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
-      override fun onPreDraw(): Boolean {
-        view.viewTreeObserver.removeOnPreDrawListener(this)
-        val imageViewHeight = view.measuredHeight
-        val imageViewWidth = view.measuredWidth
-        path?.let {
-          GlideApp.with(view.context)
-              .load(bitmapUtils.decodeSampledBitmap(path, imageViewWidth, imageViewHeight))
-              .into(view)
+        items[item] == "Cancel" -> {
+          dialog.dismiss()
+          // If user cancels and we're in initial state, reset dockets
+          if (isInitialState()) {
+            viewModel.resetDockets()
+          }
         }
-        return true
       }
-    })
+    }
+    builder.setCancelable(false)
+    builder.show()
+    builder.setOnCancelListener {
+      // If user cancels (back button) and we're in initial state, reset dockets
+      if (isInitialState()) {
+        viewModel.resetDockets()
+      }
+    }
   }
+  
+  /**
+   * Check if we are in the initial state (only first docket is available, nothing else)
+   */
+  private fun isInitialState(): Boolean {
+    val activeDockets = viewModel.getDocketItems().filter { it.state != DocketState.EMPTY }
+    return activeDockets.size == 1 && activeDockets[0].id == 1 && activeDockets[0].state == DocketState.AVAILABLE
+  }
+
+
 
   private fun requestImageCapturePermissions(isCamera: Boolean) {
     this.isCamera = isCamera
@@ -363,6 +455,9 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       )}"
     )
     viewModel.dateOfDispatch = DateUtils.formatDate(calendar.toDate(), DatePatterns.PODDateFormat)
+    
+    // Validate form after date is set
+    validateForm()
   }
 
   override fun onAWSSuccess(
@@ -370,36 +465,66 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   ) {
     uiUtils.hideProgress()
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
-    viewModel.imageUrl = path
     
-    // Show image in appropriate container
-    if (viewModel.trip != null) {
-      binding.podImageCardSmall.visibility = View.VISIBLE
-      binding.addIconSmall.visibility = View.GONE
-      binding.deleteButtonSmall.visibility = View.VISIBLE
-      binding.podImageSmall.visibility = View.VISIBLE
-      loadImage(viewModel.imagePath, binding.podImageSmall)
-    } else {
-      binding.podImageCard.visibility = View.VISIBLE
-      binding.addIcon.visibility = View.GONE
-      binding.deleteButton.visibility = View.VISIBLE
-      binding.podImage.visibility = View.VISIBLE
-      loadImage(viewModel.imagePath, binding.podImage)
-    }
+    // Update viewModel with upload success
+    viewModel.onUploadSuccess(currentDocketId, path)
     
     resetUploadData()
+    
+    // After upload success, check if we need to update dispatch details
+    val selectedDockets = viewModel.getSelectedDockets()
+    if (selectedDockets.isEmpty()) {
+      // All uploads complete, now update dispatch details
+      viewModel.updateDispatchDetails()
+    }
   }
 
   override fun onAWSFailure() {
     uiUtils.hideProgress()
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
+    
+    // Update viewModel with upload failure
+    viewModel.onUploadFailure(currentDocketId)
+    
     resetUploadData()
   }
 
+  private fun uploadSelectedDockets() {
+    val selectedDockets = viewModel.getSelectedDockets()
+    if (selectedDockets.isEmpty()) {
+      viewModel.updateDispatchDetails()
+      return
+    }
+    
+    // Upload first selected docket
+    val docket = selectedDockets.first()
+    currentDocketId = docket.id
+    
+    docket.imagePath?.let { path ->
+      val file = File(path)
+      if (file.exists()) {
+        // Set upload image name before starting upload
+        uploadImageName = "docket_${viewModel.transactionIds.firstOrNull() ?: System.currentTimeMillis()}_${docket.id}"
+        viewModel.startUpload(currentDocketId, file)
+      } else {
+        uiUtils.showSnackbar("Image file not found")
+      }
+    }
+  }
+  
   private fun resetUploadData() {
     mPhotoFile = null
     uploadImageName = ""
     localImageName = ""
+  }
+  
+  private fun viewImage(
+    path: String?,
+    title: String
+  ) {
+    if (path.isNotNullOrEmpty()) {
+      startActivity(imageViewIntent(this, path ?: "", title))
+    }
   }
 
   override fun onRequestPermissionsResult(
@@ -430,8 +555,11 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
           }
           try {
             mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
-            uiUtils.showProgress()
-            viewModel.getDelegationToken(mPhotoFile!!)
+            
+            // Set image as selected in viewModel (will upload on Submit)
+            viewModel.setImageSelected(currentDocketId, mPhotoFile!!.path)
+            
+            resetUploadData()
           } catch (e: IOException) {
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
           }
@@ -462,8 +590,11 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
               uiUtils.showToast(getString(R.string.msg_image_capture_failed))
               return
             }
-            uiUtils.showProgress()
-            viewModel.getDelegationToken(mPhotoFile!!)
+            
+            // Set image as selected in viewModel (will upload on Submit)
+            viewModel.setImageSelected(currentDocketId, mPhotoFile!!.path)
+            
+            resetUploadData()
           } catch (e: IOException) {
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
           }
