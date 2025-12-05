@@ -248,7 +248,12 @@ class AutoCompleteUtils @Inject constructor(
               try{
                   editText.post {
                       editText.progress(false)
-                      editText.showDropDown()
+                      //editText.showDropDown()
+
+                      // Only show if not in selection AND text hasn't been programmatically set
+                      if (!editText.isSelectionInProgress() && editText.hasFocus()) {
+                          editText.showDropDown()
+                      }
                   }
               }catch (e:Exception){
 

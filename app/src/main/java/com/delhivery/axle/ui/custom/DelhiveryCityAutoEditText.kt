@@ -28,6 +28,8 @@ class DelhiveryCityAutoEditText(
   private val DotRadius = context.resources.getDimension(R.dimen.size_2dp)
   private val MaxTransY = context.resources.getDimension(R.dimen.size_4dp)
 
+    private var isSelectionInProgress = false
+
   private val paint by lazy {
     Paint(Paint.ANTI_ALIAS_FLAG).apply {
       color = ResourcesCompat.getColor(resources, R.color.colorAccent, null)
@@ -108,9 +110,17 @@ class DelhiveryCityAutoEditText(
         ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, cities.names())
       setAdapter(adapter)
       setOnItemClickListener { _, _, i, _ ->
+          isSelectionInProgress = true
+          //
         setText(cities[i].cityName())
         selected(cities[i])
         dismissDropDown()
+
+          // Reset flag after a short delay
+          postDelayed({
+              isSelectionInProgress = false
+              // Clear after longer delay to prevent race conditions
+          }, 500)
       }
     }
     if (cities.isEmpty()) {
@@ -126,6 +136,12 @@ class DelhiveryCityAutoEditText(
     val shake = AnimationUtils.loadAnimation(context, R.anim.shake)
     this.startAnimation(shake)
   }
+
+
+    // Check if selection is in progress
+    fun isSelectionInProgress(): Boolean {
+        return isSelectionInProgress
+    }
 }
 
 private const val DotsCount = 3
