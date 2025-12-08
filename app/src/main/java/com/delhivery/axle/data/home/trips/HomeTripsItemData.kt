@@ -93,7 +93,7 @@ data class HomeTripsItemData(
   var paymentStatus: String = "",
   var addressExpand: Boolean = false,
   var isDelayed: Boolean = false
-) : BaseKeyTypeModel<String>(), Serializable {
+  ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
   /**
@@ -376,6 +376,12 @@ data class HomeTripsItemData(
       )
     } ?: ""
 
+  fun loadedOnDate() =
+    updateInfo?.loadedInfo?.let {
+      "Loaded on " + DateUtils.formatDate(
+        DateUtils.parseDate(it.time, OrionDateFormat), SimpleDateFormat
+      )
+    } ?: ""
   /**
    * Formatted required at
    */
@@ -1029,6 +1035,58 @@ data class HomeTripsItemData(
       }
     }
   }
+
+  fun podStatusText(): String {
+    return when (tripStatus) {
+      TruckUnloaded.statusKey -> {
+        if (epodRejectionRemark.isNotNullOrEmpty()) {
+          "ePOD Rejected"
+        } else if (podUrl.isNullOrEmpty()) {
+          "ePOD Pending"
+        } else {
+          "ePOD Pending"
+        }
+      }
+      EPodUploaded.statusKey -> {
+        if (isEpodVerified == true) {
+          "ePOD Verified"
+        } else if (isEpodVerified == false) {
+          "ePOD Rejected"
+        } else {
+          "ePOD Under Review"
+        }
+      }
+      else -> {
+       ""
+      }
+    }
+  }
+
+  fun podStatusTextVisibility() = if(!hasPODTracking() && (tripStatus==TruckUnloaded.statusKey || tripStatus== EPodUploaded.statusKey) ) View.VISIBLE else View.GONE
+  fun updateDetailsButtonVisibility() = if(hasPODTracking()) View.VISIBLE else View.GONE
+  fun uploadEpodButtonVisibility() = if(podStatusText()=="ePOD Rejected" || podStatusText()=="ePOD Pending") View.VISIBLE else View.GONE
+  fun podActionText(): String{
+    return when {
+      hasPODTracking() ->"Update Details"
+      podBadgeText() == "ePOD Verified" -> "Add Details"
+      podBadgeText() == "ePOD Pending" ->"Upload ePod"
+      podBadgeText() == "ePOD Rejected" -> "Upload ePod"
+      podBadgeText() == "ePOD Under Review" -> "Add Details"
+      else -> "Upload ePod" // HPOD Pending
+    }
+  }
+
+  @ColorRes
+  fun podActionButtonColor(): Int {
+    return when {
+      hasPODTracking() ->R.color.text_black_v2
+      else -> R.color.white // HPOD Pending
+    }
+  }
+
+  @DrawableRes
+  fun podActionBackground() =
+    DrawableProviderUtils.podActionButtonDrawableRes(podActionText())
 
   /**
    * Get POD badge background color resource

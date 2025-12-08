@@ -245,4 +245,8 @@ object DrawableProviderUtils {
   fun intracityContractType(contractType: String?, isFlexible: Boolean?) = if(isFlexible==true && contractType==ContractType.INTRACITY.type)
    R.drawable.ic_multiple_location else R.drawable.ic_place
 
+  @DrawableRes
+  fun podActionButtonDrawableRes(status: String?) = if(status=="Update Details")
+    R.drawable.bg_all_round_corner_grey_boundary else R.drawable.bg_dark_button
+
 }

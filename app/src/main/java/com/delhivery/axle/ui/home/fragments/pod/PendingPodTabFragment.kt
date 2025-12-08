@@ -154,8 +154,9 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                         trip.tripStatus == TruckUnloaded.statusKey && !trip.hasPODTracking()
                     }
                     PodType.HPOD -> {
-                        // Show HPOD pending items (EPodUploaded status without POD tracking)
-                        trip.tripStatus == EPodUploaded.statusKey && !trip.hasPODTracking()
+                        // Show HPOD pending items: both EPOD (TruckUnloaded) and HPOD (EPodUploaded) items without POD tracking
+                        !trip.hasPODTracking() && 
+                        (trip.tripStatus == EPodUploaded.statusKey || trip.tripStatus == TruckUnloaded.statusKey)
                     }
                 }
             } else {

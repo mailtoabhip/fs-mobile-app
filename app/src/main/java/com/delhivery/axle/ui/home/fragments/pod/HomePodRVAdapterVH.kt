@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -7,6 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
@@ -16,6 +18,7 @@ import com.delhivery.axle.data.home.pod.HomePodSearchAction_Search
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
@@ -163,7 +166,35 @@ class HomePodItemVH(binding: ViewNewPodItemBinding) :
     binding.root.clickToAction(
         HomeTripsRequestAction_ViewDetails, item, bindingAdapterPosition, _interface
     )
+    val badge = binding.tvPodStatus
+    when (item.data.podAction()) {
+      PODStatus.REJECT -> {
+        badge.text = "ePOD Rejected"
+        badge.backgroundTintList = ColorStateList.valueOf("#FEEFEF".toColorInt())
+        badge.setTextColor("#8E2720".toColorInt())
+      }
+        PODStatus.REVIEW -> {
+        badge.text = "ePOD Under Review"
+        badge.backgroundTintList = ColorStateList.valueOf("#F0F0F0".toColorInt())
+        badge.setTextColor("#121A31".toColorInt())
+      }
+        PODStatus.VIEWPOD -> {
+        badge.text = "ePOD Verified"
+        badge.backgroundTintList = ColorStateList.valueOf("#ECFDF5".toColorInt())
+        badge.setTextColor("#065F46".toColorInt())
+      }
+        PODStatus.UPLOAD -> {
+        badge.text = "ePOD Pending"
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
+        badge.setTextColor(ColorStateList.valueOf("#935F07".toColorInt()))
+      }
+        null -> {
+        badge.text = "ePOD Pending"
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
+        badge.setTextColor(ColorStateList.valueOf("#935F07".toColorInt()))
+      }
 
+    }
    /* binding.btnEpod.clickToAction(
         HomeTripsRequestAction_UploadEpod, item, bindingAdapterPosition, _interface
     )

@@ -121,17 +121,12 @@ class PendingPodViewModel @Inject constructor(
                       }
                     }
                     else -> {
-                      if (dispatch) {
-                        if (trip.hasPODTracking()) {
+                        // HPOD: Show both EPOD (TruckUnloaded) and HPOD (EPodUploaded) items without POD tracking
+                        if (!trip.hasPODTracking() && 
+                            (trip.tripStatus == EPodUploaded.statusKey || trip.tripStatus == TruckUnloaded.statusKey)) {
                           empty = false
                           add(Pair(HomePodTripItem(trip), Add))
                         }
-                      } else {
-                        if (!trip.hasPODTracking()) {
-                          empty = false
-                          add(Pair(HomePodTripItem(trip), Add))
-                        }
-                      }
                     }
                   }
                 }

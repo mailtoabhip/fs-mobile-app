@@ -29,7 +29,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/size_16dp">
+            android:paddingStart="@dimen/size_16dp"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingTop="@dimen/size_8dp"
+            android:paddingBottom="@dimen/size_16dp">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_status_duration"
                 app:layout_constraintTop_toTopOf="parent"
@@ -37,6 +40,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
+                android:layout_marginTop="@dimen/size_8dp"
+                android:visibility="@{trip.podStatusTextVisibility()}"
                 android:textSize="@dimen/text_size_12sp"
                 android:textColor="@color/colorDelhiveryRed"
                 android:contentDescription="@string/delay_status_content_description"
@@ -47,10 +52,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="0dp"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:visibility="@{trip.podStatusTextVisibility()}"
                 android:layout_height="wrap_content"
-                tool:background="@drawable/bg_all_rounded_delhivery"
+                android:background="@drawable/bg_all_rounded_delhivery"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_12sp"
+                android:text="@{trip.podStatusText()}"
                 tool:text="ePod Verified"
                 />
             <View
@@ -59,6 +67,7 @@
                 android:background="@color/bg_light_grey"
                 app:layout_constraintTop_toBottomOf="@+id/tvPodStatus"
                 android:layout_width="match_parent"
+                android:visibility="@{trip.podStatusTextVisibility()}"
                 android:layout_height="1dp"/>
             <include layout="@layout/view_origin_destination"
                 android:id="@+id/originDestination"
