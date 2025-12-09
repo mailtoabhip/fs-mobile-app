@@ -3,13 +3,10 @@ package com.delhivery.axle.ui.home.fragments.pod
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData

@@ -23,6 +23,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.ActivityUpdateDocketBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
@@ -432,6 +433,8 @@ class DocketUpdateActivity : BaseActivity<ActivityUpdateDocketBinding, DocketUpd
 /* intent keys */
 private const val TransactionIdsIntentKey = "transaction_ids"
 private const val TripDataIntentKey = "trip_data"
+private const val PodStatusIntentKey = "pod_status"
+
 
 /**
  * Update docket intent
@@ -439,8 +442,11 @@ private const val TripDataIntentKey = "trip_data"
 fun docketUpdateIntent(
   context: Context,
   transactionIds: ArrayList<String>? = null,
-  trip: HomeTripsItemData? = null
+  trip: HomeTripsItemData? = null,
+  podStatus: PODStatus?=null
 ) = Intent(context, DocketUpdateActivity::class.java).apply {
   transactionIds?.let { putStringArrayListExtra(TransactionIdsIntentKey, transactionIds) }
-  trip?.let { putExtra(TripDataIntentKey, trip) }
+  trip?.let { putExtra(TripDataIntentKey, trip)
+    putExtra(PodStatusIntentKey, podStatus)
+  }
 }

@@ -18,6 +18,7 @@ import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.ActivityUploadImageBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
@@ -445,6 +446,8 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 private const val TransactionIdIntentKey = "transaction_id"
 private const val ReachedTimeIntentKey = "reached_time"
 private const val UnloadedTimeIntentKey = "unloaded_time"
+private const val PodStatusIntentKey = "pod_status"
+
 
 /**
  * Upload Image intent
@@ -453,9 +456,12 @@ fun uploadImageIntent(
   context: Context,
   transactionId: String,
   reachedTime: String,
-  unloadedTime: String
+  unloadedTime: String,
+  podStatus: PODStatus? =null
 ) = Intent(context, UploadImageActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   putExtra(ReachedTimeIntentKey, reachedTime)
   putExtra(UnloadedTimeIntentKey, unloadedTime)
+  putExtra(PodStatusIntentKey, podStatus)
+
 }

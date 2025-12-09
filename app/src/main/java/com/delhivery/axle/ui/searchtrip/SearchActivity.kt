@@ -4,7 +4,6 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
@@ -26,8 +25,6 @@ import com.delhivery.axle.data.search.SearchWarningAction_NoResult
 import com.delhivery.axle.databinding.ActivitySearchBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
-import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
-import com.delhivery.axle.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
 import com.delhivery.axle.utils.AWSUtils
@@ -206,7 +203,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         viewModel.transactionId = data.transactionId
         viewModel.podUrl = data.podUrl ?: ""
         if (data.podUrl.isNullOrEmpty()) {
-          startActivityForResult(uploadImageIntent(this, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD)
+          startActivityForResult(uploadImageIntent(this, data.transactionId, data.reachedTime!!, data.unloadingTime!!, data.podAction()), REQCODE_UPLOAD_POD)
         } else {
             compositeDisposable += requestPermission(arrayOf(WRITE_EXTERNAL_STORAGE))
               .onBackground()
@@ -235,13 +232,13 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         when {
           data.hasPODTracking() ->
             startActivityForResult(
-                docketUpdateIntent(context = this, trip = data), REQCODE_UPLOAD_DOCKET
+                docketUpdateIntent(context = this, trip = data, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
             )
           else -> {
             val list = arrayListOf<String>()
             list.add(data.transactionId)
             startActivityForResult(
-                docketUpdateIntent(context = this, transactionIds = list), REQCODE_UPLOAD_DOCKET
+                docketUpdateIntent(context = this, transactionIds = list, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
             )
           }
         }

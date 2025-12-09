@@ -166,7 +166,7 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
                 viewModel.podUrl = data.podUrl ?: ""
                 context?.let {
                     startActivityForResult(
-                        docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+                        docketUpdateIntent(context = it, trip = data,  podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
                     )
                 }
 
@@ -176,7 +176,7 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
                 val data = item.data as HomeTripsItemData
                  context?.let {
                         startActivityForResult(
-                            docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+                            docketUpdateIntent(context = it, trip = data,  podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
                         )
                     }
             }

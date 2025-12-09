@@ -1,8 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
-import android.Manifest
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -33,8 +31,6 @@ import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
 
 /**
  * Fragment for Pending POD tab showing EPOD pending and Physical POD pending items
@@ -265,7 +261,7 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                         PODStatus.UPLOAD, PODStatus.REJECT -> {
                             context?.let {
                                 startActivityForResult(
-                                    uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD
+                                    uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!, data.podAction()), REQCODE_UPLOAD_POD
                                 )
                             }
                         }
@@ -283,13 +279,13 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                     if (selectedPodType == PodType.HPOD) {
                           context?.let {
                             startActivityForResult(
-                                docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+                                docketUpdateIntent(context = it, trip = data, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
                             )
                         }
                     } else {
                         context?.let {
                             startActivityForResult(
-                                uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD
+                                uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!,  podStatus = data.podAction()), REQCODE_UPLOAD_POD
                             )
                         }
                 }

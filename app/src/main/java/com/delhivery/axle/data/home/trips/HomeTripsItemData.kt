@@ -479,7 +479,7 @@ data class HomeTripsItemData(
     lr
   } else if (!lrDetails.isNullOrEmpty()) {
    lrDetails.firstOrNull()?.lr?.let { first ->
-      if (lrDetails.size > 1) "$first,..." else first
+      if (lrDetails.size > 1) "$first, ..." else first
     } ?: ""
   } else {
     ""
