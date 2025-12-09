@@ -26,6 +26,7 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
+import com.delhivery.axle.ui.home.fragments.pod.PendingPodTabFragment.PodType
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
@@ -163,21 +164,21 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
                 val data = item.data as HomeTripsItemData
                 viewModel.transactionId = data.transactionId
                 viewModel.podUrl = data.podUrl ?: ""
-                when (data.podAction()) {
-                    PODStatus.UPLOAD, PODStatus.REJECT -> {
-                        context?.let {
-                            startActivityForResult(
-                                uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD
-                            )
-                        }
-                    }
-                    else -> {
-                    }
+                context?.let {
+                    startActivityForResult(
+                        docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+                    )
                 }
+
             }
 
             HomeTripsRequestAction_UploadTracking -> {
-
+                val data = item.data as HomeTripsItemData
+                 context?.let {
+                        startActivityForResult(
+                            docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+                        )
+                    }
             }
 
             HomeTripsRequestAction_ViewDetails -> {

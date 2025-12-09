@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
@@ -104,6 +105,7 @@ class HomePodItemVH(binding: ViewNewPodItemBinding) :
     _interface: HomePodRVAdapterInterface
   ) {
     binding.trip = item.data
+    // isHPODSection will be set by the adapter in bindVH
     val spannable = SpannableStringBuilder()
     spannable.clearSpans()
     val origin = item.data.formattedOriginCity() ?: ""
@@ -163,7 +165,7 @@ class HomePodItemVH(binding: ViewNewPodItemBinding) :
       autoLinkMask = 0
       movementMethod = null
     }
-    binding.root.clickToAction(
+    binding.podCardCl.clickToAction(
         HomeTripsRequestAction_ViewDetails, item, bindingAdapterPosition, _interface
     )
     val badge = binding.tvPodStatus
@@ -195,6 +197,12 @@ class HomePodItemVH(binding: ViewNewPodItemBinding) :
       }
 
     }
+    binding.podActions.btnUploadEpod.clickToAction(
+      HomeTripsRequestAction_UploadEpod, item, bindingAdapterPosition, _interface
+    )
+    binding.podActions.updateDetails.clickToAction(
+      HomeTripsRequestAction_UploadTracking, item, bindingAdapterPosition, _interface
+    )
    /* binding.btnEpod.clickToAction(
         HomeTripsRequestAction_UploadEpod, item, bindingAdapterPosition, _interface
     )

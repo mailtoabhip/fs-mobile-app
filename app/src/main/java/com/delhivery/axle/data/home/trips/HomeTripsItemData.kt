@@ -379,7 +379,7 @@ data class HomeTripsItemData(
   fun loadedOnDate() =
     updateInfo?.loadedInfo?.let {
       "Loaded on " + DateUtils.formatDate(
-        DateUtils.parseDate(it.time, OrionDateFormat), SimpleDateFormat
+        DateUtils.parseDate(it.time, OrionDateFormat), "dd MMM"
       )
     } ?: ""
   /**
@@ -1065,11 +1065,17 @@ data class HomeTripsItemData(
   fun podStatusTextVisibility() = if(!hasPODTracking() && (tripStatus==TruckUnloaded.statusKey || tripStatus== EPodUploaded.statusKey) ) View.VISIBLE else View.GONE
   fun updateDetailsButtonVisibility() = if(hasPODTracking()) View.VISIBLE else View.GONE
   fun uploadEpodButtonVisibility() = if(podStatusText()=="ePOD Rejected" || podStatusText()=="ePOD Pending") View.VISIBLE else View.GONE
-  fun podActionText(): String{
+  /**
+   * Check if EPOD is Pending
+   */
+  fun isEPODPending() = podStatusText() == "ePOD Pending"
+  fun podActionText(isHPODSection: Boolean = false): String{
     return when {
       hasPODTracking() ->"Update Details"
       podBadgeText() == "ePOD Verified" -> "Add Details"
-      podBadgeText() == "ePOD Pending" ->"Upload ePod"
+      podBadgeText() == "ePOD Pending" -> {
+        if (isHPODSection) "Add Details" else "Upload ePod"
+      }
       podBadgeText() == "ePOD Rejected" -> "Upload ePod"
       podBadgeText() == "ePOD Under Review" -> "Add Details"
       else -> "Upload ePod" // HPOD Pending

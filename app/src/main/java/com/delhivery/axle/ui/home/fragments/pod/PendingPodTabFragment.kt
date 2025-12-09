@@ -103,6 +103,9 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
            // updatePodTypeCounts()
         })
 
+        // Set initial adapter state
+        adapter.isHPODSection = (selectedPodType == PodType.HPOD)
+        
         // Initial data load
         refreshData()
     }
@@ -122,6 +125,11 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
 
     private fun selectPodType(type: PodType) {
         selectedPodType = type
+
+        // Update adapter with selected section
+        adapter.isHPODSection = (type == PodType.HPOD)
+        // Notify adapter to rebind items with new section state
+        adapter.notifyDataSetChanged()
 
         // Update tag UI
         when (type) {
@@ -253,25 +261,42 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                 val data = item.data as HomeTripsItemData
                 viewModel.transactionId = data.transactionId
                 viewModel.podUrl = data.podUrl ?: ""
-                when (data.podAction()) {
-                    PODStatus.UPLOAD, PODStatus.REJECT -> {
+                    when (data.podAction()) {
+                        PODStatus.UPLOAD, PODStatus.REJECT -> {
+                            context?.let {
+                                startActivityForResult(
+                                    uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD
+                                )
+                            }
+                        }
+                        else -> {
+
+                        }
+                    }
+
+
+            }
+
+            HomeTripsRequestAction_UploadTracking -> {
+                val data = item.data as HomeTripsItemData
+
+                    if (selectedPodType == PodType.HPOD) {
+                          context?.let {
+                            startActivityForResult(
+                                docketUpdateIntent(context = it, trip = data), REQCODE_UPLOAD_DOCKET
+                            )
+                        }
+                    } else {
                         context?.let {
                             startActivityForResult(
                                 uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!), REQCODE_UPLOAD_POD
                             )
                         }
-                    }
-                    else -> {
-
-                    }
                 }
             }
 
-            HomeTripsRequestAction_UploadTracking -> {
-
-            }
-
             HomeTripsRequestAction_ViewDetails -> {
+                Log.i("HomeTripsRequestAction", "Details")
                 context?.let {
                     val data = item.data as HomeTripsItemData
                     startActivity(tripDetailsIntent(data.key(), it))

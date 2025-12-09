@@ -6,6 +6,10 @@
             name="trip"
             type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
             />
+        <variable
+            name="isHPODSection"
+            type="Boolean"
+            />
         <import type="android.view.View" />
         <import type="com.delhivery.axle.data.home.trips.TripStatus" />
     </data>
@@ -38,7 +42,7 @@
             android:id="@+id/loadedDate"
             app:layout_constraintTop_toTopOf="@+id/vehicleNumber"
             app:layout_constraintStart_toStartOf="@+id/guideline_middle"
-            android:text="@{trip.loadedOn()}"
+            android:text="@{trip.loadedOnDate()}"
             tool:text="Loaded on 22 Apr"
             android:layout_marginStart="@dimen/size_8dp"
             android:drawablePadding="@dimen/size_4dp"
@@ -67,7 +71,7 @@
             android:id="@+id/lrNumber"
             app:layout_constraintTop_toBottomOf="@+id/vehicleNumber"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="@{trip.allLRS()}"
+            android:text='@{"LR " + trip.allLRS()}'
             tool:text="LR88278393"
             android:layout_marginTop="@dimen/size_8dp"
             android:drawablePadding="@dimen/size_4dp"
@@ -75,7 +79,7 @@
             android:drawableStart="@drawable/ic_lr_number"
             android:fontFamily="sans-serif"
             android:textSize="@dimen/text_12sp"
-            android:visibility="gone"
+            android:visibility="@{(isHPODSection &amp;&amp; trip.isEPODPending()) ? View.VISIBLE : View.GONE}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
