@@ -17,8 +17,8 @@ android {
     applicationId "com.delhivery.axle"
     minSdkVersion 21
     targetSdkVersion 35
-    versionCode 138
-    versionName "2.133.5"
+    versionCode 139
+    versionName "2.133.6"
     multiDexEnabled true
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables.useSupportLibrary = true
