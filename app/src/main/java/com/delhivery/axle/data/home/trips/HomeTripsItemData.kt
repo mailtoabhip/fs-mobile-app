@@ -475,6 +475,15 @@ data class HomeTripsItemData(
   } else {
     ""
   }
+  fun formattedAllLRS() = if (lr.isNotNullOrEmpty()) {
+    lr
+  } else if (!lrDetails.isNullOrEmpty()) {
+   lrDetails.firstOrNull()?.lr?.let { first ->
+      if (lrDetails.size > 1) "$first,..." else first
+    } ?: ""
+  } else {
+    ""
+  }
   /**
    * @return count for lr
    */
