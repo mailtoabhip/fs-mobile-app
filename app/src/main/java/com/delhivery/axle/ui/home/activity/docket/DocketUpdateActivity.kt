@@ -4,15 +4,20 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.DatePicker
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -26,7 +31,9 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.data.DocketState
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.ActivityHpodDetailsBinding
+import com.delhivery.axle.databinding.DialogEpodSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.tripdetails.imageViewIntent
 import com.delhivery.axle.utils.AWSUtils
@@ -55,6 +62,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
 import javax.inject.Inject
+import androidx.core.graphics.toColorInt
 
 /**
  **
@@ -87,6 +95,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private lateinit var docketAdapter: DocketAdapter
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
+  private var podStatus: PODStatus? = null
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("DocketUpdateActivity_SetupTime")
@@ -103,6 +112,8 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         intent.getStringArrayListExtra(TransactionIdsIntentKey) ?: mutableListOf()
     if (intent.hasExtra(TripDataIntentKey)) {
       viewModel.trip = intent.getSerializable(TripDataIntentKey,HomeTripsItemData::class.java)
+      // Extract POD status from trip data
+      podStatus = viewModel.trip?.podAction()
     }
   }
 
@@ -119,8 +130,8 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       WindowInsetsUtils.applyTopSystemWindowInsets(binding.appBarLayout)
     }
     
-    // Hide the badge for this screen
-    binding.badgeEpodPending.visibility = View.GONE
+    // Update badge styling based on pod_status
+    updatePodStatusBadge()
     
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
@@ -213,10 +224,13 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       uploadImage(it.first, it.second)
     })
 
-    viewModel.statusLiveData.observe(this, Observer {
-      if (it) {
-        setResult(Activity.RESULT_OK)
-        finish()
+    viewModel.statusLiveData.observe(this, Observer { isSuccess ->
+      uiUtils.hideProgress()
+      if (isSuccess) {
+        showSuccessDialog(isSuccess)
+      } else {
+        // Re-validate form and enable submit button on failure
+        validateForm()
       }
     })
     
@@ -244,6 +258,9 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     binding.submitButtonMaxWidth.setOnClickListener {
       uiUtils.toggleKeyboard()
       if (isValid()) {
+        // Show progress at the start of the entire process
+        uiUtils.showProgress()
+        
         // Check if there are selected dockets to upload first
         val selectedDockets = viewModel.getSelectedDockets()
         if (selectedDockets.isNotEmpty()) {
@@ -253,6 +270,40 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
           // No new images to upload, directly update dispatch details
           viewModel.updateDispatchDetails()
         }
+      }
+    }
+  }
+  
+  /**
+   * Update the pod status badge styling based on pod_status from trip data
+   */
+  private fun updatePodStatusBadge() {
+    val badge = binding.badgeEpodPending
+    when (podStatus) {
+      PODStatus.REJECT -> {
+        badge.text = "ePOD Rejected"
+        badge.backgroundTintList = ColorStateList.valueOf("#FEEFEF".toColorInt())
+        badge.setTextColor("#8E2720".toColorInt())
+      }
+      PODStatus.REVIEW -> {
+        badge.text = "ePOD Under Review"
+        badge.backgroundTintList = ColorStateList.valueOf("#F0F0F0".toColorInt())
+        badge.setTextColor("#121A31".toColorInt())
+      }
+      PODStatus.VIEWPOD -> {
+        badge.text = "ePOD Verified"
+        badge.backgroundTintList = ColorStateList.valueOf("#ECFDF5".toColorInt())
+        badge.setTextColor("#065F46".toColorInt())
+      }
+      PODStatus.UPLOAD -> {
+        badge.text = "ePOD Pending"
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
+        badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
+      }
+      null -> {
+        badge.text = "ePOD Pending"
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
+        badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
       }
     }
   }
@@ -433,7 +484,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     delegationToken: DelegationToken,
     file: File
   ) {
-    uiUtils.showProgress()
+    // Progress is already shown at the start of submit process
     val awsPath = "trips/vendor_pod/docket/$uploadImageName.jpg"
     awsUtils.startUpload(delegationToken, awsPath, file, this)
     viewModel.imagePath = file.path
@@ -463,7 +514,6 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   override fun onAWSSuccess(
     path: String
   ) {
-    uiUtils.hideProgress()
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
     
     // Update viewModel with upload success
@@ -471,10 +521,13 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     
     resetUploadData()
     
-    // After upload success, check if we need to update dispatch details
+    // After upload success, check if there are more selected dockets to upload
     val selectedDockets = viewModel.getSelectedDockets()
-    if (selectedDockets.isEmpty()) {
-      // All uploads complete, now update dispatch details
+    if (selectedDockets.isNotEmpty()) {
+      // Upload next selected docket (progress already showing)
+      uploadSelectedDockets()
+    } else {
+      // All uploads complete, now update dispatch details (progress still showing)
       viewModel.updateDispatchDetails()
     }
   }
@@ -507,8 +560,12 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         uploadImageName = "docket_${viewModel.transactionIds.firstOrNull() ?: System.currentTimeMillis()}_${docket.id}"
         viewModel.startUpload(currentDocketId, file)
       } else {
+        uiUtils.hideProgress()
         uiUtils.showSnackbar("Image file not found")
       }
+    } ?: run {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Image file not found")
     }
   }
   
@@ -603,6 +660,34 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         }
       }
     }
+  }
+  
+  private fun showSuccessDialog(isSuccess: Boolean) {
+    if (isFinishing || !isSuccess) return
+    
+    val dialog = Dialog(this)
+    val bindingDialog = DialogEpodSuccessBinding.inflate(layoutInflater)
+
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+
+    bindingDialog.textTitle.text = "Courier details submitted successfully!"
+    bindingDialog.textMessage.visibility = View.GONE
+    bindingDialog.iconSuccess.setImageResource(R.drawable.ic_green_tick)
+
+    // Done button listener
+    bindingDialog.doneButtonMaxWidth.setOnClickListener {
+        dialog.dismiss()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
+    dialog.show()
+    dialog.setCancelable(false)
+    dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+    dialog.window!!.setGravity(Gravity.BOTTOM)
   }
 }
 

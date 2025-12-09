@@ -43,11 +43,12 @@ class DocketUpdateViewModel @Inject constructor(
 
   /**
    * Get delegation token for AWS
+   * Note: Progress is controlled at Activity level to maintain continuous progress bar
    */
   fun getDelegationToken(file: File) {
     compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
         .onBackground()
-        .progress()
+        // Don't use .progress() here - progress is controlled at Activity level
         .subscribe { _res, error ->
           if (!error) {
             delegationLiveData.postValue(Pair(_res.delegationToken, file))
@@ -218,6 +219,7 @@ class DocketUpdateViewModel @Inject constructor(
 
   /**
    * Update disatch details
+   * Note: Progress is controlled at Activity level to maintain continuous progress bar
    */
   fun updateDispatchDetails() {
     val listDispatch = mutableListOf<DispatchData>()
@@ -228,7 +230,6 @@ class DocketUpdateViewModel @Inject constructor(
         UpdateDispatchRequest(listDispatch)
     )
         .onBackground()
-        .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
             statusLiveData.postValue(true)

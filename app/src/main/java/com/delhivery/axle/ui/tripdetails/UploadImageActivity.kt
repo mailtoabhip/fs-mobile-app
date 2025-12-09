@@ -57,6 +57,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import androidx.core.graphics.toColorInt
 
 /**
  * Created by saurabh
@@ -105,11 +106,8 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     viewModel.reachedTime = intent?.getStringExtra(ReachedTimeIntentKey) ?: ""
     viewModel.unloadedTime = intent?.getStringExtra(UnloadedTimeIntentKey) ?: ""
     
-    // Read pod_status from intent and map to PODStatus enum
-    val podStatusString = intent?.getStringExtra(PodStatusIntentKey)
-    podStatus = podStatusString?.let { statusStr ->
-      PODStatus.values().find { it.status.equals(statusStr, ignoreCase = true) }
-    }
+    // Read pod_status from intent as enum
+    podStatus = intent?.getSerializableExtra(PodStatusIntentKey) as? PODStatus
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -124,7 +122,6 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       onBackPressed()
     }
 
-    // Set disabled text color for submit button programmatically
     val disabledTextColor = ContextCompat.getColor(this, R.color.disabled_button_text)
     val enabledTextColor = Color.WHITE
     val colorStateList = ColorStateList(
@@ -204,7 +201,16 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     // Observe POD submission result (final API call)
     viewModel.podSubmissionResultLiveData.observe(this, Observer { isSuccess ->
       uiUtils.hideProgress()
-      showBidSuccessDialog(!isSuccess)
+      if (isSuccess) {
+        showBidSuccessDialog(false)
+      } else {
+          viewModel.getPodItems().forEach {
+              if(it.state == PodState.SELECTED || it.state == PodState.UPLOADED)
+                  it.state = PodState.SELECTED
+          }
+
+          binding.submitButtonMaxWidth.isEnabled = true
+      }
     })
 
     // Max width container click - start first upload
@@ -240,27 +246,27 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     when (podStatus) {
       PODStatus.REJECT -> {
         badge.text = "ePOD Rejected"
-        badge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FEEFEF"))
-        badge.setTextColor(Color.parseColor("#8E2720"))
+        badge.backgroundTintList = ColorStateList.valueOf("#FEEFEF".toColorInt())
+        badge.setTextColor("#8E2720".toColorInt())
       }
       PODStatus.REVIEW -> {
         badge.text = "ePOD Under Review"
-        badge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F0F0F0"))
-        badge.setTextColor(Color.parseColor("#121A31"))
+        badge.backgroundTintList = ColorStateList.valueOf("#F0F0F0".toColorInt())
+        badge.setTextColor("#121A31".toColorInt())
       }
       PODStatus.VIEWPOD -> {
         badge.text = "ePOD Verified"
-        badge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ECFDF5"))
-        badge.setTextColor(Color.parseColor("#065F46"))
+        badge.backgroundTintList = ColorStateList.valueOf("#ECFDF5".toColorInt())
+        badge.setTextColor("#065F46".toColorInt())
       }
       PODStatus.UPLOAD -> {
         badge.text = "ePOD Pending"
-        badge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFF7EB"))
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
         badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
       }
       null -> {
         badge.text = "ePOD Pending"
-        badge.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#FFF7EB"))
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
         badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
       }
     }
@@ -471,7 +477,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   }
 
     private fun showBidSuccessDialog(isError: Boolean) {
-        if (isFinishing) return
+        if (isFinishing || isError) return
         
         val dialog = Dialog(this)
         val bindingDialog = DialogEpodSuccessBinding.inflate(layoutInflater)
@@ -479,35 +485,14 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
 
-        if (isError) {
-            bindingDialog.textTitle.text = "Error!"
-            bindingDialog.textMessage.text = "Please try again later."
-            bindingDialog.textMessage.visibility = View.VISIBLE
-            bindingDialog.iconSuccess.setImageResource(R.drawable.ic_vector_upload_error)
-            // Close button listener
-            bindingDialog.btnClose.setOnClickListener {
-                dialog.dismiss()
-            }
+        bindingDialog.textTitle.text = "ePOD submitted successfully!"
+        bindingDialog.textMessage.visibility = View.GONE
+        bindingDialog.iconSuccess.setImageResource(R.drawable.ic_green_tick)
 
-            // Done button listener
-            bindingDialog.doneButtonMaxWidth.setOnClickListener {
-                dialog.dismiss()
-            }
-        } else {
-            bindingDialog.textTitle.text = "ePOD submitted successfully!"
-            bindingDialog.textMessage.visibility = View.GONE
-            bindingDialog.iconSuccess.setImageResource(R.drawable.ic_green_tick)
-            // Close button listener
-            bindingDialog.btnClose.setOnClickListener {
-                dialog.dismiss()
-                finish()
-            }
-
-            // Done button listener
-            bindingDialog.doneButtonMaxWidth.setOnClickListener {
-                dialog.dismiss()
-                finish()
-            }
+        // Done button listener
+        bindingDialog.doneButtonMaxWidth.setOnClickListener {
+            dialog.dismiss()
+            finish()
         }
 
         dialog.show()
@@ -598,9 +583,11 @@ fun uploadImageIntent(
   context: Context,
   transactionId: String,
   reachedTime: String,
-  unloadedTime: String
+  unloadedTime: String,
+  podStatus: PODStatus? = null
 ) = Intent(context, UploadImageActivity::class.java).apply {
     putExtra(TransactionIdIntentKey, transactionId)
     putExtra(ReachedTimeIntentKey, reachedTime)
     putExtra(UnloadedTimeIntentKey, unloadedTime)
+    podStatus?.let { putExtra(PodStatusIntentKey, it) }
 }

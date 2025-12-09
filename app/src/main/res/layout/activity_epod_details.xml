@@ -85,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ePOD Picture *"
-                    android:textColor="#505361"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/text_14sp"
                     android:layout_marginStart="@dimen/size_12dp"
                     app:layout_constraintStart_toStartOf="parent"

@@ -12,18 +12,6 @@
         android:paddingStart="@dimen/size_16dp"
         android:paddingEnd="@dimen/size_16dp">
 
-        <!-- Close Button -->
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_close"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            android:src="@drawable/ic_close_dark_grey"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <!-- Success Icon Container -->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/layout_content"

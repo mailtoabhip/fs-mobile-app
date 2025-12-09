@@ -177,6 +177,21 @@
     <item name="android:windowExitAnimation">@anim/slide_out</item>
   </style>
 
+  <style name="DatePickerTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    <item name="android:buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+  </style>
+
+  <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+    <item name="android:textColor">@color/colorAccent</item>
+  </style>
+
+  <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+    <item name="android:textColor">@color/colorAccent</item>
+  </style>
+
   <style name="RatingBar" parent="Theme.MaterialComponents">
     <item name="colorControlNormal">@color/grey_bg</item>
     <item name="colorControlActivated">@color/yellow</item>

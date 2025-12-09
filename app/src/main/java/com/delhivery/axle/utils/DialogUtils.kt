@@ -58,7 +58,7 @@ class DialogUtils @Inject constructor(
     maxDate: Int = Int.MAX_VALUE
   ) {
     val picker = DatePickerDialog(
-        activity, 0, listener,
+        activity, R.style.DatePickerTheme, listener,
         calendar[Calendar.YEAR],
         calendar[Calendar.MONTH],
         calendar[Calendar.DAY_OF_MONTH]

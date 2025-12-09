@@ -7,7 +7,7 @@ import android.net.Uri
  */
 data class PodItem(
     val id: Int, // 1-10
-    val state: PodState,
+    var state: PodState,
     val imageUri: Uri? = null,
     val imagePath: String? = null, // Local file path
     val imageUrl: String? = null // AWS URL after upload
