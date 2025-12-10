@@ -32,6 +32,8 @@ import com.delhivery.axle.ui.home.fragments.pod.PendingPodTabFragment.PodType
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
+import android.app.Activity
+import android.content.Intent
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.extensions.onBackground
@@ -82,7 +84,7 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         // Observe data from own view model
         viewModel.userPodsData.observe(viewLifecycleOwner, Observer { items ->
             items?.let { _items ->
-                filterAndUpdateItems(_items)
+                adapter.operation(_items)
             }
             // Stop refreshing when data is received
             binding.refreshLayout.isRefreshing = false
@@ -125,22 +127,6 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         item: BaseHomePodRVAdapterItem<*>
     ) {
         when (actionId) {
-            HomePodHeaderAction_Epod -> {
-                if (!isLoadingData) {
-                    viewModel.status = TruckUnloaded
-                    viewModel.dispatch = false
-                    refreshData()
-                }
-            }
-
-            HomePodHeaderAction_Physical -> {
-                if (!isLoadingData) {
-                    viewModel.status = EPodUploaded
-                    viewModel.dispatch = false
-                    refreshData()
-                }
-            }
-
             HomePodHeaderAction_Dispactched -> {
                 if (!isLoadingData) {
                     viewModel.status = EPodUploaded
@@ -242,5 +228,23 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         dialog.window?.attributes = layoutParams
         
         dialog.show()
+    }
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQCODE_UPLOAD_POD -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    // Refresh data when POD upload is successful
+                    refreshData()
+                }
+            }
+            REQCODE_UPLOAD_DOCKET -> {
+                // Refresh data when docket update is successful
+                if (resultCode == Activity.RESULT_OK) {
+                    refreshData()
+                }
+            }
+        }
     }
 }

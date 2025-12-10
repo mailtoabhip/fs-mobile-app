@@ -31,6 +31,8 @@ import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
+import android.app.Activity
+import android.content.Intent
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 
@@ -107,6 +109,7 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
         // Initial data load
         refreshData()
     }
+
 
     private fun setupPodTypeTags() {
         binding.tagEpod.setOnClickListener {
@@ -353,5 +356,23 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
         dialog.window?.attributes = layoutParams
         
         dialog.show()
+    }
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQCODE_UPLOAD_POD -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    // Refresh data when POD upload is successful
+                    refreshData()
+                }
+            }
+            REQCODE_UPLOAD_DOCKET -> {
+                // Refresh data when docket update is successful
+                if (resultCode == Activity.RESULT_OK) {
+                    refreshData()
+                }
+            }
+        }
     }
 }

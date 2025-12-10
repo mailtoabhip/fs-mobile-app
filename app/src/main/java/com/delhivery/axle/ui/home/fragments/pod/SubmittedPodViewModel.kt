@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -104,8 +105,10 @@ class SubmittedPodViewModel @Inject constructor(
               /* post all transactions mapped to bids as add */
               else {
                 for (trip in _res.trips) {
+
                   // For submitted POD, only show items with POD tracking
                   if (trip.hasPODTracking()) {
+                    Log.i("hasPODTracking", trip.vehicleDetails.vehicleNo)
                     empty = false
                     add(Pair(HomePodTripItem(trip), Add))
                   }
