@@ -94,20 +94,6 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         refreshData()
     }
 
-    private fun filterAndUpdateItems(items: List<Pair<BaseHomePodRVAdapterItem<*>, com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType>>) {
-        val filteredItems = items.filter { pair ->
-            val item = pair.first
-            if (item.type == HomePodRVAdapterItemType.Pod) {
-                val trip = (item as HomePodTripItem).data
-                // Show dispatched items (EPodUploaded status with POD tracking)
-                trip.tripStatus == EPodUploaded.statusKey && trip.hasPODTracking()
-            } else {
-                true // Keep non-pod items
-            }
-        }
-        adapter.operation(filteredItems)
-    }
-
     private fun refreshData() {
         // Cancel any ongoing requests before starting a new one
         viewModel.cancelOngoingRequests()
