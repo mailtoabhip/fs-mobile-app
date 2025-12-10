@@ -64,7 +64,6 @@
                 android:visibility="@{trip.podStatusTextVisibility()}"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_all_rounded_delhivery"
-                android:textStyle="bold"
                 android:textSize="@dimen/text_12sp"
                 android:text="@{trip.podStatusText()}"
                 tool:text="ePod Verified"

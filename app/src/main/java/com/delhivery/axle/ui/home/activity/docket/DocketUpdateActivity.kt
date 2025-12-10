@@ -301,9 +301,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
       }
       null -> {
-        badge.text = "ePOD Pending"
-        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
-        badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
+        badge.visibility = View.GONE
       }
     }
   }

@@ -32,7 +32,7 @@
             android:paddingStart="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="@{(isHPODSection &amp;&amp; trip.isEPODPending()) ? View.GONE : View.VISIBLE}"
+            android:visibility="@{(isHPODSection &amp;&amp; (trip.isEPODPending() || trip.isEPODRejected())) ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
             android:orientation="vertical">
             <androidx.appcompat.widget.AppCompatTextView
@@ -42,14 +42,28 @@
                 android:textSize="10sp"
                 android:textColor="#8F9198"
                 android:text="@{trip.allLRSCount()}"/>
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/lrNumbers"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="@color/text_black_v2"
-                android:textSize="@dimen/text_14sp"
-                android:text="@{trip.formattedAllLRS()}"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/lrNumbers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_black_v2"
+                    android:textSize="@dimen/text_14sp"
+                    android:text="@{trip.formattedAllLRS()}"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icShowLR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_4dp"
+                    android:src="@drawable/ic_show"
+                    android:visibility="@{trip.hasMultipleLRs() ? View.VISIBLE : View.GONE}"
+                    android:contentDescription="Show more LR numbers"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnUploadEpod"
@@ -59,7 +73,7 @@
             android:textAllCaps="false"
             android:paddingEnd="@dimen/size_8dp"
             android:paddingStart="0dp"
-            android:visibility="@{(isHPODSection &amp;&amp; trip.isEPODPending()) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(isHPODSection &amp;&amp; (trip.isEPODPending() || trip.isEPODRejected() )) ? View.VISIBLE : View.GONE}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
@@ -68,7 +82,9 @@
             android:background="@drawable/bg_all_round_corner_grey_boundary"
             android:paddingVertical="8dp"
             android:textSize="@dimen/text_14sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_marginStart="@dimen/size_12dp"
@@ -87,7 +103,9 @@
             android:paddingEnd="0dp"
             android:paddingVertical="@dimen/size_6dp"
             android:textSize="@dimen/text_14sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

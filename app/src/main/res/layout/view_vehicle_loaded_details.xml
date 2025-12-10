@@ -67,21 +67,36 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/lrNumber"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/lrNumberContainer"
             app:layout_constraintTop_toBottomOf="@+id/vehicleNumber"
             app:layout_constraintStart_toStartOf="parent"
-            android:text='@{"LR " + trip.allLRS()}'
-            tool:text="LR88278393"
             android:layout_marginTop="@dimen/size_8dp"
-            android:drawablePadding="@dimen/size_4dp"
-            android:textColor="@color/text_grey_v3"
-            android:drawableStart="@drawable/ic_lr_number"
-            android:fontFamily="sans-serif"
-            android:textSize="@dimen/text_12sp"
-            android:visibility="@{(isHPODSection &amp;&amp; trip.isEPODPending()) ? View.VISIBLE : View.GONE}"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="@{(isHPODSection &amp;&amp; (trip.isEPODPending() || trip.isEPODRejected())) ? View.VISIBLE : View.GONE}"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lrNumber"
+                android:text='@{"LR " + trip.formattedAllLRS()}'
+                tool:text="LR88278393"
+                android:drawablePadding="@dimen/size_4dp"
+                android:textColor="@color/text_grey_v3"
+                android:drawableStart="@drawable/ic_lr_number"
+                android:fontFamily="sans-serif"
+                android:textSize="@dimen/text_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icShowLR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:src="@drawable/ic_show"
+                android:visibility="@{trip.hasMultipleLRs() ? View.VISIBLE : View.GONE}"
+                android:contentDescription="Show more LR numbers"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

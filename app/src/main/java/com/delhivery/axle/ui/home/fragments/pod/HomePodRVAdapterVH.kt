@@ -19,6 +19,7 @@ import com.delhivery.axle.data.home.pod.HomePodSearchAction_Search
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ShowLRList
 import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
@@ -203,6 +204,18 @@ class HomePodItemVH(binding: ViewNewPodItemBinding) :
     binding.podActions.updateDetails.clickToAction(
       HomeTripsRequestAction_UploadTracking, item, bindingAdapterPosition, _interface
     )
+    // Add click listener for lrNumbers TextView if there are multiple LRs
+    if (item.data.hasMultipleLRs()) {
+      binding.podActions.lrDetailsLL.clickToAction(
+        HomeTripsRequestAction_ShowLRList, item, bindingAdapterPosition, _interface
+      )
+    }
+    // Add click listener for lrNumber TextView in vehicle loaded details if there are multiple LRs
+    if (item.data.hasMultipleLRs()) {
+      binding.vehicleLoadedDetails.lrNumberContainer.clickToAction(
+        HomeTripsRequestAction_ShowLRList, item, bindingAdapterPosition, _interface
+      )
+    }
    /* binding.btnEpod.clickToAction(
         HomeTripsRequestAction_UploadEpod, item, bindingAdapterPosition, _interface
     )

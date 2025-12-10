@@ -45,7 +45,7 @@
                 android:id="@+id/badge_epod_pending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ePOD Pending"
+                tools:text="ePOD Pending"
                 android:textColor="@color/pending_font"
                 android:textSize="@dimen/text_12sp"
                 android:background="@drawable/bg_load_type_100dp_corner"

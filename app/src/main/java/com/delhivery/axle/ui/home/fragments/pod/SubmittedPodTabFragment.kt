@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
@@ -17,6 +18,7 @@ import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
+import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ShowLRList
 import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.FragmentSubmittedPodTabBinding
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
@@ -187,6 +189,58 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
                     startActivity(tripDetailsIntent(data.key(), it))
                 }
             }
+            
+            HomeTripsRequestAction_ShowLRList -> {
+                val data = item.data as HomeTripsItemData
+                showLRListDialog(data)
+            }
         }
+    }
+    
+    private fun showLRListDialog(trip: HomeTripsItemData) {
+        val lrNumbers = trip.getAllLRNumbersList()
+        if (lrNumbers.isEmpty()) return
+        
+        val dialog = android.app.Dialog(requireContext())
+        val binding = com.delhivery.axle.databinding.DialogLrListBinding.inflate(layoutInflater)
+        
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+        dialog.setContentView(binding.root)
+        
+        // Setup RecyclerView
+        binding.rvLRList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        binding.rvLRList.adapter = LRListAdapter(lrNumbers)
+        // Add divider between items
+        val dividerItemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
+            requireContext(),
+            androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
+        )
+        binding.rvLRList.addItemDecoration(dividerItemDecoration)
+        
+        // Close button
+        binding.btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+        
+        // Set dialog window properties with margins
+        val displayMetrics = resources.displayMetrics
+        val marginDp = 16f
+        val marginPx = (marginDp * displayMetrics.density).toInt()
+        val width = displayMetrics.widthPixels - (2 * marginPx)
+        
+        dialog.window?.setLayout(
+            width,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+        )
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        // Center the dialog horizontally
+        val layoutParams = dialog.window?.attributes
+        layoutParams?.gravity = android.view.Gravity.CENTER
+        dialog.window?.attributes = layoutParams
+        
+        dialog.show()
     }
 }

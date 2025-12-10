@@ -490,9 +490,35 @@ data class HomeTripsItemData(
   fun allLRSCount() = if (lr.isNotNullOrEmpty()) {
     "1 LR"
   } else if (!lrDetails.isNullOrEmpty()) {
-      lrDetails.size.toString()+ " LR"
+     lrDetails.size.toString()+ if(lrDetails.size>1)" LRs" else " LR"
   } else {
-    "0 LR"
+    " "
+  }
+  
+  /**
+   * Check if there are more than 1 LR numbers
+   */
+  fun hasMultipleLRs(): Boolean {
+    return if (lr.isNotNullOrEmpty()) {
+      false
+    } else if (!lrDetails.isNullOrEmpty()) {
+      lrDetails.size > 1
+    } else {
+      false
+    }
+  }
+  
+  /**
+   * Get all LR numbers as a list
+   */
+  fun getAllLRNumbersList(): List<String> {
+    return if (lr.isNotNullOrEmpty()) {
+      listOf(lr)
+    } else if (!lrDetails.isNullOrEmpty()) {
+      lrDetails.map { it.lr }
+    } else {
+      emptyList()
+    }
   }
   /**
    * @return pod action text
@@ -1078,6 +1104,8 @@ data class HomeTripsItemData(
    * Check if EPOD is Pending
    */
   fun isEPODPending() = podStatusText() == "ePOD Pending"
+  fun isEPODRejected() = podStatusText() == "ePOD Rejected"
+
   fun podActionText(isHPODSection: Boolean = false): String{
     return when {
       hasPODTracking() ->"Update Details"
@@ -1085,7 +1113,9 @@ data class HomeTripsItemData(
       podBadgeText() == "ePOD Pending" -> {
         if (isHPODSection) "Add Details" else "Upload ePod"
       }
-      podBadgeText() == "ePOD Rejected" -> "Upload ePod"
+      podBadgeText() == "ePOD Rejected" ->  {
+        if (isHPODSection) "Add Details" else "Upload ePod"
+      }
       podBadgeText() == "ePOD Under Review" -> "Add Details"
       else -> "Upload ePod" // HPOD Pending
     }
@@ -1160,6 +1190,7 @@ enum class PODStatus(
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 const val HomeTripsRequestAction_UploadEpod = "upload_epod"
 const val HomeTripsRequestAction_UploadTracking = "upload_tracking"
+const val HomeTripsRequestAction_ShowLRList = "show_lr_list"
 const val HomeAdvancePendingPaymentMode = "change_payment_mode"
 
 /**
