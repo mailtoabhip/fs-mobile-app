@@ -191,8 +191,8 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
 
     viewModel.uploadResultLiveData.observe(this, Observer {
       if (it) {
-        // Don't finish here - wait for POD submission to complete
-        // setResult and finish will be called after POD submission succeeds
+        setResult(Activity.RESULT_OK)
+        finish()
       } else {
         uiUtils.showSnackbar("Upload Failed, Please try again")
       }
@@ -202,8 +202,6 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     viewModel.podSubmissionResultLiveData.observe(this, Observer { isSuccess ->
       uiUtils.hideProgress()
       if (isSuccess) {
-        // Set result before showing success dialog
-        setResult(Activity.RESULT_OK)
         showBidSuccessDialog(false)
       } else {
           viewModel.getPodItems().forEach {
