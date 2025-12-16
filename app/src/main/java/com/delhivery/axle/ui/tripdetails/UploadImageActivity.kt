@@ -316,9 +316,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_SUCCESS)
       )
-      // Construct full S3 URL from the path (S3 key)
-      val fullS3Url = awsUtils.awsBasePath() + path
-      viewModel.onUploadSuccess(currentPodId, fullS3Url)
+      viewModel.onUploadSuccess(currentPodId, path)
 
       // Check if there are more selected pods to upload
       val remainingSelectedPods = viewModel.getSelectedPods()
