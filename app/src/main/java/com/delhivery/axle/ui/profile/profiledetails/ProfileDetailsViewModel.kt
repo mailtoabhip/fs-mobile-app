@@ -4,8 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
+// Removed DelegationToken and AWSConfig imports - no longer needed
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -24,27 +23,22 @@ class ProfileDetailsViewModel @Inject constructor(
     var businessName = MutableLiveData<String>()
     var mobile = userPrefs.phoneNumber?.replace("+91","")
 
-    var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
-    var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
     var statusLiveData = MutableLiveData<Boolean>()
     var imagePath = ""
     var imageUrl = ""
 
     var userUpdateLiveData = MutableLiveData<Boolean>()
 
-    /**
-     * Get delegation token for AWS
-     */
-    fun getDelegationToken(file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-                .onBackground()
-                .progress()
-                .subscribe { _res, error ->
-                    if (!error) {
-                        delegationLiveData.postValue(Pair(_res.delegationToken, file))
-                    } else
-                        error.handle()
-                }
+    // Removed delegation token logic - direct upload now handled in Activity
+    
+    // Download functionality
+    var documentListLiveData = MutableLiveData<List<com.delhivery.axle.api.response.DocumentFile>>()
+    var documentListErrorLiveData = MutableLiveData<String>()
+    
+    fun loadProfileImages() {
+        // This method can be called from Activity to trigger profile image loading
+        // The actual API call is handled by DocumentUtils in the Activity
+        documentListLiveData.postValue(emptyList()) // Initialize empty list
     }
 
     fun updateUserDetails() {
@@ -66,18 +60,6 @@ class ProfileDetailsViewModel @Inject constructor(
 
     }
 
-    fun getDownloadDelegationToken(
-            awsPath: String,
-            file: File
-    ) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-                .onBackground()
-                .subscribe { _res, error ->
-                    if (!error) {
-                        delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-                    } else
-                        error.handle()
-                }
-    }
+    // Removed download delegation token logic - new API only supports upload
 
 }

@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.businessverification
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -20,7 +21,8 @@ import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.DocumentFile
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityBusinessVerificationBinding
 import com.delhivery.axle.databinding.DialogKycSubmittedBinding
 //import com.delhivery.axle.databinding.DialogBusinessVerificationAttachmentBinding
@@ -29,6 +31,7 @@ import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -44,7 +47,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBinding, BusinessVerificationViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
+class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBinding, BusinessVerificationViewModel>(),DialogUtilsInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface,
     UploadedItemRVAdapterInterface,ResetManualVerification {
 
     private var isCamera: Boolean = false
@@ -54,7 +57,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -303,9 +306,6 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             }
         })
 
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
         viewModel.rcVerificationErrorMsg.observe(this, Observer {
             binding.editTruck.error=true
             ViewCompat.setElevation(binding.imgWrong, this.resources.getDimension( R.dimen.edit_text_raise_focus_z))
@@ -445,7 +445,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     private fun showUploadedDoc(){
         if(!userPrefs.businessDocUrl.isNullOrEmpty()){
             resetUploadData()
-            uploadArray.add(Pair(userPrefs.businessDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), "32"))
+            uploadArray.add(Pair(userPrefs.businessDocUrl, "32"))
             showFileSelected()
         }
     }
@@ -465,22 +465,32 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         bundle.putInt(StepKey,1)
         navigationUtils.navigateKyc(this,true,bundle)
     }*/
-    override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         uiUtils.hideProgress()
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        if(path.contains("RC")){
+        viewModel.documentProofUrl.clear()
+        viewModel.documentProofUrl.add(downloadUrl)
+        // Store downloadUrl (from BE response) instead of filename
+        // This downloadUrl will be sent to /upload_document API for verification
+        uploadArray.add(Pair(downloadUrl, (mPhotoFile?.length()?.div(1024)).toString()))
+        if(downloadUrl.contains("RC", true)){
             userPrefs.rcManualverificationreq = true
         }
         showFileSelected()
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showToast("Failed to upload")
+        uiUtils.showToast("Failed to upload: $error")
         resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        // Handle document list if needed
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
     }
 
     private fun resetUploadData() {
@@ -605,12 +615,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
 
      override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
-            val imageUrls= mutableListOf<String>()
-            val s3url= awsUtils.awsBasePath()
-            for(i in uploadArray){
-                imageUrls.add(s3url+awsPath+i.first)
-            }
-            viewModel.verifyByDoc(imageUrls)
+            // Extract downloadUrls from uploadArray (first element of Pair is downloadUrl from /document/upload)
+            // These downloadUrls will be sent to /upload_document API for verification
+            val downloadUrls = uploadArray.map { it.first }
+            viewModel.verifyByDoc(downloadUrls)
         }else{
             uiUtils.showToast("No file selected")
         }
@@ -650,13 +658,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         )
     }
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
-        uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+    private fun uploadImage(file: File, fileType: FileType) {
+        val docType = if(!binding.textTruck.isChecked) {
+            "lr_copy"
+        } else {
+            "rc_copy"
+        }
+        documentUtils.uploadDocument(file, fileType, docType, this)
     }
 
     override fun onActivityResult(
@@ -676,7 +684,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -687,6 +695,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
+                        val fileType: FileType
                         val selectedFile = data?.data
                         require(selectedFile != null)
                         val parcelFileDescriptor =
@@ -708,8 +717,10 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                             this.localImageName =  "RC_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension
                         }
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
                             mPhotoFile = imageScopedFile
                         }else{
                             analyticsUtil.moEngageTrackEvent(
@@ -727,7 +738,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, fileType)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -753,4 +764,16 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
             userPrefs.rcManualverificationreq=false
     }
 
+}
+
+/**
+ * Business Verification intent
+ */
+fun businessVerificationIntent(
+    context: Context,
+    currentStep: Int? = null,
+    totalSteps: Int? = null
+) = Intent(context, BusinessVerificationActivity::class.java).apply {
+    currentStep?.let { putExtra(CurrentStepKey, it) }
+    totalSteps?.let { putExtra(TotalStepsKey, it) }
 }

@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
@@ -13,7 +11,6 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import java.io.File
 import javax.inject.Inject
 
 class CommunicationAddressViewModel@Inject constructor(
@@ -117,23 +114,6 @@ BaseViewModel() {
     }
 
 
-
-
-    var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
-    /**
-     * Get delegation token for AWS
-     */
-    fun getDelegationToken(file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                    delegationLiveData.postValue(Pair(_res.delegationToken, file))
-                } else
-                    error.handle()
-            }
-    }
 
     var currentStep = ""
 

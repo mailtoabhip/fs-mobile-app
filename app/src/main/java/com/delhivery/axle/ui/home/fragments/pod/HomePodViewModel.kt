@@ -5,8 +5,6 @@ import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
@@ -44,7 +42,6 @@ class HomePodViewModel @Inject constructor(
   var tripsCountLiveData = MutableLiveData<Int>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
   val selectedLiveData = MutableLiveData<Int>()
-  var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   var request = SearchRequest()
   var status: TripStatus = TruckUnloaded
@@ -150,23 +147,6 @@ class HomePodViewModel @Inject constructor(
           }
 
           dataLoadingLiveData.postValue(false)
-        }
-  }
-
-  /**
-   * Get delegation token for AWS
-   */
-  fun getDelegationToken(
-    awsPath: String,
-    file: File
-  ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-          } else
-            error.handle()
         }
   }
 

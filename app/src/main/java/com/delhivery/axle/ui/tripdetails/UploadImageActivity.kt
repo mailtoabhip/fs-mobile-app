@@ -41,7 +41,7 @@ import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.EVENT_POD_UPLOAD
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.PROPERTY_STATUS
-import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
+import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.VALUE_FAILURE
 import com.delhivery.axle.utils.VALUE_SUCCESS
@@ -58,6 +58,15 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import androidx.core.graphics.toColorInt
+import com.delhivery.axle.api.response.FileData
+import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
+import com.delhivery.axle.utils.PROPERTY_TYPE_OF_DOC
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.constants.FileType
+import com.delhivery.axle.utils.prefs.UserPrefs
 
 /**
  * Created by saurabh
@@ -69,7 +78,7 @@ import androidx.core.graphics.toColorInt
  **
  */
 class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImageViewModel>(),
-    AWSProgressInterface {
+    DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface {
 
   override fun getViewModelClass() = UploadImageViewModel::class.java
 
@@ -82,8 +91,10 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   private var mPhotoFile: File? = null
   private var currentPodId: Int = 0
   @Inject lateinit var fileCompressor: FileCompressor
-  @Inject lateinit var awsUtils: AWSUtils
+    @Inject lateinit var awsUtils: AWSUtils
+  @Inject lateinit var documentUtils: DocumentUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
+    @Inject lateinit var userPrefs: UserPrefs
   private lateinit var podAdapter: PodAdapter
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
@@ -182,13 +193,6 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     // Initialize pods AFTER observer is set up
     viewModel.initializePods()
 
-    viewModel.delegationLiveData.observe(this, Observer {
-      uploadImage(it.first, it.second, currentPodId)
-
-      // After this upload completes, check if there are more selected pods to upload
-      // This will be handled in onAWSSuccess
-    })
-
     viewModel.uploadResultLiveData.observe(this, Observer {
       if (it) {
         setResult(Activity.RESULT_OK)
@@ -223,12 +227,15 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       captureImage(1)
     }
 
-    // Submit button - upload all selected images
+    // Submit button - upload all selected images sequentially
     binding.submitButtonMaxWidth.setOnClickListener {
       val selectedPods = viewModel.getSelectedPods()
       if (selectedPods.isNotEmpty()) {
-        // Start uploading all selected images
         uploadAllSelectedImages(selectedPods)
+      } else if (viewModel.imageUrls.isNotEmpty()) {
+        // Already uploaded but maybe failed final submission?
+        uiUtils.showProgress()
+        viewModel.uploadPod()
       } else {
         uiUtils.showSnackbar("Please select at least one image to upload")
       }
@@ -297,26 +304,15 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     )
   }
 
-  private fun uploadImage(
-    delegationToken: DelegationToken,
-    file: File,
-    podId: Int
-  ) {
-    val awsPath = "trips/temp/vendor_pod/${viewModel.transactionId}/" + uploadImageName + ".jpg"
-    awsUtils.startUpload(delegationToken, awsPath, file, this)
-    viewModel.startUpload(podId, file.path)
-  }
 
-  override fun onAWSSuccess(
-    path: String
-  ) {
+  override fun onDocumentSuccess(documentUrl: String) {
     if (!isFinishing) {
       analyticsUtil.moEngageTrackEvent(
           EVENT_POD_UPLOAD,
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_SUCCESS)
       )
-      viewModel.onUploadSuccess(currentPodId, path)
+      viewModel.onUploadSuccess(currentPodId, documentUrl)
 
       // Check if there are more selected pods to upload
       val remainingSelectedPods = viewModel.getSelectedPods()
@@ -336,7 +332,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     }
   }
 
-  override fun onAWSFailure() {
+  override fun onDocumentFailure(error: String) {
     if (!isFinishing) {
       analyticsUtil.moEngageTrackEvent(
           EVENT_POD_UPLOAD,
@@ -351,6 +347,14 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     }
   }
 
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDocumentListFailure(error: String) {
+    uiUtils.showSnackbar(error)
+  }
+
   /**
    * Upload all selected images when Submit is clicked
    */
@@ -360,7 +364,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       return
     }
 
-    // Upload first image, then chain the rest
+    // Upload first image, then onDocumentSuccess will chain the rest
     val firstPod = selectedPods.first()
     uploadSingleImage(firstPod)
   }
@@ -379,9 +383,27 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     uploadImageName = "${viewModel.transactionId}-${podItem.id}"
     localImageName = "vendor_pod_${viewModel.transactionId}-${podItem.id}"
 
+    // Determine file type
+    val fileType = when {
+      file.extension.lowercase() in listOf("jpg", "jpeg", "png") -> FileType.IMAGE
+      file.extension.lowercase() == "pdf" -> FileType.PDF
+      else -> FileType.IMAGE // Default to IMAGE
+    }
+
+    val dynamicVariables = mapOf(
+      "transactionId" to viewModel.transactionId,
+      "uploadImageName" to uploadImageName,
+      "phoneNumber" to (userPrefs.phoneNumber?.toString() ?: ""),
+      "docType" to "vendor_pod",
+      "proofType" to "epod"
+    )
+
     uiUtils.showProgress()
-    viewModel.getDelegationToken(file)
+    viewModel.startUpload(podItem.id, file.path)
+    documentUtils.uploadDocument(file, fileType, "vendor_pod", this, dynamicVariables)
   }
+
+
 
   private fun resetUploadData() {
     mPhotoFile = null
@@ -406,13 +428,13 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     this.uploadImageName = uploadImageName
     this.localImageName = localImageName
 
-    val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
+    val items = arrayOf<CharSequence>("Take Photo", "Choose Gallery/File", "Cancel")
     val builder = AlertDialog.Builder(this)
     builder.setItems(items) { dialog, item ->
       when {
         items[item] == "Take Photo" ->
           requestImageCapturePermissions(true)
-        items[item] == "Choose from Library" ->
+        items[item] == "Choose Gallery/File" ->
           requestImageCapturePermissions(false)
         items[item] == "Cancel" -> {
           dialog.dismiss()
@@ -433,10 +455,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
 
   private fun requestImageCapturePermissions(isCamera: Boolean) {
     compositeDisposable += requestPermission(
-      arrayOf(Manifest.permission.CAMERA).apply {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-          plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-      }
+      arrayOf(Manifest.permission.CAMERA)
     )
         .onBackground()
         .subscribe { granted, error ->
@@ -444,7 +463,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
             if (isCamera) {
               dispatchTakePictureIntent()
             } else {
-              dispatchGalleryIntent()
+              dispatchFileIntent()
             }
           } else {
             uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
@@ -470,6 +489,15 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       } catch (e: java.lang.Exception) {
         e.printStackTrace()
       }
+  }
+
+  private fun dispatchFileIntent() {
+    val intent = Intent(Intent.ACTION_GET_CONTENT)
+    intent.type = "*/*"
+    val mimetypes = arrayOf("image/*", "application/pdf")
+    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+    intent.addCategory(Intent.CATEGORY_OPENABLE)
+    startActivityForResult(intent, REQCODE_FILE_ATTACHMENTS)
   }
 
     private fun showBidSuccessDialog(isError: Boolean) {
@@ -499,12 +527,6 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
-  private fun dispatchGalleryIntent() {
-    val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-    pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    startActivityForResult(pickPhoto, REQCODE_GALLERY_PHOTO)
-  }
-
   override fun onActivityResult(
     requestCode: Int,
     resultCode: Int,
@@ -514,12 +536,14 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     when (requestCode) {
       REQCODE_TAKE_PHOTO -> {
         if (resultCode == Activity.RESULT_OK) {
-          if (mPhotoFile == null) {
+            val fileType = FileType.IMAGE
+          val photoFile = mPhotoFile
+          if (photoFile == null) {
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
             return
           }
           try {
-            mPhotoFile = fileCompressor.compressToFile(mPhotoFile!!, localImageName)
+            mPhotoFile = fileCompressor.compressToFile(photoFile, localImageName)
             // Just set image as selected (no upload yet)
             // For camera capture, imageUri is null since we use FileProvider URI
             viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = null)
@@ -532,29 +556,58 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
         }
       }
 
-      REQCODE_GALLERY_PHOTO -> {
+      REQCODE_FILE_ATTACHMENTS -> {
         if (resultCode == Activity.RESULT_OK) {
           try {
-            val selectedImage = data?.data
-            require(selectedImage != null)
-            val parcelFileDescriptor = contentResolver?.openFileDescriptor(selectedImage, "r", null)
-            require(parcelFileDescriptor != null)
-            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-            require(contentResolver != null && contentResolver?.getFileName(selectedImage) != null)
-            val imageScopedFile = File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
-            val outputStream = FileOutputStream(imageScopedFile)
-            IOUtils.copy(inputStream, outputStream)
+              val fileType: FileType
+            val selectedImage = data?.data ?: throw IOException("Selected image URI is null")
+            val pfd = contentResolver?.openFileDescriptor(selectedImage, "r")
+                ?: throw IOException("Could not open file descriptor")
 
-            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
-            if (mPhotoFile == null) {
-              uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-              return
+            pfd.use { parcelFileDescriptor ->
+                val fileName = contentResolver?.getFileName(selectedImage)
+                    ?: "gallery_image_${System.currentTimeMillis()}"
+                val imageScopedFile = File(cacheDir, fileName)
+
+                FileInputStream(parcelFileDescriptor.fileDescriptor).use { inputStream ->
+                    FileOutputStream(imageScopedFile).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+
+                // Ensure naming consistency with camera capture
+                this.uploadImageName = "${viewModel.transactionId}-$currentPodId"
+                this.localImageName = "vendor_pod_${viewModel.transactionId}-$currentPodId"
+
+
+                val extension = imageScopedFile.extension.lowercase()
+                if (extension in listOf("jpg", "png", "jpeg")) {
+                  fileType = FileType.IMAGE
+                  mPhotoFile = fileCompressor.compressToFile(imageScopedFile, localImageName)
+                } else if (extension == "pdf") {
+                  fileType = FileType.PDF
+                  mPhotoFile = imageScopedFile
+                } else {
+                  analyticsUtil.moEngageTrackEvent(
+                    EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
+                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber.toString(), extension, "upload_pod")
+                  )
+                  uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                  return
+                }
+
+                if (mPhotoFile == null) {
+                  uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                  return
+                }
+                // Just set image as selected (no upload yet)
+                // Store the original gallery URI for reference
+                viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = selectedImage)
+                resetUploadData()
             }
-            // Just set image as selected (no upload yet)
-            // Store the original gallery URI for reference
-            viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = selectedImage)
-            resetUploadData()
-          } catch (e: IOException) {
+          } catch (e: Exception) {
+            Log.e("UploadImageActivity", "Gallery selection failed", e)
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
           }
         } else {

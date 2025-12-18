@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.TripsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.DispatchData
 import com.delhivery.axle.api.request.UpdateDispatchRequest
+// Removed AWS imports - using Document API now
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.DocketItem
@@ -28,34 +29,20 @@ class DocketUpdateViewModel @Inject constructor(
 ) : BaseViewModel() {
 
   var trip: HomeTripsItemData? = null
-  var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
+  // Removed delegationLiveData - using Document API now
   var statusLiveData = MutableLiveData<Boolean>()
   var docketItemsLiveData = MutableLiveData<List<DocketItem>>()
-  
+
   var transactionIds = mutableListOf<String>()
   var imagePath = ""
   var imageUrl = ""
   var dateOfDispatch = ""
   var trackingNumber = ""
-  
+
   private var docketItems: MutableList<DocketItem> = mutableListOf()
   private var currentUploadingDocketId: Int? = null
 
-  /**
-   * Get delegation token for AWS
-   * Note: Progress is controlled at Activity level to maintain continuous progress bar
-   */
-  fun getDelegationToken(file: File) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        // Don't use .progress() here - progress is controlled at Activity level
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Pair(_res.delegationToken, file))
-          } else
-            error.handle()
-        }
-  }
+  // Removed getDelegationToken - uploads now handled directly by DocumentUtils
 
   /**
    * Initialize Docket items - all start as EMPTY, will become available when user starts upload
@@ -86,7 +73,7 @@ class DocketUpdateViewModel @Inject constructor(
       Log.d("ViewModel", "Docket1 state is not EMPTY: ${docketItems.getOrNull(0)?.state}")
     }
   }
-  
+
   /**
    * Load existing docket image (when trip is not null)
    */
@@ -135,9 +122,9 @@ class DocketUpdateViewModel @Inject constructor(
       )
       Log.d("DocketItems-StartUpload", "$docketItems")
       docketItemsLiveData.postValue(docketItems)
-      
-      // Get delegation token and start AWS upload
-      getDelegationToken(file)
+
+      // Upload is now handled directly in Activity using DocumentUtils
+      // No need to get delegation token - removed AWS dependency
     }
   }
 
@@ -175,6 +162,20 @@ class DocketUpdateViewModel @Inject constructor(
   }
 
   /**
+   * Update local image path for a docket (used after downloading/pre-fetching)
+   */
+  fun updateDocketLocalPath(docketId: Int, localPath: String) {
+    val index = docketItems.indexOfFirst { it.id == docketId }
+    if (index != -1) {
+      docketItems[index] = docketItems[index].copy(
+        imagePath = localPath
+      )
+      Log.d("DocketItems-UpdatePath", "ID: $docketId, Path: $localPath")
+      docketItemsLiveData.postValue(docketItems)
+    }
+  }
+
+  /**
    * Delete a docket image (remove selection or uploaded image)
    */
   fun deleteDocket(docketId: Int) {
@@ -204,14 +205,14 @@ class DocketUpdateViewModel @Inject constructor(
   fun getSelectedDockets(): List<DocketItem> {
     return docketItems.filter { it.state == DocketState.SELECTED }
   }
-  
+
   /**
    * Reset dockets to all empty (used when cancelling initial upload)
    */
   fun resetDockets() {
     initializeDockets()
   }
-  
+
   /**
    * Get current docket items list
    */

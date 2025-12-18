@@ -27,9 +27,14 @@ import com.delhivery.axle.data.doc.DocDetailData
 import com.delhivery.axle.data.transactions.TransactionTimeOutAction
 import com.delhivery.axle.databinding.FragmentKycDocumentsBinding
 import com.delhivery.axle.injection.module.GlideApp
-import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.api.response.DocumentFile
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.NavigationUtils
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -43,7 +48,8 @@ import java.io.File
 import javax.inject.Inject
 
 
-class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding, KYCDocumentsViewModel>(),  AWSUtils.AWSProgressInterface, DocRVAdapterInterface {
+class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding, KYCDocumentsViewModel>(),
+    DocRVAdapterInterface, DocumentUtils.DocumentListInterface {
 
     init {
         hasInlineProgress = true
@@ -60,10 +66,13 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     var docItem:DocDetailData = DocDetailData("", null, null, null,null, null, null)
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
-
-    @Inject lateinit var awsUtils:AWSUtils
+    // ✅ Map s3_path -> original URL to handle concurrent downloads
+    private val s3PathToUrlMap: HashMap<String, String> = HashMap()
+    private var currentDownloadUrl: String? = null
+    private var currentDownloadData: DocDetailData? = null
 
     @Inject lateinit var bitmapUtils:BitmapUtils
+    @Inject lateinit var documentUtils: DocumentUtils
 
     override fun getViewModelClass()= KYCDocumentsViewModel::class.java
 
@@ -119,13 +128,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             docRVAdapter.notifyDataSetChanged()
         })
 
-        viewModel.delegationDownloadLiveData.reobserve(this, Observer {
-            if (it != null) {
-                awsUtils.startDownload(it.first, it.second, it.third, this)
-                viewModel.imagePath = it.third.path
-            }
-        })
-
     }
 
     override fun onResume() {
@@ -136,75 +138,124 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         }
     }
 
-    private fun downloadLogo(item: String) {
-          compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .onBackground()
-                .subscribe { granted, error ->
-                    if (error == null && granted) {
-                        showProg = true
-                        uiUtils.showProgress()
-                        val file = getFile(item)
-                        if (file != null) {
-                            viewModel.getDownloadDelegationToken(item, file)
-                        } else {
-                            uiUtils.showSnackbar("Can't process image")
-                        }
+    private fun downloadLogo(docUrl: String) {
+        compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    showProg = true
+                    currentDownloadUrl = docUrl
+                    uiUtils.showProgress()
+                    // Extract s3_path from full S3 URL
+                    val s3Path = extractS3PathFromUrl(docUrl)
+                    if (s3Path != null) {
+                        Log.d("KycDocumentsFragment", "downloadByS3Path: $s3Path")
+                        documentUtils.downloadByS3Path(s3Path, this)
                     } else {
                         uiUtils.hideProgress()
-                        uiUtils.showSnackbar(getString(R.string.storage_permission))
+                        uiUtils.showSnackbar("Unable to extract document path from URL")
                     }
+                } else {
+                    uiUtils.hideProgress()
+                    uiUtils.showSnackbar(getString(R.string.storage_permission))
                 }
+            }
     }
 
-    private fun downloadImage(data: DocDetailData, item: String) {
-        val file = getImageFile(item)
-        if (file != null) {
-            docItem.docPath = file.path
-            docItem.docUrl = data.docUrl
-            dList.get(data.docUrl)?.docPath = file.path
-            viewModel.getDownloadDelegationToken(item, file)
+    private fun downloadImage(data: DocDetailData, docUrl: String) {
+        // Store reference in dList before starting download
+        if (!dList.containsKey(docUrl)) {
+            dList[docUrl] = data
+        }
+        currentDownloadData = data
+        currentDownloadUrl = docUrl
+        Log.d("KycDocumentsFragment", "downloadImage: docUrl=$docUrl, data.docUrl=${data.docUrl}")
+        // Extract s3_path from full S3 URL
+        val s3Path = extractS3PathFromUrl(docUrl)
+        Log.d("KycDocumentsFragment", "downloadByS3Path: $s3Path")
+        if (s3Path != null) {
+            // ✅ Map s3_path to original URL for lookup in callback
+            s3PathToUrlMap[s3Path] = docUrl
+            // Use secure Document API: GET /document/download?s3_path=...
+            documentUtils.downloadByS3Path(s3Path, this)
         } else {
-            uiUtils.showSnackbar("Can't process image")
+            uiUtils.showSnackbar("Unable to extract document path from URL")
         }
     }
 
-    private fun getFile(item: String): File? {
-        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        val basePath = "$storageDir/"+System.currentTimeMillis()
-        val arrString = item.split("/")
-        return File(basePath + arrString[arrString.size - 1])
+    /**
+     * Extract s3_path from full S3 URL
+     * Example: "https://orion-service-prod-mum.s3.ap-south-1.amazonaws.com/documents/user-supplier/pancard/1735911510372.png"
+     * Returns: "documents/user-supplier/pancard/1735911510372.png"
+     * 
+     * Also handles: "https://orion-service-prod-mum.s3.ap-south-1.amazonaws.com/trips/vendor_pod/docket/docket_1764233770054.jpg"
+     * Returns: "trips/vendor_pod/docket/docket_1764233770054.jpg"
+     */
+    private fun extractS3PathFromUrl(docUrl: String): String? {
+        return try {
+            // Construct AWS base path from config
+            val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
+            val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
+            val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
+            
+            // Remove base URL from full S3 URL
+            if (docUrl.startsWith(awsBasePath)) {
+                docUrl.replace(awsBasePath, "").split("?")[0] // Remove query parameters if any
+            } else {
+                // Fallback: Try to extract path from URL pattern (bucket.s3.region.amazonaws.com/path)
+                val parts = docUrl.split(".amazonaws.com/")
+                if (parts.size > 1) {
+                    parts[1].split("?")[0] // Remove query parameters if any
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("KycDocumentsFragment", "Error extracting s3_path: ${e.message}")
+            null
+        }
     }
 
-    private fun getImageFile(item: String): File? {
+
+    /**
+     * Create file for downloads: {timestamp}{filename} in Downloads directory
+     */
+    private fun getFile(url: String): File? {
+        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val arrString = url.split("/")
+        val fileName = arrString[arrString.size - 1].split("?")[0] // Remove query parameters
+        val timestamp = System.currentTimeMillis()
+        val file = File(storageDir, "${timestamp}${fileName}")
+        // Ensure directory exists
+        if (!storageDir.exists()) {
+            storageDir.mkdirs()
+        }
+        return file
+    }
+
+    /**
+     * Create file for viewing: {timestamp}/{filename} in app's documents directory
+     */
+    private fun getImageFile(url: String): File? {
         val storageDir = activity?.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-        val basePath = "$storageDir/"+System.currentTimeMillis()
-        val arrString = item.split("/")
-        return File(basePath + "/"+arrString[arrString.size - 1])
+        if (storageDir == null) return null
+        val arrString = url.split("/")
+        val fileName = arrString[arrString.size - 1].split("?")[0] // Remove query parameters
+        val timestamp = System.currentTimeMillis()
+        val timestampDir = File(storageDir, timestamp.toString())
+        // Ensure directory exists
+        if (!timestampDir.exists()) {
+            timestampDir.mkdirs()
+        }
+        return File(timestampDir, fileName)
     }
 
-    override fun onAWSSuccess(path: String) {
-        uiUtils.hideProgress()
-        if(showProg) {
-            uiUtils.showSnackbar("Document downloaded successfully")
-        }else {
-            val fullPath = awsUtils.awsBasePath()+path
-            dList.get(fullPath)?.let { viewModel.fetchDetails(it) }
-        }
-        showProg = false
-    }
-
-    override fun onAWSFailure() {
-        if(showProg) {
-            uiUtils.showSnackbar("Document download failed!")
-        }
-        showProg = false
-        uiUtils.hideProgress()
-    }
 
     override fun handleAction(actionId: String, item: BaseDocRVAdapterItem<*>) {
         when (actionId) {
             DocAction_ViewDetails -> {
-                downloadLogo(item.data.key().replace(awsUtils.awsBasePath(), ""))
+                // docUrl is already a complete URL from the backend
+                downloadLogo(item.data.key())
             }
             TransactionTimeOutAction -> {
                 refreshData()
@@ -221,7 +272,9 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if(!dList.contains(data.docUrl)){
             dList.put(data.docUrl, data)
             showProg = false
-            downloadImage(data, data.docUrl.replace(awsUtils.awsBasePath(), ""))
+            // docUrl is already a complete URL from the backend
+            Log.d("KycDocumentsFragment", "fetchDetails: ${data.docUrl}")
+            downloadImage(data, data.docUrl)
         }
     }
 
@@ -308,6 +361,128 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
                 }
                 return true
             }
+        })
+    }
+
+    // DocumentListInterface implementation for secure download API
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        if (files.isNotEmpty()) {
+            val documentFile = files.first()
+            // ✅ Use s3_path from response to find the original URL
+            val s3Path = documentFile.s3Path
+            val originalUrl = s3Path?.let { s3PathToUrlMap[it] }
+            val dataFromList = originalUrl?.let { dList[it] }
+            
+            Log.d("KycDocumentsFragment", "onDocumentListSuccess: s3Path=$s3Path, originalUrl=$originalUrl, dataFromList=${dataFromList?.docUrl}, mapKeys=${s3PathToUrlMap.keys}")
+            
+            if (originalUrl == null || dataFromList == null) {
+                uiUtils.hideProgress()
+                uiUtils.showSnackbar("Unable to determine original document URL")
+                // Clean up
+                s3Path?.let { s3PathToUrlMap.remove(it) }
+                currentDownloadUrl = null
+                currentDownloadData = null
+                return
+            }
+            
+            // Download file from pre-signed URL
+            downloadFileFromUrl(documentFile.downloadUrl, originalUrl)
+        } else {
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("No documents found")
+            // Clean up
+            currentDownloadUrl?.let { 
+                val s3Path = extractS3PathFromUrl(it)
+                s3Path?.let { s3PathToUrlMap.remove(it) }
+            }
+            currentDownloadUrl = null
+            currentDownloadData = null
+        }
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Download failed: $error")
+        // ✅ Clean up mapping
+        currentDownloadUrl?.let { 
+            val s3Path = extractS3PathFromUrl(it)
+            s3Path?.let { s3PathToUrlMap.remove(it) }
+        }
+        currentDownloadUrl = null
+        currentDownloadData = null
+    }
+
+    /**
+     * Download file from pre-signed URL using OkHttpClient
+     */
+    private fun downloadFileFromUrl(downloadUrl: String, originalDocUrl: String) {
+        compositeDisposable += io.reactivex.Observable.fromCallable {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(downloadUrl)
+                .build()
+            
+            val response: Response = client.newCall(request).execute()
+            
+            if (response.isSuccessful) {
+                val file = if (showProg) {
+                    // For downloadLogo: save to Downloads folder
+                    getFile(originalDocUrl)
+                } else {
+                    // For downloadImage: save to app documents folder
+                    getImageFile(originalDocUrl)
+                }
+                
+                if (file != null) {
+                    response.body()?.byteStream()?.use { input ->
+                        file.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    file.absolutePath
+                } else {
+                    null
+                }
+            } else {
+                null
+            }
+        }
+        .onBackground()
+        .subscribe({ filePath ->
+            if (filePath != null) {
+                if (showProg) {
+                    // For downloadLogo
+                    uiUtils.showSnackbar("File downloaded successfully")
+                    showProg = false
+                } else {
+                    // For downloadImage - ✅ Look up correct data from dList using originalDocUrl
+                    val data = originalDocUrl?.let { dList[it] }
+                    if (data != null) {
+                        data.docPath = filePath
+                        dList[originalDocUrl] = data  // ✅ Update dList
+                        Log.d("KycDocumentsFragment", "Downloaded: $originalDocUrl -> $filePath")
+                        docRVAdapter.notifyDataSetChanged()
+                    } else {
+                        Log.e("KycDocumentsFragment", "Could not find data for URL: $originalDocUrl")
+                    }
+                }
+            } else {
+                uiUtils.showSnackbar("Download failed")
+            }
+            uiUtils.hideProgress()
+            // ✅ Clean up mapping
+            val s3Path = extractS3PathFromUrl(originalDocUrl)
+            s3Path?.let { s3PathToUrlMap.remove(it) }
+            currentDownloadUrl = null
+            currentDownloadData = null
+        }, { error ->
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Download error: ${error.message}")
+            // ✅ Clean up mapping on error
+            val s3Path = extractS3PathFromUrl(originalDocUrl)
+            s3Path?.let { s3PathToUrlMap.remove(it) }
+            currentDownloadUrl = null
+            currentDownloadData = null
         })
     }
 }

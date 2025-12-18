@@ -17,15 +17,28 @@ import javax.inject.Inject
 
 /**
  * Util for AWS image upload
+ * 
+ * @deprecated This class is deprecated. Use DocumentUtils instead for secure document upload/download.
+ * The new Document API does not expose AWS credentials and provides better security.
+ * Migration guide: See VAPT_SECURE_DOCUMENT_API_MIGRATION.md
  */
 @ActivityScope
+@Deprecated(
+    message = "Use DocumentUtils instead. This AWS-based approach exposes credentials and is not VAPT compliant.",
+    replaceWith = ReplaceWith("DocumentUtils.uploadDocument()", imports = ["com.delhivery.axle.utils.DocumentUtils"])
+)
 class AWSUtils @Inject constructor(
   private val activity: DaggerAppCompatActivity
 ) {
 
   /**
    * Initiate AWS upload
+   * @deprecated Use DocumentUtils.uploadDocument() instead
    */
+  @Deprecated(
+      message = "Use DocumentUtils.uploadDocument() instead",
+      replaceWith = ReplaceWith("documentUtils.uploadDocument(file, fileType, docType, listener, dynamicVariables)")
+  )
   fun startUpload(
     delegationToken: DelegationToken,
     awsPath: String,
@@ -71,13 +84,26 @@ class AWSUtils @Inject constructor(
         })
   }
 
+  /**
+   * Get AWS base path
+   * @deprecated Use DocumentUtils.downloadByS3Path() instead
+   */
+  @Deprecated(
+      message = "Use DocumentUtils.downloadByS3Path() instead",
+      replaceWith = ReplaceWith("documentUtils.downloadByS3Path(s3Path, listener)")
+  )
   fun awsBasePath(): String {
     val s3Url =  "https://"+AWSConfig.Bucket.value()+".s3."+AWSConfig.ServerRegion.value()+".amazonaws.com/"
     return s3Url
   }
   /**
    * Initiate AWS download
+   * @deprecated Use DocumentUtils.downloadByS3Path() instead
    */
+  @Deprecated(
+      message = "Use DocumentUtils.downloadByS3Path() instead",
+      replaceWith = ReplaceWith("documentUtils.downloadByS3Path(s3Path, listener)")
+  )
   fun startDownload(
     delegationToken: DelegationToken,
     awsPath: String,
@@ -129,7 +155,12 @@ class AWSUtils @Inject constructor(
 
   /**
    * AWS upload result interface
+   * @deprecated Use DocumentUtils.DocumentProgressInterface instead
    */
+  @Deprecated(
+      message = "Use DocumentUtils.DocumentProgressInterface instead",
+      replaceWith = ReplaceWith("DocumentUtils.DocumentProgressInterface", imports = ["com.delhivery.axle.utils.DocumentUtils"])
+  )
   interface AWSProgressInterface {
 
     /**

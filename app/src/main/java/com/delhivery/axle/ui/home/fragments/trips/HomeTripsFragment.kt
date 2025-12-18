@@ -1,17 +1,9 @@
 package com.delhivery.axle.ui.home.fragments.trips
 
-import android.Manifest
 import android.app.Activity
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
@@ -29,6 +21,10 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.File
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import java.util.*
@@ -38,7 +34,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
 {
 
   var _title: String = "My Trips"
-  var downloadID = 0.toLong()
 
   @Inject lateinit var userPrefs: UserPrefs
   private var fragmentSetupTrace: Trace? = null
@@ -56,8 +51,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     val _instance: HomeTripsFragment by lazy { HomeTripsFragment() }
   }
 
-  @Inject lateinit var awsUtils: AWSUtils
-
   override fun getViewModelClass() = HomeTripsViewModel::class.java
 
   override fun layoutId() = R.layout.fragment_home_trips
@@ -69,7 +62,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeTripsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    context?.let { ContextCompat.registerReceiver(it,onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),ContextCompat.RECEIVER_NOT_EXPORTED) }
     /**
      Track Event when trip_screen is created
      */
@@ -87,10 +79,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
       userPrefs.awaitingArrivalCount=viewModel.awaitingArrivalCount
       uiUtils.hideProgress()
       setText()
-    })
-
-    viewModel.downloadPressed.observe(viewLifecycleOwner, Observer {
-      requestPermission()
     })
 
     viewModel.downloadLoadingLiveData.observe(viewLifecycleOwner, Observer {
@@ -252,61 +240,55 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     }
   }
 
-  private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
-    override fun onReceive(
-      context: Context,
-      intent: Intent
-    ) {
-      val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-      if (downloadID == id) {
-        uiUtils.showToast("File downloaded, please check notification.")
+
+  /**
+   * Download ledger Excel file using scoped storage (no permission needed)
+   */
+  private fun downloadLedger(url: String) {
+    uiUtils.showProgress()
+    val filename = "Ledger_${System.currentTimeMillis()}.xlsx"
+    val storageDir = activity?.getExternalFilesDir(android.os.Environment.DIRECTORY_DOCUMENTS)
+    val file = File(storageDir, filename)
+    
+    // Ensure directory exists
+    storageDir?.mkdirs()
+    
+    compositeDisposable += io.reactivex.Observable.fromCallable {
+      val client = OkHttpClient()
+      val request = Request.Builder()
+        .url(url)
+        .build()
+      
+      val response: Response = client.newCall(request).execute()
+      
+      if (response.isSuccessful) {
+        response.body()?.byteStream()?.use { input ->
+          file.outputStream().use { output ->
+            input.copyTo(output)
+          }
+        }
+        file.absolutePath
+      } else {
+        null
       }
     }
-  }
-
-  private fun downloadLedger(url: String) {
-
-    val mgr = activity?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-    val downloadUri = Uri.parse(url)
-    val request = DownloadManager.Request(
-        downloadUri
-    )
-
-    val filename = "Ledger.xlsx"
-    val path = "/Axle App/$filename"
-    request.setAllowedNetworkTypes(
-        DownloadManager.Request.NETWORK_WIFI or
-            DownloadManager.Request.NETWORK_MOBILE
-    )
-        .setTitle("Ledger Download")
-        .setDescription("Downloading...")
-        .setDestinationInExternalPublicDir(
-            Environment.DIRECTORY_DOCUMENTS,
-            path
-        )
-        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-
-    downloadID = mgr.enqueue(request)
-
+    .onBackground()
+    .subscribe({ filePath ->
+      uiUtils.hideProgress()
+      if (filePath != null) {
+        uiUtils.showSnackbar("Ledger downloaded successfully: $filename")
+      } else {
+        uiUtils.showSnackbar("Download failed")
+      }
+    }, { error ->
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Download error: ${error.message}")
+    })
   }
 
   override fun onDestroy() {
     super.onDestroy()
-    activity?.unregisterReceiver(onDownloadComplete)
   }
 
-  private fun requestPermission() {
-     compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        .onBackground()
-        .subscribe { granted, error ->
-          if (error == null && granted) {
-
-          } else {
-            uiUtils.showSnackbar(getString(string.storage_permission))
-          }
-        }
-  }
 
 }

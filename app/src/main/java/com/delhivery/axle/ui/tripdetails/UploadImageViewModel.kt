@@ -32,7 +32,6 @@ class UploadImageViewModel @Inject constructor(
   private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
-  var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
   var uploadResultLiveData = MutableLiveData<Boolean>()
   var podItemsLiveData = MutableLiveData<List<PodItem>>()
   var podSubmissionResultLiveData = MutableLiveData<Boolean>() // true = success, false = error
@@ -46,21 +45,7 @@ class UploadImageViewModel @Inject constructor(
   private var podItems: MutableList<PodItem> = mutableListOf()
   private var currentUploadingPodId: Int? = null
 
-  /**
-   * Get delegation token for AWS
-   */
-  fun getDelegationToken(
-    file: File
-  ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Pair(_res.delegationToken, file))
-          } else
-            error.handle()
-        }
-  }
+  // Removed getDelegationToken and delegationLiveData - uploads now handled directly by DocumentUtils
 
   /**
    * Initialize POD items - all start as EMPTY, will become available when user starts upload
@@ -233,19 +218,8 @@ class UploadImageViewModel @Inject constructor(
   fun uploadPod() {
     val podData = PODData(imageUrls, "axle-app", reachedTime, unloadedTime, "no", userRepository.userId(), userPrefs.userName, userPrefs.phoneNumber!!)
     val podRequest = PodRequest("TRP", "EPOD", transactionId, podData)
+      Log.d("POD-Req", "$podRequest")
 
-    // TODO: MOCKED RESPONSE
-//    val mockSuccess = true // Change to true to mock success response
-//
-//    compositeDisposable += Single.just(mockSuccess)
-//        .delay(1, TimeUnit.SECONDS) // Simulate network delay
-//        .subscribeOn(Schedulers.io())
-//        .observeOn(AndroidSchedulers.mainThread())
-//        .subscribe { success ->
-//          podSubmissionResultLiveData.postValue(success)
-//        }
-
-    // ACTUAL API CALL - Uncomment this block for production
     compositeDisposable += tripsRepository.uploadPod(transactionId, podRequest)
         .onBackground()
         .subscribe { _res, error ->

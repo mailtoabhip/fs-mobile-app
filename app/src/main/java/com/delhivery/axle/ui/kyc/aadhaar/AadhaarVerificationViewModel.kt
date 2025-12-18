@@ -4,9 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
-import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.PanVerificationResponse
-import com.delhivery.axle.config.AWSConfig
+// Removed AWS imports - using Document API now
 import com.delhivery.axle.databinding.DialogVerifyGstOtpBinding
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.DialogUtils
@@ -111,21 +110,7 @@ BaseViewModel() {
 
     }
 
-    var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
-    /**
-     * Get delegation token for AWS
-     */
-    fun getDelegationToken(file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                    delegationLiveData.postValue(Pair(_res.delegationToken, file))
-                } else
-                    error.handle()
-            }
-    }
+    // Removed delegationLiveData and getDelegationToken - uploads now handled directly by DocumentUtils
     /**
      * update user pan number
      */

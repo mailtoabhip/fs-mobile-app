@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.doc.DocDetailData
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstDetailItemData
@@ -25,7 +23,6 @@ class KYCDocumentsViewModel @Inject constructor(
         private val loadboardRepository: LoadboardRepository
 ) : BaseViewModel(){
 
-   var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
     var imagePath = ""
     var docLiveData = MutableLiveData<List<Pair<BaseDocRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
@@ -63,18 +60,6 @@ class KYCDocumentsViewModel @Inject constructor(
                         }
                     }
                             .let { docLiveData.postValue(it) }
-                }
-    }
-
-
-    fun getDownloadDelegationToken(awsPath: String, file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-                .onBackground()
-                .subscribe { _res, error ->
-                    if (!error) {
-                       delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-                    } else
-                        error.handle()
                 }
     }
 

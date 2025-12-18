@@ -17,7 +17,8 @@ import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.DocumentFile
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.data.gst.GstAction_ViewDetails
 import com.delhivery.axle.data.transactions.TransactionTimeOutAction
 import com.delhivery.axle.ui.base.BaseActivity
@@ -39,12 +40,14 @@ import com.delhivery.axle.ui.dialogs.ShowGstVerificationOtpDialog
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.constants.FileType
+import com.delhivery.axle.utils.DocumentUtils
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 
 
 class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerificationViewModel>(),
-        DialogUtilsInterface, GstRVAdapterInterface, AWSUtils.AWSProgressInterface, UploadedItemRVAdapterInterface {
+        DialogUtilsInterface, GstRVAdapterInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface, UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -57,7 +60,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -65,7 +68,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     /* RV adapter */
     private val gstRVAdapter: GstRVAdapter by lazy { GstRVAdapter(this) }
     var currSelectedGst:String? = null
-    val awsPath = "loadboard/gst/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var startTime: Long = 0
@@ -190,9 +192,6 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             }
         }
         )
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
 
         viewModel.docVerificationFailedCount.observe(this, Observer {
             if(viewModel.docVerificationFailedCount.value==2){
@@ -277,20 +276,33 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     }
 
 
-    override fun onAWSSuccess(
-            path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         uiUtils.hideProgress()
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2),awsUtils)
+        // Store downloadUrl (from BE response) instead of filename
+        // This downloadUrl will be sent to /upload_document API for verification
+        uploadArray.add(
+            Pair(
+                downloadUrl, (mPhotoFile?.length()
+                ?.div(1024)).toString()
+            )
+        )
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2))
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showToast("Failed to upload")
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2),awsUtils)
+        uiUtils.showToast("Failed to upload: $error")
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.label_gst_dialog_option2))
         resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        // Handle document list if needed
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
     }
 
     private fun resetUploadData() {
@@ -315,25 +327,22 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
         compositeDisposable += requestPermission(
-                arrayOf(
-                        Manifest.permission.CAMERA
-                ).apply {
-                  if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                    plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
+            arrayOf(
+                Manifest.permission.CAMERA
+            )
         )
-                .onBackground()
-                .subscribe { granted, error ->
-                    if (error == null && granted) {
-                        if (isCamera) {
-                            dispatchTakePictureIntent()
-                        } else {
-                            dispatchFileIntent()
-                        }
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    if (isCamera) {
+                        dispatchTakePictureIntent()
                     } else {
-                        uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
+                        dispatchFileIntent()
                     }
+                } else {
+                    uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
                 }
+            }
 
     }
 
@@ -355,8 +364,8 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             uploadImageName: String,
             localImageName: String
     ) {
-        this.uploadImageName =  "GST_" + System.currentTimeMillis()+".jpg"
-        this.localImageName =  "GST_" + System.currentTimeMillis()+".jpg"
+        this.uploadImageName =  "GST_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.localImageName =  "GST_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
         val builder = android.app.AlertDialog.Builder(this)
@@ -372,16 +381,14 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
-            val imageUrls= mutableListOf<String>()
-            val s3url= awsUtils.awsBasePath()
-            for(i in uploadArray){
-                imageUrls.add(s3url+awsPath+i.first)
-            }
-            viewModel.verifyByDoc(imageUrls)
+            // Extract downloadUrls from uploadArray (first element of Pair is downloadUrl from /document/upload)
+            // These downloadUrls will be sent to /upload_document API for verification
+            val downloadUrls = uploadArray.map { it.first }
+            viewModel.verifyByDoc(downloadUrls)
         }else{
             uiUtils.showToast("No file selected")
         }
-
+        uploadArray.clear()
     }
 
 
@@ -409,13 +416,9 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
         )
     }
 
-    private fun uploadImage(
-            delegationToken: DelegationToken,
-            file: File
-    ) {
-        uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+    private fun uploadImage(file: File, fileType: FileType) {
+        val docType = "gst_certificate"
+        documentUtils.uploadDocument(file, fileType, docType, this)
     }
 
     override fun onActivityResult(
@@ -435,7 +438,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -446,6 +449,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
             REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
+                        val fileType: FileType
                         val selectedFile = data?.data
                         require(selectedFile != null)
                         val parcelFileDescriptor =
@@ -459,11 +463,13 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                                 File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
-                        this.uploadImageName = "GST_" + System.currentTimeMillis()+"."+imageScopedFile.extension
-                        this.localImageName =  "GST_" + System.currentTimeMillis()+"."+imageScopedFile.extension
+                        this.uploadImageName = "GST_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.localImageName =  "GST_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
                             mPhotoFile = imageScopedFile
                         }else{
                             analyticsUtil.moEngageTrackEvent(
@@ -481,7 +487,7 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, fileType)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

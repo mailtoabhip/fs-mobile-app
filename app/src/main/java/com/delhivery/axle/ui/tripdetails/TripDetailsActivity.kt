@@ -3,8 +3,6 @@ package com.delhivery.axle.ui.tripdetails
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.SpannableString
@@ -13,13 +11,13 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.response.*
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
@@ -32,11 +30,14 @@ import com.delhivery.axle.databinding.ActivityTripDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.ChangePaymentModeDialog
 import com.delhivery.axle.utils.*
-import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_POD_VIEWED
+import android.util.Log
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
-import com.delhivery.axle.utils.REQCODE_STORAGE
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.VALUE_FAILURE
@@ -54,7 +55,7 @@ import javax.inject.Inject
  * Trip detail screen
  */
 class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetailsViewModel>(),
-    AWSProgressInterface, TripPaymentSummaryRVAdapterInterface {
+    DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface, TripPaymentSummaryRVAdapterInterface {
 
   init {
     hasInlineProgress = true
@@ -66,7 +67,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
 
   override fun requireConnection() = true
 
-  @Inject lateinit var awsUtils: AWSUtils
+  @Inject lateinit var documentUtils: DocumentUtils
   @Inject lateinit var userPrefs: UserPrefs
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
@@ -132,9 +133,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.tripSettled = it
       binding.viewModel = viewModel
     })
-    viewModel.delegationLiveData.observe(this, Observer {
+    viewModel.podDownloadLiveData.observe(this, Observer {
       if (it != null) {
-        awsUtils.startDownload(it.first, it.second, it.third, this)
+        downloadPOD(it.first, it.second)
       } else {
         uiUtils.showSnackbar("Please try again")
       }
@@ -414,61 +415,195 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
   }
 
-  private fun requestStoragePermission() {
-    val storagePermission =
-      ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU && storagePermission != PackageManager.PERMISSION_GRANTED) {
-      ActivityCompat.requestPermissions(
-          this,
-          arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-          REQCODE_STORAGE
-      )
-    } else {
-      uiUtils.showSnackbar("Downloading POD....")
-      downloadFile()
-    }
+  /**
+   * Download POD file using scoped storage (no permission needed)
+   */
+  private fun downloadPODFile() {
+    uiUtils.showSnackbar("Downloading POD....")
+    downloadFile()
   }
 
-  override fun onAWSSuccess(
-    path: String
-  ) {
-    if (!isFinishing) {
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Downloaded")
-      val file = getFile()
-      if (file != null) {
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_POD_VIEWED,
-            mutableListOf(PROPERTY_STATUS),
-            mutableListOf(VALUE_SUCCESS)
-        )
-        openFile(file)
-      } else {
-        uiUtils.showSnackbar("Can't process POD")
-      }
-    }
+  override fun onDocumentSuccess(downloadUrl: String) {
+    // TripDetailsActivity doesn't use upload functionality
+    // This method is required by DocumentProgressInterface but not used here
   }
 
-  override fun onAWSFailure() {
-    if (!isFinishing) {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_POD_VIEWED,
-          mutableListOf(PROPERTY_STATUS),
-          mutableListOf(VALUE_FAILURE)
-      )
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
-    }
+  override fun onDocumentFailure(error: String) {
+    // TripDetailsActivity doesn't use upload functionality
+    // This method is required by DocumentProgressInterface but not used here
   }
+
+//  private fun downloadFileDirectly(url: String, file: File) {
+//    // Download file from URL using standard HTTP/OkHttp
+//    uiUtils.showProgress()
+//    compositeDisposable += io.reactivex.Observable.fromCallable {
+//      val request = okhttp3.Request.Builder().url(url).build()
+//      val response = okhttp3.OkHttpClient().newCall(request).execute()
+//      if (response.isSuccessful) {
+//        response.body?.byteStream()?.use { input ->
+//          file.outputStream().use { output ->
+//            input.copyTo(output)
+//          }
+//        }
+//        true
+//      } else {
+//        false
+//      }
+//    }
+//    .onBackground()
+//    .subscribe { success, error ->
+//      uiUtils.hideProgress()
+//      if (success && error == null) {
+//        analyticsUtil.moEngageTrackEvent(
+//            EVENT_POD_VIEWED,
+//            mutableListOf(PROPERTY_STATUS),
+//            mutableListOf(VALUE_SUCCESS)
+//        )
+//        uiUtils.showSnackbar("Downloaded")
+//        openFile(file)
+//      } else {
+//        analyticsUtil.moEngageTrackEvent(
+//            EVENT_POD_VIEWED,
+//            mutableListOf(PROPERTY_STATUS),
+//            mutableListOf(VALUE_FAILURE)
+//        )
+//        uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
+//      }
+//    }
+//  }
 
   private fun downloadFile() {
     val file = getFile()
     if (file != null && !TextUtils.isEmpty(viewModel.tripDetail.podUrl)) {
-      uiUtils.showProgress()
-      viewModel.tripDetail.podUrl?.let { viewModel.getDelegationToken(it, file) }
+      viewModel.tripDetail.podUrl?.let { podUrl ->
+        downloadPOD(podUrl, file)
+      }
     } else {
       uiUtils.showSnackbar("Can't process POD")
     }
+  }
+
+  /**
+   * Download POD using secure Document API
+   */
+  private fun downloadPOD(podUrl: String, file: File) {
+    uiUtils.showProgress()
+    // Extract s3_path from full S3 URL
+    val s3Path = extractS3PathFromUrl(podUrl)
+    if (s3Path != null) {
+      // Store mapping for callback
+      currentPodUrl = podUrl
+      currentPodFile = file
+      // Use secure Document API to download
+      documentUtils.downloadByS3Path(s3Path, this)
+    } else {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Unable to extract document path")
+    }
+  }
+
+  /**
+   * Extract s3_path from full S3 URL
+   */
+  private fun extractS3PathFromUrl(docUrl: String): String? {
+    return try {
+      // Construct AWS base path from config
+      val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
+      val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
+      val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
+      
+      // Remove base URL from full S3 URL
+      if (docUrl.startsWith(awsBasePath)) {
+        docUrl.replace(awsBasePath, "").split("?")[0] // Remove query parameters if any
+      } else {
+        // Fallback: Try to extract path from URL pattern (bucket.s3.region.amazonaws.com/path)
+        val parts = docUrl.split(".amazonaws.com/")
+        if (parts.size > 1) {
+          parts[1].split("?")[0] // Remove query parameters if any
+        } else {
+          null
+        }
+      }
+    } catch (e: Exception) {
+      Log.e("TripDetailsActivity", "Error extracting s3_path: ${e.message}")
+      null
+    }
+  }
+
+  // Store current download context
+  private var currentPodUrl: String? = null
+  private var currentPodFile: File? = null
+
+  // DocumentListInterface implementation for secure download API
+  override fun onDocumentListSuccess(files: List<FileData>) {
+    if (files.isNotEmpty()) {
+      val documentFile = files.first()
+      val podUrl = currentPodUrl
+      val podFile = currentPodFile
+      
+      if (podUrl != null && podFile != null) {
+        // Download file from pre-signed URL
+        downloadFileFromUrl(documentFile.downloadUrl, podUrl, podFile)
+      } else {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Download context lost")
+        currentPodUrl = null
+        currentPodFile = null
+      }
+    } else {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("No documents found")
+      currentPodUrl = null
+      currentPodFile = null
+    }
+  }
+
+  override fun onDocumentListFailure(error: String) {
+    uiUtils.hideProgress()
+    uiUtils.showSnackbar("Download failed: $error")
+    currentPodUrl = null
+    currentPodFile = null
+  }
+
+  /**
+   * Download file from pre-signed URL using OkHttpClient
+   */
+  private fun downloadFileFromUrl(downloadUrl: String, originalUrl: String, file: File) {
+    compositeDisposable += io.reactivex.Observable.fromCallable {
+      val client = OkHttpClient()
+      val request = Request.Builder()
+        .url(downloadUrl)
+        .build()
+      
+      val response: Response = client.newCall(request).execute()
+      
+      if (response.isSuccessful) {
+        response.body()?.byteStream()?.use { input ->
+          file.outputStream().use { output ->
+            input.copyTo(output)
+          }
+        }
+        file.absolutePath
+      } else {
+        null
+      }
+    }
+    .onBackground()
+    .subscribe({ filePath ->
+      if (filePath != null) {
+        openFile(file)
+      } else {
+        uiUtils.showSnackbar("Download failed")
+      }
+      uiUtils.hideProgress()
+      currentPodUrl = null
+      currentPodFile = null
+    }, { error ->
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Download error: ${error.message}")
+      currentPodUrl = null
+      currentPodFile = null
+    })
   }
 
   private fun getFile(): File? {
@@ -611,20 +746,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     return chargeText
   }
 
-  override fun onRequestPermissionsResult(
-    requestCode: Int,
-    permissions: Array<out String>,
-    grantResults: IntArray
-  ) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == REQCODE_STORAGE) {
-      if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-        uiUtils.showSnackbar("Storage permission required to download POD")
-      } else {
-          requestStoragePermission()
-      }
-    }
-  }
 
   override fun onActivityResult(
     requestCode: Int,

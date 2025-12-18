@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -22,13 +23,14 @@ import android.widget.DatePicker
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.data.DocketState
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.PODStatus
@@ -36,17 +38,16 @@ import com.delhivery.axle.databinding.ActivityHpodDetailsBinding
 import com.delhivery.axle.databinding.DialogEpodSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.tripdetails.imageViewIntent
-import com.delhivery.axle.utils.AWSUtils
-import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
-import com.delhivery.axle.utils.REQCODE_CAMERA
-import com.delhivery.axle.utils.REQCODE_GALLERY_PHOTO
+import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -56,6 +57,9 @@ import com.delhivery.axle.utils.extensions.toDate
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -63,6 +67,7 @@ import java.io.IOException
 import java.util.Calendar
 import javax.inject.Inject
 import androidx.core.graphics.toColorInt
+import com.delhivery.axle.utils.REQCODE_CAMERA
 
 /**
  **
@@ -72,7 +77,7 @@ import androidx.core.graphics.toColorInt
  **
  */
 class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpdateViewModel>(),
-    OnDateSetListener, AWSProgressInterface {
+    OnDateSetListener, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface {
 
   override fun getViewModelClass() = DocketUpdateViewModel::class.java
 
@@ -85,9 +90,10 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
   private var currentDocketId: Int = 1 // Currently selected docket ID
+  private var pendingViewDocketId: Int? = null // Docket ID user clicked to view while downloading
 
   @Inject lateinit var imageUtils: ImageUtils
-  @Inject lateinit var awsUtils: AWSUtils
+  @Inject lateinit var documentUtils: DocumentUtils
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var bitmapUtils: BitmapUtils
   @Inject lateinit var userPrefs: UserPrefs
@@ -196,6 +202,9 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         binding.podContainerMaxWidth.visibility = View.GONE
         binding.docketRecyclerView.visibility = View.VISIBLE
         viewModel.loadExistingDocket(viewModel.trip!!.podDispatchDocketImage.toString())
+        
+        // Proactively pre-fetch existing docket for thumbnail
+        prefetchDockets()
       }
       // If no existing image, big container stays visible (user clicks to start)
     }
@@ -220,9 +229,6 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       validateForm()
     })
 
-    viewModel.delegationLiveData.observe(this, Observer {
-      uploadImage(it.first, it.second)
-    })
 
     viewModel.statusLiveData.observe(this, Observer { isSuccess ->
       uiUtils.hideProgress()
@@ -264,7 +270,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         // Check if there are selected dockets to upload first
         val selectedDockets = viewModel.getSelectedDockets()
         if (selectedDockets.isNotEmpty()) {
-          // Upload selected dockets first, then update dispatch details
+          // Sequential upload using DocumentUtils
           uploadSelectedDockets()
         } else {
           // No new images to upload, directly update dispatch details
@@ -313,8 +319,8 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
           val docketItem = viewModel.getDocketItems().find { it.id == docketId }
 
           // If already uploaded, view the image
-          if (docketItem?.state == DocketState.UPLOADED && docketItem.imageUrl != null) {
-            viewImage(docketItem.imageUrl, "Tracking Picture")
+          if (docketItem?.state == DocketState.UPLOADED && (docketItem.imageUrl != null || docketItem.imagePath != null)) {
+            viewImage(docketId, docketItem.imageUrl, docketItem.imagePath, "Tracking Picture")
             return@DocketAdapter
           }
 
@@ -391,12 +397,12 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     this.uploadImageName = uploadImageName
     this.localImageName = localImageName
 
-    val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
+    val items = arrayOf<CharSequence>("Take Photo", "Choose Gallery/File", "Cancel")
     val builder = AlertDialog.Builder(this)
     builder.setItems(items) { dialog, item ->
       when {
         items[item] == "Take Photo" -> requestImageCapturePermissions(true)
-        items[item] == "Choose from Library" -> requestImageCapturePermissions(false)
+        items[item] == "Choose Gallery/File" -> requestImageCapturePermissions(false)
         items[item] == "Cancel" -> {
           dialog.dismiss()
           // If user cancels and we're in initial state, reset dockets
@@ -431,10 +437,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     compositeDisposable += requestPermission(
         arrayOf(
             Manifest.permission.CAMERA
-        ).apply {
-          if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-            plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
+        )
     )
         .onBackground()
         .subscribe { granted, error ->
@@ -442,7 +445,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
             if (isCamera) {
               dispatchTakePictureIntent()
             } else {
-              dispatchGalleryIntent()
+              dispatchFileIntent()
             }
           } else {
             uiUtils.showSnackbar(getString(string.storage_camera_permission))
@@ -472,20 +475,26 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     return File.createTempFile(localImageName, ".jpg", storageDir)
   }
 
-  private fun dispatchGalleryIntent() {
-    val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-    pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    startActivityForResult(pickPhoto, REQCODE_GALLERY_PHOTO)
+  private fun dispatchFileIntent() {
+    val intent = Intent(Intent.ACTION_GET_CONTENT)
+    intent.type = "*/*"
+    val mimetypes = arrayOf("image/*", "application/pdf")
+    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+    intent.addCategory(Intent.CATEGORY_OPENABLE)
+    startActivityForResult(intent, REQCODE_FILE_ATTACHMENTS)
   }
 
-  private fun uploadImage(
-    delegationToken: DelegationToken,
-    file: File
-  ) {
-    // Progress is already shown at the start of submit process
-    val awsPath = "trips/vendor_pod/docket/$uploadImageName.jpg"
-    awsUtils.startUpload(delegationToken, awsPath, file, this)
-    viewModel.imagePath = file.path
+  private fun uploadImage(file: File, fileType: FileType) {
+    val docType = "docket"
+    // VAPT requirement: Docket needs uploadImageName in dynamic_variables
+    val dynamicVariables = mapOf(
+      "transactionId" to (viewModel.transactionIds.firstOrNull() ?: ""),
+      "uploadImageName" to uploadImageName,
+      "phoneNumber" to (userPrefs.phoneNumber?.toString() ?: ""),
+      "docType" to docType,
+      "proofType" to "epod"
+    )
+    documentUtils.uploadDocument(file, fileType, docType, this, dynamicVariables)
   }
 
   override fun onDateSet(
@@ -509,14 +518,13 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     validateForm()
   }
 
-  override fun onAWSSuccess(
-    path: String
-  ) {
+  override fun onDocumentSuccess(documentUrl: String) {
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
 
     // Update viewModel with upload success
-    viewModel.onUploadSuccess(currentDocketId, path)
+    viewModel.onUploadSuccess(currentDocketId, documentUrl)
 
+    viewModel.imageUrl = documentUrl
     resetUploadData()
 
     // After upload success, check if there are more selected dockets to upload
@@ -530,7 +538,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     }
   }
 
-  override fun onAWSFailure() {
+  override fun onDocumentFailure(error: String) {
     uiUtils.hideProgress()
     uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
 
@@ -538,6 +546,123 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     viewModel.onUploadFailure(currentDocketId)
 
     resetUploadData()
+  }
+
+  override fun onDocumentListSuccess(documents: List<FileData>) {
+    if (documents.isNotEmpty()) {
+      val documentFile = documents.first()
+      val signedUrl = documentFile.downloadUrl
+      if (signedUrl.isNotEmpty()) {
+        // Find which docket this belongs to (if not already known from currentDocketId)
+        // For pre-fetching, it might not be the 'current' one if multiple were queued,
+        // but since we only have 1 docket usually, currentDocketId is likely correct.
+        downloadFileFromUrl(signedUrl, "view_docket_${System.currentTimeMillis()}", currentDocketId)
+      } else {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Failed to get signed URL")
+      }
+    } else {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("No document found")
+    }
+  }
+
+  private fun downloadFileFromUrl(downloadUrl: String, fileNamePrefix: String, docketId: Int) {
+    // Show progress only if user is waiting (pending view)
+    if (pendingViewDocketId == docketId) {
+        uiUtils.showProgress()
+    }
+    
+    compositeDisposable += io.reactivex.Observable.fromCallable {
+      val client = OkHttpClient()
+      val request = Request.Builder().url(downloadUrl).build()
+      val response = client.newCall(request).execute()
+
+      if (response.isSuccessful) {
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+        val file = File.createTempFile(fileNamePrefix, ".jpg", storageDir)
+        
+        response.body()?.byteStream()?.use { input ->
+          file.outputStream().use { output ->
+            input.copyTo(output)
+          }
+        }
+        file.absolutePath
+      } else {
+        null
+      }
+    }
+    .onBackground()
+    .subscribe({ filePath ->
+      if (filePath != null) {
+        // Update local path in ViewModel so thumbnail shows and click is instant
+        viewModel.updateDocketLocalPath(docketId, filePath)
+        
+        // If user was waiting for this specific image to open
+        if (pendingViewDocketId == docketId) {
+            uiUtils.hideProgress()
+            pendingViewDocketId = null
+            startActivity(imageViewIntent(this, filePath, "Docket Image"))
+        }
+      } else {
+        if (pendingViewDocketId == docketId) {
+            uiUtils.hideProgress()
+            pendingViewDocketId = null
+            uiUtils.showSnackbar("Download failed")
+        }
+      }
+    }, { error ->
+      if (pendingViewDocketId == docketId) {
+          uiUtils.hideProgress()
+          pendingViewDocketId = null
+          uiUtils.showSnackbar("Download error: ${error.message}")
+      }
+      Log.e("DocketUpdate", "Download error", error)
+    })
+  }
+
+  override fun onDocumentListFailure(error: String) {
+    uiUtils.hideProgress()
+    pendingViewDocketId = null
+    uiUtils.showSnackbar(error)
+  }
+
+  /**
+   * Proactively pre-fetch dockets to show thumbnails and enable instant viewing
+   */
+  private fun prefetchDockets() {
+    viewModel.getDocketItems().filter { 
+        it.state == DocketState.UPLOADED && it.imageUrl != null && it.imagePath == null 
+    }.forEach { docket ->
+        val s3Path = extractS3Path(docket.imageUrl!!)
+        if (s3Path != null) {
+            currentDocketId = docket.id
+            documentUtils.downloadByS3Path(s3Path, this)
+        }
+    }
+  }
+
+  private fun extractS3Path(docUrl: String): String? {
+      return try {
+          val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
+          val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
+          val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
+
+          if (docUrl.startsWith(awsBasePath)) {
+              docUrl.replace(awsBasePath, "").split("?")[0]
+          } else if (docUrl.contains(".amazonaws.com/")) {
+              val parts = docUrl.split(".amazonaws.com/")
+              if (parts.size > 1) {
+                  parts[1].split("?")[0]
+              } else {
+                  docUrl // Assume relative path if no AWS domain found but passed to this func
+              }
+          } else {
+              docUrl // Assume it's already a relative path
+          }
+      } catch (e: Exception) {
+          null
+      }
   }
 
   private fun uploadSelectedDockets() {
@@ -554,9 +679,19 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     docket.imagePath?.let { path ->
       val file = File(path)
       if (file.exists()) {
+        // Determine file type
+        val fileType = when {
+          file.extension.lowercase() in listOf("jpg", "jpeg", "png") -> FileType.IMAGE
+          file.extension.lowercase() == "pdf" -> FileType.PDF
+          else -> FileType.IMAGE
+        }
+
         // Set upload image name before starting upload
         uploadImageName = "docket_${viewModel.transactionIds.firstOrNull() ?: System.currentTimeMillis()}_${docket.id}"
+        localImageName = "docket_${viewModel.transactionIds.firstOrNull()}_${docket.id}"
+        
         viewModel.startUpload(currentDocketId, file)
+        uploadImage(file, fileType)
       } else {
         uiUtils.hideProgress()
         uiUtils.showSnackbar("Image file not found")
@@ -574,11 +709,26 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   }
 
   private fun viewImage(
+    docketId: Int,
     path: String?,
+    localPath: String?,
     title: String
   ) {
-    if (path.isNotNullOrEmpty()) {
-      startActivity(imageViewIntent(this, path ?: "", title))
+    if (localPath.isNotNullOrEmpty()) {
+        // Instant view from local cache
+        startActivity(imageViewIntent(this, localPath!!, title))
+    } else if (path.isNotNullOrEmpty()) {
+      val s3Path = extractS3Path(path!!)
+      if (s3Path != null && path!!.startsWith("http")) {
+        // Remote S3 URL, need to fetch and cache
+        pendingViewDocketId = docketId
+        currentDocketId = docketId
+        uiUtils.showProgress()
+        documentUtils.downloadByS3Path(s3Path, this)
+      } else {
+        // Fallback for non-S3 URLs
+        startActivity(imageViewIntent(this, path ?: "", title))
+      }
     }
   }
 
@@ -610,8 +760,8 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
           }
           try {
             mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
-
-            // Set image as selected in viewModel (will upload on Submit)
+            
+            // Just set image as selected (no intermediate upload)
             viewModel.setImageSelected(currentDocketId, mPhotoFile!!.path)
 
             resetUploadData()
@@ -623,7 +773,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
         }
       }
 
-      REQCODE_GALLERY_PHOTO -> {
+      REQCODE_FILE_ATTACHMENTS -> {
         if (resultCode == Activity.RESULT_OK) {
           try {
             val selectedImage = data?.data
@@ -631,16 +781,30 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
             val parcelFileDescriptor =
               contentResolver?.openFileDescriptor(selectedImage, "r", null)
             require(parcelFileDescriptor != null)
-            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-            require(
-                contentResolver != null && contentResolver?.getFileName(selectedImage) != null
-            )
-            val imageScopedFile =
-              File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
-            val outputStream = FileOutputStream(imageScopedFile)
-            IOUtils.copy(inputStream, outputStream)
+            
+            val fileName = contentResolver?.getFileName(selectedImage) ?: "docket_${System.currentTimeMillis()}"
+            val imageScopedFile = File(cacheDir, fileName)
+            
+            parcelFileDescriptor.use { pfd ->
+                FileInputStream(pfd.fileDescriptor).use { inputStream ->
+                    FileOutputStream(imageScopedFile).use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+            }
 
-            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
+            // Set local and upload names for consistency
+            localImageName = "docket_update_${viewModel.transactionIds.firstOrNull()}_$currentDocketId"
+            uploadImageName = "docket_${viewModel.transactionIds.firstOrNull()}_$currentDocketId"
+
+            // Compress if image, otherwise use as is (PDF)
+            val extension = imageScopedFile.extension.lowercase()
+            mPhotoFile = if (extension in listOf("jpg", "jpeg", "png")) {
+                fileCompressor.compressToFile(imageScopedFile, localImageName)
+            } else {
+                imageScopedFile
+            }
+
             if (mPhotoFile == null) {
               uiUtils.showToast(getString(R.string.msg_image_capture_failed))
               return
@@ -650,7 +814,8 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
             viewModel.setImageSelected(currentDocketId, mPhotoFile!!.path)
 
             resetUploadData()
-          } catch (e: IOException) {
+          } catch (e: Exception) {
+            Log.e("DocketUpdate", "File selection failed", e)
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
           }
         } else {

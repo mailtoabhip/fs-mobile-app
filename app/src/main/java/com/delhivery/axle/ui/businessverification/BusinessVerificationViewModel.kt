@@ -6,9 +6,7 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.request.VerificationDocUploadRequest
-import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.api.response.ErrorResponseBody
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.exception.HttpErrorCode
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.errorResponseBody
@@ -17,7 +15,6 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import retrofit2.adapter.rxjava2.Result.response
-import java.io.File
 import javax.inject.Inject
 
 class BusinessVerificationViewModel@Inject constructor(
@@ -38,28 +35,12 @@ class BusinessVerificationViewModel@Inject constructor(
 
     var errorText:String? = ""
     var userUpdateLiveData = MutableLiveData<Boolean>()
-    var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
+    var documentProofUrl= mutableListOf<String>()
     var manualVerificationRequired = MutableLiveData<Boolean>()
     var rcVerificationErrorMsg = MutableLiveData<String>()
     var verificationDocUploadMsg = MutableLiveData<String>()
     var verificationDocUploadFailed = MutableLiveData<Boolean>()
 
-
-
-    /**
-     * Get delegation token for AWS
-     */
-    fun getDelegationToken(file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-            .onBackground()
-            .progress()
-            .subscribe { _res, error ->
-                if (!error) {
-                    delegationLiveData.postValue(Pair(_res.delegationToken, file))
-                } else
-                    error.handle()
-            }
-    }
 
     fun validateRC (rc :String){
         compositeDisposable += loadboardRepository.validateRC(rc)

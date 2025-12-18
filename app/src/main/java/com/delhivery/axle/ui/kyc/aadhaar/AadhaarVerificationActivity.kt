@@ -16,13 +16,15 @@ import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityVerifyAadharBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.ShowVerificationOtpDialog
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.constants.FileType
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -40,7 +42,7 @@ import java.lang.StringBuilder
 
 
 class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, AadhaarVerificationViewModel>(),
-    DialogUtilsInterface, AWSUtils.AWSProgressInterface,UploadedItemRVAdapterInterface {
+    DialogUtilsInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface,UploadedItemRVAdapterInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -61,14 +63,13 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
     lateinit var bitmapUtils: BitmapUtils
 
 
-    val awsPath = "loadboard/aadhaar/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
 
@@ -188,9 +189,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                 viewModel.updateUserDetails()
             }
         })
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
+        // Removed delegation token observer - using direct DocumentUtils upload now
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if (it) {
@@ -240,20 +239,33 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
     override fun navigateToBusinessVerification() {
     }
 
-    override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         uiUtils.hideProgress()
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
+        // Store full downloadUrl (not just filename)
+        // This downloadUrl will be sent to /upload_document API for verification
+        uploadArray.add(
+            Pair(
+                downloadUrl, (mPhotoFile?.length()
+                ?.div(1024)).toString()
+            )
+        )
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text))
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showToast("Failed to upload")
-        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text),awsUtils)
+        uiUtils.showToast("Failed to upload: $error")
+        dialogUtils.showAttachmentDialog(docUploadAdapter,uploadArray,this,getString(R.string.upload_aadhaar_text))
         resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        // Handle document list if needed
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
     }
 
     private fun resetUploadData() {
@@ -280,10 +292,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         compositeDisposable += requestPermission(
             arrayOf(
                 Manifest.permission.CAMERA
-            ).apply {
-             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-               plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
+            )
         )
             .onBackground()
             .subscribe { granted, error ->
@@ -336,9 +345,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
                 val imageUrls= mutableListOf<String>()
-                val s3url= awsUtils.awsBasePath()
                for(i in uploadArray){
-               imageUrls.add(s3url+awsPath+i.first)
+               // The URL is already complete from the document upload
+               imageUrls.add(i.first)
            }
             viewModel.verifyByDoc(imageUrls)
         }else{
@@ -365,13 +374,9 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         )
     }
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
-        uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+    private fun uploadImage(file: File, fileType: FileType) {
+        val docType = "aadhaar"
+        documentUtils.uploadDocument(file, fileType, docType, this)
     }
 
     override fun onActivityResult(
@@ -391,7 +396,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -402,6 +407,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
             REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
+                        val fileType: FileType
                         val selectedFile = data?.data
                         require(selectedFile != null)
                         val parcelFileDescriptor =
@@ -418,10 +424,17 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                             this.uploadImageName = "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                             this.localImageName =  "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
                             mPhotoFile = imageScopedFile
                         }else{
+                            analyticsUtil.moEngageTrackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
+                                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber.toString(), imageScopedFile.extension, "aadhaar")
+                            )
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
                         }
@@ -431,7 +444,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, fileType)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

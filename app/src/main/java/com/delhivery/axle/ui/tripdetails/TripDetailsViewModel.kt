@@ -9,7 +9,6 @@ import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.OMCRequest
 import com.delhivery.axle.api.request.WarehouseRequest
 import com.delhivery.axle.api.response.*
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.AdvancePaid
 import com.delhivery.axle.data.AdvancePending
 import com.delhivery.axle.data.AwaitingPODUpload
@@ -86,7 +85,7 @@ class TripDetailsViewModel @Inject constructor(
   var historyLiveData = MutableLiveData<Boolean>()
   var paymentSummaryLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
-  var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+  var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -967,20 +966,13 @@ class TripDetailsViewModel @Inject constructor(
         }
   }
   /**
-   * Get delegation token for AWS
+   * Prepare download - just pass the URL to the activity
    */
-  fun getDelegationToken(
-    awsPath: String,
+  fun prepareDownload(
+    podUrl: String,
     file: File
   ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-          } else
-            error.handle()
-        }
+    podDownloadLiveData.postValue(Pair(podUrl, file))
   }
 
   override fun done(

@@ -4,6 +4,7 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.delhivery.axle.api.service.*
 import com.delhivery.axle.config.UrlConfig
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.network.ConnectionLiveData
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
@@ -369,4 +370,25 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.SpotBiddingService).create(
           SpotBiddingService::class.java
   )
+
+  /**
+   * Provide DocumentService for secure document upload/download
+   */
+  @Provides
+  @Singleton
+  fun provideDocumentService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.DocumentService).create(
+    DocumentService::class.java
+  )
+
+  /**
+   * Provide DocumentUtils for secure document upload/download
+   */
+  @Provides
+  @Singleton
+  fun provideDocumentUtils(
+    documentService: DocumentService
+  ): DocumentUtils = DocumentUtils(documentService)
 }
