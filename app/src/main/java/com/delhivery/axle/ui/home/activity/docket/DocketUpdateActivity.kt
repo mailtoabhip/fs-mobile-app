@@ -831,10 +831,16 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     val dialog = Dialog(this)
     val bindingDialog = DialogEpodSuccessBinding.inflate(layoutInflater)
 
+      val isUpdateFlow = viewModel.trip != null && !viewModel.trip!!.podDispatchDocketImage.isNullOrEmpty()
+
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
     dialog.setContentView(bindingDialog.root)
 
-    bindingDialog.textTitle.text = "Courier details submitted successfully!"
+      bindingDialog.textTitle.text = if (isUpdateFlow) {
+          "Updated details saved successfully!"
+      } else {
+          "Courier details submitted successfully!"
+      }
     bindingDialog.textMessage.visibility = View.GONE
     bindingDialog.iconSuccess.setImageResource(R.drawable.ic_green_tick)
 
