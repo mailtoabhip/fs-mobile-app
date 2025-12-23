@@ -146,7 +146,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_80dp"
-                        android:text="Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+                        android:text="Upload a .JPG, .PNG (Max 5MB)"
                         android:textColor="@color/disabled_button_text"
                         android:textSize="@dimen/text_12sp"
                         app:layout_constraintStart_toStartOf="parent"

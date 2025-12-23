@@ -1056,7 +1056,7 @@ data class HomeTripsItemData(
         if (isEpodVerified == true) {
           "ePOD Verified"
         } else if (isEpodVerified == false) {
-          "ePOD Rejected"
+          "ePOD Under Review"
         } else {
           "ePOD Under Review"
         }
@@ -1086,7 +1086,7 @@ data class HomeTripsItemData(
         if (isEpodVerified == true) {
           "ePOD Verified"
         } else if (isEpodVerified == false) {
-          "ePOD Rejected"
+          "ePOD Under Review"
         } else {
           "ePOD Under Review"
         }

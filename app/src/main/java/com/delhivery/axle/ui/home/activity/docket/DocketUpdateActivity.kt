@@ -478,7 +478,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private fun dispatchFileIntent() {
     val intent = Intent(Intent.ACTION_GET_CONTENT)
     intent.type = "*/*"
-    val mimetypes = arrayOf("image/*", "application/pdf")
+    val mimetypes = arrayOf("image/*")
     intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
     intent.addCategory(Intent.CATEGORY_OPENABLE)
     startActivityForResult(intent, REQCODE_FILE_ATTACHMENTS)
@@ -753,7 +753,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     super.onActivityResult(requestCode, resultCode, data)
     
     // Reset recommendation text to default state when starting new file selection
-    binding.recommendationText.text = "Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+    binding.recommendationText.text = "Upload a .JPG, .PNG (Max 5MB)"
     binding.recommendationText.setTextColor("#8F9198".toColorInt())
     
     when (requestCode) {
@@ -852,7 +852,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
 
     if (isValid) {
       // Show recommendation, hide error
-      binding.recommendationText.text = "Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+      binding.recommendationText.text = "Upload a .JPG, .PNG (Max 5MB)"
       binding.recommendationText.setTextColor(
         "#8F9198".toColorInt()
       )

@@ -132,7 +132,7 @@ enum class UrlConfig(
         "https://tps-bk-dev.delhivery.com"
     ),
   DocumentService(
-      "https://orion-user-onboarding-api.delhivery.com",
+      "https://orion-user-loadboard.delhivery.com",
       "https://orion-user-onboarding-api-dev.delhivery.com",
       "https://orion-user-onboarding-api-uat.delhivery.com"
   ),
