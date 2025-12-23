@@ -751,6 +751,11 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     data: Intent?
   ) {
     super.onActivityResult(requestCode, resultCode, data)
+    
+    // Reset recommendation text to default state when starting new file selection
+    binding.recommendationText.text = "Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+    binding.recommendationText.setTextColor("#8F9198".toColorInt())
+    
     when (requestCode) {
       REQCODE_TAKE_PHOTO -> {
         if (resultCode == Activity.RESULT_OK) {
@@ -760,6 +765,12 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
           }
           try {
             mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
+            
+            // Validate file size before proceeding
+            if (mPhotoFile != null && !validateFileSize(mPhotoFile!!)) {
+              resetUploadData()
+              return
+            }
             
             // Just set image as selected (no intermediate upload)
             viewModel.setImageSelected(currentDocketId, mPhotoFile!!.path)
@@ -810,6 +821,12 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
               return
             }
 
+            // Validate file size before proceeding
+            if (!validateFileSize(mPhotoFile!!)) {
+              resetUploadData()
+              return
+            }
+
             // Set image as selected in viewModel (will upload on Submit)
             viewModel.setImageSelected(currentDocketId, mPhotoFile!!.path)
 
@@ -825,12 +842,38 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     }
   }
 
+  /**
+   * Validate file size (max 5 MB)
+   * Returns true if valid, false if exceeds limit
+   */
+  private fun validateFileSize(file: File): Boolean {
+    val fileSizeInMB = file.length() / (1024.0 * 1024.0)
+    val isValid = fileSizeInMB <= 5.0
+
+    if (isValid) {
+      // Show recommendation, hide error
+      binding.recommendationText.text = "Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+      binding.recommendationText.setTextColor(
+        "#8F9198".toColorInt()
+      )
+    } else {
+      // Show error, hide recommendation
+      binding.recommendationText.text = "The file exceeds the 5 MB limit. Upload a smaller file."
+      binding.recommendationText.setTextColor(
+        "#8E2720".toColorInt()
+      )
+    }
+
+    return isValid
+  }
+
   private fun showSuccessDialog(isSuccess: Boolean) {
     if (isFinishing || !isSuccess) return
 
     val dialog = Dialog(this)
     val bindingDialog = DialogEpodSuccessBinding.inflate(layoutInflater)
 
+      // Check if this was an update flow (trip data exists with existing docket image)
       val isUpdateFlow = viewModel.trip != null && !viewModel.trip!!.podDispatchDocketImage.isNullOrEmpty()
 
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

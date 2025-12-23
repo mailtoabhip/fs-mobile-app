@@ -312,7 +312,8 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_SUCCESS)
       )
-      viewModel.onUploadSuccess(currentPodId, documentUrl)
+        val s3Path = extractS3Path(documentUrl) ?: documentUrl
+        viewModel.onUploadSuccess(currentPodId, s3Path)
 
       // Check if there are more selected pods to upload
       val remainingSelectedPods = viewModel.getSelectedPods()
@@ -527,6 +528,32 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
         dialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
+    /**
+     * Extract S3 relative path from full S3 URL
+     */
+    private fun extractS3Path(docUrl: String): String? {
+        return try {
+            val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
+            val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
+            val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
+
+            if (docUrl.startsWith(awsBasePath)) {
+                docUrl.replace(awsBasePath, "").split("?")[0]
+            } else if (docUrl.contains(".amazonaws.com/")) {
+                val parts = docUrl.split(".amazonaws.com/")
+                if (parts.size > 1) {
+                    parts[1].split("?")[0]
+                } else {
+                    docUrl // Assume relative path if no AWS domain found
+                }
+            } else {
+                docUrl // Assume it's already a relative path
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
   override fun onActivityResult(
     requestCode: Int,
     resultCode: Int,
@@ -534,88 +561,126 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   ) {
     super.onActivityResult(requestCode, resultCode, data)
     when (requestCode) {
-      REQCODE_TAKE_PHOTO -> {
-        if (resultCode == Activity.RESULT_OK) {
-            val fileType = FileType.IMAGE
-          val photoFile = mPhotoFile
-          if (photoFile == null) {
-            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-            return
-          }
-          try {
-            mPhotoFile = fileCompressor.compressToFile(photoFile, localImageName)
-            // Just set image as selected (no upload yet)
-            // For camera capture, imageUri is null since we use FileProvider URI
-            viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = null)
-            resetUploadData()
-          } catch (e: IOException) {
-            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-          }
-        } else {
-          uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-        }
-      }
+        REQCODE_TAKE_PHOTO -> {
+            if (resultCode == Activity.RESULT_OK) {
+                val fileType = FileType.IMAGE
+                val photoFile = mPhotoFile
+                if (photoFile == null) {
+                    uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                    return
+                }
+                try {
+                    mPhotoFile = fileCompressor.compressToFile(photoFile, localImageName)
 
-      REQCODE_FILE_ATTACHMENTS -> {
-        if (resultCode == Activity.RESULT_OK) {
-          try {
-              val fileType: FileType
-            val selectedImage = data?.data ?: throw IOException("Selected image URI is null")
-            val pfd = contentResolver?.openFileDescriptor(selectedImage, "r")
-                ?: throw IOException("Could not open file descriptor")
-
-            pfd.use { parcelFileDescriptor ->
-                val fileName = contentResolver?.getFileName(selectedImage)
-                    ?: "gallery_image_${System.currentTimeMillis()}"
-                val imageScopedFile = File(cacheDir, fileName)
-
-                FileInputStream(parcelFileDescriptor.fileDescriptor).use { inputStream ->
-                    FileOutputStream(imageScopedFile).use { outputStream ->
-                        inputStream.copyTo(outputStream)
+                    // Validate file size before proceeding
+                    if (mPhotoFile != null && !validateFileSize(mPhotoFile!!)) {
+                        resetUploadData()
+                        return
                     }
+
+                    // Just set image as selected (no upload yet)
+                    // For camera capture, imageUri is null since we use FileProvider URI
+                    viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = null)
+                    resetUploadData()
+                } catch (e: IOException) {
+                    uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                 }
-
-                // Ensure naming consistency with camera capture
-                this.uploadImageName = "${viewModel.transactionId}-$currentPodId"
-                this.localImageName = "vendor_pod_${viewModel.transactionId}-$currentPodId"
-
-
-                val extension = imageScopedFile.extension.lowercase()
-                if (extension in listOf("jpg", "png", "jpeg")) {
-                  fileType = FileType.IMAGE
-                  mPhotoFile = fileCompressor.compressToFile(imageScopedFile, localImageName)
-                } else if (extension == "pdf") {
-                  fileType = FileType.PDF
-                  mPhotoFile = imageScopedFile
-                } else {
-                  analyticsUtil.moEngageTrackEvent(
-                    EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
-                    mutableListOf(userPrefs.userId(), userPrefs.phoneNumber.toString(), extension, "upload_pod")
-                  )
-                  uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-                  return
-                }
-
-                if (mPhotoFile == null) {
-                  uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-                  return
-                }
-                // Just set image as selected (no upload yet)
-                // Store the original gallery URI for reference
-                viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = selectedImage)
-                resetUploadData()
+            } else {
+                uiUtils.showToast(getString(R.string.msg_image_capture_failed))
             }
-          } catch (e: Exception) {
-            Log.e("UploadImageActivity", "Gallery selection failed", e)
-            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
-          }
-        } else {
-          uiUtils.showToast(getString(R.string.msg_image_capture_failed))
         }
-      }
+
+        REQCODE_FILE_ATTACHMENTS -> {
+            if (resultCode == Activity.RESULT_OK) {
+                try {
+                    val fileType: FileType
+                    val selectedImage = data?.data ?: throw IOException("Selected image URI is null")
+                    val pfd = contentResolver?.openFileDescriptor(selectedImage, "r")
+                        ?: throw IOException("Could not open file descriptor")
+
+                    pfd.use { parcelFileDescriptor ->
+                        val fileName = contentResolver?.getFileName(selectedImage)
+                            ?: "gallery_image_${System.currentTimeMillis()}"
+                        val imageScopedFile = File(cacheDir, fileName)
+
+                        FileInputStream(parcelFileDescriptor.fileDescriptor).use { inputStream ->
+                            FileOutputStream(imageScopedFile).use { outputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
+
+                        // Ensure naming consistency with camera capture
+                        this.uploadImageName = "${viewModel.transactionId}-$currentPodId"
+                        this.localImageName = "vendor_pod_${viewModel.transactionId}-$currentPodId"
+
+                        val extension = imageScopedFile.extension.lowercase()
+                        if (extension in listOf("jpg", "png", "jpeg")) {
+                            fileType = FileType.IMAGE
+                            mPhotoFile = fileCompressor.compressToFile(imageScopedFile, localImageName)
+                        } else if (extension == "pdf") {
+                            fileType = FileType.PDF
+                            mPhotoFile = imageScopedFile
+                        } else {
+                            analyticsUtil.moEngageTrackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
+                                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber.toString(), extension, "upload_pod")
+                            )
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
+                        }
+
+                        if (mPhotoFile == null) {
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
+                        }
+
+                        // Validate file size before proceeding
+                        if (!validateFileSize(mPhotoFile!!)) {
+                            resetUploadData()
+                            return
+                        }
+
+                        // Just set image as selected (no upload yet)
+                        // Store the original gallery URI for reference
+                        viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = selectedImage)
+                        resetUploadData()
+                    }
+                } catch (e: Exception) {
+                    Log.e("UploadImageActivity", "Gallery selection failed", e)
+                    uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                }
+            } else {
+                uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+            }
+        }
     }
   }
+
+    /**
+     * Validate file size (max 5 MB)
+     * Returns true if valid, false if exceeds limit
+     */
+    private fun validateFileSize(file: File): Boolean {
+        val fileSizeInMB = file.length() / (1024.0 * 1024.0)
+        val isValid = fileSizeInMB <= 5.0
+
+        if (isValid) {
+            // Show recommendation, hide error
+            binding.recommendationText.text = "Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+            binding.recommendationText.setTextColor(
+                "#8F9198".toColorInt()
+            )
+        } else {
+            // Show error, hide recommendation
+            binding.recommendationText.text = "The file exceeds the 5 MB limit. Upload a smaller file."
+            binding.recommendationText.setTextColor(
+                "#8E2720".toColorInt()
+            )
+        }
+
+        return isValid
+    }
 
 }
 
