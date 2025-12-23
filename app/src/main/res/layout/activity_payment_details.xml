@@ -81,6 +81,7 @@
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -89,6 +90,7 @@
                     android:visibility="gone"
                     android:id="@+id/error_account_num"
                     />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img_wrong_account"
                     android:layout_width="wrap_content"
@@ -100,6 +102,7 @@
                     android:visibility="gone"
                     android:paddingStart="@dimen/size_12dp"
                     android:paddingEnd="@dimen/size_12dp" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/IFSC_textView"
                     android:layout_width="wrap_content"
@@ -130,6 +133,7 @@
                     android:textSize="@dimen/text_16sp"
 
                     />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_holder_textView"
                     android:layout_width="wrap_content"
@@ -161,6 +165,7 @@
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_16sp"
                     />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_holder_edittext"
                     android:layout_width="wrap_content"
@@ -179,7 +184,6 @@
                     android:visibility="visible"
                     />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/account_holder_warning"
                     android:visibility="gone"
@@ -196,10 +200,12 @@
                     android:textSize="@dimen/text_14sp"
                     />
 
+                <!--     Upload Doc 1 Functionality           -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/upload_doc"
                     android:layout_width="match_parent"
                     android:visibility="gone"
+                    tools:visibility="gone"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_24dp"
                     bind:layout_constraintTop_toBottomOf="@+id/account_holder_warning">
@@ -259,6 +265,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:visibility="gone"
+                            tools:visibility="visible"
                             bind:layout_constraintTop_toTopOf="parent"
                             bind:layout_constraintStart_toStartOf="parent">
                             <androidx.appcompat.widget.AppCompatImageView
@@ -306,10 +313,12 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!--     Upload Doc 2 Functionality           -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/upload_doc1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    tools:visibility="visible"
                     android:layout_marginTop="@dimen/size_24dp"
                     bind:layout_constraintTop_toBottomOf="@+id/upload_doc">
                     <androidx.appcompat.widget.AppCompatTextView
@@ -415,6 +424,7 @@
                     bind:layout_constraintTop_toBottomOf="@+id/upload_doc1"
                     android:text="@string/name_declarion_text"
                     />
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_submit"
                     style="@style/ActionButton"

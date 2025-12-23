@@ -16,11 +16,12 @@ import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityIdentityVerificationBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -36,7 +37,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBinding, IdentityVerificationViewModel>(),
-    AWSUtils.AWSProgressInterface{
+    DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface{
 
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
@@ -45,15 +46,13 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
     lateinit var bitmapUtils: BitmapUtils
     @Inject
     lateinit var userPrefs: UserPrefs
-
-    val awsPath = "loadboard/iv/"
 
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var startTime: Long = 0
@@ -167,9 +166,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
             clickedCin(true)
         }
 
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
+        // Removed delegation token logic - direct upload now
 
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
@@ -312,14 +309,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     }
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
-        compositeDisposable += requestPermission(
-            arrayOf(
-                Manifest.permission.CAMERA
-            ).apply {
-              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        )
+        compositeDisposable += requestPermission(arrayOf(Manifest.permission.CAMERA))
             .onBackground()
             .subscribe { granted, error ->
                 if (error == null && granted) {
@@ -340,7 +330,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
          showUploadImage()
         }else{
             resetUploadData()
-            uploadArray.add(Pair(userPrefs.identityDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            uploadArray.add(Pair(uploadImageName, (mPhotoFile?.length()?.div(1024)).toString()))
             showFileSelected()
         }
     }
@@ -376,13 +366,18 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
         return File.createTempFile(localImageName, ".jpg", storageDir)
     }
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
+    private fun uploadImage(file: File) {
         uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+        val docType = "iv" // VAPT doc specifies "iv" for Identity Verification
+        // VAPT requirement: IV needs docType (PAN_, CIN_, Udyog_, Shop_) in dynamic_variables
+        val ivDocType = when {
+            binding.textCin.isChecked -> "CIN_"
+            binding.textUdyog.isChecked -> "Udyog_"
+            binding.textShop.isChecked -> "Shop_"
+            else -> "CIN_"
+        }
+        val dynamicVariables = mapOf("docType" to ivDocType)
+        documentUtils.uploadDocument(file, FileType.IMAGE, docType, this, dynamicVariables)
     }
 
     private fun captureImage(
@@ -423,12 +418,10 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
 
     fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
-            val imageUrls= mutableListOf<String>()
-            val s3url= awsUtils.awsBasePath()
-            for(i in uploadArray){
-                imageUrls.add(s3url+awsPath+i.first)
-            }
-            viewModel.verifyByDoc(imageUrls)
+            // Extract downloadUrls from uploadArray (first element of Pair is downloadUrl from /document/upload)
+            // These downloadUrls will be sent to /upload_document API for verification
+            val downloadUrls = uploadArray.map { it.first }
+            viewModel.verifyByDoc(downloadUrls)
         }else{
             uiUtils.showToast("No file selected")
         }
@@ -449,19 +442,56 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     }
 
 
-    override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         uiUtils.hideProgress()
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+        uiUtils.showToast("Upload successful")
+        // Store downloadUrl (from BE response) instead of filename
+        // This downloadUrl will be sent to /upload_document API for verification
+        uploadArray.add(Pair(downloadUrl, (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
+        uiUtils.showToast("Upload failed: $error")
         resetUploadData()
     }
+
+    // Download functionality
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        uiUtils.hideProgress()
+        if (files.isNotEmpty()) {
+            // Handle successful document list - show files to user
+            showDocumentList(files)
+        } else {
+            uiUtils.showToast("No identity documents found")
+        }
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showToast("Failed to load identity documents: $error")
+    }
+
+    private fun showDocumentList(files: List<FileData>) {
+        // Show list of available identity documents for download
+        val fileNames = files.map { it.filename }
+        uiUtils.showToast("Found ${files.size} identity document(s): ${fileNames.joinToString(", ")}")
+    }
+
+    //This functionality is not needed. Can be used in future.
+    private fun downloadIdentityDocuments() {
+        uiUtils.showProgress()
+        val docType = when {
+            binding.textCin.isChecked -> "cin"
+            binding.textUdyog.isChecked -> "udyog_aadhaar"
+            binding.textShop.isChecked -> "shop_establishment"
+            else -> "cin"
+        }
+        documentUtils.listDocuments(docType, this)
+    }
+
     private fun resetUploadData() {
         mPhotoFile = null
         uploadImageName = ""
@@ -485,7 +515,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -544,7 +574,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

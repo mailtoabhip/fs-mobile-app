@@ -6,8 +6,7 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.request.VerificationDocUploadRequest
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
+// Removed AWS imports - using Document API now
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
@@ -25,24 +24,15 @@ private val userPrefs: UserPrefs
   var accountText= userPrefs.paymentAccountNumber
   var ifscText= userPrefs.ifscCode
   var accountHolderText= userPrefs.paymentAccountName
-  var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
-  var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+  // Removed delegation token LiveData - using Document API now
+  var delegationDownloadLiveData = MutableLiveData<Triple<Any, String, File>>() // Keep for backward compatibility
   var verificationDocUploadMsg = MutableLiveData<String>()
   val accountkycDocuments = MutableLiveData<String>()
   val nine4CkycDocuments = MutableLiveData<String>()
   var imagePath = ""
 
 
-  fun getDelegationToken(file: File) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Pair(_res.delegationToken, file))
-          } else
-            error.handle()
-        }
-  }
+  // Removed getDelegationToken - uploads now handled directly by DocumentUtils
 
 
   fun uploadDocForVerification(verificationDocUploadRequest: VerificationDocUploadRequest){
@@ -87,15 +77,6 @@ private val userPrefs: UserPrefs
             error.handle()
         }
   }
-  fun getDownloadDelegationToken(awsPath: String, file: File) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-          } else
-            error.handle()
-        }
-  }
+  // Removed getDownloadDelegationToken - downloads now handled by Document API
 
 }

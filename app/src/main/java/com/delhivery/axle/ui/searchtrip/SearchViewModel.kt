@@ -5,8 +5,7 @@ import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
+// Removed AWS imports - using Document API now
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -33,7 +32,7 @@ class SearchViewModel @Inject constructor(
   var searchLiveData =
     MutableLiveData<List<Pair<BaseSearchRVAdapterItem<*>, DataRVAdapterOperationType>>>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
-  var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+  var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
 
   var request = SearchRequest()
   var transactionId: String = ""
@@ -106,20 +105,10 @@ class SearchViewModel @Inject constructor(
   }
 
   /**
-   * Get delegation token for AWS
+   * Prepare download for POD using direct URL
    */
-  fun getDelegationToken(
-    awsPath: String,
-    file: File
-  ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-          } else
-            error.handle()
-        }
+  fun prepareDownload(podUrl: String, file: File) {
+    podDownloadLiveData.postValue(Pair(podUrl, file))
   }
 
 }

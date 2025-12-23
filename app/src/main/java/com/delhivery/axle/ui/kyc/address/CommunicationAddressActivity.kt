@@ -22,7 +22,8 @@ import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.AddAddressModel
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.DocumentFile
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityCommunicationAddressBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
@@ -33,6 +34,7 @@ import com.delhivery.axle.utils.extensions.setup
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -43,7 +45,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
-class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface {
+class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressBinding, CommunicationAddressViewModel>(),DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -59,7 +61,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -342,9 +344,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                 uiUtils.showSnackbar("Error encountered, Please try again.")
             }
         })
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
  }
 
     override fun onResume() {
@@ -379,10 +378,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         compositeDisposable += requestPermission(
             arrayOf(
                 Manifest.permission.CAMERA
-            ).apply {
-              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
+            )
         )
             .onBackground()
             .subscribe { granted, error ->
@@ -396,7 +392,6 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
                 }
             }
-
     }
 
     private fun fillDataFromBusinessAddress(addressData: AddAddressModel) {
@@ -437,25 +432,11 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
 
         } else {
             dataSetFromPref = true
-            if(docPath!!.contains(awsPath)){
             docArray.add(
                 Pair(
-                    docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
-                    ?.div(1024)).toString()
+                    docPath, (mPhotoFile?.length()?.div(1024)).toString()
                 )
-            )}else if (docPath!!.contains("loadboard/iv/")){
-                docArray.add(
-                    Pair(
-                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    ))
-            }else{
-                docArray.add(
-                    Pair(
-                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    ))
-            }
+            )
             if (addressData.documentUrls != null)
                 viewModel.documentProofUrl.addAll(addressData.documentUrls!!)
             binding.uploadDocLay.visibility = View.GONE
@@ -565,13 +546,11 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
         )
     }
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
-        uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+    private fun uploadImage(file: File, fileType: FileType) {
+        // For CommunicationAddressActivity, all documents are communication address proofs
+        // The specific proof type is determined when the user submits the form
+        val docType = "alternate_address_proof"
+        documentUtils.uploadDocument(file, fileType, docType, this)
     }
 
     private fun captureImage(
@@ -619,22 +598,28 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
     }
 
 
-        override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(documentUrl: String) {
         uiUtils.hideProgress()
-            val s3url= awsUtils.awsBasePath()
-            viewModel.documentProofUrl.clear()
-            uploadArray.clear()
-            viewModel.documentProofUrl.add(s3url+path)
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+        viewModel.documentProofUrl.clear()
+        uploadArray.clear()
+        viewModel.documentProofUrl.add(documentUrl)
+        uploadArray.add(Pair(documentUrl.substringAfterLast("/"), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
+        uiUtils.showSnackbar(error)
         resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        // Handle document list if needed
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
     }
     private fun resetUploadData() {
         mPhotoFile = null
@@ -659,7 +644,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -671,6 +656,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
             REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
+                        val fileType: FileType
                         val selectedFile = data?.data
                         require(selectedFile != null)
                         val parcelFileDescriptor =
@@ -687,8 +673,10 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         this.uploadImageName = "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         this.localImageName =  "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
                             mPhotoFile = imageScopedFile
                         }else{
                             analyticsUtil.moEngageTrackEvent(
@@ -706,7 +694,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, fileType)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

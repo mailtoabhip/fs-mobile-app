@@ -3,28 +3,34 @@ package com.delhivery.axle.ui.profile
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.transition.Transition
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.DocumentFile
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityBankDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
-import com.delhivery.axle.utils.AWSUtils
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
 import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TYPE_OF_DOC
@@ -47,7 +53,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetailsViewModel>(),
-    DialogUtilsInterface, AWSUtils.AWSProgressInterface,
+    DialogUtilsInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface,
     UploadedItemRVAdapterInterface {
 
 
@@ -61,7 +67,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -70,7 +76,6 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     lateinit var userPrefs: UserPrefs
 
 
-    val awsPath = "loadboard/payment/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
@@ -90,7 +95,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-    
+
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
       WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
@@ -135,26 +140,17 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             binding.uploadDoc1.visibility=View.VISIBLE
         }
 
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
+        // Removed delegation token observer - using direct DocumentUtils upload now
 
         viewModel.verificationDocUploadMsg.observe(this, Observer {
             uiUtils.showSnackbar(it)
             binding.btnSubmit.isEnabled=false
         })
-
-        viewModel.delegationDownloadLiveData.observe(this, Observer {
-            if (it != null) {
-                awsUtils.startDownload(it.first, it.second, it.third, this)
-                viewModel.imagePath = it.third.path
-            }
-        })
         viewModel.accountkycDocuments.observe(this, Observer {
             if(it.isNotNullOrEmpty()){
                 uploadArray1.add(
                     Pair(
-                        it.substringAfter(awsPath, ""), (mPhotoFile?.length()
+                        it.substringAfterLast("/"), (mPhotoFile?.length()
                         ?.div(1024)).toString()
                     )
                 )
@@ -165,7 +161,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             if(it.isNotNullOrEmpty()){
                 uploadArray.add(
                     Pair(
-                        it.substringAfter(awsPath, ""), (mPhotoFile?.length()
+                        it.substringAfterLast("/"), (mPhotoFile?.length()
                         ?.div(1024)).toString()
                     )
                 )
@@ -180,17 +176,19 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
         binding.docRemove.setOnClickListener {
             try{
-                downloadLogo(viewModel.accountkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
-                download=true
-            }catch (e:Exception){
+                downloadLogo("passbook_front_page")
+                download = true
+            } catch (e: Exception) {
+                //uiUtils.showSnackbar("Error: ${e.message}")
             }
-
         }
         binding.docDownload1.setOnClickListener {
             try{
-            downloadLogo(viewModel.nine4CkycDocuments.value?.replace(awsUtils.awsBasePath(), "")!!)
-            download=true
-            }catch (e:Exception){}
+                downloadLogo("section_194C")
+                download = true
+            } catch (e: Exception) {
+                //uiUtils.showSnackbar("Error: ${e.message}")
+            }
         }
         binding.uploadDocLay1.setOnClickListener {
             val imageName = "194C_" + System.currentTimeMillis()+".jpg"
@@ -213,14 +211,14 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         }
     }
 
-    override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         if(!download) {
             uiUtils.hideProgress()
+            // Store downloadUrl (from BE response) instead of filename
+            // This downloadUrl will be sent to /upload_document API for verification
             uploadArray.add(
                 Pair(
-                    path.replace(awsPath, ""), (mPhotoFile?.length()
+                    downloadUrl, (mPhotoFile?.length()
                     ?.div(1024)).toString()
                 )
             )
@@ -233,10 +231,59 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         }
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showToast("Failed to upload")
+        uiUtils.showToast("Failed to upload: $error")
         resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        if (!isFinishing && download && documents.isNotEmpty()) {
+            uiUtils.hideProgress()
+
+            val document = documents.first()
+            val localFile = getFile(document.filename)
+
+            localFile?.let { file ->
+                downloadImageFromUrl(document.downloadUrl, file)
+            }
+        }
+    }
+
+    private fun downloadImageFromUrl(downloadUrl: String, localFile: File) {
+        Glide.with(this)
+            .download(downloadUrl)
+            .into(object : CustomTarget<File>() {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    uiUtils.showSnackbar("Download failed")
+                    showProg = false
+                    download = false
+                }
+
+                override fun onResourceReady(
+                    resource: File,
+                    transition: com.bumptech.glide.request.transition.Transition<in File>?
+                ) {
+                    try {
+                        resource.copyTo(localFile, overwrite = true)
+                        uiUtils.showSnackbar("Document downloaded successfully")
+                        showProg = false
+                        download = false
+                    } catch (e: Exception) {
+                        uiUtils.showSnackbar("Failed to save file: ${e.message}")
+                        showProg = false
+                        download = false
+                    }
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+            })
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
     }
 
     private fun resetUploadData() {
@@ -259,26 +306,36 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
     }
 
     private fun downloadLogo(item: String) {
-      if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-        compositeDisposable += requestPermission(
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        )
-            .onBackground()
-            .subscribe { granted, error ->
-                if (error == null && granted) {
-                    showProg = true
-                    uiUtils.showProgress()
-                    val file = getFile(item)
-                    if (file != null) {
-                        viewModel.getDownloadDelegationToken(item, file)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            compositeDisposable += requestPermission(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            )
+                .onBackground()
+                .subscribe { granted, error ->
+                    if (error == null && granted) {
+                        showProg = true
+                        uiUtils.showProgress()
+                        val file = getFile(item)
+                        if (file != null) {
+                            documentUtils.listDocuments(item, this)
+                        } else {
+                            uiUtils.showSnackbar("Can't process image")
+                        }
                     } else {
-                        uiUtils.showSnackbar("Can't process image")
+                        uiUtils.hideProgress()
+                        uiUtils.showSnackbar(getString(R.string.storage_permission))
                     }
-                } else {
-                    uiUtils.hideProgress()
-                    uiUtils.showSnackbar(getString(R.string.storage_permission))
                 }
+        } else {
+            showProg = true
+            uiUtils.showProgress()
+            val file = getFile(item)
+            if (file != null) {
+                documentUtils.listDocuments(item, this)
+            } else {
+                uiUtils.showSnackbar("Can't process image")
             }
+        }
     }
     private fun getFile(item: String): File? {
         val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -389,12 +446,10 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
-            val imageUrls= mutableListOf<String>()
-            val s3url= awsUtils.awsBasePath()
-            for(i in uploadArray){
-                imageUrls.add(s3url+awsPath+i.first)
-            }
-            viewModel.verifyByDoc(imageUrls)
+            // Extract downloadUrls from uploadArray (first element of Pair is downloadUrl from /document/upload)
+            // These downloadUrls will be sent to /upload_document API for verification
+            val downloadUrls = uploadArray.map { it.first }
+            viewModel.verifyByDoc(downloadUrls)
         }else{
             uiUtils.showToast("No file selected")
         }
@@ -420,13 +475,9 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         )
     }
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
-        uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+    private fun uploadImage(file: File, fileType: FileType) {
+        val docType = "section_194C"
+        documentUtils.uploadDocument(file, fileType, docType, this)
     }
 
     override fun onActivityResult(
@@ -446,7 +497,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -457,6 +508,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
             REQCODE_FILE_ATTACHMENTS ->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
+                        val fileType: FileType
                         val selectedFile = data?.data
                         require(selectedFile != null)
                         val parcelFileDescriptor =
@@ -473,8 +525,10 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                         this.uploadImageName = "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
                             mPhotoFile = imageScopedFile
                         }else{
                             analyticsUtil.moEngageTrackEvent(
@@ -495,7 +549,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, fileType)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

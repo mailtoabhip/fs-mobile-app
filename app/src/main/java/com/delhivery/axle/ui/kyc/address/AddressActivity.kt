@@ -25,17 +25,18 @@ import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.AddAddressModel
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.DocumentFile
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityAddressBinding
 import com.delhivery.axle.databinding.DialogAddAlternateAddressBinding
 import com.delhivery.axle.databinding.DialogConfirmAddressDialogBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
-import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.CurrentStepKey
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
 import com.delhivery.axle.utils.EVENT_GST_OFFICE_ADDRESS
 import com.delhivery.axle.utils.EVENT_SUBMIT_OFFICE_ADDRESS
@@ -54,6 +55,7 @@ import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.StepKey
 import com.delhivery.axle.utils.TotalStepsKey
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -70,7 +72,8 @@ import java.io.IOException
 import java.lang.Exception
 import javax.inject.Inject
 
-class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),AWSUtils.AWSProgressInterface{
+class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddressViewModel>(),
+    DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface {
 
 
     init {
@@ -80,7 +83,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
     private lateinit var localImageName: String
-    val awsPath = "loadboard/address/"
+
     var addressDeleted =false
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter() }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
@@ -90,7 +93,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -236,9 +239,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 viewModel.updateCommunicationAddress(selectedAddressData.address!!,isSameAsGST)
             }catch (e:Exception){}
         }
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
         viewModel.captureAddressProof.observe(this, Observer {
             if(it){
                 val imageName = "Address_" + System.currentTimeMillis()+".jpg"
@@ -305,10 +305,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
         compositeDisposable += requestPermission(
             arrayOf(
                 Manifest.permission.CAMERA
-            ).apply {
-              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
+            )
         )
             .onBackground()
             .subscribe { granted, error ->
@@ -358,13 +355,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
-        uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+    private fun uploadImage(file: File, fileType: FileType) {
+        // For AddressActivity, all documents are alternate address proofs
+        // The specific proof type is determined when the user submits the form
+        val docType = "alternate_address_proof"
+        documentUtils.uploadDocument(file, fileType, docType, this)
     }
 
     private fun captureImage(
@@ -408,22 +403,27 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
     }
 
 
-    override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(documentUrl: String) {
         uiUtils.hideProgress()
         viewModel.documentProofUrl.clear()
-        val s3url= awsUtils.awsBasePath()
-        viewModel.documentProofUrl.add(s3url+path)
-        uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
-
+        viewModel.documentProofUrl.add(documentUrl)
+        uploadArray.add(Pair(documentUrl.substringAfterLast("/"), (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
+        uiUtils.showSnackbar(error)
         resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        // Handle document list if needed
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
     }
     private fun resetUploadData() {
         mPhotoFile = null
@@ -448,7 +448,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -460,6 +460,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             REQCODE_FILE_ATTACHMENTS->{
                 if (resultCode == Activity.RESULT_OK) {
                     try {
+                        val fileType: FileType
                         val selectedFile = data?.data
                         require(selectedFile != null)
                         val parcelFileDescriptor =
@@ -476,8 +477,10 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                         this.uploadImageName = "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         this.localImageName =  "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
                         }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
                             mPhotoFile = imageScopedFile
                         }else{
                             analyticsUtil.moEngageTrackEvent(
@@ -496,7 +499,7 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!, fileType)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -655,25 +658,6 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 bindingDialog.uploadDocLay.visibility= View.GONE
                 bindingDialog.uploadedDocLay.visibility= View.VISIBLE
                 docUploadProof=true
-                if(uploadArray.get(0).first!!.contains(awsPath)){
-                    uploadArray.add(
-                        Pair(
-                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
-                            ?.div(1024)).toString()
-                        )
-                    )}else if (uploadArray.get(0).first!!.contains("loadboard/iv/")){
-                    uploadArray.add(
-                        Pair(
-                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
-                            ?.div(1024)).toString()
-                        ))
-                }else{
-                    uploadArray.add(
-                        Pair(
-                            uploadArray.get(0).first!!.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
-                            ?.div(1024)).toString()
-                        ))
-                }
                 bindingDialog.docTitle.setText(uploadArray.get(0).first)
                 bindingDialog.docSize.setText(uploadArray.get(0).second+" KB")
                 enableAddAddressDialogButton(bindingDialog)
@@ -807,25 +791,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
             docUploadProof=false
 
         }else{
-            if(docPath!!.contains(awsPath)){
-                docArray.add(
-                    Pair(
-                        docPath!!.replace(awsUtils.awsBasePath() + awsPath, ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    )
-                )}else if (docPath!!.contains("loadboard/iv/")){
-                docArray.add(
-                    Pair(
-                        docPath!!.replace(awsUtils.awsBasePath() + "loadboard/iv/", ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    ))
-            }else{
-                docArray.add(
-                    Pair(
-                        docPath.replace(awsUtils.awsBasePath() + "loadboard/lr/", ""), (mPhotoFile?.length()
-                        ?.div(1024)).toString()
-                    ))
-            }
+            docArray.add(
+                Pair(
+                    docPath, (mPhotoFile?.length()?.div(1024)).toString()
+                )
+            )
 
             if(addressData.documentUrls!=null)
                 viewModel.documentProofUrl.addAll(addressData.documentUrls!!)

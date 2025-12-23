@@ -25,6 +25,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.yourrewards.YourRewardsItemData
@@ -43,6 +44,7 @@ import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.ui.trucks.TruckSizeAdapter
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -60,7 +62,7 @@ import javax.inject.Inject
 /**
  * Share rate screen
  */
-class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewModel>(), DatePickerDialog.OnDateSetListener, AWSUtils.AWSProgressInterface {
+class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewModel>(), DatePickerDialog.OnDateSetListener, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface {
 
     companion object {
         val __INSTANCE: ShareRateActivity by lazy { ShareRateActivity() }
@@ -96,7 +98,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -345,9 +347,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
             }
         })
 
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
+        // Removed delegation token logic - direct upload now
     }
 
     override fun onResume() {
@@ -665,13 +665,11 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         )
     }
 
-    private fun uploadImage(
-            delegationToken: DelegationToken,
-            file: File
-    ) {
+    private fun uploadImage(file: File) {
         uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path, file, this)
+        // Use document type based on context - this appears to be for rate sharing proof
+        val docType = "letterhead" // or appropriate document type
+        documentUtils.uploadDocument(file, FileType.IMAGE, docType, this)
     }
 
     private fun captureImage(
@@ -744,21 +742,49 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
         }
     }
 
-    override fun onAWSSuccess(
-            path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         uiUtils.hideProgress()
-        val s3url= awsUtils.awsBasePath()
-        viewModel.documentProofUrl.add(s3url + path)
-        uploadArray.add(Pair(path.replace(awsPath, ""), (mPhotoFile?.length()?.div(1024)).toString()))
+        uiUtils.showToast("Document uploaded successfully")
+        // downloadUrl is the download URL returned from /document/upload API
+        uploadArray.add(Pair(downloadUrl, (mPhotoFile?.length()?.div(1024)).toString()))
         showFileSelected()
         enableSaveAlertButton()
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
+        uiUtils.showToast("Upload failed: $error")
         resetUploadData()
+    }
+
+    // Download functionality
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        uiUtils.hideProgress()
+        if (files.isNotEmpty()) {
+            // Handle successful document list - show files to user
+            showDocumentList(files)
+        } else {
+            uiUtils.showToast("No documents found")
+        }
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showToast("Failed to load documents: $error")
+    }
+
+    private fun showDocumentList(files: List<FileData>) {
+        // Show list of available documents for download
+        // This could be implemented as a dialog or list view
+        val fileNames = files.map { it.filename }
+        uiUtils.showToast("Found ${files.size} document(s): ${fileNames.joinToString(", ")}")
+    }
+
+    private fun downloadDocuments() {
+        uiUtils.showProgress()
+        val docType = "letterhead" // Document type for rate sharing
+        documentUtils.listDocuments(docType, this)
     }
     private fun resetUploadData() {
         mPhotoFile = null
@@ -783,7 +809,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -824,10 +850,20 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                         IOUtils.copy(inputStream, outputStream)
                         this.uploadImageName = "IMG_" + System.currentTimeMillis() + "." + imageScopedFile.extension
                         this.localImageName = "IMG_" + System.currentTimeMillis() + "." + imageScopedFile.extension
-                        if (imageScopedFile.extension == ".jpg" || imageScopedFile.extension == ".png" || imageScopedFile.extension == ".jpeg") {
+
+                        if (imageScopedFile.extension == "jpg" || imageScopedFile.extension == "png" || imageScopedFile.extension == "jpeg") {
                             mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
-                        } else {
+                        } else if (imageScopedFile.extension == "pdf") {
                             mPhotoFile = imageScopedFile
+                        } else {
+                             // Block invalid file types
+                             analyticsUtil.moEngageTrackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE),
+                                mutableListOf(userPrefs.userId(), userPrefs.phoneNumber.toString(), imageScopedFile.extension, "share_rate")
+                            )
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
                         }
 
                         if (mPhotoFile == null) {
@@ -835,7 +871,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

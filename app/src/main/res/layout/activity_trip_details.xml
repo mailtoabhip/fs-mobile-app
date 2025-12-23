@@ -159,14 +159,14 @@
             android:visibility="@{!refreshing &amp;&amp; !error ? View.VISIBLE : View.GONE }"
             tools:visibility="visible">
           <include
-              android:visibility="visible"
+              android:visibility="gone"
               android:id="@+id/cl_adhocintracity"
               layout="@layout/view_intracity_adhoc_trip_details"/>
           <androidx.appcompat.widget.LinearLayoutCompat
               android:id="@+id/ll_trip_details"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:visibility="gone"
+              android:visibility="visible"
               android:orientation="vertical">
           <!-- vehicle/driver details container -->
             <androidx.constraintlayout.widget.ConstraintLayout

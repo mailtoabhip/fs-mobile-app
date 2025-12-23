@@ -11,11 +11,11 @@ import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.request.UpdatePriceRequest
-import com.delhivery.axle.api.response.DelegationToken
+// Removed DelegationToken import - no longer needed
 import com.delhivery.axle.api.response.GetPricingDataResponse
 import com.delhivery.axle.api.response.GetSupplierRewardsResponse
 import com.delhivery.axle.api.response.TruckResponseArray
-import com.delhivery.axle.config.AWSConfig
+// Removed AWSConfig import - no longer needed
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.database.AppDatabase
@@ -138,20 +138,16 @@ class ShareRateViewModel @Inject constructor(
         }
     }
 
-    var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
-    /**
-     * Get delegation token for AWS
-     */
-    fun getDelegationToken(file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-                .onBackground()
-                .progress()
-                .subscribe { _res, error ->
-                    if (!error) {
-                        delegationLiveData.postValue(Pair(_res.delegationToken, file))
-                    } else
-                        error.handle()
-                }
+    // Removed delegation token logic - direct upload now handled in Activity
+    
+    // Download functionality
+    var documentListLiveData = MutableLiveData<List<com.delhivery.axle.api.response.DocumentFile>>()
+    var documentListErrorLiveData = MutableLiveData<String>()
+    
+    fun loadDocuments(docType: String) {
+        // This method can be called from Activity to trigger document loading
+        // The actual API call is handled by DocumentUtils in the Activity
+        documentListLiveData.postValue(emptyList()) // Initialize empty list
     }
 
   fun searchOffer(offerId:String) = appDB.offersDao().getOffers(offerId)

@@ -9,8 +9,7 @@ import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.api.request.ResetKycDataRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.BaseMessageResponse
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
+// Removed AWS imports - using Document API now
 import com.delhivery.axle.data.address.AddressDetailData
 import com.delhivery.axle.data.gst.GstDetailData
 import com.delhivery.axle.data.gst.GstDetailItemData
@@ -35,8 +34,6 @@ class GstVerificationViewModel@Inject constructor(
 ) : BaseViewModel() {
 
     var dataLoadingLiveData = MutableLiveData<Boolean>()
-
-    var delegationLiveData = MutableLiveData<Pair<DelegationToken, File>>()
 
     var gstDetailData = MutableLiveData<GstDetailItemData>()
     var docVerificationFailedCount = MutableLiveData<Int>().apply { postValue(0) }
@@ -64,20 +61,6 @@ class GstVerificationViewModel@Inject constructor(
     var gstFetchList = HashSet<String>()
 
     var resetKycLiveData = MutableLiveData<Boolean>()
-   /**
-     * Get delegation token for AWS
-     */
-    fun getDelegationToken(file: File) {
-        compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-                .onBackground()
-                .progress()
-                .subscribe { _res, error ->
-                    if (!error) {
-                        delegationLiveData.postValue(Pair(_res.delegationToken, file))
-                    } else
-                        error.handle()
-                }
-    }
 
     fun verifyRequestOtp(otp: CharArray) {
         if (!isConnected) return

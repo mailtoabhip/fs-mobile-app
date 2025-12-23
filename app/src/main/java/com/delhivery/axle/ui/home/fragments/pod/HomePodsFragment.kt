@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -40,9 +41,12 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
-import com.delhivery.axle.utils.AWSUtils
-import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.api.response.FileData
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
@@ -55,7 +59,7 @@ import java.io.File
 import javax.inject.Inject
 
 class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewModel>(),
-    HomePodRVAdapterInterface, ToolbarElevationChangeListener, AWSProgressInterface {
+    HomePodRVAdapterInterface, ToolbarElevationChangeListener {
 
   var _title: String = "PODs"
 
@@ -74,8 +78,12 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   }
 
   @Inject lateinit var dialogUtils: DialogUtils
-  @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var userPrefs: UserPrefs
+  @Inject lateinit var documentUtils: DocumentUtils
+  
+  // Store current download context
+  private var currentPodUrl: String? = null
+  private var currentPodFile: File? = null
 
   override fun getViewModelClass() = HomePodViewModel::class.java
 
@@ -148,14 +156,6 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
                 trip.selectable = viewModel.selectable
               }
             }
-      }
-    })
-
-    viewModel.delegationLiveData.observe(this, Observer {
-      if (it != null) {
-        awsUtils.startDownload(it.first, it.second, it.third, this)
-      } else {
-        uiUtils.showSnackbar("Please try again")
       }
     })
 
@@ -232,27 +232,8 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
               )
             }
           }
-          else -> {
-            compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .onBackground()
-                .subscribe { granted, error ->
-                  if (error == null && granted) {
-                    uiUtils.showSnackbar("Downloading POD....")
-                    val file = getFile()
-                    if (file != null && !TextUtils.isEmpty(data.podUrl)) {
-                      uiUtils.showProgress()
-                      data.podUrl?.let {
-                        viewModel.podUrl = it
-                        viewModel.getDelegationToken(it, file)
-                      }
-                    } else {
-                      uiUtils.showSnackbar("Can't process POD")
-                    }
-                  } else {
-                    uiUtils.showSnackbar(getString(string.storage_permission))
-                  }
-                }
-          }
+
+            else -> {}
         }
       }
 
@@ -320,27 +301,6 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     return null
   }
 
-  override fun onAWSSuccess(
-    path: String
-  ) {
-    if (isAdded) {
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Downloaded")
-      val file = getFile()
-      if (file != null) {
-        openFile(file)
-      } else {
-        uiUtils.showSnackbar("Can't process POD")
-      }
-    }
-  }
-
-  override fun onAWSFailure() {
-    if (isAdded) {
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Couldn't complete download, please try after sometime")
-    }
-  }
 
   private fun openFile(file: File) {
     try {

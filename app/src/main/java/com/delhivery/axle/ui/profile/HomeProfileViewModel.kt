@@ -6,10 +6,10 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
-import com.delhivery.axle.api.response.DelegationToken
+// Removed DelegationToken import - no longer needed
 import com.delhivery.axle.api.response.KYCDetailResponse
 import com.delhivery.axle.api.response.MonthlyEarning
-import com.delhivery.axle.config.AWSConfig
+// Removed AWSConfig import - no longer needed
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
@@ -53,7 +53,6 @@ class HomeProfileViewModel @Inject constructor(
   var aNum = userPrefs.accNumber
   var ifsc = userPrefs.ifscCode
 
-  var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
   var imagePath = ""
   var imageUrl = ""
 
@@ -133,18 +132,16 @@ class HomeProfileViewModel @Inject constructor(
     }
   }
 
-  fun getDownloadDelegationToken(
-          awsPath: String,
-          file: File
-  ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-            .onBackground()
-            .subscribe { _res, error ->
-              if (!error) {
-                delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-              } else
-                error.handle()
-            }
+  // Removed download delegation token logic - new API only supports upload
+  
+  // Download functionality
+  var documentListLiveData = MutableLiveData<List<com.delhivery.axle.api.response.DocumentFile>>()
+  var documentListErrorLiveData = MutableLiveData<String>()
+  
+  fun loadProfileImages() {
+    // This method can be called from Activity to trigger profile image loading
+    // The actual API call is handled by DocumentUtils in the Activity
+    documentListLiveData.postValue(emptyList()) // Initialize empty list
   }
 
   fun getKYCDetails(redirect:String) {

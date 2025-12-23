@@ -15,15 +15,15 @@ import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
 import com.delhivery.axle.ui.kyc.gst.DocUploadAdapter
 import com.delhivery.axle.ui.profile.MyProfileActivity
-import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DialogUtilsInterface
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
 import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
 import com.delhivery.axle.utils.FileCompressor
@@ -37,7 +37,9 @@ import com.delhivery.axle.utils.REQCODE_CAMERA
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.StepKey
+import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getFileName
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -52,7 +54,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
-class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, PaymentDetailsViewModel>(),DialogUtilsInterface, AWSUtils.AWSProgressInterface,
+class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, PaymentDetailsViewModel>(),DialogUtilsInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface,
     UploadedItemRVAdapterInterface {
 
     private var isCamera: Boolean = false
@@ -62,7 +64,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -70,8 +72,6 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     @Inject
     lateinit var userPrefs: UserPrefs
 
-
-    val awsPath = "loadboard/payment/"
     val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
     var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
     var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
@@ -193,9 +193,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             userPrefs.paymentDocUrl=""
         })
 
-        viewModel.delegationLiveData.observe(this, Observer {
-            uploadImage(it.first, it.second)
-        })
+        // Removed delegation token logic - direct upload now
 
         viewModel.verificationDocUploadMsg.observe(this, Observer {
                 if(viewModel.selected194CUpload.value==true){
@@ -491,25 +489,62 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
     override fun requireConnection() =true
 
     override fun getViewModelClass()= PaymentDetailsViewModel::class.java
-    override fun onAWSSuccess(
-        path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         uiUtils.hideProgress()
+        uiUtils.showToast("Upload successful")
+        // Store downloadUrl (from BE response) instead of filename
+        // This downloadUrl will be sent to /upload_document API for verification
         if(viewModel.accountUpload.value == true){
-            uploadArray.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            uploadArray.add(Pair(downloadUrl, (mPhotoFile?.length()?.div(1024)).toString()))
             showFileSelected()
 
         }else if(viewModel.selected194CUpload.value == true){
-            uploadArray1.add(Pair(path.replace(awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            uploadArray1.add(Pair(downloadUrl, (mPhotoFile?.length()?.div(1024)).toString()))
             showFileSelected1()
         }
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showToast("Failed to upload")
+        uiUtils.showToast("Failed to upload: $error")
         resetUploadData()
+    }
+
+    // Download functionality
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        uiUtils.hideProgress()
+        if (files.isNotEmpty()) {
+            // Handle successful document list - show files to user
+            showDocumentList(files)
+        } else {
+            uiUtils.showToast("No payment documents found")
+        }
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showToast("Failed to load payment documents: $error")
+    }
+
+    private fun showDocumentList(files: List<FileData>) {
+        // Show list of available payment documents for download
+        val fileNames = files.map { it.filename }
+        uiUtils.showToast("Found ${files.size} payment document(s): ${fileNames.joinToString(", ")}")
+    }
+
+    //This functionality is not needed. Can be used in future.
+    private fun downloadPaymentDocuments() {
+        uiUtils.showProgress()
+        val docType = "cancelled_cheque" // Document type for payment verification
+        documentUtils.listDocuments(docType, this)
+    }
+
+    //This functionality is not needed. Can be used in future.
+    private fun download194CDocuments() {
+        uiUtils.showProgress()
+        val docType = "section_194C" // Document type for 194C documents
+        documentUtils.listDocuments(docType, this)
     }
 
     private fun resetUploadData() {
@@ -534,15 +569,15 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(userPrefs.paymentDocUrl.isNullOrEmpty()){
             showUploadImage()
         }else{
-            resetUploadData()
-            uploadArray.add(Pair(userPrefs.paymentDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            // Use the stored downloadUrl from userPrefs (full URL from backend)
+            uploadArray.add(Pair(userPrefs.paymentDocUrl, "N/A"))
             showFileSelected()
         }
         if(userPrefs.ninteen4CDocUrl.isNullOrEmpty()){
             showUploadImage1()
         }else{
-            resetUploadData()
-            uploadArray1.add(Pair(userPrefs.ninteen4CDocUrl!!.replace(awsUtils.awsBasePath()+awsPath,""), (mPhotoFile?.length()?.div(1024)).toString()))
+            // Use the stored downloadUrl from userPrefs (full URL from backend)
+            uploadArray1.add(Pair(userPrefs.ninteen4CDocUrl, "N/A"))
             showFileSelected1()
         }
     }
@@ -550,14 +585,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
-        compositeDisposable += requestPermission(
-            arrayOf(
-                Manifest.permission.CAMERA
-            ).apply {
-              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        )
+        compositeDisposable += requestPermission(arrayOf(Manifest.permission.CAMERA))
             .onBackground()
             .subscribe { granted, error ->
                 if (error == null && granted) {
@@ -659,12 +687,10 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
     override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
         if(uploadArray.isNotEmpty()){
-            val imageUrls= mutableListOf<String>()
-            val s3url= awsUtils.awsBasePath()
-            for(i in uploadArray){
-                imageUrls.add(s3url+awsPath+i.first)
-            }
-            viewModel.verifyByDoc(imageUrls)
+            // Extract downloadUrls from uploadArray (first element of Pair is downloadUrl from /document/upload)
+            // These downloadUrls will be sent to /upload_document API for verification
+            val downloadUrls = uploadArray.map { it.first }
+            viewModel.verifyByDoc(downloadUrls)
         }else{
             uiUtils.showToast("No file selected")
         }
@@ -691,13 +717,16 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         )
     }
 
-    private fun uploadImage(
-        delegationToken: DelegationToken,
-        file: File
-    ) {
+    private fun uploadImage(file: File) {
         uiUtils.showProgress()
-        val path = "$awsPath$uploadImageName"
-        awsUtils.startUpload(delegationToken, path,file, this)
+        val docType = "payment_details" // VAPT doc specifies "payment_details" for payment/bank docs
+        // VAPT requirement: Payment/Bank needs phoneNumber and proofType in dynamic_variables
+        val proofType = if(viewModel.accountUpload.value == true) "account_proof" else "194C"
+        val dynamicVariables = mapOf(
+            "phoneNumber" to (userPrefs.phoneNumber?.toString() ?: ""),
+            "proofType" to proofType
+        )
+        documentUtils.uploadDocument(file, FileType.IMAGE, docType, this, dynamicVariables)
     }
 
     override fun onActivityResult(
@@ -728,7 +757,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         }
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -783,7 +812,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }

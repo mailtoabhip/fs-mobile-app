@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityMyProfileBinding
 import com.delhivery.axle.databinding.DialogAccountDeletionSubmittedBinding
 import com.delhivery.axle.injection.module.GlideApp
@@ -34,14 +35,19 @@ import com.delhivery.axle.ui.team.teamMembersIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import javax.inject.Inject
 
 
-class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileViewModel>(), AWSUtils.AWSProgressInterface  {
+class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileViewModel>(), DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface  {
     init {
         StatusBarColor = Color.parseColor("#ffffff")
     }
@@ -52,7 +58,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     override fun requireConnection() = false
 
-    @Inject lateinit var awsUtils: AWSUtils
+    @Inject lateinit var documentUtils: DocumentUtils
 
     @Inject lateinit var userPrefs:UserPrefs
 
@@ -61,6 +67,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     private var isFirstResume = false
     @Inject
     lateinit var bitmapUtils: BitmapUtils
+    
+    // Store current download context
+    private var currentProfileImageUrl: String? = null
+    private var currentProfileFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -326,14 +336,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             startActivity(consolidatedPageIntent(this))
         }
 
-        viewModel.delegationDownloadLiveData.observe(this, Observer {
-            if (it != null) {
-                awsUtils.startDownload(it.first, it.second, it.third, this)
-                viewModel.imagePath = it.third.path
-            } else {
-                uiUtils.showSnackbar("Please try again")
-            }
-        })
+        // Download functionality removed - new API only supports upload
+        // If download is needed, use listDocuments() to get file URLs
 
     }
 
@@ -464,11 +468,57 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
 
     private fun downloadLogo() {
+        val profileImageUrl = viewModel.userPrefs.profileImageUrl
+        if (profileImageUrl.isNullOrEmpty()) {
+            return
+        }
+        
         val file = getFile()
-        if (file != null) {
-            viewModel.getDownloadDelegationToken(viewModel.userPrefs.profileImageUrl, file)
-        } else {
+        if (file == null) {
             uiUtils.showSnackbar("Can't process image")
+            return
+        }
+        
+        // Extract s3_path from full S3 URL
+        val s3Path = extractS3PathFromUrl(profileImageUrl)
+        if (s3Path != null) {
+            // Store mapping for callback
+            currentProfileImageUrl = profileImageUrl
+            currentProfileFile = file
+            uiUtils.showProgress()
+            // Use secure Document API to download
+            documentUtils.downloadByS3Path(s3Path, this)
+        } else {
+            uiUtils.showSnackbar("Unable to extract document path from URL")
+        }
+    }
+    
+    /**
+     * Extract s3_path from full S3 URL
+     * Example: "https://bucket.s3.region.amazonaws.com/path/to/file.jpg"
+     * Returns: "path/to/file.jpg"
+     */
+    private fun extractS3PathFromUrl(docUrl: String): String? {
+        return try {
+            // Construct AWS base path from config
+            val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
+            val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
+            val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
+            
+            // Remove base URL from full S3 URL
+            if (docUrl.startsWith(awsBasePath)) {
+                docUrl.replace(awsBasePath, "").split("?")[0] // Remove query parameters if any
+            } else {
+                // Fallback: Try to extract path from URL pattern (bucket.s3.region.amazonaws.com/path)
+                val parts = docUrl.split(".amazonaws.com/")
+                if (parts.size > 1) {
+                    parts[1].split("?")[0] // Remove query parameters if any
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -490,19 +540,99 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
     }
 
-    override fun onAWSSuccess(
-            path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
         binding.card1.visibility = View.VISIBLE
         binding.profile.visibility = View.GONE
         uiUtils.hideProgress()
-          viewModel.imageUrl = path
+        // downloadUrl is the download URL returned from /document/upload API
+        viewModel.imageUrl = downloadUrl
         loadImage(viewModel.imagePath, binding.profilepic)
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showSnackbar("Image processing failed, please try again.")
+        uiUtils.showSnackbar("Image processing failed: $error")
+    }
+
+    // Download functionality
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        if (files.isNotEmpty()) {
+            val documentFile = files.first()
+            val profileImageUrl = currentProfileImageUrl
+            val profileFile = currentProfileFile
+            
+            if (profileImageUrl != null && profileFile != null) {
+                // Download file from pre-signed URL
+                downloadFileFromUrl(documentFile.downloadUrl, profileImageUrl, profileFile)
+            } else {
+                uiUtils.hideProgress()
+                uiUtils.showSnackbar("Download context lost")
+                currentProfileImageUrl = null
+                currentProfileFile = null
+            }
+        } else {
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("No profile images found")
+            currentProfileImageUrl = null
+            currentProfileFile = null
+        }
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Failed to load profile images: $error")
+        currentProfileImageUrl = null
+        currentProfileFile = null
+    }
+    
+    /**
+     * Download file from pre-signed URL using OkHttpClient
+     */
+    private fun downloadFileFromUrl(downloadUrl: String, originalUrl: String, file: File) {
+        compositeDisposable += io.reactivex.Observable.fromCallable {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(downloadUrl)
+                .build()
+            
+            val response: Response = client.newCall(request).execute()
+            
+            if (response.isSuccessful) {
+                response.body()?.byteStream()?.use { input ->
+                    file.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                file.absolutePath
+            } else {
+                null
+            }
+        }
+        .onBackground()
+        .subscribe({ filePath ->
+            if (filePath != null) {
+                // Set the image path and load it
+                viewModel.imagePath = filePath
+                loadImage(filePath, binding.profilepic)
+            } else {
+                uiUtils.showSnackbar("Download failed")
+            }
+            uiUtils.hideProgress()
+            currentProfileImageUrl = null
+            currentProfileFile = null
+        }, { error ->
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Download error: ${error.message}")
+            currentProfileImageUrl = null
+            currentProfileFile = null
+        })
+    }
+
+    //This functionality is not needed. Can be used in future.
+    private fun downloadProfileImages() {
+        uiUtils.showProgress()
+        val docType = "visiting_card" // Document type for profile images
+        documentUtils.listDocuments(docType, this)
     }
 
     private fun loadImage(

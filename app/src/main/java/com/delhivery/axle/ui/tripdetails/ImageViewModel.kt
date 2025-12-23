@@ -20,9 +20,13 @@ class ImageViewModel @Inject constructor(
    * @return url for image view
    */
   fun fetchImage() {
-    glideLiveData.postValue(
-        UrlConfig.ImageService.url() + url
-    )
+    if (url.startsWith("http", true) || url.startsWith("/") || url.startsWith("file://")) {
+      glideLiveData.postValue(url)
+    } else {
+      glideLiveData.postValue(
+          UrlConfig.ImageService.url() + url
+      )
+    }
   }
 
 }

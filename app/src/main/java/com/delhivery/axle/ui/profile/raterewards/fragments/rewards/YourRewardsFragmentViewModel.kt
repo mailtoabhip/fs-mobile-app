@@ -4,8 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.data.yourrewards.RangeCondition
 import com.delhivery.axle.data.yourrewards.YourRewardsItemData
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -29,7 +27,6 @@ class YourRewardsFragmentViewModel   @Inject constructor(  private val inventory
   var userRewardsData =
     MutableLiveData<List<Pair<BaseYourRewardsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
-  var delegationDownloadLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
   var hasMoreData = true
   var offset = 0
   var total = 0
@@ -98,17 +95,6 @@ class YourRewardsFragmentViewModel   @Inject constructor(  private val inventory
         }
 
         dataLoadingLiveData.postValue(false)
-      }
-  }
-
-  fun getDownloadDelegationToken(awsPath: String, file: File) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-      .onBackground()
-      .subscribe { _res, error ->
-        if (!error) {
-          delegationDownloadLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-        } else
-          error.handle()
       }
   }
 }

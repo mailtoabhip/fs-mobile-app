@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.profile.profiledetails
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.RadioButton
@@ -17,6 +19,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.amazonaws.util.IOUtils
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -24,12 +27,13 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
-import com.delhivery.axle.api.response.DelegationToken
+import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityProfileDetailsBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.extensions.*
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -41,7 +45,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, ProfileDetailsViewModel>(), AWSUtils.AWSProgressInterface,DialogUtilsInterface {
+class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, ProfileDetailsViewModel>(), DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface, DialogUtilsInterface {
 
     override fun getViewModelClass() = ProfileDetailsViewModel::class.java
 
@@ -56,7 +60,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     @Inject
     lateinit var imageUtils: ImageUtils
     @Inject
-    lateinit var awsUtils: AWSUtils
+    lateinit var documentUtils: DocumentUtils
     @Inject
     lateinit var fileCompressor: FileCompressor
     @Inject
@@ -97,6 +101,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         binding.busineesName.clearFocus()
 
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
+        //if(true){
             downloadLogo()
             binding.card1.visibility = View.VISIBLE
             binding.profile.visibility = View.GONE
@@ -129,9 +134,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             captureImage(imageName, imageName)
         }
 
-        viewModel.delegationLiveData.observe(this, androidx.lifecycle.Observer {
-            uploadImage(it.first, it.second)
-        })
+        // Removed delegation token logic - direct upload now
 
         viewModel.statusLiveData.observe(this, androidx.lifecycle.Observer {
             if (it) {
@@ -144,14 +147,8 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             viewModel.updateUserDetails()
         }
 
-        viewModel.delegationDownloadLiveData.observe(this, Observer {
-            if (it != null) {
-                awsUtils.startDownload(it.first, it.second, it.third, this)
-                viewModel.imagePath = it.third.path
-            } else {
-                uiUtils.showSnackbar("Please try again")
-            }
-        })
+        // Download functionality removed - new API only supports upload
+        // If download is needed, use listDocuments() to get file URLs
 
     }
 
@@ -164,20 +161,10 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
     }
 
     private fun downloadLogo() {
-          compositeDisposable += requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                .onBackground()
-                .subscribe { granted, error ->
-                    if (error == null && granted) {
-                        val file = getFile()
-                        if (file != null) {
-                               viewModel.getDownloadDelegationToken(viewModel.userPrefs.profileImageUrl, file)
-                        } else {
-                            uiUtils.showSnackbar("Can't process image")
-                        }
-                    } else {
-                        uiUtils.showSnackbar(getString(R.string.storage_permission))
-                    }
-                }
+        // Use new DocumentUtils to list profile images
+        uiUtils.showProgress()
+        val docType = "visiting_card"
+        documentUtils.listDocuments(docType, this)
     }
 
     override fun getRequestAadhaarOtp() {
@@ -218,13 +205,51 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
             path: String?,
             view: AppCompatImageView
     ) {
-        view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+
+        path?.let {
+            // Convert dp to pixels (52dp = fixed size)
+            val sizeInPx = (52 * resources.displayMetrics.density).toInt()
+
+            Glide.with(view.context)
+                .load(bitmapUtils.decodeSampledBitmap(path, sizeInPx, sizeInPx))
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
+                .listener(object : RequestListener<Drawable?> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Log.d("DOWNLOAD_IMAGE-onLoadFailed==>>", "onLoadFailed")
+                        binding.card1.visibility = View.GONE
+                        binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
+                        binding.profile.visibility = View.VISIBLE
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Log.d("DOWNLOAD_IMAGE-onResourceReady==>>", "onResourceReady")
+                        binding.card1.visibility = View.VISIBLE
+                        binding.profile.visibility = View.GONE
+                        return false
+                    }
+
+                }).circleCrop().into(view)
+        }
+
+        /*view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 view.viewTreeObserver.removeOnPreDrawListener(this)
                 val imageViewHeight = view.measuredHeight
                 val imageViewWidth = view.measuredWidth
                 path?.let {
-                    GlideApp.with(view.context)
+                    Glide.with(view.context)
                             .load(bitmapUtils.decodeSampledBitmap(path, imageViewWidth, imageViewHeight))
                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))
                             .listener(object : RequestListener<Drawable?> {
@@ -234,6 +259,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                                         target: com.bumptech.glide.request.target.Target<Drawable?>?,
                                         isFirstResource: Boolean
                                 ): Boolean {
+                                    Log.d("DOWNLOAD_IMAGE-onLoadFailed==>>", "onLoadFailed")
                                     binding.card1.visibility = View.GONE
                                     binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
                                     binding.profile.visibility = View.VISIBLE
@@ -247,6 +273,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                                         dataSource: DataSource?,
                                         isFirstResource: Boolean
                                 ): Boolean {
+                                    Log.d("DOWNLOAD_IMAGE-onResourceReady==>>", "onResourceReady")
                                     binding.card1.visibility = View.VISIBLE
                                     binding.profile.visibility = View.GONE
                                     return false
@@ -256,16 +283,16 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                 }
                 return true
             }
-        })
+        })*/
     }
 
     private fun requestImageCapturePermissions(isCamera: Boolean) {
         this.isCamera = isCamera
+        // Only request CAMERA permission - scoped storage doesn't require WRITE_EXTERNAL_STORAGE
+        // Camera uses getExternalFilesDir() (app-specific storage)
+        // Gallery uses ACTION_PICK with ContentResolver (scoped storage)
         compositeDisposable += requestPermission(
-                arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA
-                )
+                arrayOf(Manifest.permission.CAMERA)
         )
                 .onBackground()
                 .subscribe { granted, error ->
@@ -282,6 +309,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
 
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun dispatchTakePictureIntent() {
          val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
@@ -310,32 +338,111 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         startActivityForResult(pickPhoto, REQCODE_GALLERY_PHOTO)
     }
 
-    private fun uploadImage(
-            delegationToken: DelegationToken,
-            file: File
-    ) {
+    private fun uploadImage(file: File) {
         uiUtils.showProgress()
-        val awsPath = "loadboard/profile/$uploadImageName.jpg"
-        awsUtils.startUpload(delegationToken, awsPath, file, this)
+        val docType = "profile" // Profile image document type (VAPT doc specifies "profile" for profile images)
+        // VAPT requirement: Profile needs uploadImageName in dynamic_variables
+        val dynamicVariables = mapOf("uploadImageName" to uploadImageName)
+        documentUtils.uploadDocument(file, FileType.IMAGE, docType, this, dynamicVariables)
         viewModel.imagePath = file.path
     }
 
-    override fun onAWSSuccess(
-            path: String
-    ) {
+    override fun onDocumentSuccess(downloadUrl: String) {
+        uiUtils.showToast("Upload successful")
+        // downloadUrl is the download URL returned from /document/upload API
         binding.card1.visibility = View.VISIBLE
         binding.profile.visibility = View.GONE
         uiUtils.hideProgress()
-        viewModel.imageUrl = path
+        viewModel.imageUrl = downloadUrl // Store downloadUrl from API response
         loadImage(viewModel.imagePath, binding.profilepic)
         resetUploadData()
     }
 
-    override fun onAWSFailure() {
+    override fun onDocumentFailure(error: String) {
         uiUtils.hideProgress()
-        uiUtils.showSnackbar("Image processing failed, please try again.")
+        uiUtils.showToast("Image processing failed: $error")
         resetUploadData()
     }
+
+    // Download functionality
+    override fun onDocumentListSuccess(files: List<FileData>) {
+        uiUtils.hideProgress()
+        if (files.isNotEmpty()) {
+            // Get the most recent profile image (first in list)
+            val latestFile = files.first()
+            Log.d("DOWNLOAD_IMAGE-latestFile==>>", "$latestFile")
+            downloadProfileImage(latestFile)
+        } else {
+            uiUtils.showToast("No profile images found")
+            // Show default profile view
+            binding.card1.visibility = View.GONE
+            binding.profile.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showToast("Failed to load profile images: $error")
+        // Show default profile view on failure
+        binding.card1.visibility = View.GONE
+        binding.profile.visibility = View.VISIBLE
+    }
+
+    private fun downloadProfileImage(file: FileData) {
+        // No permission needed - using app-specific storage (getExternalFilesDir)
+        // which doesn't require WRITE_EXTERNAL_STORAGE on Android 10+ (API 29+)
+        try{
+            val localFile = getFile()
+            // Download the image using the download URL
+            Log.d("DOWNLOAD_IMAGE-localFile==>>", "$localFile")
+            downloadImageFromUrl(file.downloadUrl, localFile)
+        } catch (e: Exception){
+            uiUtils.showSnackbar("Can't create local file for download")
+            binding.card1.visibility = View.GONE
+            binding.profile.visibility = View.VISIBLE
+        }
+    }
+
+    private fun downloadImageFromUrl(downloadUrl: String, localFile: File) {
+        // Use Glide to download and cache the image
+        Glide.with(this)
+            .download(downloadUrl)
+            .into(object : com.bumptech.glide.request.target.CustomTarget<File>() {
+                override fun onResourceReady(resource: File, transition: com.bumptech.glide.request.transition.Transition<in File>?) {
+                    try {
+                        // Copy the downloaded file to our local file
+                        resource.copyTo(localFile, overwrite = true)
+                        Log.d("DOWNLOAD_IMAGE-localFile.path==>>", "${localFile.path}")
+                        viewModel.imagePath = localFile.path
+                        loadImage(localFile.path, binding.profilepic)
+                    } catch (e: Exception) {
+                        Log.d("DOWNLOAD_IMAGE-catch==>>", "${e.printStackTrace()}")
+                        uiUtils.showSnackbar("Failed to save image: ${e.message}")
+                        binding.card1.visibility = View.GONE
+                        binding.profile.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    Log.d("DOWNLOAD_IMAGE-onLoadFailed==>>", "${errorDrawable.toString()}")
+                    uiUtils.showSnackbar("Failed to download profile image")
+                    binding.card1.visibility = View.GONE
+                    binding.profile.visibility = View.VISIBLE
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // Called when the image is cleared
+                    Log.d("DOWNLOAD_IMAGE-onLoadCleared==>>", "onLoadCleared")
+                }
+            })
+    }
+
+    private fun showDocumentList(files: List<com.delhivery.axle.api.response.DocumentFile>) {
+        // Show list of available profile images for download
+        val fileNames = files.map { it.filename }
+        uiUtils.showSnackbar("Found ${files.size} profile image(s): ${fileNames.joinToString(", ")}")
+    }
+
 
     private fun resetUploadData() {
         mPhotoFile = null
@@ -372,7 +479,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                     try {
                         mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -398,13 +505,21 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                         val outputStream = FileOutputStream(imageScopedFile)
                         IOUtils.copy(inputStream, outputStream)
 
-                        mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
+                        // Strict validation for Image types only for Profile Pictures
+                        if (imageScopedFile.extension == "jpg" || imageScopedFile.extension == "png" || imageScopedFile.extension == "jpeg") {
+                            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
+                        } else {
+                            // Profile pictures only support images. PDF or other types are not appropriate here.
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
+                        }
+
                         if (mPhotoFile == null) {
                             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                             return
                         }
                         uiUtils.showProgress()
-                        viewModel.getDelegationToken(mPhotoFile!!)
+                        uploadImage(mPhotoFile!!)
                     } catch (e: IOException) {
                         uiUtils.showToast(getString(R.string.msg_image_capture_failed))
                     }
@@ -419,9 +534,9 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         binding.btnSave.isEnabled = viewModel.businessName.value?.trim().isNotNullOrEmpty() && viewModel.userName.value?.trim().isNotNullOrEmpty()
     }
 
-    private fun getFile(): File? {
+    private fun getFile(): File {
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
         val basePath = "$storageDir/" + System.currentTimeMillis()
-            return File(basePath + "_profile.jpg")
+        return File(basePath + "_profile.jpg")
     }
 }

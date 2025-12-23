@@ -72,6 +72,7 @@
                             android:layout_marginStart="@dimen/size_16dp"
                             bind:cardElevation="0dp"
                             android:visibility="gone"
+                            tools:visibility="visible"
                             android:layout_marginEnd="@dimen/size_16dp"
                             android:id="@+id/card1"
                             bind:cardBackgroundColor="@color/grey_bg"

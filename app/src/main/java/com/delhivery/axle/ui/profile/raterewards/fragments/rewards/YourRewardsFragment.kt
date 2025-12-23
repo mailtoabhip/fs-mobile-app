@@ -21,13 +21,18 @@ import com.delhivery.axle.data.yourrewards.YourRewardsTimeOutAction
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.api.response.FileData
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import android.util.Log
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsBinding, YourRewardsFragmentViewModel>(),YourRewardsAdapterInterface,OnDateSetListener,  AWSUtils.AWSProgressInterface {
+class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsBinding, YourRewardsFragmentViewModel>(),YourRewardsAdapterInterface,OnDateSetListener, DocumentUtils.DocumentListInterface {
 
   var isLoadingData = true
   private var fragmentSetupTrace: Trace? = null
@@ -49,10 +54,15 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
   @Inject
   lateinit var userPrefs: UserPrefs
 
-  @Inject lateinit var awsUtils: AWSUtils
-
   @Inject
   lateinit var dialogUtils: DialogUtils
+
+  @Inject
+  lateinit var documentUtils: DocumentUtils
+
+  // Map s3_path -> original URL to handle concurrent downloads
+  private val s3PathToUrlMap: HashMap<String, String> = HashMap()
+  private var currentDownloadUrl: String? = null
 
   var dateSelected = "start_date"
 
@@ -85,12 +95,6 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
     viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
       isLoadingData = it ?: false
       binding.refreshLayout.isRefreshing = false
-    })
-
-    viewModel.delegationDownloadLiveData.reobserve(this, Observer {
-      if (it != null) {
-        awsUtils.startDownload(it.first, it.second, it.third, this)
-      }
     })
     binding.refreshLayout.setOnRefreshListener { refreshData()}
 
@@ -140,17 +144,23 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
     viewModel.fetchSupplierRewards()
   }
 
-  private fun downloadProofDoc(item: String) {
+  private fun downloadProofDoc(proofUrl: String) {
      compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
       .onBackground()
       .subscribe { granted, error ->
         if (error == null && granted) {
           uiUtils.showProgress()
-          val file = getFile(item)
-          if (file != null) {
-            viewModel.getDownloadDelegationToken(item, file)
+          // Extract s3_path from URL
+          val s3Path = extractS3PathFromUrl(proofUrl)
+          if (s3Path != null) {
+            // Store mapping for callback
+            s3PathToUrlMap[s3Path] = proofUrl
+            currentDownloadUrl = proofUrl
+            // Use secure Document API to download
+            documentUtils.downloadByS3Path(s3Path, this)
           } else {
-            uiUtils.showSnackbar("Can't process image")
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Unable to extract document path")
           }
         } else {
           uiUtils.hideProgress()
@@ -159,11 +169,142 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
       }
   }
 
-  private fun getFile(item: String): File? {
-    val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    val basePath = "$storageDir/"+System.currentTimeMillis()
-    val arrString = item.split("/")
-    return File(basePath + arrString[arrString.size - 1])
+  /**
+   * Extract s3_path from full S3 URL
+   * Handles URLs like: "https://bucket.s3.region.amazonaws.com/trips/vendor_pod/docket/docket_1764233770054.jpg"
+   * Returns: "trips/vendor_pod/docket/docket_1764233770054.jpg"
+   */
+  private fun extractS3PathFromUrl(docUrl: String): String? {
+    return try {
+      // Construct AWS base path from config
+      val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
+      val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
+      val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
+      
+      // Remove base URL from full S3 URL
+      if (docUrl.startsWith(awsBasePath)) {
+        docUrl.replace(awsBasePath, "").split("?")[0] // Remove query parameters if any
+      } else {
+        // Fallback: Try to extract path from URL pattern (bucket.s3.region.amazonaws.com/path)
+        val parts = docUrl.split(".amazonaws.com/")
+        if (parts.size > 1) {
+          parts[1].split("?")[0] // Remove query parameters if any
+        } else {
+          null
+        }
+      }
+    } catch (e: Exception) {
+      Log.e("YourRewardsFragment", "Error extracting s3_path: ${e.message}")
+      null
+    }
+  }
+
+  // DocumentListInterface implementation for secure download API
+  override fun onDocumentListSuccess(files: List<FileData>) {
+    if (files.isNotEmpty()) {
+      val documentFile = files.first()
+      // Use s3_path from response to find the original URL
+      val s3Path = documentFile.s3Path
+      val originalUrl = s3Path?.let { s3PathToUrlMap[it] }
+      
+      Log.d("YourRewardsFragment", "onDocumentListSuccess: s3Path=$s3Path, originalUrl=$originalUrl")
+      
+      if (originalUrl == null) {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Unable to determine original document URL")
+        // Clean up
+        s3Path?.let { s3PathToUrlMap.remove(it) }
+        currentDownloadUrl = null
+        return
+      }
+      
+      // Download file from pre-signed URL
+      downloadFileFromUrl(documentFile.downloadUrl, originalUrl)
+    } else {
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("No documents found")
+      // Clean up
+      currentDownloadUrl?.let { 
+        val s3Path = extractS3PathFromUrl(it)
+        s3Path?.let { s3PathToUrlMap.remove(it) }
+      }
+      currentDownloadUrl = null
+    }
+  }
+
+  override fun onDocumentListFailure(error: String) {
+    uiUtils.hideProgress()
+    uiUtils.showSnackbar("Download failed: $error")
+    // Clean up mapping
+    currentDownloadUrl?.let { 
+      val s3Path = extractS3PathFromUrl(it)
+      s3Path?.let { s3PathToUrlMap.remove(it) }
+    }
+    currentDownloadUrl = null
+  }
+
+  /**
+   * Download file from pre-signed URL using OkHttpClient
+   */
+  private fun downloadFileFromUrl(downloadUrl: String, originalDocUrl: String) {
+    compositeDisposable += io.reactivex.Observable.fromCallable {
+      val client = OkHttpClient()
+      val request = Request.Builder()
+        .url(downloadUrl)
+        .build()
+      
+      val response: Response = client.newCall(request).execute()
+      
+      if (response.isSuccessful) {
+        val file = getFile(originalDocUrl)
+        
+        if (file != null) {
+          response.body()?.byteStream()?.use { input ->
+            file.outputStream().use { output ->
+              input.copyTo(output)
+            }
+          }
+          file.absolutePath
+        } else {
+          null
+        }
+      } else {
+        null
+      }
+    }
+    .onBackground()
+    .subscribe({ filePath ->
+      if (filePath != null) {
+        uiUtils.showSnackbar("File downloaded successfully")
+      } else {
+        uiUtils.showSnackbar("Download failed")
+      }
+      uiUtils.hideProgress()
+      // Clean up mapping
+      val s3Path = extractS3PathFromUrl(originalDocUrl)
+      s3Path?.let { s3PathToUrlMap.remove(it) }
+      currentDownloadUrl = null
+    }, { error ->
+      uiUtils.hideProgress()
+      uiUtils.showSnackbar("Download error: ${error.message}")
+      // Clean up mapping on error
+      val s3Path = extractS3PathFromUrl(originalDocUrl)
+      s3Path?.let { s3PathToUrlMap.remove(it) }
+      currentDownloadUrl = null
+    })
+  }
+
+  private fun getFile(url: String): File? {
+    val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    val arrString = url.split("/")
+    val fileName = arrString[arrString.size - 1].split("?")[0] // Remove query parameters
+    val timestamp = System.currentTimeMillis()
+    val file = File(storageDir, "${timestamp}${fileName}")
+    // Ensure directory exists
+    if (!storageDir.exists()) {
+      storageDir.mkdirs()
+    }
+    return file
   }
 
   override fun onDateSet(p0: DatePicker?, year: Int, month: Int, day: Int) {
@@ -203,10 +344,12 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
         YourRewardsItemDataAction_DownloadProof -> {
           val data = item.data as YourRewardsItemData
           try {
-            downloadProofDoc(
-             data.proofUrl?.get(0)?.replace(awsUtils.awsBasePath(), "")!!
-            )
+            // proofUrl is already a complete URL from the backend
+            data.proofUrl?.get(0)?.let { url ->
+              downloadProofDoc(url)
+            }
           }catch (e:Exception){
+            uiUtils.showSnackbar("Failed to download proof document")
           }
         }
         YourRewardsTimeOutAction -> {
@@ -215,16 +358,6 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
       }
   }
 
-  override fun onAWSSuccess(path: String) {
-    uiUtils.hideProgress()
-    uiUtils.showSnackbar("Document downloaded successfully")
-
-  }
-
-  override fun onAWSFailure() {
-      uiUtils.showSnackbar("Document download failed!")
-      uiUtils.hideProgress()
-  }
 
 }
 const val RewardStartDate = "01/07/2022"

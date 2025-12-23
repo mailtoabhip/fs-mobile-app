@@ -520,7 +520,7 @@ class DialogUtils @Inject constructor(
 
 
     /*show attachment dialog*/
-     fun showAttachmentDialog(adapter:DocUploadAdapter,uploadArray:ArrayList<Pair<String, String>>,dialogUtilsInterface: DialogUtilsInterface,uploadText: String,awsUtils: AWSUtils) {
+     fun showAttachmentDialog(adapter:DocUploadAdapter,uploadArray:ArrayList<Pair<String, String>>,dialogUtilsInterface: DialogUtilsInterface,uploadText: String) {
         val dialog = Dialog(activity)
         val bindingDialog= DialogGstAttachmentsBinding.inflate(activity.layoutInflater)
 
