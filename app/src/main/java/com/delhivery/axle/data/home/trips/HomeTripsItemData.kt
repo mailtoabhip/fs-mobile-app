@@ -14,6 +14,7 @@ import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.TripStatus.*
 import com.delhivery.axle.ui.bids.TripType
 import com.delhivery.axle.ui.bids.ViewPaymentType
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.CurrentStatusFormat
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
@@ -92,7 +93,7 @@ data class HomeTripsItemData(
   var paymentStatus: String = "",
   var addressExpand: Boolean = false,
   var isDelayed: Boolean = false
-) : BaseKeyTypeModel<String>(), Serializable {
+  ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
   /**
@@ -210,6 +211,12 @@ data class HomeTripsItemData(
   } else {
     destinationStateName()
   }
+
+  fun formattedOriginCity()=
+    StringUtils.capitalize(origin)+" ("+StringUtils.capitalize(originState)+")"
+
+  fun formattedDestinationCity() =
+    StringUtils.capitalize(destination)+" ("+StringUtils.capitalize(destinationState)+")"
 
   /**
    * @return loading location text
@@ -362,6 +369,19 @@ data class HomeTripsItemData(
       )
     } ?: ""
 
+  fun loadedOn() =
+    updateInfo?.loadedInfo?.let {
+      "Loaded on " + DateUtils.formatDate(
+        DateUtils.parseDate(it.time, OrionDateFormat), SimpleDateFormat
+      )
+    } ?: ""
+
+  fun loadedOnDate() =
+    updateInfo?.loadedInfo?.let {
+      "Loaded on " + DateUtils.formatDate(
+        DateUtils.parseDate(it.time, OrionDateFormat), "dd MMM"
+      )
+    } ?: ""
   /**
    * Formatted required at
    */
@@ -455,7 +475,51 @@ data class HomeTripsItemData(
   } else {
     ""
   }
-
+  fun formattedAllLRS() = if (lr.isNotNullOrEmpty()) {
+    lr
+  } else if (!lrDetails.isNullOrEmpty()) {
+   lrDetails.firstOrNull()?.lr?.let { first ->
+      if (lrDetails.size > 1) "$first, ..." else first
+    } ?: ""
+  } else {
+    ""
+  }
+  /**
+   * @return count for lr
+   */
+  fun allLRSCount() = if (lr.isNotNullOrEmpty()) {
+    "1 LR"
+  } else if (!lrDetails.isNullOrEmpty()) {
+     lrDetails.size.toString()+ if(lrDetails.size>1)" LRs" else " LR"
+  } else {
+    " "
+  }
+  
+  /**
+   * Check if there are more than 1 LR numbers
+   */
+  fun hasMultipleLRs(): Boolean {
+    return if (lr.isNotNullOrEmpty()) {
+      false
+    } else if (!lrDetails.isNullOrEmpty()) {
+      lrDetails.size > 1
+    } else {
+      false
+    }
+  }
+  
+  /**
+   * Get all LR numbers as a list
+   */
+  fun getAllLRNumbersList(): List<String> {
+    return if (lr.isNotNullOrEmpty()) {
+      listOf(lr)
+    } else if (!lrDetails.isNullOrEmpty()) {
+      lrDetails.map { it.lr }
+    } else {
+      emptyList()
+    }
+  }
   /**
    * @return pod action text
    */
@@ -973,6 +1037,143 @@ data class HomeTripsItemData(
     return View.GONE
   }
 
+  /**
+   * Get POD badge text based on status
+   * Returns: "ePOD Pending", "ePOD Verified", "ePOD Under Review", "ePOD Rejected", or "HPOD Pending"
+   */
+  fun podBadgeText(): String {
+    return when (tripStatus) {
+      TruckUnloaded.statusKey -> {
+        if (epodRejectionRemark.isNotNullOrEmpty()) {
+          "ePOD Rejected"
+        } else if (podUrl.isNullOrEmpty()) {
+          "ePOD Pending"
+        } else {
+          "ePOD Pending"
+        }
+      }
+      EPodUploaded.statusKey -> {
+        if (isEpodVerified == true) {
+          "ePOD Verified"
+        } else if (isEpodVerified == false) {
+          "ePOD Rejected"
+        } else {
+          "ePOD Under Review"
+        }
+      }
+      else -> {
+        if (podUrl.isNullOrEmpty()) {
+          "HPOD Pending"
+        } else {
+          "HPOD Pending"
+        }
+      }
+    }
+  }
+
+  fun podStatusText(): String {
+    return when (tripStatus) {
+      TruckUnloaded.statusKey -> {
+        if (epodRejectionRemark.isNotNullOrEmpty()) {
+          "ePOD Rejected"
+        } else if (podUrl.isNullOrEmpty()) {
+          "ePOD Pending"
+        } else {
+          "ePOD Pending"
+        }
+      }
+      EPodUploaded.statusKey -> {
+        if (isEpodVerified == true) {
+          "ePOD Verified"
+        } else if (isEpodVerified == false) {
+          "ePOD Rejected"
+        } else {
+          "ePOD Under Review"
+        }
+      }
+      else -> {
+       ""
+      }
+    }
+  }
+
+  fun podStatusTextVisibility() = if(!hasPODTracking() && (tripStatus==TruckUnloaded.statusKey || tripStatus== EPodUploaded.statusKey) ) View.VISIBLE else View.GONE
+  fun updateDetailsButtonVisibility() = if(hasPODTracking()) View.VISIBLE else View.GONE
+  fun uploadEpodButtonVisibility() = if(podStatusText()=="ePOD Rejected" || podStatusText()=="ePOD Pending") View.VISIBLE else View.GONE
+  /**
+   * Check if EPOD is Pending
+   */
+  fun isEPODPending() = podStatusText() == "ePOD Pending"
+  fun isEPODRejected() = podStatusText() == "ePOD Rejected"
+
+  fun podActionText(isHPODSection: Boolean = false): String{
+    return when {
+      hasPODTracking() ->"Update Details"
+      podBadgeText() == "ePOD Verified" -> "Add Details"
+      podBadgeText() == "ePOD Pending" -> {
+        if (isHPODSection) "Add Details" else "Upload ePod"
+      }
+      podBadgeText() == "ePOD Rejected" ->  {
+        if (isHPODSection) "Add Details" else "Upload ePod"
+      }
+      podBadgeText() == "ePOD Under Review" -> "Add Details"
+      else -> "Upload ePod" // HPOD Pending
+    }
+  }
+
+  @ColorRes
+  fun podActionButtonColor(): Int {
+    return when {
+      hasPODTracking() ->R.color.text_black_v2
+      else -> R.color.white // HPOD Pending
+    }
+  }
+
+  @DrawableRes
+  fun podActionBackground() =
+    DrawableProviderUtils.podActionButtonDrawableRes(podActionText())
+
+  /**
+   * Get POD badge background color resource
+   */
+  @ColorRes
+  fun podBadgeBgColor(): Int {
+    return when {
+      podBadgeText() == "ePOD Verified" -> R.color.status_confirmed_bg
+      podBadgeText() == "ePOD Pending" -> R.color.pending_bg
+      podBadgeText() == "ePOD Rejected" -> R.color.status_lost_bg
+      podBadgeText() == "ePOD Under Review" -> R.color.custom_grey_bg
+      else -> R.color.pending_bg // HPOD Pending
+    }
+  }
+
+  /**
+   * Get POD badge text color resource
+   */
+  @ColorRes
+  fun podBadgeTextColor(): Int {
+    return when {
+      podBadgeText() == "ePOD Verified" -> R.color.bid_placed_green
+      podBadgeText() == "ePOD Pending" -> R.color.pending_status
+      podBadgeText() == "ePOD Rejected" -> R.color.bid_suggestion_text
+      podBadgeText() == "ePOD Under Review" -> R.color.heading_black
+      else -> R.color.pending_status // HPOD Pending
+    }
+  }
+
+  /**
+   * Get payment amount text for display
+   */
+  fun paymentAmountText(): String {
+    return payment?.let {
+      if (it.paymentAmount != null && it.paymentAmount!! > 0.0) {
+        "Receive ₹${StringUtils.formatAmount(it.paymentAmount!!)}"
+      } else {
+        ""
+      }
+    } ?: ""
+  }
+
 }
 
 enum class PODStatus(
@@ -989,6 +1190,7 @@ enum class PODStatus(
 const val HomeTripsRequestAction_ViewDetails = "trip_details"
 const val HomeTripsRequestAction_UploadEpod = "upload_epod"
 const val HomeTripsRequestAction_UploadTracking = "upload_tracking"
+const val HomeTripsRequestAction_ShowLRList = "show_lr_list"
 const val HomeAdvancePendingPaymentMode = "change_payment_mode"
 
 /**

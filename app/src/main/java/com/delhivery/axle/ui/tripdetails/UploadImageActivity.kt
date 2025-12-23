@@ -3,23 +3,37 @@ package com.delhivery.axle.ui.tripdetails
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnPreDrawListener
+import android.view.Window
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
-import com.delhivery.axle.databinding.ActivityUploadImageBinding
-import com.delhivery.axle.injection.module.GlideApp
+import com.delhivery.axle.data.PodItem
+import com.delhivery.axle.data.PodState
+import com.delhivery.axle.data.home.trips.PODStatus
+import com.delhivery.axle.databinding.ActivityEpodDetailsBinding
+import com.delhivery.axle.databinding.DialogBidRevisedSuccessBinding
+import com.delhivery.axle.databinding.DialogEpodSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.utils.AWSUtils
 import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
@@ -43,6 +57,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import androidx.core.graphics.toColorInt
 
 /**
  * Created by saurabh
@@ -53,23 +68,26 @@ import javax.inject.Inject
  *
  **
  */
-class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImageViewModel>(),
+class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImageViewModel>(),
     AWSProgressInterface {
 
   override fun getViewModelClass() = UploadImageViewModel::class.java
 
-  override fun layoutId() = R.layout.activity_upload_image
+  override fun layoutId() = R.layout.activity_epod_details
 
   override fun requireConnection() = true
 
   private lateinit var uploadImageName: String
   private lateinit var localImageName: String
   private var mPhotoFile: File? = null
+  private var currentPodId: Int = 0
   @Inject lateinit var fileCompressor: FileCompressor
   @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
+  private lateinit var podAdapter: PodAdapter
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
+  private var podStatus: PODStatus? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -87,22 +105,88 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
     viewModel.transactionId = intent?.getStringExtra(TransactionIdIntentKey) ?: ""
     viewModel.reachedTime = intent?.getStringExtra(ReachedTimeIntentKey) ?: ""
     viewModel.unloadedTime = intent?.getStringExtra(UnloadedTimeIntentKey) ?: ""
+
+    // Read pod_status from intent as enum
+    podStatus = intent?.getSerializableExtra(PodStatusIntentKey) as? PODStatus
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-    /* setup toolbar */
-    setSupportActionBar(binding.toolbar)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.appBarLayout)
     }
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    title = "Upload ePOD"
+
+    binding.btnBack.setOnClickListener {
+      onBackPressed()
+    }
+
+    val disabledTextColor = ContextCompat.getColor(this, R.color.disabled_button_text)
+    val enabledTextColor = Color.WHITE
+    val colorStateList = ColorStateList(
+      arrayOf(
+        intArrayOf(-android.R.attr.state_enabled), // Disabled state
+        intArrayOf(android.R.attr.state_enabled)    // Enabled state
+      ),
+      intArrayOf(
+        disabledTextColor, // Color for disabled state
+        enabledTextColor   // Color for enabled state
+      )
+    )
+    binding.submitButtonMaxWidth.setTextColor(colorStateList)
+
+    // Initialize RecyclerView
+    podAdapter = PodAdapter(
+      onPodClick = { podId ->
+        captureImage(podId)
+      },
+      onDeleteClick = { podId ->
+        viewModel.deletePod(podId)
+      },
+      bitmapUtils = bitmapUtils
+    )
+
+    binding.podRecyclerView.apply {
+      layoutManager = GridLayoutManager(this@UploadImageActivity, 4)
+      adapter = podAdapter
+    }
+
+    // Ensure initial visibility: maxWidth visible, RecyclerView hidden
+    binding.containerPodMaxWidth.visibility = View.VISIBLE
+    binding.podRecyclerView.visibility = View.GONE
+
+    // Observe pod items changes FIRST (before initializing)
+    viewModel.podItemsLiveData.observe(this, Observer { podItems ->
+      podAdapter.updateItems(podItems)
+      // Show RecyclerView and hide maxWidth container when any pod is available/selected/uploading/uploaded
+      val hasActivePods = podItems.any {
+        it.state != PodState.EMPTY
+      }
+      if (hasActivePods) {
+        binding.containerPodMaxWidth.visibility = View.GONE
+        binding.podRecyclerView.visibility = View.VISIBLE
+        // Force layout to ensure RecyclerView is measured
+        binding.podRecyclerView.requestLayout()
+      } else {
+        // Revert to initial state if no active pods
+        binding.containerPodMaxWidth.visibility = View.VISIBLE
+        binding.podRecyclerView.visibility = View.GONE
+      }
+
+      // Enable/disable Submit button based on selected images
+      val hasSelectedImages = podItems.any { it.state == PodState.SELECTED }
+      binding.submitButtonMaxWidth.isEnabled = hasSelectedImages
+    })
+
+    // Initialize pods AFTER observer is set up
+    viewModel.initializePods()
 
     viewModel.delegationLiveData.observe(this, Observer {
-      uploadImage(it.first, it.second)
+      uploadImage(it.first, it.second, currentPodId)
+
+      // After this upload completes, check if there are more selected pods to upload
+      // This will be handled in onAWSSuccess
     })
 
     viewModel.uploadResultLiveData.observe(this, Observer {
@@ -114,47 +198,75 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
       }
     })
 
-    binding.imagePod1.setOnClickListener {
+    // Observe POD submission result (final API call)
+    viewModel.podSubmissionResultLiveData.observe(this, Observer { isSuccess ->
+      uiUtils.hideProgress()
+      if (isSuccess) {
+        showBidSuccessDialog(false)
+      } else {
+          viewModel.getPodItems().forEach {
+              if(it.state == PodState.SELECTED || it.state == PodState.UPLOADED)
+                  it.state = PodState.SELECTED
+          }
+
+          binding.submitButtonMaxWidth.isEnabled = true
+      }
+    })
+
+    // Max width container click - start first upload
+    binding.containerPodMaxWidth.setOnClickListener {
+      // Start upload process - this will make first pod available
+      viewModel.startUploadProcess()
+      // Immediately show RecyclerView and hide maxWidth (observer will also handle this, but do it immediately for better UX)
+      binding.containerPodMaxWidth.visibility = View.GONE
+      binding.podRecyclerView.visibility = View.VISIBLE
       captureImage(1)
     }
-    binding.imagePod2.setOnClickListener {
-      captureImage(2)
-    }
-    binding.imagePod3.setOnClickListener {
-      captureImage(3)
-    }
-    binding.imagePod4.setOnClickListener {
-      captureImage(4)
-    }
-    binding.imagePod5.setOnClickListener {
-      captureImage(5)
-    }
-    binding.imagePod6.setOnClickListener {
-      captureImage(6)
+
+    // Submit button - upload all selected images
+    binding.submitButtonMaxWidth.setOnClickListener {
+      val selectedPods = viewModel.getSelectedPods()
+      if (selectedPods.isNotEmpty()) {
+        // Start uploading all selected images
+        uploadAllSelectedImages(selectedPods)
+      } else {
+        uiUtils.showSnackbar("Please select at least one image to upload")
+      }
     }
 
-    binding.deletePod1.setOnClickListener {
-      deleteImage(1, binding.deletePod1, binding.imagePod1)
-    }
-    binding.deletePod2.setOnClickListener {
-      deleteImage(2, binding.deletePod2, binding.imagePod2)
-    }
-    binding.deletePod3.setOnClickListener {
-      deleteImage(3, binding.deletePod3, binding.imagePod3)
-    }
-    binding.deletePod4.setOnClickListener {
-      deleteImage(4, binding.deletePod4, binding.imagePod4)
-    }
-    binding.deletePod5.setOnClickListener {
-      deleteImage(5, binding.deletePod5, binding.imagePod5)
-    }
-    binding.deletePod6.setOnClickListener {
-      deleteImage(6, binding.deletePod6, binding.imagePod6)
-    }
+    // Update badge styling based on pod_status
+    updatePodStatusBadge()
+  }
 
-    binding.btnAction.setOnClickListener {
-      if (!viewModel.imageUrls.isNullOrEmpty())
-        viewModel.uploadPod()
+  /**
+   * Update the pod status badge styling based on pod_status from intent
+   */
+  private fun updatePodStatusBadge() {
+    val badge = binding.badgeEpodPending
+    when (podStatus) {
+      PODStatus.REJECT -> {
+        badge.text = "ePOD Rejected"
+        badge.backgroundTintList = ColorStateList.valueOf("#FEEFEF".toColorInt())
+        badge.setTextColor("#8E2720".toColorInt())
+      }
+      PODStatus.REVIEW -> {
+        badge.text = "ePOD Under Review"
+        badge.backgroundTintList = ColorStateList.valueOf("#F0F0F0".toColorInt())
+        badge.setTextColor("#121A31".toColorInt())
+      }
+      PODStatus.VIEWPOD -> {
+        badge.text = "ePOD Verified"
+        badge.backgroundTintList = ColorStateList.valueOf("#ECFDF5".toColorInt())
+        badge.setTextColor("#065F46".toColorInt())
+      }
+      PODStatus.UPLOAD -> {
+        badge.text = "ePOD Pending"
+        badge.backgroundTintList = ColorStateList.valueOf("#FFF7EB".toColorInt())
+        badge.setTextColor(ContextCompat.getColor(this, R.color.pending_font))
+      }
+      null -> {
+        badge.visibility = View.GONE
+      }
     }
   }
 
@@ -167,56 +279,32 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
   }
 
 
-  private fun captureImage(num: Int) {
-    if (viewModel.imagePaths.isNullOrEmpty()) {
-      startCapture(
-          "${viewModel.transactionId}-1", "vendor_pod_${viewModel.transactionId}-1"
-      )
-    } else {
-      for (url in viewModel.imageUrls) {
-        if (url.endsWith("$num.jpg")) {
-          viewImage(url, "View ePod $num")
-          return
-        }
-      }
-      startCapture(
-          "${viewModel.transactionId}-$num",
-          "vendor_pod_${viewModel.transactionId}-$num"
-      )
-    }
-  }
+  private fun captureImage(podId: Int) {
+    currentPodId = podId
+    val podItem = viewModel.getPodItems().find { it.id == podId }
 
-  private fun deleteImage(
-    num: Int,
-    delete: AppCompatImageView,
-    image: AppCompatImageView
-  ) {
-    with(viewModel.imageUrls.iterator()) {
-      forEach {
-        if (it.endsWith("$num.jpg")) {
-          remove()
-        }
-      }
+    // If already uploaded, view the image
+    if (podItem?.state == PodState.UPLOADED && podItem.imageUrl != null) {
+      viewImage(podItem.imageUrl, "View ePod $podId")
+      return
     }
-    with(viewModel.imagePaths.iterator()) {
-      forEach {
-        if (it.endsWith("$num")) {
-          remove()
-        }
-      }
-    }
-    image.setImageResource(R.drawable.ic_camera)
-    delete.visibility = View.GONE
+
+    // If already selected, allow reselection (will replace current selection)
+    // Start capture
+    startCapture(
+        "${viewModel.transactionId}-$podId",
+        "vendor_pod_${viewModel.transactionId}-$podId"
+    )
   }
 
   private fun uploadImage(
     delegationToken: DelegationToken,
-    file: File
+    file: File,
+    podId: Int
   ) {
-    uiUtils.showProgress()
     val awsPath = "trips/temp/vendor_pod/${viewModel.transactionId}/" + uploadImageName + ".jpg"
     awsUtils.startUpload(delegationToken, awsPath, file, this)
-    viewModel.imagePaths.add(file.path)
+    viewModel.startUpload(podId, file.path)
   }
 
   override fun onAWSSuccess(
@@ -228,11 +316,23 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
           mutableListOf(PROPERTY_STATUS),
           mutableListOf(VALUE_SUCCESS)
       )
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar(getString(R.string.msg_file_upload_successful))
-      viewModel.imageUrls.add(path)
-      updateView()
-      resetUploadData()
+      viewModel.onUploadSuccess(currentPodId, path)
+
+      // Check if there are more selected pods to upload
+      val remainingSelectedPods = viewModel.getSelectedPods()
+      if (remainingSelectedPods.isNotEmpty()) {
+        // Upload next selected image
+        uploadSingleImage(remainingSelectedPods.first())
+      } else {
+        // All images uploaded, now submit POD
+        if (!viewModel.imageUrls.isNullOrEmpty()) {
+          uiUtils.showProgress()
+          viewModel.uploadPod()
+        } else {
+          uiUtils.hideProgress()
+        }
+        resetUploadData()
+      }
     }
   }
 
@@ -245,66 +345,49 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
       )
       uiUtils.hideProgress()
       uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
+      // Reset to SELECTED state so user can retry
+      viewModel.onUploadFailure(currentPodId)
       resetUploadData()
     }
+  }
+
+  /**
+   * Upload all selected images when Submit is clicked
+   */
+  private fun uploadAllSelectedImages(selectedPods: List<PodItem>) {
+    if (selectedPods.isEmpty()) {
+      uiUtils.showSnackbar("No images selected")
+      return
+    }
+
+    // Upload first image, then chain the rest
+    val firstPod = selectedPods.first()
+    uploadSingleImage(firstPod)
+  }
+
+  /**
+   * Upload a single image
+   */
+  private fun uploadSingleImage(podItem: PodItem) {
+    val file = File(podItem.imagePath ?: return)
+    if (!file.exists()) {
+      uiUtils.showSnackbar("Image file not found for pod ${podItem.id}")
+      return
+    }
+
+    currentPodId = podItem.id
+    uploadImageName = "${viewModel.transactionId}-${podItem.id}"
+    localImageName = "vendor_pod_${viewModel.transactionId}-${podItem.id}"
+
+    uiUtils.showProgress()
+    viewModel.getDelegationToken(file)
   }
 
   private fun resetUploadData() {
     mPhotoFile = null
     uploadImageName = ""
     localImageName = ""
-  }
-
-  private fun updateView() {
-    if (!viewModel.imagePaths.isNullOrEmpty()) {
-      for (path in viewModel.imagePaths) {
-        when {
-          path.endsWith("1") -> {
-            binding.deletePod1.visibility = View.VISIBLE
-            loadImage(path, binding.imagePod1)
-          }
-          path.endsWith("2") -> {
-            binding.deletePod2.visibility = View.VISIBLE
-            loadImage(path, binding.imagePod2)
-          }
-          path.endsWith("3") -> {
-            binding.deletePod3.visibility = View.VISIBLE
-            loadImage(path, binding.imagePod3)
-          }
-          path.endsWith("4") -> {
-            binding.deletePod4.visibility = View.VISIBLE
-            loadImage(path, binding.imagePod4)
-          }
-          path.endsWith("5") -> {
-            binding.deletePod5.visibility = View.VISIBLE
-            loadImage(path, binding.imagePod5)
-          }
-          path.endsWith("6") -> {
-            binding.deletePod6.visibility = View.VISIBLE
-            loadImage(path, binding.imagePod6)
-          }
-        }
-      }
-    }
-  }
-
-  private fun loadImage(
-    path: String?,
-    view: AppCompatImageView
-  ) {
-    view.viewTreeObserver.addOnPreDrawListener(object : OnPreDrawListener {
-      override fun onPreDraw(): Boolean {
-        view.viewTreeObserver.removeOnPreDrawListener(this)
-        val imageViewHeight = view.measuredHeight
-        val imageViewWidth = view.measuredWidth
-        path?.let {
-          GlideApp.with(view.context)
-              .load(bitmapUtils.decodeSampledBitmap(path, imageViewWidth, imageViewHeight))
-              .into(view)
-        }
-        return true
-      }
-    })
+    currentPodId = 0
   }
 
   private fun viewImage(
@@ -331,10 +414,21 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
           requestImageCapturePermissions(true)
         items[item] == "Choose from Library" ->
           requestImageCapturePermissions(false)
-        items[item] == "Cancel" -> dialog.dismiss()
+        items[item] == "Cancel" -> {
+          dialog.dismiss()
+          if (viewModel.isInitialState()) {
+            viewModel.resetPods()
+          }
+        }
       }
     }
+      builder.setCancelable(false)
     builder.show()
+    builder.setOnCancelListener {
+      if (viewModel.isInitialState()) {
+        viewModel.resetPods()
+      }
+    }
   }
 
   private fun requestImageCapturePermissions(isCamera: Boolean) {
@@ -378,6 +472,33 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
       }
   }
 
+    private fun showBidSuccessDialog(isError: Boolean) {
+        if (isFinishing || isError) return
+
+        val dialog = Dialog(this)
+        val bindingDialog = DialogEpodSuccessBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        bindingDialog.textTitle.text = "ePOD submitted successfully!"
+        bindingDialog.textMessage.visibility = View.GONE
+        bindingDialog.iconSuccess.setImageResource(R.drawable.ic_green_tick)
+
+        // Done button listener
+        bindingDialog.doneButtonMaxWidth.setOnClickListener {
+            dialog.dismiss()
+            finish()
+        }
+
+        dialog.show()
+        dialog.setCancelable(false)
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
   private fun dispatchGalleryIntent() {
     val pickPhoto = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
     pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -399,8 +520,10 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
           }
           try {
             mPhotoFile = fileCompressor.compressToFile(mPhotoFile!!, localImageName)
-            uiUtils.showProgress()
-            viewModel.getDelegationToken(mPhotoFile!!)
+            // Just set image as selected (no upload yet)
+            // For camera capture, imageUri is null since we use FileProvider URI
+            viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = null)
+            resetUploadData()
           } catch (e: IOException) {
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
           }
@@ -427,8 +550,10 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
               uiUtils.showToast(getString(R.string.msg_image_capture_failed))
               return
             }
-            uiUtils.showProgress()
-            viewModel.getDelegationToken(mPhotoFile!!)
+            // Just set image as selected (no upload yet)
+            // Store the original gallery URI for reference
+            viewModel.setImageSelected(currentPodId, mPhotoFile!!.path, imageUri = selectedImage)
+            resetUploadData()
           } catch (e: IOException) {
             uiUtils.showToast(getString(R.string.msg_image_capture_failed))
           }
@@ -445,6 +570,7 @@ class UploadImageActivity : BaseActivity<ActivityUploadImageBinding, UploadImage
 private const val TransactionIdIntentKey = "transaction_id"
 private const val ReachedTimeIntentKey = "reached_time"
 private const val UnloadedTimeIntentKey = "unloaded_time"
+private const val PodStatusIntentKey = "pod_status"
 
 /**
  * Upload Image intent
@@ -453,9 +579,11 @@ fun uploadImageIntent(
   context: Context,
   transactionId: String,
   reachedTime: String,
-  unloadedTime: String
+  unloadedTime: String,
+  podStatus: PODStatus? = null
 ) = Intent(context, UploadImageActivity::class.java).apply {
-  putExtra(TransactionIdIntentKey, transactionId)
-  putExtra(ReachedTimeIntentKey, reachedTime)
-  putExtra(UnloadedTimeIntentKey, unloadedTime)
+    putExtra(TransactionIdIntentKey, transactionId)
+    putExtra(ReachedTimeIntentKey, reachedTime)
+    putExtra(UnloadedTimeIntentKey, unloadedTime)
+    podStatus?.let { putExtra(PodStatusIntentKey, it) }
 }

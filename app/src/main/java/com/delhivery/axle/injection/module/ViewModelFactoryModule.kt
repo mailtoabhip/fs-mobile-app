@@ -32,6 +32,8 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
+import com.delhivery.axle.ui.home.fragments.pod.PendingPodViewModel
+import com.delhivery.axle.ui.home.fragments.pod.SubmittedPodViewModel
 import com.delhivery.axle.ui.profile.HomeProfileViewModel
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksViewModel
@@ -175,6 +177,16 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomePodViewModel::class)
   abstract fun bindHomePodViewModel(viewModel: HomePodViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PendingPodViewModel::class)
+  abstract fun bindPendingPodViewModel(viewModel: PendingPodViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SubmittedPodViewModel::class)
+  abstract fun bindSubmittedPodViewModel(viewModel: SubmittedPodViewModel): ViewModel
 
   @Binds
   @IntoMap

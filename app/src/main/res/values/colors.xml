@@ -26,6 +26,7 @@
   <color name="pending">#d36a1b</color>
   <color name="pending_status">#D97706</color>
   <color name="pending_bg">#FFFBEB</color>
+  <color name="pending_font">#935F07</color>
 
   <!-- text colors-->
   <color name="black">#000000</color>
@@ -33,6 +34,7 @@
   <color name="sub_heading_black">#3D445C</color>
   <color name="bid_header_bg_black">#262727</color>
   <color name="color_hint">#A3AAC2</color>
+  <color name="font_labels">#A3AAC2</color>
   <color name="white">#FFFFFF</color>
   <color name="off_white">#DEFFFFFF</color>
   <color name="bid_placed_green">#059669</color>
@@ -78,6 +80,7 @@
   <color name="custom_grey_bg">#E5E3E3</color>
   <color name="custom_grey">#E5E5E5</color>
     <color name="custom_dark_grey">#991C1C1C</color>
+    <color name="grey_bg_alpha25">#40E0E3EB</color>
 
   <color name="route_heading">#3D445C</color>
 
@@ -125,6 +128,8 @@
 
 
   <color name="text_grey">#8F9198</color>
+  <color name="disabled_button_text">#989392</color>
+  <color name="label_text_color">#615655</color>
 
   <!-- New colors for updated dialog design -->
   <color name="green">#4CAF50</color>

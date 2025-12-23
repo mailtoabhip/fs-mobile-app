@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="trip"
+            type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+            />
+        <variable
+            name="isHPODSection"
+            type="Boolean"
+            />
+        <import type="android.view.View" />
+        <import type="com.delhivery.axle.data.home.trips.TripStatus" />
+        <import type="androidx.core.content.ContextCompat" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/lrDetailsLL"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/size_6dp"
+            android:paddingStart="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="@{(isHPODSection &amp;&amp; (trip.isEPODPending() || trip.isEPODRejected())) ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lrCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="#8F9198"
+                android:text="@{trip.allLRSCount()}"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/lrNumbers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_black_v2"
+                    android:textSize="@dimen/text_14sp"
+                    android:text="@{trip.formattedAllLRS()}"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icShowLR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_4dp"
+                    android:src="@drawable/ic_show"
+                    android:visibility="@{trip.hasMultipleLRs() ? View.VISIBLE : View.GONE}"
+                    android:contentDescription="Show more LR numbers"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnUploadEpod"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_36dp"
+            android:text="Upload ePOD"
+            android:textAllCaps="false"
+            android:paddingEnd="@dimen/size_8dp"
+            android:paddingStart="0dp"
+            android:visibility="@{(isHPODSection &amp;&amp; (trip.isEPODPending() || trip.isEPODRejected() )) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
+            android:textColor="@color/text_black_v2"
+            android:gravity="center"
+            android:background="@drawable/bg_all_round_corner_grey_boundary"
+            android:paddingVertical="8dp"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginStart="@dimen/size_12dp"
+            android:id="@+id/updateDetails"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_36dp"
+            android:text="@{trip.podActionText(isHPODSection)}"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_middle"
+            app:layout_constraintEnd_toEndOf="parent"
+            bind:textColor="@{ ContextCompat.getColor(context, trip.podActionButtonColor()) }"
+            android:gravity="center"
+            bind:drawableResId="@{ trip.podActionBackground() }"
+            android:paddingStart="@dimen/size_8dp"
+            android:paddingEnd="0dp"
+            android:paddingVertical="@dimen/size_6dp"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

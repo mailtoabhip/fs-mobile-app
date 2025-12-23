@@ -25,13 +25,9 @@ import java.util.Calendar
 import javax.inject.Inject
 
 /**
- **
- *
- * View model class for [HomePodsFragment]
- *
- **
+ * View model class for [PendingPodTabFragment]
  */
-class HomePodViewModel @Inject constructor(
+class PendingPodViewModel @Inject constructor(
   private val userRepository: UserRepository,
   private val loadCycleRepository: LoadCycleRepository
 ) : BaseViewModel() {
@@ -40,17 +36,14 @@ class HomePodViewModel @Inject constructor(
   var userPodsData =
     MutableLiveData<List<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>>()
 
-  /* bids count live data */
+  /* trips count live data */
   var tripsCountLiveData = MutableLiveData<Int>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
-  val selectedLiveData = MutableLiveData<Int>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
 
   var request = SearchRequest()
   var status: TripStatus = TruckUnloaded
-  var selectable: Boolean = false
   var dispatch: Boolean = false
-  var selectedTransactions = mutableListOf<String>()
   var transactionId: String = ""
   var podUrl: String = ""
   var empty = true
@@ -61,7 +54,15 @@ class HomePodViewModel @Inject constructor(
   var hasMoreData = true
 
   /**
-   * Fetch trips
+   * Cancel ongoing fetch requests
+   */
+  fun cancelOngoingRequests() {
+    compositeDisposable.clear()
+    dataLoadingLiveData.postValue(false)
+  }
+
+  /**
+   * Fetch trips for pending POD
    */
   fun fetchTrips(paginate: Boolean = false) {
     if (!paginate) {
@@ -111,28 +112,21 @@ class HomePodViewModel @Inject constructor(
               }
               /* post all transactions mapped to bids as add */
               else {
-              //  add(Pair(HomePodSearchItem(), AddUpdate))
                 for (trip in _res.trips) {
                   when (status) {
                     TruckUnloaded -> {
                       if (!trip.hasPODTracking()) {
                         empty = false
-                        trip.selectable = selectable
                         add(Pair(HomePodTripItem(trip), Add))
                       }
                     }
                     else -> {
-                      if (dispatch) {
-                        if (trip.hasPODTracking()) {
+                        // HPOD: Show both EPOD (TruckUnloaded) and HPOD (EPodUploaded) items without POD tracking
+                        if (!trip.hasPODTracking() && 
+                            (trip.tripStatus == EPodUploaded.statusKey || trip.tripStatus == TruckUnloaded.statusKey)) {
                           empty = false
                           add(Pair(HomePodTripItem(trip), Add))
                         }
-                      } else {
-                        if (!trip.hasPODTracking()) {
-                          empty = false
-                          add(Pair(HomePodTripItem(trip), Add))
-                        }
-                      }
                     }
                   }
                 }
@@ -152,22 +146,5 @@ class HomePodViewModel @Inject constructor(
           dataLoadingLiveData.postValue(false)
         }
   }
-
-  /**
-   * Get delegation token for AWS
-   */
-  fun getDelegationToken(
-    awsPath: String,
-    file: File
-  ) {
-    compositeDisposable += userRepository.getDelegationToken(AWSConfig.Target.value())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            delegationLiveData.postValue(Triple(_res.delegationToken, awsPath, file))
-          } else
-            error.handle()
-        }
-  }
-
 }
+

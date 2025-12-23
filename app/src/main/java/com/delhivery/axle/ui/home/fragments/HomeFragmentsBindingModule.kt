@@ -8,6 +8,9 @@ import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsDelayedFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsExpectedFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
+import com.delhivery.axle.ui.home.fragments.pod.HomeNewPodFragment
+import com.delhivery.axle.ui.home.fragments.pod.PendingPodTabFragment
+import com.delhivery.axle.ui.home.fragments.pod.SubmittedPodTabFragment
 import com.delhivery.axle.ui.profile.HomeProfileFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
@@ -47,5 +50,13 @@ abstract class HomeFragmentsBindingModule {
   @ContributesAndroidInjector
   internal abstract fun providePlacementsExpectedFragment(): HomePlacementsExpectedFragment
 
+  @ContributesAndroidInjector
+  internal abstract fun provideHomeNewPodFragment(): HomeNewPodFragment
+
+  @ContributesAndroidInjector
+  internal abstract fun providePendingPodTabFragment(): PendingPodTabFragment
+
+  @ContributesAndroidInjector
+  internal abstract fun provideSubmittedPodTabFragment(): SubmittedPodTabFragment
 
 }

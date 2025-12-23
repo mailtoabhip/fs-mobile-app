@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F6F7F8">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="@dimen/size_1dp"
+            app:elevation="@dimen/size_1dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/epod_details_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Back Arrow -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:src="@drawable/ic_back_arrow"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:tint="@color/heading_black" />
+
+                <!-- ePOD Pending Badge -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/badge_epod_pending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ePOD Pending"
+                    android:textColor="@color/pending_font"
+                    android:textSize="@dimen/text_12sp"
+                    android:background="@drawable/bg_load_type_100dp_corner"
+                    android:backgroundTint="#FFF7EB"
+                    android:paddingStart="@dimen/size_8dp"
+                    android:paddingEnd="@dimen/size_8dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+            app:layout_constraintVertical_bias="0.0">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/epod_pics_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/size_12dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_16dp">
+
+                    <!-- Tracking Picture Section -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/pod_pic_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tracking Picture *"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Big Upload Container (Initially Visible) -->
+                    <FrameLayout
+                        android:id="@+id/pod_container_maxWidth"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_72dp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:background="@drawable/bg_upload_container"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pod_pic_tv">
+
+                        <!-- Add Icon -->
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/add_icon_maxWidth"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:scaleType="fitCenter"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/ic_add_black_24dp"
+                            app:tint="@color/info_title" />
+
+                    </FrameLayout>
+
+                    <!-- Docket RecyclerView (Initially Hidden) -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/docket_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pod_pic_tv"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/item_pod" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/recommendation_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_80dp"
+                        android:text="Upload a .JPG, .PNG, or .PDF file (Max 5MB)"
+                        android:textColor="@color/disabled_button_text"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pod_pic_tv" />
+
+                    <!-- Tracking Number Section -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tracking_number_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:text="Tracking Number *"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recommendation_text" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/tracking_number_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_40dp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:background="@drawable/bg_input_field"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tracking_number_label">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/tracking_number_input"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:hint="Enter Tracking Number"
+                            android:imeOptions="actionNext"
+                            android:paddingEnd="@dimen/size_12dp"
+                            android:singleLine="true"
+                            android:textColor="@color/heading_black"
+                            android:textColorHint="@color/disabled_button_text"
+                            android:textSize="@dimen/text_14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Dispatch Date Section -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/dispatch_date_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:text="Dispatch Date *"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tracking_number_container" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/dispatch_date_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_40dp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:background="@drawable/bg_input_field"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/dispatch_date_label">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/dispatch_date_input"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:hint="Select Dispatch Date"
+                            android:imeOptions="actionDone"
+                            android:paddingEnd="@dimen/size_40dp"
+                            android:singleLine="true"
+                            android:textColor="@color/heading_black"
+                            android:textColorHint="@color/disabled_button_text"
+                            android:textSize="@dimen/text_14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/calendar_icon"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/calendar_icon"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="@dimen/size_4dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/calendar_v2"
+                            app:tint="@color/label_text_color" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Submit Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/submitButton_maxWidth"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_40dp"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:background="@drawable/bg_button_submit_selector"
+                        android:paddingBottom="@dimen/size_8dp"
+                        android:text="Submit"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/dispatch_date_container" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

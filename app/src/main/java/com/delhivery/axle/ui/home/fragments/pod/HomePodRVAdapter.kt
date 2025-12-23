@@ -7,6 +7,7 @@ import com.delhivery.axle.data.home.pod.HomePodHeaderItemData
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomePodsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding
+import com.delhivery.axle.databinding.ViewNewPodItemBinding
 import com.delhivery.axle.databinding.ViewPodItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
@@ -30,6 +31,11 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
     BaseDataRVAdapter<BaseHomePodRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
         _interface
     ) {
+  
+  /**
+   * Track if HPOD section is currently selected
+   */
+  var isHPODSection: Boolean = false
 
   override fun getItemViewType(position: Int) = itemsList()[position].type.typeId
 
@@ -43,17 +49,17 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
     Progress -> ViewHomeBidsProgressItemBinding.inflate(inflater, parent, false)
     Timeout -> ViewTimeOutItemBinding.inflate(inflater, parent, false)
     Search -> ViewHomeSearchItemBinding.inflate(inflater, parent, false)
-    else -> ViewPodItemBinding.inflate(inflater, parent, false)
+    else -> ViewNewPodItemBinding.inflate(inflater, parent, false)
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
     is ViewHomePodsHeaderItemBinding -> HomePodHeaderItemVH(binding)
-    is ViewPodItemBinding -> HomePodItemVH(binding)
+    is ViewNewPodItemBinding -> HomePodItemVH(binding)
     is ViewWarningItemBinding -> HomePodWarningItemVH(binding)
     is ViewTimeOutItemBinding -> HomePodTimeOutItemVH(binding)
     is ViewHomeBidsProgressItemBinding -> HomePodProgressItemVH(binding)
     is ViewHomeSearchItemBinding -> HomePodSearchItemVH(binding)
-    else -> HomePodItemVH(binding as ViewPodItemBinding)
+    else -> HomePodItemVH(binding as ViewNewPodItemBinding)
   }
 
   override fun bindVH(
@@ -62,7 +68,11 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
   ) {
     when (holder) {
       is HomePodHeaderItemVH -> holder.bind(item as HomePodHeaderItem, _interface)
-      is HomePodItemVH -> holder.bind(item as HomePodTripItem, _interface)
+      is HomePodItemVH -> {
+        holder.bind(item as HomePodTripItem, _interface)
+        // Set isHPODSection flag in the binding
+        (holder.binding as? com.delhivery.axle.databinding.ViewNewPodItemBinding)?.isHPODSection = isHPODSection
+      }
       is HomePodWarningItemVH -> holder.bind(item as HomePodWarningItem, _interface)
       is HomePodTimeOutItemVH -> holder.bind(item as HomePodTimeoutItem, _interface)
       is HomePodSearchItemVH -> holder.bind(item as HomePodSearchItem, _interface)

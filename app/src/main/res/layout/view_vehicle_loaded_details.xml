@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="trip"
+            type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+            />
+        <variable
+            name="isHPODSection"
+            type="Boolean"
+            />
+        <import type="android.view.View" />
+        <import type="com.delhivery.axle.data.home.trips.TripStatus" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/vehicleNumber"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
+            android:text="@{trip.vehicleDetails.vehicleNo}"
+            android:fontFamily="sans-serif"
+            android:drawablePadding="@dimen/size_4dp"
+            android:drawableStart="@drawable/ic_vehicle"
+            android:textColor="@color/text_grey_v3"
+            android:textSize="@dimen/text_12sp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            tool:text="MH78JH8765"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/loadedDate"
+            app:layout_constraintTop_toTopOf="@+id/vehicleNumber"
+            app:layout_constraintStart_toStartOf="@+id/guideline_middle"
+            android:text="@{trip.loadedOnDate()}"
+            tool:text="Loaded on 22 Apr"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:drawablePadding="@dimen/size_4dp"
+            android:textColor="@color/text_grey_v3"
+            android:drawableStart="@drawable/ic_loaded_arrow"
+            android:fontFamily="sans-serif"
+            android:textSize="@dimen/text_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/receiveAmount"
+            app:layout_constraintTop_toBottomOf="@+id/vehicleNumber"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text=""
+            android:fontFamily="sans-serif"
+            android:drawablePadding="@dimen/size_4dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:drawableStart="@drawable/ic_recieve_amount"
+            android:textColor="@color/text_grey_v3"
+            android:textSize="@dimen/text_12sp"
+            tool:text="Receive Rs. 10000"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/lrNumberContainer"
+            app:layout_constraintTop_toBottomOf="@+id/vehicleNumber"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="@{(isHPODSection &amp;&amp; (trip.isEPODPending() || trip.isEPODRejected())) ? View.VISIBLE : View.GONE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/lrNumber"
+                android:text='@{"LR " + trip.formattedAllLRS()}'
+                tool:text="LR88278393"
+                android:drawablePadding="@dimen/size_4dp"
+                android:textColor="@color/text_grey_v3"
+                android:drawableStart="@drawable/ic_lr_number"
+                android:fontFamily="sans-serif"
+                android:textSize="@dimen/text_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icShowLR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_4dp"
+                android:src="@drawable/ic_show"
+                android:visibility="@{trip.hasMultipleLRs() ? View.VISIBLE : View.GONE}"
+                android:contentDescription="Show more LR numbers"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
