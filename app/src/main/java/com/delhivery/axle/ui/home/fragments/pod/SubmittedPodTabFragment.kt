@@ -89,6 +89,14 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
             // Stop refreshing when data is received
             binding.refreshLayout.isRefreshing = false
         })
+        
+        // Observe pod counts and pass to parent
+        viewModel.podCountsLiveData.observe(viewLifecycleOwner, Observer { podCounts ->
+            podCounts?.let {
+                // Get parent fragment's viewModel and update it
+                (parentFragment as? HomeNewPodFragment)?.viewModel?.podCountsLiveData?.postValue(it)
+            }
+        })
 
         // Initial data load
         refreshData()

@@ -155,4 +155,8 @@
   <color name="client_load_bg">#FFF7EB</color>
   <color name="client_load_color">#C47E09</color>
 
+  <!-- Information banner colors -->
+  <color name="information_bg">#F0F4FF</color>
+  <color name="information_font">#374D94</color>
+
 </resources>

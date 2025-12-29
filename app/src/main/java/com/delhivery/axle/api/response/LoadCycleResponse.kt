@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.response
 
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.data.home.trips.PodCounts
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -9,7 +10,8 @@ import com.google.gson.annotations.SerializedName
 data class SearchTripsResponse(
   @SerializedName("count") val total: Int,
   @SerializedName("has_next") val hasNext: Boolean,
-  @SerializedName("results") val trips: List<HomeTripsItemData>
+  @SerializedName("results") val trips: List<HomeTripsItemData>,
+  @SerializedName("pod_counts") val podCounts: PodCounts? = null
 )
 
 data class FrequentTripsResponse(

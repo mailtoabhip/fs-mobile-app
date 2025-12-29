@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeNewPodBinding
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
@@ -79,6 +80,24 @@ class HomeNewPodFragment : HomeBaseFragment<FragmentHomeNewPodBinding, HomePodVi
         // Set initial tab styling
         tab1?.let { updateTabStyle(it, true) }
         tab2?.let { updateTabStyle(it, false) }
+        
+        // Observe pod counts from ViewModel
+        viewModel.podCountsLiveData.observe(viewLifecycleOwner, Observer { podCounts ->
+            podCounts?.let {
+                updateTabCounts(it.pending_tab_count, it.submitted_tab_count)
+            }
+        })
+    }
+    
+    /**
+     * Update tab text with counts
+     */
+    private fun updateTabCounts(pendingCount: Int, submittedCount: Int) {
+        val tab1 = binding.tabLayout.getTabAt(0)
+        val tab2 = binding.tabLayout.getTabAt(1)
+        
+        tab1?.text = "Pending POD ($pendingCount)"
+        tab2?.text = "Submitted ($submittedCount)"
     }
 
     private fun updateTabStyle(tab: TabLayout.Tab, isSelected: Boolean) {

@@ -118,6 +118,14 @@ object BindingAdapters {
     view.setTextColor(ContextCompat.getColor(view.context, colorResId))
   }
 
+  @JvmStatic
+  @BindingAdapter("deadlineTextColor")
+  fun setDeadlineTextColor(view: TextView, colorResId: Int) {
+    if (colorResId != 0) {
+      view.setTextColor(ContextCompat.getColor(view.context, colorResId))
+    }
+  }
+
 
 //    @JvmStatic
 //    @BindingAdapter("bind:font")
