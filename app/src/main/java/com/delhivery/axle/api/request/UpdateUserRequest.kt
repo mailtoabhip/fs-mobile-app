@@ -31,9 +31,9 @@ data class UpdateUserRequest (
     @SerializedName("name_declaration") val nameDeclaration:String? =null,
     @SerializedName("vendor_policy_accepted") var vendorPolicyAccepted: Boolean?=null,
     @SerializedName("aadhaar_policy_accepted") var aadhaarPolicyAccepted: Boolean?=null,
-    @SerializedName("requested_deletion") var requestedDeletion: Boolean?=null
-
-
+    @SerializedName("requested_deletion") var requestedDeletion: Boolean?=null,
+    @SerializedName("vendor_type") var vendorType: String? = null,
+    @SerializedName("operational_route_type") var operationalRouteType: String? = null
 )
 
 data class OriginDestinations(

@@ -899,6 +899,19 @@
     <item>12–18 Hours</item>
   </string-array>
 
+  <!-- Basic Details Screen -->
+  <string name="label_fleet_owner_subtitle">I own and run trucks</string>
+  <string name="label_broker_subtitle">I arrange trucks for customers</string>
+  <string name="label_route_type_question">What kind of trips do you do?</string>
+  <string name="label_local_intracity">Local / Intracity</string>
+  <string name="label_local_subtitle">Trips within one city</string>
+  <string name="label_national_intercity">National / Intercity</string>
+  <string name="label_national_subtitle">Trips between cities or states</string>
+  <string name="label_city_operate">City where you operate</string>
+  <string name="hint_enter_city">Enter city</string>
+  <string name="label_truck_selection">Which trucks do you use?</string>
+  <string name="label_update_routes_later">You can update routes later from Preferred Routes.</string>
+
 
 <!-- Delayed Placement Card Strings -->
 <string name="placement_card_content_description">Placement card with delay information and details</string>
