@@ -339,7 +339,7 @@ class NavigationUtils @Inject constructor(
           userPrefs.hasLoggedIn = false
           val intent = Intent(activity, AccountDetailsActivity::class.java)
           this.navigate(intent,true,null)
-        }else if(userPrefs.getLanesPreference().isNullOrEmpty() && userPrefs.truckTypes.isNullOrEmpty() || userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty()){
+        }else if(userPrefs.getLanesPreference().isNullOrEmpty() && userPrefs.truckTypes.isNullOrEmpty() && userPrefs.onboardingStatus != "pending" && !( !userPrefs.vendorType.isNullOrEmpty() && !userPrefs.routeType.isNullOrEmpty() )){
           val intent = Intent(activity, BasicDetailsActivity::class.java)
           this.navigate(intent,true,null)
         }else if(userPrefs.pancard.isNullOrEmpty()) {
