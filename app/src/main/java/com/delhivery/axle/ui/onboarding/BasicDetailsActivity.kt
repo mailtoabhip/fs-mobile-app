@@ -181,11 +181,10 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         resetRouteTypeSelection()
         
         // Show route type section when vendor type is selected
-        val routeTypeSection = binding.root.findViewById<android.widget.LinearLayout>(R.id.layoutRouteTypeSection)
         if (selectedVendorType != null) {
-            routeTypeSection.visibility = android.view.View.VISIBLE
+            binding.layoutRouteTypeSection.visibility = android.view.View.VISIBLE
         } else {
-            routeTypeSection.visibility = android.view.View.GONE
+            binding.layoutRouteTypeSection.visibility = android.view.View.GONE
         }
 
         enableSubmit()
@@ -226,8 +225,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         selectedCityStates.clear()
         
         // Clear all input fields
-        val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
-        editLocalCity.setText("")
+        binding.editLocalCity.setText("")
         binding.editOrigin.setText("")
         binding.editDestination.setText("")
         
@@ -293,17 +291,15 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                 selectedCityStates.clear()
                 
                 // Ensure local city field is properly initialized
-                val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
                 if (selectedCity != null) {
-                    editLocalCity.setText(selectedCity!!.cityName().trim())
+                    binding.editLocalCity.setText(selectedCity!!.cityName().trim())
                 }
             }
             "national" -> {
                 binding.layoutLocalRoute.visibility = android.view.View.GONE
                 binding.layoutNationalRoute.visibility = android.view.View.VISIBLE
                 // Clear local data
-                val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
-                editLocalCity.setText("")
+                binding.editLocalCity.setText("")
                 selectedCity = null
             }
             else -> {
@@ -374,8 +370,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
     
     private fun setupLocationInputs() {
         // Local city input
-        val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
-        editLocalCity.setOnClickListener {
+        binding.editLocalCity.setOnClickListener {
             val bundle = Bundle()
             // Use "origin" type so SearchOriginCityActivity returns a result
             bundle.putString(CityType, "origin")
@@ -418,8 +413,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
     }
     
     private fun setupSubmitButton() {
-        val submitButton = binding.root.findViewById<android.widget.Button>(R.id.btn_submit_details)
-        submitButton.setOnClickListener {
+        binding.btnSubmitDetails.setOnClickListener {
             viewModel.vendorType = selectedVendorType
             viewModel.routeType = selectedRouteType
             
@@ -501,8 +495,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                 if (selectedRouteType == "local" && viewModel.selectedOrigin != null) {
                     // For local route, restore the single city field
                     selectedCity = viewModel.selectedOrigin
-                    val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
-                    editLocalCity.setText(viewModel.selectedOrigin!!.cityName().trim())
+                    binding.editLocalCity.setText(viewModel.selectedOrigin!!.cityName().trim())
                 } else if (selectedRouteType == "national" && viewModel.selectedOrigin != null) {
                     // For national route, restore origin and destination fields
                     binding.editOrigin.setText(viewModel.selectedOrigin!!.cityName().trim())
@@ -549,13 +542,12 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
                         if (selectedRouteType == "local") {
                             // For local/intracity route type - update local city field
                             selectedCity = city
-                            val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
                             
                             // Set the text
                             val cityName = city.cityName().trim()
-                            editLocalCity.setText(cityName)
+                            binding.editLocalCity.setText(cityName)
                             
-                            android.util.Log.d("BasicDetails", "Set LOCAL city: $cityName, text='${editLocalCity.text}'")
+                            android.util.Log.d("BasicDetails", "Set LOCAL city: $cityName, text='${binding.editLocalCity.text}'")
                         } else if (selectedRouteType == "national") {
                             // For national/intercity route type - update origin field
                             viewModel.selectedOrigin = city
@@ -591,22 +583,18 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         val isTruckSelected = selectedTruckTypes.isNotEmpty()
 
         val isLocationValid = when (selectedRouteType) {
-            "local" -> {
-                val editLocalCity = binding.root.findViewById<com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText>(R.id.edit_local_city)
-                !editLocalCity.text.isNullOrEmpty()
-            }
+            "local" -> !binding.editLocalCity.text.isNullOrEmpty()
             "national" -> !binding.editOrigin.text.isNullOrEmpty() &&
                     !binding.editDestination.text.isNullOrEmpty()
             else -> false
         }
 
-        val submitButton = binding.root.findViewById<android.widget.Button>(R.id.btn_submit_details)
         val isEnabled = isVendorTypeSelected && isLocationValid && isTruckSelected
         
-        submitButton.isEnabled = isEnabled
+        binding.btnSubmitDetails.isEnabled = isEnabled
         
         // Set text color: white when enabled, grey when disabled
-        submitButton.setTextColor(
+        binding.btnSubmitDetails.setTextColor(
             ContextCompat.getColor(
                 this,
                 if (isEnabled) R.color.white else R.color.sub_details_grey
