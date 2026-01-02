@@ -39,7 +39,7 @@
                     android:id="@+id/closingTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Closes in 2 hrs 15 min"
                     app:optionalTextColor="@{request}"
@@ -115,7 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:textSize="@dimen/text_14sp"
+                        android:textSize="@dimen/text_16sp"
                         android:text="@{request.originCityName()}"
                         tools:text ="Navi Mumbai"
                         android:textColor="#121A31"
@@ -129,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/size_2dp"
                         android:layout_marginStart="@dimen/size_4dp"
-                        android:textSize="@dimen/text_12sp"
+                        android:textSize="@dimen/text_14sp"
                         android:text="@{request.originPincodeState()}"
                         tools:text ="110006, Delhi"
                         android:textColor="#8F9198"
@@ -138,13 +138,20 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <View
+                    android:id="@+id/divider"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@color/bg_light_grey"
+                    app:layout_constraintTop_toBottomOf="@+id/closingTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/truckInfo"
                     android:layout_width="wrap_content"
                     android:paddingEnd="@dimen/size_11dp"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:drawablePadding="@dimen/size_4dp"
                     android:text="@{request.getTruckTypeAndNo()}"
@@ -159,7 +166,7 @@
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="~1000km/month"
                     android:text="@{request.intracityKms()}"

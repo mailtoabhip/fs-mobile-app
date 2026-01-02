@@ -3,6 +3,8 @@ package com.delhivery.axle.ui.home.fragments.bids
 import android.util.Log
 import androidx.databinding.ViewDataBinding
 import android.view.View
+import android.widget.TextView
+import android.text.TextUtils
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.data.bids.TransactionBidStatus
@@ -214,6 +216,9 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
     _interface: HomeBidsRVAdapterInterface,
     isLoadingData: Boolean
   ) {
+    // Apply dynamic constraints BEFORE setting data
+    applyDynamicWidthConstraints()
+    
     binding.request = item.data
     // Also set request for the included layouts explicitly
     binding.containerError.request = item.data
@@ -451,6 +456,50 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
       binding.advancePaymentPercentage.visibility = View.GONE
     }
   }
+
+  /**
+   * Apply dynamic width constraints to prevent overlapping on different devices
+   */
+  private fun applyDynamicWidthConstraints() {
+    // Calculate available width for card content
+    val availableWidth = context.calculateAvailableCardWidth(
+      cardMarginDp = 12,
+      contentPaddingDp = 16
+    )
+    
+    // Apply to truck info view - account for paddingEnd in layout
+    binding.truckInfo?.let { truckInfo ->
+      // Truck info has paddingEnd="@dimen/size_11dp", so reduce available width
+      truckInfo.maxWidth = (availableWidth * 0.60f).toInt()
+      truckInfo.ellipsize = TextUtils.TruncateAt.END
+      truckInfo.maxLines = 1  // Force single line
+      truckInfo.requestLayout()
+    }
+    
+    // Apply to payment type row
+    binding.paymentType?.let { paymentType ->
+      if (binding.advancePaymentPercentage.visibility == View.VISIBLE) {
+        val spacingPx = 4.dpToPx(context)
+        val actualWidth = availableWidth - spacingPx
+        
+        paymentType.maxWidth = (actualWidth * 0.65f).toInt()
+        binding.advancePaymentPercentage.maxWidth = (actualWidth * 0.35f).toInt()
+        
+        paymentType.ellipsize = TextUtils.TruncateAt.END
+        paymentType.maxLines = 1  // Force single line
+        binding.advancePaymentPercentage.ellipsize = TextUtils.TruncateAt.END
+        binding.advancePaymentPercentage.maxLines = 1  // Force single line
+        
+        paymentType.requestLayout()
+        binding.advancePaymentPercentage.requestLayout()
+      } else {
+        paymentType.maxWidth = (availableWidth * 0.95f).toInt()
+        paymentType.ellipsize = TextUtils.TruncateAt.END
+        paymentType.maxLines = 1  // Force single line
+        paymentType.requestLayout()
+      }
+    }
+  }
 }
 
 
@@ -464,6 +513,9 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
     _interface: HomeBidsRVAdapterInterface,
     isLoadingData: Boolean
   ) {
+    // Apply dynamic constraints BEFORE setting data
+    applyDynamicWidthConstraints()
+    
     binding.request = item.data
     binding.executePendingBindings()
 
@@ -648,6 +700,107 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       binding.strongBidCard.strongBidMessage.setTextColor(ContextCompat.getColor(context, R.color.status_confirmed))
     }
   }
+
+  /**
+   * Apply dynamic width constraints to prevent overlapping on different devices
+   * Calculates available width based on screen size and applies proportional max widths
+   * Accounts for spacing between views to prevent sticking
+   */
+  private fun applyDynamicWidthConstraints() {
+    // Calculate available width for card content
+    val availableWidth = context.calculateAvailableCardWidth(
+      cardMarginDp = 12,  // Card margins from layout
+      contentPaddingDp = 16  // Content padding from layout
+    )
+    
+    // Account for spacing between views
+    val spacingBetweenViews = 8.dpToPx(context) // Margin between city and pincode
+    val actualAvailableWidth = availableWidth - spacingBetweenViews
+    
+    // Apply to intracity city name section (fromCity + pincode_state)
+    binding.clFromToCity.findViewById<TextView>(R.id.fromCity)?.let { fromCity ->
+      binding.clFromToCity.findViewById<TextView>(R.id.pincode_state)?.let { pincodeState ->
+        // Distribute width with proper spacing: 62% for city name, 38% for pincode/state
+        fromCity.maxWidth = (actualAvailableWidth * 0.62f).toInt()
+        pincodeState.maxWidth = (actualAvailableWidth * 0.38f).toInt()
+        
+        // City name can wrap, pincode/state should be single line
+        fromCity.ellipsize = TextUtils.TruncateAt.END
+        pincodeState.ellipsize = TextUtils.TruncateAt.END
+        pincodeState.maxLines = 1  // Force single line for pincode/state
+      }
+    }
+    
+    // Apply to truck info and distance row
+    applyToTruckInfoRow(availableWidth)
+    
+    // Apply to payment type row
+    applyToPaymentRow(availableWidth)
+  }
+
+  /**
+   * Apply dynamic constraints to truck info and distance views
+   */
+  private fun applyToTruckInfoRow(availableWidth: Int) {
+    binding.truckInfo?.let { truckInfo ->
+      // If distance is visible, split the space
+      if (binding.distance.visibility == View.VISIBLE) {
+        val spacingPx = 8.dpToPx(context)
+        val actualWidth = availableWidth - spacingPx
+        
+        truckInfo.maxWidth = (actualWidth * 0.58f).toInt()
+        binding.distance.maxWidth = (actualWidth * 0.42f).toInt()
+        
+        // Force single line for both
+        truckInfo.ellipsize = TextUtils.TruncateAt.END
+        truckInfo.maxLines = 1
+        binding.distance.ellipsize = TextUtils.TruncateAt.END
+        binding.distance.maxLines = 1
+        
+        // Request layout to apply changes
+        truckInfo.requestLayout()
+        binding.distance.requestLayout()
+      } else {
+        // If only truck info, give it more space but still constrain
+        truckInfo.maxWidth = (availableWidth * 0.95f).toInt()
+        truckInfo.ellipsize = TextUtils.TruncateAt.END
+        truckInfo.maxLines = 1
+        truckInfo.requestLayout()
+      }
+    }
+  }
+
+  /**
+   * Apply dynamic constraints to payment type views
+   */
+  private fun applyToPaymentRow(availableWidth: Int) {
+    binding.paymentType?.let { paymentType ->
+      // If advance percentage is visible, split the space
+      if (binding.advancePaymentPercentage.visibility == View.VISIBLE) {
+        val spacingPx = 4.dpToPx(context)
+        val actualWidth = availableWidth - spacingPx
+        
+        paymentType.maxWidth = (actualWidth * 0.65f).toInt()
+        binding.advancePaymentPercentage.maxWidth = (actualWidth * 0.35f).toInt()
+        
+        // Force single line for payment fields
+        paymentType.ellipsize = TextUtils.TruncateAt.END
+        paymentType.maxLines = 1
+        binding.advancePaymentPercentage.ellipsize = TextUtils.TruncateAt.END
+        binding.advancePaymentPercentage.maxLines = 1
+        
+        // Request layout to apply changes
+        paymentType.requestLayout()
+        binding.advancePaymentPercentage.requestLayout()
+      } else {
+        // If only payment type, give it more space
+        paymentType.maxWidth = (availableWidth * 0.95f).toInt()
+        paymentType.ellipsize = TextUtils.TruncateAt.END
+        paymentType.maxLines = 1
+        paymentType.requestLayout()
+      }
+    }
+  }
 }
 
 /**
@@ -757,6 +910,9 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
     _interface: HomeBidsRVAdapterInterface,
     isLoadingData: Boolean
   ) {
+    // Apply dynamic constraints BEFORE setting data
+    applyDynamicWidthConstraints()
+    
     binding.request = item.data
     binding.executePendingBindings()
 
@@ -877,6 +1033,64 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
       binding.containerError.callIcon.visibility = View.VISIBLE
       binding.containerError.callIconContainer.isClickable = true
       binding.containerError.callIconContainer.isFocusable = true
+    }
+  }
+
+  /**
+   * Apply dynamic width constraints to prevent overlapping on different devices
+   */
+  private fun applyDynamicWidthConstraints() {
+    // Calculate available width for card content
+    val availableWidth = context.calculateAvailableCardWidth(
+      cardMarginDp = 12,
+      contentPaddingDp = 16
+    )
+    
+    // Apply to truck info view
+    binding.truckInfo?.let { truckInfo ->
+      truckInfo.maxWidth = (availableWidth * 0.60f).toInt()
+      truckInfo.ellipsize = TextUtils.TruncateAt.END
+      truckInfo.maxLines = 1  // Force single line
+      truckInfo.requestLayout()
+    }
+    
+    // Apply to payment type and advance percentage
+    binding.paymentType?.let { paymentType ->
+      if (binding.advancePaymentPercentage.visibility == View.VISIBLE) {
+        val spacingPx = 4.dpToPx(context)
+        val actualWidth = availableWidth - spacingPx
+        
+        paymentType.maxWidth = (actualWidth * 0.65f).toInt()
+        binding.advancePaymentPercentage.maxWidth = (actualWidth * 0.35f).toInt()
+        
+        paymentType.ellipsize = TextUtils.TruncateAt.END
+        paymentType.maxLines = 1  // Force single line
+        binding.advancePaymentPercentage.ellipsize = TextUtils.TruncateAt.END
+        binding.advancePaymentPercentage.maxLines = 1  // Force single line
+        
+        paymentType.requestLayout()
+        binding.advancePaymentPercentage.requestLayout()
+      } else {
+        paymentType.maxWidth = (availableWidth * 0.95f).toInt()
+        paymentType.ellipsize = TextUtils.TruncateAt.END
+        paymentType.maxLines = 1  // Force single line
+        paymentType.requestLayout()
+      }
+    }
+    
+    // Apply to supplier name and number
+    binding.supplierName?.let { supplierName ->
+      supplierName.maxWidth = (availableWidth * 0.95f).toInt()
+      supplierName.ellipsize = TextUtils.TruncateAt.END
+      supplierName.maxLines = 1  // Force single line
+      supplierName.requestLayout()
+    }
+    
+    binding.supplierNumber?.let { supplierNumber ->
+      supplierNumber.maxWidth = (availableWidth * 0.95f).toInt()
+      supplierNumber.ellipsize = TextUtils.TruncateAt.END
+      supplierNumber.maxLines = 1  // Force single line
+      supplierNumber.requestLayout()
     }
   }
 }

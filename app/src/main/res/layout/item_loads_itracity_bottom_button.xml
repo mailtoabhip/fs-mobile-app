@@ -58,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text = "@{`Accept For ` + request.formatedTargetPrice()}"
                 android:textColor="#FFFFFF"
+                tools:text="Plcae Bid"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
