@@ -7,6 +7,7 @@ import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.api.response.DelegationToken
 import com.delhivery.axle.config.AWSConfig
+import com.delhivery.axle.data.home.trips.PodCounts
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
@@ -40,6 +41,9 @@ class PendingPodViewModel @Inject constructor(
   var tripsCountLiveData = MutableLiveData<Int>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
   var delegationLiveData = MutableLiveData<Triple<DelegationToken, String, File>>()
+  
+  /* pod counts live data */
+  var podCountsLiveData = MutableLiveData<PodCounts>()
 
   var request = SearchRequest()
   var status: TripStatus = TruckUnloaded
@@ -101,6 +105,9 @@ class PendingPodViewModel @Inject constructor(
             offset += _res.trips.size
             hasMoreData = _res.hasNext
             total = _res.total
+            
+            // Update pod counts
+            _res.podCounts?.let { podCountsLiveData.postValue(it) }
 
             mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */

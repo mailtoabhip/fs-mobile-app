@@ -5,6 +5,7 @@ import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.repository.UserSearchLimit
 import com.delhivery.axle.api.request.SearchRequest
+import com.delhivery.axle.data.home.trips.PodCounts
 import com.delhivery.axle.data.home.trips.TripStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
@@ -42,6 +43,9 @@ class HomePodViewModel @Inject constructor(
   var tripsCountLiveData = MutableLiveData<Int>()
   var dataLoadingLiveData = MutableLiveData<Boolean>()
   val selectedLiveData = MutableLiveData<Int>()
+  
+  /* pod counts live data */
+  var podCountsLiveData = MutableLiveData<PodCounts>()
 
   var request = SearchRequest()
   var status: TripStatus = TruckUnloaded
@@ -97,6 +101,9 @@ class HomePodViewModel @Inject constructor(
             offset += _res.trips.size
             hasMoreData = _res.hasNext
             total = _res.total
+            
+            // Update pod counts
+            _res.podCounts?.let { podCountsLiveData.postValue(it) }
 
             mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
               /* remove progress item */

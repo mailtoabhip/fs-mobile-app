@@ -99,6 +99,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
   private var podStatus: PODStatus? = null
+  private var intermittentPayableAmount: Double? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -119,6 +120,9 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
 
     // Read pod_status from intent as enum
     podStatus = intent?.getSerializableExtra(PodStatusIntentKey) as? PODStatus
+    
+    // Read intermittent payable amount from intent
+    intermittentPayableAmount = intent?.getDoubleExtra(IntermittentPayableAmountKey, 0.0)?.takeIf { it > 0.0 }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -132,6 +136,9 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     binding.btnBack.setOnClickListener {
       onBackPressed()
     }
+    
+    // Set up information banner with amount
+    setupInformationBanner()
 
     val disabledTextColor = ContextCompat.getColor(this, R.color.disabled_button_text)
     val enabledTextColor = Color.WHITE
@@ -274,6 +281,19 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       null -> {
         badge.visibility = View.GONE
       }
+    }
+  }
+  
+  /**
+   * Setup information banner with intermittent payable amount
+   */
+  private fun setupInformationBanner() {
+    if (intermittentPayableAmount != null && intermittentPayableAmount!! > 0) {
+      binding.infoBanner.visibility = View.VISIBLE
+      val formattedAmount = com.delhivery.axle.utils.StringUtils.formatAmount(intermittentPayableAmount!!)
+      binding.infoText.text = "Please upload ePOD for this trip to receive ₹$formattedAmount"
+    } else {
+      binding.infoBanner.visibility = View.GONE
     }
   }
 
@@ -689,6 +709,7 @@ private const val TransactionIdIntentKey = "transaction_id"
 private const val ReachedTimeIntentKey = "reached_time"
 private const val UnloadedTimeIntentKey = "unloaded_time"
 private const val PodStatusIntentKey = "pod_status"
+private const val IntermittentPayableAmountKey = "intermittent_payable_amount"
 
 /**
  * Upload Image intent
@@ -698,10 +719,12 @@ fun uploadImageIntent(
   transactionId: String,
   reachedTime: String,
   unloadedTime: String,
-  podStatus: PODStatus? = null
+  podStatus: PODStatus? = null,
+  intermittentPayableAmount: Double? = null
 ) = Intent(context, UploadImageActivity::class.java).apply {
     putExtra(TransactionIdIntentKey, transactionId)
     putExtra(ReachedTimeIntentKey, reachedTime)
     putExtra(UnloadedTimeIntentKey, unloadedTime)
     podStatus?.let { putExtra(PodStatusIntentKey, it) }
+    intermittentPayableAmount?.let { putExtra(IntermittentPayableAmountKey, it) }
 }

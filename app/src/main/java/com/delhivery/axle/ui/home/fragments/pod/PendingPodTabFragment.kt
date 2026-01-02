@@ -102,6 +102,21 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
         viewModel.tripsCountLiveData.observe(viewLifecycleOwner, Observer { count ->
            // updatePodTypeCounts()
         })
+        
+        // Observe pod counts and pass to parent
+        viewModel.podCountsLiveData.observe(viewLifecycleOwner, Observer { podCounts ->
+            podCounts?.let {
+                // Update local counts
+                epodCount = it.epod_pending_count
+                hpodCount = it.hpod_pending_count
+                
+                // Update ePOD and hPOD tag text with counts
+                updatePodTypeCounts()
+                
+                // Get parent fragment's viewModel and update it
+                (parentFragment as? HomeNewPodFragment)?.viewModel?.podCountsLiveData?.postValue(it)
+            }
+        })
 
         // Set initial adapter state
         adapter.isHPODSection = (selectedPodType == PodType.HPOD)
@@ -195,21 +210,7 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
     }
 
     private fun updatePodTypeCounts() {
-        // Count EPOD and HPOD items from adapter
-        val items = adapter.itemsList()
-        epodCount = items.count { item ->
-            if (item.type == Pod) {
-                val trip = (item as HomePodTripItem).data
-                trip.tripStatus == TruckUnloaded.statusKey && !trip.hasPODTracking()
-            } else false
-        }
-        hpodCount = items.count { item ->
-            if (item.type == Pod) {
-                val trip = (item as HomePodTripItem).data
-                trip.tripStatus == EPodUploaded.statusKey && !trip.hasPODTracking()
-            } else false
-        }
-
+        // Update tag text with counts from API
         binding.tagEpod.text = "ePOD ($epodCount)"
         binding.tagHpod.text = "HPOD ($hpodCount)"
     }
@@ -266,7 +267,14 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                         PODStatus.UPLOAD, PODStatus.REJECT -> {
                             context?.let {
                                 startActivityForResult(
-                                    uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!, data.podAction()), REQCODE_UPLOAD_POD
+                                    uploadImageIntent(
+                                        it, 
+                                        data.transactionId, 
+                                        data.reachedTime!!, 
+                                        data.unloadingTime!!, 
+                                        data.podAction(),
+                                        data.intermittentPayableAmount
+                                    ), REQCODE_UPLOAD_POD
                                 )
                             }
                         }
@@ -290,7 +298,14 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                     } else {
                         context?.let {
                             startActivityForResult(
-                                uploadImageIntent(it, data.transactionId, data.reachedTime!!, data.unloadingTime!!,  podStatus = data.podAction()), REQCODE_UPLOAD_POD
+                                uploadImageIntent(
+                                    it, 
+                                    data.transactionId, 
+                                    data.reachedTime!!, 
+                                    data.unloadingTime!!, 
+                                    podStatus = data.podAction(),
+                                    intermittentPayableAmount = data.intermittentPayableAmount
+                                ), REQCODE_UPLOAD_POD
                             )
                         }
                 }

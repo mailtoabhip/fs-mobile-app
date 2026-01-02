@@ -4,17 +4,10 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
-import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.api.response.TripPaymentResponse
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.data.InTransit
-import com.delhivery.axle.data.TruckPlaced
 import com.delhivery.axle.data.fuelcards.FuelCardData
-import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.trips.TripStatus.*
-import com.delhivery.axle.ui.bids.TripType
-import com.delhivery.axle.ui.bids.ViewPaymentType
-import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.utils.ColorProviderUtils
 import com.delhivery.axle.utils.DatePatterns.CurrentStatusFormat
 import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
@@ -83,6 +76,10 @@ data class HomeTripsItemData(
   @SerializedName("placed_truck_passing") val placedTruckPassing: Double? = 0.0,
   @SerializedName("entity") val entity: String?,
   @SerializedName("sub_request_type")val subRequestType:String?,
+  @SerializedName("expected_epod_date") val expectedEpodDate: String? = null,
+  @SerializedName("expected_hpod_date") val expectedHpodDate: String? = null,
+  @SerializedName("expected_epod_resubmission_date") val expectedEpodResubmissionDate: String? = null,
+  @SerializedName("intermittent_payable_amount") val intermittentPayableAmount: Double? = null,
   var payment: TripPaymentResponse? = null,
   var fuelCard: FuelCardData? = null,
   var selected: Boolean = false,
@@ -92,7 +89,8 @@ data class HomeTripsItemData(
   var isSettled: Boolean = false,
   var paymentStatus: String = "",
   var addressExpand: Boolean = false,
-  var isDelayed: Boolean = false
+  var isDelayed: Boolean = false,
+  val pod_counts: PodCounts? = null
   ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
@@ -1106,6 +1104,141 @@ data class HomeTripsItemData(
   fun isEPODPending() = podStatusText() == "ePOD Pending"
   fun isEPODRejected() = podStatusText() == "ePOD Rejected"
 
+  /**
+   * Get deadline text for display in POD list item
+   * Shows "Due in X days" or "Overdue by X days" based on the section
+   * @param isHPODSection - true if showing HPOD deadline, false for EPOD deadline
+   */
+  fun getDeadlineText(isHPODSection: Boolean = false): String {
+    // For rejected ePODs, show resubmission deadline (24 hours)
+    if (isEPODRejected() && !isHPODSection) {
+      expectedEpodResubmissionDate?.let { deadline ->
+        return calculateDeadlineText(deadline, "Resubmit by ")
+      }
+    }
+    
+    // Show appropriate deadline based on section
+    val deadlineDate = if (isHPODSection) {
+      expectedHpodDate
+    } else {
+      expectedEpodDate
+    }
+    
+    return deadlineDate?.let { deadline ->
+      calculateDeadlineText(deadline, if (isHPODSection) "hPOD " else "ePOD ")
+    } ?: ""
+  }
+
+  /**
+   * Calculate and format deadline text with days remaining/overdue
+   * Note: Does not display text when deadline is today
+   * @param deadline ISO format date string
+   * @param prefix Prefix for the deadline text
+   * @return formatted deadline text, empty if due today
+   */
+  private fun calculateDeadlineText(deadline: String, prefix: String = ""): String {
+    return try {
+      val deadlineDate = DateUtils.parseDate(deadline, "yyyy-MM-dd'T'HH:mm:ss")
+      val currentDate = Date()
+      val diff = TimeUnit.MILLISECONDS.toDays(deadlineDate.time - currentDate.time).toInt()
+      
+      when {
+        diff > 1 -> "$diff days left to submit"
+        diff == 1 -> "1 day left to submit"
+        diff == 0 -> "" // Don't show text when due today
+        diff == -1 -> "Delayed by 1 day"
+        else -> "Delayed by ${-diff} days"
+      }
+    } catch (e: Exception) {
+      ""
+    }
+  }
+
+  /**
+   * Get deadline text color based on urgency
+   * @param isHPODSection - true if showing HPOD deadline
+   * @return color resource ID
+   */
+  @ColorRes
+  fun getDeadlineTextColor(isHPODSection: Boolean = false): Int {
+    val deadlineDate = if (isHPODSection) expectedHpodDate else expectedEpodDate
+    
+    return deadlineDate?.let { deadline ->
+      try {
+        val date = DateUtils.parseDate(deadline, "yyyy-MM-dd'T'HH:mm:ss")
+        val diff = TimeUnit.MILLISECONDS.toDays(date.time - Date().time).toInt()
+        
+        when {
+          diff < 0 -> R.color.colorDelhiveryRed
+          else -> R.color.sub_details_grey
+        }
+      } catch (e: Exception) {
+        R.color.sub_details_grey
+      }
+    } ?: R.color.sub_details_grey
+  }
+
+  /**
+   * Check if deadline should be visible
+   * Show deadline for truck_unloaded and epod_uploaded statuses
+   * Hide when deadline is today
+   */
+  fun shouldShowDeadline(isHPODSection: Boolean = false): Int {
+    val hasDeadline = if (isHPODSection) {
+      expectedHpodDate != null
+    } else {
+      expectedEpodDate != null || expectedEpodResubmissionDate != null
+    }
+    
+    val isRelevantStatus = tripStatus == TruckUnloaded.statusKey || tripStatus == EPodUploaded.statusKey
+    
+    // Check if deadline is today - if so, don't show
+    val isDueToday = try {
+      val deadlineDate = if (isHPODSection) {
+        expectedHpodDate
+      } else {
+        expectedEpodDate ?: expectedEpodResubmissionDate
+      }
+      
+      deadlineDate?.let { deadline ->
+        val date = DateUtils.parseDate(deadline, "yyyy-MM-dd'T'HH:mm:ss")
+        val diff = TimeUnit.MILLISECONDS.toDays(date.time - Date().time).toInt()
+        diff == 0
+      } ?: false
+    } catch (e: Exception) {
+      false
+    }
+    
+    return if (hasDeadline && isRelevantStatus && !hasPODTracking() && !isDueToday) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+  }
+
+    fun showReceiveAmount() : Boolean {
+        return intermittentPayableAmount != null && intermittentPayableAmount!! > 0
+    }
+
+    fun formatReceiveAmount() : String {
+        return if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
+            ""
+        } else {
+            val formattedAmount = StringUtils.formatAmount(intermittentPayableAmount!!)
+            "Please upload ePOD for this trip to receive ₹$formattedAmount"
+        }
+    }
+
+    fun formatListReceiveAmount() : String {
+        return if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
+            ""
+        } else {
+            val formattedAmount = StringUtils.formatAmount(intermittentPayableAmount!!)
+            "Receive ₹$formattedAmount"
+        }
+    }
+
+
   fun podActionText(isHPODSection: Boolean = false): String{
     return when {
       hasPODTracking() ->"Update Details"
@@ -1173,6 +1306,34 @@ data class HomeTripsItemData(
       }
     } ?: ""
   }
+
+    /**
+     * @return pending tab count from pod_counts
+     */
+    fun pendingTabCount(): Int {
+        return pod_counts?.pending_tab_count ?: 0
+    }
+
+    /**
+     * @return ePOD pending count from pod_counts
+     */
+    fun epodPendingCount(): Int {
+        return pod_counts?.epod_pending_count ?: 0
+    }
+
+    /**
+     * @return hPOD pending count from pod_counts
+     */
+    fun hpodPendingCount(): Int {
+        return pod_counts?.hpod_pending_count ?: 0
+    }
+
+    /**
+     * @return submitted tab count from pod_counts
+     */
+    fun submittedTabCount(): Int {
+        return pod_counts?.submitted_tab_count ?: 0
+    }
 
 }
 
@@ -1326,4 +1487,11 @@ enum class PaymentStatus(
 data class FuelUserSpinnerOptions(
         val userName: String,
         val userType: String = ""
+)
+
+data class PodCounts(
+    val pending_tab_count: Int,
+    val epod_pending_count: Int,
+    val hpod_pending_count: Int,
+    val submitted_tab_count: Int
 )

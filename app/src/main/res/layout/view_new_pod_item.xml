@@ -45,15 +45,16 @@
                 android:id="@+id/tv_status_duration"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/divider"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="@{trip.getDeadlineText(isHPODSection)}"
                 android:layout_marginTop="@dimen/size_8dp"
-                android:visibility="@{trip.podStatusTextVisibility()}"
+                android:visibility="@{trip.shouldShowDeadline(isHPODSection)}"
                 android:textSize="@dimen/text_size_12sp"
-                android:textColor="@color/colorDelhiveryRed"
+                app:deadlineTextColor="@{trip.getDeadlineTextColor(isHPODSection)}"
                 android:contentDescription="@string/delay_status_content_description"
-                tool:text="Delayed by 3 days" />
+                tool:text="ePOD due in 3 days" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvPodStatus"

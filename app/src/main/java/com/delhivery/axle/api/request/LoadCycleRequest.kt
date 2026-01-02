@@ -30,6 +30,7 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
   var operationTripStatus: String?= null
   var sortBy: String?= null
   var sortDir: String?= null
+    var includePodCounts: Boolean = true
 
   constructor(
     vehicleNumber: String? = null,
@@ -109,6 +110,9 @@ class SearchRequest() : BaseKeyTypeModel<String>() {
     sortDir?.let {
       jsonObject.addProperty("sort_dir", sortDir)
     }
+
+    jsonObject.addProperty("include_pod_counts", includePodCounts)
+    
     return jsonObject
   }
 
