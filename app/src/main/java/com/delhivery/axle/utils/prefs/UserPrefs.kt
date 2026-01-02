@@ -285,6 +285,22 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     get() = prefs.getString(PrefKeys.TruckTypes, "")
 
   /**
+   * Vendor type (fleet_owner or broker)
+   */
+  var vendorType: String?
+    set(value) = editor.putString(PrefKeys.VendorType, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.VendorType, null)
+
+  /**
+   * Route type (local or national)
+   */
+  var routeType: String?
+    set(value) = editor.putString(PrefKeys.RouteType, value)
+            .apply()
+    get() = prefs.getString(PrefKeys.RouteType, null)
+
+  /**
    * Vendor type (Fleet / Orion / Internal)
    */
   var demandType: String
@@ -921,6 +937,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     editor.remove(PrefKeys.TruckTypes)
             .apply()
+    editor.remove(PrefKeys.VendorType)
+            .apply()
+    editor.remove(PrefKeys.RouteType)
+            .apply()
     editor.remove(PrefKeys.DemandType)
     editor.remove(PrefKeys.LogoutStatus)
             .apply()
@@ -1306,6 +1326,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val IsParent = "is_parent"
     const val UserType = "user_type"
     const val TruckTypes = "truck_types"
+    const val VendorType = "vendor_type"
+    const val RouteType = "route_type"
     const val DemandType = "demand_type"
     const val LogoutStatus = "logout_status"
     const val StartTime = "start_time"

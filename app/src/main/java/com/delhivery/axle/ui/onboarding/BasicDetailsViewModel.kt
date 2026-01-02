@@ -1,10 +1,7 @@
 package com.delhivery.axle.ui.onboarding
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.AuthenticationRepository
 import com.delhivery.axle.api.repository.LoadboardRepository
-import com.delhivery.axle.api.repository.NotificationRepository
 import com.delhivery.axle.api.request.OriginDestinations
 import com.delhivery.axle.api.request.RouteDetails
 import com.delhivery.axle.api.request.UpdateUserRequest
@@ -14,11 +11,9 @@ import com.delhivery.axle.data.StateModel
 import com.delhivery.axle.data.UserCity
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.searchcitystate.selectedCityStates
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
-import com.delhivery.axle.utils.prefs.GlobalPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -31,6 +26,8 @@ class BasicDetailsViewModel @Inject constructor(
   var selectedOrigin: CityModel? = null
   var selectedTrucks = ArrayList<String>()
   var lanePreferenceList = ArrayList<OriginDestinations>()
+  var vendorType: String? = null
+  var routeType: String? = null
 
   fun updateUserDetails() {
     if (!isConnected) return
@@ -48,12 +45,28 @@ class BasicDetailsViewModel @Inject constructor(
         lanePreferenceList.add(originDestinations)
       }
     }
+    
+    // Map vendor type to API format
+    val vendorTypeValue = when (vendorType) {
+      "fleet_owner" -> "Fleet Owner"
+      "broker" -> "Broker"
+      else -> null
+    }
+    
+    // Map route type to API format
+    val operationalRouteTypeValue = when (routeType) {
+      "local" -> "Intracity"
+      "national" -> "Intercity"
+      else -> null
+    }
+    
     compositeDisposable += loadboardRepository.updateUser(
       UpdateUserRequest(
         phoneNumber = userPrefs.phoneNumber!!,
         routePreferences = lanePreferenceList,
-        truckPreferences = selectedTrucks
-
+        truckPreferences = selectedTrucks,
+        vendorType = vendorTypeValue,
+        operationalRouteType = operationalRouteTypeValue
       )
     )
       .onBackground()

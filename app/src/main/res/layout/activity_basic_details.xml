@@ -1,44 +1,348 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_red_bg">
+        android:background="@color/light_red_bg"
+        android:fitsSystemWindows="true">
+
+        <!-- Progress Steps -->
         <include
             android:id="@+id/progress_step_layout"
+            layout="@layout/view_progress_steps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            layout="@layout/view_progress_steps"
-            android:layout_marginBottom="@dimen/size_24dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Scrollable Content -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            bind:layout_constraintTop_toBottomOf="@+id/progress_step_layout">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/size_24dp"
-                android:paddingEnd="@dimen/size_24dp"
-                android:paddingBottom="@dimen/size_24dp">
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/progress_step_layout"
+            app:layout_constraintBottom_toTopOf="@id/bottom_button_container">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/size_24dp">
+
+                <!-- HEADER -->
+                <TextView
+                    android:id="@+id/tvHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_tellus"
+                    android:textSize="@dimen/text_20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/heading_black" />
+
+                <!-- ===== Vendor Type ===== -->
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardFleetOwner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    bind:layout_constraintStart_toStartOf="parent"
-                    bind:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="@dimen/size_20dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="@dimen/size_2dp"
+                    app:strokeWidth="@dimen/size_1dp"
+                    app:strokeColor="@color/light_grey"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/size_20dp">
+
+                        <ImageView
+                            android:id="@+id/imgFleetOwner"
+                            android:layout_width="@dimen/size_48dp"
+                            android:layout_height="@dimen/size_48dp"
+                            android:src="@drawable/ic_icon_vehicle_grey"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvFleetOwnerTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_owner"
+                            android:textSize="@dimen/text_16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/heading_black"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            app:layout_constraintStart_toEndOf="@id/imgFleetOwner"
+                            app:layout_constraintTop_toTopOf="@id/imgFleetOwner"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvFleetOwnerSubtitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_fleet_owner_subtitle"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/sub_details_grey"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            app:layout_constraintStart_toEndOf="@id/imgFleetOwner"
+                            app:layout_constraintTop_toBottomOf="@id/tvFleetOwnerTitle"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBroker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="@dimen/size_2dp"
+                    app:strokeWidth="@dimen/size_1dp"
+                    app:strokeColor="@color/light_grey"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/size_20dp">
+
+                        <ImageView
+                            android:id="@+id/imgBroker"
+                            android:layout_width="@dimen/size_48dp"
+                            android:layout_height="@dimen/size_48dp"
+                            android:src="@drawable/ic_team_members"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvBrokerTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_broker"
+                            android:textSize="@dimen/text_16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/heading_black"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            app:layout_constraintStart_toEndOf="@id/imgBroker"
+                            app:layout_constraintTop_toTopOf="@id/imgBroker"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvBrokerSubtitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_broker_subtitle"
+                            android:textSize="@dimen/text_14sp"
+                            android:textColor="@color/sub_details_grey"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            app:layout_constraintStart_toEndOf="@id/imgBroker"
+                            app:layout_constraintTop_toBottomOf="@id/tvBrokerTitle"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ===== Route Type Section (Initially Hidden) ===== -->
+                <LinearLayout
+                    android:id="@+id/layoutRouteTypeSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
-      android:fitsSystemWindows="true">
+                    android:visibility="gone">
+
+                    <!-- Route Type Title -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_32dp"
+                        android:text="@string/label_route_type_question"
+                        android:textSize="@dimen/text_18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/heading_black" />
+
+                    <!-- Local / National cards -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardLocal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_20dp"
+                        app:cardCornerRadius="@dimen/size_12dp"
+                        app:cardElevation="@dimen/size_2dp"
+                        app:strokeWidth="@dimen/size_1dp"
+                        app:strokeColor="@color/light_grey"
+                        app:cardBackgroundColor="@color/white">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/size_20dp">
+
+                            <ImageView
+                                android:id="@+id/imgLocal"
+                                android:layout_width="@dimen/size_48dp"
+                                android:layout_height="@dimen/size_48dp"
+                                android:src="@drawable/ic_location_pincode_grey"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tvLocalTitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_local_intracity"
+                                android:textSize="@dimen/text_16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/heading_black"
+                                android:layout_marginStart="@dimen/size_16dp"
+                                app:layout_constraintStart_toEndOf="@id/imgLocal"
+                                app:layout_constraintTop_toTopOf="@id/imgLocal"
+                                app:layout_constraintEnd_toEndOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tvLocalSubtitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_local_subtitle"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/sub_details_grey"
+                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                app:layout_constraintStart_toEndOf="@id/imgLocal"
+                                app:layout_constraintTop_toBottomOf="@id/tvLocalTitle"
+                                app:layout_constraintEnd_toEndOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardNational"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_12dp"
+                        app:cardCornerRadius="@dimen/size_12dp"
+                        app:cardElevation="@dimen/size_2dp"
+                        app:strokeWidth="@dimen/size_1dp"
+                        app:strokeColor="@color/light_grey"
+                        app:cardBackgroundColor="@color/white">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/size_20dp">
+
+                            <ImageView
+                                android:id="@+id/imgNational"
+                                android:layout_width="@dimen/size_48dp"
+                                android:layout_height="@dimen/size_48dp"
+                                android:src="@drawable/ic_route_info"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tvNationalTitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_national_intercity"
+                                android:textSize="@dimen/text_16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/heading_black"
+                                android:layout_marginStart="@dimen/size_16dp"
+                                app:layout_constraintStart_toEndOf="@id/imgNational"
+                                app:layout_constraintTop_toTopOf="@id/imgNational"
+                                app:layout_constraintEnd_toEndOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tvNationalSubtitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_national_subtitle"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/sub_details_grey"
+                                android:layout_marginStart="@dimen/size_16dp"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                app:layout_constraintStart_toEndOf="@id/imgNational"
+                                app:layout_constraintTop_toBottomOf="@id/tvNationalTitle"
+                                app:layout_constraintEnd_toEndOf="parent" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <!-- ===== Route Details + Truck Preference (Initially Hidden) ===== -->
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/layoutRouteAndTruckDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/size_20dp">
+
+                    <!-- ================= LOCAL ROUTE (ONLY 1 FIELD) ================= -->
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/layoutLocalRoute"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_city_operate"
+                            android:textColor="@color/heading_black"
+                            android:textSize="@dimen/text_14sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="@dimen/size_20dp"/>
+
+                        <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                            android:id="@+id/edit_local_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/edit_text_height"
+                            android:background="@drawable/bg_login_edit"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:hint="@string/hint_enter_city"
+                            android:textColorHint="@color/color_hint"
+                            android:textSize="@dimen/text_16sp"
+                            android:textColor="@color/heading_black"
+                            android:paddingStart="@dimen/size_12dp"
+                            android:paddingEnd="@dimen/size_12dp"
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:focusable="false"
+                            android:enabled="true"
+                            android:longClickable="false"/>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/layoutNationalRoute"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/label_origin"
                         android:textColor="@color/heading_black"
                         android:layout_marginTop="@dimen/size_20dp"
-                        android:textStyle="normal"
+                        android:textStyle="bold"
                         android:textSize="@dimen/text_14sp"/>
                     <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                         android:id="@+id/edit_origin"
@@ -65,7 +369,7 @@
                         android:text="@string/label_destination"
                         android:textColor="@color/heading_black"
                         android:layout_marginTop="@dimen/size_20dp"
-                        android:textStyle="normal"
+                        android:textStyle="bold"
                         android:textSize="@dimen/text_14sp"/>
                     <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
                         android:id="@+id/edit_destination"
@@ -96,177 +400,195 @@
                         android:textStyle="normal"
                         android:textSize="@dimen/text_12sp"/>
 
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <!-- Truck Selection - Shared for both Local and National -->
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/label_truck_preference"
+                        android:text="@string/label_truck_selection"
                         android:textColor="@color/heading_black"
                         android:layout_marginTop="@dimen/size_20dp"
-                        android:textStyle="normal"
+                        android:textStyle="bold"
                         android:textSize="@dimen/text_14sp"/>
-                   <androidx.appcompat.widget.LinearLayoutCompat
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:orientation="horizontal"
-                       android:layout_marginTop="@dimen/size_10dp"
-                       android:weightSum="3">
-                       <androidx.constraintlayout.widget.ConstraintLayout
-                           android:layout_width="0dp"
-                           android:layout_height="wrap_content"
-                           android:layout_weight="1">
 
-                           <androidx.appcompat.widget.AppCompatImageView
-                               android:id="@+id/img_open_truck"
-                               android:layout_width="@dimen/size_64dp"
-                               android:layout_height="@dimen/size_64dp"
-                               bind:layout_constraintTop_toTopOf="parent"
-                               bind:layout_constraintBottom_toBottomOf="parent"
-                               bind:layout_constraintStart_toStartOf="parent"
-                               android:padding="@dimen/size_6dp"
-                               bind:layout_constraintEnd_toEndOf="parent"
-                               android:background="@drawable/bg_select_truck"
-                               bind:srcCompat="@drawable/open_truck"/>
-                           <androidx.constraintlayout.widget.Guideline
-                               android:id="@+id/guideline1"
-                               android:layout_width="0dp"
-                               android:layout_height="0dp"
-                               android:orientation="horizontal"
-                               bind:layout_constraintGuide_percent="0.25" />
-                           <androidx.appcompat.widget.AppCompatImageButton
-                               android:id="@+id/check_box_open_body"
-                               android:background="@drawable/checkbox_selector"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               bind:layout_constraintEnd_toEndOf="@id/img_open_truck"
-                               bind:layout_constraintHorizontal_bias="1.2"
-                               bind:layout_constraintStart_toStartOf="@id/img_open_truck"
-                               bind:layout_constraintTop_toTopOf="@+id/guideline1"
-                               bind:layout_constraintBottom_toBottomOf="@+id/guideline1" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/size_10dp"
+                        android:weightSum="3">
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
 
-                           <androidx.appcompat.widget.AppCompatTextView
-                                 android:id="@+id/txt_open_body"
-                                  android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
-                                  android:text="@string/label_open"
-                                  bind:layout_constraintTop_toBottomOf="@+id/img_open_truck"
-                                  bind:layout_constraintStart_toStartOf="parent"
-                                 bind:layout_constraintEnd_toEndOf="parent"
-                                  android:textSize="@dimen/text_12sp"
-                                  android:textColor="@color/heading_black"
-                                 android:layout_marginTop="@dimen/size_10dp"
-                                  />
-                       </androidx.constraintlayout.widget.ConstraintLayout>
-                       <androidx.constraintlayout.widget.ConstraintLayout
-                           android:layout_width="0dp"
-                           android:layout_height="wrap_content"
-                           android:layout_weight="1">
-                           <androidx.appcompat.widget.AppCompatImageView
-                               android:id="@+id/img_container"
-                               android:layout_width="@dimen/size_64dp"
-                               android:layout_height="@dimen/size_64dp"
-                               bind:layout_constraintTop_toTopOf="parent"
-                               bind:layout_constraintStart_toStartOf="parent"
-                               bind:layout_constraintEnd_toEndOf="parent"
-                               bind:layout_constraintBottom_toBottomOf="parent"
-                               android:padding="@dimen/size_6dp"
-                               android:background="@drawable/bg_select_truck"
-                               bind:srcCompat="@drawable/container_truck"/>
-                           <androidx.constraintlayout.widget.Guideline
-                               android:id="@+id/guideline2"
-                               android:layout_width="0dp"
-                               android:layout_height="0dp"
-                               android:orientation="horizontal"
-                               bind:layout_constraintGuide_percent="0.25" />
-                           <androidx.appcompat.widget.AppCompatImageButton
-                               android:id="@+id/check_box_container"
-                               android:background="@drawable/checkbox_selector"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               bind:layout_constraintEnd_toEndOf="@id/img_container"
-                               bind:layout_constraintHorizontal_bias="1.2"
-                               bind:layout_constraintStart_toStartOf="@id/img_container"
-                               bind:layout_constraintTop_toTopOf="@id/guideline2"
-                               bind:layout_constraintBottom_toBottomOf="@id/guideline2" />
-                           <androidx.appcompat.widget.AppCompatTextView
-                               android:id="@+id/txt_container"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               android:text="@string/label_closed"
-                               bind:layout_constraintTop_toBottomOf="@+id/img_container"
-                               bind:layout_constraintStart_toStartOf="parent"
-                               bind:layout_constraintEnd_toEndOf="parent"
-                               android:textSize="@dimen/text_12sp"
-                               android:textColor="@color/heading_black"
-                               android:layout_marginTop="@dimen/size_10dp"
-                               />
-                       </androidx.constraintlayout.widget.ConstraintLayout>
-                       <androidx.constraintlayout.widget.ConstraintLayout
-                           android:layout_width="0dp"
-                           android:layout_height="wrap_content"
-                           android:layout_weight="1">
-                           <androidx.appcompat.widget.AppCompatImageView
-                               android:id="@+id/img_trailer"
-                               android:layout_width="@dimen/size_64dp"
-                               android:layout_height="@dimen/size_64dp"
-                               bind:layout_constraintTop_toTopOf="parent"
-                               bind:layout_constraintStart_toStartOf="parent"
-                               bind:layout_constraintEnd_toEndOf="parent"
-                               bind:layout_constraintBottom_toBottomOf="parent"
-                               android:padding="@dimen/size_6dp"
-                               android:background="@drawable/bg_select_truck"
-                               bind:srcCompat="@drawable/trailer"/>
-                           <androidx.constraintlayout.widget.Guideline
-                               android:id="@+id/guideline3"
-                               android:layout_width="0dp"
-                               android:layout_height="0dp"
-                               android:orientation="horizontal"
-                               bind:layout_constraintGuide_percent="0.25" />
-                           <androidx.appcompat.widget.AppCompatImageButton
-                               android:id="@+id/check_box_trailer"
-                               android:background="@drawable/checkbox_selector"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               bind:layout_constraintEnd_toEndOf="@id/img_trailer"
-                               bind:layout_constraintHorizontal_bias="1.2"
-                               bind:layout_constraintStart_toStartOf="@id/img_trailer"
-                               bind:layout_constraintTop_toTopOf="@id/guideline3"
-                               bind:layout_constraintBottom_toBottomOf="@id/guideline3" />
-                           <androidx.appcompat.widget.AppCompatTextView
-                               android:id="@+id/txt_trailer"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               android:text="@string/label_trailer"
-                               bind:layout_constraintTop_toBottomOf="@+id/img_trailer"
-                               bind:layout_constraintStart_toStartOf="parent"
-                               bind:layout_constraintEnd_toEndOf="parent"
-                               android:textSize="@dimen/text_12sp"
-                               android:textColor="@color/heading_black"
-                               android:layout_marginTop="@dimen/size_10dp"
-                               />
-                       </androidx.constraintlayout.widget.ConstraintLayout>
-                   </androidx.appcompat.widget.LinearLayoutCompat>
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/img_open_truck"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_64dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                android:padding="@dimen/size_6dp"
+                                bind:layout_constraintEnd_toEndOf="parent"
+                                android:background="@drawable/bg_select_truck"
+                                bind:srcCompat="@drawable/open_truck"/>
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline1"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:orientation="horizontal"
+                                bind:layout_constraintGuide_percent="0.25" />
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/check_box_open_body"
+                                android:background="@drawable/checkbox_selector"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                bind:layout_constraintEnd_toEndOf="@id/img_open_truck"
+                                bind:layout_constraintHorizontal_bias="1.2"
+                                bind:layout_constraintStart_toStartOf="@id/img_open_truck"
+                                bind:layout_constraintTop_toTopOf="@+id/guideline1"
+                                bind:layout_constraintBottom_toBottomOf="@+id/guideline1" />
 
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txt_open_body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_open"
+                                bind:layout_constraintTop_toBottomOf="@+id/img_open_truck"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                bind:layout_constraintEnd_toEndOf="parent"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/heading_black"
+                                android:layout_marginTop="@dimen/size_10dp"
+                                />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/img_container"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_64dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                bind:layout_constraintEnd_toEndOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent"
+                                android:padding="@dimen/size_6dp"
+                                android:background="@drawable/bg_select_truck"
+                                bind:srcCompat="@drawable/container_truck"/>
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline2"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:orientation="horizontal"
+                                bind:layout_constraintGuide_percent="0.25" />
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/check_box_container"
+                                android:background="@drawable/checkbox_selector"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                bind:layout_constraintEnd_toEndOf="@id/img_container"
+                                bind:layout_constraintHorizontal_bias="1.2"
+                                bind:layout_constraintStart_toStartOf="@id/img_container"
+                                bind:layout_constraintTop_toTopOf="@id/guideline2"
+                                bind:layout_constraintBottom_toBottomOf="@id/guideline2" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txt_container"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_closed"
+                                bind:layout_constraintTop_toBottomOf="@+id/img_container"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                bind:layout_constraintEnd_toEndOf="parent"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/heading_black"
+                                android:layout_marginTop="@dimen/size_10dp"
+                                />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/img_trailer"
+                                android:layout_width="@dimen/size_64dp"
+                                android:layout_height="@dimen/size_64dp"
+                                bind:layout_constraintTop_toTopOf="parent"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                bind:layout_constraintEnd_toEndOf="parent"
+                                bind:layout_constraintBottom_toBottomOf="parent"
+                                android:padding="@dimen/size_6dp"
+                                android:background="@drawable/bg_select_truck"
+                                bind:srcCompat="@drawable/trailer"/>
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline3"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:orientation="horizontal"
+                                bind:layout_constraintGuide_percent="0.25" />
+                            <androidx.appcompat.widget.AppCompatImageButton
+                                android:id="@+id/check_box_trailer"
+                                android:background="@drawable/checkbox_selector"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                bind:layout_constraintEnd_toEndOf="@id/img_trailer"
+                                bind:layout_constraintHorizontal_bias="1.2"
+                                bind:layout_constraintStart_toStartOf="@id/img_trailer"
+                                bind:layout_constraintTop_toTopOf="@id/guideline3"
+                                bind:layout_constraintBottom_toBottomOf="@id/guideline3" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txt_trailer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/label_trailer"
+                                bind:layout_constraintTop_toBottomOf="@+id/img_trailer"
+                                bind:layout_constraintStart_toStartOf="parent"
+                                bind:layout_constraintEnd_toEndOf="parent"
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/heading_black"
+                                android:layout_marginTop="@dimen/size_10dp"
+                                />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/btn_layout"
-                android:layout_width="match_parent"
+
+        <!-- Bottom Button -->
+        <LinearLayout
+            android:id="@+id/bottom_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                android:paddingStart="@dimen/size_24dp"
-                android:paddingEnd="@dimen/size_24dp"
-                android:paddingBottom="@dimen/size_16dp">
-        <androidx.appcompat.widget.AppCompatButton
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/size_12dp"
+                android:text="@string/label_update_routes_later"
+                android:textColor="@color/sub_details_grey"
+                android:textSize="@dimen/text_14sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_submit_details"
-                style="@style/ActionButton"
-                android:enabled="false"
-                android:textAllCaps="false"
-                bind:layout_constraintBottom_toBottomOf="parent"
                 android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_continue_button"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                android:enabled="false"
                 android:text="@string/action_save_proceed"
-            />
-         </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
