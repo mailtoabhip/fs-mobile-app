@@ -1217,25 +1217,85 @@ data class HomeTripsItemData(
   }
 
     fun showReceiveAmount() : Boolean {
-        return intermittentPayableAmount != null && intermittentPayableAmount!! > 0
+        // Hide if amount is null or not positive
+        if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
+            return false
+        }
+        
+        // Hide if ePOD is verified
+        if (isEpodVerified == true) {
+            return false
+        }
+        
+        // Hide if HPOD is submitted (has POD tracking)
+        if (hasPODTracking()) {
+            return false
+        }
+        
+        return true
     }
 
     fun formatReceiveAmount() : String {
-        return if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
-            ""
-        } else {
-            val formattedAmount = StringUtils.formatAmount(intermittentPayableAmount!!)
-            "Please upload ePOD for this trip to receive ₹$formattedAmount"
+        // Return empty if amount is null or not positive
+        if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
+            return ""
         }
+        
+        // Return empty if ePOD is verified
+        if (isEpodVerified == true) {
+            return ""
+        }
+        
+        // Return empty if HPOD is submitted (has POD tracking)
+        if (hasPODTracking()) {
+            return ""
+        }
+        
+        val formattedAmount = StringUtils.formatAmount(intermittentPayableAmount!!)
+        return "Please upload ePOD for this trip to receive ₹$formattedAmount"
     }
 
     fun formatListReceiveAmount() : String {
-        return if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
-            ""
-        } else {
-            val formattedAmount = StringUtils.formatAmount(intermittentPayableAmount!!)
-            "Receive ₹$formattedAmount"
+        // Return empty if amount is null or not positive
+        if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
+            return ""
         }
+        
+        // Return empty if ePOD is verified
+        if (isEpodVerified == true) {
+            return ""
+        }
+        
+        // Return empty if HPOD is submitted (has POD tracking)
+        if (hasPODTracking()) {
+            return ""
+        }
+        
+        val formattedAmount = StringUtils.formatAmount(intermittentPayableAmount!!)
+        return "Receive ₹$formattedAmount"
+    }
+
+    /**
+     * Visibility for intermittent payable amount
+     * Hide when ePOD is verified or HPOD is submitted
+     */
+    fun intermittentPayableAmountVisibility(): Int {
+        // Hide if amount is null or not positive
+        if (intermittentPayableAmount == null || intermittentPayableAmount!! <= 0) {
+            return View.GONE
+        }
+        
+        // Hide if ePOD is verified
+        if (isEpodVerified == true) {
+            return View.GONE
+        }
+        
+        // Hide if HPOD is submitted (has POD tracking)
+        if (hasPODTracking()) {
+            return View.GONE
+        }
+        
+        return View.VISIBLE
     }
 
 

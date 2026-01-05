@@ -64,7 +64,7 @@
             android:textColor="@color/text_grey_v3"
             android:textSize="@dimen/text_12sp"
             tool:text="Receive Rs. 10000"
-            android:visibility="@{trip.showReceiveAmount() ? View.VISIBLE : View.GONE}"
+            android:visibility="@{trip.intermittentPayableAmountVisibility()}"
             tool:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
