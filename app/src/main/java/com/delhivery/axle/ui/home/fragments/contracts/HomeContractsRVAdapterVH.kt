@@ -24,6 +24,9 @@ import com.delhivery.axle.databinding.ViewSearchContractsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.home.fragments.bids.adjustTextSizeToFit
+import com.delhivery.axle.ui.home.fragments.bids.calculateAvailableCardWidth
+import com.delhivery.axle.ui.home.fragments.bids.dpToPx
 
 
 abstract class BaseHomeContractsRVAdapterViewHolder<out B: ViewDataBinding, IT: BaseHomeContractsRVAdapterItem<*>>(binding: B):BaseViewHolder<B>(binding) {
@@ -166,14 +169,21 @@ class HomeContractsRequestItemVH(binding: CardContractsIntercityTripsBidsBinding
   }
 
   /**
-   * Apply dynamic text sizing to prevent overlapping
-   * Adjusts text size based on actual content length
-   * Note: Contracts don't show payment information
+   * Apply dynamic text sizing for intercity contracts
+   * Pure dynamic sizing approach - text scales down to fit in single line
+   * Contracts don't show payment information
    */
   private fun applyDynamicTextSizing(item: HomeContractsRequestItem) {
     // Contracts only show truck info - no payment fields
-    // So just reset to default text size
-    binding.truckInfo?.textSize = 14f
+    // Reset to default text size as it's a single view
+    binding.truckInfo?.let { resetTextViewToDefault(it) }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: android.widget.TextView) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
   }
 
    fun stopCounter() {
@@ -275,14 +285,21 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
   }
 
   /**
-   * Apply dynamic text sizing to prevent overlapping
-   * Adjusts text size based on actual content length
-   * Note: Contracts don't show payment information
+   * Apply dynamic text sizing for intracity contracts
+   * Pure dynamic sizing approach - text scales down to fit in single line
+   * Contracts don't show payment information
    */
   private fun applyIntracityDynamicTextSizing(item: HomeContractsRequestItem) {
     // Contracts only show truck info - no payment fields
-    // So just reset to default text size
-    binding.truckInfo?.textSize = 14f
+    // Reset to default text size as it's a single view
+    binding.truckInfo?.let { resetTextViewToDefault(it) }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: android.widget.TextView) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
   }
 
   fun stopCounter() {

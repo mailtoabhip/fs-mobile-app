@@ -162,6 +162,84 @@ data class HomePlacementsItemData(
         }
         return "Intracity Adhoc"
     }
+    
+    /**
+     * Check if placement is intercity type
+     * @return true for ftlAdhoc, ftlRegular, orionFixed, orionSpot
+     */
+    fun isIntercity(): Boolean {
+        return loadType == LoadTypes.ftlAdhoc.name || 
+               loadType == LoadTypes.ftlRegular.name || 
+               loadType == LoadTypes.orionFixed.name || 
+               loadType == LoadTypes.orionSpot.name
+    }
+    
+    /**
+     * Check if placement is intracity type
+     * @return true for intracityAdhoc, intracityRegular
+     */
+    fun isIntracity(): Boolean {
+        return loadType == LoadTypes.intracityAdhoc.name || 
+               loadType == LoadTypes.intracityRegular.name
+    }
+    
+    /**
+     * Get visibility for intercity route view
+     */
+    fun intercityRouteVisibility(): Int {
+        return if (isIntercity()) View.VISIBLE else View.GONE
+    }
+    
+    /**
+     * Get visibility for intracity route view
+     */
+    fun intracityRouteVisibility(): Int {
+        return if (isIntracity()) View.VISIBLE else View.GONE
+    }
+    
+    /**
+     * Methods for compatibility with item_bid_route_details.xml
+     */
+    fun isItContractOrLoadV2(): Boolean {
+        // Always show route details for intercity placements
+        return isIntercity()
+    }
+    
+    fun originCityName(): String {
+        return if (loadType == LoadTypes.orionSpot.name || loadType == LoadTypes.orionFixed.name) {
+            StringUtils.capitalize(origin) ?: ""
+        } else {
+            StringUtils.capitalize(originCenterName) ?: ""
+        }
+    }
+    
+    fun destinationCityName(): String {
+        return if (loadType == LoadTypes.orionSpot.name || loadType == LoadTypes.orionFixed.name) {
+            StringUtils.capitalize(destination) ?: ""
+        } else {
+            StringUtils.capitalize(destinationCenterName) ?: ""
+        }
+    }
+    
+    fun originStateName(): String {
+        return if (loadType == LoadTypes.orionSpot.name || loadType == LoadTypes.orionFixed.name) {
+            StringUtils.capitalize(originState) ?: ""
+        } else {
+            StringUtils.capitalize(originCenterState) ?: ""
+        }
+    }
+    
+    fun destinationStateName(): String {
+        return if (loadType == LoadTypes.orionSpot.name || loadType == LoadTypes.orionFixed.name) {
+            StringUtils.capitalize(destinationState) ?: ""
+        } else {
+            StringUtils.capitalize(destinationCenterState) ?: ""
+        }
+    }
+    
+    fun getIntermediateStops(): String {
+        return haltStops()
+    }
 }
 
 

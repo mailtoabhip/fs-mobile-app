@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:tool="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="request"
@@ -58,6 +59,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/placementLoadType"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
+
+            <!-- Intercity route view -->
+            <include
+                android:id="@+id/cl_from_to_city"
+                layout="@layout/item_placement_route_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{request.intercityRouteVisibility()}"
+                tools:visibility = "gone"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:request="@{request}"
+                />
+            
+            <!-- Intracity route view -->
             <include layout="@layout/view_origin_destination"
                 android:id="@+id/originDestination"
                 app:layout_constraintTop_toBottomOf="@+id/divider"
@@ -65,11 +81,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_8dp" />
+                android:layout_marginTop="@dimen/size_8dp"
+                android:visibility="@{request.intracityRouteVisibility()}"
+                />
+
+            <!-- Barrier to handle both route views -->
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="cl_from_to_city,originDestination" />
 
             <include layout="@layout/view_driver_truck_details"
                 android:id="@+id/driverTruckDetails"
-                app:layout_constraintTop_toBottomOf="@+id/originDestination"
+                app:layout_constraintTop_toBottomOf="@+id/barrier_route"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

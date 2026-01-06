@@ -389,7 +389,7 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
         }
         // Only truck info - reset to default
         else -> {
-          truckInfo.textSize = 14f
+          resetTextViewToDefault(truckInfo, 14f)
         }
       }
     }
@@ -442,10 +442,17 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
         }
         // Only truck info - reset to default
         else -> {
-          truckInfo.textSize = 14f
+          resetTextViewToDefault(truckInfo, 14f)
         }
       }
     }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: TextView, defaultSize: Float = 14f) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultSize)
   }
 
 }
@@ -567,10 +574,17 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
         }
         // Only truck info - reset to default
         else -> {
-          truckInfo.textSize = 14f
+          resetTextViewToDefault(truckInfo, 14f)
         }
       }
     }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: TextView, defaultSize: Float = 14f) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultSize)
   }
 }
 

@@ -514,57 +514,61 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
   }
 
   /**
-   * Apply dynamic text sizing to prevent overlapping on different devices
-   * Measures actual text content and adjusts text size dynamically so all views fit without truncation
-   * Note: truckInfo, paymentType, and advancePaymentPercentage are ALL on the same horizontal line
+   * Apply dynamic text sizing for intercity bids
+   * Pure dynamic sizing approach - text scales down to fit in single line
    */
   private fun applyDynamicWidthConstraints(data: HomeBidsRequestItemData, isContract: Boolean) {
-    // Calculate available width for card content
     val availableWidth = context.calculateAvailableCardWidth(
       cardMarginDp = 12,
       contentPaddingDp = 16
     )
+    val spacingPx = 8.dpToPx(context)
+    val drawablePaddingPx = 4.dpToPx(context)
     
-    // Check data conditions to determine what should be visible
+    // Get views
+    val truckInfo = binding.truckInfo
+    val paymentType = binding.paymentType
+    val percentage = binding.advancePaymentPercentage
+    
+    // Determine visibility based on data
     val shouldShowPaymentType = !isContract && data.shouldShowPaymentMode()
     val shouldShowAdvancePercentage = shouldShowPaymentType && data.shouldShowAdvancePercentage()
     
-    binding.truckInfo?.let { truckInfo ->
-      when {
-        // All 3 views visible: truckInfo + paymentType + advancePercentage
-        shouldShowAdvancePercentage -> {
-          binding.paymentType?.let { paymentType ->
-            binding.advancePaymentPercentage?.let { percentage ->
-              adjustTextSizeToFit(
-                views = listOf(truckInfo, paymentType, percentage),
-                availableWidth = availableWidth,
-                defaultTextSize = 14f, // From layout: android:textSize="14sp"
-                minTextSize = 10f,
-                spacingBetweenViews = 8.dpToPx(context),
-                drawablePadding = 4.dpToPx(context)
-              )
-            }
-          }
-        }
-        // Only truck + payment type (no advance percentage)
-        shouldShowPaymentType -> {
-          binding.paymentType?.let { paymentType ->
-            adjustTextSizeToFit(
-              views = listOf(truckInfo, paymentType),
-              availableWidth = availableWidth,
-              defaultTextSize = 14f,
-              minTextSize = 10f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
-            )
-          }
-        }
-        // Only truck info visible - reset to default size
-        else -> {
-          truckInfo.textSize = 14f // Reset to default
-        }
+    when {
+      // All 3 views visible
+      shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, paymentType, percentage),
+          availableWidth = availableWidth,
+          defaultTextSize = 14f,
+          minTextSize = 10f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // Only truck + payment type
+      shouldShowPaymentType && truckInfo != null && paymentType != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, paymentType),
+          availableWidth = availableWidth,
+          defaultTextSize = 14f,
+          minTextSize = 10f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // Only truck info visible
+      truckInfo != null -> {
+        resetTextViewToDefault(truckInfo, 14f)
       }
     }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: TextView, defaultSize: Float = 14f) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultSize)
   }
 }
 
@@ -768,99 +772,85 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
   }
 
   /**
-   * Apply dynamic width constraints to prevent overlapping on different devices
-   * Calculates available width based on screen size and applies proportional max widths
-   * Accounts for spacing between views to prevent sticking
+   * Apply dynamic text sizing to prevent overlapping on different devices
+   * Pure dynamic sizing approach - text scales down to fit without maxWidth conflicts
    */
   private fun applyDynamicWidthConstraints(data: HomeBidsRequestItemData, isContract: Boolean) {
     // Calculate available width for card content
     val availableWidth = context.calculateAvailableCardWidth(
-      cardMarginDp = 12,  // Card margins from layout
-      contentPaddingDp = 16  // Content padding from layout
+      cardMarginDp = 12,
+      contentPaddingDp = 16
     )
     
-    // Account for spacing between views
-    val spacingBetweenViews = 8.dpToPx(context) // Margin between city and pincode
-    val actualAvailableWidth = availableWidth - spacingBetweenViews
-    
-    // Apply to intracity city name section (fromCity + pincode_state)
-    binding.clFromToCity.findViewById<TextView>(R.id.fromCity)?.let { fromCity ->
-      binding.clFromToCity.findViewById<TextView>(R.id.pincode_state)?.let { pincodeState ->
-        // Distribute width with proper spacing: 62% for city name, 38% for pincode/state
-        fromCity.maxWidth = (actualAvailableWidth * 0.62f).toInt()
-        pincodeState.maxWidth = (actualAvailableWidth * 0.38f).toInt()
-        
-        // City name can wrap, pincode/state should be single line
-        fromCity.ellipsize = TextUtils.TruncateAt.END
-        pincodeState.ellipsize = TextUtils.TruncateAt.END
-        pincodeState.maxLines = 1  // Force single line for pincode/state
-      }
-    }
-    
-    // Apply to truck info and distance/payment row based on data conditions
+    // Apply dynamic text sizing to truck info and distance/payment row
     applyToTruckInfoRow(availableWidth, data, isContract)
   }
 
   /**
    * Apply dynamic text sizing to truck info and distance/payment views
-   * Measures actual text content and adjusts text size dynamically so all views fit without truncation
-   * Note: truckInfo, distance/paymentType, and advancePaymentPercentage can all be on the same line
+   * Pure dynamic sizing approach - text scales down to fit in single line
    */
   private fun applyToTruckInfoRow(availableWidth: Int, data: HomeBidsRequestItemData, isContract: Boolean) {
-    // Check data conditions to determine what should be visible
-    val shouldShowDistance = isContract // Distance only for contracts
+    val spacingPx = 8.dpToPx(context)
+    val drawablePaddingPx = 4.dpToPx(context)
+    
+    // Get views
+    val truckInfo = binding.truckInfo
+    val distance = binding.distance
+    val paymentType = binding.paymentType
+    val percentage = binding.advancePaymentPercentage
+    
+    // Determine what should be visible based on data
+    val shouldShowDistance = isContract
     val shouldShowPaymentType = !isContract && data.shouldShowPaymentMode() && !data.isItContract()
     val shouldShowAdvancePercentage = shouldShowPaymentType && data.shouldShowAdvancePercentage()
     
-    binding.truckInfo?.let { truckInfo ->
-      when {
-        // Distance visible (contracts): truck info + distance
-        shouldShowDistance -> {
-          binding.distance?.let { distance ->
-            adjustTextSizeToFit(
-              views = listOf(truckInfo, distance),
-              availableWidth = availableWidth,
-              defaultTextSize = 14f, // From layout: android:textSize="14sp"
-              minTextSize = 10f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
-            )
-          }
-        }
-        // Payment type + advance percentage visible (loads): all 3 on same line
-        shouldShowAdvancePercentage -> {
-          binding.paymentType?.let { paymentType ->
-            binding.advancePaymentPercentage?.let { percentage ->
-              adjustTextSizeToFit(
-                views = listOf(truckInfo, paymentType, percentage),
-                availableWidth = availableWidth,
-                defaultTextSize = 12f, // Intracity uses 12sp for payment fields
-                minTextSize = 9f,
-                spacingBetweenViews = 8.dpToPx(context),
-                drawablePadding = 4.dpToPx(context)
-              )
-            }
-          }
-        }
-        // Only payment type visible
-        shouldShowPaymentType -> {
-          binding.paymentType?.let { paymentType ->
-            adjustTextSizeToFit(
-              views = listOf(truckInfo, paymentType),
-              availableWidth = availableWidth,
-              defaultTextSize = 12f,
-              minTextSize = 9f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
-            )
-          }
-        }
-        // Only truck info visible - reset to default size
-        else -> {
-          truckInfo.textSize = 14f // Reset to default
-        }
+    when {
+      // Distance visible (contracts): truck info + distance
+      shouldShowDistance && truckInfo != null && distance != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, distance),
+          availableWidth = availableWidth,
+          defaultTextSize = 14f,
+          minTextSize = 10f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // All 3 views visible (loads): truck + payment + percentage
+      shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, paymentType, percentage),
+          availableWidth = availableWidth,
+          defaultTextSize = 12f,
+          minTextSize = 9f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // Only truck + payment type
+      shouldShowPaymentType && truckInfo != null && paymentType != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, paymentType),
+          availableWidth = availableWidth,
+          defaultTextSize = 12f,
+          minTextSize = 9f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // Only truck info visible
+      truckInfo != null -> {
+        resetTextViewToDefault(truckInfo, 14f)
       }
     }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: TextView, defaultSize: Float = 14f) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultSize)
   }
 }
 
@@ -1098,55 +1088,60 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
   }
 
   /**
-   * Apply dynamic text sizing to prevent truncation on different devices
+   * Apply dynamic text sizing for marketplace bids
+   * Pure dynamic sizing approach - text scales down to fit in single line
    */
   private fun applyDynamicWidthConstraints(data: HomeBidsRequestItemData) {
-    // Calculate available width for card content
     val availableWidth = context.calculateAvailableCardWidth(
       cardMarginDp = 12,
       contentPaddingDp = 16
     )
+    val spacingPx = 8.dpToPx(context)
+    val drawablePaddingPx = 4.dpToPx(context)
+    
+    // Get views
+    val truckInfo = binding.truckInfo
+    val paymentType = binding.paymentType
+    val percentage = binding.advancePaymentPercentage
     
     // Determine visibility based on data
     val shouldShowPaymentType = data.shouldShowMarketplacePaymentMode()
     val shouldShowAdvancePercentage = data.shouldShowMarketplaceAdvancePercentage()
     
-    // Apply dynamic text sizing to truck info + payment row
-    binding.truckInfo?.let { truckInfo ->
-      when {
-        // All 3 views visible
-        shouldShowAdvancePercentage -> {
-          binding.paymentType?.let { paymentType ->
-            binding.advancePaymentPercentage?.let { percentage ->
-              adjustTextSizeToFit(
-                views = listOf(truckInfo, paymentType, percentage),
-                availableWidth = availableWidth,
-                defaultTextSize = 14f,
-                minTextSize = 10f,
-                spacingBetweenViews = 8.dpToPx(context),
-                drawablePadding = 4.dpToPx(context)
-              )
-            }
-          }
-        }
-        // Only truck + payment type
-        shouldShowPaymentType -> {
-          binding.paymentType?.let { paymentType ->
-            adjustTextSizeToFit(
-              views = listOf(truckInfo, paymentType),
-              availableWidth = availableWidth,
-              defaultTextSize = 14f,
-              minTextSize = 10f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
-            )
-          }
-        }
-        // Only truck info - reset to default
-        else -> {
-          truckInfo.textSize = 14f
-        }
+    when {
+      // All 3 views visible
+      shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, paymentType, percentage),
+          availableWidth = availableWidth,
+          defaultTextSize = 14f,
+          minTextSize = 10f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // Only truck + payment type
+      shouldShowPaymentType && truckInfo != null && paymentType != null -> {
+        adjustTextSizeToFit(
+          views = listOf(truckInfo, paymentType),
+          availableWidth = availableWidth,
+          defaultTextSize = 14f,
+          minTextSize = 10f,
+          spacingBetweenViews = spacingPx,
+          drawablePadding = drawablePaddingPx
+        )
+      }
+      // Only truck info visible
+      truckInfo != null -> {
+        resetTextViewToDefault(truckInfo, 14f)
       }
     }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: TextView, defaultSize: Float = 14f) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultSize)
   }
 }

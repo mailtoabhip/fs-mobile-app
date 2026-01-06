@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_route_details_from_to"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="16dp"
+        android:paddingBottom="@dimen/size_4dp"
+        android:visibility="@{request.isItContractOrLoadV2()? View.VISIBLE : View.GONE}"
+        tools:visibility="visible"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/fromCity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            tools:text ="Navi Mumbai"
+            android:text="@{request.originCityName()}"
+            android:textColor="#121A31"
+            app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view_stops"
+            android:layout_width="60dp"
+            android:layout_height="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="@id/fromCity"
+            app:layout_constraintEnd_toStartOf="@id/toCity"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/fromCity"
+            app:layout_constraintTop_toTopOf="@id/fromCity"
+            app:srcCompat="@drawable/ic_line_5" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_stops"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@{request.getIntermediateStops()}"
+            tools:text ="2 stops"
+            android:textColor="#8F9198"
+            app:layout_constraintTop_toBottomOf="@id/view_stops"
+            app:layout_constraintEnd_toEndOf="@id/view_stops"
+            app:layout_constraintStart_toStartOf="@id/view_stops" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.4"
+            android:orientation="vertical" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCenter1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.6"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/toCity"
+            android:layout_width="0dp"
+            android:gravity="end"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            tools:text ="Jaisalmer"
+            android:text="@{request.destinationCityName()}"
+            android:textColor="#121A31"
+            app:layout_constraintStart_toStartOf="@id/guidelineCenter1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <!-- From State -->
+        <TextView
+            android:id="@+id/fromState"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#505361"
+            android:paddingTop="@dimen/size_4dp"
+            tools:text ="Maharashtra"
+            android:text="@{request.originStateName()}"
+            app:layout_constraintTop_toBottomOf="@id/fromCity"
+            app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- To State -->
+        <TextView
+            android:id="@+id/toState"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:paddingTop="@dimen/size_4dp"
+            android:textColor="#505361"
+            android:textAlignment="textEnd"
+            tools:text ="Rajasthan"
+            android:text="@{request.destinationStateName()}"
+            app:layout_constraintStart_toEndOf="@id/guidelineCenter1"
+            app:layout_constraintTop_toBottomOf="@id/toCity"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+
