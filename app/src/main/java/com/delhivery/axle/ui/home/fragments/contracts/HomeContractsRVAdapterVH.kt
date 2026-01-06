@@ -124,6 +124,9 @@ class HomeContractsRequestItemVH(binding: CardContractsIntercityTripsBidsBinding
         binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
     }
 
+    // Apply dynamic text sizing AFTER visibility is set
+    applyDynamicTextSizing(item)
+
     // Handle the included bottom button layout - set request data first (important for visibility)
     binding.reportingTimeButton.request = item.data
     
@@ -160,6 +163,17 @@ class HomeContractsRequestItemVH(binding: CardContractsIntercityTripsBidsBinding
       binding.reportingTimeButton.placeBidButtonMaxWidth.visibility = View.GONE
       binding.reportingTimeButton.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     }
+  }
+
+  /**
+   * Apply dynamic text sizing to prevent overlapping
+   * Adjusts text size based on actual content length
+   * Note: Contracts don't show payment information
+   */
+  private fun applyDynamicTextSizing(item: HomeContractsRequestItem) {
+    // Contracts only show truck info - no payment fields
+    // So just reset to default text size
+    binding.truckInfo?.textSize = 14f
   }
 
    fun stopCounter() {
@@ -219,6 +233,9 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
         binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
     }
 
+    // Apply dynamic text sizing - contracts don't show payment info
+    applyIntracityDynamicTextSizing(item)
+
     // Handle the included bottom button layout - set request data first (important for visibility)
     binding.containerError.request = item.data
     
@@ -255,6 +272,17 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
       binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
       binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     }
+  }
+
+  /**
+   * Apply dynamic text sizing to prevent overlapping
+   * Adjusts text size based on actual content length
+   * Note: Contracts don't show payment information
+   */
+  private fun applyIntracityDynamicTextSizing(item: HomeContractsRequestItem) {
+    // Contracts only show truck info - no payment fields
+    // So just reset to default text size
+    binding.truckInfo?.textSize = 14f
   }
 
   fun stopCounter() {

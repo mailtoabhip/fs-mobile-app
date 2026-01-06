@@ -16,9 +16,11 @@ import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_NavigationMap
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_PlaceBid
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_ViewDetails
+import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.data.home.loads.*
 import com.delhivery.axle.databinding.*
+import com.delhivery.axle.ui.home.fragments.bids.adjustTextSizeToFit
 import com.delhivery.axle.ui.home.fragments.bids.calculateAvailableCardWidth
 import com.delhivery.axle.ui.home.fragments.bids.dpToPx
 import com.delhivery.axle.ui.base.BaseViewHolder
@@ -234,6 +236,10 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.paymentType.visibility = View.GONE
             binding.advancePaymentPercentage.visibility = View.GONE
         }
+        
+        // Apply dynamic text sizing AFTER visibility is set
+        applyIntercityDynamicTextSizing()
+        
         if (demandType == "Delhivery Load") {
             binding.demandLoadType.text = "Delhivery Load"
             binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.delhivery_load_bg)
@@ -339,9 +345,59 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
   }
 
   /**
-   * Apply dynamic width constraints for intracity layout
-   * Prevents text from overlapping on different devices
-   * Accounts for spacing between views
+   * Apply dynamic text sizing for intercity layout
+   * Adjusts text size based on actual content length to prevent truncation
+   */
+  private fun applyIntercityDynamicTextSizing() {
+    val availableWidth = context.calculateAvailableCardWidth(
+      cardMarginDp = 12,
+      contentPaddingDp = 16
+    )
+    
+    val shouldShowPaymentType = binding.paymentType?.visibility == View.VISIBLE
+    val shouldShowAdvancePercentage = binding.advancePaymentPercentage?.visibility == View.VISIBLE
+    
+    binding.truckInfo?.let { truckInfo ->
+      when {
+        // All 3 views visible
+        shouldShowAdvancePercentage -> {
+          binding.paymentType?.let { paymentType ->
+            binding.advancePaymentPercentage?.let { percentage ->
+              adjustTextSizeToFit(
+                views = listOf(truckInfo, paymentType, percentage),
+                availableWidth = availableWidth,
+                defaultTextSize = 14f,
+                minTextSize = 10f,
+                spacingBetweenViews = 8.dpToPx(context),
+                drawablePadding = 4.dpToPx(context)
+              )
+            }
+          }
+        }
+        // Only truck + payment type
+        shouldShowPaymentType -> {
+          binding.paymentType?.let { paymentType ->
+            adjustTextSizeToFit(
+              views = listOf(truckInfo, paymentType),
+              availableWidth = availableWidth,
+              defaultTextSize = 14f,
+              minTextSize = 10f,
+              spacingBetweenViews = 8.dpToPx(context),
+              drawablePadding = 4.dpToPx(context)
+            )
+          }
+        }
+        // Only truck info - reset to default
+        else -> {
+          truckInfo.textSize = 14f
+        }
+      }
+    }
+  }
+
+  /**
+   * Apply dynamic text sizing for intracity layout
+   * Adjusts text size based on actual content length to prevent truncation
    */
   private fun applyIntracityDynamicConstraints() {
     // Calculate available width
@@ -350,52 +406,44 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
       contentPaddingDp = 16  // Content padding
     )
     
-    // Account for spacing between city and pincode
-    val spacingPx = 8.dpToPx(context)
-    val actualAvailableWidth = availableWidth - spacingPx
+    // Apply dynamic text sizing to truck info + payment row
+    val shouldShowPaymentType = binding.layoutIntracity.paymentType?.visibility == View.VISIBLE
+    val shouldShowAdvancePercentage = binding.layoutIntracity.advancePaymentPercentage?.visibility == View.VISIBLE
     
-    // Apply to fromCity and pincode_state with spacing
-    binding.layoutIntracity.root.findViewById<TextView>(R.id.fromCity)?.let { fromCity ->
-      fromCity.maxWidth = (actualAvailableWidth * 0.62f).toInt()
-      fromCity.ellipsize = TextUtils.TruncateAt.END
-      // fromCity can wrap to 2 lines (as per XML)
-    }
-    
-    binding.layoutIntracity.root.findViewById<TextView>(R.id.pincode_state)?.let { pincodeState ->
-      pincodeState.maxWidth = (actualAvailableWidth * 0.38f).toInt()
-      pincodeState.ellipsize = TextUtils.TruncateAt.END
-      pincodeState.maxLines = 1  // Force single line for pincode/state
-    }
-    
-    // Apply to truck info
     binding.layoutIntracity.truckInfo?.let { truckInfo ->
-      truckInfo.maxWidth = (availableWidth * 0.60f).toInt()
-      truckInfo.ellipsize = TextUtils.TruncateAt.END
-      truckInfo.maxLines = 1  // Force single line
-      truckInfo.requestLayout()
-    }
-    
-    // Apply to payment type and advance percentage with spacing
-    binding.layoutIntracity.paymentType?.let { paymentType ->
-      if (binding.layoutIntracity.advancePaymentPercentage.visibility == View.VISIBLE) {
-        val paymentSpacingPx = 4.dpToPx(context)
-        val paymentAvailableWidth = availableWidth - paymentSpacingPx
-        
-        paymentType.maxWidth = (paymentAvailableWidth * 0.65f).toInt()
-        binding.layoutIntracity.advancePaymentPercentage.maxWidth = (paymentAvailableWidth * 0.35f).toInt()
-        
-        paymentType.ellipsize = TextUtils.TruncateAt.END
-        paymentType.maxLines = 1  // Force single line
-        binding.layoutIntracity.advancePaymentPercentage.ellipsize = TextUtils.TruncateAt.END
-        binding.layoutIntracity.advancePaymentPercentage.maxLines = 1  // Force single line
-        
-        paymentType.requestLayout()
-        binding.layoutIntracity.advancePaymentPercentage.requestLayout()
-      } else {
-        paymentType.maxWidth = (availableWidth * 0.95f).toInt()
-        paymentType.ellipsize = TextUtils.TruncateAt.END
-        paymentType.maxLines = 1  // Force single line
-        paymentType.requestLayout()
+      when {
+        // All 3 views visible
+        shouldShowAdvancePercentage -> {
+          binding.layoutIntracity.paymentType?.let { paymentType ->
+            binding.layoutIntracity.advancePaymentPercentage?.let { percentage ->
+              adjustTextSizeToFit(
+                views = listOf(truckInfo, paymentType, percentage),
+                availableWidth = availableWidth,
+                defaultTextSize = 14f,
+                minTextSize = 10f,
+                spacingBetweenViews = 8.dpToPx(context),
+                drawablePadding = 4.dpToPx(context)
+              )
+            }
+          }
+        }
+        // Only truck + payment type
+        shouldShowPaymentType -> {
+          binding.layoutIntracity.paymentType?.let { paymentType ->
+            adjustTextSizeToFit(
+              views = listOf(truckInfo, paymentType),
+              availableWidth = availableWidth,
+              defaultTextSize = 14f,
+              minTextSize = 10f,
+              spacingBetweenViews = 8.dpToPx(context),
+              drawablePadding = 4.dpToPx(context)
+            )
+          }
+        }
+        // Only truck info - reset to default
+        else -> {
+          truckInfo.textSize = 14f
+        }
       }
     }
   }
@@ -417,9 +465,6 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
     Log.d("MarketplaceCard", "Binding marketplace load: ${item.data.transactionId}")
     Log.d("MarketplaceCard", "Shipper price: ${item.data.shipperPrice}")
     Log.d("MarketplaceCard", "Formatted shipper price: ${item.data.getFormattedShipperPrice()}")
-    
-    // Apply dynamic width constraints FIRST
-    applyMarketplaceDynamicConstraints()
     
     // Set basic data binding
     binding.request = item.data
@@ -471,62 +516,60 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
     // Force data binding updates to be applied immediately
     binding.containerError.executePendingBindings()
     binding.executePendingBindings()
+    
+    // Apply dynamic width constraints AFTER visibility is set
+    applyMarketplaceDynamicConstraints(item.data)
   }
 
   /**
-   * Apply dynamic width constraints for marketplace layout
+   * Apply dynamic text sizing for marketplace layout
+   * Adjusts text size based on actual content length to prevent truncation
    */
-  private fun applyMarketplaceDynamicConstraints() {
+  private fun applyMarketplaceDynamicConstraints(data: HomeBidsRequestItemData) {
     val availableWidth = context.calculateAvailableCardWidth(
       cardMarginDp = 12,
       contentPaddingDp = 16
     )
     
-    // Apply to truck info
+    // Determine visibility based on data
+    val shouldShowPaymentType = data.shouldShowMarketplacePaymentMode()
+    val shouldShowAdvancePercentage = data.shouldShowMarketplaceAdvancePercentage()
+    
     binding.truckInfo?.let { truckInfo ->
-      truckInfo.maxWidth = (availableWidth * 0.60f).toInt()
-      truckInfo.ellipsize = TextUtils.TruncateAt.END
-      truckInfo.maxLines = 1  // Force single line
-      truckInfo.requestLayout()
-    }
-    
-    // Apply to payment type and advance percentage with spacing
-    binding.paymentType?.let { paymentType ->
-      if (binding.advancePaymentPercentage.visibility == View.VISIBLE) {
-        val spacingPx = 4.dpToPx(context)
-        val actualWidth = availableWidth - spacingPx
-        
-        paymentType.maxWidth = (actualWidth * 0.65f).toInt()
-        binding.advancePaymentPercentage.maxWidth = (actualWidth * 0.35f).toInt()
-        
-        paymentType.ellipsize = TextUtils.TruncateAt.END
-        paymentType.maxLines = 1  // Force single line
-        binding.advancePaymentPercentage.ellipsize = TextUtils.TruncateAt.END
-        binding.advancePaymentPercentage.maxLines = 1  // Force single line
-        
-        paymentType.requestLayout()
-        binding.advancePaymentPercentage.requestLayout()
-      } else {
-        paymentType.maxWidth = (availableWidth * 0.95f).toInt()
-        paymentType.ellipsize = TextUtils.TruncateAt.END
-        paymentType.maxLines = 1  // Force single line
-        paymentType.requestLayout()
+      when {
+        // All 3 views visible
+        shouldShowAdvancePercentage -> {
+          binding.paymentType?.let { paymentType ->
+            binding.advancePaymentPercentage?.let { percentage ->
+              adjustTextSizeToFit(
+                views = listOf(truckInfo, paymentType, percentage),
+                availableWidth = availableWidth,
+                defaultTextSize = 14f,
+                minTextSize = 10f,
+                spacingBetweenViews = 8.dpToPx(context),
+                drawablePadding = 4.dpToPx(context)
+              )
+            }
+          }
+        }
+        // Only truck + payment type
+        shouldShowPaymentType -> {
+          binding.paymentType?.let { paymentType ->
+            adjustTextSizeToFit(
+              views = listOf(truckInfo, paymentType),
+              availableWidth = availableWidth,
+              defaultTextSize = 14f,
+              minTextSize = 10f,
+              spacingBetweenViews = 8.dpToPx(context),
+              drawablePadding = 4.dpToPx(context)
+            )
+          }
+        }
+        // Only truck info - reset to default
+        else -> {
+          truckInfo.textSize = 14f
+        }
       }
-    }
-    
-    // Apply to supplier name and number
-    binding.supplierName?.let { supplierName ->
-      supplierName.maxWidth = (availableWidth * 0.95f).toInt()
-      supplierName.ellipsize = TextUtils.TruncateAt.END
-      supplierName.maxLines = 1  // Force single line
-      supplierName.requestLayout()
-    }
-    
-    binding.supplierNumber?.let { supplierNumber ->
-      supplierNumber.maxWidth = (availableWidth * 0.95f).toInt()
-      supplierNumber.ellipsize = TextUtils.TruncateAt.END
-      supplierNumber.maxLines = 1  // Force single line
-      supplierNumber.requestLayout()
     }
   }
 }
