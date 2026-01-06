@@ -1,14 +1,7 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
 import android.content.res.ColorStateList
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
-import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
@@ -107,65 +100,9 @@ class HomePodItemVH(binding: ViewNewPodItemBinding) :
   ) {
     binding.trip = item.data
     // isHPODSection will be set by the adapter in bindVH
-    val spannable = SpannableStringBuilder()
-    spannable.clearSpans()
-    val origin = item.data.formattedOriginCity() ?: ""
-    val originStart = spannable.length
-    spannable.append(origin)
-    val originEnd = spannable.length
-    spannable.setSpan(
-      ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
-      originStart,
-      originEnd,
-      Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
-    spannable.setSpan(
-      StyleSpan(Typeface.BOLD),
-      originStart,
-      originEnd,
-      Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
-// Arrow as inline image
-      val arrowStart = spannable.length
-      spannable.append(" ➔ ")
-      spannable.setSpan(
-        StyleSpan(Typeface.BOLD),
-        arrowStart,
-        spannable.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-      )
-
-// Destination text (black, bold)
-      val destStart = spannable.length
-      val destination = item.data.formattedDestinationCity()
-      spannable.append(destination)
-      val destEnd = spannable.length
-      spannable.setSpan(
-        ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
-        destStart,
-        destEnd,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-      )
-      spannable.setSpan(
-        StyleSpan(Typeface.BOLD),
-        destStart,
-        destEnd,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-      )
-
-    binding.originDestination.originDestinationText.text = null
-    binding.originDestination.originDestinationText.movementMethod = null
-    binding.originDestination.originDestinationText.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-
-// Set the TextView safely
-    binding.originDestination.originDestinationText.apply {
-      text = spannable
-      isClickable = false
-      isFocusable = false
-      linksClickable = false
-      autoLinkMask = 0
-      movementMethod = null
-    }
+    
+    // Route details are now handled by the included layout item_trip_route_details.xml
+    
     binding.podCardCl.clickToAction(
         HomeTripsRequestAction_ViewDetails, item, bindingAdapterPosition, _interface
     )
