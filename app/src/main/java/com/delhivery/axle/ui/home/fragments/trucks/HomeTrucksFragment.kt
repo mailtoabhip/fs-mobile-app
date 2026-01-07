@@ -695,7 +695,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             }
         }
 
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context, R.style.DatePickerTheme)
 
         builder.setTitle("-- Select Size --")
 
@@ -747,7 +747,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             }
         }
 
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context, R.style.DatePickerTheme)
 
         builder.setTitle("-- Select Availability --")
 
@@ -810,7 +810,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             }
         }
 
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context, R.style.DatePickerTheme)
 
         builder.setTitle("-- Select Vehicle Type --")
 

@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.bids
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -11,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.OnActionExpandListener
 import android.view.View
+import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
@@ -49,7 +51,7 @@ import javax.inject.Inject
  **
  */
 class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
-    HomeTripsRVAdapterInterface {
+    HomeTripsRVAdapterInterface, OnDateSetListener {
 
   init {
     hasInlineProgress = true
@@ -441,43 +443,29 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
   @SuppressLint("SetTextI18n")
   @RequiresApi(Build.VERSION_CODES.N)
   private fun openDatePicker(){
-    val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    dialogUtils.datePicker(
+      listener = this, 
+      maxDate = 0
+    )
+  }
 
-    val datePickerDialog = DatePickerDialog(this, {
-      view, year, monthOfYear, dayOfMonth ->
-      viewModel.date = dayOfMonth
-      viewModel.month = monthOfYear
-      viewModel.year = year
-      var month = monthOfYear + 1
-      viewModel.loadingDate =  "$dayOfMonth/$month/${year.toString().substring(2)}"
-      binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
-      if (viewModel.loadingDate.isNotNullOrEmpty()) {
-        analyticsUtil.moEngageTrackEvent(
-                EVENT_FILTER_ALL_TRIPS,
-                mutableListOf(PROPERTY_USER_ID , PROPERTY_LOADED_AFTER , PROPERTY_ONLY_SETTLED),
-                mutableListOf(userPrefs.userId() , viewModel.loadingDate ,viewModel.isSettledFilter.toString())
-        )
-        fetchTripDetails()
-      } else {
-        uiUtils.showSnackbar("Please choose valid date")
-      }
-
-    }, year, month, day)
-
-    datePickerDialog.setOnCancelListener {
-      binding.toggleRemovedLoadedFilter.visibility = View.GONE
-      binding.loadedAfter.text = "Loaded after"
-      viewModel.loadingDateFilter = false
-      viewModel.date = -1
-      viewModel.month = -1
-      viewModel.year = -1
+  override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+    viewModel.date = dayOfMonth
+    viewModel.month = monthOfYear
+    viewModel.year = year
+    val month = monthOfYear + 1
+    viewModel.loadingDate = "$dayOfMonth/$month/${year.toString().substring(2)}"
+    binding.loadedAfter.text = "Loaded after: " + viewModel.loadingDate
+    if (viewModel.loadingDate.isNotNullOrEmpty()) {
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_FILTER_ALL_TRIPS,
+        mutableListOf(PROPERTY_USER_ID, PROPERTY_LOADED_AFTER, PROPERTY_ONLY_SETTLED),
+        mutableListOf(userPrefs.userId(), viewModel.loadingDate, viewModel.isSettledFilter.toString())
+      )
+      fetchTripDetails()
+    } else {
+      uiUtils.showSnackbar("Please choose valid date")
     }
-
-    datePickerDialog.show()
-
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomeTripsRVAdapterItem<*>>().apply {
