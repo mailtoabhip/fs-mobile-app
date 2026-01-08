@@ -577,7 +577,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
-        val builder = android.app.AlertDialog.Builder(this)
+        val builder = android.app.AlertDialog.Builder(this,R.style.DatePickerTheme)
         builder.setItems(items) { dialog, item ->
             when {
                 items[item] == "Take Photo" -> requestImageCapturePermissions(true)

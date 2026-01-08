@@ -140,7 +140,7 @@ class DialogUtils @Inject constructor(
     negativeClickListener: OnClickListener? = null, @ColorInt positiveBtnClr: Int, @ColorInt negativeBtnClr: Int
   ) {
 
-    val dialog = AlertDialog.Builder(activity)
+    val dialog = AlertDialog.Builder(activity, R.style.DatePickerTheme)
         .setTitle(title)
         .setMessage(HtmlCompat.fromHtml(message!!,FROM_HTML_MODE_LEGACY))
         .setPositiveButton(positiveBtnText, positiveClickListener)

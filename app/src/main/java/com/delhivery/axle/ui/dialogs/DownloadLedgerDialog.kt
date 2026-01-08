@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.RadioButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogDownloadLedgerBinding
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -86,7 +87,7 @@ class DownloadLedgerDialog(
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val datePickerDialog = DatePickerDialog(context, {
+        val datePickerDialog = DatePickerDialog(context, R.style.DatePickerTheme,{
             view, year, monthOfYear, dayOfMonth ->
                 if(editTextType == "start"){
                     startDate = dayOfMonth

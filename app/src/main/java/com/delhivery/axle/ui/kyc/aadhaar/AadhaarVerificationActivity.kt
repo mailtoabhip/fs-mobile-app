@@ -331,7 +331,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
         this.localImageName =  "Aadhaar_" + System.currentTimeMillis()+".jpg"
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
-        val builder = android.app.AlertDialog.Builder(this)
+        val builder = android.app.AlertDialog.Builder(this,R.style.DatePickerTheme)
         builder.setItems(items) { dialog, item ->
             when {
                 items[item] == "Take Photo" -> requestImageCapturePermissions(true)

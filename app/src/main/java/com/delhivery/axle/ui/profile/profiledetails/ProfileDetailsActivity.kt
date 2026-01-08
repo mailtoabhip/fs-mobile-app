@@ -187,7 +187,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
         this.localImageName = localImageName
 
         val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this,R.style.DatePickerTheme)
         builder.setItems(items) { dialog, item ->
             when {
                 items[item] == "Take Photo" -> requestImageCapturePermissions(true)
