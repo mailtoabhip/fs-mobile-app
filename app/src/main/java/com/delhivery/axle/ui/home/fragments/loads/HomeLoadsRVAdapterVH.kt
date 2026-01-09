@@ -583,7 +583,7 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
       //binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
       binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
-      binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type))View.VISIBLE else View.GONE
+      binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type)|| item.data.userDemandType.contains(DemandType.Intracity_OPS.type))View.VISIBLE else View.GONE
       binding.dlvMarketplaceToggle.visibility = if(item.data.userDemandType.contains(DemandType.Spot_Marketplace.type))View.VISIBLE else View.GONE
 
       //Comment below line once implementation is complete

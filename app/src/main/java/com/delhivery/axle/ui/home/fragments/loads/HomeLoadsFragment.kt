@@ -531,7 +531,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
     }
 
     private fun setupLoadFilter() {
-    val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)
+    val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)|| userPrefs.demandType.contains(DemandType.Intracity_OPS.type)
     val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type)
     if (enableIntracityLoad){
       selectedLoadFilter = DemandType.Intracity.type

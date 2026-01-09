@@ -156,6 +156,7 @@ enum class DemandType(val type: String) {
   Internal("Internal"),
   Others("Others"),
   Intracity("Intracity"),
+  Intracity_OPS("intracity_ops"),
   Corporate("Corporate"),
   Spot_Marketplace("spot_marketplace")
 }
