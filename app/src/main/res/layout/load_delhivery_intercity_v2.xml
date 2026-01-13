@@ -45,7 +45,7 @@
                     app:optionalTextColor="@{request}"
                     android:text="@{request.formattedBiddingEndTime()}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
+                    app:layout_constraintTop_toTopOf="parent" />
                 
                 <LinearLayout
                     android:id="@+id/load_type_layout"
@@ -75,7 +75,7 @@
                     android:id="@+id/divider"
                     android:layout_marginTop="@dimen/size_8dp"
                     android:background="@color/bg_light_grey"
-                    app:layout_constraintTop_toBottomOf="@+id/closingTime"
+                    app:layout_constraintTop_toBottomOf="@+id/load_type_layout"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"/>
 

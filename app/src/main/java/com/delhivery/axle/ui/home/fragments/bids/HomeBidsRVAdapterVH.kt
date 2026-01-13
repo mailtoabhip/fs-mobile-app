@@ -663,7 +663,10 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
     }
     
     // Apply dynamic constraints AFTER visibility is set so we can calculate correct widths
-    applyDynamicWidthConstraints(item.data, isContract)
+    // Use post to ensure views are fully laid out before measuring
+    binding.root.post {
+      applyDynamicWidthConstraints(item.data, isContract)
+    }
 
     // Also set request for the included layouts explicitly
     binding.containerError.request = item.data
@@ -781,10 +784,72 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       cardMarginDp = 12,
       contentPaddingDp = 16
     )
+
+      applyToCityRow(availableWidth)
     
     // Apply dynamic text sizing to truck info and distance/payment row
     applyToTruckInfoRow(availableWidth, data, isContract)
   }
+
+    /**
+     * Apply dynamic text sizing to fromCity and pincode_state views
+     * Maintains relative size difference (16sp vs 14sp ratio = 1.143:1)
+     * Prevents text truncation on smaller screens
+     */
+    private fun applyToCityRow(availableWidth: Int) {
+        val spacingPx = 4.dpToPx(context) // marginStart="@dimen/size_4dp" from XML
+
+        val fromCity = binding.fromCity
+        val pincodeState = binding.pincodeState
+
+        if (fromCity != null && pincodeState != null) {
+            // Get text content first
+            val fromCityText = fromCity.text?.toString() ?: ""
+            val pincodeText = pincodeState.text?.toString() ?: ""
+            
+            // Skip if text is empty (data not bound yet)
+            if (fromCityText.isEmpty() || pincodeText.isEmpty()) {
+                return
+            }
+            
+            // First, set both to their default sizes
+            fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16f)
+            pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
+
+            // Measure total width needed with default sizes
+            var totalWidthNeeded = 0f
+
+            // Measure fromCity
+            val fromCityWidth = fromCity.paint.measureText(fromCityText)
+            val fromCityPadding = fromCity.paddingStart + fromCity.paddingEnd
+            totalWidthNeeded += fromCityWidth + fromCityPadding
+
+            // Add spacing between views
+            totalWidthNeeded += spacingPx
+
+            // Measure pincodeState
+            val pincodeWidth = pincodeState.paint.measureText(pincodeText)
+            val pincodePadding = pincodeState.paddingStart + pincodeState.paddingEnd
+            totalWidthNeeded += pincodeWidth + pincodePadding
+
+            // If total width exceeds available width, scale down proportionally
+            // while maintaining the 16:14 ratio
+            if (totalWidthNeeded > availableWidth) {
+                val scaleFactor = availableWidth / totalWidthNeeded
+
+                // Scale both maintaining their ratio (16sp:14sp)
+                val newFromCitySize = (16f * scaleFactor).coerceAtLeast(12f)
+                val newPincodeSize = (14f * scaleFactor).coerceAtLeast(10f)
+
+                fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newFromCitySize)
+                pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newPincodeSize)
+            }
+
+            // Request layout update
+            fromCity.requestLayout()
+            pincodeState.requestLayout()
+        }
+    }
 
   /**
    * Apply dynamic text sizing to truck info and distance/payment views

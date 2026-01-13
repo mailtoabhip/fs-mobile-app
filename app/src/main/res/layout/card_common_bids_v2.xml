@@ -56,8 +56,7 @@
                     android:orientation="horizontal"
                     android:background="@drawable/bg_load_type_100dp_corner"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/closingTime"
-                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/demand_load_type"
@@ -80,8 +79,8 @@
                     android:visibility="@{request.isItContractAndLiveBidding()}"
                     android:background="@drawable/bg_chip_pink"
                     app:layout_constraintEnd_toStartOf="@id/load_type_layout"
-                    app:layout_constraintTop_toTopOf="@id/closingTime"
-                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+                    app:layout_constraintTop_toTopOf="@id/load_type_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/load_type_layout">
 
                     <View
                         android:layout_width="6dp"
@@ -105,7 +104,7 @@
                     android:id="@+id/divider"
                     android:layout_marginTop="@dimen/size_8dp"
                     android:background="@color/bg_light_grey"
-                    app:layout_constraintTop_toBottomOf="@+id/closingTime"
+                    app:layout_constraintTop_toBottomOf="@+id/load_type_layout"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"/>
 
