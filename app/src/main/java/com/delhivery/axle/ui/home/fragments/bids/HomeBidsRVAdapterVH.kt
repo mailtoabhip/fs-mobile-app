@@ -23,8 +23,21 @@ import com.delhivery.axle.ui.bids.BidType
 import android.content.Context
 
 /**
+ * Helper extension to convert sp to px
+ */
+private fun Float.spToPx(context: Context): Float {
+  return android.util.TypedValue.applyDimension(
+    android.util.TypedValue.COMPLEX_UNIT_SP,
+    this,
+    context.resources.displayMetrics
+  )
+}
+
+/**
  * Dynamically adjusts text size of multiple TextViews to fit within available width
  * Measures actual text content and scales down if needed so nothing gets truncated
+ * 
+ * IMPORTANT: This function now handles unmeasured views by forcing measurement if needed
  */
 fun adjustTextSizeToFit(
   views: List<TextView>,
@@ -34,18 +47,38 @@ fun adjustTextSizeToFit(
   spacingBetweenViews: Int,
   drawablePadding: Int
 ) {
-  if (views.isEmpty()) return
+  if (views.isEmpty() || availableWidth <= 0) return
+  
+  // IMPORTANT: Force measure if views haven't been measured yet
+  views.forEach { view ->
+    if (view.width == 0) {
+      view.measure(
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+      )
+    }
+  }
   
   // First, set all views to default text size
   views.forEach { it.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultTextSize) }
+  
+  // Create a Paint object and copy properties from first view
+  val paint = android.text.TextPaint().apply {
+    isAntiAlias = true
+    textSize = defaultTextSize.spToPx(views[0].context)
+  }
   
   // Measure total width needed with default text size
   var totalWidthNeeded = 0f
   
   views.forEachIndexed { index, textView ->
+    // Copy typeface for accurate measurement
+    paint.typeface = textView.typeface
+    paint.textSize = defaultTextSize.spToPx(textView.context)
+    
     // Measure text width
     val text = textView.text?.toString() ?: ""
-    val textWidth = textView.paint.measureText(text)
+    val textWidth = paint.measureText(text)
     
     // Account for drawable (icon) width if present
     val drawableWidth = textView.compoundDrawables[0]?.intrinsicWidth ?: 0
@@ -509,8 +542,15 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
       binding.advancePaymentPercentage.visibility = View.GONE
     }
     
-    // Apply dynamic constraints AFTER visibility is set so we can calculate correct widths
-    applyDynamicWidthConstraints(item.data, isContract)
+    // Apply dynamic constraints AFTER visibility is set and layout is ready
+    // Use post {} to ensure views are measured before applying sizing
+    if (binding.root.isLaidOut && binding.root.width > 0) {
+      applyDynamicWidthConstraints(item.data, isContract)
+    } else {
+      binding.root.post {
+        applyDynamicWidthConstraints(item.data, isContract)
+      }
+    }
   }
 
   /**
@@ -662,10 +702,14 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       }
     }
     
-    // Apply dynamic constraints AFTER visibility is set so we can calculate correct widths
-    // Use post to ensure views are fully laid out before measuring
-    binding.root.post {
+    // Apply dynamic constraints AFTER visibility is set and layout is ready
+    // Use post {} to ensure views are measured before applying sizing
+    if (binding.root.isLaidOut && binding.root.width > 0) {
       applyDynamicWidthConstraints(item.data, isContract)
+    } else {
+      binding.root.post {
+        applyDynamicWidthConstraints(item.data, isContract)
+      }
     }
 
     // Also set request for the included layouts explicitly
@@ -802,25 +846,44 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
         val fromCity = binding.fromCity
         val pincodeState = binding.pincodeState
 
-        if (fromCity != null && pincodeState != null) {
-            // Get text content first
-            val fromCityText = fromCity.text?.toString() ?: ""
-            val pincodeText = pincodeState.text?.toString() ?: ""
-            
-            // Skip if text is empty (data not bound yet)
-            if (fromCityText.isEmpty() || pincodeText.isEmpty()) {
-                return
+        if (fromCity != null && pincodeState != null && availableWidth > 0) {
+            // IMPORTANT: Force measure if views haven't been measured yet
+            if (fromCity.width == 0) {
+                fromCity.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                )
+            }
+            if (pincodeState.width == 0) {
+                pincodeState.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                )
             }
             
             // First, set both to their default sizes
             fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16f)
             pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
 
+            // Create Paint objects for accurate measurement
+            val fromCityPaint = android.text.TextPaint().apply {
+                isAntiAlias = true
+                typeface = fromCity.typeface
+                textSize = 16f.spToPx(context)
+            }
+            
+            val pincodePaint = android.text.TextPaint().apply {
+                isAntiAlias = true
+                typeface = pincodeState.typeface
+                textSize = 14f.spToPx(context)
+            }
+
             // Measure total width needed with default sizes
             var totalWidthNeeded = 0f
 
             // Measure fromCity
-            val fromCityWidth = fromCity.paint.measureText(fromCityText)
+            val fromCityText = fromCity.text?.toString() ?: ""
+            val fromCityWidth = fromCityPaint.measureText(fromCityText)
             val fromCityPadding = fromCity.paddingStart + fromCity.paddingEnd
             totalWidthNeeded += fromCityWidth + fromCityPadding
 
@@ -828,7 +891,8 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
             totalWidthNeeded += spacingPx
 
             // Measure pincodeState
-            val pincodeWidth = pincodeState.paint.measureText(pincodeText)
+            val pincodeText = pincodeState.text?.toString() ?: ""
+            val pincodeWidth = pincodePaint.measureText(pincodeText)
             val pincodePadding = pincodeState.paddingStart + pincodeState.paddingEnd
             totalWidthNeeded += pincodeWidth + pincodePadding
 
@@ -1039,8 +1103,15 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
     // Update progress bar visibility based on loading state
     updateCallProgressBar(callLoadingState)
     
-    // Apply dynamic constraints AFTER data binding
-    applyDynamicWidthConstraints(item.data)
+    // Apply dynamic constraints AFTER data binding and layout is ready
+    // Use post {} to ensure views are measured before applying sizing
+    if (binding.root.isLaidOut && binding.root.width > 0) {
+      applyDynamicWidthConstraints(item.data)
+    } else {
+      binding.root.post {
+        applyDynamicWidthConstraints(item.data)
+      }
+    }
 
     // Handle place bid button state based on bid status
     when(item.data.bidStatus().statusKey.lowercase()) {
