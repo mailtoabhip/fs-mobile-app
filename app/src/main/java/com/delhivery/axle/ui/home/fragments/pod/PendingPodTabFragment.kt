@@ -318,6 +318,8 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                     when (data.podAction()) {
                         PODStatus.UPLOAD, PODStatus.REJECT -> {
                             context?.let {
+                                // Pass source based on which section user is in
+                                val source = if (selectedPodType == PodType.EPOD) "epod" else "hpod"
                                 startActivityForResult(
                                     uploadImageIntent(
                                         it, 
@@ -325,7 +327,8 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                                         data.reachedTime!!, 
                                         data.unloadingTime!!, 
                                         data.podAction(),
-                                        data.intermittentPayableAmount
+                                        data.intermittentPayableAmount,
+                                        source
                                     ), REQCODE_UPLOAD_POD
                                 )
                             }
@@ -349,6 +352,7 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                         }
                     } else {
                         context?.let {
+                            // In EPOD section, source is "epod"
                             startActivityForResult(
                                 uploadImageIntent(
                                     it, 
@@ -356,7 +360,8 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                                     data.reachedTime!!, 
                                     data.unloadingTime!!, 
                                     podStatus = data.podAction(),
-                                    intermittentPayableAmount = data.intermittentPayableAmount
+                                    intermittentPayableAmount = data.intermittentPayableAmount,
+                                    source = "epod"
                                 ), REQCODE_UPLOAD_POD
                             )
                         }

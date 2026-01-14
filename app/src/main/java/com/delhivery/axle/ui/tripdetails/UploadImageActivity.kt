@@ -41,6 +41,7 @@ import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.EVENT_POD_UPLOAD
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.PROPERTY_STATUS
+import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.VALUE_FAILURE
@@ -100,6 +101,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   private var isFirstResume = true
   private var podStatus: PODStatus? = null
   private var intermittentPayableAmount: Double? = null
+  private var source: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -123,6 +125,9 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     
     // Read intermittent payable amount from intent
     intermittentPayableAmount = intent?.getDoubleExtra(IntermittentPayableAmountKey, 0.0)?.takeIf { it > 0.0 }
+    
+    // Read source from intent
+    source = intent?.getStringExtra(SourceIntentKey)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -327,11 +332,20 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
 
   override fun onDocumentSuccess(documentUrl: String) {
     if (!isFinishing) {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_POD_UPLOAD,
-          mutableListOf(PROPERTY_STATUS),
-          mutableListOf(VALUE_SUCCESS)
-      )
+      // Track pod_upload with source if available
+      if (source != null) {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE),
+            mutableListOf(VALUE_SUCCESS, source!!)
+        )
+      } else {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS),
+            mutableListOf(VALUE_SUCCESS)
+        )
+      }
         val s3Path = extractS3Path(documentUrl) ?: documentUrl
         viewModel.onUploadSuccess(currentPodId, s3Path)
 
@@ -355,11 +369,20 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
 
   override fun onDocumentFailure(error: String) {
     if (!isFinishing) {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_POD_UPLOAD,
-          mutableListOf(PROPERTY_STATUS),
-          mutableListOf(VALUE_FAILURE)
-      )
+      // Track pod_upload failure with source if available
+      if (source != null) {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE),
+            mutableListOf(VALUE_FAILURE, source!!)
+        )
+      } else {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS),
+            mutableListOf(VALUE_FAILURE)
+        )
+      }
       uiUtils.hideProgress()
       uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
       // Reset to SELECTED state so user can retry
@@ -716,6 +739,7 @@ private const val ReachedTimeIntentKey = "reached_time"
 private const val UnloadedTimeIntentKey = "unloaded_time"
 private const val PodStatusIntentKey = "pod_status"
 private const val IntermittentPayableAmountKey = "intermittent_payable_amount"
+private const val SourceIntentKey = "source"
 
 /**
  * Upload Image intent
@@ -726,11 +750,13 @@ fun uploadImageIntent(
   reachedTime: String,
   unloadedTime: String,
   podStatus: PODStatus? = null,
-  intermittentPayableAmount: Double? = null
+  intermittentPayableAmount: Double? = null,
+  source: String? = null
 ) = Intent(context, UploadImageActivity::class.java).apply {
     putExtra(TransactionIdIntentKey, transactionId)
     putExtra(ReachedTimeIntentKey, reachedTime)
     putExtra(UnloadedTimeIntentKey, unloadedTime)
     podStatus?.let { putExtra(PodStatusIntentKey, it) }
     intermittentPayableAmount?.let { putExtra(IntermittentPayableAmountKey, it) }
+    source?.let { putExtra(SourceIntentKey, it) }
 }
