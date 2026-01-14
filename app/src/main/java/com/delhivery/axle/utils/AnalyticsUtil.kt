@@ -145,6 +145,8 @@ const val EVENT_VIEW_MY_PROFILE = "view_my_profile"
 const val EVENT_CLICKED_PRICE_BANNER = "clicked_price_banner"
 const val EVENT_CLICKED_PRICE_NOTIFICATION = "clicked_price_notification"
 const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
+const val EVENT_EPOD_LIST_SHOWN = "epod_list_shown"
+const val EVENT_HPOD_LIST_SHOWN = "hpod_list_shown"
 
 
 

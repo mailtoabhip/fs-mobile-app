@@ -35,6 +35,12 @@ import android.app.Activity
 import android.content.Intent
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
+import com.delhivery.axle.utils.EVENT_EPOD_LIST_SHOWN
+import com.delhivery.axle.utils.EVENT_HPOD_LIST_SHOWN
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 /**
  * Fragment for Pending POD tab showing EPOD pending and Physical POD pending items
@@ -45,9 +51,15 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
         HomePodRVAdapter(this)
     }
 
+    @Inject lateinit var userPrefs: UserPrefs
+
     private var selectedPodType: PodType = PodType.EPOD // Default to EPOD
     private var epodCount: Int = 0
     private var hpodCount: Int = 0
+    
+    // Track if events have been fired for current data load to avoid duplicates
+    private var epodListShownTracked = false
+    private var hpodListShownTracked = false
 
     enum class PodType {
         EPOD,
@@ -163,6 +175,10 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
             }
         }
 
+        // Reset tracking flags when switching pod types
+        epodListShownTracked = false
+        hpodListShownTracked = false
+
         // Reload data with selected filter
         refreshData()
     }
@@ -187,6 +203,38 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
                 true // Keep non-pod items (header, search, etc.)
             }
         }
+        
+        // Count POD items (excluding header, search, progress, warning items)
+        val podItemsCount = filteredItems.count { it.first.type == Pod }
+        
+        // Track analytics events only when list is not empty
+        if (podItemsCount > 0) {
+            when (selectedPodType) {
+                PodType.EPOD -> {
+                    // Track epod_list_shown only once per data load
+                    if (!epodListShownTracked) {
+                        analyticsUtil.moEngageTrackEvent(
+                            EVENT_EPOD_LIST_SHOWN,
+                            mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                            mutableListOf(userPrefs.userId(), "my_pods")
+                        )
+                        epodListShownTracked = true
+                    }
+                }
+                PodType.HPOD -> {
+                    // Track hpod_list_shown only once per data load
+                    if (!hpodListShownTracked) {
+                        analyticsUtil.moEngageTrackEvent(
+                            EVENT_HPOD_LIST_SHOWN,
+                            mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                            mutableListOf(userPrefs.userId(), "my_pods")
+                        )
+                        hpodListShownTracked = true
+                    }
+                }
+            }
+        }
+        
         adapter.operation(filteredItems)
      //   updatePodTypeCounts()
     }
@@ -197,6 +245,10 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
         
         // Clear adapter before loading new data
         adapter.resetStaticData()
+        
+        // Reset tracking flags when refreshing data
+        epodListShownTracked = false
+        hpodListShownTracked = false
         
         viewModel.status = when (selectedPodType) {
             PodType.EPOD -> TruckUnloaded
