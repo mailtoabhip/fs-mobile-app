@@ -42,8 +42,12 @@ import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.DatePatterns
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.EVENT_HPOD_SUBMIT_TAP
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -108,6 +112,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
   private var podStatus: PODStatus? = null
+  private var source: String? = null
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("DocketUpdateActivity_SetupTime")
@@ -127,6 +132,9 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       // Extract POD status from trip data
       podStatus = viewModel.trip?.podAction()
     }
+    
+    // Read source from intent
+    source = intent?.getStringExtra(SourceIntentKey)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -270,6 +278,9 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     binding.submitButtonMaxWidth.setOnClickListener {
       uiUtils.toggleKeyboard()
       if (isValid()) {
+        // Track hpod_submit_tap event
+        trackHpodSubmitTap()
+        
         // Show progress at the start of the entire process
         uiUtils.showProgress()
 
@@ -736,6 +747,27 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     uploadImageName = ""
     localImageName = ""
   }
+  
+  /**
+   * Track hpod_submit_tap event when user submits HPOD
+   */
+  private fun trackHpodSubmitTap() {
+    val transactionId = viewModel.transactionIds.firstOrNull() ?: viewModel.trip?.transactionId ?: ""
+    
+    if (source != null) {
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_HPOD_SUBMIT_TAP,
+        mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID, PROPERTY_SOURCE),
+        mutableListOf(userPrefs.userId(), transactionId, source!!)
+      )
+    } else {
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_HPOD_SUBMIT_TAP,
+        mutableListOf(PROPERTY_USER_ID, PROPERTY_TRANSACTION_ID),
+        mutableListOf(userPrefs.userId(), transactionId)
+      )
+    }
+  }
 
   private fun viewImage(
     docketId: Int,
@@ -936,6 +968,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
 private const val TransactionIdsIntentKey = "transaction_ids"
 private const val TripDataIntentKey = "trip_data"
 private const val PodStatusIntentKey = "pod_status"
+private const val SourceIntentKey = "source"
 
 
 /**
@@ -945,10 +978,12 @@ fun docketUpdateIntent(
   context: Context,
   transactionIds: ArrayList<String>? = null,
   trip: HomeTripsItemData? = null,
-  podStatus: PODStatus?=null
+  podStatus: PODStatus?=null,
+  source: String? = null
 ) = Intent(context, DocketUpdateActivity::class.java).apply {
   transactionIds?.let { putStringArrayListExtra(TransactionIdsIntentKey, transactionIds) }
   trip?.let { putExtra(TripDataIntentKey, trip)
     putExtra(PodStatusIntentKey, podStatus)
   }
+  source?.let { putExtra(SourceIntentKey, it) }
 }

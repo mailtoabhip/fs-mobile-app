@@ -346,8 +346,9 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
 
                     if (selectedPodType == PodType.HPOD) {
                           context?.let {
+                            // In HPOD section, source is "hpod"
                             startActivityForResult(
-                                docketUpdateIntent(context = it, trip = data, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
+                                docketUpdateIntent(context = it, trip = data, podStatus = data.podAction(), source = "hpod"), REQCODE_UPLOAD_DOCKET
                             )
                         }
                     } else {

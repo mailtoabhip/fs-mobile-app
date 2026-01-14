@@ -28,6 +28,9 @@ class SearchViewModel @Inject constructor(
   private val userRepository: UserRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
+  
+  // LiveData to track when search list is shown with data
+  var searchListShownTracked = MutableLiveData<Boolean>().apply { value = false }
 
   var searchLiveData =
     MutableLiveData<List<Pair<BaseSearchRVAdapterItem<*>, DataRVAdapterOperationType>>>()
@@ -78,6 +81,8 @@ class SearchViewModel @Inject constructor(
                         ), Add
                     )
                 )
+                // Signal that search list with data is shown (only for initial search, not pagination)
+                searchListShownTracked.postValue(true)
               }
 
               if (total == 0) {
