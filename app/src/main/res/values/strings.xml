@@ -928,4 +928,16 @@
 <string name="call">Call</string>
 <string name="call_content_description">Call driver</string>
   <string name="view_on_map_html"><u>View on map</u></string>
+
+  <!-- Security Strings -->
+  <string name="security_warning_title">Security Warning</string>
+  <string name="root_detection_message">This device appears to be rooted or modified. For security and compliance reasons, some features may be limited or unavailable.\n\nWe recommend using this app on a secure, unmodified device to ensure the safety of your business data.</string>
+  <string name="root_detection_message_blocked">This device appears to be rooted or modified. For security reasons, this app cannot be used on rooted devices.\n\nPlease unroot your device or use a different device to access this app.</string>
+  <string name="emulator_detection_message_blocked">This app cannot be used on emulator or virtual devices. For security and compliance reasons, please use a real physical device to access this app.\n\nThis restriction helps protect sensitive business data and ensures proper functionality.</string>
+  <string name="root_and_emulator_detection_message">This device has multiple security concerns detected (rooted and/or emulator). For security reasons, this app cannot be used on modified or virtual devices.\n\nPlease use a secure, unmodified physical device to access this app.</string>
+  <string name="continue_anyway">I Understand</string>
+  <string name="exit_app">Exit</string>
+  <string name="root_detected_toast">Rooted device detected. Some features may be restricted.</string>
+  <string name="emulator_detected_toast">Emulator detected. App cannot run on virtual devices.</string>
+
 </resources>

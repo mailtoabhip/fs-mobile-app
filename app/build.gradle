@@ -25,7 +25,14 @@ android {
     signingConfig signingConfigs.release
   }
   buildTypes {
+    debug {
+      // Root detection disabled for development
+      buildConfigField "boolean", "ROOT_DETECTION_ENABLED", "false"
+    }
+    
     release {
+      // Root detection enabled in release builds
+      buildConfigField "boolean", "ROOT_DETECTION_ENABLED", "true"
       minifyEnabled true
       shrinkResources true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -38,6 +45,8 @@ android {
     releaseDebuggable {
       initWith release      // copy release config
       debuggable true       // make it debuggable
+      // Root detection enabled for testing
+      buildConfigField "boolean", "ROOT_DETECTION_ENABLED", "true"
       signingConfig signingConfigs.release
       minifyEnabled true
       shrinkResources true
