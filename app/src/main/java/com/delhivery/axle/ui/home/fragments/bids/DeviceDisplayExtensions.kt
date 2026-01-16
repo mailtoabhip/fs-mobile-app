@@ -54,96 +54,6 @@ fun Context.getDeviceDisplayInfo(): DeviceDisplayInfo {
     )
 }
 
-/**
- * Get available content width accounting for margins and padding
- * 
- * @param horizontalMargin Total horizontal margin in dp (left + right)
- * @param horizontalPadding Total horizontal padding in dp (left + right)
- * @return Available width in pixels
- */
-fun View.getAvailableContentWidth(
-    horizontalMargin: Int = 0,
-    horizontalPadding: Int = 0
-): Int {
-    val displayInfo = context.getDeviceDisplayInfo()
-    val marginPx = horizontalMargin.dpToPx(context)
-    val paddingPx = horizontalPadding.dpToPx(context)
-    return displayInfo.widthPx - marginPx - paddingPx
-}
-
-/**
- * Distribute width percentage among multiple views in a row
- * Prevents overlapping by assigning proportional widths
- * 
- * @param views List of views to distribute width to
- * @param percentages List of percentage values (should sum to ~1.0f or less)
- * @param spacing Total spacing between views in dp
- * @param horizontalMargin Horizontal margin of parent in dp
- */
-fun View.distributeWidthProportionally(
-    views: List<View>,
-    percentages: List<Float>,
-    spacing: Int = 8,
-    horizontalMargin: Int = 16
-) {
-    require(views.size == percentages.size) {
-        "Number of views must match number of percentages"
-    }
-    
-    val displayInfo = context.getDeviceDisplayInfo()
-    val marginPx = horizontalMargin.dpToPx(context)
-    val spacingPx = spacing.dpToPx(context)
-    
-    // Calculate available width
-    val totalAvailableWidth = displayInfo.widthPx - (marginPx * 2) - (spacingPx * (views.size - 1))
-    
-    views.forEachIndexed { index, view ->
-        val widthPx = (totalAvailableWidth * percentages[index]).roundToInt()
-        view.layoutParams = view.layoutParams?.apply {
-            width = widthPx
-        } ?: ViewGroup.LayoutParams(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-}
-
-/**
- * Calculate optimal width percentage based on device screen size
- * Adjusts percentages for small screens vs tablets
- * 
- * @param itemCount Number of items in the row
- * @param equalDistribution Whether to distribute equally or use smart defaults
- * @return List of percentages for each item
- */
-fun Context.calculateOptimalWidthPercentages(
-    itemCount: Int,
-    equalDistribution: Boolean = false
-): List<Float> {
-    val displayInfo = getDeviceDisplayInfo()
-    
-    return when {
-        equalDistribution -> List(itemCount) { 1f / itemCount }
-        
-        // For small screens, adjust percentages to prevent overlap
-        displayInfo.isSmallScreen -> when (itemCount) {
-            2 -> listOf(0.55f, 0.45f) // Give more space to first item
-            3 -> listOf(0.4f, 0.3f, 0.3f)
-            else -> List(itemCount) { 1f / itemCount }
-        }
-        
-        // For tablets, can use more balanced distribution
-        displayInfo.isTablet -> when (itemCount) {
-            2 -> listOf(0.5f, 0.5f)
-            3 -> listOf(0.35f, 0.35f, 0.3f)
-            else -> List(itemCount) { 1f / itemCount }
-        }
-        
-        // For normal screens
-        else -> when (itemCount) {
-            2 -> listOf(0.5f, 0.5f)
-            3 -> listOf(0.4f, 0.3f, 0.3f)
-            else -> List(itemCount) { 1f / itemCount }
-        }
-    }
-}
 
 /**
  * Helper to convert dp to px
@@ -160,81 +70,91 @@ fun Int.pxToDp(context: Context): Int {
 }
 
 /**
- * Set max width based on percentage of screen width
- * Useful for preventing text views from taking too much space
- * 
- * @param percentage Percentage of screen width (0.0f to 1.0f)
- * @param horizontalMargin Total horizontal margin to account for in dp
+ * Helper extension to convert sp to px
  */
-fun View.setMaxWidthPercent(percentage: Float, horizontalMargin: Int = 0) {
-    val displayInfo = context.getDeviceDisplayInfo()
-    val marginPx = horizontalMargin.dpToPx(context)
-    val maxWidthPx = ((displayInfo.widthPx - marginPx) * percentage).roundToInt()
-    
-    // maxWidth is only available on TextView and its subclasses
-    if (this is android.widget.TextView) {
-        this.maxWidth = maxWidthPx
-    }
+fun Float.spToPx(context: Context): Float {
+    return android.util.TypedValue.applyDimension(
+        android.util.TypedValue.COMPLEX_UNIT_SP,
+        this,
+        context.resources.displayMetrics
+    )
 }
 
 /**
- * Set max width in pixels for TextView (type-safe extension)
+ * Dynamically adjusts text size of multiple TextViews to fit within available width
+ * Measures actual text content and scales down if needed so nothing gets truncated
  * 
- * @param maxWidthPx Maximum width in pixels
- * @param enableEllipsize Whether to enable ellipsis for overflow text
+ * IMPORTANT: This function now handles unmeasured views by forcing measurement if needed
  */
-fun android.widget.TextView.setMaxWidthSafe(maxWidthPx: Int, enableEllipsize: Boolean = true) {
-    this.maxWidth = maxWidthPx
-    if (enableEllipsize) {
-        this.ellipsize = android.text.TextUtils.TruncateAt.END
-        // Don't force maxLines - let XML or natural wrapping handle it
-    }
-}
-
-/**
- * Set max width as percentage for TextView with optional ellipsis
- * 
- * @param percentage Percentage of available width (0.0f to 1.0f)
- * @param availableWidth Total available width in pixels
- * @param enableEllipsize Whether to enable ellipsis for overflow text
- */
-fun android.widget.TextView.setMaxWidthPercent(
-    percentage: Float, 
+fun adjustTextSizeToFit(
+    views: List<android.widget.TextView>,
     availableWidth: Int,
-    enableEllipsize: Boolean = true
+    defaultTextSize: Float,
+    minTextSize: Float,
+    spacingBetweenViews: Int,
+    drawablePadding: Int
 ) {
-    val maxWidthPx = (availableWidth * percentage).toInt()
-    setMaxWidthSafe(maxWidthPx, enableEllipsize)
-}
-
-/**
- * Apply constraint layout guidelines dynamically based on screen size
- * Adjusts guideline percentages for different device types
- * 
- * @param deviceInfo Device display information
- * @param leftPercentage Default left guideline percentage
- * @param rightPercentage Default right guideline percentage
- * @return Adjusted guideline percentages as Pair(left, right)
- */
-fun ConstraintLayout.applyDynamicGuidelines(
-    deviceInfo: DeviceDisplayInfo,
-    leftPercentage: Float = 0.4f,
-    rightPercentage: Float = 0.6f
-): Pair<Float, Float> {
-    return when {
-        deviceInfo.isSmallScreen -> {
-            // For small screens, give more space to left side
-            Pair(0.45f, 0.55f)
-        }
-        deviceInfo.isTablet -> {
-            // For tablets, use default or slightly adjusted
-            Pair(leftPercentage, rightPercentage)
-        }
-        else -> {
-            // For normal screens
-            Pair(leftPercentage, rightPercentage)
+    if (views.isEmpty() || availableWidth <= 0) return
+    
+    // IMPORTANT: Force measure if views haven't been measured yet
+    views.forEach { view ->
+        if (view.width == 0) {
+            view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            )
         }
     }
+    
+    // First, set all views to default text size
+    views.forEach { it.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultTextSize) }
+    
+    // Create a Paint object and copy properties from first view
+    val paint = android.text.TextPaint().apply {
+        isAntiAlias = true
+        textSize = defaultTextSize.spToPx(views[0].context)
+    }
+    
+    // Measure total width needed with default text size
+    var totalWidthNeeded = 0f
+    
+    views.forEachIndexed { index, textView ->
+        // Copy typeface for accurate measurement
+        paint.typeface = textView.typeface
+        paint.textSize = defaultTextSize.spToPx(textView.context)
+        
+        // Measure text width
+        val text = textView.text?.toString() ?: ""
+        val textWidth = paint.measureText(text)
+        
+        // Account for drawable (icon) width if present
+        val drawableWidth = textView.compoundDrawables[0]?.intrinsicWidth ?: 0
+        val drawableSpace = if (drawableWidth > 0) drawableWidth + drawablePadding else 0
+        
+        // Account for padding
+        val paddingSpace = textView.paddingStart + textView.paddingEnd
+        
+        totalWidthNeeded += textWidth + drawableSpace + paddingSpace
+        
+        // Add spacing between views (except for last view)
+        if (index < views.size - 1) {
+            totalWidthNeeded += spacingBetweenViews
+        }
+    }
+    
+    // If total width exceeds available width, scale down text size proportionally
+    if (totalWidthNeeded > availableWidth) {
+        val scaleFactor = availableWidth / totalWidthNeeded
+        val newTextSize = (defaultTextSize * scaleFactor).coerceAtLeast(minTextSize)
+        
+        // Apply the scaled text size to all views
+        views.forEach { textView ->
+            textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newTextSize)
+        }
+    }
+    
+    // Request layout update
+    views.forEach { it.requestLayout() }
 }
 
 /**
