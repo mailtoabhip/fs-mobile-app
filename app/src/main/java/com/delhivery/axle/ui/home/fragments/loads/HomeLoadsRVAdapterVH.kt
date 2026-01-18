@@ -365,8 +365,8 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.advancePaymentPercentage?.let { percentage ->
               adjustTextSizeToFit(
                 views = listOf(truckInfo, paymentType, percentage),
+                textSizes = listOf(14f, 14f, 14f),
                 availableWidth = availableWidth,
-                defaultTextSize = 14f,
                 minTextSize = 10f,
                 spacingBetweenViews = 8.dpToPx(context),
                 drawablePadding = 4.dpToPx(context)
@@ -379,8 +379,8 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
           binding.paymentType?.let { paymentType ->
             adjustTextSizeToFit(
               views = listOf(truckInfo, paymentType),
+              textSizes = listOf(14f, 14f),
               availableWidth = availableWidth,
-              defaultTextSize = 14f,
               minTextSize = 10f,
               spacingBetweenViews = 8.dpToPx(context),
               drawablePadding = 4.dpToPx(context)
@@ -418,8 +418,8 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             binding.layoutIntracity.advancePaymentPercentage?.let { percentage ->
               adjustTextSizeToFit(
                 views = listOf(truckInfo, paymentType, percentage),
+                textSizes = listOf(14f, 14f, 14f),
                 availableWidth = availableWidth,
-                defaultTextSize = 14f,
                 minTextSize = 10f,
                 spacingBetweenViews = 8.dpToPx(context),
                 drawablePadding = 4.dpToPx(context)
@@ -432,8 +432,8 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
           binding.layoutIntracity.paymentType?.let { paymentType ->
             adjustTextSizeToFit(
               views = listOf(truckInfo, paymentType),
+              textSizes = listOf(14f, 14f),
               availableWidth = availableWidth,
-              defaultTextSize = 14f,
               minTextSize = 10f,
               spacingBetweenViews = 8.dpToPx(context),
               drawablePadding = 4.dpToPx(context)
@@ -550,8 +550,8 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
             binding.advancePaymentPercentage?.let { percentage ->
               adjustTextSizeToFit(
                 views = listOf(truckInfo, paymentType, percentage),
+                textSizes = listOf(14f, 14f, 14f),
                 availableWidth = availableWidth,
-                defaultTextSize = 14f,
                 minTextSize = 10f,
                 spacingBetweenViews = 8.dpToPx(context),
                 drawablePadding = 4.dpToPx(context)
@@ -564,8 +564,8 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
           binding.paymentType?.let { paymentType ->
             adjustTextSizeToFit(
               views = listOf(truckInfo, paymentType),
+              textSizes = listOf(14f, 14f),
               availableWidth = availableWidth,
-              defaultTextSize = 14f,
               minTextSize = 10f,
               spacingBetweenViews = 8.dpToPx(context),
               drawablePadding = 4.dpToPx(context)

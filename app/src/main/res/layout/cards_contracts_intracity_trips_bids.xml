@@ -38,7 +38,7 @@
                     android:id="@+id/closingTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     tools:text ="Closes in 2 hrs 15 min"
                     app:optionalTextColor="@{request}"
                     android:text="@{request.formattedLoadAndContractBidEndingTime()}"

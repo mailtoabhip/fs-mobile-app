@@ -490,8 +490,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
       shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType, percentage),
+          textSizes = listOf(14f, 14f, 14f),
           availableWidth = availableWidth,
-          defaultTextSize = 14f,
           minTextSize = 10f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx
@@ -501,8 +501,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
       shouldShowPaymentType && truckInfo != null && paymentType != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType),
+          textSizes = listOf(14f, 14f),
           availableWidth = availableWidth,
-          defaultTextSize = 14f,
           minTextSize = 10f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx
@@ -850,8 +850,8 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       shouldShowDistance && truckInfo != null && distance != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, distance),
+          textSizes = listOf(14f, 14f),
           availableWidth = availableWidth,
-          defaultTextSize = 14f,
           minTextSize = 10f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx
@@ -861,8 +861,8 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType, percentage),
+          textSizes = listOf(12f, 12f, 12f),
           availableWidth = availableWidth,
-          defaultTextSize = 12f,
           minTextSize = 9f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx
@@ -872,8 +872,8 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       shouldShowPaymentType && truckInfo != null && paymentType != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType),
+          textSizes = listOf(12f, 12f),
           availableWidth = availableWidth,
-          defaultTextSize = 12f,
           minTextSize = 9f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx
@@ -1160,8 +1160,8 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
       shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType, percentage),
+          textSizes = listOf(14f, 14f, 14f),
           availableWidth = availableWidth,
-          defaultTextSize = 14f,
           minTextSize = 10f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx
@@ -1171,8 +1171,8 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
       shouldShowPaymentType && truckInfo != null && paymentType != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType),
+          textSizes = listOf(14f, 14f),
           availableWidth = availableWidth,
-          defaultTextSize = 14f,
           minTextSize = 10f,
           spacingBetweenViews = spacingPx,
           drawablePadding = drawablePaddingPx

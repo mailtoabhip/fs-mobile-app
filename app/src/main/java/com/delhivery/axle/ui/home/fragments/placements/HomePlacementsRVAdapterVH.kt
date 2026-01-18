@@ -226,8 +226,8 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
         if (vehicleType != null && reportingTime != null) {
             adjustTextSizeToFit(
                 views = listOf(vehicleType, reportingTime),
+                textSizes = listOf(14f, 14f),
                 availableWidth = availableWidth,
-                defaultTextSize = 14f,
                 minTextSize = 10f,
                 spacingBetweenViews = spacingPx,
                 drawablePadding = drawablePaddingPx
@@ -243,8 +243,8 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
             vehicleNumber != null && driverName != null -> {
                 adjustTextSizeToFit(
                     views = listOf(vehicleNumber, driverName),
+                    textSizes = listOf(14f, 14f),
                     availableWidth = availableWidth,
-                    defaultTextSize = 14f,
                     minTextSize = 10f,
                     spacingBetweenViews = spacingPx,
                     drawablePadding = drawablePaddingPx
