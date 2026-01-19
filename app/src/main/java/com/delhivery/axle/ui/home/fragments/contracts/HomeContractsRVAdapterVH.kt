@@ -290,9 +290,44 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
    * Contracts don't show payment information
    */
   private fun applyIntracityDynamicTextSizing(item: HomeContractsRequestItem) {
+    // Calculate available width
+    val availableWidth = context.calculateAvailableCardWidth(
+      cardMarginDp = 12,
+      contentPaddingDp = 16
+    )
+    
+    // Apply dynamic text sizing to city row (fromCity and pincodeState)
+    applyToCityRow(availableWidth)
+    
     // Contracts only show truck info - no payment fields
     // Reset to default text size as it's a single view
     binding.truckInfo?.let { resetTextViewToDefault(it) }
+  }
+  
+  /**
+   * Apply dynamic text sizing to fromCity and pincode_state views
+   * Uses adjustTextSizeToFit method to maintain relative size difference (16sp vs 14sp)
+   * Prevents text truncation on smaller screens
+   */
+  private fun applyToCityRow(availableWidth: Int) {
+    val spacingPx = 4.dpToPx(context) // marginStart="@dimen/size_4dp" from XML
+    val drawablePaddingPx = 0 // No drawables in city row
+
+    val fromCity = binding.fromCity
+    val pincodeState = binding.pincodeState
+
+    if (fromCity != null && pincodeState != null && availableWidth > 0) {
+      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
+      // 16sp for fromCity, 14sp for pincodeState
+      adjustTextSizeToFit(
+        views = listOf(fromCity, pincodeState),
+        textSizes = listOf(16f, 14f),
+        availableWidth = availableWidth,
+        minTextSize = 10f,
+        spacingBetweenViews = spacingPx,
+        drawablePadding = drawablePaddingPx
+      )
+    }
   }
   
   /**

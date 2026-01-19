@@ -354,12 +354,16 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
       contentPaddingDp = 16
     )
     
+    val spacing8dpPx = 8.dpToPx(context)
+    val spacing2dpPx = 2.dpToPx(context)
+    val drawablePaddingPx = 4.dpToPx(context)
+    
     val shouldShowPaymentType = binding.paymentType?.visibility == View.VISIBLE
     val shouldShowAdvancePercentage = binding.advancePaymentPercentage?.visibility == View.VISIBLE
     
     binding.truckInfo?.let { truckInfo ->
       when {
-        // All 3 views visible
+        // All 3 views visible: truckInfo (8dp) paymentType (2dp) percentage
         shouldShowAdvancePercentage -> {
           binding.paymentType?.let { paymentType ->
             binding.advancePaymentPercentage?.let { percentage ->
@@ -368,13 +372,13 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
                 textSizes = listOf(14f, 14f, 14f),
                 availableWidth = availableWidth,
                 minTextSize = 10f,
-                spacingBetweenViews = 8.dpToPx(context),
-                drawablePadding = 4.dpToPx(context)
+                spacingBetweenViews = listOf(spacing8dpPx, spacing2dpPx),
+                drawablePadding = drawablePaddingPx
               )
             }
           }
         }
-        // Only truck + payment type
+        // Only truck + payment type: uniform 8dp spacing
         shouldShowPaymentType -> {
           binding.paymentType?.let { paymentType ->
             adjustTextSizeToFit(
@@ -382,8 +386,8 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
               textSizes = listOf(14f, 14f),
               availableWidth = availableWidth,
               minTextSize = 10f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
+              spacingBetweenViews = spacing8dpPx,
+              drawablePadding = drawablePaddingPx
             )
           }
         }
@@ -406,13 +410,20 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
       contentPaddingDp = 16  // Content padding
     )
     
+    val spacing8dpPx = 8.dpToPx(context)
+    val spacing2dpPx = 2.dpToPx(context)
+    val drawablePaddingPx = 4.dpToPx(context)
+    
+    // Apply dynamic text sizing to city row (fromCity and pincodeState)
+    applyIntracityToCityRow(availableWidth)
+    
     // Apply dynamic text sizing to truck info + payment row
     val shouldShowPaymentType = binding.layoutIntracity.paymentType?.visibility == View.VISIBLE
     val shouldShowAdvancePercentage = binding.layoutIntracity.advancePaymentPercentage?.visibility == View.VISIBLE
     
     binding.layoutIntracity.truckInfo?.let { truckInfo ->
       when {
-        // All 3 views visible
+        // All 3 views visible: truckInfo (8dp) paymentType (2dp) percentage
         shouldShowAdvancePercentage -> {
           binding.layoutIntracity.paymentType?.let { paymentType ->
             binding.layoutIntracity.advancePaymentPercentage?.let { percentage ->
@@ -421,13 +432,13 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
                 textSizes = listOf(14f, 14f, 14f),
                 availableWidth = availableWidth,
                 minTextSize = 10f,
-                spacingBetweenViews = 8.dpToPx(context),
-                drawablePadding = 4.dpToPx(context)
+                spacingBetweenViews = listOf(spacing8dpPx, spacing2dpPx),
+                drawablePadding = drawablePaddingPx
               )
             }
           }
         }
-        // Only truck + payment type
+        // Only truck + payment type: uniform 8dp spacing
         shouldShowPaymentType -> {
           binding.layoutIntracity.paymentType?.let { paymentType ->
             adjustTextSizeToFit(
@@ -435,8 +446,8 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
               textSizes = listOf(14f, 14f),
               availableWidth = availableWidth,
               minTextSize = 10f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
+              spacingBetweenViews = spacing8dpPx,
+              drawablePadding = drawablePaddingPx
             )
           }
         }
@@ -445,6 +456,32 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
           resetTextViewToDefault(truckInfo, 14f)
         }
       }
+    }
+  }
+  
+  /**
+   * Apply dynamic text sizing to fromCity and pincode_state views for intracity loads
+   * Uses adjustTextSizeToFit method to maintain relative size difference (16sp vs 14sp)
+   * Prevents text truncation on smaller screens
+   */
+  private fun applyIntracityToCityRow(availableWidth: Int) {
+    val spacingPx = 4.dpToPx(context) // marginStart="@dimen/size_4dp" from XML
+    val drawablePaddingPx = 0 // No drawables in city row
+
+    val fromCity = binding.layoutIntracity.fromCity
+    val pincodeState = binding.layoutIntracity.pincodeState
+
+    if (fromCity != null && pincodeState != null && availableWidth > 0) {
+      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
+      // 16sp for fromCity, 14sp for pincodeState
+      adjustTextSizeToFit(
+        views = listOf(fromCity, pincodeState),
+        textSizes = listOf(16f, 14f),
+        availableWidth = availableWidth,
+        minTextSize = 10f,
+        spacingBetweenViews = spacingPx,
+        drawablePadding = drawablePaddingPx
+      )
     }
   }
   
@@ -538,13 +575,17 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
       contentPaddingDp = 16
     )
     
+    val spacing8dpPx = 8.dpToPx(context)
+    val spacing2dpPx = 2.dpToPx(context)
+    val drawablePaddingPx = 4.dpToPx(context)
+    
     // Determine visibility based on data
     val shouldShowPaymentType = data.shouldShowMarketplacePaymentMode()
     val shouldShowAdvancePercentage = data.shouldShowMarketplaceAdvancePercentage()
     
     binding.truckInfo?.let { truckInfo ->
       when {
-        // All 3 views visible
+        // All 3 views visible: truckInfo (8dp) paymentType (2dp) percentage
         shouldShowAdvancePercentage -> {
           binding.paymentType?.let { paymentType ->
             binding.advancePaymentPercentage?.let { percentage ->
@@ -553,13 +594,13 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
                 textSizes = listOf(14f, 14f, 14f),
                 availableWidth = availableWidth,
                 minTextSize = 10f,
-                spacingBetweenViews = 8.dpToPx(context),
-                drawablePadding = 4.dpToPx(context)
+                spacingBetweenViews = listOf(spacing8dpPx, spacing2dpPx),
+                drawablePadding = drawablePaddingPx
               )
             }
           }
         }
-        // Only truck + payment type
+        // Only truck + payment type: uniform 8dp spacing
         shouldShowPaymentType -> {
           binding.paymentType?.let { paymentType ->
             adjustTextSizeToFit(
@@ -567,8 +608,8 @@ class HomeLoadsMarketplaceItemVH(binding: CardLoadsDelhiveryMarketplaceBinding) 
               textSizes = listOf(14f, 14f),
               availableWidth = availableWidth,
               minTextSize = 10f,
-              spacingBetweenViews = 8.dpToPx(context),
-              drawablePadding = 4.dpToPx(context)
+              spacingBetweenViews = spacing8dpPx,
+              drawablePadding = drawablePaddingPx
             )
           }
         }

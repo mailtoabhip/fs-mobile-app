@@ -91,7 +91,7 @@ fun Float.spToPx(context: Context): Float {
  * @param textSizes List of desired text sizes for each view (in sp)
  * @param availableWidth Total available width in pixels
  * @param minTextSize Minimum allowed text size (in sp)
- * @param spacingBetweenViews Spacing between views in pixels
+ * @param spacingBetweenViews List of spacing between each pair of views in pixels (size must be views.size - 1)
  * @param drawablePadding Padding for drawables in pixels
  */
 fun adjustTextSizeToFit(
@@ -99,11 +99,15 @@ fun adjustTextSizeToFit(
     textSizes: List<Float>,
     availableWidth: Int,
     minTextSize: Float,
-    spacingBetweenViews: Int,
+    spacingBetweenViews: List<Int>,
     drawablePadding: Int
 ) {
     require(views.size == textSizes.size) {
         "Number of views (${views.size}) must match number of text sizes (${textSizes.size})"
+    }
+    
+    require(spacingBetweenViews.size == views.size - 1 || spacingBetweenViews.isEmpty()) {
+        "Spacing list size (${spacingBetweenViews.size}) must be views.size - 1 (${views.size - 1}) or empty"
     }
     
     if (views.isEmpty() || availableWidth <= 0) return
@@ -146,9 +150,9 @@ fun adjustTextSizeToFit(
         
         totalWidthNeeded += textWidth + drawableSpace + paddingSpace
         
-        // Add spacing between views (except for last view)
-        if (index < views.size - 1) {
-            totalWidthNeeded += spacingBetweenViews
+        // Add variable spacing between views (except for last view)
+        if (index < views.size - 1 && spacingBetweenViews.isNotEmpty()) {
+            totalWidthNeeded += spacingBetweenViews[index]
         }
     }
     
@@ -168,14 +172,40 @@ fun adjustTextSizeToFit(
 }
 
 /**
- * Convenience overload: adjusts text size with same size for all views
+ * Convenience overload: adjusts text size with uniform spacing between all views
+ * Maintains backward compatibility with existing code
+ * 
+ * @param views List of TextViews to adjust
+ * @param textSizes List of desired text sizes for each view (in sp)
+ * @param availableWidth Total available width in pixels
+ * @param minTextSize Minimum allowed text size (in sp)
+ * @param spacingBetweenViews Uniform spacing between views in pixels
+ * @param drawablePadding Padding for drawables in pixels
+ */
+fun adjustTextSizeToFit(
+    views: List<android.widget.TextView>,
+    textSizes: List<Float>,
+    availableWidth: Int,
+    minTextSize: Float,
+    spacingBetweenViews: Int,
+    drawablePadding: Int
+) {
+    // Convert uniform spacing to list of same spacing for all gaps
+    val spacingList = if (views.size > 1) List(views.size - 1) { spacingBetweenViews } else emptyList()
+    
+    // Call the more flexible version
+    adjustTextSizeToFit(views, textSizes, availableWidth, minTextSize, spacingList, drawablePadding)
+}
+
+/**
+ * Convenience overload: adjusts text size with same size for all views and uniform spacing
  * Maintains backward compatibility with existing code
  * 
  * @param views List of TextViews to adjust
  * @param availableWidth Total available width in pixels
  * @param defaultTextSize Desired text size for all views (in sp)
  * @param minTextSize Minimum allowed text size (in sp)
- * @param spacingBetweenViews Spacing between views in pixels
+ * @param spacingBetweenViews Uniform spacing between views in pixels
  * @param drawablePadding Padding for drawables in pixels
  */
 fun adjustTextSizeToFit(

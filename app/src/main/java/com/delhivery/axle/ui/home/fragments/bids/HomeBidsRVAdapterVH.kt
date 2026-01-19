@@ -473,7 +473,8 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
       cardMarginDp = 12,
       contentPaddingDp = 16
     )
-    val spacingPx = 8.dpToPx(context)
+    val spacing8dpPx = 8.dpToPx(context)
+    val spacing2dpPx = 2.dpToPx(context)
     val drawablePaddingPx = 4.dpToPx(context)
     
     // Get views
@@ -486,25 +487,25 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
     val shouldShowAdvancePercentage = shouldShowPaymentType && data.shouldShowAdvancePercentage()
     
     when {
-      // All 3 views visible
+      // All 3 views visible: truckInfo (8dp) paymentType (2dp) percentage
       shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType, percentage),
           textSizes = listOf(14f, 14f, 14f),
           availableWidth = availableWidth,
           minTextSize = 10f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = listOf(spacing8dpPx, spacing2dpPx),
           drawablePadding = drawablePaddingPx
         )
       }
-      // Only truck + payment type
+      // Only truck + payment type: uniform 8dp spacing
       shouldShowPaymentType && truckInfo != null && paymentType != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType),
           textSizes = listOf(14f, 14f),
           availableWidth = availableWidth,
           minTextSize = 10f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = spacing8dpPx,
           drawablePadding = drawablePaddingPx
         )
       }
@@ -740,98 +741,46 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
       contentPaddingDp = 16
     )
 
-      applyToCityRow(availableWidth)
+    applyToCityRow(availableWidth)
     
     // Apply dynamic text sizing to truck info and distance/payment row
     applyToTruckInfoRow(availableWidth, data, isContract)
   }
 
-    /**
-     * Apply dynamic text sizing to fromCity and pincode_state views
-     * Maintains relative size difference (16sp vs 14sp ratio = 1.143:1)
-     * Prevents text truncation on smaller screens
-     */
-    private fun applyToCityRow(availableWidth: Int) {
-        val spacingPx = 4.dpToPx(context) // marginStart="@dimen/size_4dp" from XML
+  /**
+   * Apply dynamic text sizing to fromCity and pincode_state views
+   * Uses adjustTextSizeToFit method to maintain relative size difference (16sp vs 14sp)
+   * Prevents text truncation on smaller screens
+   */
+  private fun applyToCityRow(availableWidth: Int) {
+    val spacingPx = 4.dpToPx(context) // marginStart="@dimen/size_4dp" from XML
+    val drawablePaddingPx = 0 // No drawables in city row
 
-        val fromCity = binding.fromCity
-        val pincodeState = binding.pincodeState
+    val fromCity = binding.fromCity
+    val pincodeState = binding.pincodeState
 
-        if (fromCity != null && pincodeState != null && availableWidth > 0) {
-            // IMPORTANT: Force measure if views haven't been measured yet
-            if (fromCity.width == 0) {
-                fromCity.measure(
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                )
-            }
-            if (pincodeState.width == 0) {
-                pincodeState.measure(
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                )
-            }
-            
-            // First, set both to their default sizes
-            fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16f)
-            pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
-
-            // Create Paint objects for accurate measurement
-            val fromCityPaint = android.text.TextPaint().apply {
-                isAntiAlias = true
-                typeface = fromCity.typeface
-                textSize = 16f.spToPx(context)
-            }
-            
-            val pincodePaint = android.text.TextPaint().apply {
-                isAntiAlias = true
-                typeface = pincodeState.typeface
-                textSize = 14f.spToPx(context)
-            }
-
-            // Measure total width needed with default sizes
-            var totalWidthNeeded = 0f
-
-            // Measure fromCity
-            val fromCityText = fromCity.text?.toString() ?: ""
-            val fromCityWidth = fromCityPaint.measureText(fromCityText)
-            val fromCityPadding = fromCity.paddingStart + fromCity.paddingEnd
-            totalWidthNeeded += fromCityWidth + fromCityPadding
-
-            // Add spacing between views
-            totalWidthNeeded += spacingPx
-
-            // Measure pincodeState
-            val pincodeText = pincodeState.text?.toString() ?: ""
-            val pincodeWidth = pincodePaint.measureText(pincodeText)
-            val pincodePadding = pincodeState.paddingStart + pincodeState.paddingEnd
-            totalWidthNeeded += pincodeWidth + pincodePadding
-
-            // If total width exceeds available width, scale down proportionally
-            // while maintaining the 16:14 ratio
-            if (totalWidthNeeded > availableWidth) {
-                val scaleFactor = availableWidth / totalWidthNeeded
-
-                // Scale both maintaining their ratio (16sp:14sp)
-                val newFromCitySize = (16f * scaleFactor).coerceAtLeast(12f)
-                val newPincodeSize = (14f * scaleFactor).coerceAtLeast(10f)
-
-                fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newFromCitySize)
-                pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newPincodeSize)
-            }
-
-            // Request layout update
-            fromCity.requestLayout()
-            pincodeState.requestLayout()
-        }
+    if (fromCity != null && pincodeState != null && availableWidth > 0) {
+      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
+      // 16sp for fromCity, 14sp for pincodeState
+      // Min sizes: 12sp for fromCity, 10sp for pincodeState
+      adjustTextSizeToFit(
+        views = listOf(fromCity, pincodeState),
+        textSizes = listOf(16f, 14f),
+        availableWidth = availableWidth,
+        minTextSize = 10f, // Will be applied proportionally
+        spacingBetweenViews = spacingPx,
+        drawablePadding = drawablePaddingPx
+      )
     }
+  }
 
   /**
    * Apply dynamic text sizing to truck info and distance/payment views
    * Pure dynamic sizing approach - text scales down to fit in single line
    */
   private fun applyToTruckInfoRow(availableWidth: Int, data: HomeBidsRequestItemData, isContract: Boolean) {
-    val spacingPx = 8.dpToPx(context)
+    val spacing8dpPx = 8.dpToPx(context)
+    val spacing2dpPx = 2.dpToPx(context)
     val drawablePaddingPx = 4.dpToPx(context)
     
     // Get views
@@ -846,36 +795,36 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
     val shouldShowAdvancePercentage = shouldShowPaymentType && data.shouldShowAdvancePercentage()
     
     when {
-      // Distance visible (contracts): truck info + distance
+      // Distance visible (contracts): truck info + distance (uniform 8dp spacing)
       shouldShowDistance && truckInfo != null && distance != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, distance),
           textSizes = listOf(14f, 14f),
           availableWidth = availableWidth,
           minTextSize = 10f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = spacing8dpPx,
           drawablePadding = drawablePaddingPx
         )
       }
-      // All 3 views visible (loads): truck + payment + percentage
+      // All 3 views visible (loads): truckInfo (8dp) paymentType (2dp) percentage
       shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType, percentage),
           textSizes = listOf(12f, 12f, 12f),
           availableWidth = availableWidth,
           minTextSize = 9f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = listOf(spacing8dpPx, spacing2dpPx),
           drawablePadding = drawablePaddingPx
         )
       }
-      // Only truck + payment type
+      // Only truck + payment type: uniform 8dp spacing
       shouldShowPaymentType && truckInfo != null && paymentType != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType),
           textSizes = listOf(12f, 12f),
           availableWidth = availableWidth,
           minTextSize = 9f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = spacing8dpPx,
           drawablePadding = drawablePaddingPx
         )
       }
@@ -1143,7 +1092,8 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
       cardMarginDp = 12,
       contentPaddingDp = 16
     )
-    val spacingPx = 8.dpToPx(context)
+    val spacing8dpPx = 8.dpToPx(context)
+    val spacing2dpPx = 2.dpToPx(context)
     val drawablePaddingPx = 4.dpToPx(context)
     
     // Get views
@@ -1156,25 +1106,25 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
     val shouldShowAdvancePercentage = data.shouldShowMarketplaceAdvancePercentage()
     
     when {
-      // All 3 views visible
+      // All 3 views visible: truckInfo (8dp) paymentType (2dp) percentage
       shouldShowAdvancePercentage && truckInfo != null && paymentType != null && percentage != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType, percentage),
           textSizes = listOf(14f, 14f, 14f),
           availableWidth = availableWidth,
           minTextSize = 10f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = listOf(spacing8dpPx, spacing2dpPx),
           drawablePadding = drawablePaddingPx
         )
       }
-      // Only truck + payment type
+      // Only truck + payment type: uniform 8dp spacing
       shouldShowPaymentType && truckInfo != null && paymentType != null -> {
         adjustTextSizeToFit(
           views = listOf(truckInfo, paymentType),
           textSizes = listOf(14f, 14f),
           availableWidth = availableWidth,
           minTextSize = 10f,
-          spacingBetweenViews = spacingPx,
+          spacingBetweenViews = spacing8dpPx,
           drawablePadding = drawablePaddingPx
         )
       }
