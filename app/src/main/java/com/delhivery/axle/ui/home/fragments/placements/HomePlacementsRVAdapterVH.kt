@@ -11,7 +11,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
-import com.delhivery.axle.ui.home.fragments.bids.adjustTextSizeToFit
 import com.delhivery.axle.ui.home.fragments.bids.calculateAvailableCardWidth
 import com.delhivery.axle.ui.home.fragments.bids.dpToPx
 import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
@@ -223,40 +222,40 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
         val vehicleType = binding.driverTruckDetails.vehicleType
         val reportingTime = binding.driverTruckDetails.reportingTime
         
-        if (vehicleType != null && reportingTime != null) {
-            adjustTextSizeToFit(
-                views = listOf(vehicleType, reportingTime),
-                textSizes = listOf(14f, 14f),
-                availableWidth = availableWidth,
-                minTextSize = 10f,
-                spacingBetweenViews = spacingPx,
-                drawablePadding = drawablePaddingPx
-            )
-        }
+//        if (vehicleType != null && reportingTime != null) {
+//            adjustTextSizeToFit(
+//                views = listOf(vehicleType, reportingTime),
+//                textSizes = listOf(14f, 14f),
+//                availableWidth = availableWidth,
+//                minTextSize = 10f,
+//                spacingBetweenViews = spacingPx,
+//                drawablePadding = drawablePaddingPx
+//            )
+//        }
         
         // Row 2: vehicleNumber and driverName (conditional)
         val vehicleNumber = binding.driverTruckDetails.vehicleNumber
         val driverName = binding.driverTruckDetails.driverName
         
-        when {
-            data.vehicleNumber != null && data.driverName != null && 
-            vehicleNumber != null && driverName != null -> {
-                adjustTextSizeToFit(
-                    views = listOf(vehicleNumber, driverName),
-                    textSizes = listOf(14f, 14f),
-                    availableWidth = availableWidth,
-                    minTextSize = 10f,
-                    spacingBetweenViews = spacingPx,
-                    drawablePadding = drawablePaddingPx
-                )
-            }
-            data.vehicleNumber != null && vehicleNumber != null -> {
-                resetTextViewToDefault(vehicleNumber)
-            }
-            data.driverName != null && driverName != null -> {
-                resetTextViewToDefault(driverName)
-            }
-        }
+//        when {
+//            data.vehicleNumber != null && data.driverName != null &&
+//            vehicleNumber != null && driverName != null -> {
+//                adjustTextSizeToFit(
+//                    views = listOf(vehicleNumber, driverName),
+//                    textSizes = listOf(14f, 14f),
+//                    availableWidth = availableWidth,
+//                    minTextSize = 10f,
+//                    spacingBetweenViews = spacingPx,
+//                    drawablePadding = drawablePaddingPx
+//                )
+//            }
+//            data.vehicleNumber != null && vehicleNumber != null -> {
+//                resetTextViewToDefault(vehicleNumber)
+//            }
+//            data.driverName != null && driverName != null -> {
+//                resetTextViewToDefault(driverName)
+//            }
+//        }
         
         // Row 3: driverPhone (single column, no sizing needed)
         binding.driverTruckDetails.driverPhone?.let { resetTextViewToDefault(it) }

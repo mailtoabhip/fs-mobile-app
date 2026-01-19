@@ -24,7 +24,6 @@ import com.delhivery.axle.databinding.ViewSearchContractsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.home.fragments.bids.adjustTextSizeToFit
 import com.delhivery.axle.ui.home.fragments.bids.calculateAvailableCardWidth
 import com.delhivery.axle.ui.home.fragments.bids.dpToPx
 
@@ -316,18 +315,18 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
     val fromCity = binding.fromCity
     val pincodeState = binding.pincodeState
 
-    if (fromCity != null && pincodeState != null && availableWidth > 0) {
-      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
-      // 16sp for fromCity, 14sp for pincodeState
-      adjustTextSizeToFit(
-        views = listOf(fromCity, pincodeState),
-        textSizes = listOf(16f, 14f),
-        availableWidth = availableWidth,
-        minTextSize = 10f,
-        spacingBetweenViews = spacingPx,
-        drawablePadding = drawablePaddingPx
-      )
-    }
+//    if (fromCity != null && pincodeState != null && availableWidth > 0) {
+//      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
+//      // 16sp for fromCity, 14sp for pincodeState
+//      adjustTextSizeToFit(
+//        views = listOf(fromCity, pincodeState),
+//        textSizes = listOf(16f, 14f),
+//        availableWidth = availableWidth,
+//        minTextSize = 10f,
+//        spacingBetweenViews = spacingPx,
+//        drawablePadding = drawablePaddingPx
+//      )
+//    }
   }
   
   /**

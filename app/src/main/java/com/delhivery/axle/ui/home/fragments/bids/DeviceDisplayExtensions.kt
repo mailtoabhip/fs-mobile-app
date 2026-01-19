@@ -94,82 +94,82 @@ fun Float.spToPx(context: Context): Float {
  * @param spacingBetweenViews List of spacing between each pair of views in pixels (size must be views.size - 1)
  * @param drawablePadding Padding for drawables in pixels
  */
-fun adjustTextSizeToFit(
-    views: List<android.widget.TextView>,
-    textSizes: List<Float>,
-    availableWidth: Int,
-    minTextSize: Float,
-    spacingBetweenViews: List<Int>,
-    drawablePadding: Int
-) {
-    require(views.size == textSizes.size) {
-        "Number of views (${views.size}) must match number of text sizes (${textSizes.size})"
-    }
-    
-    require(spacingBetweenViews.size == views.size - 1 || spacingBetweenViews.isEmpty()) {
-        "Spacing list size (${spacingBetweenViews.size}) must be views.size - 1 (${views.size - 1}) or empty"
-    }
-    
-    if (views.isEmpty() || availableWidth <= 0) return
-    
-    // IMPORTANT: Force measure if views haven't been measured yet
-    views.forEach { view ->
-        if (view.width == 0) {
-            view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            )
-        }
-    }
-    
-    // First, set each view to its intended text size
-    views.forEachIndexed { index, view ->
-        view.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, textSizes[index])
-    }
-    
-    // Measure total width needed with original sizes
-    var totalWidthNeeded = 0f
-    
-    views.forEachIndexed { index, textView ->
-        val paint = android.text.TextPaint().apply {
-            isAntiAlias = true
-            typeface = textView.typeface
-            textSize = textSizes[index].spToPx(textView.context)
-        }
-        
-        // Measure text width
-        val text = textView.text?.toString() ?: ""
-        val textWidth = paint.measureText(text)
-        
-        // Account for drawable (icon) width if present
-        val drawableWidth = textView.compoundDrawables[0]?.intrinsicWidth ?: 0
-        val drawableSpace = if (drawableWidth > 0) drawableWidth + drawablePadding else 0
-        
-        // Account for padding
-        val paddingSpace = textView.paddingStart + textView.paddingEnd
-        
-        totalWidthNeeded += textWidth + drawableSpace + paddingSpace
-        
-        // Add variable spacing between views (except for last view)
-        if (index < views.size - 1 && spacingBetweenViews.isNotEmpty()) {
-            totalWidthNeeded += spacingBetweenViews[index]
-        }
-    }
-    
-    // If total width exceeds available width, scale down proportionally
-    if (totalWidthNeeded > availableWidth) {
-        val scaleFactor = availableWidth / totalWidthNeeded
-        
-        // Apply scaled sizes to each view, maintaining hierarchy
-        views.forEachIndexed { index, textView ->
-            val scaledSize = (textSizes[index] * scaleFactor).coerceAtLeast(minTextSize)
-            textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, scaledSize)
-        }
-    }
-    
-    // Request layout update
-    views.forEach { it.requestLayout() }
-}
+//fun adjustTextSizeToFit(
+//    views: List<android.widget.TextView>,
+//    textSizes: List<Float>,
+//    availableWidth: Int,
+//    minTextSize: Float,
+//    spacingBetweenViews: List<Int>,
+//    drawablePadding: Int
+//) {
+//    require(views.size == textSizes.size) {
+//        "Number of views (${views.size}) must match number of text sizes (${textSizes.size})"
+//    }
+//
+//    require(spacingBetweenViews.size == views.size - 1 || spacingBetweenViews.isEmpty()) {
+//        "Spacing list size (${spacingBetweenViews.size}) must be views.size - 1 (${views.size - 1}) or empty"
+//    }
+//
+//    if (views.isEmpty() || availableWidth <= 0) return
+//
+//    // IMPORTANT: Force measure if views haven't been measured yet
+//    views.forEach { view ->
+//        if (view.width == 0) {
+//            view.measure(
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+//            )
+//        }
+//    }
+//
+//    // First, set each view to its intended text size
+//    views.forEachIndexed { index, view ->
+//        view.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, textSizes[index])
+//    }
+//
+//    // Measure total width needed with original sizes
+//    var totalWidthNeeded = 0f
+//
+//    views.forEachIndexed { index, textView ->
+//        val paint = android.text.TextPaint().apply {
+//            isAntiAlias = true
+//            typeface = textView.typeface
+//            textSize = textSizes[index].spToPx(textView.context)
+//        }
+//
+//        // Measure text width
+//        val text = textView.text?.toString() ?: ""
+//        val textWidth = paint.measureText(text)
+//
+//        // Account for drawable (icon) width if present
+//        val drawableWidth = textView.compoundDrawables[0]?.intrinsicWidth ?: 0
+//        val drawableSpace = if (drawableWidth > 0) drawableWidth + drawablePadding else 0
+//
+//        // Account for padding
+//        val paddingSpace = textView.paddingStart + textView.paddingEnd
+//
+//        totalWidthNeeded += textWidth + drawableSpace + paddingSpace
+//
+//        // Add variable spacing between views (except for last view)
+//        if (index < views.size - 1 && spacingBetweenViews.isNotEmpty()) {
+//            totalWidthNeeded += spacingBetweenViews[index]
+//        }
+//    }
+//
+//    // If total width exceeds available width, scale down proportionally
+//    if (totalWidthNeeded > availableWidth) {
+//        val scaleFactor = availableWidth / totalWidthNeeded
+//
+//        // Apply scaled sizes to each view, maintaining hierarchy
+//        views.forEachIndexed { index, textView ->
+//            val scaledSize = (textSizes[index] * scaleFactor).coerceAtLeast(minTextSize)
+//            textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, scaledSize)
+//        }
+//    }
+//
+//    // Request layout update
+//    views.forEach { it.requestLayout() }
+//}
 
 /**
  * Convenience overload: adjusts text size with uniform spacing between all views
@@ -182,20 +182,20 @@ fun adjustTextSizeToFit(
  * @param spacingBetweenViews Uniform spacing between views in pixels
  * @param drawablePadding Padding for drawables in pixels
  */
-fun adjustTextSizeToFit(
-    views: List<android.widget.TextView>,
-    textSizes: List<Float>,
-    availableWidth: Int,
-    minTextSize: Float,
-    spacingBetweenViews: Int,
-    drawablePadding: Int
-) {
-    // Convert uniform spacing to list of same spacing for all gaps
-    val spacingList = if (views.size > 1) List(views.size - 1) { spacingBetweenViews } else emptyList()
-    
-    // Call the more flexible version
-    adjustTextSizeToFit(views, textSizes, availableWidth, minTextSize, spacingList, drawablePadding)
-}
+//fun adjustTextSizeToFit(
+//    views: List<android.widget.TextView>,
+//    textSizes: List<Float>,
+//    availableWidth: Int,
+//    minTextSize: Float,
+//    spacingBetweenViews: Int,
+//    drawablePadding: Int
+//) {
+//    // Convert uniform spacing to list of same spacing for all gaps
+//    val spacingList = if (views.size > 1) List(views.size - 1) { spacingBetweenViews } else emptyList()
+//
+//    // Call the more flexible version
+//    adjustTextSizeToFit(views, textSizes, availableWidth, minTextSize, spacingList, drawablePadding)
+//}
 
 /**
  * Convenience overload: adjusts text size with same size for all views and uniform spacing
@@ -208,20 +208,20 @@ fun adjustTextSizeToFit(
  * @param spacingBetweenViews Uniform spacing between views in pixels
  * @param drawablePadding Padding for drawables in pixels
  */
-fun adjustTextSizeToFit(
-    views: List<android.widget.TextView>,
-    availableWidth: Int,
-    defaultTextSize: Float,
-    minTextSize: Float,
-    spacingBetweenViews: Int,
-    drawablePadding: Int
-) {
-    // Convert single size to list of same size for all views
-    val textSizes = List(views.size) { defaultTextSize }
-    
-    // Call the more flexible version
-    adjustTextSizeToFit(views, textSizes, availableWidth, minTextSize, spacingBetweenViews, drawablePadding)
-}
+//fun adjustTextSizeToFit(
+//    views: List<android.widget.TextView>,
+//    availableWidth: Int,
+//    defaultTextSize: Float,
+//    minTextSize: Float,
+//    spacingBetweenViews: Int,
+//    drawablePadding: Int
+//) {
+//    // Convert single size to list of same size for all views
+//    val textSizes = List(views.size) { defaultTextSize }
+//
+//    // Call the more flexible version
+//    adjustTextSizeToFit(views, textSizes, availableWidth, minTextSize, spacingBetweenViews, drawablePadding)
+//}
 
 /**
  * Calculate available width for card content
