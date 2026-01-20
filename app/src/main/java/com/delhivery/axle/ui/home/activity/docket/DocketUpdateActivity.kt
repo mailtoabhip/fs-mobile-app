@@ -598,14 +598,14 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
           }
           file.absolutePath
         } else {
-          null
+          "" // Return empty string instead of null (RxJava doesn't allow null)
         }
       } catch (e: InterruptedIOException) {
-        // Return null on interruption (user navigated away)
-        null
+        // Return empty string on interruption (user navigated away)
+        ""
       } catch (e: IOException) {
         // Handle other IO errors gracefully
-        null
+        ""
       } finally {
         currentDownloadCall = null
       }
@@ -617,7 +617,7 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
       currentDownloadCall = null
     }
     .subscribe({ filePath ->
-      if (filePath != null) {
+      if (filePath.isNotEmpty()) {
         // Update local path in ViewModel so thumbnail shows and click is instant
         viewModel.updateDocketLocalPath(docketId, filePath)
         
