@@ -1114,7 +1114,7 @@ data class HomeTripsItemData(
         if (isHPODSection) "Add Details" else "Upload ePod"
       }
       podBadgeText() == "ePOD Rejected" ->  {
-        if (isHPODSection) "Add Details" else "Upload ePod"
+        if (isHPODSection) "Add Details" else "Reupload ePod"
       }
       podBadgeText() == "ePOD Under Review" -> "Add Details"
       else -> "Upload ePod" // HPOD Pending

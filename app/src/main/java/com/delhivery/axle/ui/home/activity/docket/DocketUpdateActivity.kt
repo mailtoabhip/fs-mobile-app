@@ -68,6 +68,7 @@ import java.util.Calendar
 import javax.inject.Inject
 import androidx.core.graphics.toColorInt
 import com.delhivery.axle.utils.REQCODE_CAMERA
+import java.io.InterruptedIOException
 
 /**
  **
@@ -91,6 +92,11 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private lateinit var localImageName: String
   private var currentDocketId: Int = 1 // Currently selected docket ID
   private var pendingViewDocketId: Int? = null // Docket ID user clicked to view while downloading
+  
+  // Reusable OkHttpClient for downloads to avoid creating new instances
+  private val okHttpClient: OkHttpClient by lazy { OkHttpClient() }
+  // Track current download call so it can be cancelled on disposal
+  private var currentDownloadCall: okhttp3.Call? = null
 
   @Inject lateinit var imageUtils: ImageUtils
   @Inject lateinit var documentUtils: DocumentUtils
@@ -574,25 +580,42 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     }
     
     compositeDisposable += io.reactivex.Observable.fromCallable {
-      val client = OkHttpClient()
-      val request = Request.Builder().url(downloadUrl).build()
-      val response = client.newCall(request).execute()
-
-      if (response.isSuccessful) {
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-        val file = File.createTempFile(fileNamePrefix, ".jpg", storageDir)
+      try {
+        val request = Request.Builder().url(downloadUrl).build()
+        val call = okHttpClient.newCall(request)
+        currentDownloadCall = call
         
-        response.body()?.byteStream()?.use { input ->
-          file.outputStream().use { output ->
-            input.copyTo(output)
+        val response = call.execute()
+
+        if (response.isSuccessful) {
+          val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+          val file = File.createTempFile(fileNamePrefix, ".jpg", storageDir)
+          
+          response.body()?.byteStream()?.use { input ->
+            file.outputStream().use { output ->
+              input.copyTo(output)
+            }
           }
+          file.absolutePath
+        } else {
+          null
         }
-        file.absolutePath
-      } else {
+      } catch (e: InterruptedIOException) {
+        // Return null on interruption (user navigated away)
         null
+      } catch (e: IOException) {
+        // Handle other IO errors gracefully
+        null
+      } finally {
+        currentDownloadCall = null
       }
     }
     .onBackground()
+    .doOnDispose {
+      // Cancel the OkHttp call when RxJava stream is disposed
+      currentDownloadCall?.cancel()
+      currentDownloadCall = null
+    }
     .subscribe({ filePath ->
       if (filePath != null) {
         // Update local path in ViewModel so thumbnail shows and click is instant
