@@ -121,6 +121,15 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             )
             binding.layoutIntracity.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
             binding.layoutIntracity.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+            } else if (demandType == "Facility Arranged") {
+            binding.layoutIntracity.demandLoadType.text = "Facility Arranged"
+            binding.layoutIntracity.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.facility_load_bg)
+            
+            // Clear any previous drawable for Facility Arranged
+            binding.layoutIntracity.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+                null, null, null, null
+            )
+            binding.layoutIntracity.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.facility_load_color))
         } else if (demandType == "Client Load") {
             binding.layoutIntracity.demandLoadType.text = "Client Load"
             binding.layoutIntracity.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)
@@ -255,6 +264,15 @@ class HomeLoadsRequestItemVH(binding: LoadDelhiveryIntercityV2Binding) :
             )
             binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.delhivery_load_color))
             binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.delhivery_load_color))
+        } else if (demandType == "Facility Arranged") {
+            binding.demandLoadType.text = "Facility Arranged"
+            binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.facility_load_bg)
+            
+            // Clear any previous drawable for Facility Arranged
+            binding.demandLoadType.setCompoundDrawablesWithIntrinsicBounds(
+                null, null, null, null
+            )
+            binding.demandLoadType.setTextColor(ContextCompat.getColor(context, R.color.facility_load_color))
         } else if (demandType == "Client Load") {
             binding.demandLoadType.text = "Client Load"
             binding.loadTypeLayout.backgroundTintList = ContextCompat.getColorStateList(context, R.color.client_load_bg)

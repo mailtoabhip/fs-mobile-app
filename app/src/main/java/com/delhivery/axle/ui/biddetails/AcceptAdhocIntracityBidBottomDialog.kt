@@ -253,6 +253,24 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
                 openGoogleMapsWithCoordinates()
             }
         }
+        
+        // Set phone number click listener only if phone number exists
+        if (transaction.demandType == "intracity_ops" && !transaction.requestCreatedByPhone.isNullOrEmpty()) {
+            binding.layoutTransaction.contactPhoneNumber.setOnClickListener {
+                dialPhoneNumber(transaction.requestCreatedByPhone!!)
+            }
+        }
+    }
+    
+    private fun dialPhoneNumber(phoneNumber: String) {
+        try {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:$phoneNumber")
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Log.e("AcceptIntracityDialog", "Error opening dialer: ${e.message}")
+        }
     }
 
     private fun openGoogleMapsWithCoordinates() {

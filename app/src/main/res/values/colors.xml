@@ -154,6 +154,8 @@
   <color name="delhivery_load_color">#7C3AED</color>
   <color name="client_load_bg">#FFF7EB</color>
   <color name="client_load_color">#C47E09</color>
+  <color name="facility_load_bg">#D1FAE5</color>
+  <color name="facility_load_color">#059669</color>
 
   <!-- Information banner colors -->
   <color name="information_bg">#F0F4FF</color>
