@@ -1121,6 +1121,15 @@ data class HomeTripsItemData(
     }
   }
 
+  fun podRejectedReUpload(): String{
+    return when {
+      podBadgeText() == "ePOD Rejected" ->  {
+        "Reupload ePod"
+      }
+      else -> "Upload ePod"
+    }
+  }
+
   @ColorRes
   fun podActionButtonColor(): Int {
     return when {
