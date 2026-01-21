@@ -150,6 +150,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
                     val s3Path = extractS3PathFromUrl(docUrl)
                     if (s3Path != null) {
                         Log.d("KycDocumentsFragment", "downloadByS3Path: $s3Path")
+                        // ✅ Map s3_path to original URL for lookup in callback
+                        s3PathToUrlMap[s3Path] = docUrl
                         documentUtils.downloadByS3Path(s3Path, this)
                     } else {
                         uiUtils.hideProgress()
@@ -385,9 +387,11 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             val originalUrl = s3Path?.let { s3PathToUrlMap[it] }
             val dataFromList = originalUrl?.let { dList[it] }
             
-            Log.d("KycDocumentsFragment", "onDocumentListSuccess: s3Path=$s3Path, originalUrl=$originalUrl, dataFromList=${dataFromList?.docUrl}, mapKeys=${s3PathToUrlMap.keys}")
+            Log.d("KycDocumentsFragment", "onDocumentListSuccess: s3Path=$s3Path, originalUrl=$originalUrl, dataFromList=${dataFromList?.docUrl}, showProg=$showProg, mapKeys=${s3PathToUrlMap.keys}")
             
-            if (originalUrl == null || dataFromList == null) {
+            // For downloadLogo (showProg=true), we only need originalUrl, not dataFromList
+            // For downloadImage (showProg=false), we need both originalUrl and dataFromList
+            if (originalUrl == null || (!showProg && dataFromList == null)) {
                 uiUtils.hideProgress()
                 uiUtils.showSnackbar("Unable to determine original document URL")
                 // Clean up
