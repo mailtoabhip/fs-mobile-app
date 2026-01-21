@@ -4,9 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.TextView
-import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TruckResponseArray
+import com.delhivery.axle.databinding.TruckSizeItemBinding
 
 class TruckSizeAdapter : BaseAdapter() {
     private val items: MutableList<TruckResponseArray> = mutableListOf()
@@ -17,21 +16,26 @@ class TruckSizeAdapter : BaseAdapter() {
     override fun getCount() = items.size
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val holder: ItemRowHolder
         val view: View
-        val vh: ItemRowHolder
+
         if (convertView == null) {
-            view = LayoutInflater.from(parent?.context)
-                .inflate(R.layout.truck_size_item, parent, false)
-            vh = ItemRowHolder(view)
-            view.tag = vh
+            val binding = TruckSizeItemBinding.inflate(
+                LayoutInflater.from(parent?.context),
+                parent,
+                false
+            )
+            holder = ItemRowHolder(binding)
+            view = binding.root
+            view.tag = holder
         } else {
             view = convertView
-            vh = view.tag as ItemRowHolder
+            holder = view.tag as ItemRowHolder
         }
 
         val item = getItem(position)
-        vh.label.text = item.truckUuid
-        vh.capacity.text = " ("+item.defaultMG!!.toString()+" MT)"
+        holder.binding.textSize.text = item.truckUuid
+        holder.binding.textCapacity.text = " (${item.defaultMG} MT)"
         return view
     }
 
@@ -44,10 +48,5 @@ class TruckSizeAdapter : BaseAdapter() {
         notifyDataSetChanged()
     }
 
-    private class ItemRowHolder(row: View?) {
-
-        val label: TextView = row?.findViewById(R.id.textSize) as TextView
-        val capacity: TextView = row?.findViewById(R.id.textCapacity) as TextView
-
-    }
+    private class ItemRowHolder(val binding: TruckSizeItemBinding)
 }

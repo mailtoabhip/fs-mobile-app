@@ -10,6 +10,7 @@ import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.google.gson.JsonObject
 import io.reactivex.Single
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface LoadBoardService {
@@ -209,5 +210,34 @@ interface LoadBoardService {
     fun getDelegationToken(
         @Query("target_id") targetId: String
     ): Single<DelegationTokenResponse>
+
+
+    @POST("list_sp_trucks")
+    fun getInventories(
+        @Body request: JsonObject
+    ):Single<InventoryResponse>
+
+    /**
+     * Get FASTag balance
+     */
+    @GET("finance/fastag/balance-check")
+    fun getFastagBalance(
+        @Query("fastag_id") tagId: String
+    ): Single<FastagBalanceResponse>
+
+    @GET("/finance/fastag/transactions/listing")
+    fun getFastagTransactions(
+        @Query("fastag_id") tagId: String,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): Single<FastagTransactionResponse>
+
+    @GET("/finance/fastag/transactions/download")
+    @Streaming
+    fun downloadFastagTransactions(
+        @Query("fastag_id") tagId: String,
+        @Query("from_date") fromDate: String?,
+        @Query("to_date") toDate: String?
+    ): Single<ResponseBody>
 
 }

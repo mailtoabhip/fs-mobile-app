@@ -67,15 +67,14 @@
                                 tools:text="MHb 67 HJ 3422"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"/>
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/truck_availability_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{request.statusText()}"
-                                tools:text="Available"
-                                bind:textColor="@{ ContextCompat.getColor(context, request.statusColor()) }"
-                                android:textStyle="bold"
-                                android:layout_marginStart="@dimen/size_6dp"/>
+                            <ImageView
+                                android:id="@+id/iv_verified"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginStart="4dp"
+                                android:src="@drawable/ic_check_circle_green"
+                                android:contentDescription="Refresh"
+                                android:visibility="gone" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="wrap_content"
@@ -92,28 +91,24 @@
                                 android:textColor="@color/transparent_grey"
                                 />
                             <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" | "
+                                android:textSize="@dimen/text_12sp"
+                                android:textColor="@color/transparent_grey"
+                                />
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/text_capacity_truck"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@{request.truckSizeAndCap()}"
-                                tools:text="32FTMXL (18MT)"
+                                tools:text="32FTMXL | 18.0 MT"
                                 android:textSize="@dimen/text_12sp"
-                                android:textColor="@color/transparent_grey"
-                                android:layout_marginStart="@dimen/size_6dp"/>
+                                android:textColor="@color/transparent_grey"/>
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/action_options"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_options"
-                        android:layout_marginEnd="@dimen/size_11dp"
-                        android:padding="@dimen/size_14dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -130,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/sep1"
                     android:id="@+id/lay2"
-                    android:visibility="@{request.locationVisibility()}"
+                    android:visibility="gone"
                     android:padding="@dimen/size_14dp">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
@@ -185,12 +180,187 @@
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- FASTag Section - Show when user has FASTag -->
+                <LinearLayout
+                    android:id="@+id/fastag_info_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lay2"
+                    android:orientation="vertical"
+                    android:visibility="@{request.fastagSectionVisibility()}"
+                    android:paddingStart="@dimen/size_14dp"
+                    android:paddingEnd="@dimen/size_14dp"
+                    android:paddingTop="@dimen/size_12dp"
+                    android:paddingBottom="@dimen/size_12dp">
+
+                    <!-- FASTag Header with Balance -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_fastag_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{request.fastagProviderText()}"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:layout_alignParentStart="true" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/tv_fastag_balance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{request.fastagBalanceText()}"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/iv_refresh_balance"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_marginStart="4dp"
+                                android:src="@drawable/ic_refresh_icon"
+                                android:contentDescription="Refresh" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <!-- Transaction Info -->
+                    <TextView
+                        android:id="@+id/tv_transaction_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@{request.fastagTransactionInfo()}"
+                        android:textColor="@color/transparent_grey"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_toll_plaza"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{request.fastagTransactionLocation()}"
+                        android:textColor="@color/transparent_grey"
+                        android:textSize="12sp" />
+
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_fastag_details"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            android:text="Details"
+                            android:textAllCaps="false"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:background="@drawable/bg_all_round_corner_white_boundary"
+                            android:minHeight="0dp" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_fastag_recharge"
+                            style="@style/Button.Primary"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:text="Recharge"
+                            android:minHeight="0dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Low Balance Warning - Show when balance is low -->
+                <LinearLayout
+                    android:id="@+id/low_balance_warning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/fastag_info_section"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:background="#FFF4E5"
+                    android:padding="12dp"
+                    android:layout_marginStart="@dimen/size_14dp"
+                    android:layout_marginEnd="@dimen/size_14dp"
+                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/warning_icon"
+                        android:contentDescription="Warning" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:text="@{request.fastagLowBalanceWarning()}"
+                        android:textColor="#E65100"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_arrow_right"
+                        android:contentDescription="Arrow"
+                        app:tint="#E65100" />
+
+                </LinearLayout>
+
+                <!-- No FASTag Section - Show when user doesn't have FASTag -->
+                <LinearLayout
+                    android:id="@+id/no_fastag_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lay2"
+                    android:orientation="vertical"
+                    android:visibility="@{request.noFastagSectionVisibility()}"
+                    android:paddingStart="@dimen/size_14dp"
+                    android:paddingEnd="@dimen/size_14dp"
+                    android:paddingTop="@dimen/size_12dp"
+                    android:paddingBottom="@dimen/size_12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No FASTag information available"
+                        android:textColor="@color/transparent_grey"
+                        android:textSize="14sp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_buy_fastag_card"
+                        style="@style/Button.Primary"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="12dp"
+                        android:text="Buy FASTag"
+                        android:minHeight="0dp" />
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/btn_activate_truck"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/size_36dp"
                     android:layout_margin="@dimen/size_14dp"
-                    android:layout_below="@+id/lay2"
+                    android:layout_below="@+id/low_balance_warning"
                     android:textAllCaps="false"
                     android:gravity="center"
                     android:textColor="@color/black"
@@ -204,6 +374,7 @@
                     android:id="@+id/shareRateLay"
                     android:paddingBottom="@dimen/size_12dp"
                     android:layout_below="@+id/btn_activate_truck"
+                    android:visibility="gone"
                     android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.AppCompatImageView

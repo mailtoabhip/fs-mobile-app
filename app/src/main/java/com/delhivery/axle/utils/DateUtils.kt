@@ -500,6 +500,60 @@ object DateUtils {
   fun getRelativeTimeDiff(statTime:String, endTime:String){
 
   }
+
+  fun formatFastagTransactionDate(dateStr: String): String {
+    return try {
+      val inputFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+      val date = inputFormat.parse(dateStr)
+      
+      if (date != null) {
+        // Get day with ordinal suffix (20th, 21st, etc.)
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val suffix = getDayOfMonthSuffix(day)
+        
+        // Format: "20th Jan 2026, 4:36PM"
+        val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+        val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("h:mma", Locale.getDefault())
+        
+        "$day$suffix ${monthFormat.format(date)} ${yearFormat.format(date)}, ${timeFormat.format(date)}"
+      } else {
+        dateStr
+      }
+    } catch (e: Exception) {
+      Log.e("DateUtils", "Error parsing FASTag date: $dateStr", e)
+      dateStr
+    }
+  }
+  
+  fun formatFastagTransactionDateShort(dateStr: String): String {
+    return try {
+      // Input format: "20-01-2026 16:36:38"
+      val inputFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+      val date = inputFormat.parse(dateStr)
+      
+      if (date != null) {
+        // Get day with ordinal suffix (20th, 21st, etc.)
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val suffix = getDayOfMonthSuffix(day)
+        
+        // Format: "20th Jan 4:36PM"
+        val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("h:mma", Locale.getDefault())
+        
+        "$day$suffix ${monthFormat.format(date)} ${timeFormat.format(date)}"
+      } else {
+        dateStr
+      }
+    } catch (e: Exception) {
+      Log.e("DateUtils", "Error parsing FASTag date: $dateStr", e)
+      dateStr
+    }
+  }
 }
 
 /**

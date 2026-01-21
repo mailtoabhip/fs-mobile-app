@@ -42,6 +42,7 @@ import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
+import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
@@ -363,6 +364,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementDetailsActivityModule::class])
   internal abstract fun bindPlacementDetailsActivity(): PlacementDetailsActivity
+
+  /* FASTag Transaction Details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagTransactionDetailsActivityModule::class])
+  internal abstract fun bindFastagTransactionDetailsActivity(): FastagTransactionDetailsActivity
 }
 
 
@@ -547,6 +553,9 @@ internal abstract class AbsContractDetailsActivityModule : ActivityModule<Contra
 
 @Module
 internal abstract class AbsPlacementDetailsActivityModule : ActivityModule<PlacementDetailsActivity>()
+
+@Module
+internal abstract class AbsFastagTransactionDetailsActivityModule : ActivityModule<FastagTransactionDetailsActivity>()
 
 /**
  * Activity Binds Module

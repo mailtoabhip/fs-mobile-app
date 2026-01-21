@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/size_11dp"
+            android:padding="16dp"
             android:background="@color/colorPrimary"
             android:visibility="@{!error ? View.VISIBLE : View.GONE }"
             tools:visibility="visible">
@@ -76,114 +76,91 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_12sp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:text="@string/label_body_type" />
-                <RelativeLayout
+
+                <RadioGroup
+                    android:id="@+id/body_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
 
-                    <RadioGroup
-                        android:id="@+id/body_group"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/size_6dp"
-                        android:layout_marginTop="@dimen/size_6dp"
-                        android:orientation="horizontal"
-                        android:paddingStart="@dimen/size_8dp"
-                        android:paddingTop="@dimen/size_8dp"
-                        android:paddingEnd="@dimen/size_8dp"
-                        android:paddingBottom="@dimen/size_2dp">
+                    <RadioButton
+                        android:id="@+id/btn_radio_container"
+                        android:layout_width="0dp"
+                        android:layout_height="129dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/radio_selection_container"
+                        android:button="@null"
+                        android:gravity="center_horizontal|bottom"
+                        android:paddingStart="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="16dp"
+                        android:text="@string/label_closed"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
 
-                        <RadioButton
-                            android:id="@+id/btn_radio_container"
-                            android:layout_width="@dimen/size_56dp"
-                            android:layout_height="@dimen/size_56dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/radio_selection_container"
-                            android:button="@null"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/text_12sp" />
+                    <RadioButton
+                        android:id="@+id/btn_radio_open"
+                        android:layout_width="0dp"
+                        android:layout_height="129dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/radio_selection_open"
+                        android:button="@null"
+                        android:gravity="center_horizontal|bottom"
+                        android:paddingStart="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="16dp"
+                        android:text="@string/label_open"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
 
-                        <RadioButton
-                            android:id="@+id/btn_radio_open"
-                            android:layout_width="@dimen/size_56dp"
-                            android:layout_height="@dimen/size_56dp"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="@dimen/size_24dp"
-                            android:background="@drawable/radio_selction_open"
-                            android:button="@null"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/text_12sp" />
-
-                        <RadioButton
-                            android:id="@+id/btn_radio_trailer"
-                            android:layout_width="@dimen/size_56dp"
-                            android:layout_height="@dimen/size_56dp"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="@dimen/size_24dp"
-                            android:background="@drawable/radio_selection_trailer"
-                            android:button="@null"
-                            android:textAlignment="center"
-                            android:textSize="@dimen/text_12sp" />
-                    </RadioGroup>
-
-
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/body_group"
-                        android:layout_marginStart="@dimen/size_6dp"
-                        android:orientation="horizontal"
-                        android:paddingStart="@dimen/size_8dp"
-                        android:paddingEnd="@dimen/size_8dp"
-                        android:paddingBottom="@dimen/size_8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/body_group"
-                            android:text="@string/label_closed"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/text_12sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/body_group"
-                            android:layout_marginStart="@dimen/size_28dp"
-                            android:text="@string/label_open"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/text_12sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/body_group"
-                            android:layout_marginStart="@dimen/size_36dp"
-                            android:text="@string/label_trailer"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/text_12sp" />
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-                </RelativeLayout>
+                    <RadioButton
+                        android:id="@+id/btn_radio_trailer"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/radio_selection_trailer"
+                        android:button="@null"
+                        android:gravity="center_horizontal|bottom"
+                        android:paddingStart="12dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="16dp"
+                        android:text="@string/label_trailer"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+                </RadioGroup>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_12sp"
-                    android:layout_marginTop="@dimen/size_6dp"
+                    android:textSize="14sp"
+                    android:layout_marginTop="16dp"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
                     android:text="@string/label_truck_number"/>
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_truck_number"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_8dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
                     android:hint="Eg: KA12BD2525"
                     android:inputType="textCapCharacters"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_14sp"
+                    android:textColorHint="@color/color_hint"
+                    android:textSize="14sp"
                     android:background="@drawable/background_rectangle_border_curved"/>
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/number_error"
@@ -196,50 +173,77 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:textColor="@color/black"
-                    android:layout_marginTop="@dimen/size_14dp"
-                    android:textSize="@dimen/text_12sp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:layout_height="wrap_content"
                     android:text="@string/label_ownership"/>
 
                 <RadioGroup
                     android:id="@+id/ownership_group"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_6dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal">
                     <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/btn_radio_own_truck"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:minHeight="64dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_ownership_card"
+                        android:button="@drawable/selector_radio_button_ownership"
                         android:checked="true"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:paddingStart="20dp"
+                        android:paddingTop="18dp"
+                        android:paddingEnd="24dp"
+                        android:paddingBottom="18dp"
+                        android:textSize="18sp"
+                        android:textColor="@color/black"
                         android:text="@string/label_own_truck"/>
                     <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/btn_radio_market_truck"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/size_24dp"
+                        android:minHeight="64dp"
+                        android:background="@drawable/bg_ownership_card"
+                        android:button="@drawable/selector_radio_button_ownership"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:paddingStart="20dp"
+                        android:paddingTop="18dp"
+                        android:paddingEnd="24dp"
+                        android:paddingBottom="18dp"
+                        android:textSize="18sp"
+                        android:textColor="@color/black"
                         android:text="@string/label_market_truck"/>
                 </RadioGroup>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_14dp"
-                    android:textSize="@dimen/text_12sp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:text="@string/label_truck_size"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_truck_size"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_8dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
                     android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_truck_size"
                         android:layout_width="wrap_content"
                         android:hint="Eg: 32ft SXL"
                         android:textColor="@color/black"
+                        android:textColorHint="@color/color_hint"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -254,24 +258,26 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_14dp"
-                    android:textSize="@dimen/text_12sp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:text="@string/label_truck_capacity"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_truck_capacity"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_8dp"
-                    android:textSize="@dimen/text_14sp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
+                    android:textSize="14sp"
                     android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_truck_capacity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="Eg: 4.5MT"
+                        android:hint="14.0 MT"
                         android:textColor="@color/black"
+                        android:textColorHint="@color/color_hint"
                         android:layout_gravity="center"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -285,17 +291,18 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_14dp"
-                    android:textSize="@dimen/text_12sp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:text="@string/label_current_city"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_current_city"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:padding="@dimen/size_8dp"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:textSize="@dimen/text_14sp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"
                     android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_current_city"
@@ -303,9 +310,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_search_black"
-                        android:drawablePadding="@dimen/size_4dp"
+                        android:drawablePadding="8dp"
                         android:gravity="center"
                         android:textColor="@color/black"
+                        android:textColorHint="@color/color_hint"
                         android:hint="Search city"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -320,17 +328,18 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_14dp"
-                    android:textSize="@dimen/text_12sp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
                     android:text="@string/label_unloading_destination"
+                    android:textStyle="bold"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/edit_unloading_destinations"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:padding="@dimen/size_8dp"
-                    android:textSize="@dimen/text_14sp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
+                    android:textSize="14sp"
                     android:background="@drawable/background_rectangle_border_curved">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_unloading_destination"
@@ -338,6 +347,7 @@
                         android:layout_gravity="center"
                         android:hint="Eg: Bhopal"
                         android:textColor="@color/black"
+                        android:textColorHint="@color/color_hint"
                         android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -352,21 +362,23 @@
                     android:id="@+id/label_price_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_14dp"
-                    android:textSize="@dimen/text_12sp"
-                    android:text="@string/label_price"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:text="@string/label_expected_price"
+                    android:textStyle="bold"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_price_add_truck"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_40dp"
-                    android:layout_marginTop="@dimen/size_8dp"
-                    android:padding="@dimen/size_8dp"
-                    android:textSize="@dimen/text_14sp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
+                    android:textSize="14sp"
                     android:inputType="number"
                     android:maxLength="9"
-                    android:layout_marginBottom="@dimen/size_12dp"
+                    android:layout_marginBottom="16dp"
                     android:textColor="@color/black"
+                    android:textColorHint="@color/color_hint"
                     android:hint="Eg: ₹2500"
                     android:background="@drawable/background_rectangle_border_curved">
                 </androidx.appcompat.widget.AppCompatEditText>
@@ -380,9 +392,10 @@
             android:id="@+id/btn_add_truck"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/action_add_truck"
-            android:background="@drawable/bg_action_light_red_btn_without_border"
-            android:textColor="@color/colorAccent"/>
+            android:text="@string/action_add_truck_button"
+            android:textAllCaps="false"
+            android:background="@drawable/bg_action_light_black_btn_without_border"
+            android:textColor="@color/selector_button_text"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

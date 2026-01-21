@@ -40,4 +40,14 @@ interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<Bas
     fun gettotal():Int
 
      fun settotal(total:Int)
+     
+     /**
+      * Refresh FASTag balance
+      */
+     fun refreshFastagBalance(tagId: String)
+     
+     /**
+      * Open FASTag transaction details
+      */
+     fun openFastagDetails(data: HomeTrucksRequestItemData)
 }

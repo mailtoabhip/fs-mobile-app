@@ -83,44 +83,25 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
         _interface: HomeTrucksRVAdapterInterface
     ) {
         binding.request = item.data
-        if(item.data.latestStatus=="Active"){
-            binding.actionOptions.visibility = View.GONE
-        }else{
-            binding.actionOptions.visibility = View.VISIBLE
-        }
-        binding.actionOptions.clickToAction(HomeTrucksRequestAction_EditTruck, item ,bindingAdapterPosition, _interface)
         binding.btnActivateTruck.clickToAction(HomeTrucksRequestAction_ActivateTruck , item, bindingAdapterPosition,_interface)
-        val res = item.data.resOffer
-        if(item.data.resOffer?.first?.first==null){
-           _interface.getTotalOffers(item.data)
-        }
-
-        binding.btnShareRate.setOnClickListener {
-            _interface.callShareRate(item.data, res?.second, res?.third?.first, res?.first?.second,res?.third?.second)
-        }
-
-        if(res!=null && res.first.first == true){
-            binding.shareRateLay.visibility = item.data.statusVisibilty()
-            if(_interface.getBannerStatus() == true && !bannerShown){
-                if(item.data.statusVisibilty() == View.VISIBLE) {
-                    bannerShown = true
-                    binding.rateMore.visibility = View.VISIBLE
-                }else{
-                    binding.rateMore.visibility = View.GONE
-                }
-            }else{
-                binding.rateMore.visibility = View.GONE
-            }
-        }else{
-            binding.shareRateLay.visibility = View.GONE
-            binding.rateMore.visibility = View.GONE
-        }
 
         binding.gotit.setOnClickListener { binding.rateMore.visibility = View.GONE }
 
         binding.shareRate.setOnClickListener {
             binding.rateMore.visibility = View.GONE
            _interface.callRewards()
+        }
+        
+        // Refresh FASTag balance click listener
+        binding.ivRefreshBalance.setOnClickListener {
+            item.data.fastagTagId?.let { tagId ->
+                _interface.refreshFastagBalance(tagId)
+            }
+        }
+        
+        // FASTag Details button click listener
+        binding.btnFastagDetails.setOnClickListener {
+            _interface.openFastagDetails(item.data)
         }
     }
 }
