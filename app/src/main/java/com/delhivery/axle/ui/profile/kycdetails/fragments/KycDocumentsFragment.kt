@@ -184,15 +184,27 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     /**
-     * Extract s3_path from full S3 URL
+     * Extract s3_path from full S3 URL or return relative path as-is
+     * 
+     * Handles full S3 URLs:
      * Example: "https://orion-service-prod-mum.s3.ap-south-1.amazonaws.com/documents/user-supplier/pancard/1735911510372.png"
      * Returns: "documents/user-supplier/pancard/1735911510372.png"
      * 
      * Also handles: "https://orion-service-prod-mum.s3.ap-south-1.amazonaws.com/trips/vendor_pod/docket/docket_1764233770054.jpg"
      * Returns: "trips/vendor_pod/docket/docket_1764233770054.jpg"
+     * 
+     * Handles relative paths (already s3_path):
+     * Example: "documents/user-supplier/bankaccount/1747041740988.png"
+     * Returns: "documents/user-supplier/bankaccount/1747041740988.png"
      */
     private fun extractS3PathFromUrl(docUrl: String): String? {
         return try {
+            // Check if it's already a relative path (no http/https protocol and no .amazonaws.com)
+            if (!docUrl.startsWith("http://") && !docUrl.startsWith("https://") && !docUrl.contains(".amazonaws.com")) {
+                // Already a relative path, return as-is (remove query parameters if any)
+                return docUrl.split("?")[0]
+            }
+            
             // Construct AWS base path from config
             val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
             val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()

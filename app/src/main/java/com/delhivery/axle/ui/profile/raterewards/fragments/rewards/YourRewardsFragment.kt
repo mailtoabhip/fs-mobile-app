@@ -176,6 +176,12 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
    */
   private fun extractS3PathFromUrl(docUrl: String): String? {
     return try {
+      // Check if it's already a relative path (no http/https protocol and no .amazonaws.com)
+      if (!docUrl.startsWith("http://") && !docUrl.startsWith("https://") && !docUrl.contains(".amazonaws.com")) {
+        // Already a relative path, return as-is (remove query parameters if any)
+        return docUrl.split("?")[0]
+      }
+      
       // Construct AWS base path from config
       val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
       val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()

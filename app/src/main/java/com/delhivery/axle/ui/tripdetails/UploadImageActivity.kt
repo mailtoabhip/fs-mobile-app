@@ -533,6 +533,12 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
      */
     private fun extractS3Path(docUrl: String): String? {
         return try {
+            // Check if it's already a relative path (no http/https protocol and no .amazonaws.com)
+            if (!docUrl.startsWith("http://") && !docUrl.startsWith("https://") && !docUrl.contains(".amazonaws.com")) {
+                // Already a relative path, return as-is (remove query parameters if any)
+                return docUrl.split("?")[0]
+            }
+            
             val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
             val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
             val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
@@ -544,10 +550,10 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
                 if (parts.size > 1) {
                     parts[1].split("?")[0]
                 } else {
-                    docUrl // Assume relative path if no AWS domain found
+                    null
                 }
             } else {
-                docUrl // Assume it's already a relative path
+                null
             }
         } catch (e: Exception) {
             null
