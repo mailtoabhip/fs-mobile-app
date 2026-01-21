@@ -106,7 +106,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.textTruckSize.text = viewModel.truckSizeIntent
             sourcedAs = viewModel.sourcedAsIntent
 
-            if(sourcedAs == SOURCED_AS_PMT){// todo- check what is to be displayed for each case.3
+            if(sourcedAs == SOURCED_AS_PMT){
                 binding.labelPriceText.text = String.format(getString(R.string.label_price_mt))
                 binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
             }

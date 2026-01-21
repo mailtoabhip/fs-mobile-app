@@ -177,7 +177,7 @@ data class HomeTrucksRequestItemData(
 
     fun fastagBalanceText() = "₹${fastagBalance ?: "0"}"
     
-    fun fastagProviderText() = "${fastagIssuedBy ?: "IDFC"} FASTag by Delhivery" // todo what text will be shown
+    fun fastagProviderText() = "${fastagIssuedBy ?: "IDFC"} FASTag by Delhivery"
 
     fun fastagTransactionInfo(): String {
         val transaction = fastagLastTransaction
