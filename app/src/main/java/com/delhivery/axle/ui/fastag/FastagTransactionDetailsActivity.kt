@@ -173,7 +173,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
     private fun setupObservers() {
         viewModel.transactionsData.observe(this, androidx.lifecycle.Observer { response ->
-            response?.data?.transactions?.let {
+            response?.transactions?.let {
                 adapter.submitList(it)
             }
         })

@@ -415,7 +415,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             result?.let { pair ->
                 val tagId = pair.first
                 val response = pair.second
-                val newBalance = response.data.fastagBalance
+                val newBalance = response.fastagBalance
                 
                 // Find the truck item with matching fastagTagId
                 val items = adapter.itemsList()

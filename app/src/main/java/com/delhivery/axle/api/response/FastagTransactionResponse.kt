@@ -3,14 +3,6 @@ package com.delhivery.axle.api.response
 import com.google.gson.annotations.SerializedName
 
 data class FastagTransactionResponse(
-    @SerializedName("status")
-    val status: String?,
-
-    @SerializedName("data")
-    val data: FastagTransactionData?
-)
-
-data class FastagTransactionData(
     @SerializedName("has_next")
     val hasNext: Boolean?,
 

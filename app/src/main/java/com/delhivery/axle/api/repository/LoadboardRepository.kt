@@ -153,14 +153,7 @@ class LoadboardRepository @Inject constructor(
     /**
      * Get FASTag balance
      */
-    fun getFastagBalance(tagId: String) = loadboardService.getFastagBalance(tagId)
-        .map { response ->
-            if (response.status.equals("success", ignoreCase = true)) {
-                response
-            } else {
-                throw Exception("API returned status: ${response.status}")
-            }
-        }
+    fun getFastagBalance(tagId: String) = loadboardService.getFastagBalance(tagId).convertResponse()
 
     fun getInventories(request: JsonObject) = loadboardService.getInventories(request)
         .map { response ->
@@ -173,16 +166,6 @@ class LoadboardRepository @Inject constructor(
 
     fun downloadFastagTransactions(tagId: String, from_date: String?,to_date: String?) = loadboardService.downloadFastagTransactions(tagId, from_date, to_date)
 
-    fun getFastagTransactions(tagId: String, limit: Int, offset: Int) = loadboardService.getFastagTransactions(tagId, offset, limit)
-        .map { response ->
-            android.util.Log.d("LoadboardRepository", "FASTag Transactions - status: ${response.status}, data: ${response.data}")
-            // Validate status field
-            if (response.status.equals("success", ignoreCase = true)) {
-                response
-            } else {
-                android.util.Log.e("LoadboardRepository", "API returned status: ${response.status}")
-                throw Exception("API returned status: ${response.status}")
-            }
-        }
+    fun getFastagTransactions(tagId: String, limit: Int, offset: Int) = loadboardService.getFastagTransactions(tagId, offset, limit).convertResponse()
 
 }

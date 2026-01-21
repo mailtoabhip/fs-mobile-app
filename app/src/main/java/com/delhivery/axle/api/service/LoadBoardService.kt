@@ -223,14 +223,14 @@ interface LoadBoardService {
     @GET("finance/fastag/balance-check")
     fun getFastagBalance(
         @Query("fastag_id") tagId: String
-    ): Single<FastagBalanceResponse>
+    ): Single<BaseResponse<FastagBalanceResponse>>
 
     @GET("/finance/fastag/transactions/listing")
     fun getFastagTransactions(
         @Query("fastag_id") tagId: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int
-    ): Single<FastagTransactionResponse>
+    ): Single<BaseResponse<FastagTransactionResponse>>
 
     @GET("/finance/fastag/transactions/download")
     @Streaming

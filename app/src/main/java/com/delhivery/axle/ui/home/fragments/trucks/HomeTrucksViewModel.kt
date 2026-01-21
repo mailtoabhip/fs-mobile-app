@@ -406,23 +406,17 @@ class HomeTrucksViewModel @Inject constructor(
         compositeDisposable += loadboardRepository.getFastagBalance(tagId)
             .onBackground()
             .progress()
-            .subscribe({ response ->
+            .subscribe{ _res, error ->
                 fastagBalanceRefreshLoadingData.postValue(Pair(tagId, false))
-
-                if (response != null) {
-                    fastagBalanceRefreshData.postValue(Pair(tagId, response))
+                
+                if(!error && _res != null) {
+                    fastagBalanceRefreshData.postValue(Pair(tagId, _res))
                 } else {
-                    fastagBalanceRefreshErrorData.postValue(Pair(tagId, "Invalid response from server"))
+                    error.handle()
+                    val errorMessage = error.message ?: "Failed to refresh balance"
+                    fastagBalanceRefreshErrorData.postValue(Pair(tagId, errorMessage))
                 }
-            }, { error ->
-                fastagBalanceRefreshLoadingData.postValue(Pair(tagId, false))
-                
-
-                val errorMessage = error.message ?: "Failed to refresh balance"
-                
-                fastagBalanceRefreshErrorData.postValue(Pair(tagId, errorMessage))
             }
-            )
     }
 
 }
