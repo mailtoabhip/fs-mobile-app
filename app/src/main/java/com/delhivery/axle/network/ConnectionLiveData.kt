@@ -120,6 +120,7 @@ class ConnectionLiveData constructor(private val context: Context) : MutableLive
       IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).let {
         ContextCompat.registerReceiver(context,networkReceiver, it,ContextCompat.RECEIVER_NOT_EXPORTED)
       }
+        postValue(isConnected())
     }
   }
 
