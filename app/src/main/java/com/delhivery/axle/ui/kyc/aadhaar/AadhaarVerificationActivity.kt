@@ -174,10 +174,12 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
 
                 }else{
                     uiUtils.hideProgress()
-                    viewModel.docVerificationFailedCount.postValue(viewModel.docVerificationFailedCount.value!!+1)
+                    val currentCount = viewModel.docVerificationFailedCount.value ?: 0
+                    val shouldShowDialog = currentCount < 1
+                    viewModel.docVerificationFailedCount.postValue(currentCount + 1)
                     resetUploadData()
                     uploadArray =  ArrayList()
-                    if(viewModel.docVerificationFailedCount.value!=null&&viewModel.docVerificationFailedCount.value!! <1){
+                    if(shouldShowDialog){
                         dialogUtils.showUploadFailDialog(getString(R.string.upload_aadhaar_text),this)
                     }
                 }
