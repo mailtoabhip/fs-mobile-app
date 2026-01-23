@@ -58,18 +58,27 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     companion object {
         /* singleton instance */
         val _instance: KycDocumentsFragment by lazy { KycDocumentsFragment() }
+        private const val LOG_TAG = "KYC_DOC_DOWNLOAD"
     }
 
     lateinit var path:String
-    var showProg:Boolean = false
     var dList:HashMap<String, DocDetailData?> = HashMap()
     var docItem:DocDetailData = DocDetailData("", null, null, null,null, null, null)
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
+    
     // ✅ Map s3_path -> original URL to handle concurrent downloads
     private val s3PathToUrlMap: HashMap<String, String> = HashMap()
-    private var currentDownloadUrl: String? = null
-    private var currentDownloadData: DocDetailData? = null
+    // ✅ Track download type per s3_path to avoid race conditions
+    private val s3PathDownloadType: HashMap<String, DownloadType> = HashMap()
+    
+    // ✅ FIX #2: Separate CompositeDisposable for downloads that persist across fragment lifecycle
+    private var downloadCompositeDisposable = io.reactivex.disposables.CompositeDisposable()
+    
+    private enum class DownloadType {
+        VIEW_DETAILS,  // downloadLogo flow - save to Downloads
+        PREVIEW_IMAGE  // downloadImage flow - save to app documents
+    }
 
     @Inject lateinit var bitmapUtils:BitmapUtils
     @Inject lateinit var documentUtils: DocumentUtils
@@ -89,6 +98,12 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         super.onViewCreated(view, savedInstanceState)
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("KycDocumentsFragment_SetupTime")
         fragmentSetupTrace?.start()
+        
+        // ✅ FIX: Ensure we have a working CompositeDisposable when view is created
+        if (downloadCompositeDisposable.isDisposed) {
+            downloadCompositeDisposable = io.reactivex.disposables.CompositeDisposable()
+        }
+        
         binding.attachmentList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@KycDocumentsFragment.docRVAdapter
@@ -115,7 +130,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         dList.clear()
         dList = HashMap()
         docItem = DocDetailData("", null, null, null,null, null, null)
-        showProg = false
         refreshData()
 
         viewModel.docLiveData.reobserve(this, Observer {
@@ -137,21 +151,27 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             isFirstResume = false
         }
     }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        // ✅ FIX #2: Only dispose downloads if activity is actually finishing
+        if (activity?.isFinishing == true) {
+            downloadCompositeDisposable.dispose()
+        }
+    }
 
     private fun downloadLogo(docUrl: String) {
         compositeDisposable += requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             .onBackground()
             .subscribe { granted, error ->
                 if (error == null && granted) {
-                    showProg = true
-                    currentDownloadUrl = docUrl
                     uiUtils.showProgress()
                     // Extract s3_path from full S3 URL
                     val s3Path = extractS3PathFromUrl(docUrl)
                     if (s3Path != null) {
-                        Log.d("KycDocumentsFragment", "downloadByS3Path: $s3Path")
                         // ✅ Map s3_path to original URL for lookup in callback
                         s3PathToUrlMap[s3Path] = docUrl
+                        s3PathDownloadType[s3Path] = DownloadType.VIEW_DETAILS
                         documentUtils.downloadByS3Path(s3Path, this)
                     } else {
                         uiUtils.hideProgress()
@@ -169,18 +189,19 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if (!dList.containsKey(docUrl)) {
             dList[docUrl] = data
         }
-        currentDownloadData = data
-        currentDownloadUrl = docUrl
-        Log.d("KycDocumentsFragment", "downloadImage: docUrl=$docUrl, data.docUrl=${data.docUrl}")
+        
         // Extract s3_path from full S3 URL
         val s3Path = extractS3PathFromUrl(docUrl)
-        Log.d("KycDocumentsFragment", "downloadByS3Path: $s3Path")
+        
         if (s3Path != null) {
             // ✅ Map s3_path to original URL for lookup in callback
             s3PathToUrlMap[s3Path] = docUrl
+            s3PathDownloadType[s3Path] = DownloadType.PREVIEW_IMAGE
+            
             // Use secure Document API: GET /document/download?s3_path=...
             documentUtils.downloadByS3Path(s3Path, this)
         } else {
+            Log.e(LOG_TAG, "Failed to extract s3Path from URL: $docUrl")
             uiUtils.showSnackbar("Unable to extract document path from URL")
         }
     }
@@ -225,7 +246,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
                 }
             }
         } catch (e: Exception) {
-            Log.e("KycDocumentsFragment", "Error extracting s3_path: ${e.message}")
+            Log.e(LOG_TAG, "Error extracting s3_path: ${e.message}")
             null
         }
     }
@@ -248,20 +269,42 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     /**
-     * Create file for viewing: {timestamp}/{filename} in app's documents directory
+     * Create file for viewing: {filename} in app's documents/kyc_docs directory
+     * ✅ FIX #3: Use consistent filename (not timestamp) for file persistence
      */
     private fun getImageFile(url: String): File? {
         val storageDir = activity?.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
         if (storageDir == null) return null
-        val arrString = url.split("/")
-        val fileName = arrString[arrString.size - 1].split("?")[0] // Remove query parameters
-        val timestamp = System.currentTimeMillis()
-        val timestampDir = File(storageDir, timestamp.toString())
-        // Ensure directory exists
-        if (!timestampDir.exists()) {
-            timestampDir.mkdirs()
+        val kycDocsDir = File(storageDir, "kyc_docs")
+        if (!kycDocsDir.exists()) {
+            kycDocsDir.mkdirs()
         }
-        return File(timestampDir, fileName)
+
+        // Extract doc type and timestamp
+        val s3Path = extractS3PathFromUrl(url) ?: return null
+        val parts = s3Path.split("/")
+
+        val docType = if (parts.size >= 3) parts[parts.size - 2] else "unknown"
+
+        // Get filename with timestamp
+        val arrString = url.split("/")
+        val fileName = arrString.lastOrNull()?.split("?")?.firstOrNull() ?: "doc.png"
+
+        // Use: pancard_1735911510372.png (type + timestamp)
+        return File(kycDocsDir, "${docType}_${fileName}")
+    }
+    
+    /**
+     * ✅ FIX #3: Check if file already exists on disk
+     */
+    private fun getExistingImageFile(url: String): File? {
+        val file = getImageFile(url)
+        return if (file?.exists() == true && file.length() > 0) {
+            Log.d("KycDocumentsFragment", "File already exists: ${file.absolutePath}, size=${file.length()}")
+            file
+        } else {
+            null
+        }
     }
 
 
@@ -283,12 +326,27 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     override fun fetchDetails(data: DocDetailData) {
-        if(!dList.contains(data.docUrl)){
-            dList.put(data.docUrl, data)
-            showProg = false
-            // docUrl is already a complete URL from the backend
-            Log.d("KycDocumentsFragment", "fetchDetails: ${data.docUrl}")
-            downloadImage(data, data.docUrl)
+        // ✅ Fixed: Use containsKey() instead of contains() to check HashMap keys
+        if(!dList.containsKey(data.docUrl)){
+            dList[data.docUrl] = data
+            
+            // ✅ FIX #3: Check if file already exists on disk before downloading
+            val existingFile = getExistingImageFile(data.docUrl)
+            
+            if (existingFile != null) {
+                // File already exists, use it directly
+                data.docPath = existingFile.absolutePath
+                dList[data.docUrl] = data
+                
+                // ✅ FIX: Post notification to avoid "computing layout" crash
+                // Cannot call notifyDataSetChanged during onBindViewHolder
+                binding.attachmentList.post {
+                    docRVAdapter.notifyDataSetChanged()
+                }
+            } else {
+                // File doesn't exist, download it
+                downloadImage(data, data.docUrl)
+            }
         }
     }
 
@@ -382,57 +440,66 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     override fun onDocumentListSuccess(files: List<FileData>) {
         if (files.isNotEmpty()) {
             val documentFile = files.first()
-            // ✅ Use s3_path from response to find the original URL
+            // ✅ Use s3_path from response to find the original URL and download type
             val s3Path = documentFile.s3Path
             val originalUrl = s3Path?.let { s3PathToUrlMap[it] }
+            val downloadType = s3Path?.let { s3PathDownloadType[it] }
             val dataFromList = originalUrl?.let { dList[it] }
             
-            Log.d("KycDocumentsFragment", "onDocumentListSuccess: s3Path=$s3Path, originalUrl=$originalUrl, dataFromList=${dataFromList?.docUrl}, showProg=$showProg, mapKeys=${s3PathToUrlMap.keys}")
-            
-            // For downloadLogo (showProg=true), we only need originalUrl, not dataFromList
-            // For downloadImage (showProg=false), we need both originalUrl and dataFromList
-            if (originalUrl == null || (!showProg && dataFromList == null)) {
+            // Validate based on download type
+            // For VIEW_DETAILS (downloadLogo), we only need originalUrl
+            // For PREVIEW_IMAGE (downloadImage), we need both originalUrl and dataFromList
+            if (originalUrl == null || downloadType == null) {
+                Log.e(LOG_TAG, "Validation failed: originalUrl or downloadType is null for s3Path: $s3Path")
                 uiUtils.hideProgress()
                 uiUtils.showSnackbar("Unable to determine original document URL")
                 // Clean up
-                s3Path?.let { s3PathToUrlMap.remove(it) }
-                currentDownloadUrl = null
-                currentDownloadData = null
+                s3Path?.let { 
+                    s3PathToUrlMap.remove(it)
+                    s3PathDownloadType.remove(it)
+                }
+                return
+            }
+            
+            if (downloadType == DownloadType.PREVIEW_IMAGE && dataFromList == null) {
+                Log.e(LOG_TAG, "Validation failed: dataFromList is null for PREVIEW_IMAGE, URL: $originalUrl")
+                uiUtils.hideProgress()
+                uiUtils.showSnackbar("Unable to find document data")
+                // Clean up
+                s3Path?.let { 
+                    s3PathToUrlMap.remove(it)
+                    s3PathDownloadType.remove(it)
+                }
                 return
             }
             
             // Download file from pre-signed URL
-            downloadFileFromUrl(documentFile.downloadUrl, originalUrl)
+            downloadFileFromUrl(documentFile.downloadUrl, originalUrl, downloadType)
         } else {
+            Log.e(LOG_TAG, "API returned empty files list")
             uiUtils.hideProgress()
             uiUtils.showSnackbar("No documents found")
-            // Clean up
-            currentDownloadUrl?.let { 
-                val s3Path = extractS3PathFromUrl(it)
-                s3Path?.let { s3PathToUrlMap.remove(it) }
-            }
-            currentDownloadUrl = null
-            currentDownloadData = null
         }
     }
 
     override fun onDocumentListFailure(error: String) {
+        Log.e(LOG_TAG, "API failed: $error")
         uiUtils.hideProgress()
         uiUtils.showSnackbar("Download failed: $error")
-        // ✅ Clean up mapping
-        currentDownloadUrl?.let { 
-            val s3Path = extractS3PathFromUrl(it)
-            s3Path?.let { s3PathToUrlMap.remove(it) }
-        }
-        currentDownloadUrl = null
-        currentDownloadData = null
     }
 
     /**
      * Download file from pre-signed URL using OkHttpClient
+     * ✅ Now thread-safe: each download tracked by its own downloadType
+     * ✅ FIX #2: Uses downloadCompositeDisposable to persist across fragment lifecycle
      */
-    private fun downloadFileFromUrl(downloadUrl: String, originalDocUrl: String) {
-        compositeDisposable += io.reactivex.Observable.fromCallable {
+    private fun downloadFileFromUrl(downloadUrl: String, originalDocUrl: String, downloadType: DownloadType) {
+        // ✅ FIX: If disposable was disposed, create a new one
+        if (downloadCompositeDisposable.isDisposed) {
+            downloadCompositeDisposable = io.reactivex.disposables.CompositeDisposable()
+        }
+        
+        downloadCompositeDisposable += io.reactivex.Observable.fromCallable {
             val client = OkHttpClient()
             val request = Request.Builder()
                 .url(downloadUrl)
@@ -441,11 +508,9 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
             val response: Response = client.newCall(request).execute()
             
             if (response.isSuccessful) {
-                val file = if (showProg) {
-                    // For downloadLogo: save to Downloads folder
+                val file = if (downloadType == DownloadType.VIEW_DETAILS) {
                     getFile(originalDocUrl)
                 } else {
-                    // For downloadImage: save to app documents folder
                     getImageFile(originalDocUrl)
                 }
                 
@@ -457,48 +522,70 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
                     }
                     file.absolutePath
                 } else {
+                    Log.e(LOG_TAG, "File creation failed for: $originalDocUrl")
                     null
                 }
             } else {
+                Log.e(LOG_TAG, "HTTP request failed with code: ${response.code()} for URL: $downloadUrl")
                 null
             }
         }
         .onBackground()
         .subscribe({ filePath ->
+            // ✅ FIX #2: Check if fragment is still attached before updating UI
+            if (!isAdded || context == null) {
+                return@subscribe
+            }
+            
             if (filePath != null) {
-                if (showProg) {
+                if (downloadType == DownloadType.VIEW_DETAILS) {
                     // For downloadLogo
                     uiUtils.showSnackbar("File downloaded successfully")
-                    showProg = false
                 } else {
                     // For downloadImage - ✅ Look up correct data from dList using originalDocUrl
-                    val data = originalDocUrl?.let { dList[it] }
+                    val data = dList[originalDocUrl]
+                    
                     if (data != null) {
                         data.docPath = filePath
                         dList[originalDocUrl] = data  // ✅ Update dList
-                        Log.d("KycDocumentsFragment", "Downloaded: $originalDocUrl -> $filePath")
-                        docRVAdapter.notifyDataSetChanged()
+                        
+                        // ✅ FIX: Post notification to avoid "computing layout" crash
+                        binding.attachmentList.post {
+                            docRVAdapter.notifyDataSetChanged()
+                        }
                     } else {
-                        Log.e("KycDocumentsFragment", "Could not find data for URL: $originalDocUrl")
+                        Log.e(LOG_TAG, "Data not found in dList for URL: $originalDocUrl")
                     }
                 }
             } else {
                 uiUtils.showSnackbar("Download failed")
             }
+            
             uiUtils.hideProgress()
-            // ✅ Clean up mapping
+            
+            // ✅ Clean up mappings for this specific download
             val s3Path = extractS3PathFromUrl(originalDocUrl)
-            s3Path?.let { s3PathToUrlMap.remove(it) }
-            currentDownloadUrl = null
-            currentDownloadData = null
+            s3Path?.let { 
+                s3PathToUrlMap.remove(it)
+                s3PathDownloadType.remove(it)
+            }
         }, { error ->
+            Log.e(LOG_TAG, "Download error for $originalDocUrl: ${error.message}")
+            
+            // ✅ FIX #2: Check if fragment is still attached before updating UI
+            if (!isAdded || context == null) {
+                return@subscribe
+            }
+            
             uiUtils.hideProgress()
             uiUtils.showSnackbar("Download error: ${error.message}")
-            // ✅ Clean up mapping on error
+            
+            // ✅ Clean up mappings on error
             val s3Path = extractS3PathFromUrl(originalDocUrl)
-            s3Path?.let { s3PathToUrlMap.remove(it) }
-            currentDownloadUrl = null
-            currentDownloadData = null
+            s3Path?.let { 
+                s3PathToUrlMap.remove(it)
+                s3PathDownloadType.remove(it)
+            }
         })
     }
 }
