@@ -13,7 +13,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 class ProfileKYCFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
         fragmentManager
 ) {
-    override fun getItem(position: Int) = ProfileKYCFragmentType.pos(position)!!.fragment
+    override fun getItem(position: Int) = ProfileKYCFragmentType.pos(position)!!.creator()
 
     override fun getCount() = ProfileKYCFragmentType.count()
 

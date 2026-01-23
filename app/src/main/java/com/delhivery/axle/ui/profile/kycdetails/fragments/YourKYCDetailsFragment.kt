@@ -23,8 +23,7 @@ class YourKYCDetailsFragment: ProfileKYCBaseFragment<FragmentYourKycDetailsBindi
     }
 
     companion object {
-        /* singleton instance */
-        val _instance: YourKYCDetailsFragment by lazy { YourKYCDetailsFragment() }
+        fun newInstance(): YourKYCDetailsFragment = YourKYCDetailsFragment()
     }
 
     @Inject lateinit var userPrefs: UserPrefs

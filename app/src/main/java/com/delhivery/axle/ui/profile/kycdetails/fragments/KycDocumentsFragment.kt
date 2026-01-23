@@ -56,8 +56,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     companion object {
-        /* singleton instance */
-        val _instance: KycDocumentsFragment by lazy { KycDocumentsFragment() }
+        fun newInstance(): KycDocumentsFragment = KycDocumentsFragment()
     }
 
     lateinit var path:String
