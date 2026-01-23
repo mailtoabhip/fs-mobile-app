@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.PackageManagerCompat.LOG_TAG
 import androidx.lifecycle.Observer
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -70,9 +71,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     // ✅ Track download type per s3_path to avoid race conditions
     private val s3PathDownloadType: HashMap<String, DownloadType> = HashMap()
     
-    // ✅ FIX #2: Separate CompositeDisposable for downloads that persist across fragment lifecycle
-    private var downloadCompositeDisposable = io.reactivex.disposables.CompositeDisposable()
-    
     private enum class DownloadType {
         VIEW_DETAILS,  // downloadLogo flow - save to Downloads
         PREVIEW_IMAGE  // downloadImage flow - save to app documents
@@ -96,12 +94,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         super.onViewCreated(view, savedInstanceState)
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("KycDocumentsFragment_SetupTime")
         fragmentSetupTrace?.start()
-        
-        // ✅ FIX: Ensure we have a working CompositeDisposable when view is created
-        if (downloadCompositeDisposable.isDisposed) {
-            downloadCompositeDisposable = io.reactivex.disposables.CompositeDisposable()
-        }
-        
+
         binding.attachmentList.apply {
             layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             adapter = this@KycDocumentsFragment.docRVAdapter
@@ -147,14 +140,6 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
             isFirstResume = false
-        }
-    }
-    
-    override fun onDestroy() {
-        super.onDestroy()
-        // ✅ FIX #2: Only dispose downloads if activity is actually finishing
-        if (activity?.isFinishing == true) {
-            downloadCompositeDisposable.dispose()
         }
     }
 
@@ -492,12 +477,8 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
      * ✅ FIX #2: Uses downloadCompositeDisposable to persist across fragment lifecycle
      */
     private fun downloadFileFromUrl(downloadUrl: String, originalDocUrl: String, downloadType: DownloadType) {
-        // ✅ FIX: If disposable was disposed, create a new one
-        if (downloadCompositeDisposable.isDisposed) {
-            downloadCompositeDisposable = io.reactivex.disposables.CompositeDisposable()
-        }
         
-        downloadCompositeDisposable += io.reactivex.Observable.fromCallable {
+        compositeDisposable += io.reactivex.Observable.fromCallable {
             val client = OkHttpClient()
             val request = Request.Builder()
                 .url(downloadUrl)
