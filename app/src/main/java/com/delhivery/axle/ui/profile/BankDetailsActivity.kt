@@ -176,7 +176,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
 
         binding.docRemove.setOnClickListener {
             try{
-                downloadLogo("passbook_front_page")
+                // Use the full URL from viewModel's LiveData
+                downloadLogo(viewModel.accountkycDocuments.value)
                 download = true
             } catch (e: Exception) {
                 //uiUtils.showSnackbar("Error: ${e.message}")
@@ -184,7 +185,8 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         }
         binding.docDownload1.setOnClickListener {
             try{
-                downloadLogo("section_194C")
+                // Use the full URL from viewModel's LiveData
+                downloadLogo(viewModel.nine4CkycDocuments.value)
                 download = true
             } catch (e: Exception) {
                 //uiUtils.showSnackbar("Error: ${e.message}")
@@ -305,7 +307,12 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
         }
     }
 
-    private fun downloadLogo(item: String) {
+    private fun downloadLogo(fullUrl: String?) {
+        if (fullUrl.isNullOrEmpty()) {
+            uiUtils.showSnackbar("Document URL not available")
+            return
+        }
+        
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             compositeDisposable += requestPermission(
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -313,28 +320,50 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                 .onBackground()
                 .subscribe { granted, error ->
                     if (error == null && granted) {
-                        showProg = true
-                        uiUtils.showProgress()
-                        val file = getFile(item)
-                        if (file != null) {
-                            documentUtils.listDocuments(item, this)
-                        } else {
-                            uiUtils.showSnackbar("Can't process image")
-                        }
+                        performDownload(fullUrl)
                     } else {
                         uiUtils.hideProgress()
                         uiUtils.showSnackbar(getString(R.string.storage_permission))
                     }
                 }
         } else {
-            showProg = true
-            uiUtils.showProgress()
-            val file = getFile(item)
-            if (file != null) {
-                documentUtils.listDocuments(item, this)
-            } else {
-                uiUtils.showSnackbar("Can't process image")
+            performDownload(fullUrl)
+        }
+    }
+
+    private fun performDownload(fullUrl: String) {
+        showProg = true
+        uiUtils.showProgress()
+        
+        // Extract S3 path from full URL
+        val s3Path = extractS3PathFromUrl(fullUrl)
+        
+        if (s3Path != null) {
+            documentUtils.downloadByS3Path(s3Path, this)
+        } else {
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Unable to extract document path from URL")
+        }
+    }
+
+    private fun extractS3PathFromUrl(docUrl: String): String? {
+        return try {
+            // Check if it's already a relative path (no http/https protocol and no .amazonaws.com)
+            if (!docUrl.startsWith("http://") && !docUrl.startsWith("https://") && !docUrl.contains(".amazonaws.com")) {
+                // Already a relative path, return as-is (remove query parameters if any)
+                return docUrl.split("?")[0]
             }
+            
+            // Fallback: Try to extract path from URL pattern (bucket.s3.region.amazonaws.com/path)
+            val parts = docUrl.split(".amazonaws.com/")
+            if (parts.size > 1) {
+                parts[1].split("?")[0] // Remove query parameters if any
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("BankDetailsActivity", "Error extracting s3_path: ${e.message}")
+            null
         }
     }
     private fun getFile(item: String): File? {
