@@ -4,11 +4,11 @@ import com.delhivery.axle.ui.base.BaseFragment
 
 enum class ProfileKYCFragmentType(
     val position: Int,
-    val fragment: BaseFragment<*, *>,
+    val creator: () -> BaseFragment<*, *>,
     val title: String
 ) {
-    DetailsFragment(0, YourKYCDetailsFragment._instance, "Details"),
-    DocumentFragment( 1, KycDocumentsFragment._instance, "Documents");
+    DetailsFragment(0, { YourKYCDetailsFragment.newInstance() }, "Details"),
+    DocumentFragment(1, { KycDocumentsFragment.newInstance() }, "Documents");
 
     companion object {
 

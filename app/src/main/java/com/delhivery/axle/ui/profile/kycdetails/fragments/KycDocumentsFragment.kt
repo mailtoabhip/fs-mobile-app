@@ -56,9 +56,7 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
     }
 
     companion object {
-        /* singleton instance */
-        val _instance: KycDocumentsFragment by lazy { KycDocumentsFragment() }
-        private const val LOG_TAG = "KYC_DOC_DOWNLOAD"
+        fun newInstance(): KycDocumentsFragment = KycDocumentsFragment()
     }
 
     lateinit var path:String

@@ -6,6 +6,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityProfileKycDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.profile.kycdetails.fragments.KycDocumentsFragment
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentType
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentsAdapter
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -85,4 +86,8 @@ class ProfileKYCDetailsActivity : BaseActivity<ActivityProfileKycDetailsBinding,
         }
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 }
