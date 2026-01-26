@@ -14,6 +14,9 @@ import com.moengage.core.config.NotificationConfig
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.delhivery.axle.injection.module.DaggerWorkerFactory
+import io.reactivex.exceptions.UndeliverableException
+import io.reactivex.plugins.RxJavaPlugins
+import java.io.InterruptedIOException
 import javax.inject.Inject
 
 /**
@@ -29,6 +32,7 @@ class KotlinApp : DaggerApplication() {
 
   override fun onCreate() {
     super.onCreate()
+    setupRxJavaErrorHandler()
     setupMoEngage()
     createNotificationChannel()
     WorkManager.initialize(
@@ -37,6 +41,34 @@ class KotlinApp : DaggerApplication() {
                     .setWorkerFactory(workerFactory)
                     .build()
     )
+  }
+
+  /**
+   * Setup global RxJava error handler to prevent crashes from UndeliverableExceptions
+   * These occur when errors happen after the Observable stream has been disposed
+   */
+  private fun setupRxJavaErrorHandler() {
+    RxJavaPlugins.setErrorHandler { throwable ->
+      if (throwable is UndeliverableException) {
+        val cause = throwable.cause
+        if (cause is InterruptedIOException || cause is InterruptedException) {
+          // Fine to ignore - happens when operations are cancelled (e.g., user navigates away)
+          return@setErrorHandler
+        }
+        // Log other undeliverable exceptions
+        if (BuildConfig.DEBUG) {
+          throwable.printStackTrace()
+        }
+      } else {
+        // Crash on other uncaught RxJava errors in debug mode
+        if (BuildConfig.DEBUG) {
+          throw throwable
+        } else {
+          // Log in production to prevent crashes
+          throwable.printStackTrace()
+        }
+      }
+    }
   }
 
   private fun setupMoEngage() {

@@ -33,12 +33,12 @@ enum class UrlConfig(
   TransactionService(
       "https://orion-transaction-api.delhivery.com",
       "https://orion-transaction-api-dev.delhivery.com",
-      "http://orion-transaction-api-uat.delhivery.com"
+      "https://orion-transaction-api-uat.delhivery.com"
   ),
   TripService(
       "https://orion-trip-api.delhivery.com",
       "https://orion-trip-api-dev.delhivery.com",
-      "http://orion-trip-api-uat.delhivery.com"
+      "https://orion-trip-api-uat.delhivery.com"
   ),
   PaymentService(
       "https://orion-payment-api.delhivery.com",

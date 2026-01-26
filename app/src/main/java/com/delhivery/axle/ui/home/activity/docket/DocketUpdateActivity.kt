@@ -68,6 +68,7 @@ import java.util.Calendar
 import javax.inject.Inject
 import androidx.core.graphics.toColorInt
 import com.delhivery.axle.utils.REQCODE_CAMERA
+import java.io.InterruptedIOException
 
 /**
  **
@@ -91,6 +92,11 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
   private lateinit var localImageName: String
   private var currentDocketId: Int = 1 // Currently selected docket ID
   private var pendingViewDocketId: Int? = null // Docket ID user clicked to view while downloading
+  
+  // Reusable OkHttpClient for downloads to avoid creating new instances
+  private val okHttpClient: OkHttpClient by lazy { OkHttpClient() }
+  // Track current download call so it can be cancelled on disposal
+  private var currentDownloadCall: okhttp3.Call? = null
 
   @Inject lateinit var imageUtils: ImageUtils
   @Inject lateinit var documentUtils: DocumentUtils
@@ -574,27 +580,44 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
     }
     
     compositeDisposable += io.reactivex.Observable.fromCallable {
-      val client = OkHttpClient()
-      val request = Request.Builder().url(downloadUrl).build()
-      val response = client.newCall(request).execute()
-
-      if (response.isSuccessful) {
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-        val file = File.createTempFile(fileNamePrefix, ".jpg", storageDir)
+      try {
+        val request = Request.Builder().url(downloadUrl).build()
+        val call = okHttpClient.newCall(request)
+        currentDownloadCall = call
         
-        response.body()?.byteStream()?.use { input ->
-          file.outputStream().use { output ->
-            input.copyTo(output)
+        val response = call.execute()
+
+        if (response.isSuccessful) {
+          val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+          val file = File.createTempFile(fileNamePrefix, ".jpg", storageDir)
+          
+          response.body()?.byteStream()?.use { input ->
+            file.outputStream().use { output ->
+              input.copyTo(output)
+            }
           }
+          file.absolutePath
+        } else {
+          "" // Return empty string instead of null (RxJava doesn't allow null)
         }
-        file.absolutePath
-      } else {
-        null
+      } catch (e: InterruptedIOException) {
+        // Return empty string on interruption (user navigated away)
+        ""
+      } catch (e: IOException) {
+        // Handle other IO errors gracefully
+        ""
+      } finally {
+        currentDownloadCall = null
       }
     }
     .onBackground()
+    .doOnDispose {
+      // Cancel the OkHttp call when RxJava stream is disposed
+      currentDownloadCall?.cancel()
+      currentDownloadCall = null
+    }
     .subscribe({ filePath ->
-      if (filePath != null) {
+      if (filePath.isNotEmpty()) {
         // Update local path in ViewModel so thumbnail shows and click is instant
         viewModel.updateDocketLocalPath(docketId, filePath)
         
@@ -644,6 +667,12 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
 
   private fun extractS3Path(docUrl: String): String? {
       return try {
+          // Check if it's already a relative path (no http/https protocol and no .amazonaws.com)
+          if (!docUrl.startsWith("http://") && !docUrl.startsWith("https://") && !docUrl.contains(".amazonaws.com")) {
+              // Already a relative path, return as-is (remove query parameters if any)
+              return docUrl.split("?")[0]
+          }
+          
           val bucket = com.delhivery.axle.config.AWSConfig.Bucket.value()
           val region = com.delhivery.axle.config.AWSConfig.ServerRegion.value()
           val awsBasePath = "https://$bucket.s3.$region.amazonaws.com/"
@@ -655,10 +684,10 @@ class DocketUpdateActivity : BaseActivity<ActivityHpodDetailsBinding, DocketUpda
               if (parts.size > 1) {
                   parts[1].split("?")[0]
               } else {
-                  docUrl // Assume relative path if no AWS domain found but passed to this func
+                  null
               }
           } else {
-              docUrl // Assume it's already a relative path
+              null
           }
       } catch (e: Exception) {
           null

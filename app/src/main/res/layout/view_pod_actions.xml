@@ -69,7 +69,7 @@
             android:id="@+id/btnUploadEpod"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_36dp"
-            android:text="Upload ePOD"
+            android:text="@{trip.podRejectedReUpload()}"
             android:textAllCaps="false"
             android:paddingEnd="@dimen/size_8dp"
             android:paddingStart="0dp"

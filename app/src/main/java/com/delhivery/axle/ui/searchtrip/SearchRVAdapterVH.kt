@@ -85,7 +85,6 @@ class SearchDataItemVH(binding: ViewPodItemBinding) :
   ) {
     binding.trip = item.data
     binding.root.clickToAction(HomeTripsRequestAction_ViewDetails, item, _interface)
-    binding.btnEpod.clickToAction(HomeTripsRequestAction_UploadEpod, item, _interface)
     binding.btnCourier.clickToAction(HomeTripsRequestAction_UploadTracking, item, _interface)
   }
 }

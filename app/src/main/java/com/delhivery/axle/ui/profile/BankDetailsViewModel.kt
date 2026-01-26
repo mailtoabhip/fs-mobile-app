@@ -64,13 +64,17 @@ private val userPrefs: UserPrefs
         .subscribe { _res, error ->
           if (!error && _res!=null) {
             _res.responseData?.kyc_documents?.forEach {
-              if(it.contains("loadboard/payment",true)){
-                 if(it.contains("loadboard/payment/account_proof")){
-                   accountkycDocuments.value=it
-                 }
-                if(it.contains("loadboard/payment/194C")){
-                  nine4CkycDocuments.value=it
-                }
+              // Filter for bank account documents (new secure API path structure)
+              if(it.contains("bankaccount", ignoreCase = true) || 
+                 it.contains("cancelled_cheque", ignoreCase = true) ||
+                 it.contains("passbook", ignoreCase = true)) {
+                accountkycDocuments.value = it
+                Log.d("BankDetailsViewModel", "Found bank account document: $it")
+              }
+              // Filter for 194C documents (new secure API path structure)
+              if(it.contains("section_194c", ignoreCase = true)) {
+                nine4CkycDocuments.value = it
+                Log.d("BankDetailsViewModel", "Found 194C document: $it")
               }
             }
           } else
