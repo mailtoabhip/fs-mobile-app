@@ -183,36 +183,44 @@ class HomeTrucksViewModel @Inject constructor(
 
                     // Update pagination state from API response
                     offset = _res.nextOffset ?: offset
-                    total = _res.total
-                    userPrefs.inventoryCount = total.toString()
+                    
+                    // Only update total count when NOT searching - preserve inventory card counts during search
+                    if (!searchFlag) {
+                        total = _res.total
+                        userPrefs.inventoryCount = total.toString()
+                    }
+                    
                     hasMoreData = _res.hasNext
 
                     val trucksList :List<HomeTrucksRequestItemData> = _res.trucks
                     
 
-                    // Calculate FASTag stats on background thread for large lists
-                    compositeDisposable += io.reactivex.Single.fromCallable {
-                        val fastagTrucksCount = trucksList.count { 
-                            it.fastagTagStatus?.equals("Active", ignoreCase = true) == true 
+                    // Only calculate FASTag stats when NOT searching - preserve inventory card stats during search
+                    if (!searchFlag) {
+                        // Calculate FASTag stats on background thread for large lists
+                        compositeDisposable += io.reactivex.Single.fromCallable {
+                            val fastagTrucksCount = trucksList.count { 
+                                it.fastagTagStatus?.equals("Active", ignoreCase = true) == true 
+                            }
+                            val totalFastagBalance = trucksList
+                                .filter { it.fastagTagStatus?.equals("Active", ignoreCase = true) == true }
+                                .sumOf { it.fastagBalance?.toDoubleOrNull() ?: 0.0 }
+                            
+                            FastagStats(
+                                totalTrucks = total,
+                                fastagTrucksCount = fastagTrucksCount,
+                                totalFastagBalance = totalFastagBalance
+                            )
                         }
-                        val totalFastagBalance = trucksList
-                            .filter { it.fastagTagStatus?.equals("Active", ignoreCase = true) == true }
-                            .sumOf { it.fastagBalance?.toDoubleOrNull() ?: 0.0 }
-                        
-                        FastagStats(
-                            totalTrucks = total,
-                            fastagTrucksCount = fastagTrucksCount,
-                            totalFastagBalance = totalFastagBalance
-                        )
+                        .onBackground()
+                        .subscribe({ stats ->
+                            fastagStatsData.postValue(stats)
+                        }, { error ->
+                            Log.e("HomeTrucksViewModel", "Error calculating FASTag stats", error)
+                            // Post default stats on error
+                            fastagStatsData.postValue(FastagStats(total, 0, 0.0))
+                        })
                     }
-                    .onBackground()
-                    .subscribe({ stats ->
-                        fastagStatsData.postValue(stats)
-                    }, { error ->
-                        Log.e("HomeTrucksViewModel", "Error calculating FASTag stats", error)
-                        // Post default stats on error
-                        fastagStatsData.postValue(FastagStats(total, 0, 0.0))
-                    })
 
                     mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.Remove))

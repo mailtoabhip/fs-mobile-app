@@ -276,7 +276,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             
             // Set Title
             item.tvTitle.text = when(id) {
-                R.id.itemRecent -> "Recent transactions"
+                R.id.itemRecent -> "Last 24 hours"
                 R.id.itemLastWeek -> "Last 1 week"
                 R.id.itemCurrentMonth -> "Current month"
                 R.id.itemLastMonth -> "Last 1 month"
@@ -502,19 +502,13 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         
         when (selectedId) {
             R.id.itemRecent -> {
-                // To date: end of today
+                // To date: current time
                 val toCalendar = Calendar.getInstance()
-                toCalendar.set(Calendar.HOUR_OF_DAY, 23)
-                toCalendar.set(Calendar.MINUTE, 59)
-                toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
                 
-                // From date: start of 15 days ago
+                // From date: 24 hours ago
                 val fromCalendar = Calendar.getInstance()
-                fromCalendar.add(Calendar.DAY_OF_YEAR, -15)
-                fromCalendar.set(Calendar.HOUR_OF_DAY, 0)
-                fromCalendar.set(Calendar.MINUTE, 0)
-                fromCalendar.set(Calendar.SECOND, 0)
+                fromCalendar.add(Calendar.HOUR_OF_DAY, -24)
                 fromDate = dateFormat.format(fromCalendar.time)
             }
             R.id.itemLastWeek -> {
