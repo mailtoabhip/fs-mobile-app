@@ -163,18 +163,18 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         binding.editTruckSize.setOnClickListener {
-            if (truckItems.isEmpty()) {
-                uiUtils.showSnackbar(getString(R.string.msg_no_truck_types_found))
-                return@setOnClickListener
+            if(truckItems.isNotEmpty()){
+                val type = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked)  "open" else if(binding.btnRadioTrailer.isChecked) "trailer" else ""
+                if(type != "") {
+                    showTruckSizeDialog(type)
+                }
+                else{
+                    uiUtils.showSnackbar("Select body type first")
+                }
             }
-
-            val type = getSelectedBodyType()
-            if (type.isEmpty()) {
-                uiUtils.showSnackbar(getString(R.string.msg_select_body_type_first))
-                return@setOnClickListener
+            else{
+                uiUtils.showSnackbar("No Truck Types Found")
             }
-
-            showTruckSizeDialog(type)
         }
 
         binding.editCurrentCity.setOnClickListener {
