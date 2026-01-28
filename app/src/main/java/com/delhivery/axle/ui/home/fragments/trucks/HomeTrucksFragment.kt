@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -1208,6 +1209,17 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     bindingDialog.tabTruckSize.setBackgroundColor(resources.getColor(android.R.color.white))
                     bindingDialog.tabTruckSize.setTextColor(resources.getColor(R.color.black))
                     bindingDialog.tvFilterTitle.text = getString(R.string.filter_by_truck_size)
+                    // Show dynamically generated truck size checkboxes
+                    if (parentLayout != null) {
+                        for (i in 0 until parentLayout.childCount) {
+                            val child = parentLayout.getChildAt(i)
+                            if (child is CheckBox && child.tag != null) {
+                                child.visibility = View.VISIBLE
+                            } else if (child is TextView && child.text.toString() == getString(R.string.msg_no_truck_sizes_available)) {
+                                child.visibility = View.VISIBLE
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1434,9 +1446,8 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         val childrenToRemove = mutableListOf<View>()
         for (i in 0 until parentLayout.childCount) {
             val child = parentLayout.getChildAt(i)
-            if (child is CheckBox && child.tag != null) {
-                childrenToRemove.add(child)
-            } else if (child is TextView && child.text.toString() == getString(R.string.msg_no_truck_sizes_available)) {
+            if ((child is CheckBox && child.tag != null) || 
+                (child is TextView && child.text.toString() == getString(R.string.msg_no_truck_sizes_available))) {
                 childrenToRemove.add(child)
             }
         }
@@ -1451,10 +1462,8 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         }
         
         // Filter truck sizes based on selected vehicle types
-        val afterFilter = viewModel.truckSizeData
+        val filteredTruckSizes = viewModel.truckSizeData
             .filter { selectedVehicleTypes.contains(it.truckType) }
-        val filteredTruckSizes = afterFilter
-            .distinctBy { it.truckDisplayName }
             .sortedBy { it.defaultMG }
         
         if (filteredTruckSizes.isEmpty()) {

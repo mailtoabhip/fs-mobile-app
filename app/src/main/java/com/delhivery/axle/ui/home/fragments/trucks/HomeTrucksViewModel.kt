@@ -116,7 +116,6 @@ class HomeTrucksViewModel @Inject constructor(
             .onBackground()
             .subscribe { _tRes, error ->
                 if(!error && _tRes != null){
-                    truckSizeData.clear()
                     truckSizeData.addAll(_tRes)
                 }
                 else{
@@ -185,7 +184,8 @@ class HomeTrucksViewModel @Inject constructor(
                     // Update pagination state from API response
                     offset = _res.nextOffset ?: offset
                     
-                    if (!searchFlag && !hasActiveFilters()) {
+                    // Only update total count when NOT searching - preserve inventory card counts during search
+                    if (!searchFlag) {
                         total = _res.total
                         userPrefs.inventoryCount = total.toString()
                     }
@@ -195,7 +195,8 @@ class HomeTrucksViewModel @Inject constructor(
                     val trucksList :List<HomeTrucksRequestItemData> = _res.trucks
                     
 
-                    if (!searchFlag && !hasActiveFilters()) {
+                    // Only calculate FASTag stats when NOT searching - preserve inventory card stats during search
+                    if (!searchFlag) {
                         // Calculate FASTag stats on background thread for large lists
                         compositeDisposable += io.reactivex.Single.fromCallable {
                             val fastagTrucksCount = trucksList.count { 
@@ -424,16 +425,6 @@ class HomeTrucksViewModel @Inject constructor(
                     fastagBalanceRefreshErrorData.postValue(Pair(tagId, errorMessage))
                 }
             }
-    }
-    
-    /**
-     * Check if any filters are currently active
-     * @return true if any filter (vehicle type, availability, or truck size) is active
-     */
-    private fun hasActiveFilters(): Boolean {
-        return bodyTypeFilter.isNotEmpty() || 
-               availabilityFilter.isNotEmpty() || 
-               sizeFilter.isNotNullOrEmpty()
     }
 
 }

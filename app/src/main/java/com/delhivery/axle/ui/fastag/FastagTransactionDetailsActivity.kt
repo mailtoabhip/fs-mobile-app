@@ -175,10 +175,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         viewModel.transactionsData.observe(this, androidx.lifecycle.Observer { response ->
             response?.transactions?.let {
                 adapter.submitList(it)
-
-                // Enable/disable download button based on transaction availability
-                binding.btnDownload.isEnabled = it.isNotEmpty()
-                binding.btnDownload.alpha = if (it.isNotEmpty()) 1.0f else 0.5f
             }
         })
 
