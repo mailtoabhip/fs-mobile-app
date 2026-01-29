@@ -1131,7 +1131,11 @@ data class HomeTripsItemData(
 
   /**
    * Calculate and format deadline text with days remaining/overdue
-   * Shows "Delayed by X days" as soon as deadline passes (even by 1 minute)
+   * Uses truncation (floor) for counting days - 1.5 days = 1 day
+   * Rules:
+   * - More than 24 hours left: Show "X days left to submit" (truncated)
+   * - Less than 24 hours left: Show nothing (empty string)
+   * - Any time past deadline: Show "Delayed by X days" immediately (minimum 1 day)
    * @param deadline ISO format date string
    * @param prefix Prefix for the deadline text
    * @return formatted deadline text
@@ -1143,17 +1147,19 @@ data class HomeTripsItemData(
       val diffMillis = deadlineDate.time - currentDate.time
       
       when {
-        // More than 1 day left
+        // More than 24 hours left - truncate (3 days 23 hours → 3 days)
         diffMillis > TimeUnit.DAYS.toMillis(1) -> {
           val daysLeft = TimeUnit.MILLISECONDS.toDays(diffMillis).toInt()
           "$daysLeft days left to submit"
         }
-        // Between 0 and 24 hours left
-        diffMillis > 0 -> "1 day left to submit"
-        // Overdue - round up any time past deadline to next full day
+        // Between 0 and 24 hours left - show nothing
+        diffMillis > 0 -> ""
+        // Overdue - show immediately, truncate days (1.5 days late → "Delayed by 1 day")
         else -> {
-          val daysDelayed = kotlin.math.ceil((-diffMillis).toDouble() / TimeUnit.DAYS.toMillis(1)).toInt()
-          if (daysDelayed == 1) "Delayed by 1 day" else "Delayed by $daysDelayed days"
+          val daysDelayed = TimeUnit.MILLISECONDS.toDays(-diffMillis).toInt()
+          // Always show at least "Delayed by 1 day" for any delay
+          val displayDays = if (daysDelayed == 0) 1 else daysDelayed
+          if (displayDays == 1) "Delayed by 1 day" else "Delayed by $displayDays days"
         }
       }
     } catch (e: Exception) {
@@ -1196,7 +1202,7 @@ data class HomeTripsItemData(
   /**
    * Check if deadline should be visible
    * Show deadline for truck_unloaded and epod_uploaded statuses
-   * Always show when there's a valid deadline text to display
+   * Shows deadline text including delays immediately after deadline passes
    */
   fun shouldShowDeadline(isHPODSection: Boolean = false): Int {
     val hasDeadline = if (isHPODSection) {
