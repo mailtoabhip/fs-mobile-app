@@ -1131,23 +1131,30 @@ data class HomeTripsItemData(
 
   /**
    * Calculate and format deadline text with days remaining/overdue
-   * Note: Does not display text when deadline is today
+   * Shows "Delayed by X days" as soon as deadline passes (even by 1 minute)
    * @param deadline ISO format date string
    * @param prefix Prefix for the deadline text
-   * @return formatted deadline text, empty if due today
+   * @return formatted deadline text
    */
   private fun calculateDeadlineText(deadline: String, prefix: String = ""): String {
     return try {
       val deadlineDate = DateUtils.parseDate(deadline, "yyyy-MM-dd'T'HH:mm:ss")
       val currentDate = Date()
-      val diff = TimeUnit.MILLISECONDS.toDays(deadlineDate.time - currentDate.time).toInt()
+      val diffMillis = deadlineDate.time - currentDate.time
       
       when {
-        diff > 1 -> "$diff days left to submit"
-        diff == 1 -> "1 day left to submit"
-        diff == 0 -> "" // Don't show text when due today
-        diff == -1 -> "Delayed by 1 day"
-        else -> "Delayed by ${-diff} days"
+        // More than 1 day left
+        diffMillis > TimeUnit.DAYS.toMillis(1) -> {
+          val daysLeft = TimeUnit.MILLISECONDS.toDays(diffMillis).toInt()
+          "$daysLeft days left to submit"
+        }
+        // Between 0 and 24 hours left
+        diffMillis > 0 -> "1 day left to submit"
+        // Overdue - round up any time past deadline to next full day
+        else -> {
+          val daysDelayed = kotlin.math.ceil((-diffMillis).toDouble() / TimeUnit.DAYS.toMillis(1)).toInt()
+          if (daysDelayed == 1) "Delayed by 1 day" else "Delayed by $daysDelayed days"
+        }
       }
     } catch (e: Exception) {
       ""
@@ -1156,21 +1163,29 @@ data class HomeTripsItemData(
 
   /**
    * Get deadline text color based on urgency
+   * Red for overdue, grey for upcoming deadlines
    * @param isHPODSection - true if showing HPOD deadline
    * @return color resource ID
    */
   @ColorRes
   fun getDeadlineTextColor(isHPODSection: Boolean = false): Int {
-    val deadlineDate = if (isHPODSection) expectedHpodDate else expectedEpodDate
+    // For rejected ePODs, use resubmission deadline
+    val deadlineDate = if (isEPODRejected() && !isHPODSection) {
+      expectedEpodResubmissionDate
+    } else if (isHPODSection) {
+      expectedHpodDate
+    } else {
+      expectedEpodDate
+    }
     
     return deadlineDate?.let { deadline ->
       try {
         val date = DateUtils.parseDate(deadline, "yyyy-MM-dd'T'HH:mm:ss")
-        val diff = TimeUnit.MILLISECONDS.toDays(date.time - Date().time).toInt()
+        val diffMillis = date.time - Date().time
         
         when {
-          diff < 0 -> R.color.colorDelhiveryRed
-          else -> R.color.sub_details_grey
+          diffMillis < 0 -> R.color.colorDelhiveryRed // Overdue
+          else -> R.color.sub_details_grey // Still time left
         }
       } catch (e: Exception) {
         R.color.sub_details_grey
@@ -1181,7 +1196,7 @@ data class HomeTripsItemData(
   /**
    * Check if deadline should be visible
    * Show deadline for truck_unloaded and epod_uploaded statuses
-   * Hide when deadline is today
+   * Always show when there's a valid deadline text to display
    */
   fun shouldShowDeadline(isHPODSection: Boolean = false): Int {
     val hasDeadline = if (isHPODSection) {
@@ -1192,24 +1207,10 @@ data class HomeTripsItemData(
     
     val isRelevantStatus = tripStatus == TruckUnloaded.statusKey || tripStatus == EPodUploaded.statusKey
     
-    // Check if deadline is today - if so, don't show
-    val isDueToday = try {
-      val deadlineDate = if (isHPODSection) {
-        expectedHpodDate
-      } else {
-        expectedEpodDate ?: expectedEpodResubmissionDate
-      }
-      
-      deadlineDate?.let { deadline ->
-        val date = DateUtils.parseDate(deadline, "yyyy-MM-dd'T'HH:mm:ss")
-        val diff = TimeUnit.MILLISECONDS.toDays(date.time - Date().time).toInt()
-        diff == 0
-      } ?: false
-    } catch (e: Exception) {
-      false
-    }
+    // Check if there's actual deadline text to show
+    val hasDeadlineText = getDeadlineText(isHPODSection).isNotEmpty()
     
-    return if (hasDeadline && isRelevantStatus && !hasPODTracking() && !isDueToday) {
+    return if (hasDeadline && isRelevantStatus && !hasPODTracking() && hasDeadlineText) {
       View.VISIBLE
     } else {
       View.GONE
