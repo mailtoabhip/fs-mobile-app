@@ -17,9 +17,6 @@ import com.delhivery.axle.tokenExpiryHandling.RefreshTokenWorker
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.squareup.okhttp.Callback
-import com.squareup.okhttp.Request
-import com.squareup.okhttp.Response
 import org.json.JSONObject
 import java.io.IOException
 import javax.inject.Inject

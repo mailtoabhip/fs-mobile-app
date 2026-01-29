@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
@@ -35,8 +34,6 @@ import com.delhivery.axle.databinding.ActivityEpodDetailsBinding
 import com.delhivery.axle.databinding.DialogBidRevisedSuccessBinding
 import com.delhivery.axle.databinding.DialogEpodSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.AWSUtils
-import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.EVENT_POD_UPLOAD
 import com.delhivery.axle.utils.FileCompressor
@@ -93,7 +90,6 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   private var mPhotoFile: File? = null
   private var currentPodId: Int = 0
   @Inject lateinit var fileCompressor: FileCompressor
-    @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var documentUtils: DocumentUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
     @Inject lateinit var userPrefs: UserPrefs

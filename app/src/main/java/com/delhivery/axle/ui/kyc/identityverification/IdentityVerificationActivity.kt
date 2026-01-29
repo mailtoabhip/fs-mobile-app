@@ -13,7 +13,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FileData
@@ -539,7 +538,7 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                         val imageScopedFile =
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
                        var docType=""
                         when {
                             binding.textCin.isChecked -> {

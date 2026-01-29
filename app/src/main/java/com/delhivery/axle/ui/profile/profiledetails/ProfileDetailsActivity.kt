@@ -18,7 +18,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -503,7 +502,7 @@ class ProfileDetailsActivity : BaseActivity<ActivityProfileDetailsBinding, Profi
                         val imageScopedFile =
                                 File(cacheDir, contentResolver?.getFileName(selectedImage)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
 
                         // Strict validation for Image types only for Profile Pictures
                         if (imageScopedFile.extension == "jpg" || imageScopedFile.extension == "png" || imageScopedFile.extension == "jpeg") {
