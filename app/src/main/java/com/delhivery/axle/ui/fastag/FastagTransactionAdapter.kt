@@ -27,16 +27,12 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: FastagTransaction) {
-            // Transaction ID with # prefix
             binding.tvTransactionId.text = "#${transaction.txnId}"
             
-            // Format timestamp
             binding.tvTimestamp.text = formatTimestamp(transaction.timestamp?:"")
             
-            // Toll name or transaction type
             binding.tvTollName.text = transaction.tollName ?: transaction.transactionType
             
-            // Amount with +/- sign based on transaction type
             val amountText = when {
                 transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
                         transaction.transactionType?.contains("recharge", ignoreCase = true) == true ->
@@ -45,7 +41,6 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
             }
             binding.tvAmount.text = amountText
             
-            // Set amount color based on transaction type
             val amountColor = when {
                 transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
                         transaction.transactionType?.contains("recharge", ignoreCase = true) == true ->
@@ -55,7 +50,6 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
             }
             binding.tvAmount.setTextColor(amountColor)
             
-            // Available balance
             binding.tvAvailableBalance.text = "₹${transaction.avlBalance}"
         }
 

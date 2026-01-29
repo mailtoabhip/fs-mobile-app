@@ -5,13 +5,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class HomeTrucksRequestItemData(
     @SerializedName("latest_inventory_uuid")
@@ -71,14 +66,12 @@ data class HomeTrucksRequestItemData(
     @SerializedName("demand_type")
     val demandType: List<String>? = null,
 
-    // FASTag
     @SerializedName("fastag_id")
     val fastagTagId: String? = null,
 
     @SerializedName("fastag_vrn")
     val fastagVrn: String? = null,
 
-    // Backend sends string → keep String to be safe
     @SerializedName("fastag_balance")
     var fastagBalance: String? = null,
 

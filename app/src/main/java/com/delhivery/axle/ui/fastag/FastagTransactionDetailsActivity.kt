@@ -120,15 +120,11 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         } else {
             binding.tvStatus.visibility = android.view.View.GONE
         }
-        
 
-        
-        // Handle AWB
         if (awb != null && awb.isNotEmpty()) {
             binding.layoutAwb.visibility = android.view.View.VISIBLE
             binding.tvAwb.text = awb
             
-            // Copy AWB to clipboard
             binding.ivCopyAwb.setOnClickListener {
                 val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                 val clip = android.content.ClipData.newPlainText("AWB", awb)
@@ -139,27 +135,22 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             binding.layoutAwb.visibility = android.view.View.GONE
         }
 
-        // Back button
         binding.ivBack.setOnClickListener {
             finish()
         }
 
-        // Recharge button (placeholder)
         binding.btnRecharge.setOnClickListener {
             Toast.makeText(this, "Recharge functionality coming soon", Toast.LENGTH_SHORT).show()
         }
 
-        // Download statement button - Show bottom sheet
         binding.btnDownload.setOnClickListener {
             showStatementHistoryBottomSheet()
         }
         
-        // Account button - Call helpline
         binding.ivAccount.setOnClickListener {
             callHelpline()
         }
         
-        // Help button - Navigate to Help & Support
         binding.ivHelp.setOnClickListener {
             navigationUtils.navigate(HelpSupportActivity::class.java)
         }
@@ -176,7 +167,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             response?.transactions?.let {
                 adapter.submitList(it)
 
-                // Enable/disable download button based on transaction availability
                 binding.btnDownload.isEnabled = it.isNotEmpty()
                 binding.btnDownload.alpha = if (it.isNotEmpty()) 1.0f else 0.5f
             }
@@ -189,7 +179,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         })
 
         viewModel.progressData.observe(this, androidx.lifecycle.Observer { isLoading ->
-            // Show/hide progress indicator if needed
             if (isLoading) {
                 uiUtils.showProgress()
             } else {
@@ -197,7 +186,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             }
         })
         
-        // Observe download data
         viewModel.downloadData.observe(this, androidx.lifecycle.Observer { responseBody ->
             responseBody?.let {
                 try {
@@ -207,14 +195,12 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                     storageDir?.mkdirs()
                     val file = File(storageDir, filename)
                     
-                    // Write ResponseBody to file
                     it.byteStream().use { input ->
                         file.outputStream().use { output ->
                             input.copyTo(output)
                         }
                     }
                     
-                    // Show success dialog
                     showDownloadSuccessDialog()
                     
                 } catch (e: Exception) {
@@ -237,7 +223,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
         
-        // List of all item bindings for easier iteration
         val items = listOf(
             bindingDialog.itemRecent,
             bindingDialog.itemLastWeek,
@@ -247,7 +232,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             bindingDialog.itemLast6Months
         )
         
-        // Map items to identifiers
         val itemIds = listOf(
             R.id.itemRecent,
             R.id.itemLastWeek,
@@ -257,15 +241,13 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             R.id.itemLast6Months
         )
         
-        var selectedIndex = 0 // Default to Recent
+        var selectedIndex = 0
         
-        // Helper to update selection UI
         fun updateSelection(index: Int) {
             selectedIndex = index
             items.forEachIndexed { i, item ->
                 item.rbSelection.isChecked = (i == index)
                 
-                // Bold title for selected
                 if (i == index) {
                     item.tvTitle.setTypeface(null, android.graphics.Typeface.BOLD)
                 } else {
@@ -274,11 +256,9 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             }
         }
         
-        // Setup each item
         items.forEachIndexed { index, item ->
             val id = itemIds[index]
             
-            // Set Title
             item.tvTitle.text = when(id) {
                 R.id.itemRecent -> "Last 24 hours"
                 R.id.itemLastWeek -> "Last 1 week"
@@ -289,7 +269,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 else -> ""
             }
             
-            // Set Subtitle (Date Range)
             val dateRange = calculateDateRange(id)
             val formattedRange = formatDateRangeForDisplay(dateRange.first, dateRange.second, id)
             
@@ -306,31 +285,25 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 item.tvSubtitle.visibility = android.view.View.VISIBLE
             }
             
-            // Handle Click
             item.root.setOnClickListener {
                 updateSelection(index)
             }
             
-            // Forward click from inner RB just in case, though it's disabled in XML
             item.rbSelection.setOnClickListener {
                 updateSelection(index)
             }
         }
         
-        // Initialize default selection
         updateSelection(0)
         
-        // Handle download button click
         bindingDialog.btnDownloadStatement.setOnClickListener {
             val tagId = intent.getStringExtra(TAG_ID) ?: return@setOnClickListener
             
             dialog.dismiss()
             
-            // Calculate date range based on selection
             val selectedId = itemIds[selectedIndex]
             val dateRange = calculateDateRange(selectedId)
             
-            // Call download API
             viewModel.downloadTransactions(tagId, dateRange.first, dateRange.second)
         }
         
