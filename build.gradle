@@ -37,5 +37,5 @@ ext {
   okhttpVersion = '3.9.0'
   glideVersion = '4.11.0'
   room_version = '1.1.1'
-  moengageSdkVersion = '12.8.01'
+  moengageSdkVersion = '12.10.02'
 }
