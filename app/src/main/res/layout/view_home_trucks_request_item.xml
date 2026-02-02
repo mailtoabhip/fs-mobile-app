@@ -66,6 +66,7 @@
                                 android:text="@{request.truckNumber()}"
                                 tools:text="MHb 67 HJ 3422"
                                 android:textColor="@color/black"
+                                android:fontFamily="sans-serif"
                                 android:textStyle="bold"/>
                             <ImageView
                                 android:id="@+id/iv_verified"
@@ -278,6 +279,8 @@
                             android:id="@+id/btn_fastag_recharge"
                             style="@style/Button.Primary"
                             android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="8dp"
                             android:text="Recharge"
                             android:minHeight="0dp" />

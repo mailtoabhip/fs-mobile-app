@@ -41,7 +41,7 @@ import com.delhivery.axle.databinding.DialogBottomTruckOptionsBinding
 import com.delhivery.axle.databinding.DialogTooltipBinding
 import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
-import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
@@ -159,7 +159,8 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             addOnScrollListener(PaginationInterface())
         }
 
-        binding.btnAddTruckCard.setOnClickListener {
+
+        binding.truckInventoryCardInner.btnAddTruckCard.setOnClickListener {
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
                     analyticsUtil.moEngageTrackEvent(
@@ -403,10 +404,10 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             stats?.let {
                 // Show the card only after API response is received
                 binding.truckInventoryCard.visibility = View.VISIBLE
-                
-                binding.tvTruckCount.text = "${it.totalTrucks} trucks in inventory"
-                binding.tvFastagCount.text = it.fastagTrucksCount.toString()
-                binding.tvFastagBalance.text = "₹${String.format("%,.0f", it.totalFastagBalance)}"
+
+                binding.truckInventoryCardInner.tvTruckCount.text = "${it.totalTrucks} trucks in inventory"
+                binding.truckInventoryCardInner.tvFastagCount.text = it.fastagTrucksCount.toString()
+                binding.truckInventoryCardInner.tvFastagBalance.text = "₹${String.format("%,.0f", it.totalFastagBalance)}"
             }
         })
         
@@ -449,7 +450,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         })
 
         // Add tooltip on info icon click
-        binding.ivInfoIcon.setOnClickListener {
+        binding.truckInventoryCardInner.ivInfoIcon.setOnClickListener {
             showTooltip(it, "This balance is the total of all available FASTag balances")
         }
 
@@ -1013,7 +1014,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
      * Home trucks rv scroll listener for search bar animation related stuff
      */
     inner class HomeTrucksRVScrollListener(
-            private val stickyView: DelhiveryAnimatedSearchBar,
+            private val stickyView: View,
             private val elevation: Float = 12f
     ) : RecyclerView.OnScrollListener() {
         /* Current toolbar elevation */
@@ -1045,12 +1046,12 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 }
                 val factor =
                     (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
-                stickyView.setRatio((1 - factor))
+//                stickyView.setRatio((1 - factor))
                 defToolbarElevation
             } else {
                 stickyView.translationY = 0f
                 stickyView.alpha = 1f
-                stickyView.setRatio(0f)
+//                stickyView.setRatio(0f)
                 0f
             }
             if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
@@ -1105,19 +1106,19 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         var isExpanded = true
 
         // Set click listener on header using data binding
-        binding.headerLayout.setOnClickListener {
+        binding.truckInventoryCardInner.headerLayout.setOnClickListener {
             isExpanded = !isExpanded
             
             if (isExpanded) {
                 // Expanded state - show collapse icon (up arrow)
-                binding.expandableContent.visibility = View.VISIBLE
-                binding.divider.visibility = View.VISIBLE
-                binding.ivCollapseIcon.setImageResource(R.drawable.ic_arrow_up)
+                binding.truckInventoryCardInner.expandableContent.visibility = View.VISIBLE
+                binding.truckInventoryCardInner.divider.visibility = View.VISIBLE
+                binding.truckInventoryCardInner.ivCollapseIcon.setImageResource(R.drawable.ic_arrow_up)
             } else {
                 // Collapsed state - show expand icon (down arrow)
-                binding.expandableContent.visibility = View.GONE
-                binding.divider.visibility = View.GONE
-                binding.ivCollapseIcon.setImageResource(R.drawable.ic_expand)
+                binding.truckInventoryCardInner.expandableContent.visibility = View.GONE
+                binding.truckInventoryCardInner.divider.visibility = View.GONE
+                binding.truckInventoryCardInner.ivCollapseIcon.setImageResource(R.drawable.ic_expand)
             }
         }
 
