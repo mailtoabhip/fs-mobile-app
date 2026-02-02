@@ -342,13 +342,13 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         when {
           data.hasPODTracking() ->
             startActivityForResult(
-                docketUpdateIntent(context = this, trip = data, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
+                docketUpdateIntent(context = this, trip = data, podStatus = data.podAction(), source = "search"), REQCODE_UPLOAD_DOCKET
             )
           else -> {
             val list = arrayListOf<String>()
             list.add(data.transactionId)
             startActivityForResult(
-                docketUpdateIntent(context = this, transactionIds = list, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
+                docketUpdateIntent(context = this, transactionIds = list, podStatus = data.podAction(), source = "search"), REQCODE_UPLOAD_DOCKET
             )
           }
         }

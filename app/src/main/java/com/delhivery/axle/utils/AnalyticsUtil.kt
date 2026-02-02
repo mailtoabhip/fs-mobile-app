@@ -409,6 +409,8 @@ const val VALUE_ORDER_LISTING = "order_listing"
 const val VALUE_VENDOR_SUBSOURCE = "new_order_vendor_match"
 const val VALUE_INVENTORY_SUBSOURCE = "new_order_inventory_match"
 
+const val VALUE_POD_STATUS = "pod_status"
+
 
 
 

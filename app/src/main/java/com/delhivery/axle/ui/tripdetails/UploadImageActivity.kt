@@ -66,6 +66,7 @@ import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TYPE_OF_DOC
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.VALUE_POD_STATUS
 import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.prefs.UserPrefs
 
@@ -329,6 +330,27 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     )
   }
 
+    private fun getPODStatus() : String {
+        var status = ""
+        when (podStatus) {
+            PODStatus.REJECT -> {
+                status = "ePOD Rejected"
+            }
+            PODStatus.REVIEW -> {
+                status = "ePOD Under Review"
+            }
+            PODStatus.VIEWPOD -> {
+                status = "ePOD Verified"
+            }
+            PODStatus.UPLOAD -> {
+                status = "ePOD Pending"
+            }
+
+            else -> {}
+        }
+        return status
+    }
+
 
   override fun onDocumentSuccess(documentUrl: String) {
     if (!isFinishing) {
@@ -336,14 +358,14 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       if (source != null) {
         analyticsUtil.moEngageTrackEvent(
             EVENT_POD_UPLOAD,
-            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE),
-            mutableListOf(VALUE_SUCCESS, source!!)
+            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE, VALUE_POD_STATUS),
+            mutableListOf(VALUE_SUCCESS, source!!, getPODStatus())
         )
       } else {
         analyticsUtil.moEngageTrackEvent(
             EVENT_POD_UPLOAD,
-            mutableListOf(PROPERTY_STATUS),
-            mutableListOf(VALUE_SUCCESS)
+            mutableListOf(PROPERTY_STATUS, VALUE_POD_STATUS),
+            mutableListOf(VALUE_SUCCESS, getPODStatus())
         )
       }
         val s3Path = extractS3Path(documentUrl) ?: documentUrl
@@ -373,14 +395,14 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
       if (source != null) {
         analyticsUtil.moEngageTrackEvent(
             EVENT_POD_UPLOAD,
-            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE),
-            mutableListOf(VALUE_FAILURE, source!!)
+            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE, VALUE_POD_STATUS),
+            mutableListOf(VALUE_FAILURE, source!!, getPODStatus())
         )
       } else {
         analyticsUtil.moEngageTrackEvent(
             EVENT_POD_UPLOAD,
-            mutableListOf(PROPERTY_STATUS),
-            mutableListOf(VALUE_FAILURE)
+            mutableListOf(PROPERTY_STATUS, VALUE_POD_STATUS),
+            mutableListOf(VALUE_FAILURE, getPODStatus())
         )
       }
       uiUtils.hideProgress()
