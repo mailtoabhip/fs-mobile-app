@@ -44,9 +44,9 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
             val amountColor = when {
                 transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
                         transaction.transactionType?.contains("recharge", ignoreCase = true) == true ->
-                    android.graphics.Color.parseColor("#2E7D32") // Green for credit
-                else -> 
-                    android.graphics.Color.parseColor("#D32F2F") // Red for debit
+                    android.graphics.Color.parseColor("#059669") // Green for credit
+                else ->
+                    android.graphics.Color.parseColor("#505361")
             }
             binding.tvAmount.setTextColor(amountColor)
             

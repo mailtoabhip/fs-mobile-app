@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.fastag
 
-import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -10,15 +9,16 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
@@ -123,7 +123,28 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
         if (awb != null && awb.isNotEmpty()) {
             binding.layoutAwb.visibility = android.view.View.VISIBLE
-            binding.tvAwb.text = awb
+            
+            // Create spannable string with "ID: " in gray and awb in red
+            val fullText = "ID: $awb"
+            val spannableString = SpannableString(fullText)
+            
+            // Set "ID: " to gray color
+            spannableString.setSpan(
+                ForegroundColorSpan(Color.parseColor("#6A6A6A")),
+                0,
+                3, // Length of "ID: "
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            
+            // Set awb to red color
+            spannableString.setSpan(
+                ForegroundColorSpan(Color.parseColor("#E53935")),
+                3,
+                fullText.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            
+            binding.tvAwb.text = spannableString
             
             binding.ivCopyAwb.setOnClickListener {
                 val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
@@ -370,36 +391,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             return ""
         }
     }
-    
-    /**
-     * Download statement file using DownloadManager
-     */
-    private fun downloadStatement(url: String) {
-        val mgr = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        
-        val downloadUri = Uri.parse(url)
-        val request = DownloadManager.Request(downloadUri)
-        
-        // Generate filename with current date
-        val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-        val filename = "FASTag_Statement_${dateFormat.format(Date())}.xlsx"
-        val path = "/Axle App/$filename"
-        
-        request.setAllowedNetworkTypes(
-            DownloadManager.Request.NETWORK_WIFI or
-                    DownloadManager.Request.NETWORK_MOBILE
-        )
-            .setTitle("FASTag Statement Download")
-            .setDescription("Downloading...")
-            .setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOCUMENTS,
-                path
-            )
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        
-        downloadID = mgr.enqueue(request)
-    }
-    
     /**
      * Broadcast receiver for download completion
      */

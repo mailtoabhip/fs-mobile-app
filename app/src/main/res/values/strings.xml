@@ -969,5 +969,9 @@
   <string name="exit_app">Exit</string>
   <string name="root_detected_toast">Rooted device detected. Some features may be restricted.</string>
   <string name="emulator_detected_toast">Emulator detected. App cannot run on virtual devices.</string>
+    <string name="recent_transactions">Recent Transactions</string>
+    <string name="recent_txn_subtitle">Transactions shown are from IDFC FASTags issued by Delhivery, for all vehicle usage</string>
+    <string name="download_statement">Download Statement</string>
+    <string name="recharge">Recharge</string>
 
 </resources>
