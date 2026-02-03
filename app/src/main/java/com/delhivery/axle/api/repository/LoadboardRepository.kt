@@ -168,4 +168,9 @@ class LoadboardRepository @Inject constructor(
 
     fun getFastagTransactions(tagId: String, limit: Int, offset: Int) = loadboardService.getFastagTransactions(tagId, offset, limit).convertResponse()
 
+    /**
+     * Submit FASTag lead request
+     */
+    fun submitFastagLead(fastagLeadRequest: FastagLeadRequest) = loadboardService.submitFastagLead(fastagLeadRequest).convertResponse()
+
 }

@@ -420,6 +420,7 @@
   <string name="msg_no_truck_types_found">No Truck Types Found</string>
   <string name="msg_no_truck_sizes_available">No truck sizes available for selected vehicle types</string>
 
+  <string name="fastag_info_message">You can add FASTags for more trucks later as well. (Max: %1$d trucks in your inventory)</string>
   <string name="label_no_loads_found">Can\'t find relevant loads?</string>
   <string name="label_active">Active</string>
   <string name="label_under_review">Under Review</string>
@@ -970,5 +971,9 @@
     <string name="download_statement">Download Statement</string>
     <string name="recharge">Recharge</string>
     <string name="search_vehicle_number">Search vehicle number</string>
+    <string name="buy_fastag_for_your_trucks">Buy FASTag for your trucks</string>
+    <string name="submit_request">Submit request</string>
+    <string name="share_a_few_details_and_our_team_will_help_you_get_fastags_quickly">Share a few details and our team will help you get FASTags quickly.</string>
+    <string name="operating_location">Operating location</string>
 
 </resources>

@@ -200,6 +200,8 @@ const val HomeTrucksRequestAction_EditTruck = "edit_truck"
 
 const val HomeTrucksRequestAction_ActivateTruck = "activate_truck"
 
+const val HomeTrucksRequestAction_BuyFastag = "buy_fastag"
+
 data class TruckFrequentItem(
     val truckType: String,
     val truckSize: String,

@@ -240,4 +240,12 @@ interface LoadBoardService {
         @Query("to_date") toDate: String?
     ): Single<ResponseBody>
 
+    /**
+     * Submit FASTag lead request
+     */
+    @POST("/finance/fastag/lead")
+    fun submitFastagLead(
+        @Body request: FastagLeadRequest
+    ): Single<BaseResponse<FastagLeadResponse>>
+
 }

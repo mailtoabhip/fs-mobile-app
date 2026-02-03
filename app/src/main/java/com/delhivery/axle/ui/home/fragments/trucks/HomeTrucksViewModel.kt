@@ -436,4 +436,37 @@ class HomeTrucksViewModel @Inject constructor(
                sizeFilter.isNotNullOrEmpty()
     }
 
+    /**
+     * Submit FASTag lead request with simple parameters
+     * Generic function that can be called from anywhere
+     */
+    fun submitFastagLead(
+        vehicleCount: Int = 1,
+        location: String = "",
+        vrn: String? = null,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val request = com.delhivery.axle.api.request.FastagLeadRequest(
+            userId = userPrefs.userId(),
+            vehicleCount = vehicleCount,
+            location = location,
+            source = "Axle",
+            vrn = vrn
+        )
+        
+        compositeDisposable += loadboardRepository.submitFastagLead(request)
+            .onBackground()
+            .progress()
+            .subscribe { _res, error ->
+                if (!error && _res != null) {
+                    onSuccess(_res.message)
+                } else {
+                    error.handle()
+                    val errorMessage = error.message ?: "Failed to submit FASTag request"
+                    onError(errorMessage)
+                }
+            }
+    }
+
 }

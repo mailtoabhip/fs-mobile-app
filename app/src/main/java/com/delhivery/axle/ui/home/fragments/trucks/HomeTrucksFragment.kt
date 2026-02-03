@@ -26,6 +26,7 @@ import com.delhivery.axle.data.home.trucks.FastagStats
 import com.delhivery.axle.data.home.trucks.HomeTrucksAvailabilityFilterAction
 import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityAction
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_ActivateTruck
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_BuyFastag
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_EditTruck
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.data.home.trucks.HomeTrucksSizeFilterAction
@@ -40,7 +41,8 @@ import com.delhivery.axle.databinding.DialogBottomTruckOptionsBinding
 import com.delhivery.axle.databinding.DialogTooltipBinding
 import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
-
+import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
+import com.delhivery.axle.ui.dialogs.FastagSuccessBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
@@ -191,6 +193,10 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
 
         // Setup truck inventory card collapse/expand functionality
         setupTruckInventoryCard()
+
+        binding.truckInventoryCardInner.btnBuyFastag.setOnClickListener {
+            showBuyFastagBottomSheet()
+        }
 
         // Setup filter icon click listener
         binding.filterIcon.setOnClickListener {
@@ -571,6 +577,14 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             HomeTrucksTimeOutAction -> {
                 refreshData()
             }
+            
+            HomeTrucksRequestAction_BuyFastag -> {
+                val data = item.data as? HomeTrucksRequestItemData
+                submitFastagLeadRequest(
+                    vehicleCount = 1,
+                    vrn = data?.vehicleNumber
+                )
+            }
 
             HomeTrucksPriorityAction -> {
                 analyticsUtil.moEngageTrackEvent(
@@ -628,6 +642,14 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 context?.let {
                     ActivateTruckDialog(requireContext(), item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
                 }
+            }
+            
+            HomeTrucksRequestAction_BuyFastag -> {
+                val data = item.data as? HomeTrucksRequestItemData
+                submitFastagLeadRequest(
+                    vehicleCount = 1,
+                    vrn = data?.vehicleNumber
+                )
             }
         }
     }
@@ -1131,6 +1153,58 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             }
         }
 
+    }
+
+    /**
+     * Show Buy FASTag bottom sheet
+     */
+    private fun showBuyFastagBottomSheet() {
+        val dialog = BuyFastagBottomSheetDialogFragment.newInstance(
+            maxTrucks = viewModel.total
+        ) { selectedCity, truckCount ->
+            submitFastagLeadRequest(
+                vehicleCount = truckCount,
+                location = "${selectedCity.cityName()},${selectedCity.state}",
+                vrn = null
+            )
+        }
+
+        dialog.show(parentFragmentManager, "BuyFastagBottomSheet")
+    }
+
+    /**
+     * Show FASTag success bottom sheet
+     */
+    private fun showFastagSuccessBottomSheet() {
+        val successDialog = FastagSuccessBottomSheetDialogFragment.newInstance()
+        successDialog.show(parentFragmentManager, "FastagSuccessBottomSheet")
+    }
+    
+    /**
+     * Generic function to submit FASTag lead request
+     * Can be called from anywhere without showing bottom sheet
+     */
+    private fun submitFastagLeadRequest(
+        vehicleCount: Int = 1,
+        location: String = "",
+        vrn: String? = null
+    ) {
+        uiUtils.showProgress()
+        
+        viewModel.submitFastagLead(
+            vehicleCount = vehicleCount,
+            location = location,
+            vrn = vrn,
+            onSuccess = { message ->
+                uiUtils.hideProgress()
+                showFastagSuccessBottomSheet()
+                uiUtils.showSnackbar(message)
+            },
+            onError = { errorMessage ->
+                uiUtils.hideProgress()
+                uiUtils.showSnackbar("Failed to submit request: $errorMessage")
+            }
+        )
     }
 
     /**
