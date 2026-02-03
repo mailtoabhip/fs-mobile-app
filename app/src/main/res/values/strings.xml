@@ -387,16 +387,12 @@
   <string name="label_current_locations">Current location</string>
   <string name="label_more_options">More Options</string>
   <string name="label_body_type">Select Body Type</string>
-  <string name="label_truck_body_type">Body Type</string>
   <string name="label_truck_number">Truck Number</string>
-  <string name="label_registration_number">Registration Number</string>
   <string name="label_ownership">Ownership</string>
   <string name="label_own_truck">Owned truck</string>
   <string name="label_market_truck">Market truck</string>
   <string name="label_truck_size">Truck Size</string>
-  <string name="label_size">Size</string>
   <string name="label_truck_capacity">Truck Capacity</string>
-  <string name="label_load_capacity">Load Capacity</string>
   <string name="label_current_city">Current City</string>
   <string name="label_drop_city">Drop City</string>
   <string name="label_unloading_destination">Drop Location</string>
@@ -973,5 +969,6 @@
     <string name="recent_txn_subtitle">Transactions shown are from IDFC FASTags issued by Delhivery, for all vehicle usage</string>
     <string name="download_statement">Download Statement</string>
     <string name="recharge">Recharge</string>
+    <string name="search_vehicle_number">Search vehicle number</string>
 
 </resources>

@@ -309,7 +309,6 @@
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_search_black"
                         android:drawablePadding="8dp"
                         android:gravity="center"
                         android:textColor="@color/black"
@@ -330,7 +329,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:textSize="14sp"
-                    android:text="@string/label_unloading_destination"
+                    android:text="@string/label_drop_city"
                     android:textStyle="bold"
                     android:textColor="@color/black"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
