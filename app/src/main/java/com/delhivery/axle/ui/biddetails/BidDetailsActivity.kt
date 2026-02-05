@@ -113,6 +113,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
 
   var bidEndingTime: String = ""
   var source: String = VALUE_APP_FLOW
+  var listType: String? = null
   var subSource: String = "NA"
   var reviseInitiated: Boolean = false
   var oldAmountbids = ""
@@ -153,6 +154,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
     viewModel.fromPage = intent.getBooleanExtra(FromPage, false)
     viewModel.active = intent.getBooleanExtra(ActiveBid, false)
     source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
+    listType = intent.getStringExtra(ListType)
     subSource = intent.getStringExtra(PROPERTY_SUB_SOURCE) ?: "NA"
     forPlacement =   intent.getBooleanExtra(ForPlacementKey, false)
     if (intent?.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java) != null)
@@ -575,6 +577,14 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
             )
             if (viewModel.transaction.transactionBid == null) {
               uiUtils.showProgress()
+                /*Trigger this event only when list is normal list or search list*/
+                if(listType.isNotNullOrEmpty()){
+                    analyticsUtil.moEngageTrackEvent(
+                        EVENT_INTERCITY_LOADS_BID_SUBMIT,
+                        mutableListOf(PROPERTY_ORDER_ID,PROPERTY_USER_ID,PROPERTY_PAGE_NAME,PROPERTY_SOURCE,PROPERTY_DEMAND_TYPE),
+                        mutableListOf(viewModel.transactionId?:"",userPrefs.userId(),VALUE_LOAD_PAGE_LOADS_BIDS, listType?:"",viewModel.transaction.demandType?:"")
+                    )
+                }
               viewModel.createBid(
                 viewModel.transaction.isPMTIndent(), viewModel.transaction.key(), amount, pmtRate,
                 viewModel.transaction.biddingType
@@ -2274,6 +2284,7 @@ private const val FromPage = "from_page"
 private const val ActiveBid= "active_bid"
 private const val ForPlacementKey= "for_placement"
 private const val PlacementData = "placement_data"
+private const val ListType = "list_type"
 
 /**
  * Bid details intent
@@ -2287,7 +2298,8 @@ fun bidDetailsIntent(
         source:String?= VALUE_APP_FLOW,
         subSource:String?="NA",
         forPlacement:Boolean = false,
-        homePlacementsItemData: HomePlacementsItemData? = null
+        homePlacementsItemData: HomePlacementsItemData? = null,
+        listType: String? = null
 ) = Intent(context, BidDetailsActivity::class.java).apply {
   putExtra(TransactionIdIntentKey, transactionId)
   if(requestType!=null)
@@ -2298,4 +2310,5 @@ fun bidDetailsIntent(
   putExtra(PROPERTY_SUB_SOURCE,subSource)
   putExtra(ForPlacementKey,forPlacement)
   putExtra(PlacementData, homePlacementsItemData)
+  putExtra(ListType, listType)
 }

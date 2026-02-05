@@ -35,9 +35,11 @@ import com.delhivery.axle.databinding.FragmentHomeContractsBinding
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
+import com.delhivery.axle.ui.home.activity.home.orderRank
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsSearchItem
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
+import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -123,8 +125,18 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
     binding.rvLoads.setItemAnimator(null);
 
-    viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
-      it?.let { _items -> adapter.operation(_items) }
+    viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer { it ->
+        it?.let { _items ->
+          adapter.operation(_items)
+          val intercityCount = _items.count { item -> item.first.type == HomeContractsRVAdapterItemType.Contracts }
+            if(viewModel.paginateCount==0 && intercityCount > 0 && contractType != ContractType.INTRACITY.name && userPrefs.currentNavigationTab == HomeTrucksFragment::class.java.name){
+                analyticsUtil.moEngageTrackEvent(
+                    EVENT_INTERCITY_CONTRACTS_SHOWN,
+                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                    mutableListOf(userPrefs.userId(), VALUE_LOAD_PAGE_CONTRACTS)
+                )
+            }
+      }
     })
     viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
       it?.let { _items -> adapter.operation(_items) }
@@ -178,7 +190,12 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
         val data = item.data as HomeBidsRequestItemData
-
+        analyticsUtil.moEngageTrackEvent(
+            event = if(data.contractType == ContractType.INTRACITY.name) EVENT_INTRACITY_CONTRACTS_BID_CTA_TAP else EVENT_INTERCITY_CONTRACTS_BID_CTA_TAP,
+            attributes = listOf(PROPERTY_ORDER_ID,PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_TRANSACTION_TYPE),
+            values = listOf(data.transactionId?:"",viewModel.total.toString(),
+                (orderRank - STATIC_ITEM_COUNT).toString(), userPrefs.userId(), VALUE_LOAD_PAGE_CONTRACTS_BIDS, VALUE_LISTING, data.contractType?:"")
+        )
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
           startActivity(contractDetailsIntent(data.key(), it,VALUE_ORDER_LISTING))
@@ -422,3 +439,4 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
 }
  var REFRESH_ON_BACK = false
+const val STATIC_ITEM_COUNT =2

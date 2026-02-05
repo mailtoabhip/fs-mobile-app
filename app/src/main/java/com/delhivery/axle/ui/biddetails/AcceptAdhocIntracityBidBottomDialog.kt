@@ -26,14 +26,23 @@ import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.axle.utils.AnalyticsUtil
+import com.delhivery.axle.utils.EVENT_INTRACITY_LOADS_VEHICLE_DETAILS_SUBMIT
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NAME
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_DRIVER_NUMBER
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_SUBMIT
 import com.delhivery.axle.utils.EVENT_LOAD_INTRACITY_VEHICLE_NUMBER
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NAME
 import com.delhivery.axle.utils.PROPERTY_DRIVER_NUMBER
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_NUMBER
 import com.delhivery.axle.utils.UiUtils
+import com.delhivery.axle.utils.VALUE_LISTING
+import com.delhivery.axle.utils.VALUE_LOAD_PAGE_LOADS
+import com.delhivery.axle.utils.VALUE_SEARCH
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.util.regex.Pattern
@@ -334,9 +343,15 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
                 mutableListOf(binding.editTextDriverNumber.text.toString()))
             analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_VEHICLE_NUMBER, mutableListOf(PROPERTY_VEHICLE_NUMBER),
                 mutableListOf(binding.editTextVehicleNumber.text.toString()))
-              analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_SUBMIT, mutableListOf(PROPERTY_DRIVER_NAME, PROPERTY_DRIVER_NUMBER, PROPERTY_VEHICLE_NUMBER),
-                  mutableListOf(binding.editTextDriverName.text.toString(),binding.editTextDriverNumber.text.toString(), binding.editTextVehicleNumber.text.toString()))
-                dialogInterface.acceptBid(
+            analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_SUBMIT, mutableListOf(PROPERTY_DRIVER_NAME, PROPERTY_DRIVER_NUMBER, PROPERTY_VEHICLE_NUMBER),
+                mutableListOf(binding.editTextDriverName.text.toString(),binding.editTextDriverNumber.text.toString(), binding.editTextVehicleNumber.text.toString()))
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_INTRACITY_LOADS_VEHICLE_DETAILS_SUBMIT,
+                listOf(PROPERTY_ORDER_ID, PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_DEMAND_TYPE),
+                listOf(transaction.transactionId.toString(),userPrefs.userId(), VALUE_LOAD_PAGE_LOADS,homeFragInstance?.let { VALUE_LISTING } ?: VALUE_SEARCH, transaction.demandType.toString())
+            )
+
+            dialogInterface.acceptBid(
                     position,
                     transaction.key(), userPrefs.userId(),userPrefs.userName,transaction.targetPrice!!.toInt(),
                     transaction.biddingType

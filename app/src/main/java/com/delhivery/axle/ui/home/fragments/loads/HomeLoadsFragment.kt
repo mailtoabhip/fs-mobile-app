@@ -452,6 +452,40 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         }
       }
     })
+
+      viewModel.intracityListShownTracked.observe(viewLifecycleOwner, Observer { shouldTrack ->
+          if (shouldTrack == true) {
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_INTRACITY_LOADS_SHOWN,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                  mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
+              )
+              // Reset flag to avoid duplicate tracking
+              viewModel.intracityListShownTracked.value = false
+          }
+      })
+      viewModel.intercityListShownTracked.observe(viewLifecycleOwner, Observer { shouldTrack ->
+          if (shouldTrack == true) {
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_INTERCITY_LOADS_SHOWN,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                  mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
+              )
+              // Reset flag to avoid duplicate tracking
+              viewModel.intercityListShownTracked.value = false
+          }
+      })
+      viewModel.marketPlaceListShownTracked.observe(viewLifecycleOwner, Observer { shouldTrack ->
+          if (shouldTrack == true) {
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_MARKETPLACE_LOADS_SHOWN,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                  mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
+              )
+              // Reset flag to avoid duplicate tracking
+              viewModel.marketPlaceListShownTracked.value = false
+          }
+      })
   }
 
     private fun showIntracityAdhocSuccessDialog() {
@@ -653,7 +687,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
             )
           } else {
             // Open regular BidDetailsActivity for non-marketplace loads
-            startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else ""))
+            startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else "", listType = VALUE_LISTING))
           }
         }
       }
@@ -1116,12 +1150,18 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
                   ctx,
                   data.transactionId ?: data.uuid ?: "",
                   data.origin ?: "",
-                  data.destination ?: ""
+                  data.destination ?: "",
+                    VALUE_LISTING
                 )
               } else {
                 // Open regular BidDetailsActivity for non-marketplace loads
-                startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else ""))
+                startActivity(bidDetailsIntent(data.key(), ctx, if (data.isDMTIndent()) "dmt" else "", listType = VALUE_LISTING))
               }
+                analyticsUtil.moEngageTrackEvent(
+                    event = if(data.isMarketplaceLoad()) EVENT_MARKETPLACE_LOADS_BID_CTA_TAP else EVENT_INTERCITY_LOADS_BID_CTA_TAP,
+                    attributes = listOf(PROPERTY_ORDER_ID,PROPERTY_ORDER_COUNT, PROPERTY_ORDER_RANK,PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_TRANSACTION_TYPE),
+                    values = listOf(data.transactionId?:"", viewModel.total.toString(), (position + 1 - STATIC_ITEM_LIST).toString(),userPrefs.userId(),VALUE_LOAD_PAGE_LOADS_BIDS, VALUE_LISTING, data.getDemandTypeByLoad()),
+                )
             }
 
         }

@@ -140,6 +140,9 @@ class HomeLoadsViewModel @Inject constructor(
 
     val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
 
+    var intercityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
+    var intracityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
+    var marketPlaceListShownTracked = MutableLiveData<Boolean>().apply { value = false }
 
 
     /**
@@ -400,7 +403,11 @@ class HomeLoadsViewModel @Inject constructor(
                             add(Pair(HomeLoadsMoreInfoItem(), Remove))
                             add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
 
-                    }.let { userLoadsData.postValue(it) }
+                    }.let {
+                        userLoadsData.postValue(it)
+                        if(_tRes.first?.isNotEmpty() == true && paginateCount == 0)
+                            intracityListShownTracked.postValue(true)
+                    }
 
                 }
 
@@ -630,7 +637,11 @@ class HomeLoadsViewModel @Inject constructor(
                                 }
                                 add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
 
-                        }.let { userLoadsData.postValue(it) }
+                        }.let {
+                            userLoadsData.postValue(it)
+                            if(_tRes.first.isNotEmpty() && paginateCount == 0)
+                                intercityListShownTracked.postValue(true)
+                        }
 
                     }
                     else {
@@ -1112,7 +1123,9 @@ class HomeLoadsViewModel @Inject constructor(
 
           }.let { 
             Log.d("MarketplaceDebug", "Posting ${it.size} items to userLoadsData")
-            userLoadsData.postValue(it) 
+            userLoadsData.postValue(it)
+              if(_tRes.first?.isNotEmpty() == true && paginateCount == 0)
+                  marketPlaceListShownTracked.postValue(true)
           }
 
         } else {

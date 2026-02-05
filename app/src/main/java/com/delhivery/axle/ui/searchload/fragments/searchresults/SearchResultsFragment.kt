@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.ContractType
+import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.bids.HomeBidsRequestAction_AcceptBid
@@ -33,12 +34,19 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
+import com.delhivery.axle.ui.home.fragments.bids.SearchContractWarningItem_NoLoad
 import com.delhivery.axle.ui.home.fragments.bids.SearchLoadWarningItem_NoLoad
 import com.delhivery.axle.ui.searchload.fragments.ProgressSearchLoadAction
 import com.delhivery.axle.ui.searchload.fragments.SearchLoadBaseFragment
 import com.delhivery.axle.utils.BidSuccessInterface
 import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_CONTRACT_SEARCH_RESULT_SHOWN
+import com.delhivery.axle.utils.EVENT_INTERCITY_CONTRACTS_BID_CTA_TAP
+import com.delhivery.axle.utils.EVENT_INTERCITY_LOADS_BID_CTA_TAP
+import com.delhivery.axle.utils.EVENT_INTRACITY_CONTRACTS_BID_CTA_TAP
 import com.delhivery.axle.utils.EVENT_LIST_ITEM
+import com.delhivery.axle.utils.EVENT_LOAD_SEARCH_RESULT_SHOWN
+import com.delhivery.axle.utils.EVENT_MARKETPLACE_LOADS_BID_CTA_TAP
 import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS
 import com.delhivery.axle.utils.EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS
 import com.delhivery.axle.utils.EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS
@@ -58,9 +66,11 @@ import com.delhivery.axle.utils.PROPERTY_ORDER_ID
 import com.delhivery.axle.utils.PROPERTY_ORDER_LOWEST_BID_VALUE
 import com.delhivery.axle.utils.PROPERTY_ORDER_RANK
 import com.delhivery.axle.utils.PROPERTY_ORIGIN
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_SEARCH_BODY_TYPE
 import com.delhivery.axle.utils.PROPERTY_SEARCH_DESTINATION_CITY
 import com.delhivery.axle.utils.PROPERTY_SEARCH_ORIGIN_CITY
+import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PROPERTY_TRUCK_TYPE
@@ -71,6 +81,8 @@ import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_VEHICLE_REPORTING_DATE_TIME
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.VALUE_LOAD
+import com.delhivery.axle.utils.VALUE_LOAD_PAGE_CONTRACTS_BIDS
+import com.delhivery.axle.utils.VALUE_SEARCH
 import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
 import com.delhivery.axle.utils.extensions.centerX
 import com.delhivery.axle.utils.extensions.centerY
@@ -492,6 +504,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if (_item.isItContract()) {
           if (_item.transactionId != null) {
             userPrefs.setPreviousScreen(this.javaClass.name)
+              analyticsUtil.moEngageTrackEvent(
+                  event = if(item.data.contractType == ContractType.INTRACITY.type) EVENT_INTRACITY_CONTRACTS_BID_CTA_TAP else EVENT_INTERCITY_CONTRACTS_BID_CTA_TAP,
+                  mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID,
+                      PROPERTY_PAGE_NAME,
+                      PROPERTY_SOURCE,
+                      PROPERTY_TRANSACTION_TYPE
+                  ),
+                  mutableListOf(
+                      _item.transactionId, viewModel.total.toString(),orderRank.toString(), userPrefs.userId(),
+                      VALUE_LOAD_PAGE_CONTRACTS_BIDS,VALUE_SEARCH, _item.getDemandTypeByLoad()
+                  )
+              )
             startActivity(contractDetailsIntent(_item.transactionId, requireContext(), VALUE_SEARCH_LISITING))
           } else {
             Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
@@ -508,6 +532,18 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
           mutableListOf(VALUE_LOAD, _item.transactionId ?: "")
         )
+            analyticsUtil.moEngageTrackEvent(
+                event = if(item.data.requestType == RequestType.SpotMarketplace.type) EVENT_MARKETPLACE_LOADS_BID_CTA_TAP else EVENT_INTERCITY_LOADS_BID_CTA_TAP,
+                listOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID,
+                    PROPERTY_PAGE_NAME,
+                    PROPERTY_SOURCE,
+                    PROPERTY_TRANSACTION_TYPE
+                ),
+                listOf(
+                    _item.transactionId?:"", viewModel.total.toString(),orderRank.toString(), userPrefs.userId(),
+                    VALUE_LOAD_PAGE_CONTRACTS_BIDS,VALUE_SEARCH, _item.getDemandTypeByLoad()
+                )
+            )
         if(_item.subRequestType!= SUB_REQUEST_TYPE_INTRACITY)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
@@ -643,7 +679,8 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         numResults = t.size
         _adapter.operation(t)
       }
-      if(t==null || t.contains(Pair(SearchLoadWarningItem_NoLoad, Add))){
+        /* fix: if block was executing even when there is no contract items found in search*/
+      if(t==null || t.contains(Pair(SearchLoadWarningItem_NoLoad, Add)) || t.contains(Pair(SearchContractWarningItem_NoLoad, Add))){
         analyticsUtil.moEngageTrackEvent(
             if(isContract)EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
             mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
@@ -662,6 +699,15 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               if(isIntraCity)binding.spinnerTruckDisplayName.selectedItem?.toString() ?: "" else binding.spinnerTruckType.selectedItem.toString(),
               numResults.toString())
         )
+          analyticsUtil.moEngageTrackEvent(
+              if(isContract) EVENT_CONTRACT_SEARCH_RESULT_SHOWN else EVENT_LOAD_SEARCH_RESULT_SHOWN,
+              mutableListOf(
+                  PROPERTY_USER_ID
+              ),
+              mutableListOf(
+                  userPrefs.userId()
+              )
+          )
       }
       analyticsUtil.moEngageTrackEvent(
           event,
