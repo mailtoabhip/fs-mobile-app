@@ -1159,8 +1159,8 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
               }
                 analyticsUtil.moEngageTrackEvent(
                     event = if(data.isMarketplaceLoad()) EVENT_MARKETPLACE_LOADS_BID_CTA_TAP else EVENT_INTERCITY_LOADS_BID_CTA_TAP,
-                    attributes = listOf(PROPERTY_ORDER_ID,PROPERTY_ORDER_COUNT, PROPERTY_ORDER_RANK,PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_TRANSACTION_TYPE),
-                    values = listOf(data.transactionId?:"", viewModel.total.toString(), (position + 1 - STATIC_ITEM_LIST).toString(),userPrefs.userId(),VALUE_LOAD_PAGE_LOADS_BIDS, VALUE_LISTING, data.getDemandTypeByLoad()),
+                    attributes = listOf(PROPERTY_ORDER_ID,PROPERTY_ORDER_COUNT, PROPERTY_ORDER_RANK,PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_DEMAND_TYPE),
+                    values = listOf(data.transactionId?:"", viewModel.total.toString(), (position + 1 - STATIC_ITEM_LIST).toString(),userPrefs.userId(),VALUE_LOAD_PAGE_LOADS_BIDS, VALUE_LISTING, data.demandType?:""),
                 )
             }
 

@@ -608,7 +608,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                       PROPERTY_DEMAND_TYPE
                   ),
                   listOf(
-                      transaction.key() ,
+                      transaction.transactionId?:"" ,
                       userPrefs.userId(),
                       VALUE_LOAD_PAGE_CONTRACTS_BIDS,
                       if(source == VALUE_SEARCH_LISITING) VALUE_LISTING else VALUE_SEARCH,

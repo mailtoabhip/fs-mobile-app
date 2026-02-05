@@ -190,11 +190,17 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
         val data = item.data as HomeBidsRequestItemData
+          val itemRank = adapter.itemsList().indexOf(item).let { position ->
+              if (position >= 0) {
+                  adapter.itemsList().take(position + 1)
+                      .count { it.type == HomeContractsRVAdapterItemType.Contracts }
+              } else 0
+          }
         analyticsUtil.moEngageTrackEvent(
             event = if(data.contractType == ContractType.INTRACITY.name) EVENT_INTRACITY_CONTRACTS_BID_CTA_TAP else EVENT_INTERCITY_CONTRACTS_BID_CTA_TAP,
-            attributes = listOf(PROPERTY_ORDER_ID,PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_TRANSACTION_TYPE),
+            attributes = listOf(PROPERTY_ORDER_ID,PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_DEMAND_TYPE),
             values = listOf(data.transactionId?:"",viewModel.total.toString(),
-                (orderRank - STATIC_ITEM_COUNT).toString(), userPrefs.userId(), VALUE_LOAD_PAGE_CONTRACTS_BIDS, VALUE_LISTING, data.contractType?:"")
+                itemRank.toString(), userPrefs.userId(), VALUE_LOAD_PAGE_CONTRACTS_BIDS, VALUE_LISTING, data.demandType?:"")
         )
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
@@ -439,4 +445,3 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
 
 }
  var REFRESH_ON_BACK = false
-const val STATIC_ITEM_COUNT =2

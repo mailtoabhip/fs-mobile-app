@@ -59,6 +59,7 @@ import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_REVISE_SUBMITTED
 import com.delhivery.axle.utils.EVENT_SEARCH_RESULT_BID_SUBMIT
 import com.delhivery.axle.utils.EVENT_SEARCH_SAVED_LOAD
 import com.delhivery.axle.utils.PROPERTY_BID_COUNT
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_DESTINATION
 import com.delhivery.axle.utils.PROPERTY_NUM_RESULTS
 import com.delhivery.axle.utils.PROPERTY_ORDER_COUNT
@@ -500,6 +501,12 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   ) {
     when (actionId) {
       HomeBidsRequestAction_ViewDetails -> {
+          val itemRank = _adapter.itemsList().indexOf(item).let { position ->
+              if (position >= 0) {
+                  _adapter.itemsList().take(position + 1)
+                      .count { it.type == SearchResultsRVAdapterItemType.Request || it.type == SearchResultsRVAdapterItemType.Contracts }
+              } else 0
+          }
         val _item = item.data as HomeBidsRequestItemData
         if (_item.isItContract()) {
           if (_item.transactionId != null) {
@@ -509,11 +516,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                   mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID,
                       PROPERTY_PAGE_NAME,
                       PROPERTY_SOURCE,
-                      PROPERTY_TRANSACTION_TYPE
+                      PROPERTY_DEMAND_TYPE
                   ),
                   mutableListOf(
-                      _item.transactionId, viewModel.total.toString(),orderRank.toString(), userPrefs.userId(),
-                      VALUE_LOAD_PAGE_CONTRACTS_BIDS,VALUE_SEARCH, _item.getDemandTypeByLoad()
+                      _item.transactionId, viewModel.total.toString(),itemRank.toString(), userPrefs.userId(),
+                      VALUE_LOAD_PAGE_CONTRACTS_BIDS,VALUE_SEARCH, _item.demandType?:""
                   )
               )
             startActivity(contractDetailsIntent(_item.transactionId, requireContext(), VALUE_SEARCH_LISITING))
@@ -537,11 +544,11 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 listOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_COUNT,PROPERTY_ORDER_RANK,PROPERTY_USER_ID,
                     PROPERTY_PAGE_NAME,
                     PROPERTY_SOURCE,
-                    PROPERTY_TRANSACTION_TYPE
+                    PROPERTY_DEMAND_TYPE
                 ),
                 listOf(
-                    _item.transactionId?:"", viewModel.total.toString(),orderRank.toString(), userPrefs.userId(),
-                    VALUE_LOAD_PAGE_CONTRACTS_BIDS,VALUE_SEARCH, _item.getDemandTypeByLoad()
+                    _item.transactionId?:"", viewModel.total.toString(),itemRank.toString(), userPrefs.userId(),
+                    VALUE_LOAD_PAGE_CONTRACTS_BIDS,VALUE_SEARCH, _item.demandType?:""
                 )
             )
         if(_item.subRequestType!= SUB_REQUEST_TYPE_INTRACITY)
@@ -679,7 +686,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         numResults = t.size
         _adapter.operation(t)
       }
-        /* fix: if block was executing even when there is no contract items found in search*/
+        /* fix: else block was executing even when there is no contract items found in search*/
       if(t==null || t.contains(Pair(SearchLoadWarningItem_NoLoad, Add)) || t.contains(Pair(SearchContractWarningItem_NoLoad, Add))){
         analyticsUtil.moEngageTrackEvent(
             if(isContract)EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS else EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS,
