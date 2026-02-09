@@ -464,18 +464,30 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               .toString()
               .toInt()
             val data = binding.transaction as HomeBidsRequestItemData
+              /**
+               * Check if its a PMT load or FTL load
+               */
             if (data.isPMTIndent()) {
               pmtRate = input
+
+                /**
+                 * Validate PMT rate against maximum allowed rate
+                 * Disable bid placement if rate exceeds user's maximum PMT rate limit
+                 */
               if (pmtRate > userPrefs.maxPMTRate) {
                 enablePlaceBid(false)
                 binding.cardInput.bidError.visibility = View.VISIBLE
                 binding.cardInput.bidError.text = "*Rate should be less than ${userPrefs.maxPMTRate}/MT"
                // throw Exception("*Rate should be less than ${userPrefs.maxPMTRate}/MT")
               }
-              amount = (input * data.requestedCapacityMg).toInt()
+              //amount = (input * data.requestedCapacityMg).toInt()
             //  binding.labelBid.text = "Your minimum payout will be ₹ $amount"
 
-              if (data.transactionBid != null) {
+              /**
+               * Validate bid difference for PMT loads with existing bids
+               * Ensure new bid differs by at least ₹500 from existing bid amount
+               */
+              else if (data.transactionBid != null) {
                 if (abs((input * data.requestedCapacityMg) - (data.transactionBid?.pmtRate
                     ?: 0.0)) < 500) {
                   enablePlaceBid(false)
@@ -483,8 +495,22 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
                   binding.cardInput.bidError.text = "*Bid difference should be more than ₹500"
 
                 //  throw Exception("*Bid difference should be more than ₹500")
+                }  else {
+                    enablePlaceBid(true)
+                    binding.cardInput.bidError.visibility = View.GONE
                 }
+                  /**
+                   * PMT rate is valid (within max limit and no existing bid)
+                   * Enable bid placement button
+                   */
+              } else {
+                  enablePlaceBid(true)
+                  binding.cardInput.bidError.visibility = View.GONE
               }
+                /**
+                 * Handle FTL (Full Truck Load) bid validation
+                 * For non-PMT loads, validate bid amount and enable/disable placement accordingly
+                 */
             } else {
               binding.cardInput.bidError.visibility = View.GONE
               amount = input
