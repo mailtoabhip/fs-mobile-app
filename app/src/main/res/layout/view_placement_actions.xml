@@ -40,7 +40,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share Details"
+            android:text="Share"
             android:textColor="@color/info_title"
             android:textSize="@dimen/text_14sp"
             android:textStyle="bold"
@@ -60,9 +60,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnShareWhatsapp"
         app:layout_constraintEnd_toStartOf="@+id/btnFillDetails"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:gravity="center"
-        android:background="@drawable/bg_dark_button"
+        android:background="@drawable/bg_all_round_corner_grey_boundary"
+        android:stateListAnimator="@null"
+        android:elevation="0dp"
         android:paddingHorizontal="@dimen/size_16dp"
         android:paddingVertical="8dp"
         android:textSize="@dimen/text_14sp"
@@ -78,17 +80,15 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:visibility="@{request.fillDetailsVisibility()}"
-        android:background="@drawable/bg_all_round_corner_red_v1_boundary">
+        android:background="@drawable/bg_dark_button">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fill Details"
-            android:textColor="@color/text_red_v1"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_14sp"
-            android:textStyle="bold"
-            android:drawableEnd="@drawable/ic_fill_details"
-            android:drawablePadding="8dp"/>
+            android:textStyle="bold"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

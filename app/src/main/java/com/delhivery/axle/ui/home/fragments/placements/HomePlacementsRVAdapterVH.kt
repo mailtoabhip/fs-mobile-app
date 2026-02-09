@@ -257,8 +257,6 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
 //            }
 //        }
         
-        // Row 3: driverPhone (single column, no sizing needed)
-        binding.driverTruckDetails.driverPhone?.let { resetTextViewToDefault(it) }
     }
     
     /**
