@@ -349,11 +349,11 @@ data class HomeBidsRequestItemData(
    * Returns true if shipper details are present (indicating marketplace load)
    */
   fun isMarketplaceLoad(): Boolean {
-    return demandType == RequestType.SpotMarketplace.type ||
-            !shipperName.isNullOrEmpty() ||
+    return demandType == RequestType.SpotMarketplace.type &&
+            (!shipperName.isNullOrEmpty() ||
             !shipperPhoneNumber.isNullOrEmpty() ||
             shipperPrice != null ||
-            !shipperUcid.isNullOrEmpty()
+            !shipperUcid.isNullOrEmpty())
   }
 
   /**
