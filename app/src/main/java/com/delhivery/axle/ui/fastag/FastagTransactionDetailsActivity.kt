@@ -115,8 +115,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         if (status.equals("Free", ignoreCase = true)) {
             binding.tvStatus.text = "Available"
             binding.tvStatus.visibility = android.view.View.VISIBLE
-            binding.tvStatus.setTextColor(android.graphics.Color.parseColor("#2E7D32"))
-            binding.tvStatus.setBackgroundResource(com.delhivery.axle.R.drawable.bg_available_pill)
+            binding.tvStatus.setBackgroundResource(R.drawable.bg_available_pill)
         } else {
             binding.tvStatus.visibility = android.view.View.GONE
         }
@@ -130,7 +129,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             
             // Set "ID: " to gray color
             spannableString.setSpan(
-                ForegroundColorSpan(Color.parseColor("#6A6A6A")),
+                ForegroundColorSpan(Color.parseColor("#525B7A")),
                 0,
                 3, // Length of "ID: "
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -138,7 +137,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             
             // Set awb to red color
             spannableString.setSpan(
-                ForegroundColorSpan(Color.parseColor("#E53935")),
+                ForegroundColorSpan(Color.parseColor("#FA3A2E")),
                 3,
                 fullText.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -147,7 +146,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             binding.tvAwb.text = spannableString
             
             binding.ivCopyAwb.setOnClickListener {
-                val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
                 val clip = android.content.ClipData.newPlainText("AWB", awb)
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(this, "AWB copied to clipboard", Toast.LENGTH_SHORT).show()
