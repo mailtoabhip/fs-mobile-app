@@ -273,7 +273,7 @@ data class HomeBidsRequestItemData(
     return if (vendorAdvancePercent == null || vendorAdvancePercent == 0) {
       "To Pay"
     } else {
-      "Advance Payment"
+      "Advance"
     }
   }
 
@@ -306,7 +306,7 @@ data class HomeBidsRequestItemData(
     }
     // Fallback to vendorAdvancePercent
     return if (vendorAdvancePercent != null && vendorAdvancePercent!! > 0) {
-      "(${vendorAdvancePercent}%)"
+      "${vendorAdvancePercent}%"
     } else {
       ""
     }
@@ -352,25 +352,25 @@ data class HomeBidsRequestItemData(
      */
     fun isMarketplaceLoad(): Boolean {
         // Primary check: demand_type is spot_marketplace
-        if (demandType?.equals(DemandType.Spot_Marketplace.type, ignoreCase = true) == true) {
-            return true
-        }
+    if (demandType?.equals(DemandType.Spot_Marketplace.type, ignoreCase = true) == true) {
+      return true
+    }
 
-        // Secondary check: request_type is spot_marketplace
-        if (requestType?.equals(RequestType.SpotMarketplace.type, ignoreCase = true) == true) {
-            return true
-        }
+    // Secondary check: request_type is spot_marketplace
+    if (requestType?.equals(RequestType.SpotMarketplace.type, ignoreCase = true) == true) {
+      return true
+    }
 
-        // Tertiary check: sub_request_type is marketplace
-        if (subRequestType?.equals("marketplace", ignoreCase = true) == true) {
-            return true
-        }
+    // Tertiary check: sub_request_type is marketplace
+    if (subRequestType?.equals("marketplace", ignoreCase = true) == true) {
+      return true
+    }
 
-        // Fallback: Check if shipper data is present (for backward compatibility)
-        return !shipperName.isNullOrEmpty() ||
-                !shipperPhoneNumber.isNullOrEmpty() ||
-                shipperPrice != null ||
-                !shipperUcid.isNullOrEmpty()
+    // Fallback: Check if shipper data is present (for backward compatibility)
+    return !shipperName.isNullOrEmpty() ||
+           !shipperPhoneNumber.isNullOrEmpty() ||
+           shipperPrice != null ||
+           !shipperUcid.isNullOrEmpty()
     }
 
   /**
