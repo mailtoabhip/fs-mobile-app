@@ -285,7 +285,7 @@ class HomeLoadsViewModel @Inject constructor(
                         .split(",")
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type}
+                        .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
                         .joinToString(","),
                     vehicleTypes,
                     excludeTruckTypes,
@@ -413,7 +413,7 @@ class HomeLoadsViewModel @Inject constructor(
                     .split(",")
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
-                    .filterNot { it == DemandType.Intracity.type }
+                    .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
                     .joinToString(","),
                 vehicleTypes,
                 excludeTruckTypes,
@@ -470,7 +470,7 @@ class HomeLoadsViewModel @Inject constructor(
                                 .split(",")
                                 .map { it.trim() }
                                 .filter { it.isNotEmpty() }
-                                .filterNot { it == DemandType.Intracity.type }
+                                .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
                                 .joinToString(","),
                             vehicleTypes,
                             excludeTruckTypes,
@@ -983,7 +983,7 @@ class HomeLoadsViewModel @Inject constructor(
                         .split(",")
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type }
+                        .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
                         .joinToString(","),
                     vehicleTypes, null, filterVehicleType, true, 
                     splitViewCount = true, searchAfter = null

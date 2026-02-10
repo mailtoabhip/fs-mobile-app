@@ -344,17 +344,32 @@ data class HomeBidsRequestItemData(
     }
   }
 
-  /**
-   * Check if this is a marketplace load
-   * Returns true if shipper details are present (indicating marketplace load)
-   */
-  fun isMarketplaceLoad(): Boolean {
-    return demandType == RequestType.SpotMarketplace.type &&
-            (!shipperName.isNullOrEmpty() ||
-            !shipperPhoneNumber.isNullOrEmpty() ||
-            shipperPrice != null ||
-            !shipperUcid.isNullOrEmpty())
-  }
+    /**
+     * Check if this is a marketplace load
+     * Returns true if demand_type/request_type is spot_marketplace OR if subRequestType is marketplace OR shipper data is present
+     */
+    fun isMarketplaceLoad(): Boolean {
+        // Primary check: demand_type is spot_marketplace
+        if (demandType?.equals(DemandType.Spot_Marketplace.type, ignoreCase = true) == true) {
+            return true
+        }
+
+        // Secondary check: request_type is spot_marketplace
+        if (requestType?.equals(RequestType.SpotMarketplace.type, ignoreCase = true) == true) {
+            return true
+        }
+
+        // Tertiary check: sub_request_type is marketplace
+        if (subRequestType?.equals("marketplace", ignoreCase = true) == true) {
+            return true
+        }
+
+        // Fallback: Check if shipper data is present (for backward compatibility)
+        return !shipperName.isNullOrEmpty() ||
+                !shipperPhoneNumber.isNullOrEmpty() ||
+                shipperPrice != null ||
+                !shipperUcid.isNullOrEmpty()
+    }
 
   /**
    * Get initials from shipper/POC name for avatar

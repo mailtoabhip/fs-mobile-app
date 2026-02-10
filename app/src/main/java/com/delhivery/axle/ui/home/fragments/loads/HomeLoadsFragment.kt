@@ -543,7 +543,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       selectedLoadFilter = DemandType.Others.type
       demandType = userPrefs.demandType
         .split(",")
-        .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type}
+        .filterNot { it == DemandType.Intracity.type || it == DemandType.Internal.type || it == DemandType.Spot_Marketplace.type }
         .joinToString(",")
     }
   }
@@ -842,7 +842,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         demandType = userPrefs.demandType
             .split(",")
             .filterNot {
-                it == DemandType.Intracity.type
+                it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type
             }
             .joinToString { "," }
         refreshData()
