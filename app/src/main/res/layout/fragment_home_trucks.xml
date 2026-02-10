@@ -27,13 +27,25 @@
 
                 <!-- Truck Inventory Card - Top Most Element -->
                 <LinearLayout
-                    android:id="@+id/truck_inventory_card"
+                    android:id="@+id/truck_inventory_card_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:background="@color/white"
                     android:orientation="vertical">
 
+                    <!-- Shimmer for summary card -->
+                    <include
+                        android:id="@+id/truck_inventory_card_shimmer"
+                        layout="@layout/view_home_loads_progress_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_16dp"
+                        android:layout_marginEnd="@dimen/size_16dp"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:visibility="visible" />
+
+                    <!-- Actual summary card -->
                     <include
                         android:id="@+id/truck_inventory_card_inner"
                         layout="@layout/layout_truck_inventory_card"
@@ -42,7 +54,7 @@
                         android:layout_marginStart="@dimen/size_16dp"
                         android:layout_marginEnd="@dimen/size_16dp"
                         android:layout_marginTop="@dimen/size_16dp"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <!-- Search Bar with Filter Icon - Below Inventory Card -->
@@ -50,7 +62,7 @@
                     android:id="@+id/search_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/truck_inventory_card"
+                    android:layout_below="@id/truck_inventory_card_container"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:background="@color/white"

@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -245,6 +244,16 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 } else {
                     bannerValue = false
                 }
+                
+                val hasError = _items.any { pair ->
+                    pair.first is HomeTrucksWarningItem && 
+                    (pair.first as HomeTrucksWarningItem).data.title.contains("timed out", ignoreCase = true)
+                }
+                
+                if (hasError) {
+                    binding.truckInventoryCardShimmer.root.visibility = View.GONE
+                    binding.truckInventoryCardInner.root.visibility = View.GONE
+                }
             }
         })
 
@@ -402,8 +411,8 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         // Observe FASTag stats
         viewModel.fastagStatsData.observe(this, Observer { stats ->
             stats?.let {
-                // Show the card only after API response is received
-                binding.truckInventoryCard.visibility = View.VISIBLE
+                binding.truckInventoryCardShimmer.root.visibility = View.GONE
+                binding.truckInventoryCardInner.root.visibility = View.VISIBLE
 
                 binding.truckInventoryCardInner.tvTruckCount.text = "${it.totalTrucks} trucks in inventory"
                 binding.truckInventoryCardInner.tvFastagCount.text = it.fastagTrucksCount.toString()
