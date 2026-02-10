@@ -460,7 +460,7 @@ class HomeTrucksViewModel @Inject constructor(
             .progress()
             .subscribe { _res, error ->
                 if (!error && _res != null) {
-                    onSuccess(_res.message)
+                    onSuccess(_res.message?:"")
                 } else {
                     error.handle()
                     val errorMessage = error.message ?: "Failed to submit FASTag request"
