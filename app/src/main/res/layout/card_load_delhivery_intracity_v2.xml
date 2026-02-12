@@ -139,10 +139,10 @@
                     tools:text ="Advance Payment"
                     android:text="@{request.getPaymentModeDisplay()}"
                     android:textColor="#505361"
-                    android:layout_marginStart="@dimen/size_8dp"
+                    android:layout_marginEnd="@dimen/size_2dp"
                     android:drawableStart="@drawable/money_bill_wave"
                     android:drawableTint="@color/text_grey_v3"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintEnd_toStartOf="@+id/advance_payment_percentage"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
 
@@ -156,7 +156,7 @@
                     android:textColor="#505361"
                     android:layout_marginStart="@dimen/size_2dp"
                     android:text="@{request.getAdvancePaymentPercentage()}"
-                    app:layout_constraintStart_toEndOf="@id/paymentType"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/paymentType"
                     app:layout_constraintBottom_toBottomOf="@id/paymentType" />
 

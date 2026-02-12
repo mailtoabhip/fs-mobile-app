@@ -119,7 +119,7 @@
                     android:layout_marginStart="@dimen/size_8dp"
                     android:drawableStart="@drawable/route"
                     android:drawableTint="@color/text_grey_v3"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
 

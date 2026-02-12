@@ -111,7 +111,7 @@ data class HomePlacementsItemData(
         return if(detailVisible)View.GONE else View.VISIBLE
     }
 
-    fun formatReportingTime():String?= "Report "+reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
+    fun formatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
     fun placementsFormatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
     fun onlyFormatReportingTime():String?= reportingTime?.let { DateUtils.daysDiffWithDateTimeStr(it, "yyyy-MM-dd'T'HH:mm") }
 
