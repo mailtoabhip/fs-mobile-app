@@ -341,9 +341,11 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
             binding.textAvatar.text = transaction.getShipperInitials()
         }
         
-        val phoneNumber = transaction.getContactPhoneNumber()
-        if (phoneNumber.isNotEmpty()) {
-            binding.textShipperPhone.text = phoneNumber
+        val phoneNumber = transaction.pocContactNo
+        phoneNumber?.let {
+            if (it.isNotEmpty()) {
+                binding.textShipperPhone.text = it
+            }
         }
         
         // Update payment mode

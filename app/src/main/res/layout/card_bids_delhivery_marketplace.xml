@@ -125,7 +125,7 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="9876******"
-                    android:text="@{request.getContactPhoneNumber()}"
+                    android:text="@{request.pocContactNo}"
                     android:textColor="@color/text_grey_v3"
                     android:layout_marginTop="@dimen/size_8dp"
                     android:drawableStart="@drawable/ic_call_12dp"
