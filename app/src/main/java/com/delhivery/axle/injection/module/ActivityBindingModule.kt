@@ -49,6 +49,7 @@ import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagRechargeActivity
+import com.delhivery.axle.ui.fastag.FastagTransactionDetailActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.PlacementsActivity
@@ -404,6 +405,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
   internal abstract fun bindPlacementsActivity(): PlacementsActivity
+
+  /* FASTag Transaction Detail activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagTransactionDetailActivityModule::class])
+  internal abstract fun bindFastagTransactionDetailActivity(): FastagTransactionDetailActivity
 }
 
 
@@ -609,6 +615,9 @@ internal abstract class AbsFastagRechargeActivityModule : ActivityModule<FastagR
 
 @Module
 internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()
+
+@Module
+internal abstract class AbsFastagTransactionDetailActivityModule : ActivityModule<FastagTransactionDetailActivity>()
 
 /**
  * Activity Binds Module

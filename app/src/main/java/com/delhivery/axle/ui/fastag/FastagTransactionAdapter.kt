@@ -49,8 +49,55 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
                     android.graphics.Color.parseColor("#505361")
             }
             binding.tvAmount.setTextColor(amountColor)
-            
-            binding.tvAvailableBalance.text = "₹${transaction.avlBalance}"
+
+            // Handle dispute status visibility and styling
+            if (transaction.isDispute == true && transaction.disputeStatus?.isNotEmpty() == true) {
+                binding.tvDisputeStatus.visibility = android.view.View.VISIBLE
+                
+                when (transaction.disputeStatus.lowercase()) {
+                    "submitted" -> {
+                        binding.tvDisputeStatus.text = "Dispute submitted"
+                        setDisputeBackground(binding.tvDisputeStatus, "#FFF7ED")
+                        binding.tvDisputeStatus.setTextColor(android.graphics.Color.parseColor("#92400E"))
+                    }
+                    "accepted" -> {
+                        binding.tvDisputeStatus.text = "Dispute accepted"
+                        setDisputeBackground(binding.tvDisputeStatus, "#D1FAE5")
+                        binding.tvDisputeStatus.setTextColor(android.graphics.Color.parseColor("#065F46"))
+                    }
+                    "rejected" -> {
+                        binding.tvDisputeStatus.text = "Dispute rejected"
+                        setDisputeBackground(binding.tvDisputeStatus, "#FEE2E2")
+                        binding.tvDisputeStatus.setTextColor(android.graphics.Color.parseColor("#991B1B"))
+                    }
+                    else -> {
+                        binding.tvDisputeStatus.visibility = android.view.View.GONE
+                    }
+                }
+            } else {
+                binding.tvDisputeStatus.visibility = android.view.View.GONE
+            }
+
+            // Click listener to open transaction detail
+            binding.root.setOnClickListener {
+                val context = binding.root.context
+                val intent = android.content.Intent(context, FastagTransactionDetailActivity::class.java).apply {
+                    putExtra(FastagTransactionDetailActivity.EXTRA_TXN_ID, transaction.txnId)
+                    putExtra(FastagTransactionDetailActivity.EXTRA_AMOUNT, transaction.amount ?: 0.0)
+                    putExtra(FastagTransactionDetailActivity.EXTRA_TOLL_NAME, transaction.tollName)
+                    putExtra(FastagTransactionDetailActivity.EXTRA_TIMESTAMP, formatTimestamp(transaction.timestamp ?: ""))
+                }
+                context.startActivity(intent)
+            }
+
+        }
+
+        private fun setDisputeBackground(view: android.widget.TextView, colorHex: String) {
+            val drawable = android.graphics.drawable.GradientDrawable()
+            drawable.shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            drawable.cornerRadius = view.context.resources.getDimension(com.delhivery.axle.R.dimen.size_16dp)
+            drawable.setColor(android.graphics.Color.parseColor(colorHex))
+            view.background = drawable
         }
 
         private fun formatTimestamp(timestamp: String): String {

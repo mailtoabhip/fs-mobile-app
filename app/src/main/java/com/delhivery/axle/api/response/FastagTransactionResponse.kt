@@ -40,7 +40,11 @@ data class FastagTransaction(
     val tollName: String?,
 
     @SerializedName("txn_details")
-    val txnDetails: String?
+    val txnDetails: String?,
+    @SerializedName("isDispute")
+    val isDispute: Boolean? = true,
+    @SerializedName("dispute_status")
+    val disputeStatus: String? = "submitted"
 )
 
 
