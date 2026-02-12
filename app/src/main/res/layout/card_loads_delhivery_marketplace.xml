@@ -89,7 +89,7 @@
                     android:text="@{request.getMarketplacePaymentModeDisplay()}"
                     android:textColor="@color/text_grey_v3"
                     android:layout_marginStart="@dimen/size_2dp"
-                    app:layout_constraintStart_toEndOf="@id/advance_payment_percentage"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/advance_payment_percentage"
                     app:layout_constraintBottom_toBottomOf="@id/advance_payment_percentage"/>
 
@@ -100,11 +100,11 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="(50%)"
-                    android:layout_marginStart="@dimen/size_8dp"
+                    android:layout_marginEnd="@dimen/size_2dp"
                     android:textColor="#505361"
                     android:drawableStart="@drawable/money_bill_wave"
                     android:text="@{request.getMarketplaceAdvancePaymentPercentage()}"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintEnd_toStartOf="@+id/paymentType"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo"
                     />
