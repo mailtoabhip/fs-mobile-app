@@ -353,7 +353,7 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
           binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
-            R.drawable.ic_arrow_right,
+            0,
             0
           )
           binding.containerError.placeBidButton.isClickable = true
@@ -714,7 +714,7 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
           binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
           binding.containerError.placeBidTv.text = "Revise To Win"
           binding.containerError.placeBidTv.setTextColor(ContextCompat.getColor(context, android.R.color.white))
-          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_right, 0)
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
           binding.containerError.placeBidButton.isClickable = true
           binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
         } else {
@@ -1130,7 +1130,7 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
             ContextCompat.getColor(context, android.R.color.white)
           )
           binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
-            0, 0, R.drawable.ic_arrow_right, 0
+            0, 0, 0, 0
           )
           binding.containerError.placeBidButton.isClickable = true
           binding.containerError.placeBidButton.clickToAction(
