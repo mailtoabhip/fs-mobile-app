@@ -327,4 +327,21 @@ interface LoadBoardService {
         @Query("recharge_id") rechargeId: String
     ): Single<BaseResponse<WalletRechargeStatusResponse>>
 
+    @GET("/finance/fastag/transaction-dispute")
+    fun getTransactionDispute(
+        @Query("txn_id") txnId: String
+    ): Single<BaseResponse<TransactionDisputeResponse>>
+
+    /**
+     * Get FASTag transactions by toll plaza
+     * New API endpoint for transaction selection
+     */
+    @GET("/fastag/transactions")
+    fun getFastagTransactionsByTollPlaza(
+        @Query("toll_plaza_id") tollPlazaId: String,
+        @Query("dateTime") dateTime: String?,
+        @Query("limit") limit: Int?,
+        @Query("offset") offset: Int?
+    ): Single<BaseResponse<FastagTransactionsByTollPlazaResponse>>
+
 }

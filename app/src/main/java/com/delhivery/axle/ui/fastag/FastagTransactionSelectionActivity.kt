@@ -1,0 +1,151 @@
+package com.delhivery.axle.ui.fastag
+
+import android.os.Bundle
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.delhivery.axle.R
+import com.delhivery.axle.databinding.ActivityFastagTransactionSelectionBinding
+import com.delhivery.axle.ui.base.BaseActivity
+import com.moengage.core.internal.utils.showToast
+
+class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactionSelectionBinding, FastagTransactionSelectionViewModel>() {
+
+    override fun getViewModelClass() = FastagTransactionSelectionViewModel::class.java
+    override fun layoutId() = R.layout.activity_fastag_transaction_selection
+    override fun requireConnection() = true
+
+    private lateinit var adapter: TransactionSelectionAdapter
+    private var title: String = ""
+    private var subTitle: String = ""
+    private var fastagId: String = ""
+    private var tollPlazaId: String = ""
+
+    companion object {
+        const val EXTRA_TITLE = "title"
+        const val EXTRA_SUBTITLE = "subtitle"
+        const val EXTRA_PARTNER = "partner"
+        const val EXTRA_DISPUTE_CODE = "dispute_code"
+        const val EXTRA_FASTAG_ID = "fastag_id"
+        const val EXTRA_TOLL_PLAZA_ID = "toll_plaza_id"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        }
+
+        setupUI()
+        observeData()
+        loadTransactions()
+    }
+
+    private fun setupUI() {
+        title = intent.getStringExtra(EXTRA_TITLE) ?: ""
+        subTitle = intent.getStringExtra(EXTRA_SUBTITLE) ?: ""
+        fastagId = intent.getStringExtra(EXTRA_FASTAG_ID) ?: ""
+        tollPlazaId = intent.getStringExtra(EXTRA_TOLL_PLAZA_ID) ?: ""
+
+        binding.tvTitle.text = "Fastag related issues"
+        binding.tvTransactionTitle.text = title
+        binding.tvTransactionSubtitle.text = subTitle
+
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
+        adapter = TransactionSelectionAdapter { transaction ->
+            onTransactionSelected(transaction)
+        }
+
+        binding.rvTransactions.apply {
+            layoutManager = LinearLayoutManager(this@FastagTransactionSelectionActivity)
+            adapter = this@FastagTransactionSelectionActivity.adapter
+        }
+
+        // Initially disable the confirm button
+        binding.btnConfirmSelection.isEnabled = false
+
+        binding.btnConfirmSelection.setOnClickListener {
+            val selectedTransaction = adapter.getSelectedTransaction()
+            if (selectedTransaction != null) {
+                // TODO: Handle confirmation
+//                showToast("Transaction selected: ${selectedTransaction.tollName}")
+            } else {
+//                showToast("Please select a transaction")
+            }
+        }
+    }
+
+    private fun loadTransactions() {
+        // Use NEW API only if toll plaza ID is explicitly provided
+//        if (tollPlazaId.isNotEmpty()) {//todo check for data
+            viewModel.getTransactionsByTollPlaza(tollPlazaId)
+//        }
+    }
+
+    private fun observeData() {
+        viewModel.progressData.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.rvTransactions.visibility = if (isLoading) View.GONE else View.VISIBLE
+        }
+
+        // Observe OLD API response (existing implementation)
+        viewModel.transactionsData.observe(this) { response ->
+            response.transactions?.let { transactions ->
+                val transactionItems = transactions.map { txn ->
+                    TransactionItem(
+                        id = txn.txnId ?: "",
+                        tollName = txn.tollName ?: "Unknown",
+                        timestamp = txn.timestamp ?: "",
+                        amount = txn.amount ?: 0.0
+                    )
+                }
+                adapter.submitList(transactionItems)
+            }
+        }
+
+        // Observe NEW API response
+        viewModel.transactionsByTollPlazaData.observe(this) { response ->
+            response.transactions?.let { transactions ->
+                val transactionItems = transactions.map { txn ->
+                    TransactionItem(
+                        id = txn.txnId ?: "",
+                        tollName = txn.tollPlazaName ?: "Unknown",
+                        timestamp = formatDateTime(txn.txnDateTime ?: ""),
+                        amount = if (txn.txnType == "DEBIT") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0)
+                    )
+                }
+                adapter.submitList(transactionItems)
+            }
+        }
+
+        viewModel.errorData.observe(this) { error ->
+//            showToast(error)
+        }
+    }
+
+    /**
+     * Format ISO 8601 datetime to readable format
+     * Example: "2025-01-20T10:30:45Z" -> "20 Jan 2025, 10:30 AM"
+     */
+    private fun formatDateTime(dateTime: String): String {
+        return try {
+            val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault())
+            inputFormat.timeZone = java.util.TimeZone.getTimeZone("UTC")
+            val date = inputFormat.parse(dateTime)
+            
+            val outputFormat = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
+            date?.let { outputFormat.format(it) } ?: dateTime
+        } catch (e: Exception) {
+            dateTime
+        }
+    }
+
+    private fun onTransactionSelected(transaction: TransactionItem) {
+        adapter.setSelectedTransaction(transaction)
+        // Enable confirm button when a transaction is selected
+        binding.btnConfirmSelection.isEnabled = true
+    }
+}

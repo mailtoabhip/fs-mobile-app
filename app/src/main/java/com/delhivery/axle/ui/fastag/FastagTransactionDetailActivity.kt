@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.fastag
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.delhivery.axle.R
@@ -69,7 +70,12 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
         // Raise Dispute button
         binding.btnRaiseDispute.setOnClickListener {
-            Toast.makeText(this, "Raise Dispute functionality coming soon", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, FastagDisputeIssuesActivity::class.java).apply {
+                putExtra(FastagDisputeIssuesActivity.EXTRA_PARTNER, "IDFC")
+                putExtra(FastagDisputeIssuesActivity.EXTRA_TXN_ID, txnId)
+                putExtra(FastagDisputeIssuesActivity.EXTRA_FASTAG_ID, "FT-9928341029")
+            }
+            startActivity(intent)
         }
     }
 }
