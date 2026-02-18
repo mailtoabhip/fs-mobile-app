@@ -83,12 +83,21 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
 
     private fun onDisputeTypeSelected(disputeType: DisputeType) {
         if (disputeType.addTxnReq == true) {
+            // Requires transaction selection - go to transaction selection screen
             val intent = Intent(this, FastagTransactionSelectionActivity::class.java).apply {
                 putExtra(FastagTransactionSelectionActivity.EXTRA_TITLE, disputeType.title ?: "")
                 putExtra(FastagTransactionSelectionActivity.EXTRA_SUBTITLE, disputeType.subTitle ?: "")
                 putExtra(FastagTransactionSelectionActivity.EXTRA_PARTNER, partner)
                 putExtra(FastagTransactionSelectionActivity.EXTRA_DISPUTE_CODE, disputeType.code)
                 putExtra(FastagTransactionSelectionActivity.EXTRA_FASTAG_ID, fastagId)
+            }
+            startActivity(intent)
+        } else {
+            // No transaction required - go directly to dispute form
+            val intent = Intent(this, FastagDynamicDisputeFormActivity::class.java).apply {
+                putExtra(FastagDynamicDisputeFormActivity.EXTRA_DISPUTE_TYPE_CODE, disputeType.code)
+                putExtra(FastagDynamicDisputeFormActivity.EXTRA_FASTAG_ID, fastagId)
+                putExtra(FastagDynamicDisputeFormActivity.EXTRA_SHOW_TRANSACTION, false)
             }
             startActivity(intent)
         }

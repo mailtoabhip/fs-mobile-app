@@ -45,9 +45,9 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
             binding.tvAmount.text = amountText
             
             val amountColor = if (isCredit) {
-                android.graphics.Color.parseColor("#059669") // Green for credit/refund
+                android.graphics.Color.parseColor("#10B981") // Green for credit/refund
             } else {
-                android.graphics.Color.parseColor("#505361")
+                android.graphics.Color.parseColor("#0F172A")
             }
             binding.tvAmount.setTextColor(amountColor)
 

@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="#505361" />
+                    android:textColor="#1E293B" />
 
                 <TextView
                     android:id="@+id/tvTimestamp"
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#1F2937" />
+                    android:textColor="#0F172A" />
 
                 <ImageView
                     android:id="@+id/ivDetailsIcon"

@@ -52,6 +52,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         const val EXTRA_TRANSACTION_TOLL_NAME = "transaction_toll_name"
         const val EXTRA_TRANSACTION_TIMESTAMP = "transaction_timestamp"
         const val EXTRA_TRANSACTION_AMOUNT = "transaction_amount"
+        const val EXTRA_SHOW_TRANSACTION = "show_transaction"
     }
 
     // File picker launcher
@@ -73,6 +74,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        hasInlineProgress = true // Disable base progress observer - must be set before super.onCreate()
         super.onCreate(savedInstanceState)
         setupUI()
         observeData()
@@ -124,7 +126,10 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     private fun setupSelectedTransaction() {
-        if (transactionId != null && transactionTollName != null) {
+        // Check if we should show the transaction card
+        val showTransaction = intent.getBooleanExtra(EXTRA_SHOW_TRANSACTION, true)
+        
+        if (showTransaction && transactionId != null && transactionTollName != null) {
             binding.llSelectedTransaction.visibility = View.VISIBLE
             binding.tvTransactionTollName.text = transactionTollName
             binding.tvTransactionDateTime.text = transactionTimestamp ?: ""
@@ -136,6 +141,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
                 // Go back to transaction selection
                 finish()
             }
+        } else {
+            binding.llSelectedTransaction.visibility = View.GONE
         }
     }
 
@@ -171,9 +178,13 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     private fun observeData() {
-        // Observe progress
+       // Observe progress - use uiUtils loader like transaction listing
         viewModel.progressData.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (isLoading) {
+                uiUtils.showProgress()
+            } else {
+                uiUtils.hideProgress()
+            }
         }
 
         // Observe form configuration
@@ -425,15 +436,12 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         when (state) {
             is SubmissionState.Loading -> {
                 binding.btnSubmit.isEnabled = false
-                binding.progressBar.visibility = View.VISIBLE
             }
             is SubmissionState.Success -> {
                 binding.btnSubmit.isEnabled = true
-                binding.progressBar.visibility = View.GONE
             }
             is SubmissionState.Error -> {
                 binding.btnSubmit.isEnabled = true
-                binding.progressBar.visibility = View.GONE
             }
             is SubmissionState.Idle -> {
                 binding.btnSubmit.isEnabled = true
