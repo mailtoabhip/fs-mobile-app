@@ -69,16 +69,20 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
-        
-        // Handle window insets for edge-to-edge display (API 35+)
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
-        }
-        
+
         setupUI()
         setupRecyclerView()
         setupObservers()
         loadData()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+
+        /* Handle window insets for edge-to-edge display (API 35+) */
+        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        }
     }
 
     private var isFirstResume = true
@@ -91,7 +95,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         }
         loadData()
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(onDownloadComplete)

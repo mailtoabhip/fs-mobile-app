@@ -28,14 +28,18 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Handle window insets for edge-to-edge display (API 35+)
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
-        }
-
         setupUI()
         observeData()
         loadDisputeIssues()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+
+        /* Handle window insets for edge-to-edge display (API 35+) */
+        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        }
     }
 
     private fun setupUI() {

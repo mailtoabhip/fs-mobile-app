@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.fastag
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagTransactionDetailBinding
 import com.delhivery.axle.ui.base.BaseActivity
@@ -27,12 +26,16 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Handle window insets for edge-to-edge display (API 35+)
+        setupUI()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+
+        /* Handle window insets for edge-to-edge display (API 35+) */
         if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
-
-        setupUI()
     }
 
     private fun setupUI() {
