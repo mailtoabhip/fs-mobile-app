@@ -39,6 +39,9 @@ data class FastagTransaction(
     @SerializedName("txn_event")
     val tollName: String?,
 
+    @SerializedName("txn_event_context")
+    val txnEventContext: String?,
+
     @SerializedName("txn_details")
     val txnDetails: String?,
     @SerializedName("isDispute")

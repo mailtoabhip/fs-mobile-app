@@ -27,26 +27,27 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: FastagTransaction) {
-            binding.tvTransactionId.text = "#${transaction.txnId}"
+            // Title: txn_event / tollName (e.g. "552003-Agra Toll Plaza")
+            binding.tvTransactionId.text = transaction.tollName ?: ""
             
-            binding.tvTimestamp.text = formatTimestamp(transaction.timestamp?:"")
+            binding.tvTimestamp.text = formatTimestamp(transaction.timestamp ?: "")
             
-            binding.tvTollName.text = transaction.tollName ?: transaction.transactionType
+            // Subtitle: txnEventContext (e.g. "Toll Debit", "Account Activity")
+            binding.tvTollName.text = transaction.txnEventContext ?: transaction.transactionType ?: ""
             
-            val amountText = when {
-                transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
-                        transaction.transactionType?.contains("recharge", ignoreCase = true) == true ->
-                    "+₹${transaction.amount}"
-                else -> "-₹${transaction.amount}"
-            }
+            // Amount with sign
+            val isCredit = transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
+                    transaction.transactionType?.contains("recharge", ignoreCase = true) == true ||
+                    transaction.transactionType?.contains("refund", ignoreCase = true) == true ||
+                    transaction.txnEventContext?.contains("refund", ignoreCase = true) == true
+            
+            val amountText = if (isCredit) "+₹${transaction.amount?.toInt() ?: 0}" else "-₹${transaction.amount?.toInt() ?: 0}"
             binding.tvAmount.text = amountText
             
-            val amountColor = when {
-                transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
-                        transaction.transactionType?.contains("recharge", ignoreCase = true) == true ->
-                    android.graphics.Color.parseColor("#059669") // Green for credit
-                else ->
-                    android.graphics.Color.parseColor("#505361")
+            val amountColor = if (isCredit) {
+                android.graphics.Color.parseColor("#059669") // Green for credit/refund
+            } else {
+                android.graphics.Color.parseColor("#505361")
             }
             binding.tvAmount.setTextColor(amountColor)
 
