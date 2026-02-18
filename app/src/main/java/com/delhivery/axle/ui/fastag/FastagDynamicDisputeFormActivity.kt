@@ -110,7 +110,9 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         // Setup terms and conditions
         setupTermsAndConditions()
 
-        // Setup submit button
+        // Setup submit button - initially disabled until mandatory fields are filled
+        binding.btnSubmit.isEnabled = false
+        binding.btnSubmit.alpha = 0.5f
         binding.btnSubmit.setOnClickListener {
             onSubmitClicked()
         }
@@ -197,6 +199,12 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         viewModel.errorData.observe(this) { error ->
             Toast.makeText(this, error, Toast.LENGTH_LONG).show()
         }
+
+        // Observe submit button enabled state
+        viewModel.submitEnabledData.observe(this) { isEnabled ->
+            binding.btnSubmit.isEnabled = isEnabled
+            binding.btnSubmit.alpha = if (isEnabled) 1.0f else 0.5f
+        }
     }
 
     private fun renderFormFields(fields: List<FormField>) {
@@ -248,25 +256,11 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
             view.setValue(existingValue)
         }
 
-        // Listen for value changes with debouncing
+        // Listen for value changes - just update value, don't validate while typing
         view.setOnValueChangedListener { value ->
             viewModel.updateFieldValue(field.fieldId, value)
-
-            // Clear error immediately when user types
+            // Clear error when user starts typing again
             view.clearError()
-
-            // Cancel previous validation runnable
-            validationRunnables[field.fieldId]?.let { validationHandler.removeCallbacks(it) }
-
-            // Schedule new validation after 300ms debounce
-            val validationRunnable = Runnable {
-                val result = viewModel.validateField(field.fieldId, value, this)
-                if (!result.isValid) {
-                    view.setError(result.errorMessage)
-                }
-            }
-            validationRunnables[field.fieldId] = validationRunnable
-            validationHandler.postDelayed(validationRunnable, 300)
         }
 
         return view
@@ -374,6 +368,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
         val view = DynamicFileUploadView(this)
         view.setFieldConfig(additionalField)
+        view.removeHorizontalPadding()
+        view.setAdditionalDocMode()
         view.setFileUri(uri)
 
         view.setOnFileRemovedListener {

@@ -30,6 +30,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     val submissionStateData = MutableLiveData<SubmissionState>()
     val progressData = MutableLiveData<Boolean>()
     val errorData = MutableLiveData<String>()
+    val submitEnabledData = MutableLiveData<Boolean>()
 
     // State
     private val fieldValues = mutableMapOf<String, Any?>()
@@ -123,6 +124,32 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
      */
     fun updateFieldValue(fieldId: String, value: Any?) {
         fieldValues[fieldId] = value
+        checkMandatoryFieldsComplete()
+    }
+
+    /**
+     * Check if all mandatory fields have values and update submit button state
+     */
+    fun checkMandatoryFieldsComplete() {
+        val mandatoryFields = formConfig?.fields?.filter { it.mandatory } ?: emptyList()
+        
+        var allComplete = true
+        for (field in mandatoryFields) {
+            if (field.fieldTypeEnum == FieldType.FILE) {
+                if (fileUris[field.fieldId] == null) {
+                    allComplete = false
+                    break
+                }
+            } else {
+                val str = fieldValues[field.fieldId]?.toString() ?: ""
+                if (str.isBlank()) {
+                    allComplete = false
+                    break
+                }
+            }
+        }
+        
+        submitEnabledData.value = allComplete
     }
 
     /**
@@ -152,6 +179,8 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
             currentValidation[fieldId] = validationResult
             validationStateData.value = currentValidation
         }
+        
+        checkMandatoryFieldsComplete()
     }
 
     /**
@@ -160,6 +189,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     fun removeFile(fieldId: String) {
         fileUris.remove(fieldId)
         fieldValues.remove(fieldId)
+        checkMandatoryFieldsComplete()
     }
 
     /**

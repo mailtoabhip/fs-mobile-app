@@ -1,18 +1,18 @@
 package com.delhivery.axle.ui.customviews
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.databinding.ViewDynamicFileUploadBinding
 
 /**
  * Custom view for rendering FILE fields dynamically.
- * Single card layout: label + subtitle on left, UPLOAD button or thumbnail+cross on right.
+ * Two-state layout: upload card (label + UPLOAD button) or uploaded card (doc icon + label + filename + trash).
  */
 class DynamicFileUploadView @JvmOverloads constructor(
     context: Context,
@@ -25,6 +25,7 @@ class DynamicFileUploadView @JvmOverloads constructor(
     private var fileRemovedListener: (() -> Unit)? = null
     private var currentFileUri: Uri? = null
     private var currentField: FormField? = null
+    private var isAdditionalDocMode = false
 
     init {
         binding = ViewDynamicFileUploadBinding.inflate(LayoutInflater.from(context), this, true)
@@ -37,13 +38,11 @@ class DynamicFileUploadView @JvmOverloads constructor(
     fun setFieldConfig(field: FormField) {
         currentField = field
 
-        // Set label with mandatory indicator
-        val labelText = if (field.mandatory) {
-            "${field.displayLabel} *"
-        } else {
-            field.displayLabel
-        }
-        binding.tvLabel.text = labelText
+        // Set label on upload card
+        binding.tvLabel.text = field.displayLabel
+
+        // Set label on uploaded card (without mandatory indicator)
+        binding.tvUploadedLabel.text = field.displayLabel
 
         // Set subtitle (help text)
         field.helpText?.let {
@@ -60,11 +59,11 @@ class DynamicFileUploadView @JvmOverloads constructor(
     fun getFileUri(): Uri? = currentFileUri
 
     /**
-     * Set file URI and show thumbnail preview
+     * Set file URI and show uploaded state
      */
     fun setFileUri(uri: Uri) {
         currentFileUri = uri
-        showFilePreview(uri)
+        showUploadedState(uri)
     }
 
     /**
@@ -72,8 +71,7 @@ class DynamicFileUploadView @JvmOverloads constructor(
      */
     fun clearFile() {
         currentFileUri = null
-        binding.tvUploadButton.visibility = VISIBLE
-        binding.flFilePreview.visibility = GONE
+        showUploadState()
         clearError()
     }
 
@@ -111,19 +109,32 @@ class DynamicFileUploadView @JvmOverloads constructor(
     }
 
     /**
-     * Setup click listeners for upload card and remove button
+     * Remove horizontal padding (for use in containers that already have padding)
+     */
+    fun removeHorizontalPadding() {
+        binding.llRoot.setPadding(0, binding.llRoot.paddingTop, 0, binding.llRoot.paddingBottom)
+    }
+
+    /**
+     * Set additional document mode - uses paperclip icon and shows "Uploaded" text
+     */
+    fun setAdditionalDocMode() {
+        isAdditionalDocMode = true
+        binding.ivDocIcon.setImageResource(R.drawable.ic_paperclip)
+    }
+
+    /**
+     * Setup click listeners for upload card and delete button
      */
     private fun setupClickListeners() {
-        // Card click opens file picker only when no file is selected
+        // Upload card click opens file picker
         binding.cvUploadCard.setOnClickListener {
-            if (currentFileUri == null) {
-                it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                fileSelectedListener?.invoke(Uri.EMPTY)
-            }
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            fileSelectedListener?.invoke(Uri.EMPTY)
         }
 
-        // Remove button clears file and notifies listener
-        binding.ivRemove.setOnClickListener {
+        // Delete button clears file and notifies listener
+        binding.ivDelete.setOnClickListener {
             it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             clearFile()
             fileRemovedListener?.invoke()
@@ -131,29 +142,51 @@ class DynamicFileUploadView @JvmOverloads constructor(
     }
 
     /**
-     * Swap right side from UPLOAD button to thumbnail + cross
+     * Show upload state: upload card visible, uploaded card hidden
      */
-    private fun showFilePreview(uri: Uri) {
-        binding.tvUploadButton.visibility = GONE
-        binding.flFilePreview.visibility = VISIBLE
-        loadThumbnail(uri)
+    private fun showUploadState() {
+        binding.cvUploadCard.visibility = VISIBLE
+        binding.cvUploadedCard.visibility = GONE
     }
 
     /**
-     * Load thumbnail for image files, fallback to gallery icon
+     * Show uploaded state: upload card hidden, uploaded card visible with filename
      */
-    private fun loadThumbnail(uri: Uri) {
+    private fun showUploadedState(uri: Uri) {
+        binding.cvUploadCard.visibility = GONE
+        binding.cvUploadedCard.visibility = VISIBLE
+
+        // Extract and display filename
+        val filename = getFilenameFromUri(uri)
+        
+        if (isAdditionalDocMode) {
+            // For additional docs: show filename as label, "Uploaded" as subtitle
+            binding.tvUploadedLabel.text = filename
+            binding.tvFilename.text = "Uploaded"
+        } else {
+            // For required docs: show field label, filename as subtitle
+            binding.tvFilename.text = filename
+        }
+    }
+
+    /**
+     * Extract filename from URI
+     */
+    private fun getFilenameFromUri(uri: Uri): String {
+        var filename = "uploaded_file"
+
         try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                if (bitmap != null) {
-                    binding.ivThumbnail.setImageBitmap(bitmap)
-                } else {
-                    binding.ivThumbnail.setImageResource(android.R.drawable.ic_menu_gallery)
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                if (nameIndex >= 0 && cursor.moveToFirst()) {
+                    filename = cursor.getString(nameIndex) ?: filename
                 }
             }
         } catch (e: Exception) {
-            binding.ivThumbnail.setImageResource(android.R.drawable.ic_menu_gallery)
+            // Fallback to last path segment
+            uri.lastPathSegment?.let { filename = it }
         }
+
+        return filename
     }
 }

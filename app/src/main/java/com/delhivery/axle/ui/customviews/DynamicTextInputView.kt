@@ -30,6 +30,18 @@ class DynamicTextInputView @JvmOverloads constructor(
     init {
         binding = ViewDynamicTextInputBinding.inflate(LayoutInflater.from(context), this, true)
         setupTextWatcher()
+        setupFocusListener()
+    }
+
+    /**
+     * Setup focus listener to show cursor when focused
+     */
+    private fun setupFocusListener() {
+        binding.etInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etInput.isCursorVisible = true
+            }
+        }
     }
 
     /**
@@ -37,26 +49,20 @@ class DynamicTextInputView @JvmOverloads constructor(
      */
     fun setFieldConfig(field: FormField) {
         currentField = field
-        
-        // Set label with mandatory indicator
-        val labelText = if (field.mandatory) {
-            "${field.displayLabel} *"
-        } else {
-            field.displayLabel
-        }
-        binding.tvLabel.text = labelText
+
+        binding.tvLabel.text = field.displayLabel
 
         // Set placeholder
         field.placeholder?.let {
             binding.etInput.hint = it
         }
 
-        // Set help text
+        // Set help text with info icon
         field.helpText?.let {
             binding.tvHelpText.text = it
-            binding.tvHelpText.visibility = VISIBLE
+            binding.llHelpText.visibility = VISIBLE
         } ?: run {
-            binding.tvHelpText.visibility = GONE
+            binding.llHelpText.visibility = GONE
         }
 
         // Configure input type based on field type
@@ -70,9 +76,10 @@ class DynamicTextInputView @JvmOverloads constructor(
                 binding.etInput.inputType = InputType.TYPE_CLASS_TEXT or 
                     InputType.TYPE_TEXT_FLAG_MULTI_LINE or 
                     InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-                binding.etInput.minLines = 3
-                binding.etInput.maxLines = 6
-
+                // Fixed height for TEXTAREA - use fixed lines with scrolling
+                binding.etInput.setLines(5)
+                binding.etInput.isVerticalScrollBarEnabled = true
+                binding.etInput.setHorizontallyScrolling(false)
             }
             FieldType.TEXT -> {
                 binding.etInput.inputType = InputType.TYPE_CLASS_TEXT or 

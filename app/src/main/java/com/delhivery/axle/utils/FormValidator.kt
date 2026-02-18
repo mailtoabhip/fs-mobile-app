@@ -52,9 +52,11 @@ object FormValidator {
             }
         }
 
-        // Check validation rule (regex)
+        // Check validation rule (regex) - skip if minLength/maxLength already handle length validation
         field.validationRule?.let { rule ->
-            if (!evaluateComplexValidation(value, rule)) {
+            // Skip regex validation if minLength or maxLength are specified (they already validate length)
+            val hasLengthConstraints = field.minLength != null || field.maxLength != null
+            if (!hasLengthConstraints && !evaluateComplexValidation(value, rule)) {
                 return ValidationResult(
                     isValid = false,
                     errorMessage = field.validationErrorMessage 
@@ -185,7 +187,9 @@ object FormValidator {
      */
     private fun matchesRegex(value: String, pattern: String): Boolean {
         return try {
-            value.matches(Regex(pattern))
+            // Use DOTALL flag to make . match newlines as well
+            val regex = Regex(pattern, RegexOption.DOT_MATCHES_ALL)
+            value.matches(regex)
         } catch (e: Exception) {
             false
         }

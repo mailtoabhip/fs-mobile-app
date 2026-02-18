@@ -3,12 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/llRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/size_20dp"
         android:paddingVertical="@dimen/size_12dp">
 
+        <!-- Upload State Card: label + subtitle on left, UPLOAD button on right -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cvUploadCard"
             android:layout_width="match_parent"
@@ -42,18 +44,16 @@
                         android:id="@+id/tvLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="#1F2937"
-                        android:textStyle="bold"
-                        android:letterSpacing="0" />
+                        android:textSize="14sp"
+                        android:textColor="#1E293B"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="#9CA3AF"
-                        android:textStyle="normal"
+                        android:textSize="11sp"
+                        android:textColor="#94A3B8"
                         android:layout_marginTop="4dp" />
 
                 </LinearLayout>
@@ -63,44 +63,88 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="UPLOAD"
-                    android:textSize="14sp"
-                    android:textColor="#111827"
+                    android:textSize="12sp"
+                    android:textColor="#111111"
                     android:textStyle="bold"
-                    android:paddingHorizontal="@dimen/size_24dp"
-                    android:paddingVertical="@dimen/size_12dp"
+                    android:paddingHorizontal="@dimen/size_18dp"
+                    android:paddingVertical="@dimen/size_8dp"
                     android:background="@drawable/background_upload_button"
                     android:layout_marginStart="@dimen/size_16dp" />
 
-                <FrameLayout
-                    android:id="@+id/flFilePreview"
-                    android:layout_width="wrap_content"
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Uploaded State Card: doc icon + label + filename (green) + trash icon -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvUploadedCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:strokeColor="#E5E7EB"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="@dimen/size_8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/size_16dp"
+                android:paddingVertical="@dimen/size_16dp"
+                android:minHeight="72dp">
+
+
+
+                    <ImageView
+                        android:id="@+id/ivDocIcon"
+                        android:layout_width="@dimen/size_40dp"
+                        android:layout_height="@dimen/size_40dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_document_uploaded"
+                        android:contentDescription="Document icon" />
+
+
+
+                <!-- Label + Filename -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_16dp"
-                    android:visibility="gone">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/size_12dp">
 
-                    <ImageView
-                        android:id="@+id/ivThumbnail"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="@string/file_thumbnail"
-                        android:background="#F3F4F6" />
+                    <TextView
+                        android:id="@+id/tvUploadedLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#1E293B"
+                        android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/ivRemove"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="top|end"
-                        android:translationX="6dp"
-                        android:translationY="-6dp"
-                        android:src="@drawable/ic_close"
-                        android:contentDescription="@string/remove_file"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        app:tint="#6B7280" />
+                    <TextView
+                        android:id="@+id/tvFilename"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="#22C55E"
+                        android:layout_marginTop="2dp" />
 
-                </FrameLayout>
+                </LinearLayout>
+
+                <!-- Red trash icon -->
+                <ImageView
+                    android:id="@+id/ivDelete"
+                    android:layout_width="@dimen/size_18dp"
+                    android:layout_height="@dimen/size_18dp"
+                    android:src="@drawable/ic_delete_red"
+                    android:contentDescription="@string/remove_file"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    />
 
             </LinearLayout>
 
