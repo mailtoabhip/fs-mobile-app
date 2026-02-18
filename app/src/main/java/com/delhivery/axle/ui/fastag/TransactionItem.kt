@@ -5,5 +5,6 @@ data class TransactionItem(
     val tollName: String?,
     val timestamp: String?,
     val amount: Double?,
+    val tollPlazaId: String? = null,
     var isSelected: Boolean? = false
 )

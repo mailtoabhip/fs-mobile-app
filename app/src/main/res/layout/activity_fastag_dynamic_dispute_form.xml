@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F9FAFB"
+        android:fitsSystemWindows="true">
+
+        <!-- Header -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_16dp"
+            android:gravity="center_vertical"
+            android:elevation="2dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/size_16dp"
+                android:layout_height="@dimen/size_16dp"
+                android:contentDescription="@string/back_button"
+                android:src="@drawable/ic_back_arrow" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:text="Dispute submission  form"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#615655" />
+
+        </LinearLayout>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/size_24dp" />
+
+        <!-- Scroll View for Form Fields -->
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintBottom_toTopOf="@id/btnSubmit">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/size_16dp">
+
+                <!-- Issue Category Section -->
+                <LinearLayout
+                    android:id="@+id/llIssueCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/size_20dp"
+                    android:paddingTop="@dimen/size_24dp"
+                    android:paddingBottom="@dimen/size_16dp"
+                    android:background="#F9FAFB">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Issue Category"
+                        android:textSize="13sp"
+                        android:layout_marginBottom="@dimen/size_4dp" />
+
+                    <TextView
+                        android:id="@+id/tvIssueTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Duplicate Transactions done at Toll Plaza"
+                        android:textSize="20sp"
+                        android:textColor="#111827"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Selected Transaction Section -->
+                <LinearLayout
+                    android:id="@+id/llSelectedTransaction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/size_20dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvSelectTransactionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Duplicate Transaction"
+                        android:textSize="14sp"
+                        android:textColor="#374151"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/size_8dp" />
+
+                    <!-- Transaction Card -->
+                    <LinearLayout
+                        android:id="@+id/cardSelectedTransaction"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/background_transaction_card"
+                        android:padding="@dimen/size_16dp"
+                        android:layout_marginBottom="@dimen/size_16dp">
+
+                        <!-- Card icon -->
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_fastag_card"
+                            android:contentDescription="Transaction icon"
+                            android:layout_marginEnd="@dimen/size_12dp" />
+
+                        <!-- Transaction details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvTransactionTollName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                android:textColor="#111827"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvTransactionDateTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:textColor="#9CA3AF"
+                                android:layout_marginTop="2dp" />
+
+                            <TextView
+                                android:id="@+id/tvTransactionAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="15sp"
+                                android:textColor="#111827"
+                                android:textStyle="bold"
+                                android:layout_marginTop="4dp" />
+
+                        </LinearLayout>
+
+                        <!-- Change button -->
+                        <TextView
+                            android:id="@+id/tvChangeTransaction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Change"
+                            android:textSize="14sp"
+                            android:textColor="#1A56DB"
+                            android:textStyle="bold"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:padding="@dimen/size_8dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Dynamic Form Fields Container (text inputs, etc.) -->
+                <LinearLayout
+                    android:id="@+id/llFormFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/size_8dp" />
+
+                <!-- Upload Required Documents Section Header -->
+                <LinearLayout
+                    android:id="@+id/llUploadDocumentsHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/size_20dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvUploadDocumentsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upload Required Documents"
+                        android:textSize="16sp"
+                        android:textColor="#111827"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/size_12dp" />
+
+                </LinearLayout>
+
+                <!-- File Upload Fields Container -->
+                <LinearLayout
+                    android:id="@+id/llFileFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <!-- File size info hint -->
+                <LinearLayout
+                    android:id="@+id/llFileSizeHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/size_20dp"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_info"
+                        android:contentDescription="Info"
+                        android:layout_marginEnd="@dimen/size_8dp" />
+
+                    <TextView
+                        android:id="@+id/tvFileSizeHint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Maximum file size: 100Kb to 2.5MB per document. JPG, PNG only"
+                        android:textSize="12sp"
+                        android:textColor="#1A56DB" />
+
+                </LinearLayout>
+
+                <!-- Additional Documents Section -->
+                <LinearLayout
+                    android:id="@+id/llAdditionalDocuments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/size_20dp"
+                    android:layout_marginTop="@dimen/size_20dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Additional Documents"
+                        android:textSize="14sp"
+                        android:textColor="#374151"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="(optional)"
+                        android:textSize="14sp"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="@dimen/size_12dp" />
+
+                    <!-- Container for additional uploaded documents -->
+                    <LinearLayout
+                        android:id="@+id/llAdditionalFileFields"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <!-- Add another document button -->
+                    <LinearLayout
+                        android:id="@+id/btnAddDocument"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:background="@drawable/background_add_document_button"
+                        android:padding="@dimen/size_16dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+"
+                            android:textSize="18sp"
+                            android:textColor="#374151"
+                            android:layout_marginEnd="@dimen/size_8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Add another document"
+                            android:textSize="14sp"
+                            android:textColor="#374151" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Terms and Conditions + Info -->
+                <LinearLayout
+                    android:id="@+id/llTermsSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:paddingHorizontal="@dimen/size_20dp"
+                    android:layout_marginTop="@dimen/size_24dp">
+
+                    <TextView
+                        android:id="@+id/tvTermsAndConditions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:textColor="#6B7280"
+                        android:lineSpacingExtra="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvDisputeResolutionInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Dispute resolution typically takes 7-10 working days as\nper banking norms."
+                        android:textSize="12sp"
+                        android:textColor="#1A56DB"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:lineSpacingExtra="2dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <!-- Submit Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_16dp"
+            android:background="@drawable/background_all_rounded_black"
+            android:text="Submit Request"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:minHeight="52dp"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

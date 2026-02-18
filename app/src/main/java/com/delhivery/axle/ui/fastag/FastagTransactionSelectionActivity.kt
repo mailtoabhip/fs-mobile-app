@@ -1,12 +1,12 @@
 package com.delhivery.axle.ui.fastag
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagTransactionSelectionBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.moengage.core.internal.utils.showToast
 
 class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactionSelectionBinding, FastagTransactionSelectionViewModel>() {
 
@@ -19,6 +19,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
     private var subTitle: String = ""
     private var fastagId: String = ""
     private var tollPlazaId: String = ""
+    private var disputeTypeCode: String = ""
 
     companion object {
         const val EXTRA_TITLE = "title"
@@ -46,6 +47,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         subTitle = intent.getStringExtra(EXTRA_SUBTITLE) ?: ""
         fastagId = intent.getStringExtra(EXTRA_FASTAG_ID) ?: ""
         tollPlazaId = intent.getStringExtra(EXTRA_TOLL_PLAZA_ID) ?: ""
+        disputeTypeCode = intent.getStringExtra(EXTRA_DISPUTE_CODE) ?: ""
 
         binding.tvTitle.text = "Fastag related issues"
         binding.tvTransactionTitle.text = title
@@ -70,10 +72,17 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         binding.btnConfirmSelection.setOnClickListener {
             val selectedTransaction = adapter.getSelectedTransaction()
             if (selectedTransaction != null) {
-                // TODO: Handle confirmation
-//                showToast("Transaction selected: ${selectedTransaction.tollName}")
-            } else {
-//                showToast("Please select a transaction")
+                // Navigate to dynamic dispute form
+                val intent = Intent(this, FastagDynamicDisputeFormActivity::class.java).apply {
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_DISPUTE_TYPE_CODE, disputeTypeCode)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_SELECTED_TRANSACTION_ID, selectedTransaction.id)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_FASTAG_ID, fastagId)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_TOLL_PLAZA_ID, selectedTransaction.tollPlazaId ?: "")
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_TOLL_NAME, selectedTransaction.tollName)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_TIMESTAMP, selectedTransaction.timestamp)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_AMOUNT, selectedTransaction.amount ?: 0.0)
+                }
+                startActivity(intent)
             }
         }
     }
@@ -114,7 +123,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                         id = txn.txnId ?: "",
                         tollName = txn.tollPlazaName ?: "Unknown",
                         timestamp = formatDateTime(txn.txnDateTime ?: ""),
-                        amount = if (txn.txnType == "DEBIT") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0)
+                        amount = if (txn.txnType == "DEBIT") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
+                        tollPlazaId = txn.tollPlazaId
                     )
                 }
                 adapter.submitList(transactionItems)

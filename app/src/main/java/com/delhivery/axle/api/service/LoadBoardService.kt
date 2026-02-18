@@ -344,4 +344,20 @@ interface LoadBoardService {
         @Query("offset") offset: Int?
     ): Single<BaseResponse<FastagTransactionsByTollPlazaResponse>>
 
+    /**
+     * Submit dispute with multipart form data
+     */
+    @Multipart
+    @POST("/api/v1/disputes")
+    fun submitDispute(
+        @Part("txn_id") txnId: okhttp3.RequestBody,
+        @Part("toll_plaza_id") tollPlazaId: okhttp3.RequestBody,
+        @Part("refundRequestedAmount") refundAmount: okhttp3.RequestBody,
+        @Part("comment") comment: okhttp3.RequestBody,
+        @Part("raisedAgainst") raisedAgainst: okhttp3.RequestBody,
+        @Part upload_doc1: okhttp3.MultipartBody.Part?,
+        @Part upload_doc2: okhttp3.MultipartBody.Part?,
+        @Part upload_doc3: okhttp3.MultipartBody.Part?
+    ): Single<BaseResponse<DisputeSubmissionResponse>>
+
 }

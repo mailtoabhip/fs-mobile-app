@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/size_20dp"
+        android:paddingVertical="@dimen/size_12dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvUploadCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:contentDescription="@string/upload_file_button"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:strokeColor="#E5E7EB"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="@dimen/size_8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/size_20dp"
+                android:paddingVertical="@dimen/size_16dp"
+                android:minHeight="72dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="#1F2937"
+                        android:textStyle="bold"
+                        android:letterSpacing="0" />
+
+                    <TextView
+                        android:id="@+id/tvSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="#9CA3AF"
+                        android:textStyle="normal"
+                        android:layout_marginTop="4dp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvUploadButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UPLOAD"
+                    android:textSize="14sp"
+                    android:textColor="#111827"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="@dimen/size_24dp"
+                    android:paddingVertical="@dimen/size_12dp"
+                    android:background="@drawable/background_upload_button"
+                    android:layout_marginStart="@dimen/size_16dp" />
+
+                <FrameLayout
+                    android:id="@+id/flFilePreview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivThumbnail"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/file_thumbnail"
+                        android:background="#F3F4F6" />
+
+                    <ImageView
+                        android:id="@+id/ivRemove"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="top|end"
+                        android:translationX="6dp"
+                        android:translationY="-6dp"
+                        android:src="@drawable/ic_close"
+                        android:contentDescription="@string/remove_file"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        app:tint="#6B7280" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</layout>

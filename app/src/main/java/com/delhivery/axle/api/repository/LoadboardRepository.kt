@@ -6,9 +6,12 @@ import com.delhivery.axle.api.request.GstNumberRequest
 import com.delhivery.axle.api.request.PanVerificationRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.api.response.DisputeIssuesResponse
+import com.delhivery.axle.api.response.DisputeSubmissionResponse
 import com.delhivery.axle.api.response.DisputeType
 import com.delhivery.axle.api.response.FastagTransactionByTollPlaza
 import com.delhivery.axle.api.response.FastagTransactionsByTollPlazaResponse
+import com.delhivery.axle.api.response.FormConfigResponse
+import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
@@ -239,6 +242,119 @@ class LoadboardRepository @Inject constructor(
         // return loadboardService.getFastagTransactionsByTollPlaza(tollPlazaId, dateTime, limit, offset).convertResponse()
     }
 
+    /**
+     * Get dispute form configuration
+     * Currently using mock data until API is deployed
+     */
+    fun getDisputeFormConfig(disputeTypeCode: String): io.reactivex.Single<FormConfigResponse> {
+        // Mock implementation - returns data directly
+        return io.reactivex.Single.just(DisputeFormConfigMock.getMockResponse(disputeTypeCode))
+        
+        // When API is ready, replace above line with:
+        // return loadboardService.getDisputeFormConfig(disputeTypeCode).convertResponse()
+    }
+
+    /**
+     * Submit dispute with multipart form data
+     */
+    fun submitDispute(
+        txnId: String,
+        tollPlazaId: String,
+        refundAmount: Double,
+        comment: String,
+        raisedAgainst: String,
+        doc1: okhttp3.MultipartBody.Part?,
+        doc2: okhttp3.MultipartBody.Part?,
+        doc3: okhttp3.MultipartBody.Part?
+    ): io.reactivex.Single<DisputeSubmissionResponse> {
+        val txnIdBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), txnId)
+        val tollPlazaIdBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), tollPlazaId)
+        val refundAmountBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), refundAmount.toString())
+        val commentBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), comment)
+        val raisedAgainstBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), raisedAgainst)
+        
+        return loadboardService.submitDispute(
+            txnIdBody,
+            tollPlazaIdBody,
+            refundAmountBody,
+            commentBody,
+            raisedAgainstBody,
+            doc1,
+            doc2,
+            doc3
+        ).convertResponse()
+    }
+
+}
+
+/**
+ * Mock data for dispute form configuration
+ * Remove this object when the real API is deployed
+ */
+object DisputeFormConfigMock {
+    fun getMockResponse(disputeTypeCode: String): FormConfigResponse {
+        return FormConfigResponse(
+            disputeTypeCode = disputeTypeCode,
+            issueCategory = "Duplicate Transactions done at Toll Plaza",
+            fields = listOf(
+                FormField(
+                    displayOrder = 1,
+                    fieldType = "NUMBER",
+                    displayLabel = "Enter the extra deduction or amount",
+                    placeholder = "0.00",
+                    mandatory = true,
+                    minLength = 1,
+                    maxLength = 100,
+                    validationRule = "^\\d+(\\.\\d{1,2})?$ AND value > 0",
+                    validationErrorMessage = "Enter valid amount greater than 0 with up to 2 decimal places",
+                    allowedFileTypes = null,
+                    maxFileSizeMB = null
+                ),
+                FormField(
+                    displayOrder = 2,
+                    fieldType = "FILE",
+                    displayLabel = "Vehicle RC",
+                    placeholder = null,
+                    mandatory = true,
+                    minLength = null,
+                    maxLength = null,
+                    validationRule = null,
+                    validationErrorMessage = null,
+                    helpText = "Front side of Registration Cert.",
+                    allowedFileTypes = listOf("JPG", "JPEG", "PNG"),
+                    maxFileSizeMB = 2
+                ),
+                FormField(
+                    displayOrder = 3,
+                    fieldType = "FILE",
+                    displayLabel = "Proof of double debit",
+                    placeholder = null,
+                    mandatory = true,
+                    minLength = null,
+                    maxLength = null,
+                    validationRule = null,
+                    validationErrorMessage = null,
+                    helpText = "Screenshot or statement of both deductions",
+                    allowedFileTypes = listOf("JPG", "JPEG", "PNG"),
+                    maxFileSizeMB = 2
+                ),
+                FormField(
+                    displayOrder = 4,
+                    fieldType = "TEXTAREA",
+                    displayLabel = "Tell us what happened",
+                    placeholder = "E.g. The toll was charged twice within 5 minutes for the same vehicle...",
+                    mandatory = false,
+                    minLength = 20,
+                    maxLength = 500,
+                    validationRule = "MIN_LENGTH:20, MAX_LENGTH:500",
+                    validationErrorMessage = "Comment must be between 20 and 500 characters",
+                    helpText = "Minimum 20 characters required. Providing the exact time of both transactions helps in faster resolution.",
+                    allowedFileTypes = null,
+                    maxFileSizeMB = null
+                )
+            )
+        )
+    }
 }
 
 

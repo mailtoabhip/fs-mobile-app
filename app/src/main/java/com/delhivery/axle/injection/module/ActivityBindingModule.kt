@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagDisputeIssuesActivity
+import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionSelectionActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
@@ -422,6 +423,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagTransactionSelectionActivityModule::class])
   internal abstract fun bindFastagTransactionSelectionActivity(): FastagTransactionSelectionActivity
+
+  /* FASTag Dynamic Dispute Form activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagDynamicDisputeFormActivityModule::class])
+  internal abstract fun bindFastagDynamicDisputeFormActivity(): FastagDynamicDisputeFormActivity
 }
 
 
@@ -636,6 +642,9 @@ internal abstract class AbsFastagTransactionSelectionActivityModule : ActivityMo
 
 @Module
 internal abstract class AbsFastagTransactionDetailActivityModule : ActivityModule<FastagTransactionDetailActivity>()
+
+@Module
+internal abstract class AbsFastagDynamicDisputeFormActivityModule : ActivityModule<FastagDynamicDisputeFormActivity>()
 
 /**
  * Activity Binds Module
