@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -94,7 +95,15 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeContractsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ "${DemandType.Internal.type},${DemandType.Corporate.type}" }else if (userPrefs.demandType.contains(DemandType.Others.type)){"${DemandType.Internal.type},${DemandType.Corporate.type}"} else{"${DemandType.Internal.type},${DemandType.Corporate.type}"}
+    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {
+        DemandType.Intracity.type
+    } else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){
+        "${DemandType.Internal.type},${DemandType.Corporate.type}"
+    }else if (userPrefs.demandType.contains(DemandType.Others.type)){
+        DemandType.Corporate.type
+    } else{
+        ""
+    }
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       refreshData()
@@ -193,8 +202,13 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         showVehicleFilterDialog()
       }
       HomeContractsFilterExpress -> {
+          val demand_Type = userPrefs.demandType
         // Merged functionality: now handles both Internal (express) and Corporate (non-express) demand types
-        demandType = "${DemandType.Internal.type},${DemandType.Corporate.type}"
+        demandType = if (demand_Type.contains(DemandType.Internal.type)) {
+            "${DemandType.Internal.type},${DemandType.Corporate.type}"
+        } else {
+            DemandType.Corporate.type
+        }
         contractType = null
         isflexible = null
         includeFlexibleContract= null
@@ -299,7 +313,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     // Apply filter button
     bindingDialog.btnApplyFilter.setOnClickListener {
       val selectedVehicleTypes = mutableListOf<String>()
-      
+
       if (bindingDialog.checkboxOpen.isChecked) {
         selectedVehicleTypes.add("open")
       }
@@ -321,7 +335,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       bindingDialog.checkboxOpen.isChecked = false
       bindingDialog.checkboxClosed.isChecked = false
       bindingDialog.checkboxTrailer.isChecked = false
-      
+
       viewModel.vehicleStr = null
       viewModel.filterVehicleType = null
       refreshData()
