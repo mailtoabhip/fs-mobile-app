@@ -94,11 +94,24 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeContractsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    demandType= if(userPrefs.demandType.contains(DemandType.Intracity.type)&& userPrefs.contractDemand) {DemandType.Intracity.type} else if(userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand){ "${DemandType.Internal.type},${DemandType.Corporate.type}" }else if (userPrefs.demandType.contains(DemandType.Others.type)){"${DemandType.Internal.type},${DemandType.Corporate.type}"} else{"${DemandType.Internal.type},${DemandType.Corporate.type}"}
-    binding.refreshLayout.setOnRefreshListener {
-      binding.refreshLayout.isRefreshing = false
-      refreshData()
-    }
+      val demandTypes = userPrefs.demandType.split(",").map { it.trim() }
+      demandType = when {
+          // Intracity: user has Intracity demand type + contract demand enabled
+          demandTypes.contains(DemandType.Intracity.type) && userPrefs.contractDemand ->
+              DemandType.Intracity.type
+
+          // Intercity (Delhivery): user has Internal + contract demand enabled
+          demandTypes.contains(DemandType.Internal.type) && userPrefs.contractDemand ->
+              "${DemandType.Internal.type},${DemandType.Corporate.type}"
+
+          // Intercity (Non-Delhivery only): user has Others (Corporate) demand type
+          demandTypes.contains(DemandType.Others.type) ->
+              DemandType.Corporate.type
+
+          // No intercity or intracity access
+          else ->
+              ""
+      }
 
     /* setup recycler view */
     binding.rvLoads.apply {
@@ -299,7 +312,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     // Apply filter button
     bindingDialog.btnApplyFilter.setOnClickListener {
       val selectedVehicleTypes = mutableListOf<String>()
-      
+
       if (bindingDialog.checkboxOpen.isChecked) {
         selectedVehicleTypes.add("open")
       }
@@ -321,7 +334,7 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
       bindingDialog.checkboxOpen.isChecked = false
       bindingDialog.checkboxClosed.isChecked = false
       bindingDialog.checkboxTrailer.isChecked = false
-      
+
       viewModel.vehicleStr = null
       viewModel.filterVehicleType = null
       refreshData()
