@@ -152,10 +152,8 @@ class HomeContractsViewModel@Inject constructor(
           //Filtering demand_type in req body according to user's demand type
           val demandType = if (userPrefs.demandType.contains(DemandType.Internal.type)) {
               "${DemandType.Internal.type},${DemandType.Corporate.type}"
-          } else if (userPrefs.demandType.contains(DemandType.Others.type)) {
-              DemandType.Corporate.type
           } else {
-              ""
+              DemandType.Corporate.type
           }
         
         Single.zip(
