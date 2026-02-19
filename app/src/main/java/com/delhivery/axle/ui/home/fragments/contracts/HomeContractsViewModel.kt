@@ -146,24 +146,24 @@ class HomeContractsViewModel@Inject constructor(
         } else {
           _res.transactions
         }
-        
+
         // Update the response with filtered transactions
         val filteredRes = _res.copy(transactions = filteredTransactions)
           //Filtering demand_type in req body according to user's demand type
-          val demandType = if (userPrefs.demandType.contains(DemandType.Internal.type)) {
+          val demand_Type = if (userPrefs.demandType.contains(DemandType.Internal.type)) {
               "${DemandType.Internal.type},${DemandType.Corporate.type}"
           } else {
               DemandType.Corporate.type
           }
-        
+
         Single.zip(
           bidsRepository.bidsForLoads(filteredTransactions,true).subscribeOn(Schedulers.io()),
           bidsRepository.bulkLowestBidsForLoads(filteredTransactions).subscribeOn(Schedulers.io()),
           transactionsRepository.fetchContractsSummaryCount().subscribeOn(Schedulers.io()),
           // Fetch intercity contracts for count calculation
           transactionsRepository.fetchContractsTransactions(
-            0, 
-            demandType,
+            0,
+            demand_type = demand_Type,
             allActiveFetched = false,
             100,
             false,
@@ -174,8 +174,8 @@ class HomeContractsViewModel@Inject constructor(
           ).subscribeOn(Schedulers.io()),
           // Fetch intracity contracts for count calculation
           transactionsRepository.fetchContractsTransactions(
-            0, 
-            DemandType.Intracity.type, 
+            0,
+            DemandType.Intracity.type,
             allActiveFetched = false,
             100,
             true,
@@ -207,11 +207,11 @@ class HomeContractsViewModel@Inject constructor(
             }*/
 
             add(Pair(HomeContractsSearchItem(), AddUpdate))
-              
+
               // Get intercity and intracity data from the API responses
               val intercityTransactions = _tRes.fifth.transactions
               val intracityTransactions = _tRes.sixth.transactions
-              
+
               // Apply truck filter to both datasets
               val filteredIntercityTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
                 val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
@@ -221,7 +221,7 @@ class HomeContractsViewModel@Inject constructor(
               } else {
                 intercityTransactions
               }
-              
+
               val filteredIntracityTransactions = if (filterVehicleType == true && !vehicleStr.isNullOrEmpty()) {
                 val selectedVehicleTypes = vehicleStr!!.split(",").map { it.trim() }
                 intracityTransactions?.filter { transaction ->
@@ -230,13 +230,13 @@ class HomeContractsViewModel@Inject constructor(
               } else {
                 intracityTransactions
               }
-              
+
               // Calculate counts from filtered data
               // Express = LH_FTL contracts, Non-Express = FRC contracts
               val expressCount = filteredIntercityTransactions?.count { it.contractType == ContractType.LH_FTL.type }
               val nonExpressCount = filteredIntercityTransactions?.count { it.contractType == ContractType.FRC.type }
               val intraCityCount = filteredIntracityTransactions?.size
-              
+
               // Calculate total active count for legacy purposes
               var totalActive = 0
               for(item in _tRes.fourth.contractsCount.active){
