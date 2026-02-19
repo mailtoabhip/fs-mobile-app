@@ -149,6 +149,14 @@ class HomeContractsViewModel@Inject constructor(
         
         // Update the response with filtered transactions
         val filteredRes = _res.copy(transactions = filteredTransactions)
+          //Filtering demand_type in req body according to user's demand type
+          val demandType = if (userPrefs.demandType.contains(DemandType.Internal.type)) {
+              "${DemandType.Internal.type},${DemandType.Corporate.type}"
+          } else if (userPrefs.demandType.contains(DemandType.Others.type)) {
+              DemandType.Corporate.type
+          } else {
+              ""
+          }
         
         Single.zip(
           bidsRepository.bidsForLoads(filteredTransactions,true).subscribeOn(Schedulers.io()),
@@ -157,7 +165,7 @@ class HomeContractsViewModel@Inject constructor(
           // Fetch intercity contracts for count calculation
           transactionsRepository.fetchContractsTransactions(
             0, 
-            "${DemandType.Internal.type},${DemandType.Corporate.type}", 
+            demandType,
             allActiveFetched = false,
             100,
             false,
