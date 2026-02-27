@@ -53,6 +53,7 @@ import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsViewModel
 import com.delhivery.axle.ui.fastag.FastagRechargeViewModel
+import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -491,4 +492,9 @@ abstract class ViewModelFactoryModule {
   @WorkerKey(RefreshTokenWorker::class)
   abstract fun bindRefreshTokenWorker(factory: RefreshTokenWorker.Factory):
       ChildWorkerFactory
+
+    @Binds
+    @IntoMap
+    @ViewModelScope(AddMoneyDialogViewmodel::class)
+    abstract fun bindPaymentDialogViewModel(viewModel: AddMoneyDialogViewmodel): ViewModel
 }

@@ -261,6 +261,17 @@ interface LoadBoardService {
     ): Single<BaseResponse<FastagStatusResponse>>
 
 
+    @POST("/finance/users/wallet/recharge")
+    fun initiateRecharge(
+        @Body walletRechargeReq: WalletRechargeReqBody
+    ) : Single<BaseResponse<WalletRechargeResponse>>
+
+    @GET("/finance/users/wallet/recharge/{transaction_id}")
+    fun checkRechargeStatus(
+        @Path("transaction_id") transactionId: String,
+        @Query("start") startDate : String
+    ) : Single<BaseResponse<WalletRechargeStatusResponse>>
+
     /**
      * Get wallet details
      */
