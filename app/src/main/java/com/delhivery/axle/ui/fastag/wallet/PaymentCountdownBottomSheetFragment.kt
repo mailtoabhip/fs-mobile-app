@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import com.delhivery.axle.R
 import com.delhivery.axle.databinding.PaymentStatusCountdownBinding
 import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
@@ -28,6 +29,8 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         private const val ARG_RECHARGE_ID = "recharge_id"
         private const val ARG_START_DATE  = "start_date"
+        private const val COUNTDOWN_MS    = 30_000L
+        private const val INTERVAL_MS     =  1_000L
 
         fun newInstance(
             viewModelFactory: ViewModelProvider.Factory,
@@ -44,6 +47,11 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,7 +63,6 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        isCancelable = false
         rechargeId = arguments?.getString(ARG_RECHARGE_ID) ?: ""
         startDate  = arguments?.getString(ARG_START_DATE)  ?: ""
         viewModel  = ViewModelProvider(requireActivity(), viewModelFactory)
@@ -71,9 +78,12 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
 
             override fun onTick(millisUntilFinished: Long) {
                 val secondsLeft = (millisUntilFinished / 1000).toInt()
-                // format as "00:30", "00:29" ... "00:00"
-                binding.tvCountdownTitle.text =
-                    String.format("00:%02d", secondsLeft)
+                binding.tvCountdownTitle.text = String.format("00:%02d", secondsLeft)
+
+                tickCount++
+                if (tickCount % 3 == 0) {
+                    viewModel.checkTransactionStatus(rechargeId, startDate)
+                }
             }
 
             override fun onFinish() {
@@ -83,16 +93,6 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
         }.start()
-    }
-
-    override fun onTick(millisUntilFinished: Long) {
-        val secondsLeft = (millisUntilFinished / 1000).toInt()
-        binding.tvCountdownTitle.text = String.format("00:%02d", secondsLeft)
-
-        tickCount++
-        if (tickCount % 3 == 0) {
-            viewModel.checkTransactionStatus(rechargeId, startDate)
-        }
     }
 
     // ── Observe ViewModel status ──────────────────────────────────────────
@@ -123,17 +123,10 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.let { dlg ->
-            val bottomSheetDialog = dlg as BottomSheetDialog
-            val bottomSheet = bottomSheetDialog.findViewById<View>(
-                com.google.android.material.R.id.design_bottom_sheet
-            )
-            bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
-            val behavior = bottomSheetDialog.behavior
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            behavior.isDraggable = false  // prevent swipe during countdown
-            behavior.skipCollapsed = true
-        }
+        val behavior = (dialog as? BottomSheetDialog)?.behavior ?: return
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.isDraggable = false
+        behavior.skipCollapsed = true
     }
 
     override fun getTheme() = com.delhivery.axle.R.style.TransparentBottomSheetDialog

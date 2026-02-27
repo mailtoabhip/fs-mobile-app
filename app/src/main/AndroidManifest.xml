@@ -280,6 +280,8 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity android:name=".ui.payment.PaymentWebViewActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.userroutes.ManageRouteActivity"
             android:screenOrientation="portrait"/>
 

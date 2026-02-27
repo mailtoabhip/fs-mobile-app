@@ -8,6 +8,9 @@ import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class AddMoneyDialogViewmodel @Inject constructor(
@@ -26,25 +29,29 @@ class AddMoneyDialogViewmodel @Inject constructor(
     **/
     val paymentStatusLiveData = MutableLiveData<PaymentStatus?>()
 
+    var currentRechargeId: String = ""
+    var rechargeStartDate: String = ""
+
     // ── Step 1: Initiate recharge ─────────────────────────────────────────
 
     fun initiateRecharge(amount: Int, deeplink: String) {
-        val request = WalletRechargeReqBody(
-            amount      = amount,
-            deeplinkUrl = deeplink
-        )
+        val request = WalletRechargeReqBody(amount = amount, deeplinkUrl = deeplink)
         compositeDisposable += paymentRepository
             .initiateRecharge(request)
             .convertResponse()
-            .progress()          // shows/hides BaseViewModel progress spinner
+            .progress()
             .onBackground()
             .subscribe { response, error ->
                 if (!error && response != null) {
-                    rechargeInitLiveData.postValue(
-                        Pair(response.paymentLink, response.rechargeId)
+                    currentRechargeId = response.rechargeId
+                    rechargeStartDate = SimpleDateFormat(
+                        "yyyy-MM-dd'T'HH:mm:ss",
+                        Locale.getDefault()
                     )
+                        .format(Date())
+                    rechargeInitLiveData.postValue(Pair(response.paymentLink, response.rechargeId))
                 } else {
-                    error?.handle()   // posts to BaseViewModel.exceptionLiveData
+                    error?.handle()
                     rechargeInitLiveData.postValue(null)
                 }
             }

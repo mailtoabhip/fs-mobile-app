@@ -10,9 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.AddMoneyBottomSheetBinding
+import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -71,21 +73,11 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.let { dlg ->
-            val bottomSheetDialog = dlg as BottomSheetDialog
-            val bottomSheet = bottomSheetDialog.findViewById<View>(
-                com.google.android.material.R.id.design_bottom_sheet
-            )
-            bottomSheet?.let {
-                it.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                it.layoutParams = it.layoutParams
-            }
-            val behavior = bottomSheetDialog.behavior
+        val behavior = (dialog as? BottomSheetDialog)?.behavior ?: return
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
             behavior.isDraggable = true
             behavior.skipCollapsed = true
         }
-    }
 
     private fun setupDialog() {
         dialog?.window?.setLayout(
@@ -99,51 +91,58 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
     private fun setupClickListeners() {
         binding.ivClose.setOnClickListener { dismiss() }
 
+        binding.etAmount.addTextChangedListener { text ->
+            binding.btnProceedToPay.isEnabled = !text.isNullOrBlank()
+        }
+
+        binding.tvQuick500.setOnClickListener {
+            val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
+            binding.etAmount.setText((current + 500).toString())
+        }
+        binding.tvQuick1000.setOnClickListener {
+            val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
+            binding.etAmount.setText((current + 1000).toString())
+        }
+        binding.tvQuick5000.setOnClickListener {
+            val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
+            binding.etAmount.setText((current + 5000).toString())
+        }
+
         binding.btnProceedToPay.setOnClickListener {
-            val amount = binding.etAmount.text.toString().trim()
-            if (amount.isNotEmpty()) {
+            val amountText = binding.etAmount.text.toString().trim()
+            if (amountText.isNotEmpty()) {
                 viewModel.initiateRecharge(
-                    amount   = amount.toInt(),
-                    deeplink = deeplink       // the redirect URL passed to the API
+                    amount   = amountText.toInt(),
+                    deeplink = deeplink
                 )
             }
         }
     }
 
-    private fun onPaymentGatewayComplete() {
-        // Called when WebView detects the redirect URL
-        dismiss()
-        PaymentCountdownBottomSheetFragment
-            .newInstance(viewModelFactory)
-            .show(parentFragmentManager, "PaymentCountdown")
-    }
-
     private fun setupObservers() {
-        // Recharge initiated → open WebView activity
+        // Recharge initiated → open WebView
         viewModel.rechargeInitLiveData.observe(viewLifecycleOwner) { result ->
             if (result != null) {
-                val (paymentLink, rechargeId) = result
-                val intent = Intent(requireContext(), PaymentWebViewActivity::class.java).apply {
-                    putExtra(PaymentWebViewActivity.EXTRA_PAYMENT_URL, paymentLink)
-                    putExtra(PaymentWebViewActivity.EXTRA_RECHARGE_ID, rechargeId)
-                    putExtra(PaymentWebViewActivity.EXTRA_REDIRECT_URL, deeplink)
-                }
+                val (paymentLink, _) = result
+                val intent = PaymentWebViewActivity.createIntent(
+                    context     = requireContext(),
+                    paymentUrl  = paymentLink,
+                    redirectUrl = deeplink,
+                    title       = "Wallet Recharge"
+                )
                 webViewLauncher.launch(intent)
-            } else {
-                // initiation failed — error is already posted to exceptionLiveData
             }
+            // null = initiation failed, error already shown via exceptionLiveData
         }
 
-        // Loading state
         viewModel.progressLiveData.observe(viewLifecycleOwner) { isLoading ->
             binding.rlProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.btnProceedToPay.isEnabled = !isLoading
         }
 
-        // Error
         viewModel.exceptionLiveData.observe(viewLifecycleOwner) { throwable ->
             throwable?.let {
-                // show a toast or snackbar with it.message
+                // Do nothing
             }
         }
     }
@@ -151,15 +150,22 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
     private val webViewLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val rechargeId = result.data?.getStringExtra(PaymentWebViewActivity.EXTRA_RECHARGE_ID) ?: return@registerForActivityResult
-            val startDate  = result.data?.getStringExtra(PaymentWebViewActivity.EXTRA_START_DATE)  ?: return@registerForActivityResult
-            dismiss()
-            PaymentCountdownBottomSheetFragment
-                .newInstance(viewModelFactory, rechargeId, startDate)
-                .show(parentFragmentManager, "PaymentCountdown")
+        when (result.resultCode) {
+            PaymentWebViewActivity.RESULT_SUCCESS -> {
+                // Payment gateway redirect detected → start polling
+                dismiss()
+                PaymentCountdownBottomSheetFragment
+                    .newInstance(
+                        viewModelFactory = viewModelFactory,
+                        rechargeId       = viewModel.currentRechargeId,  // store this after initiate
+                        startDate        = viewModel.rechargeStartDate    // store this after initiate
+                    )
+                    .show(parentFragmentManager, "PaymentCountdown")
+            }
+            PaymentWebViewActivity.RESULT_CANCELLED -> {
+                // User closed WebView without paying — do nothing, stay on bottom sheet
+            }
         }
-        // If RESULT_CANCELED → user closed WebView without paying → do nothing, stay on bottom sheet
     }
 
     override fun onDestroyView() {
