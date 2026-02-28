@@ -45,6 +45,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagRechargeActivity
@@ -330,6 +331,11 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsVendorPolicyActivityModule::class])
   internal abstract fun bindVendorPolicyActivity(): VendorPolicyActivity
 
+  /* Payment WebView Activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPaymentWebViewActivityModule::class])
+  internal abstract fun bindPaymentWebViewActivity(): PaymentWebViewActivity
+
   /* Basic Details page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBasicDetailsActivityModule::class])
@@ -552,6 +558,9 @@ internal abstract class AbsPaymentDetailsActivityModule : ActivityModule<Payment
 
 @Module
 internal abstract class AbsVendorPolicyActivityModule : ActivityModule<VendorPolicyActivity>()
+
+@Module
+internal abstract class AbsPaymentWebViewActivityModule : ActivityModule<PaymentWebViewActivity>()
 
 @Module
 internal abstract class AbsBasicDetailsActivityModule : ActivityModule<BasicDetailsActivity>()

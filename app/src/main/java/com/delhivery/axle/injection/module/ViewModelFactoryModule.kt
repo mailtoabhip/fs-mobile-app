@@ -50,6 +50,7 @@ import com.delhivery.axle.ui.loadwallet.RechargeDetailsViewModel
 import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.payment.PaymentWebViewViewModel
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsViewModel
 import com.delhivery.axle.ui.fastag.FastagRechargeViewModel
@@ -398,6 +399,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(PaymentDetailsViewModel::class)
   abstract fun bindPaymentDetailsViewModel(viewModel: PaymentDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PaymentWebViewViewModel::class)
+  abstract fun bindPaymentWebViewViewModel(viewModel: PaymentWebViewViewModel): ViewModel
 
   @Binds
   @IntoMap
