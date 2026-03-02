@@ -35,6 +35,10 @@ import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
+import com.delhivery.axle.ui.loadwallet.LoadWalletActivity
+import com.delhivery.axle.ui.loadwallet.TransactionDetailsActivity
+import com.delhivery.axle.ui.loadwallet.RechargeDetailsActivity
+import com.delhivery.axle.ui.loadwallet.WalletFragmentBindingModule
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
@@ -369,6 +373,19 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagTransactionDetailsActivityModule::class])
   internal abstract fun bindFastagTransactionDetailsActivity(): FastagTransactionDetailsActivity
+
+  /* Load Wallet activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsLoadWalletActivityModule::class, WalletFragmentBindingModule::class])
+  internal abstract fun bindLoadWalletActivity(): LoadWalletActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTransactionDetailsActivityModule::class])
+  internal abstract fun bindTransactionDetailsActivity(): TransactionDetailsActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsRechargeDetailsActivityModule::class])
+  internal abstract fun bindRechargeDetailsActivity(): RechargeDetailsActivity
 }
 
 
@@ -556,6 +573,15 @@ internal abstract class AbsPlacementDetailsActivityModule : ActivityModule<Place
 
 @Module
 internal abstract class AbsFastagTransactionDetailsActivityModule : ActivityModule<FastagTransactionDetailsActivity>()
+
+@Module
+internal abstract class AbsLoadWalletActivityModule : ActivityModule<LoadWalletActivity>()
+
+@Module
+internal abstract class AbsTransactionDetailsActivityModule : ActivityModule<TransactionDetailsActivity>()
+
+@Module
+internal abstract class AbsRechargeDetailsActivityModule : ActivityModule<RechargeDetailsActivity>()
 
 /**
  * Activity Binds Module

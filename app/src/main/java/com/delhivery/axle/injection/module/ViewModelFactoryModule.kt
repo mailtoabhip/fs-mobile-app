@@ -44,6 +44,9 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
+import com.delhivery.axle.ui.loadwallet.LoadWalletViewModel
+import com.delhivery.axle.ui.loadwallet.TransactionDetailsViewModel
+import com.delhivery.axle.ui.loadwallet.RechargeDetailsViewModel
 import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
@@ -452,6 +455,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagTransactionDetailsViewModel::class)
   abstract fun bindFastagTransactionDetailsViewModel(viewModel: FastagTransactionDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(LoadWalletViewModel::class)
+  abstract fun bindLoadWalletViewModel(viewModel: LoadWalletViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TransactionDetailsViewModel::class)
+  abstract fun bindTransactionDetailsViewModel(viewModel: TransactionDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(RechargeDetailsViewModel::class)
+  abstract fun bindRechargeDetailsViewModel(viewModel: RechargeDetailsViewModel): ViewModel
 
   @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

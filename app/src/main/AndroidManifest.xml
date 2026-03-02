@@ -306,6 +306,15 @@
 
         <activity android:name=".ui.fastag.FastagTransactionDetailsActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.LoadWalletActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.TransactionDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.RechargeDetailsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

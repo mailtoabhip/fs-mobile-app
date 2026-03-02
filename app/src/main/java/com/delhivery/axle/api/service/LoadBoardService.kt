@@ -1,10 +1,6 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.*
-import com.delhivery.axle.api.response.BaseMessageResponse
-import com.delhivery.axle.api.response.BaseResponse
-import com.delhivery.axle.api.response.GstNumberData
-import com.delhivery.axle.api.response.PanVerificationResponse
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailItemData
@@ -247,5 +243,55 @@ interface LoadBoardService {
     fun submitFastagLead(
         @Body request: FastagLeadRequest
     ): Single<BaseResponse<FastagLeadResponse>>
+
+    /**
+     * Get wallet details
+     */
+    @GET("/finance/users/wallet/")
+    fun fetchWalletDetails(): Single<BaseResponse<UserWalletResponse>>
+
+    /**
+     * Create wallet
+     */
+    @POST("/finance/users/wallet/")
+    fun createWallet(@Body body: JsonObject = JsonObject()): Single<BaseResponse<UserWalletResponse>>
+
+    /**
+     * Get wallet transaction listing
+     */
+    @GET("/finance/users/wallet/transactions/list")
+    fun fetchWalletTransactionList(
+        @Query("start") start: String,
+        @Query("end") end: String,
+        @Query("wallet_id") walletId: String
+    ): Single<BaseResponse<WalletTransactionListResponse>>
+
+    /**
+     * Get single transaction status
+     */
+    @GET("/finance/users/wallet/transactions")
+    fun fetchTransactionStatus(
+        @Query("start") start: String,
+        @Query("txn_id") txnId: String
+    ): Single<BaseResponse<WalletTransactionStatusResponse>>
+
+    /**
+     * Get wallet recharge transactions
+     */
+    @GET("/finance/users/wallet/recharge/transactions")
+    fun fetchWalletRechargeList(
+        @Query("wallet_id") walletId: String,
+        @Query("start") start: String,
+        @Query("end") end: String
+    ): Single<BaseResponse<WalletRechargeListResponse>>
+
+    /**
+     * Get single recharge status
+     */
+    @GET("/finance/users/wallet/recharge/{recharge_id}")
+    fun fetchRechargeStatus(
+        @Path("recharge_id") rechargeId: String,
+        @Query("start") start: String
+    ): Single<BaseResponse<WalletRechargeStatusResponse>>
 
 }

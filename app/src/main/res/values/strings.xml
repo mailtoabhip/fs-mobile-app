@@ -523,6 +523,7 @@
   <string name="label_account">Account</string>
   <string name="label_kyc_details">KYC Details</string>
   <string name="label_profile">Profile Details</string>
+  <string name="label_delhivery_wallet">Delhivery Wallet</string>
   <string name="label_routes">My Routes</string>
   <string name="label_earnings">My Earnings</string>
   <string name="label_team">My Team Members</string>
@@ -975,5 +976,44 @@
     <string name="submit_request">Submit request</string>
     <string name="share_a_few_details_and_our_team_will_help_you_get_fastags_quickly">Share a few details and our team will help you get FASTags quickly.</string>
     <string name="operating_location">Operating location</string>
+
+    <!-- Load Wallet -->
+    <string name="label_load_wallet_balance">WALLET BALANCE</string>
+    <string name="label_add_money">Add Money</string>
+    <string name="label_wallet_history">Wallet History</string>
+    <string name="label_refresh_status">Refresh Status</string>
+
+    <!-- Wallet Filter -->
+    <string name="label_filter_title">Filter</string>
+    <string name="label_filter_type">Type</string>
+    <string name="label_filter_credit">Credit</string>
+    <string name="label_filter_debit">Debit</string>
+    <string name="label_filter_date_range">Date Range</string>
+    <string name="label_filter_today">Today</string>
+    <string name="label_filter_yesterday">Yesterday</string>
+    <string name="label_filter_this_week">This Week</string>
+    <string name="label_filter_last_week">Last Week</string>
+    <string name="label_filter_this_month">This Month</string>
+    <string name="label_filter_last_month">Last Month</string>
+    <string name="label_filter_last_90_days">Last 90 Days</string>
+    <string name="label_filter_custom_range">Custom Range</string>
+    <string name="label_filter_apply">Apply</string>
+    <string name="label_empty_transactions_title">Oops!</string>
+    <string name="label_empty_transactions_message">You haven\'t done any transactions.</string>
+    <string name="label_empty_recharges_message">You haven\'t done any recharges.</string>
+    <string name="label_wallet_creating_title">Please wait!</string>
+    <string name="label_wallet_creating_message">We are creating a wallet for you</string>
+    <string name="label_txn_details_title">Transaction details</string>
+    <string name="label_recharge_details_title">Money Added</string>
+    <string name="label_txn_reason">Transaction Reason</string>
+    <string name="label_txn_date">Transaction Date</string>
+    <string name="label_recharge_date">Recharge Date</string>
+    <string name="label_bank_reference_no">Bank Reference no</string>
+    <string name="label_added_via">Added via</string>
+    <string name="label_txn_success_message">The amount has been successfully deducted for your order.</string>
+    <string name="label_txn_pending_message">Your payment is being processed. The amount will reflect in your wallet shortly.</string>
+    <string name="label_txn_failed_message">If money was deducted, it will be refunded by your bank in 3 to 4 days.</string>
+    <string name="label_txn_credit_message">The amount has been successfully credited to your wallet.</string>
+    <string name="please_add_money_to_user_delhivery_wallet">Please add money to user Delhivery Wallet</string>
 
 </resources>
