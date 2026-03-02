@@ -281,7 +281,11 @@ data class HomeBidsRequestItemData(
    * Check if marketplace payment mode should be displayed
    */
   fun shouldShowMarketplacePaymentMode(): Boolean {
-    return !marketplacePaymentType.isNullOrEmpty() || vendorAdvancePercent != null
+      // Show payment mode when we have explicit data OR when it's a marketplace load (default to "To Pay")
+      if (!marketplacePaymentType.isNullOrEmpty() || vendorAdvancePercent != null) {
+          return true
+      }
+      return isMarketplaceLoad()
   }
 
   /**

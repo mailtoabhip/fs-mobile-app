@@ -21,6 +21,84 @@ import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
 import com.delhivery.axle.ui.bids.BidType
 
+
+/**
+ * Dynamically adjusts text size of multiple TextViews to fit within available width
+ * Measures actual text content and scales down if needed so nothing gets truncated
+ *
+ * IMPORTANT: This function now handles unmeasured views by forcing measurement if needed
+ */
+fun adjustTextSizeToFit(
+  views: List<TextView>,
+  availableWidth: Int,
+  defaultTextSize: Float,
+  minTextSize: Float,
+  spacingBetweenViews: Int,
+  drawablePadding: Int
+) {
+  if (views.isEmpty() || availableWidth <= 0) return
+
+  // IMPORTANT: Force measure if views haven't been measured yet
+  views.forEach { view ->
+    if (view.width == 0) {
+      view.measure(
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+      )
+    }
+  }
+
+  // First, set all views to default text size
+  views.forEach { it.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, defaultTextSize) }
+
+  // Create a Paint object and copy properties from first view
+  val paint = android.text.TextPaint().apply {
+    isAntiAlias = true
+    textSize = defaultTextSize.spToPx(views[0].context)
+  }
+
+  // Measure total width needed with default text size
+  var totalWidthNeeded = 0f
+
+  views.forEachIndexed { index, textView ->
+    // Copy typeface for accurate measurement
+    paint.typeface = textView.typeface
+    paint.textSize = defaultTextSize.spToPx(textView.context)
+
+    // Measure text width
+    val text = textView.text?.toString() ?: ""
+    val textWidth = paint.measureText(text)
+    
+    // Account for drawable (icon) width if present
+    val drawableWidth = textView.compoundDrawables[0]?.intrinsicWidth ?: 0
+    val drawableSpace = if (drawableWidth > 0) drawableWidth + drawablePadding else 0
+    
+    // Account for padding
+    val paddingSpace = textView.paddingStart + textView.paddingEnd
+    
+    totalWidthNeeded += textWidth + drawableSpace + paddingSpace
+    
+    // Add spacing between views (except for last view)
+    if (index < views.size - 1) {
+      totalWidthNeeded += spacingBetweenViews
+    }
+  }
+  
+  // If total width exceeds available width, scale down text size proportionally
+  if (totalWidthNeeded > availableWidth) {
+    val scaleFactor = availableWidth / totalWidthNeeded
+    val newTextSize = (defaultTextSize * scaleFactor).coerceAtLeast(minTextSize)
+    
+    // Apply the scaled text size to all views
+    views.forEach { textView ->
+      textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newTextSize)
+    }
+  }
+  
+  // Request layout update
+  views.forEach { it.requestLayout() }
+}
+
 /**
  * Base Home bids RV adapter view holder
  */
@@ -275,7 +353,7 @@ class HomeBidsRequestItemVH(binding: CardCommonBidsV2Binding) :
           binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
-            R.drawable.ic_arrow_right,
+            0,
             0
           )
           binding.containerError.placeBidButton.isClickable = true
@@ -636,7 +714,7 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
           binding.containerError.placeBidButton.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
           binding.containerError.placeBidTv.text = "Revise To Win"
           binding.containerError.placeBidTv.setTextColor(ContextCompat.getColor(context, android.R.color.white))
-          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_right, 0)
+          binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
           binding.containerError.placeBidButton.isClickable = true
           binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ReviseBid, item, _interface)
         } else {
@@ -759,6 +837,74 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
     val fromCity = binding.fromCity
     val pincodeState = binding.pincodeState
 
+        if (fromCity != null && pincodeState != null && availableWidth > 0) {
+            // IMPORTANT: Force measure if views haven't been measured yet
+            if (fromCity.width == 0) {
+                fromCity.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                )
+            }
+            if (pincodeState.width == 0) {
+                pincodeState.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                )
+            }
+
+            // First, set both to their default sizes
+            fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16f)
+            pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
+
+            // Create Paint objects for accurate measurement
+            val fromCityPaint = android.text.TextPaint().apply {
+                isAntiAlias = true
+                typeface = fromCity.typeface
+                textSize = 16f.spToPx(context)
+            }
+
+            val pincodePaint = android.text.TextPaint().apply {
+                isAntiAlias = true
+                typeface = pincodeState.typeface
+                textSize = 14f.spToPx(context)
+            }
+
+            // Measure total width needed with default sizes
+            var totalWidthNeeded = 0f
+
+            // Measure fromCity
+            val fromCityText = fromCity.text?.toString() ?: ""
+            val fromCityWidth = fromCityPaint.measureText(fromCityText)
+            val fromCityPadding = fromCity.paddingStart + fromCity.paddingEnd
+            totalWidthNeeded += fromCityWidth + fromCityPadding
+
+            // Add spacing between views
+            totalWidthNeeded += spacingPx
+
+            // Measure pincodeState
+            val pincodeText = pincodeState.text?.toString() ?: ""
+            val pincodeWidth = pincodePaint.measureText(pincodeText)
+            val pincodePadding = pincodeState.paddingStart + pincodeState.paddingEnd
+            totalWidthNeeded += pincodeWidth + pincodePadding
+
+            // If total width exceeds available width, scale down proportionally
+            // while maintaining the 16:14 ratio
+            if (totalWidthNeeded > availableWidth) {
+                val scaleFactor = availableWidth / totalWidthNeeded
+
+                // Scale both maintaining their ratio (16sp:14sp)
+                val newFromCitySize = (16f * scaleFactor).coerceAtLeast(12f)
+                val newPincodeSize = (14f * scaleFactor).coerceAtLeast(10f)
+
+                fromCity.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newFromCitySize)
+                pincodeState.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newPincodeSize)
+            }
+
+            // Request layout update
+            fromCity.requestLayout()
+            pincodeState.requestLayout()
+        }
+    }
 //    if (fromCity != null && pincodeState != null && availableWidth > 0) {
 //      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
 //      // 16sp for fromCity, 14sp for pincodeState
@@ -772,7 +918,6 @@ class HomeBidsIntracityRequestItemVH(binding: CardCommonIntracityBidsBinding) :
 //        drawablePadding = drawablePaddingPx
 //      )
 //    }
-  }
 
   /**
    * Apply dynamic text sizing to truck info and distance/payment views
@@ -985,7 +1130,7 @@ class HomeBidsMarketplaceRequestItemVH(binding: CardBidsDelhiveryMarketplaceBind
             ContextCompat.getColor(context, android.R.color.white)
           )
           binding.containerError.placeBidTv.setCompoundDrawablesWithIntrinsicBounds(
-            0, 0, R.drawable.ic_arrow_right, 0
+            0, 0, 0, 0
           )
           binding.containerError.placeBidButton.isClickable = true
           binding.containerError.placeBidButton.clickToAction(

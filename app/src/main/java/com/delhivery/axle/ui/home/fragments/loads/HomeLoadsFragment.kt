@@ -842,7 +842,7 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
         demandType = userPrefs.demandType
             .split(",")
             .filterNot {
-                it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type
+                it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type || it == DemandType.Intracity_OPS.type
             }
             .joinToString { "," }
         refreshData()

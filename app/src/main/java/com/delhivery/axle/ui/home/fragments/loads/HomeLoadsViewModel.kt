@@ -285,13 +285,15 @@ class HomeLoadsViewModel @Inject constructor(
                         .split(",")
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
+                        .filterNot { it == DemandType.Intracity.type
+                                || it == DemandType.Intracity_OPS.type
+                        }
                         .joinToString(","),
                     vehicleTypes,
                     excludeTruckTypes,
                     filterVehicleType,
                     true, splitViewCount = true,
-                    searchAfter = searchAfter
+                    searchAfter = null
                 ),
                 marketplaceSingle,
                 BiFunction { recommTrans, marketplaceTrans ->
@@ -413,7 +415,8 @@ class HomeLoadsViewModel @Inject constructor(
                     .split(",")
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
-                    .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
+                    .filterNot { it == DemandType.Intracity.type
+                            || it == DemandType.Intracity_OPS.type}
                     .joinToString(","),
                 vehicleTypes,
                 excludeTruckTypes,
@@ -470,14 +473,15 @@ class HomeLoadsViewModel @Inject constructor(
                                 .split(",")
                                 .map { it.trim() }
                                 .filter { it.isNotEmpty() }
-                                .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
+                                .filterNot { it == DemandType.Intracity.type
+                                        || it == DemandType.Intracity_OPS.type}
                                 .joinToString(","),
                             vehicleTypes,
                             excludeTruckTypes,
                             filterVehicleType,
                             true,
                             splitViewCount = true,
-                            searchAfter = searchAfter
+                            searchAfter = null
                         ).subscribeOn(Schedulers.io()),
                         marketplaceSingle,
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
@@ -983,7 +987,8 @@ class HomeLoadsViewModel @Inject constructor(
                         .split(",")
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
+                        .filterNot { it == DemandType.Intracity.type
+                                || it == DemandType.Intracity_OPS.type}
                         .joinToString(","),
                     vehicleTypes, null, filterVehicleType, true, 
                     splitViewCount = true, searchAfter = null

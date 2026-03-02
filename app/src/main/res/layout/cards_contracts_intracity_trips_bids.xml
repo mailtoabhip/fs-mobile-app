@@ -113,7 +113,7 @@
                     android:layout_width="wrap_content"
                     android:paddingEnd="@dimen/size_11dp"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:layout_marginTop="@dimen/size_12dp"
                     android:drawablePadding="@dimen/size_4dp"
                     android:text="@{request.getTruckTypeAndNo()}"
@@ -128,7 +128,7 @@
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="~1000km/month"
                     android:text="@{request.intracityKms()}"
@@ -136,7 +136,7 @@
                     android:layout_marginStart="@dimen/size_8dp"
                     android:drawableStart="@drawable/route"
                     android:drawableTint="@color/text_grey_v3"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
 

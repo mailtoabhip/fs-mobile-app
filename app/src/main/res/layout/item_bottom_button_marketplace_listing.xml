@@ -56,7 +56,6 @@
                 android:layout_height="wrap_content"
                 android:text="Place Bid"
                 android:textColor="#FFFFFF"
-                android:drawableEnd="@drawable/ic_arrow_right"
                 android:drawablePadding="@dimen/size_14dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
