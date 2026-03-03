@@ -52,6 +52,7 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsViewModel
+import com.delhivery.axle.ui.fastag.FastagRechargeViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -455,6 +456,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagTransactionDetailsViewModel::class)
   abstract fun bindFastagTransactionDetailsViewModel(viewModel: FastagTransactionDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagRechargeViewModel::class)
+  abstract fun bindFastagRechargeViewModel(viewModel: FastagRechargeViewModel): ViewModel
 
   @Binds
   @IntoMap

@@ -245,6 +245,23 @@ interface LoadBoardService {
     ): Single<BaseResponse<FastagLeadResponse>>
 
     /**
+     * Recharge FASTag from wallet
+     */
+    @POST("/finance/users/wallet/fastag/recharge")
+    fun rechargeFastag(
+        @Body request: FastagRechargeRequest
+    ): Single<BaseResponse<FastagRechargeResponse>>
+
+    /**
+     * Get FASTag status
+     */
+    @GET("/finance/fastag/status")
+    fun fetchFastagStatus(
+        @Query("tag_id") tagId: String
+    ): Single<BaseResponse<FastagStatusResponse>>
+
+
+    /**
      * Get wallet details
      */
     @GET("/finance/users/wallet/")

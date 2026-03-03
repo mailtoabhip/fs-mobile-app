@@ -1718,4 +1718,13 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         startActivity(intent)
     }
 
+    override fun openFastagRecharge(data: HomeTrucksRequestItemData) {
+        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagRechargeActivity::class.java).apply {
+            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.TAG_ID, data.fastagTagId)
+            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
+            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
+        }
+        startActivity(intent)
+    }
+
 }

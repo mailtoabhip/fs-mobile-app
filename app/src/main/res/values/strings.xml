@@ -1016,4 +1016,14 @@
     <string name="label_txn_credit_message">The amount has been successfully credited to your wallet.</string>
     <string name="please_add_money_to_user_delhivery_wallet">Please add money to user Delhivery Wallet</string>
 
+    <!-- FASTag Recharge -->
+    <string name="recharge_fastag">Recharge FASTag</string>
+    <string name="add_amount">Add Amount</string>
+    <string name="delhivery_wallet">Delhivery Wallet</string>
+    <string name="add_money">ADD MONEY</string>
+    <string name="payment_summary">Payment Summary</string>
+    <string name="recharge_amount">Recharge Amount</string>
+    <string name="payable_amount">Payable Amount</string>
+    <string name="slide_to_pay">Slide to recharge</string>
+
 </resources>

@@ -173,6 +173,19 @@ class LoadboardRepository @Inject constructor(
      */
     fun submitFastagLead(fastagLeadRequest: FastagLeadRequest) = loadboardService.submitFastagLead(fastagLeadRequest).convertResponse()
 
+    /**
+     * Recharge FASTag from wallet
+     */
+    fun rechargeFastag(fastagRechargeRequest: FastagRechargeRequest) = loadboardService.rechargeFastag(fastagRechargeRequest).convertResponse()
+
+    /**
+     * Fetch FASTag status
+     */
+    fun fetchFastagStatus(tagId: String) = loadboardService.fetchFastagStatus(tagId).convertResponse()
+
+    /**
+     * Fetch wallet details (real API call — uncomment when ready)
+     */
     fun fetchWalletDetails() =
         loadboardService.fetchWalletDetails().convertResponse()
 

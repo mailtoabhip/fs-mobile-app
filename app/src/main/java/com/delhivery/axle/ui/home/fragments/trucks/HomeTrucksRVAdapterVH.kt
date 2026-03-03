@@ -104,6 +104,11 @@ class HomeTrucksRequestItemVH(binding: ViewHomeTrucksRequestItemBinding) :
             _interface.openFastagDetails(item.data)
         }
         
+        // FASTag Recharge button click listener
+        binding.btnFastagRecharge.setOnClickListener {
+            _interface.openFastagRecharge(item.data)
+        }
+        
         // Buy FASTag button click listener
         binding.btnBuyFastagCard.clickToAction(HomeTrucksRequestAction_BuyFastag, item, _interface)
     }

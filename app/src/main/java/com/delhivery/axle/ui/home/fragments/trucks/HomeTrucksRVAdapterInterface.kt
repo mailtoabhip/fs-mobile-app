@@ -50,4 +50,9 @@ interface HomeTrucksRVAdapterInterface : BaseDataRVAdapter.ItemClickListener<Bas
       * Open FASTag transaction details
       */
      fun openFastagDetails(data: HomeTrucksRequestItemData)
+     
+     /**
+      * Open FASTag recharge screen
+      */
+     fun openFastagRecharge(data: HomeTrucksRequestItemData)
 }

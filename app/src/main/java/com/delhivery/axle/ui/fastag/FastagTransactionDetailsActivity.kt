@@ -160,7 +160,12 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         }
 
         binding.btnRecharge.setOnClickListener {
-            Toast.makeText(this, "Recharge functionality coming soon", Toast.LENGTH_SHORT).show()
+            val intent = android.content.Intent(this, FastagRechargeActivity::class.java).apply {
+                putExtra(FastagRechargeActivity.TAG_ID, getIntent().getStringExtra(TAG_ID))
+                putExtra(FastagRechargeActivity.VEHICLE_NUMBER, getIntent().getStringExtra(VEHICLE_NUMBER))
+                putExtra(FastagRechargeActivity.FASTAG_BALANCE, getIntent().getStringExtra(BALANCE) ?: "0")
+            }
+            startActivity(intent)
         }
 
         binding.btnDownload.setOnClickListener {
