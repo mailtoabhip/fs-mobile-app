@@ -199,20 +199,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             fragmentAction(NavigateHomeFragmentAction(LoadsTruckFragment))
           }
 
-//            binding.profile.setOnClickListener {
-//                AddMoneyDialogFragment.newInstance(
-//                    redirectUrl = "https://www.delhivery.com",
-//                    viewModelFactory = viewModelFactory,
-//                    onPaymentResult = {}
-//                ).show(supportFragmentManager, "AddMoney")
-//            }
-
           binding.profile.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_PROFILE
             )
-              navigationUtils.navigate(MyProfileActivity::class.java, false) //TODO MyProfileActivity::class.java . Test : startActivity(businessVerificationIntent(this))
+              navigationUtils.navigate(MyProfileActivity::class.java, false)
           }
         }
       }

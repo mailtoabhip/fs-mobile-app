@@ -94,28 +94,29 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
         binding.ivClose.setOnClickListener { dismiss() }
 
         binding.etAmount.addTextChangedListener { text ->
-            binding.btnProceedToPay.setEnabledState(!text.isNullOrBlank())
+            binding.btnProceedToPay.setEnabledState(validateAmount(text?.toString()))
         }
 
-        binding.tvQuick500.setOnClickListener {
-            addQuickAmount(500)
-        }
-        binding.tvQuick1000.setOnClickListener {
-            addQuickAmount(1000)
-        }
-        binding.tvQuick5000.setOnClickListener {
-            addQuickAmount(5000)
-        }
+        binding.tvQuick500.setOnClickListener  { addQuickAmount(500)  }
+        binding.tvQuick1000.setOnClickListener { addQuickAmount(1000) }
+        binding.tvQuick5000.setOnClickListener { addQuickAmount(5000) }
 
         binding.btnProceedToPay.setOnClickListener {
-            val amountText = binding.etAmount.text.toString().trim()
-            if (amountText.isNotEmpty()) {
-                viewModel.callWalletRecharge(
-                    amount   = amountText.toInt(),
-//                    deeplink = deeplink
-                )
-            }
+            val amount = binding.etAmount.text.toString().trim().toIntOrNull() ?: return@setOnClickListener
+            viewModel.callWalletRecharge(amount = amount)
         }
+    }
+
+    /**
+     * Returns true if the amount is valid (₹1–₹100000).
+     * Shows/hides the error label as a side-effect.
+     */
+    private fun validateAmount(text: String?): Boolean {
+        val amount = text?.trim()?.toIntOrNull()
+        val isValid = amount != null && amount in 1..100_000
+        val showError = !text.isNullOrBlank() && !isValid  // only show error when user has typed something
+        binding.tvAmountError.visibility = if (showError) View.VISIBLE else View.GONE
+        return isValid
     }
 
     private fun setupObservers() {
@@ -137,7 +138,9 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.progressLiveData.observe(viewLifecycleOwner) { isLoading ->
             binding.rlProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.btnProceedToPay.setEnabledState(!isLoading)
+            // When loading finishes, re-validate instead of blindly enabling
+            val canPay = !isLoading && validateAmount(binding.etAmount.text?.toString())
+            binding.btnProceedToPay.setEnabledState(canPay)
         }
 
         viewModel.exceptionLiveData.observe(viewLifecycleOwner) { throwable ->
@@ -149,7 +152,8 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
     private fun addQuickAmount(delta: Int) {
         val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
-        binding.etAmount.setText((current + delta).toString())
+        val newAmount = (current + delta).coerceAtMost(100_000)
+        binding.etAmount.setText(newAmount.toString())
         binding.etAmount.setSelection(binding.etAmount.text?.length ?: 0)
     }
 

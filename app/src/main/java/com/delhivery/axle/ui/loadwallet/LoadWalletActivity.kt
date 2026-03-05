@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityLoadWalletBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.chip.Chip
@@ -104,8 +105,11 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
 
         binding.btnAddMoney.setOnClickListener {
             if (viewModel.walletExistsLiveData.value == true) {
-                WalletCreatingBottomSheet.newInstance()
-                    .show(supportFragmentManager, "WalletCreatingBottomSheet")
+                AddMoneyDialogFragment.newInstance(
+                    redirectUrl = "https://www.delhivery.com",
+                    viewModelFactory = viewModelFactory,
+                    onPaymentResult = {}
+                ).show(supportFragmentManager, "AddMoney")
             } else {
                 // Show "creating wallet" bottom sheet and call create API
                 walletCreatingBottomSheet = WalletCreatingBottomSheet.newInstance()
