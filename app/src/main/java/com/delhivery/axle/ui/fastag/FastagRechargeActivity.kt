@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagRechargeBinding
@@ -99,8 +98,14 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                val amount = s?.toString()?.toIntOrNull() ?: 0
+                val raw = s?.toString() ?: ""
+                val amount = raw.trimStart('0').toIntOrNull() ?: 0
                 selectedAmount = amount
+
+                val hasLeadingZero = raw.length > 1 && raw.startsWith("0")
+                val isInvalid = amount > 100000 || hasLeadingZero
+                binding.tvAmountError.visibility = if (isInvalid) View.VISIBLE else View.GONE
+
                 updateChipSelection(amount)
                 updateAmountDisplay(amount)
                 updateSliderState()
@@ -134,8 +139,11 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     }
 
     private fun updateSliderState() {
+        val raw = binding.etAmount.text.toString()
+        val hasLeadingZero = raw.length > 1 && raw.startsWith("0")
         val hasInsufficientBalance = selectedAmount > 0 && selectedAmount > walletBalance
-        val enabled = selectedAmount > 0 && !hasInsufficientBalance
+        val isInvalidAmount = selectedAmount > 100000 || hasLeadingZero
+        val enabled = selectedAmount > 0 && !hasInsufficientBalance && !isInvalidAmount
         val container = binding.slideToPayContainer
         val thumb = binding.ivSlideThumb
         val label = binding.tvSlideLabel
@@ -206,7 +214,9 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         val container = binding.slideToPayContainer
 
         thumb.setOnTouchListener { view, event ->
-            if (selectedAmount <= 0 || selectedAmount > walletBalance) return@setOnTouchListener false
+            val raw = binding.etAmount.text.toString()
+            val hasLeadingZero = raw.length > 1 && raw.startsWith("0")
+            if (selectedAmount <= 0 || selectedAmount > walletBalance || selectedAmount > 100000 || hasLeadingZero) return@setOnTouchListener false
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {

@@ -273,10 +273,11 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
   /**
    * Define whether internet is required by activity or not
+   * Returns true by default — override to disable for specific activities
    *
    * @return [Boolean] based on flag, active no internet snackbar will be shown
    */
-  protected abstract fun requireConnection(): Boolean
+  protected open fun requireConnection(): Boolean = true
 
   /**
    * Connected to internet callback
