@@ -2,16 +2,22 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.BankTransferRequest
 import com.delhivery.axle.api.request.CreateFuelCardRequest
+import com.delhivery.axle.api.request.WalletRechargeReqBody
+import com.delhivery.axle.api.request.WalletRechargeRequest
 import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.api.response.BankTransferResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.WalletDataResponse
+import com.delhivery.axle.api.response.WalletRechargeResp
+import com.delhivery.axle.api.response.WalletRechargeResponse
 import com.delhivery.axle.api.response.WalletTransactionsResponse
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -51,5 +57,17 @@ interface WalletService {
    */
   @POST("/api/v1/wallet/me/transactions/")
   fun createFuelCard(@Body payload: CreateFuelCardRequest): Single<BaseResponse<BankTransferResponse>>
+
+    /**
+     * TODO: Remove later
+     * Recharge wallet
+     */
+    @POST("/api/v1/wallet/{wallet_id}/recharge")
+    fun rechargeWallet(
+        @Path("wallet_id") walletId: String,
+        @Header("Authorization") authorization: String,
+        @Header("X-API-REQID") apiReqId: String,
+        @Body payload: WalletRechargeRequest
+    ): Single<WalletRechargeResp>
 
 }

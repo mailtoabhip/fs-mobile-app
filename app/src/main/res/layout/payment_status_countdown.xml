@@ -25,6 +25,7 @@
                 android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:indeterminateTint="@color/route_heading"
                 android:layout_marginTop="@dimen/size_56dp" />
 
             <!-- ── Status Title ── -->
@@ -49,10 +50,10 @@
                 android:layout_marginBottom="@dimen/size_56dp"
                 android:gravity="center"
                 android:lineSpacingMultiplier="1.4"
-                android:text="Hang on, we’re confirming your payment status. Please don't close this screen"
+                android:text="Hang on, we’re confirming your payment status."
                 android:textColor="@color/background_dark_grey"
                 android:textSize="@dimen/text_14sp"
-                tools:text="Hang on, we’re confirming your payment status. Please don't close this screen" />
+                tools:text="Hang on, we’re confirming your payment status." />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

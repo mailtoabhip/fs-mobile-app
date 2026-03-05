@@ -21,10 +21,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.annotation.ColorRes
+import androidx.appcompat.widget.AppCompatButton
 import com.delhivery.axle.R
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
-
+import android.content.res.ColorStateList
 /**
  * Edit Text Clear text and request focus
  */
@@ -193,4 +194,15 @@ fun Context.dpToPx(context: Context, dp: Float): Float {
   return TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics
   )
+}
+
+fun AppCompatButton.setEnabledState(enabled: Boolean) {
+    isEnabled = enabled
+    if (enabled) {
+        backgroundTintList = null
+        setTextColor(Color.WHITE)
+    } else {
+        backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F1F5F9")) // greyed bg
+        setTextColor(Color.parseColor("#94A3B8"))
+    }
 }

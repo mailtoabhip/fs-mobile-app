@@ -36,8 +36,9 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/status_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/size_64dp"
+                android:layout_height="@dimen/size_64dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/fs_payment_success"/>
 
             <!-- ── Status Title ── -->
@@ -49,7 +50,7 @@
                 android:gravity="center"
                 android:text="Payment Successful!"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_20sp"
+                android:textSize="@dimen/text_24sp"
                 android:textStyle="bold"
                 tools:text="Payment Successful!" />
 
@@ -59,11 +60,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="48dp"
                 android:gravity="center"
                 android:lineSpacingMultiplier="1.4"
                 android:text="Your money has been added to your Delhivery wallet."
                 android:textColor="@color/background_dark_grey"
-                android:textSize="@dimen/text_14sp"
+                android:textSize="@dimen/text_16sp"
                 tools:text="Your money has been added to your Delhivery wallet." />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

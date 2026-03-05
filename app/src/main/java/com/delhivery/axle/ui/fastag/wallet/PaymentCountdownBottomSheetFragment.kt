@@ -29,7 +29,7 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         private const val ARG_RECHARGE_ID = "recharge_id"
         private const val ARG_START_DATE  = "start_date"
-        private const val COUNTDOWN_MS    = 30_000L
+        private const val COUNTDOWN_MS    = 31_000L
         private const val INTERVAL_MS     =  1_000L
 
         fun newInstance(
@@ -65,7 +65,7 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         rechargeId = arguments?.getString(ARG_RECHARGE_ID) ?: ""
         startDate  = arguments?.getString(ARG_START_DATE)  ?: ""
-        viewModel  = ViewModelProvider(requireActivity(), viewModelFactory)
+        viewModel  = ViewModelProvider(this, viewModelFactory)
             .get(AddMoneyDialogViewmodel::class.java)
         startCountdown()
         observeStatus()
@@ -102,6 +102,7 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
             if (status != null && status != PaymentStatus.PENDING && !hasResolved) {
                 // SUCCESS or FAILURE arrived before the timer ran out
                 resolveWith(status)
+                viewModel.paymentStatusLiveData.value = null
             }
         }
     }
@@ -112,7 +113,7 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
         hasResolved = true
         countDownTimer?.cancel()
         dismiss()
-        // Show the final status full-screen dialog
+        // Show the final status bottom sheet
         PaymentStatusDialogFragment.show(
             fragmentManager = parentFragmentManager,
             initialStatus   = status

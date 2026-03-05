@@ -19,6 +19,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:background="@color/white"
+            android:visibility="gone"
             android:layout_width="match_parent"
             bind:shadow="@{ @dimen/size_2dp }"
             android:layout_height="@dimen/height_toolbar">
@@ -54,7 +55,7 @@
                 android:layout_height="4dp"
                 android:max="100"
                 android:progress="0"
-                android:progressTint="@color/colorPrimary"
+                android:progressTint="@color/colorAccent"
                 android:visibility="visible" />
 
         </FrameLayout>

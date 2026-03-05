@@ -63,7 +63,7 @@ enum class UrlConfig(
   WalletService(
       "https://orion-wallet-api.delhivery.com",
       "https://orion-wallet-api-dev.delhivery.com",
-      "https://orion-wallet-api-uat.delhivery.com"
+      "https://consignee-app-stage.pntrzz.com" // TODO Enable later: "https://orion-wallet-api-uat.delhivery.com"
   ),
   ImageService(
     "https://orion-utility-api.delhivery.com/signer/",

@@ -1,7 +1,5 @@
 package com.delhivery.axle.ui.fastag.wallet
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.AddMoneyBottomSheetBinding
 import com.delhivery.axle.ui.payment.PaymentWebViewActivity
+import com.delhivery.axle.utils.extensions.setEnabledState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -31,13 +30,13 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_DEEPLINK = "deeplink"
 
         fun newInstance(
-            deeplink: String,
+            redirectUrl: String,
             viewModelFactory: ViewModelProvider.Factory,
             onPaymentResult: (success: Boolean) -> Unit
         ): AddMoneyDialogFragment {
             val fragment = AddMoneyDialogFragment()
             fragment.arguments = Bundle().apply {
-                putString(ARG_DEEPLINK, deeplink)
+                putString(ARG_DEEPLINK, redirectUrl)
             }
             fragment.viewModelFactory = viewModelFactory
             fragment.onPaymentResult = onPaymentResult
@@ -62,7 +61,9 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
         deeplink = arguments?.getString(ARG_DEEPLINK) ?: ""
 
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(AddMoneyDialogViewmodel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AddMoneyDialogViewmodel::class.java)
+
+        binding.btnProceedToPay.setEnabledState(false)
 
         setupDialog()
         setupClickListeners()
@@ -85,6 +86,7 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog?.window?.setGravity(Gravity.BOTTOM)
     }
 
@@ -92,28 +94,25 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
         binding.ivClose.setOnClickListener { dismiss() }
 
         binding.etAmount.addTextChangedListener { text ->
-            binding.btnProceedToPay.isEnabled = !text.isNullOrBlank()
+            binding.btnProceedToPay.setEnabledState(!text.isNullOrBlank())
         }
 
         binding.tvQuick500.setOnClickListener {
-            val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
-            binding.etAmount.setText((current + 500).toString())
+            addQuickAmount(500)
         }
         binding.tvQuick1000.setOnClickListener {
-            val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
-            binding.etAmount.setText((current + 1000).toString())
+            addQuickAmount(1000)
         }
         binding.tvQuick5000.setOnClickListener {
-            val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
-            binding.etAmount.setText((current + 5000).toString())
+            addQuickAmount(5000)
         }
 
         binding.btnProceedToPay.setOnClickListener {
             val amountText = binding.etAmount.text.toString().trim()
             if (amountText.isNotEmpty()) {
-                viewModel.initiateRecharge(
+                viewModel.callWalletRecharge(
                     amount   = amountText.toInt(),
-                    deeplink = deeplink
+//                    deeplink = deeplink
                 )
             }
         }
@@ -123,6 +122,7 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
         // Recharge initiated → open WebView
         viewModel.rechargeInitLiveData.observe(viewLifecycleOwner) { result ->
             if (result != null) {
+                viewModel.rechargeInitLiveData.value = null
                 val (paymentLink, _) = result
                 val intent = PaymentWebViewActivity.createIntent(
                     context     = requireContext(),
@@ -137,7 +137,7 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.progressLiveData.observe(viewLifecycleOwner) { isLoading ->
             binding.rlProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.btnProceedToPay.isEnabled = !isLoading
+            binding.btnProceedToPay.setEnabledState(!isLoading)
         }
 
         viewModel.exceptionLiveData.observe(viewLifecycleOwner) { throwable ->
@@ -145,6 +145,12 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
                 // Do nothing
             }
         }
+    }
+
+    private fun addQuickAmount(delta: Int) {
+        val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
+        binding.etAmount.setText((current + delta).toString())
+        binding.etAmount.setSelection(binding.etAmount.text?.length ?: 0)
     }
 
     private val webViewLauncher = registerForActivityResult(
