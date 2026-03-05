@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagRechargeBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.utils.StringUtils
 
 class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, FastagRechargeViewModel>() {
@@ -66,7 +67,11 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         binding.ivBack.setOnClickListener { finish() }
 
         binding.tvAddMoney.setOnClickListener {
-            Toast.makeText(this, "Add money feature coming soon", Toast.LENGTH_SHORT).show()
+            AddMoneyDialogFragment.newInstance(
+                redirectUrl = "https://www.delhivery.com",
+                viewModelFactory = viewModelFactory,
+                onPaymentResult = {}
+            ).show(supportFragmentManager, "AddMoney")
         }
 
         updateAmountDisplay(selectedAmount)
