@@ -356,7 +356,57 @@
             android:layout_height="wrap_content"
             />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_settled_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:textSize="10sp"
+            android:textColor="@color/sub_heading_black"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/icon_settled"
+            app:layout_constraintTop_toBottomOf="@+id/tvSettled"
+            tools:text="Payment made at 12-Dec-2025 12:30 PM"
+            tools:visibility="visible"/>
+
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="0dp"
+        android:text="Refresh"
+        android:background="@drawable/bg_all_round_corner_solid_black"
+        app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:backgroundTint="@color/black"
+        android:textAllCaps="false"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:layout_height="@dimen/size_40dp"
+        android:id="@+id/button_abc"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="0dp"
+        android:text="Download Invoice"
+        app:layout_constraintTop_toBottomOf="@id/button_abc"
+        android:background="@drawable/bg_all_round_corner_solid_black"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:backgroundTint="@color/black"
+        android:textAllCaps="false"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:layout_height="@dimen/size_40dp"
+
+        android:id="@+id/button_download_invoice"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

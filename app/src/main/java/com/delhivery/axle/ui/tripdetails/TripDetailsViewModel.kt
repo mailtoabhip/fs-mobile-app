@@ -72,6 +72,7 @@ class TripDetailsViewModel @Inject constructor(
   private val omcRepository: OMCRepository,
   private val transactionsRepository: TransactionsRepository,
   private val loadboardRepository: LoadboardRepository,
+  private val invoiceRepository: InvoiceRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -86,6 +87,7 @@ class TripDetailsViewModel @Inject constructor(
   var paymentSummaryLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
   var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
+  var invoiceDownloadLiveData = MutableLiveData<String>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -1067,5 +1069,20 @@ class TripDetailsViewModel @Inject constructor(
             }
   }
 
+  /**
+   * Fetch invoice download URL from backend
+   */
+  fun fetchInvoiceDownloadUrl() {
+    compositeDisposable += invoiceRepository.downloadInvoiceDocument(transactionId)
+      .onBackground()
+      .progress()
+      .subscribe { result, error ->
+        if (!error && result != null && result.url.isNotEmpty()) {
+          invoiceDownloadLiveData.postValue(result.url)
+        } else {
+          invoiceDownloadLiveData.postValue(null)
+        }
+      }
+  }
 
 }

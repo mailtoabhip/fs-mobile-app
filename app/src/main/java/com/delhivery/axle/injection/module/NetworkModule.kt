@@ -384,6 +384,18 @@ class NetworkModule {
   )
 
   /**
+   * Provide InvoiceService for invoice download
+   */
+  @Provides
+  @Singleton
+  fun provideInvoiceService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.InvoiceService).create(
+    InvoiceService::class.java
+  )
+
+  /**
    * Provide DocumentUtils for secure document upload/download
    */
   @Provides
