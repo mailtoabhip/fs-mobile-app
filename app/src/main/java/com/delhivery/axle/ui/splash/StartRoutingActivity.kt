@@ -35,6 +35,7 @@ import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
@@ -434,6 +435,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
         Auth -> AuthenticationActivity::class
         Home -> HomeActivity::class
         AccountDetails -> AccountDetailsActivity::class
+          SplashPostState.BasicDetails -> BasicDetailsActivity::class
       }.let {
         val bundle = Bundle()
         if (!TextUtils.isEmpty(notificationId)) {

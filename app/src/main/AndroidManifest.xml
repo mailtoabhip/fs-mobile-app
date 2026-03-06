@@ -321,6 +321,10 @@
 
         <activity android:name=".ui.loadwallet.RechargeDetailsActivity"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.profile.PlacementsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

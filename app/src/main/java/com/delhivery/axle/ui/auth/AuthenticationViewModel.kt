@@ -126,7 +126,12 @@ class AuthenticationViewModel @Inject constructor(
               }  else {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
-                LoadRequest
+                // Check if basic details are filled
+                if (isBasicDetailsPending()) {
+                  BasicDetails
+                } else {
+                  LoadRequest
+                }
               }
             }
           } else {
@@ -172,7 +177,19 @@ class AuthenticationViewModel @Inject constructor(
           } else {
             userPrefs.hasLoggedIn = true
             userPrefs.lastLoginTime = Date().time
-            LoadRequest
+              val isAccountDetailsMissing = (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty())
+              val isSupplier = _res.third.supplierDetails?.isLoadBoardSupplier == true
+              val isClient = _res.third.clientDetails?.isLoadBoardClient == true
+            // Check if basic details are filled
+            if ((isBasicDetailsPending() || isAccountDetailsMissing)   && isSupplier && isClient) {
+                if(isAccountDetailsMissing){
+                    userPrefs.hasLoggedIn = false
+                    AccountDetails
+                }else
+                    BasicDetails
+            } else {
+              LoadRequest
+            }
           }
         } else {
           errorLiveData.postValue(Pair(InvalidPassword, ""))
@@ -194,5 +211,15 @@ class AuthenticationViewModel @Inject constructor(
 
   fun logout() {
     userPrefs.clearPrefs()
+  }
+
+  /**
+   * Check if basic details (vendor type, route type, lanes) are pending
+   */
+  private fun isBasicDetailsPending(): Boolean {
+    return userPrefs.getLanesPreference().isNullOrEmpty() &&
+           userPrefs.truckTypes.isNullOrEmpty() &&
+           userPrefs.onboardingStatus == "details_pending" &&
+           (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty())
   }
 }

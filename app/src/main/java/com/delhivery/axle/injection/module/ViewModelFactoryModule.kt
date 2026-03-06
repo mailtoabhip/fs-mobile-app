@@ -28,6 +28,7 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel
+import com.delhivery.axle.ui.home.fragments.home.HomeFragmentViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
@@ -154,6 +155,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomeBidsViewModel::class)
   abstract fun bindHomeBidsViewModel(homeBidsViewModel: HomeBidsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeFragmentViewModel::class)
+  abstract fun bindHomeFragmentViewModel(homeFragmentViewModel: HomeFragmentViewModel): ViewModel
 
   @Binds
   @IntoMap

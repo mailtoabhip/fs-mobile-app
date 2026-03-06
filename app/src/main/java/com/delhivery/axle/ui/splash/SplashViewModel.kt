@@ -21,6 +21,7 @@ class SplashViewModel @Inject constructor(
    * Post splash state
    */
   fun postState() = when {
+    authenticationRepository.authStatus() && userPrefs.hasLoggedIn && getOldUser() && userPrefs.getLanesPreference().isNullOrEmpty() && userPrefs.truckTypes.isNullOrEmpty() && userPrefs.onboardingStatus == "details_pending" && (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty()) -> BasicDetails
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn && getOldUser() && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
     else -> Auth

@@ -2,11 +2,9 @@ package com.delhivery.axle.ui.home.fragments
 
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
+import com.delhivery.axle.ui.home.fragments.home.HomeFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsDelayedFragment
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsExpectedFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomeNewPodFragment
 import com.delhivery.axle.ui.home.fragments.pod.PendingPodTabFragment
@@ -42,15 +40,6 @@ abstract class HomeFragmentsBindingModule {
   internal abstract fun provideLoadsTruckFragment(): HomeLoadsTruckFragment
 
   @ContributesAndroidInjector
-  internal abstract fun providePlacementsFragment(): HomePlacementsFragment
-
-  @ContributesAndroidInjector
-  internal abstract fun providePlacementsDelayedFragment(): HomePlacementsDelayedFragment
-
-  @ContributesAndroidInjector
-  internal abstract fun providePlacementsExpectedFragment(): HomePlacementsExpectedFragment
-
-  @ContributesAndroidInjector
   internal abstract fun provideHomeNewPodFragment(): HomeNewPodFragment
 
   @ContributesAndroidInjector
@@ -58,5 +47,8 @@ abstract class HomeFragmentsBindingModule {
 
   @ContributesAndroidInjector
   internal abstract fun provideSubmittedPodTabFragment(): SubmittedPodTabFragment
+
+  @ContributesAndroidInjector
+  internal abstract fun provideHomeFragment(): HomeFragment
 
 }

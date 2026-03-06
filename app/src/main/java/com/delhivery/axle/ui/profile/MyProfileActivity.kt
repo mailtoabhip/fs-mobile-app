@@ -341,6 +341,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             userPrefs.setPreviousScreen(this.javaClass.name)
             startActivity(consolidatedPageIntent(this))
         }
+        binding.placementsLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            navigationUtils.navigate(PlacementsActivity::class.java)
+        }
 
         // Download functionality removed - new API only supports upload
         // If download is needed, use listDocuments() to get file URLs

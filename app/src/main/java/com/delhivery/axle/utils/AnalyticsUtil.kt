@@ -300,6 +300,7 @@ const val EVENT_NAVIGATION_MY_TRIPS = "navigation_my_trips"
 const val EVENT_NAVIGATION_MY_PROFILE = "navigation_my_profile"
 const val EVENT_NAVIGATION_PODS = "navigation_pods"
 const val EVENT_NAVIGATION_HOME = "navigation_home"
+const val EVENT_NAVIGATION_LOADS = "navigation_loads"
 const val EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK = "search_results_order_card_click"
 const val EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID =
   "page_load_order_details_without_existing_bid"

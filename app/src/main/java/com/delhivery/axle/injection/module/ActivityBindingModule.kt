@@ -51,6 +51,8 @@ import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagRechargeActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
+import com.delhivery.axle.ui.profile.PlacementsActivity
+import com.delhivery.axle.ui.profile.PlacementsFragmentsBindingModule
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
@@ -398,6 +400,10 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagRechargeActivityModule::class])
   internal abstract fun bindFastagRechargeActivity(): FastagRechargeActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
+  internal abstract fun bindPlacementsActivity(): PlacementsActivity
 }
 
 
@@ -600,6 +606,9 @@ internal abstract class AbsRechargeDetailsActivityModule : ActivityModule<Rechar
 
 @Module
 internal abstract class AbsFastagRechargeActivityModule : ActivityModule<FastagRechargeActivity>()
+
+@Module
+internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()
 
 /**
  * Activity Binds Module

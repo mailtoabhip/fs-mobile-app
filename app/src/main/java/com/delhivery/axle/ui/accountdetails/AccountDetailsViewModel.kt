@@ -79,6 +79,9 @@ class AccountDetailsViewModel @Inject constructor(
                 .progress()
                 .subscribe { _res, error ->
                     state = if (!error && _res.first.first) {
+                        val isSupplier = _res.third.supplierDetails?.isLoadBoardSupplier == true
+                        val isClient = _res.third.clientDetails?.isLoadBoardClient == true
+                        val isAccountDetailsMissing = (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty())
                         if(_res.third.supplierDetails?.isLoadBoardSupplier == true || _res.third.clientDetails?.isLoadBoardClient == true){
                             if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                                 userPrefs.hasLoggedIn = false
@@ -86,7 +89,16 @@ class AccountDetailsViewModel @Inject constructor(
                             } else{
                                 userPrefs.hasLoggedIn = true
                                 userPrefs.lastLoginTime = Date().time
-                                LoadRequest
+                                // Check if basic details are filled, account details missing case is nearly impossible here, added just for safe side
+                                if (isSupplier && isClient && (isBasicDetailsPending() || isAccountDetailsMissing)) {
+                                    if(isAccountDetailsMissing){
+                                        userPrefs.hasLoggedIn = false
+                                        AccountDetails
+                                    }else
+                                        BasicDetails
+                                } else {
+                                    LoadRequest
+                                }
                             }
                         }else{
                             if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
@@ -98,7 +110,12 @@ class AccountDetailsViewModel @Inject constructor(
                             } else{
                                 userPrefs.hasLoggedIn = true
                                 userPrefs.lastLoginTime = Date().time
-                                LoadRequest
+                                // Check if basic details are filled
+                                if (isSupplier && isClient && isBasicDetailsPending()) {
+                                    BasicDetails
+                                } else {
+                                    LoadRequest
+                                }
                             }
                         }
                     } else {
@@ -109,5 +126,15 @@ class AccountDetailsViewModel @Inject constructor(
                         OTP
                     }
                 }
+    }
+
+    /**
+     * Check if basic details (vendor type, route type, lanes) are pending
+     */
+    private fun isBasicDetailsPending(): Boolean {
+        return userPrefs.getLanesPreference().isNullOrEmpty() &&
+               userPrefs.truckTypes.isNullOrEmpty() &&
+               userPrefs.onboardingStatus == "details_pending" &&
+               (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty())
     }
 }

@@ -70,7 +70,7 @@ import javax.inject.Inject
 class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, HomeLoadsViewModel>(),BidSuccessInterface,
     HomeLoadsRVAdapterInterface, TitleProvider {
 
-  var _title: String = "Home"
+  var _title: String = "Loads"
 
   override val title: CharSequence
     get() = _title
