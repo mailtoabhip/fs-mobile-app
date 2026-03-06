@@ -46,10 +46,9 @@ class AddMoneyDialogViewmodel @Inject constructor(
                 if (!error && response != null) {
                     currentRechargeId = response.rechargeId
                     rechargeStartDate = SimpleDateFormat(
-                        "yyyy-MM-dd'T'HH:mm:ss",
+                        "yyyy-MM-dd HH:mm:ss.S",
                         Locale.getDefault()
-                    )
-                        .format(Date())
+                    ).format(Date())
                     rechargeInitLiveData.postValue(Pair(response.paymentLink, response.rechargeId))
                 } else {
                     error?.handle()

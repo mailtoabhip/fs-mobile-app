@@ -12,5 +12,7 @@ class AddMoneyRepository @Inject constructor(
         loadBoardService.initiateRecharge(walletRechargeReqBody)
 
     fun checkTransactionStatus(transactionId: String, startDate : String) =
-        loadBoardService.checkRechargeStatus(transactionId, startDate)
+        loadBoardService.checkRechargeStatus(
+            transactionId, startDate
+        )
 }

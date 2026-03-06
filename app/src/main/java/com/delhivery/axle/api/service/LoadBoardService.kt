@@ -266,9 +266,9 @@ interface LoadBoardService {
         @Body walletRechargeReq: WalletRechargeReqBody
     ) : Single<BaseResponse<WalletRechargeResponse>>
 
-    @GET("/finance/users/wallet/recharge/{transaction_id}")
+    @GET("/finance/users/wallet/recharge")
     fun checkRechargeStatus(
-        @Path("transaction_id") transactionId: String,
+        @Query("recharge_id") rechargeId: String,
         @Query("start") startDate : String
     ) : Single<BaseResponse<WalletRechargeStatusResponse>>
 
