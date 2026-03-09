@@ -153,8 +153,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         downloadFileFromUrl(downloadUrl, currentInvoiceFile!!)
       } else {
         uiUtils.hideProgress()
-        uiUtils.showSnackbar("Failed to get invoice URL")
         resetDownloadContext()
+      }
+    })
+
+    viewModel.invoiceErrorLiveData.observe(this, Observer { errorMessage ->
+      if (errorMessage != null) {
+        uiUtils.showSnackbar(errorMessage)
       }
     })
 

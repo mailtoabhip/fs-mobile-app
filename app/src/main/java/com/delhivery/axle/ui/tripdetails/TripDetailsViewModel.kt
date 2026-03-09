@@ -88,6 +88,7 @@ class TripDetailsViewModel @Inject constructor(
   var warehouseLiveData = MutableLiveData<String>()
   var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
   var invoiceDownloadLiveData = MutableLiveData<String>()
+  var invoiceErrorLiveData = MutableLiveData<String>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -1080,6 +1081,37 @@ class TripDetailsViewModel @Inject constructor(
         if (!error && result != null && result.url.isNotEmpty()) {
           invoiceDownloadLiveData.postValue(result.url)
         } else {
+          // Handle specific error codes and extract error message from response
+          val errorMessage = when {
+            error is retrofit2.adapter.rxjava2.HttpException -> {
+              try {
+                val errorBody = error.response()?.errorBody()?.string()
+                val errorJson = com.google.gson.JsonParser.parseString(errorBody).asJsonObject
+                
+                // Extract message from error response
+                val errorObj = errorJson.getAsJsonObject("error")
+                val message = errorObj?.get("message")?.asString ?: "Unknown error"
+                
+                when (error.code()) {
+                  400 -> message // Show actual backend message
+                  401 -> "Unauthorized. Please login again"
+                  500 -> message // Show actual backend message
+                  else -> "Failed to get invoice URL"
+                }
+              } catch (e: Exception) {
+                // Fallback if parsing fails
+                when (error.code()) {
+                  400 -> "Invoice not available for this trip"
+                  401 -> "Unauthorized. Please login again"
+                  404 -> "Invoice not found"
+                  500 -> "Server error. Please try again later"
+                  else -> "Failed to get invoice URL"
+                }
+              }
+            }
+            else -> "Failed to get invoice URL"
+          }
+          invoiceErrorLiveData.postValue(errorMessage)
           invoiceDownloadLiveData.postValue(null)
         }
       }
