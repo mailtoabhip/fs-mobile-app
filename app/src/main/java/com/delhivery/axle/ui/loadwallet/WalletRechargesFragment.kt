@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentWalletRechargesBinding
 import com.delhivery.axle.ui.base.BaseFragment
@@ -30,22 +31,53 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val layoutManager = LinearLayoutManager(context)
         binding.rvWalletRecharges.apply {
-            layoutManager = LinearLayoutManager(context)
+            this.layoutManager = layoutManager
             adapter = this@WalletRechargesFragment.adapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy <= 0) return
+                    val lastVisible = layoutManager.findLastVisibleItemPosition()
+                    val total = layoutManager.itemCount
+                    if (lastVisible >= total - 3) {
+                        viewModel.loadNextRechargePage()
+                    }
+                }
+            })
         }
 
         viewModel.rechargesLiveData.observe(viewLifecycleOwner, Observer {
             it?.let { items ->
                 adapter.operation(items)
-                binding.emptyState.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
-                binding.rvWalletRecharges.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+                val isInitialLoading = viewModel.rechargeInitialLoadingLiveData.value == true
+                if (!isInitialLoading) {
+                    binding.emptyState.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
+                    binding.rvWalletRecharges.visibility = if (adapter.itemCount == 0) View.GONE else View.VISIBLE
+                }
+            }
+        })
+
+        viewModel.rechargeLoadingLiveData.observe(viewLifecycleOwner, Observer { isLoading ->
+            val isInitialLoading = viewModel.rechargeInitialLoadingLiveData.value == true
+            binding.progressLoadMore.visibility = if (isLoading == true && !isInitialLoading) View.VISIBLE else View.GONE
+        })
+
+        viewModel.rechargeInitialLoadingLiveData.observe(viewLifecycleOwner, Observer { isLoading ->
+            binding.progressInitialLoad.visibility = if (isLoading == true) View.VISIBLE else View.GONE
+            if (isLoading == true) {
+                binding.progressLoadMore.visibility = View.GONE
+                binding.rvWalletRecharges.visibility = View.GONE
+                binding.emptyState.visibility = View.GONE
             }
         })
 
         viewModel.errorLiveData.observe(viewLifecycleOwner, Observer {
-            binding.emptyState.visibility = View.VISIBLE
-            binding.rvWalletRecharges.visibility = View.GONE
+            val isInitialLoading = viewModel.rechargeInitialLoadingLiveData.value == true
+            if (!isInitialLoading) {
+                binding.emptyState.visibility = View.VISIBLE
+                binding.rvWalletRecharges.visibility = View.GONE
+            }
         })
 
         viewModel.refreshRechargeStatusLiveData.observe(viewLifecycleOwner, Observer { result ->

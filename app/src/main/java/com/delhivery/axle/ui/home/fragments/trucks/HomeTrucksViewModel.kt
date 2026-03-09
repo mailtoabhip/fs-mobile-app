@@ -37,6 +37,7 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
+import io.reactivex.disposables.SerialDisposable
 import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -67,6 +68,8 @@ class HomeTrucksViewModel @Inject constructor(
 
     var searchPrefix = ""
     var searchFlag = false
+
+    private val inventoryDisposable = SerialDisposable()
 
     //Live data variables
 
@@ -177,7 +180,7 @@ class HomeTrucksViewModel @Inject constructor(
 
         dataLoadingLiveData.postValue(true)
 
-        compositeDisposable += loadboardRepository.getInventories(jsonObject)
+        inventoryDisposable.set(loadboardRepository.getInventories(jsonObject)
             .onBackground()
             .subscribe{ _res, error ->
                 if(!error && _res != null) {
@@ -252,7 +255,7 @@ class HomeTrucksViewModel @Inject constructor(
                 }
 
                 dataLoadingLiveData.postValue(false)
-            }
+            })
 
     }
 
@@ -434,6 +437,11 @@ class HomeTrucksViewModel @Inject constructor(
         return bodyTypeFilter.isNotEmpty() || 
                availabilityFilter.isNotEmpty() || 
                sizeFilter.isNotNullOrEmpty()
+    }
+
+    override fun onCleared() {
+        inventoryDisposable.dispose()
+        super.onCleared()
     }
 
     /**

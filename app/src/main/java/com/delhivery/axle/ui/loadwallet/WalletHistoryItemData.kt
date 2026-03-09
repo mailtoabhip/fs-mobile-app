@@ -20,7 +20,8 @@ data class WalletHistoryItemData(
     @SerializedName("transaction_reference_number") val txnNumber: String,
     @SerializedName("transaction_type") val type: String,
     @SerializedName("bank_reference_no") val bankReferenceNo: String? = null,
-    @SerializedName("added_via") val addedVia: String? = null
+    @SerializedName("added_via") val addedVia: String? = null,
+    @SerializedName("txn_details") val txnDetails: String? = null
 ) : BaseKeyTypeModel<String>(), Serializable {
 
     override fun key() = txnNumber + dateTime
@@ -80,7 +81,7 @@ data class WalletHistoryItemData(
     fun statusColorRes(): Int = when (status.lowercase()) {
         "success" -> R.color.txn_success
         "pending" -> R.color.pending_status
-        "failure" -> R.color.status_lost_bid
+        "failure", "failed" -> R.color.status_lost_bid
         else -> R.color.heading_black
     }
 

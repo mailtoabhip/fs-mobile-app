@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.loadwallet
 
 import androidx.lifecycle.MutableLiveData
-import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.response.UserWalletResponse
@@ -35,15 +34,41 @@ class LoadWalletViewModel @Inject constructor(
         MutableLiveData<List<Pair<BaseLoadWalletRVAdapterItem<*>, DataRVAdapterOperationType>>>()
     var errorLiveData = MutableLiveData<Boolean>()
 
+    // Pagination state for wallet transactions
+    private val pageSize = 10
+    private var currentOffset = 0
+    private var isFetchingTransactions = false
+    private var hasMoreTransactions = true
+    private var currentTransactionFilter = WalletFilter()
+
+    /** Emits true when a page is loading, false when done */
+    var transactionLoadingLiveData = MutableLiveData<Boolean>()
+
+    /** Emits true only during the initial/reset load (not pagination) */
+    var transactionInitialLoadingLiveData = MutableLiveData<Boolean>(false)
+
+    // Pagination state for recharges
+    private var rechargeOffset = 0
+    private var isFetchingRecharges = false
+    private var hasMoreRecharges = true
+    private var currentRechargeFilter = WalletFilter()
+
+    /** Emits true when a recharge page is loading, false when done */
+    var rechargeLoadingLiveData = MutableLiveData<Boolean>()
+
+    /** Emits true only during the initial/reset recharge load (not pagination) */
+    var rechargeInitialLoadingLiveData = MutableLiveData<Boolean>(false)
+
     /** true = wallet exists, false = wallet not found */
     var walletExistsLiveData = MutableLiveData<Boolean>()
     var walletDetailsLiveData = MutableLiveData<UserWalletResponse?>()
     var walletErrorLiveData = MutableLiveData<String?>()
 
     private fun walletId(): String =
-        "wallet::wallet::${JWT(userPrefs.jwtToken!!).claims["sub"]?.asString()!!.substring(11)}"
+        walletDetailsLiveData.value?.walletId ?: ""
 
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault())
+    private val dateOnlyFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     /**
      * Calculate start and end dates from filter
@@ -128,15 +153,36 @@ class LoadWalletViewModel @Inject constructor(
     }
 
     /**
-     * Fetch wallet data and transaction listing
+     * Fetch wallet data and transaction listing — resets pagination and loads first page
      */
     fun fetchWalletData(filter: WalletFilter = WalletFilter()) {
+        currentOffset = 0
+        hasMoreTransactions = true
+        currentTransactionFilter = filter
+        loadTransactionPage(filter, reset = true)
+    }
+
+    /**
+     * Load the next page of transactions (call when user scrolls to bottom)
+     */
+    fun loadNextTransactionPage() {
+        if (isFetchingTransactions || !hasMoreTransactions) return
+        loadTransactionPage(currentTransactionFilter, reset = false)
+    }
+
+    private fun loadTransactionPage(filter: WalletFilter, reset: Boolean) {
         val (start, end) = getDateRange(filter)
         val wId = walletId()
+        isFetchingTransactions = true
+        transactionLoadingLiveData.postValue(true)
+        if (reset) transactionInitialLoadingLiveData.postValue(true)
 
-        compositeDisposable += loadboardRepository.fetchWalletTransactionList(start, end, wId)
+        compositeDisposable += loadboardRepository.fetchWalletTransactionList(start, end, "6e026500-121b-11f1-b7e8-9af2b81aeab2", pageSize, currentOffset)
             .onBackground()
             .subscribe { result, error ->
+                isFetchingTransactions = false
+                transactionLoadingLiveData.postValue(false)
+                if (reset) transactionInitialLoadingLiveData.postValue(false)
                 if (!error) {
                     val items = result.transactions
                         .map { txn ->
@@ -146,10 +192,14 @@ class LoadWalletViewModel @Inject constructor(
                                 dateTime = txn.createdAt,
                                 status = txn.status,
                                 txnNumber = txn.transactionId,
-                                type = txn.transactionType
+                                type = txn.transactionType,
+                                txnDetails = txn.txnDetails
                             )
                         }
                         .filter { applyTypeFilter(it, filter) }
+
+                    hasMoreTransactions = result.transactions.size >= pageSize
+                    currentOffset += result.transactions.size
 
                     mutableListOf<Pair<BaseLoadWalletRVAdapterItem<*>, DataRVAdapterOperationType>>()
                         .apply {
@@ -158,7 +208,10 @@ class LoadWalletViewModel @Inject constructor(
                             }
                         }.let { historyLiveData.postValue(it) }
                 } else {
-                    errorLiveData.postValue(true)
+                    if (reset) {
+                        transactionInitialLoadingLiveData.postValue(false)
+                        errorLiveData.postValue(true)
+                    }
                 }
             }
     }
@@ -192,15 +245,35 @@ class LoadWalletViewModel @Inject constructor(
     }
 
     /**
-     * Fetch wallet recharges using the recharge API
+     * Fetch wallet recharges — resets pagination and loads first page
      */
     fun fetchRecharges(filter: WalletFilter = WalletFilter()) {
-        val (start, end) = getDateRange(filter)
-        val wId = walletId()
+        rechargeOffset = 0
+        hasMoreRecharges = true
+        currentRechargeFilter = filter
+        loadRechargePage(filter, reset = true)
+    }
 
-        compositeDisposable += loadboardRepository.fetchWalletRechargeList(wId, start, end)
+    /**
+     * Load the next page of recharges (call when user scrolls to bottom)
+     */
+    fun loadNextRechargePage() {
+        if (isFetchingRecharges || !hasMoreRecharges) return
+        loadRechargePage(currentRechargeFilter, reset = false)
+    }
+
+    private fun loadRechargePage(filter: WalletFilter, reset: Boolean) {
+        val (start, end) = getDateRange(filter)
+        isFetchingRecharges = true
+        rechargeLoadingLiveData.postValue(true)
+        if (reset) rechargeInitialLoadingLiveData.postValue(true)
+
+        compositeDisposable += loadboardRepository.fetchWalletRechargeList("6e026500-121b-11f1-b7e8-9af2b81aeab2", start, end, pageSize, rechargeOffset)
             .onBackground()
             .subscribe { result, error ->
+                isFetchingRecharges = false
+                rechargeLoadingLiveData.postValue(false)
+                if (reset) rechargeInitialLoadingLiveData.postValue(false)
                 if (!error) {
                     val items = result.recharges
                         .map { recharge ->
@@ -216,6 +289,9 @@ class LoadWalletViewModel @Inject constructor(
                             )
                         }
 
+                    hasMoreRecharges = result.recharges.size >= pageSize
+                    rechargeOffset += result.recharges.size
+
                     mutableListOf<Pair<BaseLoadWalletRVAdapterItem<*>, DataRVAdapterOperationType>>()
                         .apply {
                             for (item in items) {
@@ -223,7 +299,10 @@ class LoadWalletViewModel @Inject constructor(
                             }
                         }.let { rechargesLiveData.postValue(it) }
                 } else {
-                    errorLiveData.postValue(true)
+                    if (reset) {
+                        rechargeInitialLoadingLiveData.postValue(false)
+                        errorLiveData.postValue(true)
+                    }
                 }
             }
     }

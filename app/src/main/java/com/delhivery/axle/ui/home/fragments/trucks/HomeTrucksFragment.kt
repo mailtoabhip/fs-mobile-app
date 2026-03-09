@@ -92,6 +92,8 @@ import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import android.os.Handler
+import android.os.Looper
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -132,6 +134,8 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     var visible = false
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
+    private val searchHandler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -219,21 +223,23 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     before: Int,
                     count: Int
             ) {
-                if (s != null && s.toString() != "") {
-                    viewModel.searchPrefix = s.trim().toString()
-                    if (viewModel.searchPrefix.length >= 2) {
-                        adapter.clearItems()
-                        viewModel.userTrucksData.postValue(null)
-                        viewModel.searchFlag = true
-                        viewModel.getAllInventories(search = true)
+                searchRunnable?.let { searchHandler.removeCallbacks(it) }
+                val query = s?.trim()?.toString() ?: ""
+                searchRunnable = Runnable {
+                    if (query.isEmpty()) {
+                        viewModel.searchPrefix = ""
+                        viewModel.searchFlag = false
+                        adapter.resetStaticData()
+                        viewModel.getAllInventories(search = false)
+                    } else {
+                        viewModel.searchPrefix = query
+                        if (query.length >= 2) {
+                            adapter.resetStaticData()
+                            viewModel.searchFlag = true
+                            viewModel.getAllInventories(search = true)
+                        }
                     }
-
-                }else{
-                    adapter.clearItems()
-                    viewModel.userTrucksData.postValue(null)
-                    viewModel.searchFlag = false
-                    viewModel.getAllInventories(search = false)
-                }
+                }.also { searchHandler.postDelayed(it, 300) }
             }
         })
 
@@ -513,6 +519,11 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             fragmentSetupTrace?.stop()
             isFirstResume = false
         }
+    }
+
+    override fun onDestroyView() {
+        searchRunnable?.let { searchHandler.removeCallbacks(it) }
+        super.onDestroyView()
     }
 
     private fun refreshData(filter: Boolean = false) {

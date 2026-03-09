@@ -3,9 +3,9 @@
     <item android:drawable="@drawable/bg_truck_card"/>
     <item android:drawable="@drawable/open_body"
         android:bottom="@dimen/size_36dp"
-        android:left="@dimen/size_20dp"
-        android:right="@dimen/size_20dp"
-        android:top="@dimen/size_28dp"/>
+        android:left="@dimen/size_28dp"
+        android:right="@dimen/size_24dp"
+        android:top="@dimen/size_32dp"/>
     <item android:drawable="@drawable/selector_radio_button"
         android:gravity="top|left"
         android:top="@dimen/size_10dp"

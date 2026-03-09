@@ -92,7 +92,7 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
                 hideBalanceShimmer()
                 walletCreatingBottomSheet?.dismiss()
                 walletCreatingBottomSheet = null
-                uiUtils.showSnackbar(error)
+                dialogUtils.showErrorDialog(error, 3L)
                 viewModel.walletErrorLiveData.postValue(null)
             }
         }
@@ -126,7 +126,18 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
         binding.tabLayout.setupWithViewPager(binding.viewpager)
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                updateActiveFilterChips(tab?.position ?: 0)
+                val position = tab?.position ?: 0
+                updateActiveFilterChips(position)
+                when (position) {
+                    0 -> {
+                        val fragment = pagerAdapter.getItem(0) as? WalletTransactionsFragment
+                        fragment?.applyFilter(currentFilter)
+                    }
+                    1 -> {
+                        val fragment = pagerAdapter.getItem(1) as? WalletRechargesFragment
+                        fragment?.refreshData()
+                    }
+                }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -265,10 +276,15 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
 
     private fun hideBalanceShimmer() {
         binding.balanceShimmer.visibility = View.GONE
-        // Restore label alignment to balance_container
+        // Restore label alignment based on whether balance_container is visible
         val labelParams = binding.labelWalletBalance.layoutParams as android.widget.RelativeLayout.LayoutParams
-        labelParams.removeRule(android.widget.RelativeLayout.CENTER_HORIZONTAL)
-        labelParams.addRule(android.widget.RelativeLayout.ALIGN_START, R.id.balance_container)
+        if (binding.balanceContainer.visibility == View.VISIBLE) {
+            labelParams.removeRule(android.widget.RelativeLayout.CENTER_HORIZONTAL)
+            labelParams.addRule(android.widget.RelativeLayout.ALIGN_START, R.id.balance_container)
+        } else {
+            labelParams.removeRule(android.widget.RelativeLayout.ALIGN_START)
+            labelParams.addRule(android.widget.RelativeLayout.CENTER_HORIZONTAL)
+        }
         binding.labelWalletBalance.layoutParams = labelParams
         // Re-anchor Add Money button below balance_container
         val params = binding.btnAddMoney.layoutParams as android.widget.RelativeLayout.LayoutParams

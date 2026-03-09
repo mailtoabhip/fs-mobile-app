@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="@{item.title}"
+                android:text="@{item.txnDetails != null ? item.txnDetails : item.title}"
                 android:textColor="#27272A"
                 android:textSize="@dimen/text_14sp"
                 android:textStyle="bold"

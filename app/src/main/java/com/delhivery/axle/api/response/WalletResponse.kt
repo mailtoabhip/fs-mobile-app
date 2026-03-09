@@ -76,7 +76,8 @@ data class WalletTransactionItem(
   @SerializedName("status") val status: String = "",
   @SerializedName("updated_wallet_balance") val updatedWalletBalance: String = "0.0",
   @SerializedName("ref_type") val refType: String = "",
-  @SerializedName("created_at") val createdAt: String = ""
+  @SerializedName("created_at") val createdAt: String = "",
+  @SerializedName("txn_details") val txnDetails: String? = null
 ) {
   /**
    * @return transaction heading based on ref_type

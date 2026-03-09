@@ -263,7 +263,9 @@ interface LoadBoardService {
     fun fetchWalletTransactionList(
         @Query("start") start: String,
         @Query("end") end: String,
-        @Query("wallet_id") walletId: String
+        @Query("wallet_id") walletId: String,
+        @Query("limit") limit: Int = 10,
+        @Query("offset") offset: Int = 0
     ): Single<BaseResponse<WalletTransactionListResponse>>
 
     /**
@@ -282,7 +284,9 @@ interface LoadBoardService {
     fun fetchWalletRechargeList(
         @Query("wallet_id") walletId: String,
         @Query("start") start: String,
-        @Query("end") end: String
+        @Query("end") end: String,
+        @Query("limit") limit: Int = 10,
+        @Query("offset") offset: Int = 0
     ): Single<BaseResponse<WalletRechargeListResponse>>
 
     /**
