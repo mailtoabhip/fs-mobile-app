@@ -122,7 +122,8 @@ data class WalletRechargeItem(
     @SerializedName("status") val status: String = "",
     @SerializedName("created_at") val createdAt: String = "",
     @SerializedName("bank_refernce_no") val bankReferenceNo: String? = null,
-    @SerializedName("added_via") val addedVia: String? = null
+    @SerializedName("added_via") val addedVia: String? = null,
+    @SerializedName("type") val type: String = "credit"
 )
 
 /**

@@ -26,5 +26,5 @@ abstract class BaseLoadWalletRVAdapterItem<D : BaseKeyTypeModel<String>>(
 /**
  * Wallet history item
  */
-class WalletHistoryItem(data: WalletHistoryItemData) :
+class WalletHistoryItem(data: WalletHistoryItemData, val isRefreshing: Boolean = false) :
     BaseLoadWalletRVAdapterItem<WalletHistoryItemData>(LoadWalletRVAdapterItemType.HistoryItem, data)

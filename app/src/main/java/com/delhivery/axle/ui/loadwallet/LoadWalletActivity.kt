@@ -128,6 +128,8 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
             adapter = pagerAdapter
         }
         binding.tabLayout.setupWithViewPager(binding.viewpager)
+        // Block swipe gestures on the tab strip — only content area swipe should work
+        binding.tabLayout.setOnTouchListener { _, _ -> true }
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val position = tab?.position ?: 0

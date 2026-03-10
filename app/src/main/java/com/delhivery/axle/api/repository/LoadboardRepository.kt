@@ -195,6 +195,9 @@ class LoadboardRepository @Inject constructor(
     fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0) =
         loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset).convertResponse()
 
+    fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0, type: String? = null) =
+        loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset, type).convertResponse()
+
     fun fetchTransactionStatus(start: String, txnId: String) =
         loadboardService.fetchTransactionStatus(start, txnId).convertResponse()
 
@@ -202,6 +205,6 @@ class LoadboardRepository @Inject constructor(
         loadboardService.fetchWalletRechargeList(walletId, start, end, limit, offset).convertResponse()
 
     fun fetchRechargeStatus(rechargeId: String, start: String) =
-        loadboardService.fetchRechargeStatus(rechargeId, start).convertResponse()
+        loadboardService.fetchRechargeStatus(start, rechargeId).convertResponse()
 
 }

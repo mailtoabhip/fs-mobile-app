@@ -28,18 +28,19 @@ class WalletHistoryItemVH(binding: ItemWalletHistoryBinding) :
         _interface: LoadWalletRVAdapterInterface
     ) {
         binding.item = item.data
-        // Reset to default (non-loading) state
-        binding.iconRefresh.visibility = android.view.View.VISIBLE
-        binding.progressRefresh.visibility = android.view.View.GONE
-        binding.textRefreshLabel.text = binding.root.context.getString(com.delhivery.axle.R.string.label_refresh_status)
-        binding.btnRefreshStatus.isClickable = true
-        binding.btnRefreshStatus.setOnClickListener {
-            // Show inline loading state
+        if (item.isRefreshing) {
             binding.iconRefresh.visibility = android.view.View.GONE
             binding.progressRefresh.visibility = android.view.View.VISIBLE
             binding.textRefreshLabel.text = "Loading ..."
             binding.btnRefreshStatus.isClickable = false
-            _interface.handleAction(LoadWalletAction_RefreshStatus, item)
+        } else {
+            binding.iconRefresh.visibility = android.view.View.VISIBLE
+            binding.progressRefresh.visibility = android.view.View.GONE
+            binding.textRefreshLabel.text = binding.root.context.getString(com.delhivery.axle.R.string.label_refresh_status)
+            binding.btnRefreshStatus.isClickable = true
+            binding.btnRefreshStatus.setOnClickListener {
+                _interface.handleAction(LoadWalletAction_RefreshStatus, item)
+            }
         }
         binding.cardContent.setOnClickListener {
             _interface.handleAction(LoadWalletAction_ViewDetails, item)

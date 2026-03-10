@@ -96,7 +96,10 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
             (activity as? LoadWalletActivity)?.uiUtils?.showSnackbar(snackMsg)
         })
 
-        viewModel.refreshRechargeStatusErrorLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.refreshRechargeStatusErrorLiveData.observe(viewLifecycleOwner, Observer { txnId ->
+            if (txnId == null) return@Observer
+            viewModel.refreshRechargeStatusErrorLiveData.postValue(null)
+            adapter.clearRefreshing(txnId)
             (activity as? LoadWalletActivity)?.dialogUtils?.showErrorDialog(
                 "Unable to refresh status", 3L
             )
@@ -116,6 +119,7 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
         when (actionId) {
             LoadWalletAction_RefreshStatus -> {
                 val data = (item as? WalletHistoryItem)?.data ?: return
+                adapter.setRefreshing(data.txnNumber)
                 viewModel.refreshRechargeStatus(data.txnNumber, data.dateTime)
             }
             LoadWalletAction_ViewDetails -> {

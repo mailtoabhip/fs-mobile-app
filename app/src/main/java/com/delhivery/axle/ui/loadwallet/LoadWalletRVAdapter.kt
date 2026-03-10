@@ -17,7 +17,12 @@ private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BaseLoadWalletRVAdapt
     override fun areContentsTheSame(
         oldItem: BaseLoadWalletRVAdapterItem<*>,
         newItem: BaseLoadWalletRVAdapterItem<*>
-    ): Boolean = oldItem.data == newItem.data
+    ): Boolean {
+        if (oldItem is WalletHistoryItem && newItem is WalletHistoryItem) {
+            return oldItem.data == newItem.data && oldItem.isRefreshing == newItem.isRefreshing
+        }
+        return oldItem.data == newItem.data
+    }
 }
 
 /**
@@ -46,6 +51,22 @@ class LoadWalletRVAdapter(private val _interface: LoadWalletRVAdapterInterface) 
 
     fun submitList(items: List<BaseLoadWalletRVAdapterItem<*>>, onCommitted: (() -> Unit)? = null) {
         differ.submitList(items, onCommitted)
+    }
+
+    fun setRefreshing(txnId: String) {
+        differ.submitList(differ.currentList.map { item ->
+            if (item is WalletHistoryItem && item.data.txnNumber == txnId)
+                WalletHistoryItem(item.data, isRefreshing = true)
+            else item
+        })
+    }
+
+    fun clearRefreshing(txnId: String) {
+        differ.submitList(differ.currentList.map { item ->
+            if (item is WalletHistoryItem && item.data.txnNumber == txnId)
+                WalletHistoryItem(item.data, isRefreshing = false)
+            else item
+        })
     }
 
     fun updateItem(txnId: String, newStatus: String) {

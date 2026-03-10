@@ -16,8 +16,7 @@ class RechargeDetailsViewModel @Inject constructor(
     var refreshErrorLiveData = MutableLiveData<String?>()
 
     fun fetchRechargeStatus(rechargeId: String, createdAt: String) {
-        val start = createdAt.substring(0, 10)
-
+        val start = createdAt.replace('T', ' ').substringBefore('+').substringBefore('Z')
         compositeDisposable += loadboardRepository.fetchRechargeStatus(rechargeId, start)
             .onBackground()
             .subscribe({ result ->

@@ -88,12 +88,22 @@ class LoadWalletViewModel @Inject constructor(
 
         when (filter.dateRange) {
             FilterDateRange.TODAY -> {
-                start = end
+                val startOfToday = Calendar.getInstance().apply { resetTime() }
+                start = dateFormat.format(startOfToday.time)
             }
             FilterDateRange.YESTERDAY -> {
-                val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
-                start = dateFormat.format(yesterday.time)
-                return Pair(start, start)
+                val startOfYesterday = Calendar.getInstance().apply {
+                    add(Calendar.DAY_OF_YEAR, -1)
+                    resetTime()
+                }
+                val endOfYesterday = Calendar.getInstance().apply {
+                    add(Calendar.DAY_OF_YEAR, -1)
+                    set(Calendar.HOUR_OF_DAY, 23)
+                    set(Calendar.MINUTE, 59)
+                    set(Calendar.SECOND, 59)
+                    set(Calendar.MILLISECOND, 999)
+                }
+                return Pair(dateFormat.format(startOfYesterday.time), dateFormat.format(endOfYesterday.time))
             }
             FilterDateRange.THIS_WEEK -> {
                 val startOfWeek = Calendar.getInstance().apply {
@@ -184,11 +194,16 @@ class LoadWalletViewModel @Inject constructor(
     private fun loadTransactionPage(filter: WalletFilter, reset: Boolean) {
         val (start, end) = getDateRange(filter)
         val wId = walletId()
+        val type = when (filter.type) {
+            FilterType.CREDIT -> "credit"
+            FilterType.DEBIT -> "debit"
+            else -> null
+        }
         isFetchingTransactions = true
         transactionLoadingLiveData.postValue(true)
         if (reset) transactionInitialLoadingLiveData.postValue(true)
 
-        transactionDisposable = loadboardRepository.fetchWalletTransactionList(start, end, wId, pageSize, currentOffset)
+        transactionDisposable = loadboardRepository.fetchWalletTransactionList(start, end, wId, pageSize, currentOffset, type)
             .onBackground()
             .subscribe { result, error ->
                 isFetchingTransactions = false
@@ -208,7 +223,6 @@ class LoadWalletViewModel @Inject constructor(
                                 transactionReason = txn.txnReason
                             )
                         }
-                        .filter { applyTypeFilter(it, filter) }
 
                     hasMoreTransactions = result.transactions.size >= pageSize
                     currentOffset += result.transactions.size
@@ -224,14 +238,6 @@ class LoadWalletViewModel @Inject constructor(
                 }
             }
         compositeDisposable += transactionDisposable!!
-    }
-
-    private fun applyTypeFilter(item: WalletHistoryItemData, filter: WalletFilter): Boolean {
-        return when (filter.type) {
-            FilterType.CREDIT -> item.type.lowercase().contains("credit")
-            FilterType.DEBIT -> !item.type.lowercase().contains("credit")
-            else -> true
-        }
     }
 
     private fun Calendar.resetTime() {
@@ -297,7 +303,7 @@ class LoadWalletViewModel @Inject constructor(
                                 dateTime = recharge.createdAt,
                                 status = recharge.status,
                                 txnNumber = recharge.rechargeId,
-                                type = "credit",
+                                type = recharge.type,
                                 bankReferenceNo = recharge.bankReferenceNo,
                                 addedVia = recharge.addedVia
                             )
@@ -361,15 +367,12 @@ class LoadWalletViewModel @Inject constructor(
 
     /** LiveData for single transaction status refresh result */
     var refreshStatusLiveData = MutableLiveData<Pair<String, String>?>()
-    var refreshStatusErrorLiveData = MutableLiveData<Boolean>()
+    var refreshStatusErrorLiveData = MutableLiveData<String?>()
 
     /** LiveData for single recharge status refresh result */
     var refreshRechargeStatusLiveData = MutableLiveData<Pair<String, String>?>()
-    var refreshRechargeStatusErrorLiveData = MutableLiveData<Boolean>()
+    var refreshRechargeStatusErrorLiveData = MutableLiveData<String?>()
 
-    /**
-     * Refresh status of a single pending transaction
-     */
     fun refreshTransactionStatus(txnId: String, createdAt: String) {
         val start = createdAt.substring(0, 10)
 
@@ -378,7 +381,7 @@ class LoadWalletViewModel @Inject constructor(
             .subscribe({ result ->
                 refreshStatusLiveData.postValue(Pair(result.txnId, result.status))
             }, {
-                refreshStatusErrorLiveData.postValue(true)
+                refreshStatusErrorLiveData.postValue(txnId)
             })
     }
 
@@ -386,14 +389,13 @@ class LoadWalletViewModel @Inject constructor(
      * Refresh status of a single pending recharge
      */
     fun refreshRechargeStatus(rechargeId: String, createdAt: String) {
-        val start = createdAt.substring(0, 10)
-
+        val start = createdAt.replace('T', ' ').substringBefore('+').substringBefore('Z')
         compositeDisposable += loadboardRepository.fetchRechargeStatus(rechargeId, start)
             .onBackground()
             .subscribe({ result ->
                 refreshRechargeStatusLiveData.postValue(Pair(result.rechargeId, result.status))
             }, {
-                refreshRechargeStatusErrorLiveData.postValue(true)
+                refreshRechargeStatusErrorLiveData.postValue(rechargeId)
             })
     }
 

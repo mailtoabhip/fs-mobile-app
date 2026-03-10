@@ -293,7 +293,8 @@ interface LoadBoardService {
         @Query("end") end: String,
         @Query("wallet_id") walletId: String,
         @Query("limit") limit: Int = 10,
-        @Query("offset") offset: Int = 0
+        @Query("offset") offset: Int = 0,
+        @Query("type") type: String? = null
     ): Single<BaseResponse<WalletTransactionListResponse>>
 
     /**
@@ -320,10 +321,10 @@ interface LoadBoardService {
     /**
      * Get single recharge status
      */
-    @GET("/finance/users/wallet/recharge/{recharge_id}")
+    @GET("/finance/users/wallet/recharge")
     fun fetchRechargeStatus(
-        @Path("recharge_id") rechargeId: String,
-        @Query("start") start: String
+        @Query("start") start: String,
+        @Query("recharge_id") rechargeId: String
     ): Single<BaseResponse<WalletRechargeStatusResponse>>
 
 }

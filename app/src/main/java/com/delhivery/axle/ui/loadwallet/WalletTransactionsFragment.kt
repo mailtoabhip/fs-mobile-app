@@ -96,7 +96,10 @@ class WalletTransactionsFragment : BaseFragment<FragmentWalletTransactionsBindin
             (activity as? LoadWalletActivity)?.uiUtils?.showSnackbar(snackMsg)
         })
 
-        viewModel.refreshStatusErrorLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.refreshStatusErrorLiveData.observe(viewLifecycleOwner, Observer { txnId ->
+            if (txnId == null) return@Observer
+            viewModel.refreshStatusErrorLiveData.postValue(null)
+            adapter.clearRefreshing(txnId)
             (activity as? LoadWalletActivity)?.dialogUtils?.showErrorDialog(
                 "Unable to refresh status", 3L
             )
@@ -121,6 +124,7 @@ class WalletTransactionsFragment : BaseFragment<FragmentWalletTransactionsBindin
         when (actionId) {
             LoadWalletAction_RefreshStatus -> {
                 val data = (item as? WalletHistoryItem)?.data ?: return
+                adapter.setRefreshing(data.txnNumber)
                 viewModel.refreshTransactionStatus(data.txnNumber, data.dateTime)
             }
             LoadWalletAction_ViewDetails -> {
