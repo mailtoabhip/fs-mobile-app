@@ -21,7 +21,8 @@ data class WalletHistoryItemData(
     @SerializedName("transaction_type") val type: String,
     @SerializedName("bank_reference_no") val bankReferenceNo: String? = null,
     @SerializedName("added_via") val addedVia: String? = null,
-    @SerializedName("txn_details") val txnDetails: String? = null
+    @SerializedName("txn_details") val txnDetails: String? = null,
+    @SerializedName("txn_reason") val transactionReason: String? = null
 ) : BaseKeyTypeModel<String>(), Serializable {
 
     override fun key() = txnNumber + dateTime

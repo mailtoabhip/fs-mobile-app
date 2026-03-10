@@ -36,7 +36,7 @@
                     android:textColor="@color/black"
                     android:fontWeight="600"
                     android:fontFamily="sans-serif"
-                    android:textSize="@dimen/text_20sp" />
+                    android:textSize="@dimen/text_18sp" />
 
                 <ImageView
                     android:id="@+id/iv_collapse_icon"
@@ -79,8 +79,8 @@
                         android:layout_alignParentStart="true"
                         android:text="FASTag Trucks"
                         android:textColor="#505361"
-                        android:fontWeight="500"
-                        android:textSize="@dimen/text_16sp" />
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_14sp" />
 
                     <TextView
                         android:id="@+id/tv_fastag_count"
@@ -89,7 +89,7 @@
                         android:layout_alignParentEnd="true"
                         android:text="12"
                         android:textColor="#505361"
-                        android:textSize="@dimen/text_16sp"
+                        android:textSize="@dimen/text_14sp"
                         android:textStyle="bold" />
 
                 </RelativeLayout>
@@ -160,7 +160,7 @@
                     android:text="@string/action_add_truck_button"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_14sp"
+                    android:textSize="@dimen/text_12sp"
                     android:background="@drawable/bg_search_white_load_minimal_padding"
                     android:paddingTop="@dimen/size_8dp"
                     android:paddingBottom="@dimen/size_8dp"
@@ -187,7 +187,7 @@
                     android:text="Buy FASTag"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/text_14sp"
+                    android:textSize="@dimen/text_12sp"
                     android:elevation="0dp"
                     android:translationZ="0dp"
                     android:stateListAnimator="@null"

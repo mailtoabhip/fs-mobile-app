@@ -11,51 +11,53 @@
             />
     </data>
     <FrameLayout
-        android:layout_width="match_parent"
         android:id="@+id/fm"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <RelativeLayout
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
-                <!-- Truck Inventory Card - Top Most Element -->
-                <LinearLayout
-                    android:id="@+id/truck_inventory_card_container"
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/app_bar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
                     android:background="@color/white"
-                    android:orientation="vertical">
+                    app:elevation="0dp">
 
-                    <!-- Shimmer for summary card -->
-                    <include
-                        android:id="@+id/truck_inventory_card_shimmer"
-                        layout="@layout/view_home_loads_progress_item"
+                    <!-- Truck Inventory Card - scrolls away -->
+                    <LinearLayout
+                        android:id="@+id/truck_inventory_card_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/size_16dp"
-                        android:layout_marginEnd="@dimen/size_16dp"
-                        android:layout_marginTop="@dimen/size_16dp"
-                        android:visibility="visible" />
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                    <!-- Actual summary card -->
-                    <include
-                        android:id="@+id/truck_inventory_card_inner"
-                        layout="@layout/layout_truck_inventory_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/size_16dp"
-                        android:layout_marginEnd="@dimen/size_16dp"
-                        android:layout_marginTop="@dimen/size_16dp"
-                        android:visibility="gone" />
-                </LinearLayout>
+                        <!-- Shimmer for summary card -->
+                        <include
+                            android:id="@+id/truck_inventory_card_shimmer"
+                            layout="@layout/view_home_loads_progress_item"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            android:layout_marginEnd="@dimen/size_16dp"
+                            android:layout_marginTop="@dimen/size_16dp"
+                            android:visibility="visible" />
+
+                        <!-- Actual summary card -->
+                        <include
+                            android:id="@+id/truck_inventory_card_inner"
+                            layout="@layout/layout_truck_inventory_card"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_16dp"
+                            android:layout_marginEnd="@dimen/size_16dp"
+                            android:layout_marginTop="@dimen/size_16dp"
+                            android:visibility="gone" />
+                    </LinearLayout>
 
                 <!-- Search Bar with Filter Icon - Below Inventory Card -->
                 <LinearLayout
@@ -70,83 +72,88 @@
                     android:paddingEnd="@dimen/size_14dp"
                     android:paddingTop="@dimen/size_8dp">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/search_bar_layout"
-                        android:layout_margin="@dimen/size_10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="38dp"
-                        android:layout_weight="1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginEnd="@dimen/size_8dp"
-                        android:background="@drawable/bg_search_white_load_minimal_padding">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/search_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/size_8dp"
-                            android:src="@drawable/bg_search_bar_light_v2"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/search_bar_layout"
+                            android:layout_margin="@dimen/size_10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="38dp"
+                            android:layout_weight="1"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/edit_sticky_search"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/size_8dp"
                             android:layout_marginEnd="@dimen/size_8dp"
-                            android:hint="@string/search_vehicle_number"
-                            android:textSize="@dimen/text_14sp"
-                            android:textColor="@color/black"
-                            android:textColorHint="#A3AAC2"
-                            android:background="@null"
-                            android:gravity="start|center_vertical"
-                            android:singleLine="true"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:inputType="textCapCharacters"
-                            android:imeOptions="actionSearch"
-                            app:layout_constraintStart_toEndOf="@id/search_icon"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            android:background="@drawable/bg_search_white_load_minimal_padding">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/search_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_8dp"
+                                android:src="@drawable/bg_search_bar_light_v2"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent" />
 
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edit_sticky_search"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_8dp"
+                                android:layout_marginEnd="@dimen/size_8dp"
+                                android:hint="@string/search_vehicle_number"
+                                android:textSize="@dimen/text_14sp"
+                                android:textColor="@color/black"
+                                android:textColorHint="#A3AAC2"
+                                android:background="@null"
+                                android:gravity="start|center_vertical"
+                                android:singleLine="true"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:inputType="textCapCharacters"
+                                android:imeOptions="actionSearch"
+                                app:layout_constraintStart_toEndOf="@id/search_icon"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"/>
 
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/filter_icon"
-                        android:layout_width="46dp"
-                        android:layout_height="38dp"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        android:background="@drawable/bg_edittext_outline"
-                        android:padding="@dimen/size_12dp"
-                        android:scaleType="centerInside"
-                        app:srcCompat="@drawable/ic_filter_grey_border"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:contentDescription="Filter" />
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/filter_icon"
+                            android:layout_width="46dp"
+                            android:layout_height="38dp"
+                            android:layout_marginStart="@dimen/size_4dp"
+                            android:background="@drawable/bg_edittext_outline"
+                            android:padding="@dimen/size_12dp"
+                            android:scaleType="centerInside"
+                            app:srcCompat="@drawable/ic_filter_grey_border"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="Filter" />
 
-                </LinearLayout>
+                    </LinearLayout>
 
+                </com.google.android.material.appbar.AppBarLayout>
 
-                <!-- RecyclerView - Below Search Bar -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_trucks"
+                <!-- SwipeRefreshLayout wraps only the RecyclerView so pull-to-refresh
+                     only triggers when the list is at top and AppBar is fully expanded -->
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/refresh_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/search_container"
-                    android:layout_marginHorizontal="@dimen/size_6dp"
-                    android:layout_marginVertical="@dimen/size_12dp"
-                    android:clipToPadding="false"
-                    android:paddingTop="0dp" />
-            </RelativeLayout>
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_trucks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="@dimen/size_6dp"
+                        android:layout_marginVertical="@dimen/size_12dp"
+                        android:clipToPadding="false"
+                        android:paddingTop="0dp" />
 
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </FrameLayout>
 </layout>

@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentWalletRechargesBinding
 import com.delhivery.axle.ui.base.BaseFragment
-import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 
 /**
  * Fragment showing wallet recharge history
@@ -49,11 +48,12 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
 
         viewModel.rechargesLiveData.observe(viewLifecycleOwner, Observer {
             it?.let { items ->
-                adapter.operation(items)
                 val isInitialLoading = viewModel.rechargeInitialLoadingLiveData.value == true
-                if (!isInitialLoading) {
-                    binding.emptyState.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
-                    binding.rvWalletRecharges.visibility = if (adapter.itemCount == 0) View.GONE else View.VISIBLE
+                adapter.submitList(items) {
+                    if (!isInitialLoading) {
+                        binding.emptyState.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
+                        binding.rvWalletRecharges.visibility = if (adapter.itemCount == 0) View.GONE else View.VISIBLE
+                    }
                 }
             }
         })
@@ -85,38 +85,18 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
             val (rechargeId, newStatus) = result
             viewModel.refreshRechargeStatusLiveData.postValue(null)
 
-            val currentItems = adapter.getData()
-            val matchingItems = currentItems
+            val oldStatus = adapter.getData()
                 .filterIsInstance<WalletHistoryItem>()
-                .filter { it.data.txnNumber == rechargeId }
+                .firstOrNull { it.data.txnNumber == rechargeId }?.data?.status
 
-            val oldStatus = matchingItems.firstOrNull()?.data?.status
+            adapter.updateItem(rechargeId, newStatus)
+
             val statusChanged = oldStatus != null && !oldStatus.equals(newStatus, ignoreCase = true)
-
-            val updatedPairs = matchingItems
-                .map { oldItem ->
-                    val updatedData = oldItem.data.copy(status = newStatus)
-                    Pair(
-                        WalletHistoryItem(updatedData) as BaseLoadWalletRVAdapterItem<*>,
-                        DataRVAdapterOperationType.Update
-                    )
-                }
-            if (updatedPairs.isNotEmpty()) {
-                adapter.operation(updatedPairs)
-            }
-
             val snackMsg = if (statusChanged) "Transaction status updated" else "Status is already up to date"
             (activity as? LoadWalletActivity)?.uiUtils?.showSnackbar(snackMsg)
         })
 
         viewModel.refreshRechargeStatusErrorLiveData.observe(viewLifecycleOwner, Observer {
-            val pendingPairs = adapter.getData()
-                .filterIsInstance<WalletHistoryItem>()
-                .filter { it.data.isPending() }
-                .map { Pair(it as BaseLoadWalletRVAdapterItem<*>, DataRVAdapterOperationType.Update) }
-            if (pendingPairs.isNotEmpty()) {
-                adapter.operation(pendingPairs)
-            }
             (activity as? LoadWalletActivity)?.dialogUtils?.showErrorDialog(
                 "Unable to refresh status", 3L
             )

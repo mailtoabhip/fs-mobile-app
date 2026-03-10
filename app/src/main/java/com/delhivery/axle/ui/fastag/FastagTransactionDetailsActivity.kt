@@ -149,7 +149,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
                 val clip = android.content.ClipData.newPlainText("AWB", awb)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, "AWB copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Fastag Id copied to clipboard", Toast.LENGTH_SHORT).show()
             }
         } else {
             binding.layoutAwb.visibility = android.view.View.GONE
