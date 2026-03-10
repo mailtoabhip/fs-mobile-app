@@ -57,22 +57,4 @@ class WalletRepository @Inject constructor(
       CreateFuelCardRequest.getRequest(mobile, vehicleNum, tripId, vehicleNum, amount)
   ).convertResponse()
 
-    /**
-     * TODO :- Remove Later
-     * Recharge wallet
-     */
-    fun rechargeWallet(
-        walletId: String,
-        amount: Int,
-        redirectUrl: String,
-        userName: String,
-        apiReqId: String,
-        authorizationToken: String = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InNvdXJjZSI6IldFQiIsInVjaWQiOiIwYzUyYzNmMi1lNjE3LTE2OTEtMzM1MC1hMGM3YjQyZDI4NjQifSwiZXhwIjoxNzcyNzk0OTM0LCJpYXQiOjE3NzI3MDg1MzQsImp0aSI6IjNmNWQxYWExLWI3NGEtNDE2ZC05MjZmLTQ3YTFmYTMyYzY5MyJ9.mUaRU1zV_VtffPSkAE3BtKrqQI5zT7_XkNuAvl7iBzI"
-    ) = walletService.rechargeWallet(
-        walletId,
-        authorizationToken,
-        apiReqId,
-        WalletRechargeRequest.getRequest(amount, redirectUrl, userName)
-    )
-
 }

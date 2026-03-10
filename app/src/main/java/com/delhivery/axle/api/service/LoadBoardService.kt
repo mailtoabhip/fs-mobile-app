@@ -264,7 +264,7 @@ interface LoadBoardService {
     @POST("/finance/users/wallet/recharge")
     fun initiateRecharge(
         @Body walletRechargeReq: WalletRechargeReqBody
-    ) : Single<BaseResponse<WalletRechargeResponse>>
+    ) : Single<BaseResponse<WalletRechargeData>>
 
     @GET("/finance/users/wallet/recharge")
     fun checkRechargeStatus(

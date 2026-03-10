@@ -35,9 +35,7 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
             onPaymentResult: (success: Boolean) -> Unit
         ): AddMoneyDialogFragment {
             val fragment = AddMoneyDialogFragment()
-            fragment.arguments = Bundle().apply {
-                putString(ARG_DEEPLINK, redirectUrl)
-            }
+            fragment.arguments = Bundle().apply { putString(ARG_DEEPLINK, redirectUrl) }
             fragment.viewModelFactory = viewModelFactory
             fragment.onPaymentResult = onPaymentResult
             return fragment
@@ -102,8 +100,10 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
         binding.tvQuick5000.setOnClickListener { addQuickAmount(5000) }
 
         binding.btnProceedToPay.setOnClickListener {
-            val amount = binding.etAmount.text.toString().trim().toIntOrNull() ?: return@setOnClickListener
-            viewModel.callWalletRecharge(amount = amount)
+            val amount =
+                    binding.etAmount.text.toString().trim().toIntOrNull()
+                            ?: return@setOnClickListener
+            viewModel.initiateRecharge(amount, deeplink)
         }
     }
 
