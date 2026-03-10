@@ -62,24 +62,21 @@ class PaymentStatusBottomSheet : BottomSheetDialogFragment() {
             Status.SUCCESS -> {
                 binding.ivStatusIcon.setImageResource(R.drawable.fs_payment_success)
                 binding.tvStatusTitle.text = "Payment Success"
-                binding.tvStatusDescription.text =
-                    "Your FASTag is recharged successfully"
+                binding.tvStatusDescription.text = "Your FASTag is recharged successfully"
             }
             Status.FAILED -> {
                 binding.ivStatusIcon.setImageResource(R.drawable.fs_payment_failed)
                 binding.tvStatusTitle.text = "Payment failed"
-                binding.tvStatusDescription.text =
-                    "If money was deducted, it will be refunded soon."
+                binding.tvStatusDescription.text = "If money was deducted, it will be refunded soon."
             }
             Status.PROCESSING -> {
                 binding.ivStatusIcon.setImageResource(R.drawable.fs_payment_pending)
                 binding.tvStatusTitle.text = "Payment in process"
                 binding.tvStatusDescription.text =
-                    "Your payment is being processed. The amount will reflect in your wallet shortly."
+                    "Your recharge request has been received and is being processed. The FASTag balance will update shortly."
             }
         }
 
-        // Scale-in animation for the icon
         binding.ivStatusIcon.alpha = 0f
         binding.ivStatusIcon.scaleX = 0.5f
         binding.ivStatusIcon.scaleY = 0.5f

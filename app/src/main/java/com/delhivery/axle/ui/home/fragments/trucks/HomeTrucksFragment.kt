@@ -74,6 +74,7 @@ import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
+import com.delhivery.axle.utils.REQCODE_FASTAG_RECHARGE
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PAGE
 import com.delhivery.axle.utils.VALUE_ADD_TRUCK_TOP_BANNER
 import com.delhivery.axle.utils.VALUE_BANNER
@@ -977,7 +978,9 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     refreshData()
                 }
             }
-
+            REQCODE_FASTAG_RECHARGE -> {
+                refreshData()
+            }
         }
     }
 
@@ -1724,7 +1727,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
             putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
         }
-        startActivity(intent)
+        startActivityForResult(intent, REQCODE_FASTAG_RECHARGE)
     }
 
 }

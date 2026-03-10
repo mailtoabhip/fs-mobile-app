@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
+import android.view.animation.DecelerateInterpolator
 import android.view.View
 import android.widget.Toast
 import com.delhivery.axle.R
@@ -19,6 +20,8 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     override fun layoutId() = R.layout.activity_fastag_recharge
     override fun requireConnection() = true
 
+    private var fastagStatus: String? = null
+    private var fastagBalanceValue: String? = null
     private var selectedAmount: Int = 0
     private var slideStartX = 0f
     private var walletBalance: Double = 0.0
@@ -63,6 +66,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
 
         binding.tvVehicleNumber.text = vehicleNumber
         binding.tvFastagBalance.text = "FASTag Balance: ₹$fastagBalance"
+        fastagBalanceValue = fastagBalance
 
         binding.ivBack.setOnClickListener { finish() }
 
@@ -194,9 +198,15 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             }
 
             if (warning.visibility != View.VISIBLE) {
+                warning.translationY = if (warning.height != 0) -warning.height.toFloat() else -100f
                 warning.alpha = 0f
                 warning.visibility = View.VISIBLE
-                warning.animate().alpha(1f).setDuration(250).start()
+                warning.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
             }
         } else {
             if (lowBalanceText.visibility == View.VISIBLE) {
@@ -205,9 +215,15 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             }
 
             if (warning.visibility == View.VISIBLE) {
-                warning.animate().alpha(0f).setDuration(200).withEndAction {
-                    warning.visibility = View.GONE
-                }.start()
+                warning.animate()
+                    .translationY(-warning.height.toFloat())
+                    .alpha(0f)
+                    .setDuration(250)
+                    .setInterpolator(DecelerateInterpolator())
+                    .withEndAction {
+                        warning.visibility = View.GONE
+                        warning.translationY = 0f
+                    }.start()
             }
         }
         updateSliderState()
@@ -275,7 +291,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         }
 
         showSliderCompletedState()
-        viewModel.rechargeFastag(tagId, selectedAmount)
+        viewModel.rechargeFastag(tagId, selectedAmount, fastagStatus, fastagBalanceValue)
     }
 
     private fun showSliderCompletedState() {
@@ -326,6 +342,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 // Update FASTag balance on screen
                 it.fastagBalance?.let { newFastagBalance ->
                     binding.tvFastagBalance.text = "FASTag Balance: ₹$newFastagBalance"
+                    fastagBalanceValue = newFastagBalance
                 }
 
                 val status = when (it.status?.lowercase()) {
@@ -339,6 +356,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         })
 
         viewModel.fastagBlacklistedData.observe(this, androidx.lifecycle.Observer { isBlacklisted ->
+            fastagStatus = if (isBlacklisted) "blacklisted" else "active"
             binding.layoutBlacklistWarning.visibility = if (isBlacklisted) View.VISIBLE else View.GONE
         })
 

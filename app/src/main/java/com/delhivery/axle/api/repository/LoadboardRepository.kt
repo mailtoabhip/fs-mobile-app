@@ -184,7 +184,7 @@ class LoadboardRepository @Inject constructor(
     fun fetchFastagStatus(tagId: String) = loadboardService.fetchFastagStatus(tagId).convertResponse()
 
     /**
-     * Fetch wallet details (real API call — uncomment when ready)
+     * Fetch wallet details
      */
     fun fetchWalletDetails() =
         loadboardService.fetchWalletDetails().convertResponse()
