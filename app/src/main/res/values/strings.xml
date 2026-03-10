@@ -1031,7 +1031,7 @@
   <!-- KYC Status Card Strings -->
   <string name="kyc_heading_completed">You\'re all set to start bidding</string>
   <string name="kyc_message_completed">Your account is activated. Explore and bid on available loads.</string>
-  <string name="kyc_button_completed">Start Bidding</string>
+  <string name="kyc_button_completed">Browse Loads</string>
 
   <string name="kyc_heading_start">You\'re almost ready to bid</string>
   <string name="kyc_message_start">Complete onboarding to access live loads in your area.</string>
@@ -1041,12 +1041,14 @@
   <string name="kyc_message_continue">You\'re almost done. Complete the remaining steps to start bidding.</string>
   <string name="kyc_button_continue">Continue setup</string>
 
-  <string name="kyc_heading_pending">KYC Verification pending</string>
-  <string name="kyc_message_pending">Your account is under verification. We will notify you once it is completed.</string>
+  <string name="kyc_heading_pending">Documents are submitted</string>
+  <string name="kyc_message_pending">We’re reviewing your details. You’ll be notified once it’s done.</string>
   <string name="kyc_button_pending">View KYC details</string>
 
   <string name="kyc_heading_rejected">KYC Verification Rejected</string>
-  <string name="kyc_message_rejected">Your KYC could not be verified due to document issues. Please re-upload your documents to continue.</string>
-  <string name="kyc_button_rejected">Update KYC details</string>
-
+  <string name="kyc_message_rejected">Document issue detected. Please re-upload the requested document.</string>
+  <string name="kyc_button_rejected">Re-upload Document</string>
+  <string name="label_fastag_no_space">Fastag</string>
+  <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
+  <string name="label_bidding">Bidding</string>
 </resources>

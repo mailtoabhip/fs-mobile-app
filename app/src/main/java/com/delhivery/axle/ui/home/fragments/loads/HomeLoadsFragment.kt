@@ -566,14 +566,19 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     private fun setupLoadFilter() {
     val enableIntracityLoad = userPrefs.demandType.contains(DemandType.Intracity.type)|| userPrefs.demandType.contains(DemandType.Intracity_OPS.type)
-    val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type)
+    val enableIntercityLoad = userPrefs.demandType.contains(DemandType.Internal.type) || userPrefs.demandType.contains(DemandType.Others.type)
+        val enableMarketplace = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
+
     if (enableIntracityLoad){
       selectedLoadFilter = DemandType.Intracity.type
       demandType = DemandType.Intracity.type
     }else if(enableIntercityLoad){
       selectedLoadFilter = DemandType.Internal.type
       demandType = DemandType.Internal.type
-    }else{
+    }else if (enableMarketplace) {
+        selectedLoadFilter = "Marketplace"
+        demandType = DemandType.Spot_Marketplace.type
+    } else{
       selectedLoadFilter = DemandType.Others.type
       demandType = userPrefs.demandType
         .split(",")

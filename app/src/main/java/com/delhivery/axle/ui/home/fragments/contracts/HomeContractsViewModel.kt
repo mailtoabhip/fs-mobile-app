@@ -273,8 +273,10 @@ class HomeContractsViewModel@Inject constructor(
                   }
                 }
               }
-
-            val count = (expressCount ?: 0) + (nonExpressCount ?: 0) + (intraCityCount ?: 0)
+              val includeIntercity = (userPrefs.demandType.contains(DemandType.Internal.type)&&userPrefs.contractDemand)||userPrefs.demandType.contains(DemandType.Others.type)
+              val includeIntracity = userPrefs.demandType.contains(DemandType.Intracity.type)&&userPrefs.contractDemand
+              val intercityCount = (expressCount ?: 0) + (nonExpressCount ?: 0)
+              val count = (if (includeIntercity) intercityCount else 0) + (if (includeIntracity) (intraCityCount ?: 0) else 0)
             Log.d("viewmodelContract", "Filtered counts - expressCount: ${expressCount}, intraCityCount: ${intraCityCount}, nonExpressCount: ${nonExpressCount}")
 
             contractsCountLiveData.postValue(count)

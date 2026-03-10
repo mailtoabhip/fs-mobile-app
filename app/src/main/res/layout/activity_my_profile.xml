@@ -580,6 +580,7 @@
                         android:layout_height="match_parent"
                         android:padding="@dimen/size_8dp"
                         android:scaleType="centerInside"
+                        android:contentDescription="@string/label_placements"
                         bind:srcCompat="@drawable/iconcontainer_placements"/>
 
                 </com.google.android.material.card.MaterialCardView>

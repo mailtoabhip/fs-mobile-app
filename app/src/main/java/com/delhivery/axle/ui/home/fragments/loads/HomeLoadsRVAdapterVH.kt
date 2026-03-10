@@ -659,7 +659,7 @@ internal class HomeLoadsKycPendingItemVH(binding: CardKycPendingBannerBinding) :
         _interface: HomeLoadsRVAdapterInterface
     ) {
         // Set click action for the entire card
-        binding.root.clickToAction(
+        binding.alertContainer.clickToAction(
             HomeLoadsKycPendingAction,
             item,
             _interface
@@ -815,7 +815,7 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
       binding.dlvMarketplaceToggle.text =   "${context.getString(R.string.market_place)} (${item.data.marketplaceCount})"
       //binding.nonDlvToggle.text =   "${context.getString(R.string.action_non_delhivery)} (${item.data.nonDlvCount})"
       // filter visibility based on user's demand type
-      binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type))View.VISIBLE else View.GONE
+      binding.dlvIntercityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Internal.type) || item.data.userDemandType.contains(DemandType.Others.type))View.VISIBLE else View.GONE
       binding.dlvIntracityToggle.visibility = if(item.data.userDemandType.contains(DemandType.Intracity.type)|| item.data.userDemandType.contains(DemandType.Intracity_OPS.type))View.VISIBLE else View.GONE
       binding.dlvMarketplaceToggle.visibility = if(item.data.userDemandType.contains(DemandType.Spot_Marketplace.type))View.VISIBLE else View.GONE
 
@@ -829,17 +829,11 @@ internal class HomeLoadsFilterItemVH(binding: ViewHomeLoadFilterTypesItemBinding
               binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = false
           }
-          DemandType.Internal.type-> {
+          DemandType.Internal.type, DemandType.Others.type-> {
               binding.dlvIntracityToggle.isSelected = false
               binding.dlvIntercityToggle.isSelected = true
               binding.dlvMarketplaceToggle.isSelected = false
               //binding.nonDlvToggle.isSelected = false
-          }
-          DemandType.Others.type-> {
-              binding.dlvIntracityToggle.isSelected = false
-              binding.dlvIntercityToggle.isSelected = false
-              binding.dlvMarketplaceToggle.isSelected = false
-              //binding.nonDlvToggle.isSelected = true
           }
           "Marketplace"-> {
               binding.dlvIntracityToggle.isSelected = false

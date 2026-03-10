@@ -172,13 +172,13 @@
     <color name="progress_copper">#B88B5C</color>
     <color name="progress_bg_copper">#FFEDD6</color>
     <color name="progress_green">#1BA86E</color>
-    <color name="progress_red">#ED4136</color>
+    <color name="progress_red">#DC143C</color>
     <color name="text_body_secondary">#454545</color>
 
     <color name="surface_success_light">#ECF8F3</color>
     <color name="surface_success_dark">#D1EEE2</color>
 
-    <color name="surface_failed_light">#44bf4242</color>
-    <color name="surface_failed_dark">#44ED4136</color>
+    <color name="surface_failed_light">#FDF2F4</color>
+    <color name="surface_failed_dark">#FCE9ED</color>
 
 </resources>
