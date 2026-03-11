@@ -139,7 +139,7 @@ enum class UrlConfig(
   InvoiceService(
       "https://fms-intracity-billing-bk.delhivery.com",
       "https://fms-intracity-billing-bk-dev.pntrzz.com",
-      "https://fms-intracity-billing-bk-dev.pntrzz.com"
+      "https://fms-intracity-billing-bk-uat.delhivery.com"
   ),
   SpotBiddingService(
         "https://orion-user-loadboard.delhivery.com/",
