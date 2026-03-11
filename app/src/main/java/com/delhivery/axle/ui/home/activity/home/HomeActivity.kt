@@ -132,7 +132,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           navigationUtils.logout("Please login to create account","fromUser")
         } else {
           setUserAttributes()
-          //navigationUtils.navigateOnboardingSteps(true)
+          navigationUtils.navigateOnboardingDetails()
           /* setup toolbar */
           setSupportActionBar(binding.toolbar)
           title = "Home"

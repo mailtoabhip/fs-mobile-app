@@ -284,14 +284,7 @@ class HomeLoadsViewModel @Inject constructor(
             Single.zip(
                 transactionsRepository.fetchRecommTransactions(
                     offset,
-                    userPrefs.demandType
-                        .split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type
-                                || it == DemandType.Intracity_OPS.type
-                        }
-                        .joinToString(","),
+                    filterDemandTypeForRecommendations(userPrefs.demandType),
                     vehicleTypes,
                     excludeTruckTypes,
                     filterVehicleType,
@@ -418,13 +411,7 @@ class HomeLoadsViewModel @Inject constructor(
 
             compositeDisposable += transactionsRepository.fetchRecommTransactions(
                 offset,
-                userPrefs.demandType
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                    .filterNot { it == DemandType.Intracity.type
-                            || it == DemandType.Intracity_OPS.type}
-                    .joinToString(","),
+                filterDemandTypeForRecommendations(userPrefs.demandType),
                 vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
@@ -476,13 +463,7 @@ class HomeLoadsViewModel @Inject constructor(
                         ),
                         transactionsRepository.fetchRecommTransactions(
                             offset,
-                            userPrefs.demandType
-                                .split(",")
-                                .map { it.trim() }
-                                .filter { it.isNotEmpty() }
-                                .filterNot { it == DemandType.Intracity.type
-                                        || it == DemandType.Intracity_OPS.type}
-                                .joinToString(","),
+                            filterDemandTypeForRecommendations(userPrefs.demandType),
                             vehicleTypes,
                             excludeTruckTypes,
                             filterVehicleType,
@@ -994,13 +975,7 @@ class HomeLoadsViewModel @Inject constructor(
                 ).subscribeOn(Schedulers.io()),
                 transactionsRepository.fetchRecommTransactions(
                     offset,
-                    userPrefs.demandType
-                        .split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type
-                                || it == DemandType.Intracity_OPS.type}
-                        .joinToString(","),
+                    filterDemandTypeForRecommendations(userPrefs.demandType),
                     vehicleTypes, null, filterVehicleType, true, 
                     splitViewCount = true, searchAfter = null
                 ).subscribeOn(Schedulers.io()),
@@ -1445,4 +1420,15 @@ private const val BidsUpdateDelay = 1L
 
 interface CloseDialog{
     fun dismissDialog()
+}
+/**
+ * Filter demand types for recommendation API - only Internal and Others are valid
+ * Filters out Intracity, Intracity_OPS, and Spot_Marketplace
+ */
+private fun filterDemandTypeForRecommendations(demandType:String): String {
+    return if (demandType.contains(DemandType.Internal.type)) {
+        "${DemandType.Internal.type},${DemandType.Others.type}"
+    } else {
+        DemandType.Others.type
+    }
 }

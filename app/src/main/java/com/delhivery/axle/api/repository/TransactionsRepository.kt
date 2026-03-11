@@ -41,33 +41,9 @@ class TransactionsRepository @Inject constructor(
   fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, splitViewCount:Boolean?=null, searchAfter: SearchAfter?) =
          recommendationService.recommendationTransactions(
            ReccomdationRequest( userPrefs.parentId,UserTripsLoadLimit,offset,
-               filterDemandTypeForRecommendations(), vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter )
+               demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter )
          ).convertResponse()
 
-    /**
-     * Filter demand types for recommendation API - only Internal and Others are valid
-     * Filters out Intracity, Intracity_OPS, and Spot_Marketplace
-     */
-    private fun filterDemandTypeForRecommendations( ): String {
-        val validTypes = userPrefs.demandType
-            .split(",")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-            .filterNot {
-                it == DemandType.Intracity.type ||
-                        it == DemandType.Intracity_OPS.type ||
-                        it == DemandType.Spot_Marketplace.type
-            }
-            .joinToString(",")
-
-        // If after filtering we have Internal, return "Internal,Others"
-        // Otherwise return "Others" only
-        return if (validTypes.contains(DemandType.Internal.type)) {
-            "${DemandType.Internal.type},${DemandType.Others.type}"
-        } else {
-            DemandType.Others.type
-        }
-    }
   /**
    * Get user intracity transactions
    */

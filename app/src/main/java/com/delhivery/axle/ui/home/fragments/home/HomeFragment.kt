@@ -25,7 +25,7 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
 
     override fun layoutId() = R.layout.fragment_home
     private var fragmentSetupTrace: Trace? = null
-    private var currentUiState: HomeFragmentViewModel.KycUiState? = null
+    private var currentUiState: KycUiState? = null
     private var isFirstResume = true
     companion object {
         val _instance: HomeFragment by lazy { HomeFragment() }
@@ -59,11 +59,11 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
 
         binding.btnGetStarted.setOnClickListener {
             when (currentUiState) {
-                HomeFragmentViewModel.KycUiState.START,
-                HomeFragmentViewModel.KycUiState.CONTINUE -> {
+                KycUiState.START,
+                KycUiState.CONTINUE -> {
                     navigationUtils.navigateOnboardingSteps(true)
                 }
-                HomeFragmentViewModel.KycUiState.COMPLETED -> {
+                KycUiState.COMPLETED -> {
                     action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
                 }
                 else -> { navigationUtils.navigate(MyProfileActivity::class.java) }
@@ -87,7 +87,7 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         }
     }
 
-    private fun applyKycCardColors(colors: HomeFragmentViewModel.KycUiColors) {
+    private fun applyKycCardColors(colors: KycUiColors) {
         context?.let { ctx ->
             binding.buttonCl.setBackgroundColor(
                 ContextCompat.getColor(ctx, colors.cardColorLight)
@@ -106,11 +106,11 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         }
     }
 
-    private fun applyKycCardTexts(model: HomeFragmentViewModel.KycUiModel) {
+    private fun applyKycCardTexts(model: KycUiModel) {
         context?.let { ctx ->
-            binding.kycHeading.text = ctx.getString(model.headingResId)
-            binding.kycMessage.text = ctx.getString(model.messageResId)
-            binding.btnTv.text = ctx.getString(model.buttonTextResId)
+            binding.kycHeading.text = ctx.getString(model.strings.headingResId)
+            binding.kycMessage.text = ctx.getString(model.strings.messageResId)
+            binding.btnTv.text = ctx.getString(model.strings.buttonTextResId)
             binding.progressBar.progress = model.progress
             binding.progressBar.visibility = if (model.progress != 0) View.VISIBLE else View.GONE
         }

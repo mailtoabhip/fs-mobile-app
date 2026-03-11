@@ -453,6 +453,25 @@ class NavigationUtils @Inject constructor(
             }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
+
+    /* Auto redirect if user details are pending */
+    fun navigateOnboardingDetails() {
+        if (userPrefs.isLoadBoardClient && userPrefs.isLoadBoardSupplier) {
+            if (!userPrefs.isUserVerfied) {
+                userPrefs.setPreviousScreen(activity.javaClass.name)
+                if (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty()) {
+                    userPrefs.hasLoggedIn = false
+                    val intent = Intent(activity, AccountDetailsActivity::class.java)
+                    this.navigate(intent, true, null)
+                } else if (userPrefs.getLanesPreference()
+                        .isNullOrEmpty() && userPrefs.truckTypes.isNullOrEmpty() && userPrefs.onboardingStatus == "details_pending" && (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty())
+                ) {
+                    val intent = Intent(activity, BasicDetailsActivity::class.java)
+                    this.navigate(intent, true, null)
+                }
+            }
+        }
+    }
 }
 
 
