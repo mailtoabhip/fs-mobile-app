@@ -104,9 +104,7 @@ data class TripPaymentsResponse(
   @SerializedName("amount") var amount: Double,
   @SerializedName("transfer_time") val transferTime: String?,
   @SerializedName("remarks") var remark: String? = "",
-  @SerializedName("payment_timestamp") val paymentTimestamp: String? = null,
-  @SerializedName("payment_status") val paymentStatus: String? = null,
-  @SerializedName("payment_failure_message") val paymentFailureMessage: String? = null
+  @SerializedName("payment_at") val paymentTimestamp: String? = null
 ) {
 
   /**

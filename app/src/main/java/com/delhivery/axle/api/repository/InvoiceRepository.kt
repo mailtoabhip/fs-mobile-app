@@ -1,8 +1,8 @@
 package com.delhivery.axle.api.repository
 
+import com.delhivery.axle.api.request.InvoiceDownloadRequest
 import com.delhivery.axle.api.service.InvoiceService
 import com.delhivery.axle.utils.extensions.convertResponse
-import com.google.gson.JsonObject
 import javax.inject.Inject
 
 /**
@@ -17,8 +17,6 @@ class InvoiceRepository @Inject constructor(
    */
   fun downloadInvoiceDocument(transactionId: String) =
     invoiceService.downloadInvoiceDocument(
-      JsonObject().apply {
-        addProperty("orion_transaction_id", "ORION-TXN-98765")  // Hardcoded for testing
-      }
+      InvoiceDownloadRequest(orionTransactionId = transactionId)
     ).convertResponse()
 }

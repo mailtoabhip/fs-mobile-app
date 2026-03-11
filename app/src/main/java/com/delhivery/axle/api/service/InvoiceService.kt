@@ -1,8 +1,8 @@
 package com.delhivery.axle.api.service
 
+import com.delhivery.axle.api.request.InvoiceDownloadRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.InvoiceDownloadData
-import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -13,5 +13,5 @@ import retrofit2.http.POST
 interface InvoiceService {
   
   @POST("ticket_invoices/documents")
-  fun downloadInvoiceDocument(@Body request: JsonObject): Single<BaseResponse<InvoiceDownloadData>>
+  fun downloadInvoiceDocument(@Body invoiceDownloadRequest: InvoiceDownloadRequest): Single<BaseResponse<InvoiceDownloadData>>
 }

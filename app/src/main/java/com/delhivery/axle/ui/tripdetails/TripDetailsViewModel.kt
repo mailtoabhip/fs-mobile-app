@@ -321,6 +321,8 @@ class TripDetailsViewModel @Inject constructor(
     tripDetail.isSettled = paymentSettled && recoverySettled
     if (tripDetail.isSettled) {
       tripSettledLiveData.postValue(true)
+    } else {
+      tripSettledLiveData.postValue(false)
     }
 
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {

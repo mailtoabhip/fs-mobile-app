@@ -100,7 +100,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.backArrow.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
-      binding.clAdhocintracity.buttonAbc.setOnClickListener {
+      binding.clAdhocintracity.buttonRefresh.setOnClickListener {
           refreshData()
       }
       
@@ -138,6 +138,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
     viewModel.tripSettledLiveData.observe(this, Observer {
       binding.tripSettled = it
+      binding.clAdhocintracity.tripSettled = it
       binding.viewModel = viewModel
     })
     viewModel.podDownloadLiveData.observe(this, Observer {
@@ -149,7 +150,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
 
     viewModel.invoiceDownloadLiveData.observe(this, Observer { downloadUrl ->
-      if (downloadUrl != null && currentInvoiceFile != null) {
+      if (downloadUrl != null && currentInvoiceFile != null ) {
         downloadFileFromUrl(downloadUrl, currentInvoiceFile!!)
       } else {
         uiUtils.hideProgress()
@@ -340,7 +341,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         binding.clAdhocintracity.tvSettledTimestamp?.visibility = View.GONE
         return
     }
-    
+
     // Get payment data
     val payment = trip.payment
     if (payment == null) {
@@ -349,12 +350,10 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     }
     
     val timestamp = payment.paymentTimestamp
-    val status = payment.paymentStatus
-    val failureMessage = payment.paymentFailureMessage
     
     when {
-        // Success with timestamp
-        status == "success" && !timestamp.isNullOrEmpty() -> {
+        // Show timestamp if available
+        !timestamp.isNullOrEmpty() -> {
             try {
                 val date = DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat)
                 val sdf = java.text.SimpleDateFormat("dd-MMM-yyyy hh:mma", java.util.Locale.ENGLISH)
@@ -368,24 +367,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
             } catch (e: Exception) {
                 binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
             }
-        }
-        
-        // Failed with message
-        status == "failed" && !failureMessage.isNullOrEmpty() -> {
-            binding.clAdhocintracity.tvSettledTimestamp.text = failureMessage
-            binding.clAdhocintracity.tvSettledTimestamp.setTextColor(
-                ContextCompat.getColor(this, R.color.colorDelhiveryRed)
-            )
-            binding.clAdhocintracity.tvSettledTimestamp.visibility = View.VISIBLE
-        }
-        
-        // Failed without message
-        status == "failed" -> {
-            binding.clAdhocintracity.tvSettledTimestamp.text = "Payment failed - contact support"
-            binding.clAdhocintracity.tvSettledTimestamp.setTextColor(
-                ContextCompat.getColor(this, R.color.colorDelhiveryRed)
-            )
-            binding.clAdhocintracity.tvSettledTimestamp.visibility = View.VISIBLE
         }
         
         // No timestamp available
@@ -411,6 +392,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           binding.clAdhocintracity.tripDetails = t.second
           binding.clAdhocintracity.request = t.first
           binding.clAdhocintracity.layoutTransaction.request = t.first
+          binding.clAdhocintracity.tripSettled = t.second.isSettled
           
           // Update settled milestone timestamp
           updateSettledMilestone()
@@ -677,7 +659,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     // Prepare file for invoice
     currentInvoiceFile = getInvoiceFile()
     
-    if (currentInvoiceFile == null) {
+    if (currentInvoiceFile == null )  {
       uiUtils.hideProgress()
       uiUtils.showSnackbar("Unable to prepare invoice file")
       return
