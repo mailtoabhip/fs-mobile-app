@@ -86,14 +86,16 @@ import com.delhivery.axle.utils.VALUE_OWNERSHIP
 import com.delhivery.axle.utils.VALUE_PRICE
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.getTextChangeObservable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import android.os.Handler
-import android.os.Looper
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -134,8 +136,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     var visible = false
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
-    private val searchHandler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -207,41 +207,24 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             showFilterBottomSheet()
         }
 
-        binding.editStickySearch.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
-
-            override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-            ) = Unit
-
-            override fun onTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    before: Int,
-                    count: Int
-            ) {
-                searchRunnable?.let { searchHandler.removeCallbacks(it) }
-                val query = s?.trim()?.toString() ?: ""
-                searchRunnable = Runnable {
-                    if (query.isEmpty()) {
-                        viewModel.searchPrefix = ""
-                        viewModel.searchFlag = false
-                        adapter.resetStaticData()
-                        viewModel.getAllInventories(search = false)
-                    } else {
-                        viewModel.searchPrefix = query
-                        if (query.length >= 2) {
-                            adapter.resetStaticData()
-                            viewModel.searchFlag = true
-                            viewModel.getAllInventories(search = true)
-                        }
-                    }
-                }.also { searchHandler.postDelayed(it, 300) }
-            }
-        })
+        binding.editStickySearch.getTextChangeObservable()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .filter { it.isEmpty() || it.length >= 2 }
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { query ->
+                if (query.isEmpty()) {
+                    viewModel.searchPrefix = ""
+                    viewModel.searchFlag = false
+                    adapter.resetStaticData()
+                    viewModel.getAllInventories(search = false)
+                } else {
+                    viewModel.searchPrefix = query
+                    viewModel.searchFlag = true
+                    adapter.resetStaticData()
+                    viewModel.getAllInventories(search = true)
+                }
+            }.also { compositeDisposable.add(it) }
 
 
 
@@ -518,11 +501,12 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
             isFirstResume = false
+            return
         }
+        refreshData()
     }
 
     override fun onDestroyView() {
-        searchRunnable?.let { searchHandler.removeCallbacks(it) }
         super.onDestroyView()
     }
 
