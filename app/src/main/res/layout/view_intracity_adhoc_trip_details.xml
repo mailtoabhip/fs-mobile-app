@@ -375,37 +375,33 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_Refresh"
+        style="@style/ActionButton"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="Refresh"
-        android:background="@drawable/bg_all_round_corner_solid_black"
+        android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
-        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/size_16dp"
-        android:backgroundTint="@color/black"
-        android:textAllCaps="false"
         android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginEnd="@dimen/size_16dp"
-        android:layout_height="@dimen/size_40dp"
-        android:id="@+id/button_Refresh"/>
+        android:layout_marginEnd="@dimen/size_16dp"/>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_download_invoice"
+        style="@style/ActionButton"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="Download Invoice"
+        android:textAllCaps="false"
+        android:visibility="@{tripSettled ? View.VISIBLE : View.GONE}"
         app:layout_constraintTop_toBottomOf="@id/button_Refresh"
-        android:background="@drawable/bg_all_round_corner_solid_black"
-        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/size_16dp"
-        android:backgroundTint="@color/black"
-        android:textAllCaps="false"
         android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginEnd="@dimen/size_16dp"
-        android:layout_height="@dimen/size_40dp"
-  android:visibility="@{tripDetails.isSettled?View.VISIBLE:View.GONE}"
-        android:id="@+id/button_download_invoice"/>
+        android:layout_marginEnd="@dimen/size_16dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
