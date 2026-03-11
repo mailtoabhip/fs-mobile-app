@@ -148,24 +148,6 @@ class WalletFilterBottomSheet : BottomSheetDialogFragment() {
             else -> {}
         }
     }
-
-    private fun showDateRangePicker() {
-        val cal = Calendar.getInstance()
-        DatePickerDialog(requireContext(), { _, year, month, day ->
-            customStartDate = Calendar.getInstance().apply { set(year, month, day) }
-            // Pick end date
-            DatePickerDialog(requireContext(), { _, y2, m2, d2 ->
-                customEndDate = Calendar.getInstance().apply { set(y2, m2, d2) }
-                updateCustomRangeLabel()
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
-    }
-
-    private fun updateCustomRangeLabel() {
-        val fmt = SimpleDateFormat("d MMM", Locale.getDefault())
-        val start = customStartDate?.let { fmt.format(it.time) } ?: ""
-        val end = customEndDate?.let { fmt.format(it.time) } ?: ""
-    }
 }
 
 /**

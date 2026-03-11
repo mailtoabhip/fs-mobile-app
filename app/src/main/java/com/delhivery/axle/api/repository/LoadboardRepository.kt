@@ -173,40 +173,21 @@ class LoadboardRepository @Inject constructor(
      */
     fun submitFastagLead(fastagLeadRequest: FastagLeadRequest) = loadboardService.submitFastagLead(fastagLeadRequest).convertResponse()
 
-    /**
-     * Fetch wallet details (real API call — uncomment when ready)
-     */
     fun fetchWalletDetails() =
         loadboardService.fetchWalletDetails().convertResponse()
 
-    /**
-     * Create wallet (real API call — uncomment when ready)
-     */
     fun createWallet() =
         loadboardService.createWallet().convertResponse()
 
-
-    /**
-     * Fetch wallet transaction listing (paginated)
-     */
     fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0) =
         loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset).convertResponse()
 
-    /**
-     * Fetch single transaction status (real API call — uncomment when ready)
-     */
     fun fetchTransactionStatus(start: String, txnId: String) =
         loadboardService.fetchTransactionStatus(start, txnId).convertResponse()
 
-    /**
-     * Fetch wallet recharge transactions (real API call — uncomment when ready)
-     */
     fun fetchWalletRechargeList(walletId: String, start: String, end: String, limit: Int = 10, offset: Int = 0) =
         loadboardService.fetchWalletRechargeList(walletId, start, end, limit, offset).convertResponse()
 
-    /**
-     * Fetch single recharge status (real API call — uncomment when ready)
-     */
     fun fetchRechargeStatus(rechargeId: String, start: String) =
         loadboardService.fetchRechargeStatus(rechargeId, start).convertResponse()
 
