@@ -6,6 +6,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.Interceptor
 import okhttp3.Request
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,7 +15,10 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class DelhiveryNetworkInterceptor @Inject constructor(var userPrefs: UserPrefs) : Interceptor {
+class DelhiveryNetworkInterceptor @Inject constructor(
+  var userPrefs: UserPrefs,
+  var connectionLiveData: ConnectionLiveData
+) : Interceptor {
 
   private var jwtToken: String? = userPrefs.jwtToken
 
@@ -29,6 +33,11 @@ class DelhiveryNetworkInterceptor @Inject constructor(var userPrefs: UserPrefs) 
 
   override fun intercept(chain: Interceptor.Chain) =
     chain.request().newBuilder().let { builder: Request.Builder ->
+
+        /* Block request if no internet connection */
+        if (!connectionLiveData.isConnected()) {
+            throw IOException("No internet connection")
+        }
       if (jwtToken.isNotNullOrEmpty()) {
         if (BuildConfig.DEBUG) {
           Log.d("Authorization", "Bearer $jwtToken")

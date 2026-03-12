@@ -1,44 +1,46 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
-import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.delhivery.axle.SyncOfferData.MyWorker
-import com.delhivery.axle.api.repository.*
+import com.delhivery.axle.api.repository.InventoryRepository
+import com.delhivery.axle.api.repository.LoadCycleRepository
+import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.repository.TruckRepository
+import com.delhivery.axle.api.repository.UserRepository
+import com.delhivery.axle.api.repository.UserTrucksLoadLimit
 import com.delhivery.axle.api.request.DeactivateTruckRequest
 import com.delhivery.axle.api.request.DeleteTruckRequest
 import com.delhivery.axle.api.request.UpdateTruck
-import com.delhivery.axle.api.response.FrequentTripsResponse
+import com.delhivery.axle.api.response.FastagBalanceResponse
 import com.delhivery.axle.api.response.TruckResponseArray
 import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.data.gst.GstDetailData
-import com.delhivery.axle.data.home.trucks.HomeTrucksInfoItemData
-import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityItemData
+import com.delhivery.axle.data.home.trucks.FastagStats
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.database.entity.OffersEntity
-import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.trucks.ActivateTruckInterface
 import com.delhivery.axle.ui.trucks.EditTruckInterface
-import com.delhivery.axle.utils.UiUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import io.reactivex.disposables.SerialDisposable
 import retrofit2.HttpException
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 /**
  * View model class for [HomeTrucksFragment]
@@ -50,6 +52,7 @@ class HomeTrucksViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val appDatabase: AppDatabase,
     private val loadCycleRepository: LoadCycleRepository,
+    private val loadboardRepository: LoadboardRepository,
     val userPrefs: UserPrefs
 ): BaseViewModel(), ActivateTruckInterface, EditTruckInterface {
 
@@ -66,6 +69,8 @@ class HomeTrucksViewModel @Inject constructor(
     var searchPrefix = ""
     var searchFlag = false
 
+    private val inventoryDisposable = SerialDisposable()
+
     //Live data variables
 
     /* data loading live data */
@@ -80,6 +85,18 @@ class HomeTrucksViewModel @Inject constructor(
     /* user bids live data */
     var userTrucksData =
         MutableLiveData<List<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
+    /* FASTag stats live data */
+    var fastagStatsData = MutableLiveData<FastagStats>()
+    
+    /* FASTag balance refresh live data - using tagId instead of position */
+    var fastagBalanceRefreshData = MutableLiveData<Pair<String, FastagBalanceResponse>>()
+    
+    /* FASTag balance refresh error live data - using tagId instead of position */
+    var fastagBalanceRefreshErrorData = MutableLiveData<Pair<String, String>>()
+    
+    /* FASTag balance refresh loading state - using tagId instead of position */
+    var fastagBalanceRefreshLoadingData = MutableLiveData<Pair<String, Boolean>>()
 
     var noCityCodeError =  MutableLiveData<Boolean>()
 
@@ -102,6 +119,7 @@ class HomeTrucksViewModel @Inject constructor(
             .onBackground()
             .subscribe { _tRes, error ->
                 if(!error && _tRes != null){
+                    truckSizeData.clear()
                     truckSizeData.addAll(_tRes)
                 }
                 else{
@@ -130,12 +148,13 @@ class HomeTrucksViewModel @Inject constructor(
         jsonObject.addProperty("limit", UserTrucksLoadLimit)
 
         if(searchFlag){
-            jsonObject.addProperty("vehicle_prefix",searchPrefix)
+            jsonObject.addProperty("vehicle_prefix", searchPrefix.uppercase())
         }
 
         if(search && searchPrefix.isNotEmpty() ){
             mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
+                // Search item removed - using fixed search bar in layout instead
+                // add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
                 add(Pair(HomeTrucksProgressItem() , DataRVAdapterOperationType.AddUpdate))
             }.let{userTrucksData.postValue(it)}
 
@@ -161,37 +180,60 @@ class HomeTrucksViewModel @Inject constructor(
 
         dataLoadingLiveData.postValue(true)
 
-        compositeDisposable += inventoryRepository.getInventories(jsonObject)
+        inventoryDisposable.set(loadboardRepository.getInventories(jsonObject)
             .onBackground()
             .subscribe{ _res, error ->
                 if(!error && _res != null) {
-                    offset += _res.trucks.size
-                    total = _res.total
-                    userPrefs.inventoryCount =total.toString()
+
+                    // Update pagination state from API response
+                    offset = _res.nextOffset ?: offset
+                    
+                    if (!searchFlag && !hasActiveFilters()) {
+                        total = _res.total
+                        userPrefs.inventoryCount = total.toString()
+                    }
+                    
                     hasMoreData = _res.hasNext
 
                     val trucksList :List<HomeTrucksRequestItemData> = _res.trucks
+                    
+
+                    if (!searchFlag && !hasActiveFilters()) {
+                        // Calculate FASTag stats on background thread for large lists
+                        compositeDisposable += io.reactivex.Single.fromCallable {
+                            val fastagTrucksCount = trucksList.count { 
+                                it.fastagTagStatus?.equals("Active", ignoreCase = true) == true 
+                            }
+                            val totalFastagBalance = trucksList
+                                .filter { it.fastagTagStatus?.equals("Active", ignoreCase = true) == true }
+                                .sumOf { it.fastagBalance?.toDoubleOrNull() ?: 0.0 }
+                            
+                            FastagStats(
+                                totalTrucks = total,
+                                fastagTrucksCount = fastagTrucksCount,
+                                totalFastagBalance = totalFastagBalance
+                            )
+                        }
+                        .onBackground()
+                        .subscribe({ stats ->
+                            fastagStatsData.postValue(stats)
+                        }, { error ->
+                            Log.e("HomeTrucksViewModel", "Error calculating FASTag stats", error)
+                            // Post default stats on error
+                            fastagStatsData.postValue(FastagStats(total, 0, 0.0))
+                        })
+                    }
 
                     mutableListOf<Pair<BaseHomeTrucksRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         add(Pair(HomeTrucksProgressItem(), DataRVAdapterOperationType.Remove))
 
                         if(trucksList != null && trucksList.isNotEmpty()) {
-                            add(Pair(HomeTrucksSearchItem(), DataRVAdapterOperationType.AddUpdate))
-                            add(Pair(HomeTrucksFilterItem(), DataRVAdapterOperationType.AddUpdate))
-                            if(!paginate) {
-                                add(Pair( HomeTruckPriorityAccessItem(HomeTrucksPriorityItemData()), DataRVAdapterOperationType.AddUpdate))
-                            }
-                            add(Pair(HomeTrucksInfoItem(HomeTrucksInfoItemData(total)), DataRVAdapterOperationType.AddUpdate))
-
                             for (trucks in trucksList) {
                                 add(Pair(HomeTrucksRequestItem(trucks), DataRVAdapterOperationType.AddUpdate))
                             }
 
                         }else{
-                            bodyTypeFilter = mutableListOf()
-                            availabilityFilter = mutableListOf()
-                            sizeFilter = null
-                            searchPrefix = ""
+                            Log.d("HomeTrucksViewModel", "Trucks list is empty or null")
                             add(Pair(HomeTrucksWarningItem_NoTrucks, DataRVAdapterOperationType.AddUpdate))
                         }
                     }.let {
@@ -213,7 +255,7 @@ class HomeTrucksViewModel @Inject constructor(
                 }
 
                 dataLoadingLiveData.postValue(false)
-            }
+            })
 
     }
 
@@ -222,7 +264,7 @@ class HomeTrucksViewModel @Inject constructor(
         reason: String,
         position: Int
     ){
-        val request = DeactivateTruckRequest(data.inventoryId, "not_available","deactivate_truck", reason)
+        val request = DeactivateTruckRequest(data.inventoryId ?: "", "not_available","deactivate_truck", reason)
         compositeDisposable += inventoryRepository.deActivateTruck(request)
             .onBackground()
             .progress()
@@ -292,7 +334,7 @@ class HomeTrucksViewModel @Inject constructor(
                 currentCity.orionDbCityCode ?: "", destinationCity.orionDbCityCode ?: ""
             )
                 .flatMap { t ->
-                    val request = UpdateTruck(data.inventoryId, "update_details", currentCity.city, currentCity.orionDbCityCode!!, destinationCity.city,
+                    val request = UpdateTruck(data.inventoryId ?: "", "update_details", currentCity.city, currentCity.orionDbCityCode!!, destinationCity.city,
                         destinationCity.orionDbCityCode!!, sourcedAs, t.first, t.second, userPrefs.demandType, price, ownership = ownership)
 
                     inventoryRepository.editTruck(request.getRequest())
@@ -323,7 +365,7 @@ class HomeTrucksViewModel @Inject constructor(
         data: HomeTrucksRequestItemData,
         position: Int
     ){
-        compositeDisposable += inventoryRepository.deleteTruck(DeleteTruckRequest(data.inventoryId))
+        compositeDisposable += inventoryRepository.deleteTruck(DeleteTruckRequest(data.inventoryId ?: ""))
             .onBackground()
             .progress()
             .subscribe{ _res, error ->
@@ -343,13 +385,13 @@ class HomeTrucksViewModel @Inject constructor(
     var offeLiveData = MutableLiveData<HomeTrucksRequestItemData?>()
 
     fun fetchDatabaseOffers(data: HomeTrucksRequestItemData?){
-        val lrt = appDatabase.offersDao().getParticularsOffers(data?.currentCityCode, data?.unloadingDestinationCode)
-        if(!lrt.isNullOrEmpty() && lrt.size>0){
-            data?.resOffer = Triple(Pair(true, lrt.get(0).offerId),data?.truckSize, Pair(lrt[0].tdn,lrt[0].amt.toString()))
-        }else{
-            data?.resOffer = Triple(Pair(false, null),null, Pair(null,null))
-        }
-        offeLiveData.postValue(data)
+//        val lrt = appDatabase.offersDao().getParticularsOffers(data?.currentCityCode, data?.unloadingDestinationCode)
+//        if(!lrt.isNullOrEmpty() && lrt.size>0){
+//            data?.resOffer = Triple(Pair(true, lrt.get(0).offerId),data?.truckSize, Pair(lrt[0].tdn,lrt[0].amt.toString()))
+//        }else{
+//            data?.resOffer = Triple(Pair(false, null),null, Pair(null,null))
+//        }
+//        offeLiveData.postValue(data)
     }
 
     fun fetchData() {
@@ -366,6 +408,73 @@ class HomeTrucksViewModel @Inject constructor(
                 ExistingPeriodicWorkPolicy.KEEP,  //Existing Periodic Work policy
                 periodicSyncDataWork //work request
         )
+    }
+
+    fun refreshFastagBalance(tagId: String) {
+        fastagBalanceRefreshLoadingData.postValue(Pair(tagId, true))
+        
+        compositeDisposable += loadboardRepository.getFastagBalance(tagId)
+            .onBackground()
+            .progress()
+            .subscribe{ _res, error ->
+                fastagBalanceRefreshLoadingData.postValue(Pair(tagId, false))
+                
+                if(!error && _res != null) {
+                    fastagBalanceRefreshData.postValue(Pair(tagId, _res))
+                } else {
+                    error.handle()
+                    val errorMessage = error.message ?: "Failed to refresh balance"
+                    fastagBalanceRefreshErrorData.postValue(Pair(tagId, errorMessage))
+                }
+            }
+    }
+    
+    /**
+     * Check if any filters are currently active
+     * @return true if any filter (vehicle type, availability, or truck size) is active
+     */
+    private fun hasActiveFilters(): Boolean {
+        return bodyTypeFilter.isNotEmpty() || 
+               availabilityFilter.isNotEmpty() || 
+               sizeFilter.isNotNullOrEmpty()
+    }
+
+    override fun onCleared() {
+        inventoryDisposable.dispose()
+        super.onCleared()
+    }
+
+    /**
+     * Submit FASTag lead request with simple parameters
+     * Generic function that can be called from anywhere
+     */
+    fun submitFastagLead(
+        vehicleCount: Int = 1,
+        location: String = "",
+        vrn: String? = null,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val request = com.delhivery.axle.api.request.FastagLeadRequest(
+            userId = userPrefs.userId(),
+            vehicleCount = vehicleCount,
+            location = location,
+            source = "Axle",
+            vrn = vrn
+        )
+        
+        compositeDisposable += loadboardRepository.submitFastagLead(request)
+            .onBackground()
+            .progress()
+            .subscribe { _res, error ->
+                if (!error && _res != null) {
+                    onSuccess(_res.message?:"")
+                } else {
+                    error.handle()
+                    val errorMessage = error.message ?: "Failed to submit FASTag request"
+                    onError(errorMessage)
+                }
+            }
     }
 
 }

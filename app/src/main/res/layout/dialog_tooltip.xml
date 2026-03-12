@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!-- Tooltip content box -->
+        <LinearLayout
+            android:id="@+id/tooltip_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:background="@drawable/bg_tooltip"
+            android:elevation="8dp">
+
+            <TextView
+                android:id="@+id/tv_tooltip_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This balance is the total of all available FASTag balances"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:lineSpacingExtra="1dp"
+                android:maxWidth="165dp" />
+
+        </LinearLayout>
+
+        <!-- Arrow pointing down - positioned on the LEFT side to align with info icon -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="10dp"
+            android:layout_below="@id/tooltip_content"
+            android:layout_alignStart="@id/tooltip_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="-1dp"
+            android:src="@drawable/tooltip_arrow_down"
+            android:contentDescription="Arrow" />
+
+    </RelativeLayout>
+</layout>

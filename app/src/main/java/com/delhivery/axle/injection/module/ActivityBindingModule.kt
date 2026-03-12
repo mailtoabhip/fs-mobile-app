@@ -35,13 +35,20 @@ import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
+import com.delhivery.axle.ui.loadwallet.LoadWalletActivity
+import com.delhivery.axle.ui.loadwallet.TransactionDetailsActivity
+import com.delhivery.axle.ui.loadwallet.RechargeDetailsActivity
+import com.delhivery.axle.ui.loadwallet.WalletFragmentBindingModule
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
 import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
+import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
+import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
+import com.delhivery.axle.ui.fastag.FastagRechargeActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
@@ -324,6 +331,11 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsVendorPolicyActivityModule::class])
   internal abstract fun bindVendorPolicyActivity(): VendorPolicyActivity
 
+  /* Payment WebView Activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPaymentWebViewActivityModule::class])
+  internal abstract fun bindPaymentWebViewActivity(): PaymentWebViewActivity
+
   /* Basic Details page activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsBasicDetailsActivityModule::class])
@@ -363,6 +375,29 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementDetailsActivityModule::class])
   internal abstract fun bindPlacementDetailsActivity(): PlacementDetailsActivity
+
+  /* FASTag Transaction Details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagTransactionDetailsActivityModule::class])
+  internal abstract fun bindFastagTransactionDetailsActivity(): FastagTransactionDetailsActivity
+
+  /* Load Wallet activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsLoadWalletActivityModule::class, WalletFragmentBindingModule::class])
+  internal abstract fun bindLoadWalletActivity(): LoadWalletActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsTransactionDetailsActivityModule::class])
+  internal abstract fun bindTransactionDetailsActivity(): TransactionDetailsActivity
+
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsRechargeDetailsActivityModule::class])
+  internal abstract fun bindRechargeDetailsActivity(): RechargeDetailsActivity
+
+  /* FASTag Recharge activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagRechargeActivityModule::class])
+  internal abstract fun bindFastagRechargeActivity(): FastagRechargeActivity
 }
 
 
@@ -525,6 +560,9 @@ internal abstract class AbsPaymentDetailsActivityModule : ActivityModule<Payment
 internal abstract class AbsVendorPolicyActivityModule : ActivityModule<VendorPolicyActivity>()
 
 @Module
+internal abstract class AbsPaymentWebViewActivityModule : ActivityModule<PaymentWebViewActivity>()
+
+@Module
 internal abstract class AbsBasicDetailsActivityModule : ActivityModule<BasicDetailsActivity>()
 
 @Module
@@ -547,6 +585,21 @@ internal abstract class AbsContractDetailsActivityModule : ActivityModule<Contra
 
 @Module
 internal abstract class AbsPlacementDetailsActivityModule : ActivityModule<PlacementDetailsActivity>()
+
+@Module
+internal abstract class AbsFastagTransactionDetailsActivityModule : ActivityModule<FastagTransactionDetailsActivity>()
+
+@Module
+internal abstract class AbsLoadWalletActivityModule : ActivityModule<LoadWalletActivity>()
+
+@Module
+internal abstract class AbsTransactionDetailsActivityModule : ActivityModule<TransactionDetailsActivity>()
+
+@Module
+internal abstract class AbsRechargeDetailsActivityModule : ActivityModule<RechargeDetailsActivity>()
+
+@Module
+internal abstract class AbsFastagRechargeActivityModule : ActivityModule<FastagRechargeActivity>()
 
 /**
  * Activity Binds Module

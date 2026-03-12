@@ -5,42 +5,95 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
-import com.delhivery.axle.data.CityModel
-import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class HomeTrucksRequestItemData(
-    @SerializedName("uuid") val inventoryId : String,
-    @SerializedName("supplier_id") var supplierId: String,
-    @SerializedName("supplier_name") val supplierName: String,
-    @SerializedName("vehicle_number") var vehicleNumber: String,
-    @SerializedName("truck_type") val truckType: String,
-    @SerializedName("ownership") var ownership :String?,
-    @SerializedName("truck_uuid") val truckSize: String,
-    @SerializedName("capacity") val capacity: Double,
-    @SerializedName("current_city") var currentCityName: String? = "",
-    @SerializedName("current_city_code") var currentCityCode: String? = null,
-    @SerializedName("destination_city") var unloadingDestination: String? = "",
-    @SerializedName("destination_city_code") var unloadingDestinationCode: String? =null,
-    @SerializedName("unloading_destination_amount") var unloadingDestinationAmount: Double? = null,
-    @SerializedName("unloading_destination_rate") var unloadingDestinationRate: Double? = null,
-    @SerializedName("last_deactivated_at") var lastDeactivateTime: String,
-    @SerializedName("last_deactivate_reason") var lastDeactivateReason: String,
-    @SerializedName("latest_inventory_uuid") var latestUUID: String? = null,
-    @SerializedName("latest_inventory_status") var latestStatus: String? = null,
-    @SerializedName("created_at") var createdAt: String,
-    @SerializedName("created_by") var createdBy: String,
-    @SerializedName("origin_cluster_id") var originClusterId: String,
-    @SerializedName("destination_cluster_id") var destinationClusterId: String,
-    @SerializedName("sourced_as") var sourcedAs: String? =null,
-    @SerializedName("res_offer") var resOffer: Triple<Pair<Boolean?,String?>, String?, Pair<String?,String?>>? = Triple(Pair(null, null), null, Pair(null,null))
-) : BaseKeyTypeModel<String>(){
+    @SerializedName("latest_inventory_uuid")
+    val inventoryId: String?,
 
-    override fun key()= inventoryId
+    @SerializedName("vehicle_number")
+    val vehicleNumber: String,
+
+    @SerializedName("truck_type")
+    val truckType: String,
+
+    @SerializedName("truck_display_name")
+    val truckSize: String,
+
+    @SerializedName("truck_uuid")
+    val truckUuid: String,
+
+    @SerializedName("capacity")
+    val capacity: Double,
+
+    @SerializedName("current_city")
+    var currentCityName: String,
+
+    @SerializedName("current_city_code")
+    var currentCityCode: String,
+
+    @SerializedName("destination_city")
+    var unloadingDestination: String,
+
+    @SerializedName("destination_city_code")
+    var unloadingDestinationCode: String,
+
+    @SerializedName("ownership")
+    var ownership: String,
+
+    @SerializedName("latest_inventory_status")
+    var latestStatus: String,
+
+    @SerializedName("uuid")
+    var latestUUID: String,
+
+    @SerializedName("origin_cluster_id")
+    var originClusterId: String,
+
+    @SerializedName("destination_cluster_id")
+    var destinationClusterId: String,
+
+    @SerializedName("unloading_destination_amount")
+    var unloadingDestinationAmount: Double = 0.0,
+
+    @SerializedName("unloading_destination_rate")
+    var unloadingDestinationRate: Double = 0.0,
+
+    @SerializedName("sourced_as")
+    val sourcedAs: String,
+
+    @SerializedName("demand_type")
+    val demandType: List<String>? = null,
+
+    @SerializedName("fastag_id")
+    val fastagTagId: String? = null,
+
+    @SerializedName("fastag_vrn")
+    val fastagVrn: String? = null,
+
+    @SerializedName("fastag_balance")
+    var fastagBalance: String? = null,
+
+    @SerializedName("fastag_issued_by")
+    val fastagIssuedBy: String? = null,
+
+    @SerializedName("fastag_linked_bank")
+    val fastagLinkedBank: String? = null,
+
+    @SerializedName("fastag_tag_status")
+    val fastagTagStatus: String? = null,
+
+    @SerializedName("fastag_last_balance_updated")
+    val fastagLastBalanceUpdated: String? = null,
+
+    @SerializedName("fastag_last_transaction")
+    val fastagLastTransaction: FastagLastTransaction? = null
+)
+
+    : BaseKeyTypeModel<String>(){
+
+    override fun key() = inventoryId ?: ""
 
     @DrawableRes
     fun truckImage() : Int{
@@ -54,9 +107,13 @@ data class HomeTrucksRequestItemData(
 
     fun truckNumber() = vehicleNumber
 
-    fun ownership() = capitalize((((ownership?.split("_"))?.toTypedArray())?.joinToString(" ")))
+    fun ownership() = when(ownership) {
+        "owns_truck" -> "Own Truck"
+        "market_truck" -> "Market Truck"
+        else -> capitalize((((ownership.split("_")).toTypedArray()).joinToString(" ")))
+    }
 
-    fun truckSizeAndCap() = truckSize()+ "-" + truckCapacity()
+    fun truckSizeAndCap() = truckSize() + " | " + truckCapacity()
 
     fun originCity() = capitalize(currentCityName)
 
@@ -84,10 +141,8 @@ data class HomeTrucksRequestItemData(
     else R.color.bid_placed_red
 
     fun statusText()= if(latestStatus == "Free")
-        "Looking for Load"
-    else if(latestStatus == "Active")
-        "In a Trip"
-       else ""
+        "Available"
+    else ""
 
     fun statusVisibilty() = if(latestStatus == "not_available")
         View.VISIBLE
@@ -99,6 +154,43 @@ data class HomeTrucksRequestItemData(
     else
         View.GONE
 
+    // FASTag helper methods
+    fun verifiedIconVisibility() = if(fastagTagStatus.equals("Active", ignoreCase = true)) View.VISIBLE else View.GONE
+    
+    fun hasFastagInfo() = fastagTagId != null
+    
+    fun fastagSectionVisibility() = if(hasFastagInfo()) View.VISIBLE else View.GONE
+    
+    fun noFastagSectionVisibility() = if(!hasFastagInfo()) View.VISIBLE else View.GONE
+    
+//    fun lowBalanceWarningVisibility(): Int {
+//        val balance = fastagBalance?.toDoubleOrNull() ?: 0.0
+//        return if(hasFastagInfo() && balance < 100) View.VISIBLE else View.GONE
+//    }
+
+    fun fastagBalanceText() = "₹${fastagBalance ?: "0"}"
+    
+    fun fastagProviderText() = "${fastagIssuedBy ?: "IDFC"} FASTag by Delhivery"
+
+    fun fastagTransactionInfo(): String {
+        val transaction = fastagLastTransaction
+        return transaction?.let {
+            val sign = when (it.txnType) {
+                "Debit" -> "-"
+                "Credit" -> "+"
+                else -> ""
+            }
+            
+            val formattedDate = com.delhivery.axle.utils.DateUtils.formatFastagTransactionDateShort(it.datetime)
+            
+            "$sign ₹${it.amount} on $formattedDate"
+        } ?: ""
+    }
+
+    
+    fun fastagTransactionLocation() = fastagLastTransaction?.txnEvent ?: ""
+    
+    fun fastagLowBalanceWarning() = "Your FASTag is hotlisted due to low balance. Recharge to avoid blacklisting."
 
 }
 
@@ -107,6 +199,8 @@ const val HomeTrucksRequestAction_ViewDetails = "truck_details"
 const val HomeTrucksRequestAction_EditTruck = "edit_truck"
 
 const val HomeTrucksRequestAction_ActivateTruck = "activate_truck"
+
+const val HomeTrucksRequestAction_BuyFastag = "buy_fastag"
 
 data class TruckFrequentItem(
     val truckType: String,
@@ -143,6 +237,27 @@ data class TruckFrequentItem(
     fun truckSize(): String = truckSize
 
 }
+
+data class FastagLastTransaction(
+    @SerializedName("txn_id")
+    val id: String,
+
+    @SerializedName("txn_time")
+    val datetime: String,
+
+    @SerializedName("txn_amount")
+    val amount: Double,
+
+    @SerializedName("txn_type")
+    val txnType: String?,
+
+    @SerializedName("txn_details")
+    val txnDetails: String?,
+    
+    @SerializedName("txn_event")
+    val txnEvent: String?
+)
+
 fun List<HomeTrucksRequestItemData>.names() =
         mapIndexed { _, truckModel ->
             return@mapIndexed truckModel.vehicleNumber

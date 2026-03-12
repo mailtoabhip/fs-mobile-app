@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" android:drawable="@drawable/bg_radio_trailer_selected"/>
-    <item android:state_checked="false" android:drawable="@drawable/ic_trailer"/>
-</selector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_truck_card"/>
+    <item android:drawable="@drawable/ic_trailer_truck_new"
+        android:bottom="@dimen/size_36dp"
+        android:left="@dimen/size_20dp"
+        android:right="@dimen/size_20dp"
+        android:top="@dimen/size_28dp"/>
+    <item android:drawable="@drawable/selector_radio_button"
+        android:gravity="top|left"
+        android:top="@dimen/size_10dp"
+        android:left="@dimen/size_10dp"/>
+</layer-list>

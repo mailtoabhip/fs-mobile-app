@@ -280,6 +280,8 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity android:name=".ui.payment.PaymentWebViewActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.userroutes.ManageRouteActivity"
             android:screenOrientation="portrait"/>
 
@@ -302,6 +304,22 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.placementdetails.PlacementDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.fastag.FastagTransactionDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.fastag.FastagRechargeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".ui.loadwallet.LoadWalletActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.TransactionDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.RechargeDetailsActivity"
             android:screenOrientation="portrait"/>
     </application>
 

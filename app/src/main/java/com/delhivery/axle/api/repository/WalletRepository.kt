@@ -2,6 +2,8 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.BankTransferRequest
 import com.delhivery.axle.api.request.CreateFuelCardRequest
+import com.delhivery.axle.api.request.WalletRechargeReqBody
+import com.delhivery.axle.api.request.WalletRechargeRequest
 import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.api.service.WalletService
 import com.delhivery.axle.utils.extensions.convertResponse

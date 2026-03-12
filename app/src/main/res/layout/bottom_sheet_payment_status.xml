@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_rounded_top"
+        android:orientation="vertical"
+        android:paddingBottom="100dp">
+
+        <!-- Close Button -->
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="@dimen/size_32dp"
+            android:layout_height="@dimen/size_32dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:padding="@dimen/size_4dp"
+            android:src="@drawable/ic_close_grey"
+            android:contentDescription="Close"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
+
+        <!-- Status Icon -->
+        <ImageView
+            android:id="@+id/ivStatusIcon"
+            android:layout_width="@dimen/size_80dp"
+            android:layout_height="@dimen/size_80dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:contentDescription="Status" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvStatusTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:textColor="#1E293B"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvStatusDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_marginHorizontal="40dp"
+            android:gravity="center"
+            android:textColor="#6B7280"
+            android:textSize="@dimen/text_16sp" />
+
+    </LinearLayout>
+</layout>

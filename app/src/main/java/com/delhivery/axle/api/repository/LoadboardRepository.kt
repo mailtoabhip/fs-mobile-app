@@ -150,4 +150,61 @@ class LoadboardRepository @Inject constructor(
 
     fun getBankName(bankValidationRequest: BankValidationRequest) = loadboardService.getBankName(bankValidationRequest = bankValidationRequest).convertResponse()
 
+    /**
+     * Get FASTag balance
+     */
+    fun getFastagBalance(tagId: String) = loadboardService.getFastagBalance(tagId).convertResponse()
+
+    fun getInventories(request: JsonObject) = loadboardService.getInventories(request)
+        .map { response ->
+            if (response.success) {
+                response
+            } else {
+                throw Exception("API returned success: false")
+            }
+        }
+
+    fun downloadFastagTransactions(tagId: String, from_date: String?,to_date: String?) = loadboardService.downloadFastagTransactions(tagId, from_date, to_date)
+
+    fun getFastagTransactions(tagId: String, limit: Int, offset: Int) = loadboardService.getFastagTransactions(tagId, offset, limit).convertResponse()
+
+    /**
+     * Submit FASTag lead request
+     */
+    fun submitFastagLead(fastagLeadRequest: FastagLeadRequest) = loadboardService.submitFastagLead(fastagLeadRequest).convertResponse()
+
+    /**
+     * Recharge FASTag from wallet
+     */
+    fun rechargeFastag(fastagRechargeRequest: FastagRechargeRequest) = loadboardService.rechargeFastag(fastagRechargeRequest).convertResponse()
+
+    /**
+     * Fetch FASTag status
+     */
+    fun fetchFastagStatus(tagId: String) = loadboardService.fetchFastagStatus(tagId).convertResponse()
+
+    /**
+     * Fetch wallet details
+     */
+    fun fetchWalletDetails() =
+        loadboardService.fetchWalletDetails().convertResponse()
+
+    fun createWallet() =
+        loadboardService.createWallet().convertResponse()
+
+    fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0) =
+        loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset).convertResponse()
+
+    fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0, type: String? = null) =
+        loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset, type).convertResponse()
+
+    fun fetchTransactionStatus(start: String, txnId: String) =
+        loadboardService.fetchTransactionStatus(start, txnId).convertResponse()
+
+    fun fetchWalletRechargeList(walletId: String, start: String, end: String, limit: Int = 10, offset: Int = 0) =
+        loadboardService.fetchWalletRechargeList(walletId, start, end, limit, offset).convertResponse()
+
+    fun fetchRechargeStatus(rechargeId: String, start: String) =
+        loadboardService.fetchRechargeStatus(start, rechargeId).convertResponse()
+
 }

@@ -15,6 +15,8 @@
 
   <color name="colorShimmerPrimary">#F1F1F1</color>
   <color name="colorShimmerSecondary">#F3F3F3</color>
+  <color name="colorShimmerDarkPrimary">#2A2A2A</color>
+  <color name="colorShimmerDarkSecondary">#333333</color>
 
   <!-- bid status colors-->
   <color name="status_active">#29A8E0</color>
@@ -160,5 +162,8 @@
   <!-- Information banner colors -->
   <color name="information_bg">#F0F4FF</color>
   <color name="information_font">#374D94</color>
+  <color name="txn_success">#2563EB</color>
+  <color name="title_black">#0F172A</color>
+  <color name="text_dark_grey">#64748B</color>
 
 </resources>

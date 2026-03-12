@@ -21,36 +21,23 @@ import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
-import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
-import com.delhivery.axle.ui.businessverification.businessVerificationIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
-import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.fragments.*
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
-import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
-import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
-import com.delhivery.axle.ui.kyc.address.AddressActivity
-import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
-import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
-import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
-import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
-import com.delhivery.axle.ui.searchtrip.SearchActivity
 import android.os.Bundle
+import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.splash.StartRoutingActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
-import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
-import com.delhivery.axle.ui.tripdetails.UploadImageActivity
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.trucks.TruckActivity
 import com.delhivery.axle.ui.userroutes.userRoutesIntent
@@ -59,7 +46,6 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onPageSelected
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
-import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
@@ -218,7 +204,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             analyticsUtil.moEngageTrackEvent(
               EVENT_NAVIGATION_MY_PROFILE
             )
-              navigationUtils.navigate(MyProfileActivity::class.java, false) //TODO MyProfileActivity::class.java . Test : startActivity(businessVerificationIntent(this))
+              navigationUtils.navigate(MyProfileActivity::class.java, false)
           }
         }
       }
