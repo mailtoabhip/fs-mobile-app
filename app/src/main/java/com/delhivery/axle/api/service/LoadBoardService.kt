@@ -341,23 +341,35 @@ interface LoadBoardService {
         @Query("toll_plaza_id") tollPlazaId: String,
         @Query("dateTime") dateTime: String?,
         @Query("limit") limit: Int?,
-        @Query("offset") offset: Int?
+        @Query("offset") offset: Int?,
+        @Query("fastagId") fastagId: String?
     ): Single<BaseResponse<FastagTransactionsByTollPlazaResponse>>
 
     /**
      * Submit dispute with multipart form data
      */
     @Multipart
-    @POST("/api/v1/disputes")
+    @POST("/fastag/transactions/dispute")
     fun submitDispute(
         @Part("txn_id") txnId: okhttp3.RequestBody,
         @Part("toll_plaza_id") tollPlazaId: okhttp3.RequestBody,
         @Part("refundRequestedAmount") refundAmount: okhttp3.RequestBody,
         @Part("comment") comment: okhttp3.RequestBody,
         @Part("raisedAgainst") raisedAgainst: okhttp3.RequestBody,
-        @Part upload_doc1: okhttp3.MultipartBody.Part?,
-        @Part upload_doc2: okhttp3.MultipartBody.Part?,
-        @Part upload_doc3: okhttp3.MultipartBody.Part?
+        @Part("additional_txn_id") additionalTxnId: okhttp3.RequestBody?,
+        @Part uploadDoc1: okhttp3.MultipartBody.Part?,
+        @Part uploadDoc2: okhttp3.MultipartBody.Part?,
+        @Part uploadDoc3: okhttp3.MultipartBody.Part?
     ): Single<BaseResponse<DisputeSubmissionResponse>>
+
+    @GET("/fastag/transactions/dispute/issues-list")
+    fun getDisputeIssuesList(
+        @Query("partner") partner: String
+    ): Single<BaseResponse<DisputeIssuesResponse>>
+
+    @GET("/fastag/transaction/dispute/form-config/{disputeTypeCode}")
+    fun getDisputeFormConfig(
+        @Path("disputeTypeCode") disputeTypeCode: String
+    ): Single<BaseResponse<List<FormField>>>
 
 }

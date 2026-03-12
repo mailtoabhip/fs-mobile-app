@@ -2,9 +2,13 @@ package com.delhivery.axle.ui.fastag
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.databinding.ActivityFastagTransactionDetailBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDetailBinding, FastagTransactionDetailsViewModel>() {
 
@@ -23,55 +27,38 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
         const val EXTRA_OWNERSHIP = "ownership"
     }
 
+    private var txnId: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupUI()
+        txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: ""
+
+        setupStaticUI()
+        observeData()
+        viewModel.getTransactionDispute(txnId)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        /* Handle window insets for edge-to-edge display (API 35+) */
         if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
     }
 
-    private fun setupUI() {
-        // Get data from intent - using hardcoded values for now
-        val txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: "TXN-4925892SM7"
-        val amount = intent.getDoubleExtra(EXTRA_AMOUNT, 310.0)
-        val tollName = intent.getStringExtra(EXTRA_TOLL_NAME) ?: "Gurgaon Toll Plaza"
-        val timestamp = intent.getStringExtra(EXTRA_TIMESTAMP) ?: "8th Dec 2023, 02:54 PM"
-        val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: "RJ-14-GH-1234"
-        val truckSize = intent.getStringExtra(EXTRA_TRUCK_SIZE) ?: "32FTXXL"
-        val capacity = intent.getDoubleExtra(EXTRA_CAPACITY, 18.0)
-        val ownership = intent.getStringExtra(EXTRA_OWNERSHIP) ?: "Own Truck"
+    private fun setupStaticUI() {
+        // Populate fields from intent extras (passed from the transaction list)
+        val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
+        val truckSize = intent.getStringExtra(EXTRA_TRUCK_SIZE) ?: ""
+        val capacity = intent.getDoubleExtra(EXTRA_CAPACITY, 0.0)
+        val ownership = intent.getStringExtra(EXTRA_OWNERSHIP) ?: ""
 
-        // Set vehicle info
         binding.tvVehicleNumber.text = vehicleNumber
         binding.tvVehicleMeta.text = "$ownership | $truckSize | $capacity MT"
 
-        // Set FASTag info
-        binding.tvFastagProvider.text = "IDFC FASTag by Delhivery"
-        binding.tvFastagId.text = "FASTag ID: FT-9928341029"
+        binding.ivBack.setOnClickListener { finish() }
 
-        // Set amount
-        val amountText = if (amount < 0) "-₹${kotlin.math.abs(amount).toInt()}" else "+₹${amount.toInt()}"
-        binding.tvAmount.text = amountText
-
-        // Set transaction details
-        binding.tvTollName.text = tollName
-        binding.tvDateTime.text = timestamp
-        binding.tvTransactionId.text = txnId
-
-        // Back button
-        binding.ivBack.setOnClickListener {
-            finish()
-        }
-
-        // Raise Dispute button
         binding.btnRaiseDispute.setOnClickListener {
             val intent = Intent(this, FastagDisputeIssuesActivity::class.java).apply {
                 putExtra(FastagDisputeIssuesActivity.EXTRA_PARTNER, "IDFC")
@@ -79,6 +66,71 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
                 putExtra(FastagDisputeIssuesActivity.EXTRA_FASTAG_ID, "FT-9928341029")
             }
             startActivity(intent)
+        }
+    }
+
+    private fun observeData() {
+        viewModel.progressData.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.scrollContent.visibility = if (isLoading) View.GONE else View.VISIBLE
+        }
+
+        viewModel.transactionDisputeData.observe(this) { response ->
+            populateUI(response)
+        }
+    }
+
+    private fun populateUI(response: TransactionDisputeResponse) {
+        // FASTag info
+        binding.tvFastagProvider.text = "${response.fastagIssuedBy ?: ""} FASTag by Delhivery"
+        binding.tvFastagId.text = "FASTag ID: ${response.fastagId ?: ""}"
+
+        // Amount
+        val amount = response.txnAmount ?: 0.0
+        val isDebit = response.txnType == "D"
+        binding.tvAmount.text = if (isDebit) "-₹${amount.toInt()}" else "+₹${amount.toInt()}"
+
+        // Transaction details
+        binding.tvTxnCategory.text = response.txnCategory ?: ""
+        binding.tvTollName.text = response.tollPlazaName ?: ""
+        binding.tvTransactionId.text = response.txnId ?: ""
+        binding.tvDateTime.text = formatDateTime(response.txnDatetime)
+
+        // Dispute tracker
+        val dispute = response.disputeDetails
+        if (dispute != null) {
+            binding.cardDisputeTracker.visibility = View.VISIBLE
+            binding.tvIssueCategory.text = dispute.issueCategory ?: ""
+            binding.tvTicketId.text = "#${dispute.srId ?: ""}"
+            binding.tvComment.text = dispute.comment ?: ""
+
+            // Populate timeline from API
+            val timeline = dispute.statusTimeline
+            if (!timeline.isNullOrEmpty()) {
+                timeline.getOrNull(0)?.let {
+                    binding.tvSubmittedTime.text = "${it.displayLabel ?: "Submitted"}: ${formatDateTime(it.timestamp)}"
+                }
+                timeline.getOrNull(1)?.let {
+                    binding.tvAcceptedTime.text = "${it.displayLabel ?: "Accepted"}: ${formatDateTime(it.timestamp)}"
+                }
+                timeline.getOrNull(2)?.let {
+                    binding.tvUnderReviewTime.text = "${it.displayLabel ?: "Under Review"}: ${formatDateTime(it.timestamp)}"
+                }
+            }
+        } else {
+            binding.cardDisputeTracker.visibility = View.GONE
+        }
+    }
+
+    private fun formatDateTime(isoString: String?): String {
+        if (isoString.isNullOrEmpty()) return ""
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("d MMM yyyy, hh:mm a", Locale.getDefault())
+            val date = inputFormat.parse(isoString)
+            if (date != null) outputFormat.format(date) else isoString
+        } catch (e: Exception) {
+            isoString
         }
     }
 }

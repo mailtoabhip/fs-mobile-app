@@ -20,7 +20,7 @@ class FastagDisputeIssuesViewModel @Inject constructor(
     fun getDisputeIssues(partner: String) {
         progressData.value = true
 
-        compositeDisposable += loadboardRepository.getDisputeIssues(partner)
+        compositeDisposable += loadboardRepository.getDisputeIssuesList(partner)
             .onBackground()
             .progress()
             .subscribe { _res, error ->

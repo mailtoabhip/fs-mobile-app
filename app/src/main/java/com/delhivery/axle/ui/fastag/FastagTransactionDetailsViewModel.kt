@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.response.FastagTransactionResponse
+import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.errorPaymentResponseBody
 import com.delhivery.axle.utils.extensions.not
@@ -17,6 +18,7 @@ class FastagTransactionDetailsViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val transactionsData = MutableLiveData<FastagTransactionResponse>()
+    val transactionDisputeData = MutableLiveData<TransactionDisputeResponse>()
     val errorData = MutableLiveData<String>()
     val progressData = MutableLiveData<Boolean>()
     val downloadData = MutableLiveData<ResponseBody>()
@@ -86,6 +88,24 @@ class FastagTransactionDetailsViewModel @Inject constructor(
                     }
                     errorData.value = errorMessage
                     error.handle()
+                }
+            }
+    }
+
+    fun getTransactionDispute(txnId: String) {
+        progressData.value = true
+
+        compositeDisposable += loadboardRepository.getDisputeIssues(txnId)
+            .onBackground()
+            .progress()
+            .subscribe { _res, error ->
+                progressData.value = false
+
+                if (!error && _res != null) {
+                    transactionDisputeData.value = _res
+                } else {
+                    error.handle()
+                    errorData.value = error.message ?: "Failed to load transaction details"
                 }
             }
     }

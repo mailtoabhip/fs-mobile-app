@@ -188,13 +188,13 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         }
 
         // Observe form configuration
-        viewModel.formConfigData.observe(this) { formConfig ->
-            // Update issue category title from API response
-            binding.tvIssueTitle.text = formConfig.issueCategory
-
-            // Render form fields
-            renderFormFields(formConfig.fields)
-        }
+//        viewModel.formConfigData.observe(this) { formConfig ->//todo check
+//            // Update issue category title from API response
+//            binding.tvIssueTitle.text = formConfig.issueCategory
+//
+//            // Render form fields
+//            renderFormFields(formConfig.fields)
+//        }
 
         // Observe validation state
         viewModel.validationStateData.observe(this) { validationMap ->

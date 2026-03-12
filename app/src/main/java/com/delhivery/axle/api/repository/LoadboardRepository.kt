@@ -173,11 +173,14 @@ class LoadboardRepository @Inject constructor(
 
 
     /**
-     * Get dispute issues for FASTag
+     * Get transaction dispute details for FASTag
      */
-    fun getDisputeIssues(partner: String) = io.reactivex.Single.just(DisputeIssuesMock.getMockResponse())
-    // When API is ready, uncomment below and remove the mock line above:
-    // fun getDisputeIssues(partner: String) = loadboardService.getDisputeIssues(partner).convertResponse()
+    fun getDisputeIssues(txnId: String) = loadboardService.getTransactionDispute(txnId).convertResponse()
+
+    /**
+     * Get dispute issues list for FASTag
+     */
+    fun getDisputeIssuesList(partner: String) = loadboardService.getDisputeIssuesList(partner).convertResponse()
 
 
     fun downloadFastagTransactions(tagId: String, from_date: String?,to_date: String?) = loadboardService.downloadFastagTransactions(tagId, from_date, to_date)
@@ -226,33 +229,21 @@ class LoadboardRepository @Inject constructor(
 
     /**
      * Get FASTag transactions by toll plaza or fastag ID
-     * Currently using mock data until API is deployed
-     * To switch to real API: uncomment the line below and remove the mock line
      */
     fun getFastagTransactionsByTollPlaza(
         tollPlazaId: String,
         dateTime: String? = null,
+        fastagId: String? = null,
         limit: Int? = 50,
         offset: Int? = 0
-    ): io.reactivex.Single<FastagTransactionsByTollPlazaResponse> {
-        // Mock implementation - returns data directly
-        return io.reactivex.Single.just(FastagTransactionsByTollPlazaMock.getMockResponse())
-
-        // When API is ready, replace above line with:
-        // return loadboardService.getFastagTransactionsByTollPlaza(tollPlazaId, dateTime, limit, offset).convertResponse()
-    }
+    ) = loadboardService.getFastagTransactionsByTollPlaza(tollPlazaId, dateTime, limit, offset, fastagId).convertResponse()
 
     /**
      * Get dispute form configuration
-     * Currently using mock data until API is deployed
      */
-    fun getDisputeFormConfig(disputeTypeCode: String): io.reactivex.Single<FormConfigResponse> {
-        // Mock implementation - returns data directly
-        return io.reactivex.Single.just(DisputeFormConfigMock.getMockResponse(disputeTypeCode))
-        
-        // When API is ready, replace above line with:
-        // return loadboardService.getDisputeFormConfig(disputeTypeCode).convertResponse()
-    }
+    fun getDisputeFormConfig(disputeTypeCode: String) =
+        loadboardService.getDisputeFormConfig(disputeTypeCode).convertResponse()
+            .map { fields -> FormConfigResponse(fields) }
 
     /**
      * Submit dispute with multipart form data
@@ -263,22 +254,20 @@ class LoadboardRepository @Inject constructor(
         refundAmount: Double,
         comment: String,
         raisedAgainst: String,
+        additionalTxnId: String? = null,
         doc1: okhttp3.MultipartBody.Part?,
         doc2: okhttp3.MultipartBody.Part?,
         doc3: okhttp3.MultipartBody.Part?
     ): io.reactivex.Single<DisputeSubmissionResponse> {
-        val txnIdBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), txnId)
-        val tollPlazaIdBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), tollPlazaId)
-        val refundAmountBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), refundAmount.toString())
-        val commentBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), comment)
-        val raisedAgainstBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), raisedAgainst)
-        
+        val plain = okhttp3.MediaType.parse("text/plain")
+        val additionalTxnIdBody = additionalTxnId?.let { okhttp3.RequestBody.create(plain, it) }
         return loadboardService.submitDispute(
-            txnIdBody,
-            tollPlazaIdBody,
-            refundAmountBody,
-            commentBody,
-            raisedAgainstBody,
+            okhttp3.RequestBody.create(plain, txnId),
+            okhttp3.RequestBody.create(plain, tollPlazaId),
+            okhttp3.RequestBody.create(plain, refundAmount.toString()),
+            okhttp3.RequestBody.create(plain, comment),
+            okhttp3.RequestBody.create(plain, raisedAgainst),
+            additionalTxnIdBody,
             doc1,
             doc2,
             doc3
@@ -286,77 +275,6 @@ class LoadboardRepository @Inject constructor(
     }
 
 }
-
-/**
- * Mock data for dispute form configuration
- * Remove this object when the real API is deployed
- */
-object DisputeFormConfigMock {
-    fun getMockResponse(disputeTypeCode: String): FormConfigResponse {
-        return FormConfigResponse(
-            disputeTypeCode = disputeTypeCode,
-            issueCategory = "Duplicate Transactions done at Toll Plaza",
-            fields = listOf(
-                FormField(
-                    displayOrder = 1,
-                    fieldType = "NUMBER",
-                    displayLabel = "Enter the extra deduction or amount",
-                    placeholder = "0.00",
-                    mandatory = true,
-                    minLength = 1,
-                    maxLength = 100,
-                    validationRule = "^\\d+(\\.\\d{1,2})?$ AND value > 0",
-                    validationErrorMessage = "Enter valid amount greater than 0 with up to 2 decimal places",
-                    allowedFileTypes = null,
-                    maxFileSizeMB = null
-                ),
-                FormField(
-                    displayOrder = 2,
-                    fieldType = "FILE",
-                    displayLabel = "Vehicle RC",
-                    placeholder = null,
-                    mandatory = true,
-                    minLength = null,
-                    maxLength = null,
-                    validationRule = null,
-                    validationErrorMessage = null,
-                    helpText = "Front side of Registration Cert.",
-                    allowedFileTypes = listOf("JPG", "JPEG", "PNG"),
-                    maxFileSizeMB = 2
-                ),
-                FormField(
-                    displayOrder = 3,
-                    fieldType = "FILE",
-                    displayLabel = "Proof of double debit",
-                    placeholder = null,
-                    mandatory = true,
-                    minLength = null,
-                    maxLength = null,
-                    validationRule = null,
-                    validationErrorMessage = null,
-                    helpText = "Screenshot or statement of both deductions",
-                    allowedFileTypes = listOf("JPG", "JPEG", "PNG"),
-                    maxFileSizeMB = 2
-                ),
-                FormField(
-                    displayOrder = 4,
-                    fieldType = "TEXTAREA",
-                    displayLabel = "Tell us what happened",
-                    placeholder = "E.g. The toll was charged twice within 5 minutes for the same vehicle...",
-                    mandatory = false,
-                    minLength = 20,
-                    maxLength = 500,
-                    validationRule = "MIN_LENGTH:20, MAX_LENGTH:500",
-                    validationErrorMessage = "Comment must be between 20 and 500 characters",
-                    helpText = "Minimum 20 characters required. Providing the exact time of both transactions helps in faster resolution.",
-                    allowedFileTypes = null,
-                    maxFileSizeMB = null
-                )
-            )
-        )
-    }
-}
-
 
 /**
  * Mock data for FASTag transactions by toll plaza

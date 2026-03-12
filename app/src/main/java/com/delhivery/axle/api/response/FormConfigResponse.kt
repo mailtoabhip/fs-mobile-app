@@ -4,15 +4,12 @@ import com.google.gson.annotations.SerializedName
 
 /**
  * Response model for dispute form configuration
+ * API returns: { "success": true, "data": [ ...FormField list... ] }
+ * After convertResponse(), we receive List<FormField> directly.
+ * FormConfigResponse wraps it for use in the ViewModel.
  */
 data class FormConfigResponse(
-    @SerializedName("disputeTypeCode")
-    val disputeTypeCode: String,
-
-    @SerializedName("issue_category")
-    val issueCategory: String,
-    
-    @SerializedName("fields")
+    @SerializedName("data")
     val fields: List<FormField>
 )
 

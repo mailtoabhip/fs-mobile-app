@@ -93,10 +93,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
     }
 
     private fun loadTransactions() {
-        // Use NEW API only if toll plaza ID is explicitly provided
-//        if (tollPlazaId.isNotEmpty()) {//todo check for data
-            viewModel.getTransactionsByTollPlaza(tollPlazaId)
-//        }
+        viewModel.getTransactionsByTollPlaza(tollPlazaId = tollPlazaId, fastagId = fastagId)
     }
 
     private fun observeData() {
@@ -105,22 +102,6 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
             binding.rvTransactions.visibility = if (isLoading) View.GONE else View.VISIBLE
         }
 
-        // Observe OLD API response (existing implementation)
-        viewModel.transactionsData.observe(this) { response ->
-            response.transactions?.let { transactions ->
-                val transactionItems = transactions.map { txn ->
-                    TransactionItem(
-                        id = txn.txnId ?: "",
-                        tollName = txn.tollName ?: "Unknown",
-                        timestamp = txn.timestamp ?: "",
-                        amount = txn.amount ?: 0.0
-                    )
-                }
-                adapter.submitList(transactionItems)
-            }
-        }
-
-        // Observe NEW API response
         viewModel.transactionsByTollPlazaData.observe(this) { response ->
             response.transactions?.let { transactions ->
                 val transactionItems = transactions.map { txn ->
@@ -134,10 +115,6 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                 }
                 adapter.submitList(transactionItems)
             }
-        }
-
-        viewModel.errorData.observe(this) { error ->
-//            showToast(error)
         }
     }
 

@@ -11,6 +11,7 @@ import com.delhivery.axle.data.dispute.ValidationResult
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.FileUploadManager
 import com.delhivery.axle.utils.FormValidator
+import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import okhttp3.MediaType
@@ -45,35 +46,16 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
 
         compositeDisposable += loadboardRepository.getDisputeFormConfig(disputeTypeCode)
             .onBackground()
+            .progress()
             .subscribe { response, error ->
                 progressData.value = false
 
-                when {
-                    error != null -> {
-                        val errorMessage = when {
-                            error.message?.contains("network", ignoreCase = true) == true -> 
-                                "Network error. Please check your connection and try again."
-                            error.message?.contains("timeout", ignoreCase = true) == true -> 
-                                "Request timed out. Please try again."
-                            error.message?.contains("404") == true -> 
-                                "Form configuration not found for this dispute type."
-                            error.message?.contains("500") == true -> 
-                                "Server error. Please try again later."
-                            else -> 
-                                "Failed to load form configuration. ${error.message ?: ""}"
-                        }
-                        errorData.value = errorMessage
-                    }
-                    response == null -> {
-                        errorData.value = "Failed to load form configuration. Please try again."
-                    }
-                    response.fields.isEmpty() -> {
-                        errorData.value = "No form fields available for this dispute type."
-                    }
-                    else -> {
-                        formConfig = response
-                        formConfigData.value = response
-                    }
+                if (!error && response != null) {
+                    formConfig = response
+                    formConfigData.value = response
+                } else {
+                    error.handle()
+                    errorData.value = error.message ?: "Failed to load form configuration"
                 }
             }
     }
@@ -245,7 +227,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
             ?.forEach { field ->
                 val uri = fileUris[field.fieldId]
                 if (uri != null) {
-                    val part = createMultipartFromUri(uri, "upload_doc$fileIndex", context)
+                    val part = createMultipartFromUri(uri, "uploadDoc$fileIndex", context)
                     fileParts.add(part)
                     fileIndex++
                 } else if (field.mandatory) {
@@ -258,7 +240,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
         fileUris.filter { it.key.startsWith("additional_doc_") }
             .forEach { (_, uri) ->
                 if (fileIndex <= 3) {
-                    val part = createMultipartFromUri(uri, "upload_doc$fileIndex", context)
+                    val part = createMultipartFromUri(uri, "uploadDoc$fileIndex", context)
                     fileParts.add(part)
                     fileIndex++
                 }
@@ -279,6 +261,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
             refundAmount = refundRequestedAmount,
             comment = comment,
             raisedAgainst = disputeTypeCode,
+            additionalTxnId = transactionId,
             doc1 = fileParts.getOrNull(0),
             doc2 = fileParts.getOrNull(1),
             doc3 = fileParts.getOrNull(2)
@@ -287,15 +270,15 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
             .subscribe { response, error ->
                 progressData.value = false
 
-                if (error == null && response != null) {
-                    val srId = response.srId ?: "N/A"
-                    val status = response.disputeStatus ?: ""
+                if (!error && response != null) {
                     submissionStateData.value = SubmissionState.Success(
-                        "Dispute submitted successfully. SR ID: $srId"
+                        "Dispute submitted successfully. SR ID: ${response.srId ?: "N/A"}"
                     )
                 } else {
-                    val msg = error?.message ?: "Submission failed. Please try again."
-                    submissionStateData.value = SubmissionState.Error(msg)
+                    error.handle()
+                    submissionStateData.value = SubmissionState.Error(
+                        error.message ?: "Submission failed. Please try again."
+                    )
                 }
             }
     }
