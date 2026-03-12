@@ -41,8 +41,8 @@ class TransactionsRepository @Inject constructor(
   fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, splitViewCount:Boolean?=null, searchAfter: SearchAfter?) =
          recommendationService.recommendationTransactions(
            ReccomdationRequest( userPrefs.parentId,UserTripsLoadLimit,offset,
-               demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter )
-         ).convertResponse()
+             demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter )
+          ).convertResponse()
 
   /**
    * Get user intracity transactions

@@ -1430,8 +1430,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
               binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
               binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                  navigationUtils.navigate(PlacementsActivity::class.java)
-               // startActivity(homeActivityIntent("placement", this@BidDetailsActivity))
+              navigationUtils.navigate(PlacementsActivity::class.java)
 
                 // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
               }

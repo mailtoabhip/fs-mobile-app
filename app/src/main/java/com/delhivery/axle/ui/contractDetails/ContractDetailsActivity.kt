@@ -1190,8 +1190,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
                 binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
                 binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                    navigationUtils.navigate(PlacementsActivity::class.java)
-                  //startActivity(homeActivityIntent("placement", this@ContractDetailsActivity))
+                navigationUtils.navigate(PlacementsActivity::class.java)
 
                   // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
                 }

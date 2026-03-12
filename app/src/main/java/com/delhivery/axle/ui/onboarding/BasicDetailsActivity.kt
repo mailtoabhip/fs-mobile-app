@@ -444,8 +444,6 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
                 val bundle = Bundle()
                 bundle.putInt(StepKey, 0)
-                //navigationUtils.navigateKyc(this, true, bundle)
-
                 /*Allow home page access after basic details as KYC will be done from HomePage*/
                 navigationUtils.navigate(HomeActivity::class.java, true, bundle)
             } else {

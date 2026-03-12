@@ -56,9 +56,6 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
           if(userPrefs.retryVerification){
             navigationUtils.navigate(MyProfileActivity::class.java, true)
           }
-          /*else {
-            navigationUtils.navigate(BasicDetailsActivity::class.java, true)
-          }*/
           finish()
         }
       })
