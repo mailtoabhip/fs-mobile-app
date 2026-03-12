@@ -38,17 +38,11 @@ class DelhiveryNetworkInterceptor @Inject constructor(
         if (!connectionLiveData.isConnected()) {
             throw IOException("No internet connection")
         }
-        // TODO remove it also
-      val existingAuthHeader = chain.request().header("Authorization")
-      if (existingAuthHeader == null && jwtToken.isNotNullOrEmpty()) {
+      if (jwtToken.isNotNullOrEmpty()) {
         if (BuildConfig.DEBUG) {
           Log.d("Authorization", "Bearer $jwtToken")
         }
         builder.addHeader("Authorization", "Bearer $jwtToken")
-      } else if (existingAuthHeader != null) {
-        if (BuildConfig.DEBUG) {
-          Log.d("Authorization", "Using existing Authorization header from request")
-        }
       } else {
         Log.d("DelhiveryInterceptor", "intercept:: no jwt token")
       }
