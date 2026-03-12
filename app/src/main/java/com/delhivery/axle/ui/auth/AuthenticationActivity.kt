@@ -21,6 +21,7 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
@@ -320,6 +321,20 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             }
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountDetailsActivity::class.java, true)
+          }
+          BasicDetails -> {
+            analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
+            userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
+            userPrefs.userId().let {
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
+            }
+            userPrefs.phoneNumber?.let {
+              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
+              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
+            }
+            uiUtils.hideDelhiveryProgress()
+            navigationUtils.navigate(BasicDetailsActivity::class.java, true)
           }
           Disabled -> {
             userPrefs.userId().let {

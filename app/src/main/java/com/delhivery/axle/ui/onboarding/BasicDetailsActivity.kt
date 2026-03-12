@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.data.CityModel
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.searchcitystate.CityType
 import com.delhivery.axle.ui.searchcitystate.HaveOldDestinations
 import com.delhivery.axle.ui.searchcitystate.SelectedData
@@ -443,7 +444,8 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
 
                 val bundle = Bundle()
                 bundle.putInt(StepKey, 0)
-                navigationUtils.navigateKyc(this, true, bundle)
+                /*Allow home page access after basic details as KYC will be done from HomePage*/
+                navigationUtils.navigate(HomeActivity::class.java, true, bundle)
             } else {
                 uiUtils.showSnackbar("Update Failed, Please try again")
             }

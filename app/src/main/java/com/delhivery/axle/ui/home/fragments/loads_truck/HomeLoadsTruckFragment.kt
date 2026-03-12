@@ -37,7 +37,7 @@ import com.google.firebase.perf.metrics.Trace
 class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, HomeLoadsTruckViewModel>(),
     TitleProvider, UpdateTabCountAndBadgeInterface{
 
-    var _title: String = "Home"
+    var _title: String = "Loads"
     var vehicleNo = ""
     var fromNotification = false
     var fromDeepLink = false

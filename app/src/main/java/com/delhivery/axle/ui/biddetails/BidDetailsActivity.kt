@@ -64,6 +64,7 @@ import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.delhivery.axle.ui.profile.PlacementsActivity
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.extensions.focusClick
@@ -1429,7 +1430,7 @@ class BidDetailsActivity : BaseActivity<ActivityLoadBidDetailsBinding, BidDetail
               binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
               binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
               binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                startActivity(homeActivityIntent("placement", this@BidDetailsActivity))
+              navigationUtils.navigate(PlacementsActivity::class.java)
 
                 // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
               }

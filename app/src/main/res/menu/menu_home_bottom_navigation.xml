@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item
-      android:id="@+id/nav_loads_trucks"
+      android:id="@+id/nav_home"
       android:icon="@drawable/iconcontainer__7_"
       android:title="@string/label_home"/>
 
   <item
-      android:id="@+id/nav_placements"
-      android:icon="@drawable/iconcontainer_placements"
-      android:title="@string/label_placements"/>
+      android:id="@+id/nav_loads"
+      android:icon="@drawable/ic_nav_loads"
+      android:title="@string/label_nav_loads"/>
 
   <item
       android:id="@+id/nav_trucks"
@@ -25,10 +25,5 @@
       android:id="@+id/nav_trips"
       android:icon="@drawable/ic_route"
       android:title="@string/label_nav_trips"/>
-
-<!--  <item-->
-<!--      android:id="@+id/nav_wallet"-->
-<!--      android:icon="@drawable/ic_nav_payment"-->
-<!--      android:title="@string/label_nav_payment" />-->
 
 </menu>

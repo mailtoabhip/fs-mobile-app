@@ -61,6 +61,7 @@
   <string name="msg_your_bid">Your bid: ₹ </string>
   <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
   <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
+  <string name="msg_home_under_dev">Home screen is coming soon with exciting features.</string>
   <string name="msg_image_capture_failed">Unable to capture image</string>
   <string name="msg_file_upload_failed">File Upload Failed</string>
   <string name="msg_file_upload_successful">File Uploaded Successfully</string>
@@ -226,6 +227,7 @@
   <string name="label_nav_trucks">Trucks</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_pods">PODs</string>
+  <string name="label_nav_loads">Loads</string>
   <string name="label_nav_alerts">Alerts</string>
   <string name="label_nav_payment">Axle Money</string>
   <string name="label_nav_profile">Profile</string>
@@ -1026,4 +1028,27 @@
     <string name="payable_amount">Payable Amount</string>
     <string name="slide_to_pay">Slide to recharge</string>
 
+  <!-- KYC Status Card Strings -->
+  <string name="kyc_heading_completed">You\'re all set to start bidding</string>
+  <string name="kyc_message_completed">Your account is activated. Explore and bid on available loads.</string>
+  <string name="kyc_button_completed">Browse Loads</string>
+
+  <string name="kyc_heading_start">You\'re almost ready to bid</string>
+  <string name="kyc_message_start">Complete onboarding to access live loads in your area.</string>
+  <string name="kyc_button_start">Finish setup</string>
+
+  <string name="kyc_heading_continue">Continue your onboarding</string>
+  <string name="kyc_message_continue">You\'re almost done. Complete the remaining steps to start bidding.</string>
+  <string name="kyc_button_continue">Continue setup</string>
+
+  <string name="kyc_heading_pending">Documents are submitted</string>
+  <string name="kyc_message_pending">We’re reviewing your details. You’ll be notified once it’s done.</string>
+  <string name="kyc_button_pending">View KYC details</string>
+
+  <string name="kyc_heading_rejected">KYC Verification Rejected</string>
+  <string name="kyc_message_rejected">Document issue detected. Please re-upload the requested document.</string>
+  <string name="kyc_button_rejected">Re-upload Document</string>
+  <string name="label_fastag_no_space">Fastag</string>
+  <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
+  <string name="label_bidding">Bidding</string>
 </resources>

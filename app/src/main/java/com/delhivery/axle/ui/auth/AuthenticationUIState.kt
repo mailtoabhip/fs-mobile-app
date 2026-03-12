@@ -10,5 +10,6 @@ enum class AuthenticationUIState {
   LoadRequest,
   Disabled,
   Password,
-  AccountDetails
+  AccountDetails,
+  BasicDetails
 }

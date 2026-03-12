@@ -17,6 +17,7 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState
 
 import com.delhivery.axle.ui.base.BaseLocationActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -177,6 +178,12 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                     AuthenticationUIState.LoadRequest -> {
                       //  uiUtils.showProgress()
                         val intent = Intent(this@AccountDetailsActivity, HomeActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    }
+                    AuthenticationUIState.BasicDetails -> {
+                        uiUtils.hideDelhiveryProgress()
+                        val intent = Intent(this@AccountDetailsActivity, BasicDetailsActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                     }

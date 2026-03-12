@@ -23,7 +23,8 @@ import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.bids.userTripsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.home.fragments.*
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.*
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsTruckFragment
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType.PodFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
@@ -32,9 +33,10 @@ import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.profile.placementsActivityIntent
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import android.os.Bundle
-import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
+import com.delhivery.axle.ui.home.fragments.home.HomeFragment
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.splash.StartRoutingActivity
 import com.delhivery.axle.ui.team.teamMembersIntent
@@ -130,7 +132,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           navigationUtils.logout("Please login to create account","fromUser")
         } else {
           setUserAttributes()
-          navigationUtils.navigateOnboardingSteps(true)
+          navigationUtils.navigateOnboardingDetails()
           /* setup toolbar */
           setSupportActionBar(binding.toolbar)
           title = "Home"
@@ -184,12 +186,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             userPrefs.setPreviousScreen(this.javaClass.name)
             fragmentAction(NavigateHomeFragmentAction(PodFragment))
           }
-          if (fragmentType.isNotNullOrEmpty() && fragmentType == "placement") {
+          if (fragmentType.isNotNullOrEmpty() && fragmentType == "home") {
 //            analyticsUtil.moEngageTrackEvent(
 //              EVENT_NAVIGATION_PODS
 //            )
             userPrefs.setPreviousScreen(this.javaClass.name)
-            fragmentAction(NavigateHomeFragmentAction(PlacementsFragment))
+            fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.NewHomeFragment))
           }
           if (fragmentType.isNotNullOrEmpty() && fragmentType == "load") {
 //            analyticsUtil.moEngageTrackEvent(
@@ -267,7 +269,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           startActivity(consolidatedPageIntent(this))
         }
         PLACEMENT_LIST -> {
-          fragmentAction(NavigateHomeFragmentAction(PlacementsFragment))
+          startActivity(placementsActivityIntent(this))
         }
         PHYSICAL_POD_PENDING_REDIRECT -> {
           userPrefs.dpLinkArg = "physicalPod"
@@ -556,12 +558,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
       userPrefs.setPreviousScreen(this.javaClass.name)
       fragmentAction(NavigateHomeFragmentAction(PodFragment))
     }
-    if (fragmentType.isNotNullOrEmpty() && fragmentType == "placement") {
+    if (fragmentType.isNotNullOrEmpty() && fragmentType == "home") {
 //            analyticsUtil.moEngageTrackEvent(
 //              EVENT_NAVIGATION_PODS
 //            )
       userPrefs.setPreviousScreen(this.javaClass.name)
-      fragmentAction(NavigateHomeFragmentAction(PlacementsFragment))
+      fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.NewHomeFragment))
     }
     if (fragmentType.isNotNullOrEmpty() && fragmentType == "load") {
 //            analyticsUtil.moEngageTrackEvent(
@@ -683,33 +685,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         binding.bottomNav.selectedItemId = fragmentType.menuId
         binding.toolbarTitle.text = title
       }
-      /* update placement badge action */
+      /* update placement badge action - no longer needed in HomeActivity */
       HomeFragmentActionType.UpdatePlacementBadge -> {
-        val delayedCount = (action as UpdatePlacementBadgeAction).delayedCount
-        updatePlacementBadgeCount(delayedCount)
+        // Placement badge is now handled in PlacementsActivity
       }
     }
   }
 
-  /**
-   * Update placement badge count on bottom navigation
-   */
-  fun updatePlacementBadgeCount(delayedCount: Int) {
-    try {
-      if (delayedCount > 0) {
-        val badge = binding.bottomNav.getOrCreateBadge(R.id.nav_placements)
-        badge.number = delayedCount
-        badge.isVisible = true
-        badge.backgroundColor = ContextCompat.getColor(this@HomeActivity, R.color.colorDelhiveryRed)
-      } else {
-        binding.bottomNav.removeBadge(R.id.nav_placements)
-      }
-    } catch (e: Exception) {
-      Log.e("HomeActivity", "Error updating placement badge: ${e.message}", e)
-      // Fallback: Just log the count for now
-      Log.d("HomeActivity", "Badge count would be: $delayedCount")
-    }
-  }
   override fun onNavigationItemSelected(item: MenuItem) = HomeFragmentType.posById(item.itemId)
     .let{ pos ->
       count++
@@ -723,7 +705,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
             } else {
               userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
             }
-            userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+            userPrefs.currentNavigationTab = HomeFragment::class.java.name
             userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
               EVENT_HOME_CLICKED
@@ -737,10 +719,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         1 ->
           if (count == 1) {
             userPrefs.previousNavigationTab = userPrefs.currentNavigationTab
-            userPrefs.currentNavigationTab = HomePlacementsFragment::class.java.name
+            userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
             userPrefs.setPreviousScreen(userPrefs.previousNavigationTab)
             analyticsUtil.moEngageTrackEvent(
-                    EVENT_HOME_PLACEMENT_TAB,
+                EVENT_NAVIGATION_LOADS,
               mutableListOf(
                 PROPERTY_USER_ID,
                 PROPERTY_PHONE_NO
@@ -840,7 +822,7 @@ enum class FragmentName(
   val frgName: String
 ) {
   HomeFragment(0, "home_screen"),
-  PlacementsFragment(1, "placement_screen"),
+  LoadsFragment(1, "loads_screen"),
   BidsFragment(2, "bids_screen"),
   TripsFragment(4, "trips_screen" ),
   ProfileFragment(5, "profile_screen"),

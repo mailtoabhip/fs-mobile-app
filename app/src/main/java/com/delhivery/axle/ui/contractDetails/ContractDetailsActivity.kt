@@ -105,6 +105,7 @@ import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.delhivery.axle.ui.profile.PlacementsActivity
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.EVENT_INTERCITY_CONTRACTS_BID_SUBMIT
 import com.delhivery.axle.utils.EVENT_INTRACITY_CONTRACTS_BID_SUBMIT
@@ -1189,7 +1190,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
                 binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
                 binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                  startActivity(homeActivityIntent("placement", this@ContractDetailsActivity))
+                navigationUtils.navigate(PlacementsActivity::class.java)
 
                   // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
                 }
