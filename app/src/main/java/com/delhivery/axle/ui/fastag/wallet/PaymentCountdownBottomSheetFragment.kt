@@ -8,32 +8,28 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.PaymentStatusCountdownBinding
+import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import javax.inject.Inject
 
 class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
-
     private lateinit var binding: PaymentStatusCountdownBinding
     private lateinit var viewModel: AddMoneyDialogViewmodel
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
-
     private var countDownTimer: CountDownTimer? = null
     private var hasResolved = false  // guard so only one outcome fires
     private var tickCount = 0
     private lateinit var rechargeId: String
     private lateinit var startDate: String
-
     companion object {
         private const val ARG_RECHARGE_ID = "recharge_id"
         private const val ARG_START_DATE  = "start_date"
         private const val COUNTDOWN_MS    = 31_000L
         private const val INTERVAL_MS     =  1_000L
-
         fun newInstance(
-            viewModelFactory: ViewModelProvider.Factory,
             rechargeId: String,
             startDate: String
         ): PaymentCountdownBottomSheetFragment {
@@ -42,16 +38,13 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
                 putString(ARG_RECHARGE_ID, rechargeId)
                 putString(ARG_START_DATE, startDate)
             }
-            fragment.viewModelFactory = viewModelFactory
             return fragment
         }
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = false
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,13 +53,16 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
         binding = PaymentStatusCountdownBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rechargeId = arguments?.getString(ARG_RECHARGE_ID) ?: ""
         startDate  = arguments?.getString(ARG_START_DATE)  ?: ""
-        viewModel  = ViewModelProvider(this, viewModelFactory)
+
+        val factory = (requireActivity() as BaseActivity<*, *>).viewModelFactory
+
+        viewModel  = ViewModelProvider(this, factory)
             .get(AddMoneyDialogViewmodel::class.java)
+
         startCountdown()
         observeStatus()
     }

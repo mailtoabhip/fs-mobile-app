@@ -166,9 +166,8 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
                 dismiss()
                 PaymentCountdownBottomSheetFragment
                     .newInstance(
-                        viewModelFactory = viewModelFactory,
-                        rechargeId       = viewModel.currentRechargeId,  // store this after initiate
-                        startDate        = viewModel.rechargeStartDate    // store this after initiate
+                        rechargeId       = viewModel.currentRechargeId,
+                        startDate        = viewModel.rechargeStartDate
                     )
                     .show(parentFragmentManager, "PaymentCountdown")
             }
