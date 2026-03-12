@@ -106,7 +106,7 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
         binding.btnAddMoney.setOnClickListener {
             if (viewModel.walletExistsLiveData.value == true) {
                 AddMoneyDialogFragment.newInstance(
-                    redirectUrl = "https://www.delhivery.com",
+                    redirectUrl = "https://www.delhivery.com/",
                     viewModelFactory = viewModelFactory,
                     onPaymentResult = {}
                 ).show(supportFragmentManager, "AddMoney")

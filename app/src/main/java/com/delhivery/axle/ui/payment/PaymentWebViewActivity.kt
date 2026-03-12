@@ -259,7 +259,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
                         val normalizedRedirect = redirectBase.trimEnd('/').lowercase()
                         
                         // Exact match only - this prevents false positives from asset URLs
-                        if (normalizedCurrent == normalizedRedirect) {
+                        if (normalizedCurrent.contains(normalizedRedirect)) {
                             // Redirect URL detected - set result and close the WebView
                             val resultIntent = Intent().apply {
                                 putExtra(EXTRA_RESULT_MESSAGE, "Payment completed successfully")
