@@ -506,9 +506,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         refreshData()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
 
     private fun refreshData(filter: Boolean = false) {
         viewModel.paginateCount = 0

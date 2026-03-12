@@ -79,27 +79,7 @@ data class WalletTransactionItem(
   @SerializedName("created_at") val createdAt: String = "",
   @SerializedName("txn_details") val txnDetails: String? = null,
   @SerializedName("txn_reason") val txnReason: String? = null
-) {
-  /**
-   * @return transaction heading based on ref_type
-   */
-  fun transactionHeading(): String {
-    return when (refType.uppercase()) {
-      "HYPERLOCAL" -> "Hyperlocal Payment"
-      "WALLET_RECHARGE" -> "Wallet Recharge"
-      "ORDER_PAYMENT" -> "Order Payment"
-      "REFUND" -> "Refund"
-      "FASTAG_RECHARGE" -> "FASTag Recharge"
-      else -> refType.replace("_", " ").lowercase()
-        .replaceFirstChar { it.uppercase() }
-    }
-  }
-
-  /**
-   * @return amount as Double
-   */
-  fun amountDouble(): Double = amount.toDoubleOrNull() ?: 0.0
-}
+)
 
 
 /**
@@ -110,9 +90,7 @@ data class UserWalletResponse(
     @SerializedName("wallet_id") val walletId: String = "",
     @SerializedName("current_balance") val currentBalance: Double = 0.00,
     @SerializedName("is_active") val isActive: Boolean = false
-) : java.io.Serializable {
-    fun balanceFormatted(): String = "₹${StringUtils.formatAmount(currentBalance ?: 0.0)}"
-}
+) : java.io.Serializable
 
 /**
  * Single transaction status response (from GET /finance/users/wallet/transactions?txn_id=)

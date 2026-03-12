@@ -5,6 +5,9 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.response.UserWalletResponse
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.ui.loadwallet.amountDouble
+import com.delhivery.axle.ui.loadwallet.balanceFormatted
+import com.delhivery.axle.ui.loadwallet.transactionHeading
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.not
