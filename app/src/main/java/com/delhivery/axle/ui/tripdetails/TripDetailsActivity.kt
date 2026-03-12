@@ -342,14 +342,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         return
     }
 
-    // Get payment data
-    val payment = trip.payment
-    if (payment == null) {
-        binding.clAdhocintracity.tvSettledTimestamp?.visibility = View.GONE
-        return
-    }
-    
-    val timestamp = payment.paymentTimestamp
+    // Use the settledTime from ViewModel (captured when balance payment was processed)
+    val timestamp = viewModel.settledTime
     
     when {
         // Show timestamp if available
