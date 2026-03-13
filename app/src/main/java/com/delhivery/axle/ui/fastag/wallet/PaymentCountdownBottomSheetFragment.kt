@@ -5,20 +5,25 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.PaymentStatusCountdownBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
+import com.delhivery.axle.utils.extensions.viewModelFactoryExtension
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import javax.inject.Inject
+import kotlin.getValue
 
 class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var binding: PaymentStatusCountdownBinding
-    private lateinit var viewModel: AddMoneyDialogViewmodel
+    private val viewModel: AddMoneyDialogViewmodel by activityViewModels {
+        viewModelFactoryExtension()
+    }
     private var countDownTimer: CountDownTimer? = null
     private var hasResolved = false  // guard so only one outcome fires
     private var tickCount = 0
@@ -57,11 +62,6 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         rechargeId = arguments?.getString(ARG_RECHARGE_ID) ?: ""
         startDate  = arguments?.getString(ARG_START_DATE)  ?: ""
-
-        val factory = (requireActivity() as BaseActivity<*, *>).viewModelFactory
-
-        viewModel  = ViewModelProvider(this, factory)
-            .get(AddMoneyDialogViewmodel::class.java)
 
         startCountdown()
         observeStatus()
@@ -126,7 +126,7 @@ class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {
         behavior.skipCollapsed = true
     }
 
-    override fun getTheme() = com.delhivery.axle.R.style.TransparentBottomSheetDialog
+    override fun getTheme() = R.style.TransparentBottomSheetDialog
 
     override fun onDestroyView() {
         countDownTimer?.cancel()

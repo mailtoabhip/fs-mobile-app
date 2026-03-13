@@ -86,7 +86,6 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         binding.tvAddMoney.setOnClickListener {
             AddMoneyDialogFragment.newInstance(
                 redirectUrl = "https://www.delhivery.com/",
-                viewModelFactory = viewModelFactory,
                 onPaymentResult = {}
             ).show(supportFragmentManager, "AddMoney")
         }

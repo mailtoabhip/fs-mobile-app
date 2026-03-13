@@ -9,11 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.AddMoneyBottomSheetBinding
+import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.utils.extensions.setEnabledState
+import com.delhivery.axle.utils.extensions.viewModelFactoryExtension
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -21,7 +24,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: AddMoneyBottomSheetBinding
-    private lateinit var viewModel: AddMoneyDialogViewmodel
+    private val viewModel: AddMoneyDialogViewmodel by activityViewModels {
+        viewModelFactoryExtension()
+    }
 
     private var deeplink: String = ""
     private var onPaymentResult: ((success: Boolean) -> Unit)? = null
@@ -31,19 +36,14 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
         fun newInstance(
             redirectUrl: String,
-            viewModelFactory: ViewModelProvider.Factory,
             onPaymentResult: (success: Boolean) -> Unit
         ): AddMoneyDialogFragment {
             val fragment = AddMoneyDialogFragment()
             fragment.arguments = Bundle().apply { putString(ARG_DEEPLINK, redirectUrl) }
-            fragment.viewModelFactory = viewModelFactory
             fragment.onPaymentResult = onPaymentResult
             return fragment
         }
     }
-
-    // Received from the calling activity
-    private lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,8 +58,6 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         deeplink = arguments?.getString(ARG_DEEPLINK) ?: ""
-
-        viewModel = ViewModelProvider(this, viewModelFactory).get(AddMoneyDialogViewmodel::class.java)
 
         binding.btnProceedToPay.setEnabledState(false)
 
