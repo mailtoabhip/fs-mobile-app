@@ -12,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_screen_gradient">
+        android:background="@drawable/bg_screen_gradient"
+        android:fitsSystemWindows="true">
 
         <!-- Header -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +22,6 @@
             android:layout_height="wrap_content"
             android:minHeight="@dimen/size_56dp"
             android:background="@android:color/white"
-            android:fitsSystemWindows="true"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -144,13 +144,14 @@
                         android:layout_height="match_parent"
                         android:background="#E5E7EB" />
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/etAmount"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
                         android:hint="0"
+                        android:textColorHint="@color/text_grey"
                         android:importantForAutofill="no"
                         android:inputType="numberDecimal"
                         android:paddingHorizontal="@dimen/size_16dp"

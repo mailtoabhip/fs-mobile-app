@@ -98,7 +98,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             chip.setOnClickListener {
                 selectedAmount = amount
                 binding.etAmount.setText(amount.toInt().toString())
-                binding.etAmount.setSelection(binding.etAmount.text.length)
+                binding.etAmount.setSelection(binding.etAmount.text?.length ?: 0)
                 updateChipSelection(amount)
                 updateAmountDisplay(amount)
                 updateSliderState()

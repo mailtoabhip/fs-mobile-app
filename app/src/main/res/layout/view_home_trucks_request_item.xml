@@ -378,7 +378,7 @@
                         android:textSize="@dimen/text_14sp"
                         android:text="Buy FASTag"
                         android:background="@drawable/bg_button_primary_r8"
-                        android:minHeight="0dp" />
+                       />
 
                 </LinearLayout>
 
