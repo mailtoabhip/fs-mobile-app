@@ -80,6 +80,17 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         setupObservers()
         loadData()
     }
+
+    private var isFirstResume = true
+
+    override fun onResume() {
+        super.onResume()
+        if (isFirstResume) {
+            isFirstResume = false
+            return
+        }
+        loadData()
+    }
     
     override fun onDestroy() {
         super.onDestroy()
