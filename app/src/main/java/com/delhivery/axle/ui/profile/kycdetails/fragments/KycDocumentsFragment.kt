@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.PackageManagerCompat.LOG_TAG
 import androidx.lifecycle.Observer
 import com.bumptech.glide.load.DataSource
@@ -42,9 +43,6 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import com.shockwave.pdfium.PdfDocument
-import com.shockwave.pdfium.PdfiumCore
-import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -335,44 +333,40 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
 
     override fun showImage(data: DocDetailData, textView: TextView, imageView: ImageView) {
         try {
-            if(data.docPath?.endsWith(".pdf") == true &&  !renderToBitmap(context, data.docPath).isNullOrEmpty()){
-                val bitmap = renderToBitmap(context, data.docPath)?.get(0)
-                imageView.setImageBitmap(bitmap)
-                val stream = ByteArrayOutputStream()
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                val imageInByte: ByteArray = stream.toByteArray()
-                val lengthbmp = imageInByte.size.toLong()/ 1024
-                textView.text = lengthbmp.toString() +" KB"
-            }else{
+            if (data.docPath?.endsWith(".pdf") == true) {
+                // Keep the circular background from layout
+                imageView.background = ContextCompat.getDrawable(imageView.context, R.drawable.ic_doc_business_empty)
+                
+                // Add padding so PDF icon fits nicely inside the circular background
+                val padding = imageView.context.resources.getDimensionPixelSize(R.dimen.size_12dp)
+                imageView.setPadding(padding, padding, padding, padding)
+
+                // Use fitCenter instead of circleCrop - this scales down to fit WITHOUT cropping
+                GlideApp.with(imageView.context)
+                    .load(R.drawable.pdf_svg)
+                    .apply(RequestOptions().fitCenter())
+                    .into(imageView)
+
+                data.docPath?.let { path ->
+                    val file = File(path)
+                    if (file.exists()) {
+                        val fileSizeKb = file.length() / 1024
+                        textView.text = "$fileSizeKb KB"
+                        textView.visibility = View.VISIBLE
+                    } else {
+                        textView.visibility = View.GONE
+                    }
+                }
+            } else {
+                // Reset for actual images - no background, no padding, use circleCrop
+                imageView.background = null
+                imageView.setPadding(0, 0, 0, 0)
                 loadImage(data.docPath, imageView, textView)
             }
-        }catch (e:Exception){
-            e.printStackTrace()
-        }
-
-    }
-
-    fun renderToBitmap(context: Context?, filePath: String?): List<Bitmap>? {
-        val images: MutableList<Bitmap> = ArrayList()
-        val pdfiumCore = PdfiumCore(context)
-        try {
-            val f: File = File(filePath)
-            val fd = ParcelFileDescriptor.open(f, ParcelFileDescriptor.MODE_READ_ONLY)
-            val pdfDocument: PdfDocument = pdfiumCore.newDocument(fd)
-            val pageCount = pdfiumCore.getPageCount(pdfDocument)
-            for (i in 0 until pageCount) {
-                pdfiumCore.openPage(pdfDocument, i)
-                val width = pdfiumCore.getPageWidthPoint(pdfDocument, i)
-                val height = pdfiumCore.getPageHeightPoint(pdfDocument, i)
-                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                pdfiumCore.renderPageBitmap(pdfDocument, bmp, i, 0, 0, width, height)
-                images.add(bmp)
-            }
-            pdfiumCore.closeDocument(pdfDocument)
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return images
+
     }
 
     private fun loadImage(
@@ -386,6 +380,10 @@ class KycDocumentsFragment : ProfileKYCBaseFragment<FragmentKycDocumentsBinding,
                 val imageViewHeight = view.measuredHeight
                 val imageViewWidth = view.measuredWidth
                 path?.let {
+                    // Clear placeholder background when loading actual image
+                    view.background = null
+                    // Reset padding for images
+                    view.setPadding(0, 0, 0, 0)
                     GlideApp.with(view.context)
                             .load(bitmapUtils.decodeSampledBitmap(path, imageViewWidth, imageViewHeight))
                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.RESOURCE))

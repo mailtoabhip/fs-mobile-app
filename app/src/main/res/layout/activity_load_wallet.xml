@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.loadwallet.LoadWalletViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="#121212"
+            bind:titleTextColor="@color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            bind:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                bind:elevation="0dp">
+
+                <RelativeLayout
+                    android:id="@+id/balance_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_dark_bottom_rounded"
+                    android:paddingBottom="@dimen/size_40dp"
+                    bind:layout_scrollFlags="scroll">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_wallet_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/balance_container"
+                        android:layout_marginTop="@dimen/size_32dp"
+                        android:fontFamily="sans-serif"
+                        android:letterSpacing="0.1"
+                        android:textStyle="bold"
+                        android:text="@string/label_load_wallet_balance"
+                        android:textColor="#9CA3AF"
+                        android:textSize="@dimen/text_10sp" />
+
+                    <LinearLayout
+                        android:id="@+id/balance_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/label_wallet_balance"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_balance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@{viewModel.walletBalance}"
+                            android:textColor="@color/white"
+                            android:textSize="36sp"
+                            android:textStyle="bold"
+                            tools:text="₹225" />
+
+                        <FrameLayout
+                            android:id="@+id/btn_refresh_balance"
+                            android:layout_width="@dimen/size_30dp"
+                            android:layout_height="@dimen/size_30dp"
+                            android:layout_marginStart="@dimen/size_8dp"
+                            android:background="@drawable/bg_refresh_circle"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="@dimen/size_30dp"
+                                android:layout_height="@dimen/size_30dp"
+                                android:layout_gravity="center"
+                                bind:srcCompat="@drawable/ic_refresh_balance"
+                                bind:tint="@color/white" />
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
+                        android:id="@+id/balance_shimmer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/label_wallet_balance"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="140dp"
+                                android:layout_height="36dp"
+                                android:background="@color/transparent_grey" />
+
+                        </LinearLayout>
+                    </com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_add_money"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/size_56dp"
+                        android:layout_below="@+id/balance_container"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/size_24dp"
+                        android:paddingHorizontal="@dimen/size_48dp"
+                        android:backgroundTint="@color/transparent_white"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/label_add_money"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_14sp"
+                        bind:cornerRadius="@dimen/size_32dp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_wallet_hint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/btn_add_money"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/size_12dp"
+                        android:layout_marginBottom="@dimen/size_12dp"
+                        android:fontFamily="sans-serif"
+                        android:text="@string/please_add_money_to_user_delhivery_wallet"
+                        android:textColor="#E0E3EB"
+                        android:textSize="@dimen/text_14sp"
+                        android:visibility="gone" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/wallet_history_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingHorizontal="@dimen/size_24dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_24dp"
+                    bind:layout_scrollFlags="scroll">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/label_history"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="@string/label_wallet_history"
+                        android:textColor="#18181B"
+                        android:textSize="@dimen/text_20sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/btn_filter"
+                        android:layout_width="@dimen/size_24dp"
+                        android:layout_height="@dimen/size_24dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        bind:srcCompat="@drawable/ic_filter_icon" />
+                </RelativeLayout>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingHorizontal="@dimen/size_24dp"
+                    bind:tabGravity="fill"
+                    bind:tabMode="fixed"
+                    android:textSize="@dimen/text_14sp"
+                    bind:tabIndicatorColor="@color/colorDelhiveryRed"
+                    bind:tabSelectedTextColor="#1E293B"
+                    bind:tabTextColor="#94A3B8"
+                    bind:tabTextAppearance="@style/CustomTextAppearanceTab"
+                    bind:tabIndicatorFullWidth="true" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/active_filters_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingHorizontal="@dimen/size_24dp"
+                    android:paddingTop="@dimen/size_8dp"
+                    android:paddingBottom="@dimen/size_4dp"
+                    android:visibility="gone" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <com.delhivery.axle.ui.custom.DelhiverViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                bind:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            <LinearLayout
+                android:id="@+id/no_wallet_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="80dp"
+                android:visibility="gone"
+                bind:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    bind:srcCompat="@drawable/ic_wallet_transaction" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/label_empty_transactions_title"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_20sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:text="@string/label_empty_transactions_message"
+                    android:textColor="@color/color_hint"
+                    android:textSize="@dimen/text_14sp" />
+
+            </LinearLayout>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </LinearLayout>
+
+</layout>

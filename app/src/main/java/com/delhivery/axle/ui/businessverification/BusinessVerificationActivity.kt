@@ -19,7 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DocumentFile
 import com.delhivery.axle.api.response.FileData
@@ -708,7 +707,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                         val imageScopedFile =
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
                         if(!binding.textTruck.isChecked) {
                             this.uploadImageName = "Lr_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension
                             this.localImageName =  "Lr_doc_" +userPrefs.phoneNumber+"."+imageScopedFile.extension

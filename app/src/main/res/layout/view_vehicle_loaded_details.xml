@@ -32,7 +32,7 @@
             android:drawablePadding="@dimen/size_4dp"
             android:drawableStart="@drawable/ic_vehicle"
             android:textColor="@color/text_grey_v3"
-            android:textSize="@dimen/text_12sp"
+            android:textSize="@dimen/text_14sp"
             android:layout_marginTop="@dimen/size_12dp"
             android:layout_marginEnd="@dimen/size_8dp"
             tool:text="MH78JH8765"
@@ -49,7 +49,7 @@
             android:textColor="@color/text_grey_v3"
             android:drawableStart="@drawable/ic_loaded_arrow"
             android:fontFamily="sans-serif"
-            android:textSize="@dimen/text_12sp"
+            android:textSize="@dimen/text_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <androidx.appcompat.widget.AppCompatTextView
@@ -62,7 +62,7 @@
             android:layout_marginTop="@dimen/size_8dp"
             android:drawableStart="@drawable/ic_recieve_amount"
             android:textColor="@color/text_grey_v3"
-            android:textSize="@dimen/text_12sp"
+            android:textSize="@dimen/text_14sp"
             tool:text="Receive Rs. 10000"
             android:visibility="@{trip.intermittentPayableAmountVisibility()}"
             tool:visibility="visible"
@@ -87,7 +87,7 @@
                 android:textColor="@color/text_grey_v3"
                 android:drawableStart="@drawable/ic_lr_number"
                 android:fontFamily="sans-serif"
-                android:textSize="@dimen/text_12sp"
+                android:textSize="@dimen/text_14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <androidx.appcompat.widget.AppCompatImageView

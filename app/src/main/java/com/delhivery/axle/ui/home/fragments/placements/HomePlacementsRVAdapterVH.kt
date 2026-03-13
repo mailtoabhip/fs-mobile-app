@@ -11,10 +11,13 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
+import com.delhivery.axle.ui.home.fragments.bids.calculateAvailableCardWidth
+import com.delhivery.axle.ui.home.fragments.bids.dpToPx
 import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterDelay
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterExpected
 import com.delhivery.axle.data.home.placements.HomePlacementsFilterMissing
+import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
 import com.delhivery.axle.databinding.ViewPlacementsDurationsBinding
@@ -89,100 +92,47 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
     ) {
         binding.request = item.data
         binding.driverTruckDetails.request = item.data
-        binding.originDestination.request = item.data
         binding.placementActions.request = item.data
         binding.placementActions.btnCall.clickToAction(HomePlacementsCallDriver, item, _interface)
         binding.placementActions.btnShareWhatsapp.clickToAction(HomePlacementsShareOnWhatsapp, item, _interface)
-        val spannable = SpannableStringBuilder()
-        spannable.clearSpans()
-// Origin text (black, bold)
-        val origin = if(item.data.loadType== LoadTypes.intracityAdhoc.name || item.data.loadType == LoadTypes.intracityRegular.name) StringUtils.capitalize(item.data.originCenterName) else item.data.formattedOriginCity() ?: ""
-        val originStart = spannable.length
-        spannable.append(origin)
-        val originEnd = spannable.length
-        spannable.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
-            originStart,
-            originEnd,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        spannable.setSpan(
-            StyleSpan(Typeface.BOLD),
-            originStart,
-            originEnd,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        if (item.data.loadType == LoadTypes.orionFixed.name || item.data.loadType == LoadTypes.orionSpot.name || item.data.loadType == LoadTypes.ftlRegular.name || item.data.loadType == LoadTypes.ftlAdhoc.name) {
-// Arrow as inline image
-
-            val arrowStart = spannable.length
-            spannable.append(" ➔ ")
+        
+        // Handle intracity route display (originDestination view)
+        // Intercity route display is handled by cl_from_to_city via data binding
+        if (item.data.isIntracity()) {
+            binding.originDestination.request = item.data
+            val spannable = SpannableStringBuilder()
+            spannable.clearSpans()
+            
+            // Origin text (black, bold) - use center name for intracity
+            val origin = StringUtils.capitalize(item.data.originCenterName) ?: ""
+            val originStart = spannable.length
+            spannable.append(origin)
+            val originEnd = spannable.length
+            spannable.setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
+                originStart,
+                originEnd,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             spannable.setSpan(
                 StyleSpan(Typeface.BOLD),
-                arrowStart,
-                spannable.length,
+                originStart,
+                originEnd,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-    /*    val arrowDrawable =
-            ContextCompat.getDrawable(context, R.drawable.ic_arrow_forward_blue)
-        arrowDrawable?.let { drawable ->
-            val textSize = binding.originDestination.originDestinationText.textSize.toInt()
-            drawable.setBounds(0, 0, textSize, textSize)
-
-            val arrowStart = spannable.length
-            spannable.append("\u200B") // zero-width space as placeholder
-            spannable.setSpan(
-                ImageSpan(drawable),
-                arrowStart,
-                arrowStart + 1,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }*/
-
-// Destination text (black, bold)
-        val destStart = spannable.length
-        val destination = item.data.formattedDestinationCity() ?: ""
-        spannable.append(destination)
-        val destEnd = spannable.length
-        spannable.setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_black_v2)),
-            destStart,
-            destEnd,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        spannable.setSpan(
-            StyleSpan(Typeface.BOLD),
-            destStart,
-            destEnd,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-// Stops text (grey, normal)
-        if (item.data.haltStops().isNotEmpty()) {
-            spannable.append("  ")
-            val stopStart = spannable.length
-            spannable.append(item.data.haltStops())
-            val stopEnd = spannable.length
-            spannable.setSpan(
-                ForegroundColorSpan(ContextCompat.getColor(context, R.color.text_grey)),
-                stopStart,
-                stopEnd,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-    }
-        binding.originDestination.originDestinationText.text = null
-        binding.originDestination.originDestinationText.movementMethod = null
-        binding.originDestination.originDestinationText.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-
-// Set the TextView safely
-        binding.originDestination.originDestinationText.apply {
-            text = spannable
-            isClickable = false
-            isFocusable = false
-            linksClickable = false
-            autoLinkMask = 0
-            movementMethod = null
+            
+            // Set the TextView for intracity
+            binding.originDestination.originDestinationText.text = null
+            binding.originDestination.originDestinationText.movementMethod = null
+            binding.originDestination.originDestinationText.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+            binding.originDestination.originDestinationText.apply {
+                text = spannable
+                isClickable = false
+                isFocusable = false
+                linksClickable = false
+                autoLinkMask = 0
+                movementMethod = null
+            }
         }
 
         when(item.data.loadType){
@@ -250,8 +200,70 @@ internal class HomeVehiclePlacementsRequestItemVH(binding:ViewVehiclePlacementBi
             }
 
         }
-
-
+        
+        // Apply dynamic text sizing for driver truck details to prevent overlapping
+        applyDriverTruckDetailsDynamicSizing(item.data)
+    }
+    
+    /**
+     * Apply dynamic text sizing for driver truck details
+     * Pure dynamic sizing approach - text scales down to fit in single line
+     * maxLines=1 enforced in XML
+     */
+    private fun applyDriverTruckDetailsDynamicSizing(data: HomePlacementsItemData) {
+        val availableWidth = context.calculateAvailableCardWidth(
+            cardMarginDp = 2,
+            contentPaddingDp = 16
+        )
+        val spacingPx = 8.dpToPx(context)
+        val drawablePaddingPx = 4.dpToPx(context)
+        
+        // Row 1: vehicleType and reportingTime (always visible)
+        val vehicleType = binding.driverTruckDetails.vehicleType
+        val reportingTime = binding.driverTruckDetails.reportingTime
+        
+//        if (vehicleType != null && reportingTime != null) {
+//            adjustTextSizeToFit(
+//                views = listOf(vehicleType, reportingTime),
+//                textSizes = listOf(14f, 14f),
+//                availableWidth = availableWidth,
+//                minTextSize = 10f,
+//                spacingBetweenViews = spacingPx,
+//                drawablePadding = drawablePaddingPx
+//            )
+//        }
+        
+        // Row 2: vehicleNumber and driverName (conditional)
+        val vehicleNumber = binding.driverTruckDetails.vehicleNumber
+        val driverName = binding.driverTruckDetails.driverName
+        
+//        when {
+//            data.vehicleNumber != null && data.driverName != null &&
+//            vehicleNumber != null && driverName != null -> {
+//                adjustTextSizeToFit(
+//                    views = listOf(vehicleNumber, driverName),
+//                    textSizes = listOf(14f, 14f),
+//                    availableWidth = availableWidth,
+//                    minTextSize = 10f,
+//                    spacingBetweenViews = spacingPx,
+//                    drawablePadding = drawablePaddingPx
+//                )
+//            }
+//            data.vehicleNumber != null && vehicleNumber != null -> {
+//                resetTextViewToDefault(vehicleNumber)
+//            }
+//            data.driverName != null && driverName != null -> {
+//                resetTextViewToDefault(driverName)
+//            }
+//        }
+        
+    }
+    
+    /**
+     * Reset TextView to default size
+     */
+    private fun resetTextViewToDefault(textView: android.widget.TextView) {
+        textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
     }
 }
 

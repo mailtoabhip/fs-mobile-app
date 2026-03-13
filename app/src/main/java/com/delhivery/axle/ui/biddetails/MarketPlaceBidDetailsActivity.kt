@@ -26,6 +26,14 @@ import com.delhivery.axle.data.bids.TransactionBidStatus
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBidRevisedSuccessBinding
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
+import com.delhivery.axle.utils.EVENT_MARKETPLACE_LOADS_BID_SUBMIT
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.VALUE_LISTING
+import com.delhivery.axle.utils.VALUE_LOAD_PAGE_LOADS_BIDS
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.text.DecimalFormat
@@ -50,23 +58,27 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
     private var bidId: String? = null
     private var sourceCity: String? = null
     private var destinationCity: String? = null
+    private var source: String? = null
     private var isGuidelinesExpanded = true
 
     companion object {
         private const val EXTRA_BID_ID = "extra_bid_id"
         private const val EXTRA_SOURCE_CITY = "extra_source_city"
         private const val EXTRA_DESTINATION_CITY = "extra_destination_city"
+        private const val EXTRA_SOURCE = "extra_source"
 
         fun start(
             context: Context,
             bidId: String,
             sourceCity: String = "",
-            destinationCity: String = ""
+            destinationCity: String = "",
+            source: String = ""
         ) {
             val intent = Intent(context, MarketPlaceBidDetailsActivity::class.java).apply {
                 putExtra(EXTRA_BID_ID, bidId)
                 putExtra(EXTRA_SOURCE_CITY, sourceCity)
                 putExtra(EXTRA_DESTINATION_CITY, destinationCity)
+                putExtra(EXTRA_SOURCE, source)
             }
             context.startActivity(intent)
         }
@@ -85,6 +97,7 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         bidId = intent.getStringExtra(EXTRA_BID_ID)
         sourceCity = intent.getStringExtra(EXTRA_SOURCE_CITY)
         destinationCity = intent.getStringExtra(EXTRA_DESTINATION_CITY)
+        source = intent.getStringExtra(EXTRA_SOURCE)
 
         setupViews()
         setupListeners()
@@ -341,9 +354,11 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
             binding.textAvatar.text = transaction.getShipperInitials()
         }
         
-        val phoneNumber = transaction.getContactPhoneNumber()
-        if (phoneNumber.isNotEmpty()) {
-            binding.textShipperPhone.text = phoneNumber
+        val phoneNumber = transaction.pocContactNo
+        phoneNumber?.let {
+            if (it.isNotEmpty()) {
+                binding.textShipperPhone.text = it
+            }
         }
         
         // Update payment mode
@@ -387,6 +402,18 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
         }
 
         bidId?.let {
+            /*This page is never started from resultsFragment, i.e. source is always listing*/
+            if(viewModel.userExistingBid?.key().isNullOrEmpty() && source.equals(VALUE_LISTING)){
+                analyticsUtil.moEngageTrackEvent(
+                    event = EVENT_MARKETPLACE_LOADS_BID_SUBMIT,
+                    attributes = listOf(PROPERTY_ORDER_ID, PROPERTY_USER_ID, PROPERTY_PAGE_NAME,
+                        PROPERTY_SOURCE, PROPERTY_DEMAND_TYPE
+                    ),
+                    values = listOf(viewModel.transactionId, userPrefs.userId(),
+                        VALUE_LOAD_PAGE_LOADS_BIDS,VALUE_LISTING, viewModel.demandType
+                    )
+                )
+            }
             viewModel.placeBid(it, bidAmount)
         } ?: run {
             Toast.makeText(this, "Invalid bid ID", Toast.LENGTH_SHORT).show()

@@ -28,6 +28,7 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel
+import com.delhivery.axle.ui.home.fragments.home.HomeFragmentViewModel
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
@@ -44,10 +45,17 @@ import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
+import com.delhivery.axle.ui.loadwallet.LoadWalletViewModel
+import com.delhivery.axle.ui.loadwallet.TransactionDetailsViewModel
+import com.delhivery.axle.ui.loadwallet.RechargeDetailsViewModel
 import com.delhivery.axle.ui.onboarding.BasicDetailsViewModel
 import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
+import com.delhivery.axle.ui.payment.PaymentWebViewViewModel
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
+import com.delhivery.axle.ui.fastag.FastagTransactionDetailsViewModel
+import com.delhivery.axle.ui.fastag.FastagRechargeViewModel
+import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -147,6 +155,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(HomeBidsViewModel::class)
   abstract fun bindHomeBidsViewModel(homeBidsViewModel: HomeBidsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(HomeFragmentViewModel::class)
+  abstract fun bindHomeFragmentViewModel(homeFragmentViewModel: HomeFragmentViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -395,6 +408,11 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
+  @ViewModelScope(PaymentWebViewViewModel::class)
+  abstract fun bindPaymentWebViewViewModel(viewModel: PaymentWebViewViewModel): ViewModel
+
+  @Binds
+  @IntoMap
   @ViewModelScope(BankDetailsViewModel::class)
   abstract fun bindBankDetailsViewModel(viewModel: BankDetailsViewModel): ViewModel
   @Binds
@@ -448,6 +466,31 @@ abstract class ViewModelFactoryModule {
   abstract fun bindPlacementDetailsViewModel(viewModel: PlacementDetailsViewModel): ViewModel
 
   @Binds
+  @IntoMap
+  @ViewModelScope(FastagTransactionDetailsViewModel::class)
+  abstract fun bindFastagTransactionDetailsViewModel(viewModel: FastagTransactionDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagRechargeViewModel::class)
+  abstract fun bindFastagRechargeViewModel(viewModel: FastagRechargeViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(LoadWalletViewModel::class)
+  abstract fun bindLoadWalletViewModel(viewModel: LoadWalletViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TransactionDetailsViewModel::class)
+  abstract fun bindTransactionDetailsViewModel(viewModel: TransactionDetailsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(RechargeDetailsViewModel::class)
+  abstract fun bindRechargeDetailsViewModel(viewModel: RechargeDetailsViewModel): ViewModel
+
+  @Binds
   internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
   @Binds
@@ -461,4 +504,9 @@ abstract class ViewModelFactoryModule {
   @WorkerKey(RefreshTokenWorker::class)
   abstract fun bindRefreshTokenWorker(factory: RefreshTokenWorker.Factory):
       ChildWorkerFactory
+
+    @Binds
+    @IntoMap
+    @ViewModelScope(AddMoneyDialogViewmodel::class)
+    abstract fun bindPaymentDialogViewModel(viewModel: AddMoneyDialogViewmodel): ViewModel
 }

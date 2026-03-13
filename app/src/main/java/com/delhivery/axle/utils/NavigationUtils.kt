@@ -295,7 +295,8 @@ class NavigationUtils @Inject constructor(
           if(!retryDone){
             try{
               activity.startActivity(intent)
-              activity.finish()
+                if(activity !is HomeActivity )
+                    activity.finish()
             }catch (e:Exception){}
 
           }
@@ -326,7 +327,7 @@ class NavigationUtils @Inject constructor(
   }
 
   fun navigateOnboardingSteps(fromHome: Boolean=false) {
-
+    val finishAfter = false
     if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
       //do nothing
 
@@ -345,26 +346,26 @@ class NavigationUtils @Inject constructor(
         }else if(userPrefs.pancard.isNullOrEmpty()) {
           val bundle = Bundle()
           bundle.putInt(StepKey, 0)
-          this.navigateKyc(activity, fromHome, bundle)
+          this.navigateKyc(activity, finishAfter, bundle)
         }else  if(!(userPrefs.aadhaarNumber.isNotNullOrEmpty() ||userPrefs.gstNumber.isNotNullOrEmpty() ||(userPrefs.cinNumber.isNotNullOrEmpty()||userPrefs.shopNumber.isNotNullOrEmpty()||userPrefs.udyogNumber.isNotNullOrEmpty()))){
           val bundle = Bundle()
           bundle.putInt(StepKey, 1)
-          this.navigateKyc(activity, fromHome, bundle)
+          this.navigateKyc(activity, finishAfter, bundle)
         }else  if(userPrefs.businessAddress.isNullOrEmpty()){
           val bundle = Bundle()
           bundle.putInt(StepKey, 2)
-          this.navigateKyc(activity, fromHome, bundle)
+          this.navigateKyc(activity, finishAfter, bundle)
         }else  if(!userPrefs.userMode.equals("post_load")){
           if( userPrefs.rcNumber.isNullOrEmpty() && !userPrefs.isTruckingDocumentUploaded){
             val bundle = Bundle()
             bundle.putInt(StepKey, 3)
-            this.navigateKyc(activity, fromHome, bundle)
+            this.navigateKyc(activity, finishAfter, bundle)
           }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty() || userPrefs.accNumber.equals("Not Available",true)){
             val intent = Intent(activity, PaymentDetailsActivity::class.java)
-            this.navigate(intent,fromHome,null)
+            this.navigate(intent,finishAfter,null)
           }else if(!userPrefs.vendorPolicyAccepted){
             val intent = Intent(activity, VendorPolicyActivity::class.java)
-            this.navigate(intent,fromHome,null)
+            this.navigate(intent,finishAfter,null)
           }else{
             if(!fromHome) {
               navigate(HomeActivity::class.java, true)
@@ -373,11 +374,11 @@ class NavigationUtils @Inject constructor(
 
         }else if(userPrefs.ifscCode.isNullOrEmpty() || userPrefs.accNumber.isNullOrEmpty() || userPrefs.accNumber.equals("Not Available",true)){
           val intent = Intent(activity, PaymentDetailsActivity::class.java)
-          this.navigate(intent,fromHome,null)
+          this.navigate(intent,finishAfter,null)
 
         }else if(!userPrefs.vendorPolicyAccepted){
           val intent = Intent(activity, VendorPolicyActivity::class.java)
-          this.navigate(intent,fromHome,null)
+          this.navigate(intent,finishAfter,null)
         }else{
           if(!fromHome) {
             navigate(HomeActivity::class.java, true)
@@ -451,6 +452,25 @@ class NavigationUtils @Inject constructor(
                 this.navigate(HomeActivity::class.java, true)
             }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    /* Auto redirect if user details are pending */
+    fun navigateOnboardingDetails() {
+        if (userPrefs.isLoadBoardClient && userPrefs.isLoadBoardSupplier) {
+            if (!userPrefs.isUserVerfied) {
+                userPrefs.setPreviousScreen(activity.javaClass.name)
+                if (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty()) {
+                    userPrefs.hasLoggedIn = false
+                    val intent = Intent(activity, AccountDetailsActivity::class.java)
+                    this.navigate(intent, true, null)
+                } else if (userPrefs.getLanesPreference()
+                        .isNullOrEmpty() && userPrefs.truckTypes.isNullOrEmpty() && userPrefs.onboardingStatus == "details_pending" && (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty())
+                ) {
+                    val intent = Intent(activity, BasicDetailsActivity::class.java)
+                    this.navigate(intent, true, null)
+                }
+            }
+        }
     }
 }
 

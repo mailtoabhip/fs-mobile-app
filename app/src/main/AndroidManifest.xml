@@ -19,16 +19,15 @@
 
     <application
         android:name=".KotlinApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="portrait"
-        android:fullBackupContent="@xml/backup_descriptor"
+        android:fullBackupContent="false"
         android:supportsRtl="true"
         android:theme="@style/CustomSplashScreenTheme"
-        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
 
@@ -281,6 +280,8 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity android:name=".ui.payment.PaymentWebViewActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.userroutes.ManageRouteActivity"
             android:screenOrientation="portrait"/>
 
@@ -304,6 +305,26 @@
 
         <activity android:name=".ui.placementdetails.PlacementDetailsActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.fastag.FastagTransactionDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.fastag.FastagRechargeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".ui.loadwallet.LoadWalletActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.TransactionDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.loadwallet.RechargeDetailsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.profile.PlacementsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

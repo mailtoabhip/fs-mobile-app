@@ -341,7 +341,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     tools:text="Mohan Aggarwal"
-                                    android:text="@{request.shipperName}"
+                                    android:text="@{request.pocName}"
                                     android:textColor="@color/info_title"
                                     android:textSize="@dimen/text_12sp" />
 
@@ -350,7 +350,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     tools:text="98762*****"
-                                    android:text="@{request.shipperPhoneNumber}"
+                                    android:text="@{request.pocContactNo}"
                                     android:textColor="@color/text_grey_v3"
                                     android:textSize="@dimen/text_12sp" />
 

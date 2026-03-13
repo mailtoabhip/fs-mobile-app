@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DelegationToken
@@ -35,12 +34,11 @@ import com.delhivery.axle.databinding.ActivityEpodDetailsBinding
 import com.delhivery.axle.databinding.DialogBidRevisedSuccessBinding
 import com.delhivery.axle.databinding.DialogEpodSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.AWSUtils
-import com.delhivery.axle.utils.AWSUtils.AWSProgressInterface
 import com.delhivery.axle.utils.BitmapUtils
 import com.delhivery.axle.utils.EVENT_POD_UPLOAD
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.PROPERTY_STATUS
+import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.REQCODE_FILE_ATTACHMENTS
 import com.delhivery.axle.utils.REQCODE_TAKE_PHOTO
 import com.delhivery.axle.utils.VALUE_FAILURE
@@ -65,6 +63,7 @@ import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TYPE_OF_DOC
 import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.VALUE_POD_STATUS
 import com.delhivery.axle.utils.constants.FileType
 import com.delhivery.axle.utils.prefs.UserPrefs
 
@@ -91,7 +90,6 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   private var mPhotoFile: File? = null
   private var currentPodId: Int = 0
   @Inject lateinit var fileCompressor: FileCompressor
-    @Inject lateinit var awsUtils: AWSUtils
   @Inject lateinit var documentUtils: DocumentUtils
   @Inject lateinit var bitmapUtils: BitmapUtils
     @Inject lateinit var userPrefs: UserPrefs
@@ -100,6 +98,7 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
   private var isFirstResume = true
   private var podStatus: PODStatus? = null
   private var intermittentPayableAmount: Double? = null
+  private var source: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -123,6 +122,9 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     
     // Read intermittent payable amount from intent
     intermittentPayableAmount = intent?.getDoubleExtra(IntermittentPayableAmountKey, 0.0)?.takeIf { it > 0.0 }
+    
+    // Read source from intent
+    source = intent?.getStringExtra(SourceIntentKey)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -324,14 +326,44 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
     )
   }
 
+    private fun getPODStatus() : String {
+        var status = ""
+        when (podStatus) {
+            PODStatus.REJECT -> {
+                status = "ePOD Rejected"
+            }
+            PODStatus.REVIEW -> {
+                status = "ePOD Under Review"
+            }
+            PODStatus.VIEWPOD -> {
+                status = "ePOD Verified"
+            }
+            PODStatus.UPLOAD -> {
+                status = "ePOD Pending"
+            }
+
+            else -> {}
+        }
+        return status
+    }
+
 
   override fun onDocumentSuccess(documentUrl: String) {
     if (!isFinishing) {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_POD_UPLOAD,
-          mutableListOf(PROPERTY_STATUS),
-          mutableListOf(VALUE_SUCCESS)
-      )
+      // Track pod_upload with source if available
+      if (source != null) {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE, VALUE_POD_STATUS),
+            mutableListOf(VALUE_SUCCESS, source!!, getPODStatus())
+        )
+      } else {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS, VALUE_POD_STATUS),
+            mutableListOf(VALUE_SUCCESS, getPODStatus())
+        )
+      }
         val s3Path = extractS3Path(documentUrl) ?: documentUrl
         viewModel.onUploadSuccess(currentPodId, s3Path)
 
@@ -355,11 +387,20 @@ class UploadImageActivity : BaseActivity<ActivityEpodDetailsBinding, UploadImage
 
   override fun onDocumentFailure(error: String) {
     if (!isFinishing) {
-      analyticsUtil.moEngageTrackEvent(
-          EVENT_POD_UPLOAD,
-          mutableListOf(PROPERTY_STATUS),
-          mutableListOf(VALUE_FAILURE)
-      )
+      // Track pod_upload failure with source if available
+      if (source != null) {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS, PROPERTY_SOURCE, VALUE_POD_STATUS),
+            mutableListOf(VALUE_FAILURE, source!!, getPODStatus())
+        )
+      } else {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_POD_UPLOAD,
+            mutableListOf(PROPERTY_STATUS, VALUE_POD_STATUS),
+            mutableListOf(VALUE_FAILURE, getPODStatus())
+        )
+      }
       uiUtils.hideProgress()
       uiUtils.showSnackbar(getString(R.string.msg_file_upload_failed))
       // Reset to SELECTED state so user can retry
@@ -716,6 +757,7 @@ private const val ReachedTimeIntentKey = "reached_time"
 private const val UnloadedTimeIntentKey = "unloaded_time"
 private const val PodStatusIntentKey = "pod_status"
 private const val IntermittentPayableAmountKey = "intermittent_payable_amount"
+private const val SourceIntentKey = "source"
 
 /**
  * Upload Image intent
@@ -726,11 +768,13 @@ fun uploadImageIntent(
   reachedTime: String,
   unloadedTime: String,
   podStatus: PODStatus? = null,
-  intermittentPayableAmount: Double? = null
+  intermittentPayableAmount: Double? = null,
+  source: String? = null
 ) = Intent(context, UploadImageActivity::class.java).apply {
     putExtra(TransactionIdIntentKey, transactionId)
     putExtra(ReachedTimeIntentKey, reachedTime)
     putExtra(UnloadedTimeIntentKey, unloadedTime)
     podStatus?.let { putExtra(PodStatusIntentKey, it) }
     intermittentPayableAmount?.let { putExtra(IntermittentPayableAmountKey, it) }
+    source?.let { putExtra(SourceIntentKey, it) }
 }

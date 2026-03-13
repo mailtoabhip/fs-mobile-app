@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.delhivery.axle.ui.loadwallet.WalletHistoryItemData" />
+
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_12dp"
+        android:layout_marginBottom="@dimen/size_8dp"
+        android:background="@drawable/bg_truck_card"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/card_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_20dp"
+            >
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@{item.txnDetails != null ? item.txnDetails : item.title}"
+                android:textColor="#27272A"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                bind:layout_constraintEnd_toStartOf="@+id/text_amount"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toTopOf="parent"
+                tools:text="Recharge Amount for Tag ID - 123456" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="bold"
+                android:text="@{item.amountFormatted()}"
+                android:textColor="@{ContextCompat.getColor(context, item.txnAmountColorRes())}"
+                android:textSize="@dimen/text_14sp"
+                bind:strikethrough="@{item.isFailed()}"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintTop_toTopOf="parent"
+                tools:text="-₹300" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif"
+                android:text="@{item.dateFormatted()}"
+                android:textColor="#9CA3AF"
+                android:textSize="@dimen/text_10sp"
+                bind:layout_constraintEnd_toStartOf="@+id/text_status"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/text_title"
+                tools:text="12 Feb 2026 | 04:20 PM" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@{ContextCompat.getDrawable(context, item.statusBgRes())}"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="@dimen/size_8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="@dimen/size_8dp"
+                android:paddingBottom="2dp"
+                android:text="@{item.statusLabel()}"
+                android:textSize="@dimen/text_10sp"
+                bind:layout_constraintBottom_toBottomOf="@+id/text_date"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintTop_toTopOf="@+id/text_date"
+                bind:textColor="@{ContextCompat.getColor(context, item.statusColorRes())}"
+                tools:text="SUCCESS" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_txn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:fontFamily="sans-serif"
+                android:text="@{item.txnLabel()}"
+                android:textColor="#9CA3AF"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_10sp"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/text_date"
+                tools:text="TXN: 154323" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/btn_refresh_status"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:background="@drawable/bg_button_grey_rounded"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="@{item.isPending() ? View.VISIBLE : View.GONE}"
+                bind:layout_constraintEnd_toEndOf="parent"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintTop_toBottomOf="@+id/text_txn">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon_refresh"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_30dp"
+                    bind:srcCompat="@drawable/ic_refresh_balance"
+                    bind:tint="@color/heading_black" />
+
+                <ProgressBar
+                    android:id="@+id/progress_refresh"
+                    android:layout_width="@dimen/size_20dp"
+                    android:layout_height="@dimen/size_20dp"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_refresh_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/label_refresh_status"
+                    android:textColor="#525B7A"
+                    android:textSize="13sp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</layout>

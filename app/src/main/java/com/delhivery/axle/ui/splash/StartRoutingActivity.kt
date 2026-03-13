@@ -12,8 +12,10 @@ import android.provider.Settings.Secure
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
 import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
@@ -43,6 +45,7 @@ import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_ID
 import com.delhivery.axle.utils.USER_PROPERTY_ANDROID_VERSION
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.SecurityPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -52,6 +55,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import java.util.Calendar
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 
 /**
@@ -82,6 +86,12 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   override fun onCreate(savedInstanceState: Bundle?) {
     splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
+    
+    // CRITICAL: Check for rooted device and show blocking dialog if detected
+    if (checkAndHandleRootedDevice()) {
+      return // Root dialog shown, activity will be blocked
+    }
+    
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("StartRoutingActivity_SetupTime")
     activitySetupTrace?.start()
     // Keep the splash screen visible for this Activity
@@ -109,6 +119,108 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     notificationFrom =  intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
     pricingOfferId =  intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
     isFirstResume = true
+  }
+  
+  /**
+   * Check if device is insecure (rooted or emulator) and show blocking dialog if necessary.
+   * 
+   * @return true if device is insecure and dialog was shown, false otherwise
+   */
+  private fun checkAndHandleRootedDevice(): Boolean {
+    // Skip check in debug builds
+    if (BuildConfig.DEBUG) {
+      Log.d(TAG, "Security check skipped in debug build")
+      return false
+    }
+    
+    try {
+      val securityPrefs = SecurityPrefs(this)
+      
+      // Check if security threat was detected during app initialization
+      if (securityPrefs.isDeviceInsecure() && securityPrefs.rootCheckCompleted) {
+        val isRooted = securityPrefs.isDeviceRooted
+        val isEmulator = securityPrefs.isDeviceEmulator
+        
+        Log.w(TAG, "Insecure device detected: rooted=$isRooted, emulator=$isEmulator")
+        showInsecureDeviceBlockingDialog(
+          isRooted = isRooted,
+          isEmulator = isEmulator,
+          detectedMethods = securityPrefs.rootDetectionMethods ?: "Unknown"
+        )
+        return true
+      }
+      
+      return false
+    } catch (e: Exception) {
+      Log.e(TAG, "Error checking security status, allowing app to continue", e)
+      return false
+    }
+  }
+  
+  /**
+   * Show a blocking dialog informing user that device is insecure.
+   * App will exit when user dismisses the dialog.
+   * 
+   * @param isRooted Whether device is rooted
+   * @param isEmulator Whether device is an emulator
+   * @param detectedMethods String describing detection methods
+   */
+  private fun showInsecureDeviceBlockingDialog(
+    isRooted: Boolean,
+    isEmulator: Boolean,
+    detectedMethods: String
+  ) {
+    val message = when {
+      isRooted && isEmulator -> getString(R.string.root_and_emulator_detection_message)
+      isRooted -> getString(R.string.root_detection_message_blocked)
+      isEmulator -> getString(R.string.emulator_detection_message_blocked)
+      else -> getString(R.string.root_detection_message_blocked)
+    }
+    
+    AlertDialog.Builder(this)
+        .setTitle(getString(R.string.security_warning_title))
+        .setMessage(message)
+        .setPositiveButton(getString(R.string.exit_app)) { dialog, _ ->
+          Log.w(TAG, "User acknowledged security dialog, exiting app")
+          
+          // Log analytics event for user action
+          logSecurityDialogDismissed(isRooted, isEmulator)
+          
+          dialog.dismiss()
+          
+          // Exit the app
+          finishAffinity()
+          exitProcess(0)
+        }
+        .setCancelable(false)
+        .show()
+    
+    Log.w(TAG, "Security dialog shown. Detected by: $detectedMethods")
+  }
+  
+  /**
+   * Log when user dismisses the security detection dialog.
+   */
+  private fun logSecurityDialogDismissed(isRooted: Boolean, isEmulator: Boolean) {
+    val threatType = when {
+      isRooted && isEmulator -> "rooted_and_emulator"
+      isRooted -> "rooted"
+      isEmulator -> "emulator"
+      else -> "unknown"
+    }
+    
+    Log.w(TAG, "Security dialog dismissed by user. Threat: $threatType")
+    
+    // TODO: Uncomment when analytics is ready
+    // analyticsUtil.moEngageTrackEvent(
+    //     "security_dialog_dismissed",
+    //     mutableListOf("threat_type", "action"),
+    //     mutableListOf(threatType, "exit")
+    // )
+  }
+  
+  companion object {
+    private const val TAG = "StartRoutingActivity"
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {

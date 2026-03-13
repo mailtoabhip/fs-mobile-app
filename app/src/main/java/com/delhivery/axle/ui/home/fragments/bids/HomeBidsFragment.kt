@@ -262,11 +262,13 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
               _item.destination ?: ""
             )
           } else if(_item.requestType==RequestType.Contract.type){
-            startActivity(_item.transactionId?.let {
-              contractDetailsIntent(it, ctx)
-            })
+              _item.transactionId?.let {
+                  startActivity(contractDetailsIntent(it, ctx))
+              }
           } else {
-            startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) })
+              _item.transactionId?.let {
+                  startActivity(contractDetailsIntent(it, ctx))
+              }
           }
         }
       }
@@ -305,11 +307,13 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
               _item.destination ?: ""
             )
           } else if(_item.requestType==RequestType.Contract.type){
-            startActivity(_item.transactionId?.let {
-              contractDetailsIntent(it, ctx)
-            })
+              _item.transactionId?.let {
+                  startActivity(contractDetailsIntent(it, ctx))
+              }
           } else {
-            startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) })
+              _item.transactionId?.let {
+                  startActivity(contractDetailsIntent(it, ctx))
+              }
           }
         }
       }

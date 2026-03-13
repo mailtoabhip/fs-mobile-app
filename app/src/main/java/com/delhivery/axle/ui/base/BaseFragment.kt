@@ -86,6 +86,12 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel> : DaggerFra
   ) {
     super.onViewCreated(view, savedInstanceState)
 
+    /* Observe network connectivity and show/hide no-internet snackbar */
+    (activity as? BaseActivity<*, *>)?.connectionLiveData?.observe(viewLifecycleOwner) { isConnected ->
+      if (isConnected == true) uiUtils.dismissSnackbar()
+      else uiUtils.showNoInternetSnackbar()
+    }
+
     /* Observe on toast live data and show toast */
     viewModel.toastLiveData.observe(viewLifecycleOwner, Observer {
       it?.let { uiUtils.showToast(it) }

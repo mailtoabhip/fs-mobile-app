@@ -13,7 +13,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FileData
@@ -420,7 +419,7 @@ class AadhaarVerificationActivity  : BaseActivity<ActivityVerifyAadharBinding, A
                         val imageScopedFile =
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
                             this.uploadImageName = "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                             this.localImageName =  "Aadhaar_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){

@@ -60,6 +60,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
     val isBidPlacementLoadingLiveData: LiveData<Boolean> = _isBidPlacementLoadingLiveData
 
     var transactionId: String = ""
+    var demandType : String = ""
     var userExistingBid: TransactionBid? = null
     private var isTransactionDetailsLoaded = false
     private var isUserBidsLoaded = false
@@ -79,6 +80,7 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
             .onBackground()
             .subscribe { response, error ->
                 if (!error) {
+                    demandType = response.demandType?:""
                     _transactionLiveData.postValue(response)
                     bidEndTime = response?.contractBiddingEndTime?.let { endTimeStr ->
                         try {

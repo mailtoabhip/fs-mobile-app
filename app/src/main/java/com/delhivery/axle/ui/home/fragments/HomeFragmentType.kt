@@ -4,12 +4,12 @@ import com.delhivery.axle.R
 import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
+import com.delhivery.axle.ui.home.fragments.home.HomeFragment
 import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsDelayedFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsExpectedFragment
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomeNewPodFragment
 import com.delhivery.axle.ui.home.fragments.trips.HomeTripsFragment
@@ -24,10 +24,9 @@ enum class HomeFragmentType(
   val fragment: BaseFragment<*, *>,
   val title: String
 ) {
-  LoadsTruckFragment(R.id.nav_loads_trucks, 0, HomeLoadsTruckFragment._instance, "Home"),
-  PlacementsFragment(R.id.nav_placements,1, HomePlacementsFragment._instance,"Placements"),
-//  BidsFragment(R.id.nav_trips, 2, HomeBidsFragment._instance, "Bids & Requests"),
-  TruckFragment(R.id.nav_trucks,2, HomeTrucksFragment._instance,"My Trucks"),
+  NewHomeFragment(R.id.nav_home, 0, HomeFragment._instance, "Home"),
+  LoadsTruckFragment(R.id.nav_loads, 1, HomeLoadsTruckFragment._instance, "Loads"),
+  TruckFragment(R.id.nav_trucks, 2, HomeTrucksFragment._instance, "My Trucks"),
   PodFragment(R.id.nav_pod, 3, HomeNewPodFragment._instance, "PODs"),
   TripsFragment(R.id.nav_trips, 4, HomeTripsFragment._instance, "Ongoing Trips");
   //Wallet(R.id.nav_wallet, 3, HomeWalletFragment._instance, "Balance"),

@@ -127,6 +127,16 @@ object BindingAdapters {
   }
 
 
+  @JvmStatic
+  @BindingAdapter("strikethrough")
+  fun setStrikethrough(textView: TextView, strikethrough: Boolean) {
+    if (strikethrough) {
+      textView.paintFlags = textView.paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+    } else {
+      textView.paintFlags = textView.paintFlags and android.graphics.Paint.STRIKE_THRU_TEXT_FLAG.inv()
+    }
+  }
+
 //    @JvmStatic
 //    @BindingAdapter("bind:font")
 //    fun bindFont(textView: TextView, fontName: String) {

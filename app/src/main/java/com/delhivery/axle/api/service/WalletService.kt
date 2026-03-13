@@ -2,6 +2,7 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.BankTransferRequest
 import com.delhivery.axle.api.request.CreateFuelCardRequest
+import com.delhivery.axle.api.request.WalletRechargeRequest
 import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.api.response.BankTransferResponse
 import com.delhivery.axle.api.response.BaseResponse
@@ -10,8 +11,10 @@ import com.delhivery.axle.api.response.WalletTransactionsResponse
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**

@@ -140,6 +140,9 @@ class HomeLoadsViewModel @Inject constructor(
 
     val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
 
+    var intercityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
+    var intracityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
+    var marketPlaceListShownTracked = MutableLiveData<Boolean>().apply { value = false }
 
 
     /**
@@ -281,17 +284,12 @@ class HomeLoadsViewModel @Inject constructor(
             Single.zip(
                 transactionsRepository.fetchRecommTransactions(
                     offset,
-                    userPrefs.demandType
-                        .split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
-                        .joinToString(","),
+                    filterDemandTypeForRecommendations(userPrefs.demandType),
                     vehicleTypes,
                     excludeTruckTypes,
                     filterVehicleType,
                     true, splitViewCount = true,
-                    searchAfter = searchAfter
+                    searchAfter = null
                 ),
                 marketplaceSingle,
                 BiFunction { recommTrans, marketplaceTrans ->
@@ -398,7 +396,11 @@ class HomeLoadsViewModel @Inject constructor(
                             add(Pair(HomeLoadsMoreInfoItem(), Remove))
                             add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
 
-                    }.let { userLoadsData.postValue(it) }
+                    }.let {
+                        userLoadsData.postValue(it)
+                        if(_tRes.first?.isNotEmpty() == true && paginateCount == 0)
+                            intracityListShownTracked.postValue(true)
+                    }
 
                 }
 
@@ -409,12 +411,7 @@ class HomeLoadsViewModel @Inject constructor(
 
             compositeDisposable += transactionsRepository.fetchRecommTransactions(
                 offset,
-                userPrefs.demandType
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                    .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
-                    .joinToString(","),
+                filterDemandTypeForRecommendations(userPrefs.demandType),
                 vehicleTypes,
                 excludeTruckTypes,
                 filterVehicleType,
@@ -466,18 +463,13 @@ class HomeLoadsViewModel @Inject constructor(
                         ),
                         transactionsRepository.fetchRecommTransactions(
                             offset,
-                            userPrefs.demandType
-                                .split(",")
-                                .map { it.trim() }
-                                .filter { it.isNotEmpty() }
-                                .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
-                                .joinToString(","),
+                            filterDemandTypeForRecommendations(userPrefs.demandType),
                             vehicleTypes,
                             excludeTruckTypes,
                             filterVehicleType,
                             true,
                             splitViewCount = true,
-                            searchAfter = searchAfter
+                            searchAfter = null
                         ).subscribeOn(Schedulers.io()),
                         marketplaceSingle,
                         // CORRECTED: Pass the lambda as the last argument, separated by a comma.
@@ -626,7 +618,11 @@ class HomeLoadsViewModel @Inject constructor(
                                 }
                                 add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
 
-                        }.let { userLoadsData.postValue(it) }
+                        }.let {
+                            userLoadsData.postValue(it)
+                            if(_tRes.first.isNotEmpty() && paginateCount == 0)
+                                intercityListShownTracked.postValue(true)
+                        }
 
                     }
                     else {
@@ -979,12 +975,7 @@ class HomeLoadsViewModel @Inject constructor(
                 ).subscribeOn(Schedulers.io()),
                 transactionsRepository.fetchRecommTransactions(
                     offset,
-                    userPrefs.demandType
-                        .split(",")
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                        .filterNot { it == DemandType.Intracity.type || it == DemandType.Spot_Marketplace.type }
-                        .joinToString(","),
+                    filterDemandTypeForRecommendations(userPrefs.demandType),
                     vehicleTypes, null, filterVehicleType, true, 
                     splitViewCount = true, searchAfter = null
                 ).subscribeOn(Schedulers.io()),
@@ -1107,7 +1098,9 @@ class HomeLoadsViewModel @Inject constructor(
 
           }.let { 
             Log.d("MarketplaceDebug", "Posting ${it.size} items to userLoadsData")
-            userLoadsData.postValue(it) 
+            userLoadsData.postValue(it)
+              if(_tRes.first?.isNotEmpty() == true && paginateCount == 0)
+                  marketPlaceListShownTracked.postValue(true)
           }
 
         } else {
@@ -1427,4 +1420,15 @@ private const val BidsUpdateDelay = 1L
 
 interface CloseDialog{
     fun dismissDialog()
+}
+/**
+ * Filter demand types for recommendation API - only Internal and Others are valid
+ * Filters out Intracity, Intracity_OPS, and Spot_Marketplace
+ */
+private fun filterDemandTypeForRecommendations(demandType:String): String {
+    return if (demandType.contains(DemandType.Internal.type)) {
+        "${DemandType.Internal.type},${DemandType.Others.type}"
+    } else {
+        DemandType.Others.type
+    }
 }

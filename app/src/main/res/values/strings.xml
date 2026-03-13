@@ -61,6 +61,7 @@
   <string name="msg_your_bid">Your bid: ₹ </string>
   <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
   <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
+  <string name="msg_home_under_dev">Home screen is coming soon with exciting features.</string>
   <string name="msg_image_capture_failed">Unable to capture image</string>
   <string name="msg_file_upload_failed">File Upload Failed</string>
   <string name="msg_file_upload_successful">File Uploaded Successfully</string>
@@ -129,6 +130,7 @@
   <string name="action_deactivate_truck">Deactivate Truck</string>
   <string name="action_edit_truck">Edit Truck</string>
   <string name="action_add_truck">+ Add Truck</string>
+  <string name="action_add_truck_button">Add Truck</string>
   <string name="action_add_vehicle_type">+ Vehicle Type</string>
   <string name="action_add_destination">Add Destination</string>
   <string name="action_save_changes">Save Changes</string>
@@ -225,6 +227,7 @@
   <string name="label_nav_trucks">Trucks</string>
   <string name="label_nav_trips">Trips</string>
   <string name="label_nav_pods">PODs</string>
+  <string name="label_nav_loads">Loads</string>
   <string name="label_nav_alerts">Alerts</string>
   <string name="label_nav_payment">Axle Money</string>
   <string name="label_nav_profile">Profile</string>
@@ -393,6 +396,7 @@
   <string name="label_truck_size">Truck Size</string>
   <string name="label_truck_capacity">Truck Capacity</string>
   <string name="label_current_city">Current City</string>
+  <string name="label_drop_city">Drop City</string>
   <string name="label_unloading_destination">Drop Location</string>
   <string name="label_select_truck_size">Select truck size</string>
   <string name="label_select_truck_capacity">Select truck capacity</string>
@@ -401,11 +405,24 @@
   <string name="label_enter_unloading_destination">Drop Location</string>
   <string name="label_price_mt">Price/MT (optional)</string>
   <string name="label_price_ftl">Full Truck Price (optional)</string>
+  <string name="label_expected_price">Expected Rate (optional)</string>
   <string name="label_price">Price (optional)</string>
   <string name="label_search_by_city">Search by city name</string>
   <string name="label_choose_options">Choose option</string>
   <string name="label_choose_from_below">Choose one from the below trucks</string>
   <string name="label_confirm_details">Confirm truck details</string>
+
+  <!-- Filter and validation messages -->
+  <string name="filter_by_vehicle_type">Filter by Vehicle Type</string>
+  <string name="filter_by_availability">Filter by Availability</string>
+  <string name="filter_by_truck_size">Filter by Truck Size</string>
+  <string name="msg_select_vehicle_type_first">Please select vehicle type first</string>
+  <string name="msg_select_truck_size_first">Select Truck Size First</string>
+  <string name="msg_select_body_type_first">Select body type first</string>
+  <string name="msg_no_truck_types_found">No Truck Types Found</string>
+  <string name="msg_no_truck_sizes_available">No truck sizes available for selected vehicle types</string>
+
+  <string name="fastag_info_message">You can add FASTags for more trucks later as well. (Max: %1$d trucks in your inventory)</string>
   <string name="label_no_loads_found">Can\'t find relevant loads?</string>
   <string name="label_active">Active</string>
   <string name="label_under_review">Under Review</string>
@@ -508,6 +525,7 @@
   <string name="label_account">Account</string>
   <string name="label_kyc_details">KYC Details</string>
   <string name="label_profile">Profile Details</string>
+  <string name="label_delhivery_wallet">Delhivery Wallet</string>
   <string name="label_routes">My Routes</string>
   <string name="label_earnings">My Earnings</string>
   <string name="label_team">My Team Members</string>
@@ -928,4 +946,109 @@
 <string name="call">Call</string>
 <string name="call_content_description">Call driver</string>
   <string name="view_on_map_html"><u>View on map</u></string>
+    <string name="search_city">Search city</string>
+
+  <!-- Truck Activity Strings -->
+  <string name="title_truck_details">Truck Details</string>
+  <string name="msg_no_inventory_found">No Inventory Found</string>
+  <string name="error_city_not_mapped">City is not mapped to cluster</string>
+  <string name="error_city_code_missing">City Code is missing</string>
+  <string name="msg_select_body_type">Select body type</string>
+  <string name="progress_adding_truck">Adding truck</string>
+  <string name="format_capacity_mt">%s MT</string>
+  <string name="intent_extra_added">Added</string>
+  <string name="intent_extra_truck_added">Truck Added</string>
+
+  <!-- Security Strings -->
+  <string name="security_warning_title">Security Warning</string>
+  <string name="root_detection_message">This device appears to be rooted or modified. For security and compliance reasons, some features may be limited or unavailable.\n\nWe recommend using this app on a secure, unmodified device to ensure the safety of your business data.</string>
+  <string name="root_detection_message_blocked">This device appears to be rooted or modified. For security reasons, this app cannot be used on rooted devices.\n\nPlease unroot your device or use a different device to access this app.</string>
+  <string name="emulator_detection_message_blocked">This app cannot be used on emulator or virtual devices. For security and compliance reasons, please use a real physical device to access this app.\n\nThis restriction helps protect sensitive business data and ensures proper functionality.</string>
+  <string name="root_and_emulator_detection_message">This device has multiple security concerns detected (rooted and/or emulator). For security reasons, this app cannot be used on modified or virtual devices.\n\nPlease use a secure, unmodified physical device to access this app.</string>
+  <string name="continue_anyway">I Understand</string>
+  <string name="exit_app">Exit</string>
+  <string name="root_detected_toast">Rooted device detected. Some features may be restricted.</string>
+  <string name="emulator_detected_toast">Emulator detected. App cannot run on virtual devices.</string>
+    <string name="recent_transactions">Recent Transactions</string>
+    <string name="recent_txn_subtitle">Transactions shown are from IDFC FASTags issued by Delhivery, for all vehicle usage</string>
+    <string name="download_statement">Download Statement</string>
+    <string name="recharge">Recharge</string>
+    <string name="search_vehicle_number">Search vehicle number</string>
+    <string name="buy_fastag_for_your_trucks">Buy FASTag for your trucks</string>
+    <string name="submit_request">Submit request</string>
+    <string name="share_a_few_details_and_our_team_will_help_you_get_fastags_quickly">Share a few details and our team will help you get FASTags quickly.</string>
+    <string name="operating_location">Operating location</string>
+
+    <!-- Load Wallet -->
+    <string name="label_load_wallet_balance">WALLET BALANCE</string>
+    <string name="label_add_money">Add Money</string>
+    <string name="label_wallet_history">Wallet History</string>
+    <string name="label_refresh_status">Refresh Status</string>
+
+    <!-- Wallet Filter -->
+    <string name="label_filter_title">Filter</string>
+    <string name="label_filter_type">Type</string>
+    <string name="label_filter_credit">Credit</string>
+    <string name="label_filter_debit">Debit</string>
+    <string name="label_filter_date_range">Date Range</string>
+    <string name="label_filter_today">Today</string>
+    <string name="label_filter_yesterday">Yesterday</string>
+    <string name="label_filter_this_week">This Week</string>
+    <string name="label_filter_last_week">Last Week</string>
+    <string name="label_filter_this_month">This Month</string>
+    <string name="label_filter_last_month">Last Month</string>
+    <string name="label_filter_last_90_days">Last 90 Days</string>
+    <string name="label_filter_custom_range">Custom Range</string>
+    <string name="label_filter_apply">Apply</string>
+    <string name="label_empty_transactions_title">Oops!</string>
+    <string name="label_empty_transactions_message">You haven\'t done any transactions.</string>
+    <string name="label_empty_recharges_message">You haven\'t done any recharges.</string>
+    <string name="label_wallet_creating_title">Please wait!</string>
+    <string name="label_wallet_creating_message">We are creating a wallet for you</string>
+    <string name="label_txn_details_title">Transaction details</string>
+    <string name="label_recharge_details_title">Money Added</string>
+    <string name="label_txn_reason">Transaction Reason</string>
+    <string name="label_txn_date">Transaction Date</string>
+    <string name="label_recharge_date">Recharge Date</string>
+    <string name="label_bank_reference_no">Bank Reference no</string>
+    <string name="label_added_via">Added via</string>
+    <string name="label_txn_success_message">The amount has been successfully deducted for your order.</string>
+    <string name="label_txn_pending_message">Your payment is being processed. The amount will reflect in your wallet shortly.</string>
+    <string name="label_txn_failed_message">If money was deducted, it will be refunded by your bank in 3 to 4 days.</string>
+    <string name="label_txn_credit_message">The amount has been successfully credited to your wallet.</string>
+    <string name="please_add_money_to_user_delhivery_wallet">Please add money to user Delhivery Wallet</string>
+
+    <!-- FASTag Recharge -->
+    <string name="recharge_fastag">Recharge FASTag</string>
+    <string name="add_amount">Add Amount</string>
+    <string name="delhivery_wallet">Delhivery Wallet</string>
+    <string name="add_money">ADD MONEY</string>
+    <string name="payment_summary">Payment Summary</string>
+    <string name="recharge_amount">Recharge Amount</string>
+    <string name="payable_amount">Payable Amount</string>
+    <string name="slide_to_pay">Slide to recharge</string>
+
+  <!-- KYC Status Card Strings -->
+  <string name="kyc_heading_completed">You\'re all set to start bidding</string>
+  <string name="kyc_message_completed">Your account is activated. Explore and bid on available loads.</string>
+  <string name="kyc_button_completed">Browse Loads</string>
+
+  <string name="kyc_heading_start">You\'re almost ready to bid</string>
+  <string name="kyc_message_start">Complete onboarding to access live loads in your area.</string>
+  <string name="kyc_button_start">Finish setup</string>
+
+  <string name="kyc_heading_continue">Continue your onboarding</string>
+  <string name="kyc_message_continue">You\'re almost done. Complete the remaining steps to start bidding.</string>
+  <string name="kyc_button_continue">Continue setup</string>
+
+  <string name="kyc_heading_pending">Documents are submitted</string>
+  <string name="kyc_message_pending">We’re reviewing your details. You’ll be notified once it’s done.</string>
+  <string name="kyc_button_pending">View KYC details</string>
+
+  <string name="kyc_heading_rejected">KYC Verification Rejected</string>
+  <string name="kyc_message_rejected">Document issue detected. Please re-upload the requested document.</string>
+  <string name="kyc_button_rejected">Re-upload Document</string>
+  <string name="label_fastag_no_space">Fastag</string>
+  <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
+  <string name="label_bidding">Bidding</string>
 </resources>

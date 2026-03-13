@@ -28,7 +28,10 @@ import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
 import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.EVENT_POD_SEARCH_LIST_SHOWN
 import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -107,6 +110,20 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
 
     viewModel.dataLoadingLiveData.observe(this, Observer {
       isLoadingData = it ?: false
+    })
+    
+    // Observe when search list with data is shown and track analytics
+    viewModel.searchListShownTracked.observe(this, Observer { shouldTrack ->
+      if (shouldTrack == true) {
+        // Track pod_search_list_shown event
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_POD_SEARCH_LIST_SHOWN,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+          mutableListOf(viewModel.userPrefs.userId(), "my_pods")
+        )
+        // Reset flag to avoid duplicate tracking
+        viewModel.searchListShownTracked.value = false
+      }
     })
 
     adapter.resetStaticData()
@@ -325,13 +342,13 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
         when {
           data.hasPODTracking() ->
             startActivityForResult(
-                docketUpdateIntent(context = this, trip = data, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
+                docketUpdateIntent(context = this, trip = data, podStatus = data.podAction(), source = "search"), REQCODE_UPLOAD_DOCKET
             )
           else -> {
             val list = arrayListOf<String>()
             list.add(data.transactionId)
             startActivityForResult(
-                docketUpdateIntent(context = this, transactionIds = list, podStatus = data.podAction()), REQCODE_UPLOAD_DOCKET
+                docketUpdateIntent(context = this, transactionIds = list, podStatus = data.podAction(), source = "search"), REQCODE_UPLOAD_DOCKET
             )
           }
         }

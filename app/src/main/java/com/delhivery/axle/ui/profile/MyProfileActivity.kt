@@ -28,6 +28,7 @@ import com.delhivery.axle.databinding.DialogAccountDeletionSubmittedBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
+import com.delhivery.axle.ui.loadwallet.loadWalletIntent
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
@@ -277,6 +278,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
         }
 
+        binding.delhiveryWallet.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            startActivity(loadWalletIntent(this))
+        }
+
         binding.teamLayout.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
@@ -334,6 +340,10 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         binding.earningsLayout.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
             startActivity(consolidatedPageIntent(this))
+        }
+        binding.placementsLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            navigationUtils.navigate(PlacementsActivity::class.java)
         }
 
         // Download functionality removed - new API only supports upload

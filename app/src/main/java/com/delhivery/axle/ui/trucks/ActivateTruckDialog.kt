@@ -154,27 +154,27 @@ class ActivateTruckDialog @Inject constructor(
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_ACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_SOURCE),
-                        mutableListOf(userPrefs.userId(), data.inventoryId, VALUE_DEEP_LINKING)
+                        mutableListOf(userPrefs.userId(), data.inventoryId ?: "", VALUE_DEEP_LINKING)
                     )
                 }
                 fromNotification -> {
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_ACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_SOURCE),
-                        mutableListOf(userPrefs.userId(), data.inventoryId, VALUE_NOTIFICATION)
+                        mutableListOf(userPrefs.userId(), data.inventoryId ?: "", VALUE_NOTIFICATION)
                     )
                 }
                 else -> {
                     analyticsUtil.moEngageTrackEvent(
                         EVENT_ACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID),
-                        mutableListOf(userPrefs.userId(), data.inventoryId)
+                        mutableListOf(userPrefs.userId(), data.inventoryId ?: "")
                     )
                 }
             }
 
             uiUtils.showProgress()
-            dialogInterface.activateTruck(data, data.inventoryId, truckCity!!, truckDestination!! ,sourcedAs, truckPrice, position)
+            dialogInterface.activateTruck(data, data.inventoryId ?: "", truckCity!!, truckDestination!! ,sourcedAs, truckPrice, position)
             dismiss()
         }
     }

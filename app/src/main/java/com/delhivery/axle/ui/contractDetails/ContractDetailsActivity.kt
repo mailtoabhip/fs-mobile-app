@@ -100,11 +100,22 @@ import android.database.Cursor
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.WindowManager
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
 import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.delhivery.axle.ui.profile.PlacementsActivity
 import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
+import com.delhivery.axle.utils.EVENT_INTERCITY_CONTRACTS_BID_SUBMIT
+import com.delhivery.axle.utils.EVENT_INTRACITY_CONTRACTS_BID_SUBMIT
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.VALUE_LISTING
+import com.delhivery.axle.utils.VALUE_LOAD_PAGE_CONTRACTS_BIDS
+import com.delhivery.axle.utils.VALUE_ORDER_LISTING
+import com.delhivery.axle.utils.VALUE_SEARCH
+import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
 import com.google.gson.Gson
 
 class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
@@ -587,6 +598,25 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             PROPERTY_IS_FLEXIBLE),
           mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",viewModel.transaction.contractEventStatusText()?:"", transaction.key(),source,transaction.isFlexible.toString()))
 
+          if(source == VALUE_SEARCH_LISITING || source == VALUE_ORDER_LISTING) {
+              analyticsUtil.moEngageTrackEvent(
+                  if (transaction.contractType == ContractType.INTRACITY.type) EVENT_INTRACITY_CONTRACTS_BID_SUBMIT else EVENT_INTERCITY_CONTRACTS_BID_SUBMIT,
+                  listOf(
+                      PROPERTY_ORDER_ID,
+                      PROPERTY_USER_ID,
+                      PROPERTY_PAGE_NAME,
+                      PROPERTY_SOURCE,
+                      PROPERTY_DEMAND_TYPE
+                  ),
+                  listOf(
+                      transaction.transactionId?:"" ,
+                      userPrefs.userId(),
+                      VALUE_LOAD_PAGE_CONTRACTS_BIDS,
+                      if(source == VALUE_SEARCH_LISITING) VALUE_LISTING else VALUE_SEARCH,
+                      transaction.demandType ?: ""
+                  )
+              )
+          }
         viewModel.createBid(
           transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
           transaction.biddingType
@@ -1160,7 +1190,7 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                 binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
                 binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
                 binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
-                  startActivity(homeActivityIntent("placement", this@ContractDetailsActivity))
+                navigationUtils.navigate(PlacementsActivity::class.java)
 
                   // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
                 }

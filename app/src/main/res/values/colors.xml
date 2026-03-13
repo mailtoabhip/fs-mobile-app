@@ -15,6 +15,8 @@
 
   <color name="colorShimmerPrimary">#F1F1F1</color>
   <color name="colorShimmerSecondary">#F3F3F3</color>
+  <color name="colorShimmerDarkPrimary">#2A2A2A</color>
+  <color name="colorShimmerDarkSecondary">#333333</color>
 
   <!-- bid status colors-->
   <color name="status_active">#29A8E0</color>
@@ -154,9 +156,29 @@
   <color name="delhivery_load_color">#7C3AED</color>
   <color name="client_load_bg">#FFF7EB</color>
   <color name="client_load_color">#C47E09</color>
+  <color name="facility_load_bg">#D1FAE5</color>
+  <color name="facility_load_color">#059669</color>
 
   <!-- Information banner colors -->
   <color name="information_bg">#F0F4FF</color>
   <color name="information_font">#374D94</color>
+  <color name="txn_success">#2563EB</color>
+  <color name="title_black">#0F172A</color>
+  <color name="text_dark_grey">#64748B</color>
+
+    <color name="cardboard_surface_light">#F7F3ED</color>
+    <color name="cardboard_surface_dark">#F1E8DE</color>
+    <color name="gray_tint">#808080</color>
+    <color name="progress_copper">#B88B5C</color>
+    <color name="progress_bg_copper">#FFEDD6</color>
+    <color name="progress_green">#1BA86E</color>
+    <color name="progress_red">#DC143C</color>
+    <color name="text_body_secondary">#454545</color>
+
+    <color name="surface_success_light">#ECF8F3</color>
+    <color name="surface_success_dark">#D1EEE2</color>
+
+    <color name="surface_failed_light">#FDF2F4</color>
+    <color name="surface_failed_dark">#FCE9ED</color>
 
 </resources>

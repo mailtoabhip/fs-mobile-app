@@ -83,34 +83,34 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
       WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "Enter Truck Details"
+        title = getString(R.string.title_truck_details)
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
         }
 
-        if(viewModel.fromLinks && viewModel.vehicleNumberIntent != ""){
+        if(viewModel.fromLinks && viewModel.vehicleNumberIntent.isNotEmpty()){
             uiUtils.showProgress()
             viewModel.getInventory(userPrefs.userId() , viewModel.vehicleNumberIntent)
         }
 
-        if(viewModel.truckTypeIntent != ""){
+        if(viewModel.truckTypeIntent.isNotEmpty()){
             when(viewModel.truckTypeIntent){
-                "open" -> binding.btnRadioOpen.isChecked = true
-                "closed" -> binding.btnRadioContainer.isChecked = true
-                "trailer" ->binding.btnRadioTrailer.isChecked = true
+                BODY_TYPE_OPEN -> binding.btnRadioOpen.isChecked = true
+                BODY_TYPE_CLOSED -> binding.btnRadioContainer.isChecked = true
+                BODY_TYPE_TRAILER ->binding.btnRadioTrailer.isChecked = true
             }
         }
 
-        if(viewModel.truckSizeIntent != ""){
+        if(viewModel.truckSizeIntent.isNotEmpty()){
             binding.textTruckSize.text = viewModel.truckSizeIntent
             sourcedAs = viewModel.sourcedAsIntent
 
-            if(sourcedAs == "PMT"){
+            if(sourcedAs == SOURCED_AS_PMT){
                 binding.labelPriceText.text = String.format(getString(R.string.label_price_mt))
                 binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
             }
-            else if(sourcedAs == "FTL"){
+            else if(sourcedAs == SOURCED_AS_FTL){
                 binding.labelPriceText.text = String.format(getString(R.string.label_price_ftl))
                 binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
             }
@@ -134,18 +134,31 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.textTruckCapacity.text = "${viewModel.truckCapacityIntent} MT"
         }
 
+        // Initialize button as disabled
+        binding.btnAddTruck.isEnabled = false
+        
+        // Add text watcher for truck number
+        binding.editTruckNumber.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                checkFieldsAndEnableButton()
+            }
+        })
+
         binding.bodyGroup.setOnCheckedChangeListener { radioGroup, i ->
             binding.textTruckSize.text=""
             binding.textTruckCapacity.text = ""
             sourcedAs = ""
+            checkFieldsAndEnableButton()
         }
 
         binding.editTruckCapacity.setOnClickListener{
-            if(binding.textTruckSize.text != "") {
+            if(binding.textTruckSize.text.isNotEmpty()) {
                 showTruckCapacityDialog()
             }
             else{
-                uiUtils.showToast("Select Truck Size First")
+                uiUtils.showToast(getString(R.string.msg_select_truck_size_first))
             }
         }
 
@@ -184,14 +197,14 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             if(it != null){
                 binding.editTruckNumber.setText(it.vehicleNumber)
                 when(it.truckType){
-                    "open" -> binding.btnRadioOpen.isChecked = true
-                    "closed" -> binding.btnRadioContainer.isChecked = true
-                    "trailer" ->binding.btnRadioTrailer.isChecked = true
+                    BODY_TYPE_OPEN -> binding.btnRadioOpen.isChecked = true
+                    BODY_TYPE_CLOSED -> binding.btnRadioContainer.isChecked = true
+                    BODY_TYPE_TRAILER -> binding.btnRadioTrailer.isChecked = true
                 }
 
                 when(it.ownership){
-                    "owns_trucks"-> binding.btnRadioOwnTruck.isChecked = true
-                    "market_truck" -> binding.btnRadioMarketTruck.isChecked = true
+                    OWNERSHIP_OWN -> binding.btnRadioOwnTruck.isChecked = true
+                    OWNERSHIP_MARKET -> binding.btnRadioMarketTruck.isChecked = true
                 }
 
                 capacityArr.clear()
@@ -215,11 +228,11 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
                 sourcedAs = it.sourcedAs ?:""
 
-                if(it.sourcedAs != null && it.sourcedAs == "PMT"){
+                if(it.sourcedAs != null && it.sourcedAs == SOURCED_AS_PMT){
                     binding.labelPriceText.text = String.format(getString(R.string.label_price_mt))
                     binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_pmt_price))
                 }
-                else if(it.sourcedAs != null && it.sourcedAs == "FTL"){
+                else if(it.sourcedAs != null && it.sourcedAs == SOURCED_AS_FTL){
                     binding.labelPriceText.text = String.format(getString(R.string.label_price_ftl))
                     binding.editPriceAddTruck.hint = String.format(getString(R.string.hint_ftl_price))
                 }
@@ -231,7 +244,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             }
             else{
                 binding.editTruckNumber.setText(viewModel.truckNumber)
-                uiUtils.showSnackbar("No Inventory Found")
+                uiUtils.showSnackbar(getString(R.string.msg_no_inventory_found))
             }
         })
 
@@ -253,7 +266,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             }
             else if(it!=null && it== false){
                 dialogUtils.showErrorDialog(
-                    "City is not mapped to cluster",
+                    getString(R.string.error_city_not_mapped),
                     3L
                 )
             }
@@ -262,7 +275,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             if(it){
                 uiUtils.hideProgress()
                 dialogUtils.showErrorDialog(
-                    "City Code is missing",
+                    getString(R.string.error_city_code_missing),
                     3L
                 )
             }
@@ -295,7 +308,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         Handler(Looper.myLooper()!!).postDelayed({
             dialog.dismiss()
             setResult(REQCODE_ADD_TRUCK, Intent().apply {
-                putExtra("Added", "Truck Added")
+                putExtra(getString(R.string.intent_extra_added), getString(R.string.intent_extra_truck_added))
             })
             finish()
         }, 2000)
@@ -304,28 +317,75 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
     }
 
+    /**
+     * Checks if all required fields are filled and enables/disables the Add Truck button accordingly.
+     * Price field is optional and not considered for button enablement.
+     */
+    private fun checkFieldsAndEnableButton() {
+        binding.btnAddTruck.isEnabled = areAllRequiredFieldsFilled()
+    }
+    
+    /**
+     * Validates that all required fields are filled.
+     * @return true if all required fields have valid values, false otherwise
+     */
+    private fun areAllRequiredFieldsFilled(): Boolean {
+        return isTruckNumberValid() &&
+               isTruckSizeValid() &&
+               isTruckCapacityValid() &&
+               isCurrentCityValid() &&
+               isDestinationValid() &&
+               isBodyTypeSelected()
+    }
+    
+    private fun isTruckNumberValid(): Boolean = 
+        binding.editTruckNumber.text?.toString()?.isNotEmpty() == true
+    
+    private fun isTruckSizeValid(): Boolean = 
+        binding.textTruckSize.text.toString().isNotEmpty()
+    
+    private fun isTruckCapacityValid(): Boolean = 
+        binding.textTruckCapacity.text.toString().isNotEmpty()
+    
+    private fun isCurrentCityValid(): Boolean = 
+        viewModel.truckCity != null
+    
+    private fun isDestinationValid(): Boolean = 
+        viewModel.truckDestination != null
+    
+    private fun isBodyTypeSelected(): Boolean = 
+        binding.btnRadioContainer.isChecked || 
+        binding.btnRadioOpen.isChecked || 
+        binding.btnRadioTrailer.isChecked
+
+    private fun getSelectedBodyType(): String = when {
+        binding.btnRadioContainer.isChecked -> BODY_TYPE_CLOSED
+        binding.btnRadioOpen.isChecked -> BODY_TYPE_OPEN
+        binding.btnRadioTrailer.isChecked -> BODY_TYPE_TRAILER
+        else -> ""
+    }
+
+
     private fun validateFieldsAndAddTruck(){
         viewModel.truckOwnership = if(binding.btnRadioMarketTruck.isChecked)
-            "market_truck" else "owns_truck"
+            OWNERSHIP_MARKET else OWNERSHIP_OWN
 
         viewModel.truckCapacity =  if(binding.textTruckCapacity.text.isNotEmpty())
             binding.textTruckCapacity.text.toString().split("\\s+".toRegex())[0].toDouble() else 0.0
 
         viewModel.truckSize = if(binding.textTruckSize.text.isNotEmpty()) binding.textTruckSize.text.toString() else ""
 
-        viewModel.truckNumber = if(binding.editTruckNumber.text !=null && binding.editTruckNumber.text.toString() != "" )
-            binding.editTruckNumber.text.toString() else ""
+        viewModel.truckNumber = binding.editTruckNumber.text.toString().trim()
 
-        viewModel.truckType = if(binding.btnRadioContainer.isChecked) "closed" else if(binding.btnRadioOpen.isChecked) "open" else if(binding.btnRadioTrailer.isChecked) "trailer" else ""
+        viewModel.truckType = getSelectedBodyType()
 
-        viewModel.truckPrice = if(binding.editPriceAddTruck.text !=null && binding.editPriceAddTruck.text.toString() != "" )
-            binding.editPriceAddTruck.text.toString().toInt().toDouble() else 0.0
+        viewModel.truckPrice = binding.editPriceAddTruck.text.toString().toIntOrNull()?.toDouble() ?: 0.0
 
         var flag = true
 
-        if(viewModel.truckType == ""){
+        if(viewModel.truckType.isEmpty()){
             flag = false
-            uiUtils.showSnackbar("Select body type")
+            uiUtils.showSnackbar(getString(R.string.msg_select_body_type))
         }
 
         if(viewModel.truckCapacity!= 0.0 ){
@@ -374,7 +434,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         }
 
         if(flag) {
-            uiUtils.showProgress("Adding truck")
+            uiUtils.showProgress(getString(R.string.progress_adding_truck))
             viewModel.addNewTruck(sourcedAs.uppercase())
         }
 
@@ -426,6 +486,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
                     min += (1.0)
                 }
             }
+            checkFieldsAndEnableButton()
             dialog.dismiss()
         }
 
@@ -455,6 +516,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         bindingDialog.truckList.adapter = adapter
         bindingDialog.truckList.setOnItemClickListener { parent, view, position, id ->
             binding.textTruckCapacity.text = adapter.getItem(position)
+            checkFieldsAndEnableButton()
             dialog.dismiss()
         }
         adapter.notifyDataSetChanged();
@@ -482,6 +544,7 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
                         viewModel.truckDestination = city
                         binding.textUnloadingDestination.text = city.cityName().trim()
                     }
+                    checkFieldsAndEnableButton()
                 }
             }
         }
@@ -502,6 +565,19 @@ private const val FromLinks = "notification_deeplink"
 private const val VehicleNumber = "vehicle_number"
 private const val AddTruckSource = "source"
 
+
+private const val BODY_TYPE_CLOSED = "closed"
+private const val BODY_TYPE_OPEN = "open"
+private const val BODY_TYPE_TRAILER = "trailer"
+private const val OWNERSHIP_MARKET = "market_truck"
+private const val OWNERSHIP_OWN = "owns_truck"
+
+// Sourced types
+private const val SOURCED_AS_PMT = "PMT"
+private const val SOURCED_AS_FTL = "FTL"
+
+// Request codes
+private const val REQCODE_SELECT_CITY = 100
 
 
 

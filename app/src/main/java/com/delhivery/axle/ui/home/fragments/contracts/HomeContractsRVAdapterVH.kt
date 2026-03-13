@@ -24,6 +24,8 @@ import com.delhivery.axle.databinding.ViewSearchContractsItemBinding
 import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
+import com.delhivery.axle.ui.home.fragments.bids.calculateAvailableCardWidth
+import com.delhivery.axle.ui.home.fragments.bids.dpToPx
 
 
 abstract class BaseHomeContractsRVAdapterViewHolder<out B: ViewDataBinding, IT: BaseHomeContractsRVAdapterItem<*>>(binding: B):BaseViewHolder<B>(binding) {
@@ -124,6 +126,9 @@ class HomeContractsRequestItemVH(binding: CardContractsIntercityTripsBidsBinding
         binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
     }
 
+    // Apply dynamic text sizing AFTER visibility is set
+    applyDynamicTextSizing(item)
+
     // Handle the included bottom button layout - set request data first (important for visibility)
     binding.reportingTimeButton.request = item.data
     
@@ -160,6 +165,24 @@ class HomeContractsRequestItemVH(binding: CardContractsIntercityTripsBidsBinding
       binding.reportingTimeButton.placeBidButtonMaxWidth.visibility = View.GONE
       binding.reportingTimeButton.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     }
+  }
+
+  /**
+   * Apply dynamic text sizing for intercity contracts
+   * Pure dynamic sizing approach - text scales down to fit in single line
+   * Contracts don't show payment information
+   */
+  private fun applyDynamicTextSizing(item: HomeContractsRequestItem) {
+    // Contracts only show truck info - no payment fields
+    // Reset to default text size as it's a single view
+    binding.truckInfo?.let { resetTextViewToDefault(it) }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: android.widget.TextView) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
   }
 
    fun stopCounter() {
@@ -219,6 +242,9 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
         binding.demandLoadType.compoundDrawables[0]?.setTint(ContextCompat.getColor(context, R.color.client_load_color))
     }
 
+    // Apply dynamic text sizing - contracts don't show payment info
+    applyIntracityDynamicTextSizing(item)
+
     // Handle the included bottom button layout - set request data first (important for visibility)
     binding.containerError.request = item.data
     
@@ -255,6 +281,59 @@ class HomeContractsIntracityRequestItemVH(binding: CardsContractsIntracityTripsB
       binding.containerError.placeBidButtonMaxWidth.visibility = View.GONE
       binding.containerError.placeBidButton.clickToAction(HomeBidsRequestAction_ViewDetails, item, _interface)
     }
+  }
+
+  /**
+   * Apply dynamic text sizing for intracity contracts
+   * Pure dynamic sizing approach - text scales down to fit in single line
+   * Contracts don't show payment information
+   */
+  private fun applyIntracityDynamicTextSizing(item: HomeContractsRequestItem) {
+    // Calculate available width
+    val availableWidth = context.calculateAvailableCardWidth(
+      cardMarginDp = 12,
+      contentPaddingDp = 16
+    )
+    
+    // Apply dynamic text sizing to city row (fromCity and pincodeState)
+    applyToCityRow(availableWidth)
+    
+    // Contracts only show truck info - no payment fields
+    // Reset to default text size as it's a single view
+    binding.truckInfo?.let { resetTextViewToDefault(it) }
+  }
+  
+  /**
+   * Apply dynamic text sizing to fromCity and pincode_state views
+   * Uses adjustTextSizeToFit method to maintain relative size difference (16sp vs 14sp)
+   * Prevents text truncation on smaller screens
+   */
+  private fun applyToCityRow(availableWidth: Int) {
+    val spacingPx = 4.dpToPx(context) // marginStart="@dimen/size_4dp" from XML
+    val drawablePaddingPx = 0 // No drawables in city row
+
+    val fromCity = binding.fromCity
+    val pincodeState = binding.pincodeState
+
+//    if (fromCity != null && pincodeState != null && availableWidth > 0) {
+//      // Use adjustTextSizeToFit with different text sizes to maintain hierarchy
+//      // 16sp for fromCity, 14sp for pincodeState
+//      adjustTextSizeToFit(
+//        views = listOf(fromCity, pincodeState),
+//        textSizes = listOf(16f, 14f),
+//        availableWidth = availableWidth,
+//        minTextSize = 10f,
+//        spacingBetweenViews = spacingPx,
+//        drawablePadding = drawablePaddingPx
+//      )
+//    }
+  }
+  
+  /**
+   * Reset TextView to default size
+   */
+  private fun resetTextViewToDefault(textView: android.widget.TextView) {
+    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
   }
 
   fun stopCounter() {

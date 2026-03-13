@@ -13,7 +13,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.delhivery.axle.R
@@ -550,7 +549,7 @@ class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetails
                         val imageScopedFile =
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
                         this.uploadImageName = "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){

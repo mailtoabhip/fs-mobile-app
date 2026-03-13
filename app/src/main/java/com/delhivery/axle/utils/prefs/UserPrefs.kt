@@ -887,6 +887,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   fun setPreviousScreen(previousScreen:String){
     userPreviousScreen =previousScreen
   }
+
+  var walletId: String
+    set(value) = editor.putString(PrefKeys.WalletId, value).apply()
+    get() = prefs.getString(PrefKeys.WalletId, "") ?: ""
   /**
    * Clear all preferences
    */
@@ -1431,6 +1435,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val RequestedDeletion= "requested_deletion"
     const val ReturningFromDeletion= "returningFromDeletion"
     const val LastLoggedInUserId= "last_logged_in_userID"
+    const val WalletId = "wallet_id"
   }
 }
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_bottom_sheet_rounded_top">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/size_24dp"
+            android:paddingEnd="@dimen/size_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/route_heading"
+                android:layout_marginTop="@dimen/size_56dp" />
+
+            <!-- ── Status Title ── -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_countdown_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:gravity="center"
+                android:text="Payment Successful!"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_20sp"
+                android:textStyle="bold"
+                tools:text="00:30" />
+
+            <!-- ── Status Description ── -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_status_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:layout_marginBottom="@dimen/size_56dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.4"
+                android:text="Hang on, we’re confirming your payment status."
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_14sp"
+                tools:text="Hang on, we’re confirming your payment status." />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

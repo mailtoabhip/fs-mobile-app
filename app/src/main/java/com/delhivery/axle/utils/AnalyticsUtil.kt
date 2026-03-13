@@ -145,6 +145,10 @@ const val EVENT_VIEW_MY_PROFILE = "view_my_profile"
 const val EVENT_CLICKED_PRICE_BANNER = "clicked_price_banner"
 const val EVENT_CLICKED_PRICE_NOTIFICATION = "clicked_price_notification"
 const val EVENT_SUPPLIER_RECOMMENDATION = "recommendation_notif_open"
+const val EVENT_EPOD_LIST_SHOWN = "epod_list_shown"
+const val EVENT_HPOD_LIST_SHOWN = "hpod_list_shown"
+const val EVENT_HPOD_SUBMIT_TAP = "hpod_submit_tap"
+const val EVENT_POD_SEARCH_LIST_SHOWN = "pod_search_list_shown"
 
 
 
@@ -296,6 +300,7 @@ const val EVENT_NAVIGATION_MY_TRIPS = "navigation_my_trips"
 const val EVENT_NAVIGATION_MY_PROFILE = "navigation_my_profile"
 const val EVENT_NAVIGATION_PODS = "navigation_pods"
 const val EVENT_NAVIGATION_HOME = "navigation_home"
+const val EVENT_NAVIGATION_LOADS = "navigation_loads"
 const val EVENT_SEARCH_RESULTS_ORDER_CARD_CLICK = "search_results_order_card_click"
 const val EVENT_PAGE_LOAD_ORDER_DETAILS_WITHOUT_EXISTING_BID =
   "page_load_order_details_without_existing_bid"
@@ -350,6 +355,29 @@ const val EVENT_HOME_PLACEMENT_FILTER= "placement_filter"
 const val EVENT_HOME_PLACEMENT_MISSING_DETAILS_LISTING= "missing_details_listing"
 const val EVENT_HOME_TOTAL_PLACEMENT= "total_placements"
 
+/*Loads Events*/
+const val EVENT_INTRACITY_LOADS_SHOWN = "Intracity_loads_shown"
+const val EVENT_INTERCITY_LOADS_SHOWN = "Intercity_loads_shown"
+const val EVENT_MARKETPLACE_LOADS_SHOWN = "marketplace_loads_shown"
+const val EVENT_INTERCITY_CONTRACTS_SHOWN = "Intercity_contracts_shown"
+const val EVENT_INTRACITY_LOADS_VEHICLE_DETAILS_SUBMIT = "Intracity_loads_vehicle_details_submit"
+const val EVENT_INTERCITY_LOADS_BID_SUBMIT = "Intercity_loads_bid_submit"
+const val EVENT_MARKETPLACE_LOADS_BID_SUBMIT = "marketplace_loads_bid_submit"
+const val EVENT_INTRACITY_CONTRACTS_BID_SUBMIT = "Intracity_contracts_bid_submit"
+const val EVENT_INTERCITY_CONTRACTS_BID_SUBMIT = "Intercity_contracts_bid_submit"
+const val EVENT_LOAD_SEARCH_RESULT_SHOWN = "load_search_result_shown"
+const val EVENT_CONTRACT_SEARCH_RESULT_SHOWN = "contract_search_result_shown"
+const val EVENT_INTERCITY_LOADS_BID_CTA_TAP = "Intercity_loads_bid_cta_tap"
+const val EVENT_MARKETPLACE_LOADS_BID_CTA_TAP = "marketplace_loads_bid_cta_tap"
+const val EVENT_INTRACITY_CONTRACTS_BID_CTA_TAP= "Intracity_contracts_bid_cta_tap"
+const val EVENT_INTERCITY_CONTRACTS_BID_CTA_TAP = "Intercity_contracts_bid_cta_tap"
+
+const val VALUE_LOAD_PAGE_LOADS = "load_page_loads"
+const val VALUE_LOAD_PAGE_CONTRACTS = "load_page_contracts"
+const val VALUE_LISTING = "listing"
+const val VALUE_SEARCH = "search"
+const val VALUE_LOAD_PAGE_LOADS_BIDS = "load_page_loads_bids"
+const val VALUE_LOAD_PAGE_CONTRACTS_BIDS = "load_page_contracts_bids"
 
 
 const val PROPERTY_ORDER_ID = "order_id"
@@ -404,6 +432,8 @@ const val VALUE_PUSH_NOTIFICATION = "push_notification"
 const val VALUE_ORDER_LISTING = "order_listing"
 const val VALUE_VENDOR_SUBSOURCE = "new_order_vendor_match"
 const val VALUE_INVENTORY_SUBSOURCE = "new_order_inventory_match"
+
+const val VALUE_POD_STATUS = "pod_status"
 
 
 

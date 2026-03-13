@@ -46,61 +46,23 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <View
+                    android:id="@+id/divider"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@color/bg_light_grey"
+                    app:layout_constraintTop_toBottomOf="@+id/closingTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
+
+                <include
                     android:id="@+id/cl_from_to_city"
+                    layout="@layout/item_bid_route_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_18dp"
-                    app:layout_constraintTop_toBottomOf="@id/closingTime"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <!-- 1. FromCity - Sticks to left side -->
-                    <TextView
-                        android:id="@+id/fromCity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_14sp"
-                        android:text="@{request.originCityState()}"
-                        tools:text ="Navi Mumbai"
-                        android:textColor="#121A31"
-                        android:maxWidth="150dp"
-                        android:maxLines="2"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <!-- 2. Arrow - Sticks to fromCity with 4dp gap -->
-                    <TextView
-                        android:id="@+id/fromCity_toCity_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_14sp"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        android:text="➔"
-                        tools:text ="➔"
-                        android:textColor="#121A31"
-                        android:gravity="center"
-                        app:layout_constraintStart_toEndOf="@id/fromCity"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                    <TextView
-                        android:id="@+id/toCity"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_14sp"
-                        android:text="@{request.destinationCityState()}"
-                        tools:text ="Jaisalmer"
-                        android:textColor="#121A31"
-                        android:maxLines="2"
-                        android:layout_marginStart="@dimen/size_4dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/fromCity_toCity_arrow" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
+                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:request="@{request}"
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/truckInfo"
@@ -123,15 +85,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
-                    android:drawablePadding="@dimen/size_4dp"
-                    tools:text ="Advance Payment"
+                    tools:text ="Advance"
                     android:text="@{request.getMarketplacePaymentModeDisplay()}"
                     android:textColor="@color/text_grey_v3"
-                    android:layout_marginStart="@dimen/size_8dp"
-                    android:drawableStart="@drawable/money_bill_wave"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
-                    app:layout_constraintTop_toTopOf="@id/truckInfo"
-                    app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
+                    android:layout_marginStart="@dimen/size_2dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/advance_payment_percentage"
+                    app:layout_constraintBottom_toBottomOf="@id/advance_payment_percentage"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/advance_payment_percentage"
@@ -140,13 +100,14 @@
                     android:textSize="12sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="(50%)"
+                    android:layout_marginEnd="@dimen/size_2dp"
                     android:textColor="#505361"
-                    android:layout_marginStart="@dimen/size_2dp"
+                    android:drawableStart="@drawable/money_bill_wave"
                     android:text="@{request.getMarketplaceAdvancePaymentPercentage()}"
-                    app:layout_constraintStart_toEndOf="@id/paymentType"
-                    app:layout_constraintTop_toTopOf="@id/paymentType"
-                    app:layout_constraintBottom_toBottomOf="@id/paymentType" />
-
+                    app:layout_constraintEnd_toStartOf="@+id/paymentType"
+                    app:layout_constraintTop_toTopOf="@id/truckInfo"
+                    app:layout_constraintBottom_toBottomOf="@id/truckInfo"
+                    />
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/supplierName"
                     android:layout_width="wrap_content"
@@ -174,8 +135,8 @@
                     android:textColor="@color/text_grey_v3"
                     android:layout_marginTop="@dimen/size_8dp"
                     android:drawableStart="@drawable/ic_call_12dp"
-                    app:layout_constraintStart_toStartOf="@id/paymentType"
-                    app:layout_constraintTop_toBottomOf="@id/paymentType" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/advance_payment_percentage" />
 
                 <include
                     android:id="@+id/container_error"

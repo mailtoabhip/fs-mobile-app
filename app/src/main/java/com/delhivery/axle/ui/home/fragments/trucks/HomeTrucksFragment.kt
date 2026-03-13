@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.home.fragments.trucks
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
@@ -13,6 +12,9 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.CheckBox
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -20,21 +22,75 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
-import com.delhivery.axle.data.home.trucks.*
-import com.delhivery.axle.databinding.*
-import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+import com.delhivery.axle.data.home.trucks.FastagStats
+import com.delhivery.axle.data.home.trucks.HomeTrucksAvailabilityFilterAction
+import com.delhivery.axle.data.home.trucks.HomeTrucksPriorityAction
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_ActivateTruck
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_BuyFastag
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestAction_EditTruck
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
+import com.delhivery.axle.data.home.trucks.HomeTrucksSizeFilterAction
+import com.delhivery.axle.data.home.trucks.HomeTrucksTimeOutAction
+import com.delhivery.axle.data.home.trucks.HomeTrucksVehicleFilterAction
+import com.delhivery.axle.data.home.trucks.HomeTrucksWarningAction_NoTrucks
+import com.delhivery.axle.data.home.trucks.TruckFrequentItem
+import com.delhivery.axle.databinding.DialogBottomTruckAddBinding
+import com.delhivery.axle.databinding.DialogBottomTruckDeactivateBinding
+import com.delhivery.axle.databinding.DialogBottomTruckFilterBinding
+import com.delhivery.axle.databinding.DialogBottomTruckOptionsBinding
+import com.delhivery.axle.databinding.DialogTooltipBinding
+import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
+import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
+import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
+import com.delhivery.axle.ui.dialogs.FastagSuccessBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
-import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.sharerate.ShareRateActivity
 import com.delhivery.axle.ui.trucks.ActivateTruckDialog
 import com.delhivery.axle.ui.trucks.EditTruckDialog
 import com.delhivery.axle.ui.trucks.truckIntent
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.DialogUtils
+import com.delhivery.axle.utils.EVENT_ADD_TRUCK_INITIATE
+import com.delhivery.axle.utils.EVENT_BANNER_CLICK_TOP
+import com.delhivery.axle.utils.EVENT_CLICKED_OFFER
+import com.delhivery.axle.utils.EVENT_CLICKED_PRICE_BANNER
+import com.delhivery.axle.utils.EVENT_DEACTIVATE_TRUCK
+import com.delhivery.axle.utils.EVENT_DELETE_TRUCK
+import com.delhivery.axle.utils.EVENT_EDIT_TRUCK_INITIATE
+import com.delhivery.axle.utils.EVENT_EDIT_TRUCK_SUBMIT
+import com.delhivery.axle.utils.EVENT_REQUEST_FOR_LOAD_SUBMIT
+import com.delhivery.axle.utils.EVENT_VIEW_MY_TRUCK
+import com.delhivery.axle.utils.FCMUtils
+import com.delhivery.axle.utils.PROPERTY_FIELD_EDITED
+import com.delhivery.axle.utils.PROPERTY_INVENTORY_ID
+import com.delhivery.axle.utils.PROPERTY_INVENTORY_UUID
+import com.delhivery.axle.utils.PROPERTY_OFFER_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_REASON
+import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.PaginationScrollListener
+import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
+import com.delhivery.axle.utils.REQCODE_FASTAG_RECHARGE
+import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PAGE
+import com.delhivery.axle.utils.VALUE_ADD_TRUCK_TOP_BANNER
+import com.delhivery.axle.utils.VALUE_BANNER
+import com.delhivery.axle.utils.VALUE_DEEP_LINKING
+import com.delhivery.axle.utils.VALUE_DESTINATION
+import com.delhivery.axle.utils.VALUE_MY_TRUCKS
+import com.delhivery.axle.utils.VALUE_NOTIFICATION
+import com.delhivery.axle.utils.VALUE_ORIGIN
+import com.delhivery.axle.utils.VALUE_OWNERSHIP
+import com.delhivery.axle.utils.VALUE_PRICE
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
+import com.delhivery.axle.utils.extensions.getTextChangeObservable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
@@ -105,12 +161,12 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         binding.rvTrucks.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@HomeTrucksFragment.adapter
-            addOnScrollListener(HomeTrucksRVScrollListener(binding.editStickySearch))
             addOnScrollListener(ButtonRVScrollListener())
             addOnScrollListener(PaginationInterface())
         }
 
-        binding.addTruck.setOnClickListener {
+
+        binding.truckInventoryCardInner.btnAddTruckCard.setOnClickListener {
             when (viewModel.userPrefs.canBid()) {
                 APPROVED -> {
                     analyticsUtil.moEngageTrackEvent(
@@ -118,41 +174,8 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                             mutableListOf(PROPERTY_SOURCE),
                             mutableListOf(VALUE_MY_TRUCKS)
                     )
-                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
-                            TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
-                            TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
-                    ), VALUE_ADD_TRUCK_PAGE)
-                }
-                UNAPPROVED -> {
-                    dialogUtils.showBasicConfirmDialog(
-                            string.title_dialog_supplier_not_approved,
-                            string.msg_dialog_supplier_not_approved,
-                            getString(string.label_call_us), getString(string.label_mail_us),
-                            { callHelpline() }, { sendMail() }
-                    )
-                }
-                DISABLED -> {
-                    dialogUtils.showBasicConfirmDialog(
-                            string.title_dialog_supplier_disabled,
-                            string.msg_dialog_supplier_disabled,
-                            getString(string.label_call_us), getString(string.label_mail_us),
-                            { callHelpline() }, { sendMail() }
-                    )
-                }
-            }
-        }
-        binding.addTruckFloating.setOnClickListener {
-            when (viewModel.userPrefs.canBid()) {
-                APPROVED -> {
-                    analyticsUtil.moEngageTrackEvent(
-                            EVENT_ADD_TRUCK_INITIATE,
-                            mutableListOf(PROPERTY_SOURCE),
-                            mutableListOf(VALUE_MY_TRUCKS)
-                    )
-                    showAddTruckDialog(mutableListOf(TruckFrequentItem("closed", "32FTMXL", 14.0, 14.0, 18.0, "FTL"),
-                            TruckFrequentItem("open", "10_TYRE", 16.0, 15.0, 20.0, "PMT"),
-                            TruckFrequentItem("open", "12_TYRE", 21.0, 20.0, 25.0, "PMT")
-                    ), VALUE_ADD_TRUCK_PAGE)
+                    // Directly open add truck screen without bottom sheet
+                    context?.let { startActivityForResult(truckIntent(requireContext(), source = VALUE_ADD_TRUCK_PAGE), REQCODE_ADD_TRUCK) }
                 }
                 UNAPPROVED -> {
                     dialogUtils.showBasicConfirmDialog(
@@ -173,39 +196,36 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             }
         }
 
-        binding.editStickySearch.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = Unit
+        // Setup truck inventory card collapse/expand functionality
+        setupTruckInventoryCard()
 
-            override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-            ) = Unit
+        binding.truckInventoryCardInner.btnBuyFastag.setOnClickListener {
+            showBuyFastagBottomSheet()
+        }
 
-            override fun onTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    before: Int,
-                    count: Int
-            ) {
-                if (s != null && s.toString() != "") {
-                    viewModel.searchPrefix = s.trim().toString()
-                    if (viewModel.searchPrefix.length >= 2) {
-                        adapter.clearItems()
-                        viewModel.userTrucksData.postValue(null)
-                        viewModel.searchFlag = true
-                        viewModel.getAllInventories(search = true)
-                    }
+        // Setup filter icon click listener
+        binding.filterIcon.setOnClickListener {
+            showFilterBottomSheet()
+        }
 
-                }else{
-                    adapter.clearItems()
-                    viewModel.userTrucksData.postValue(null)
+        binding.editStickySearch.getTextChangeObservable()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .filter { it.isEmpty() || it.length >= 2 }
+            .distinctUntilChanged()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { query ->
+                if (query.isEmpty()) {
+                    viewModel.searchPrefix = ""
                     viewModel.searchFlag = false
+                    adapter.resetStaticData()
                     viewModel.getAllInventories(search = false)
+                } else {
+                    viewModel.searchPrefix = query
+                    viewModel.searchFlag = true
+                    adapter.resetStaticData()
+                    viewModel.getAllInventories(search = true)
                 }
-            }
-        })
+            }.also { compositeDisposable.add(it) }
 
 
 
@@ -219,6 +239,16 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     bannerValue = true
                 } else {
                     bannerValue = false
+                }
+                
+                val hasError = _items.any { pair ->
+                    pair.first is HomeTrucksWarningItem && 
+                    (pair.first as HomeTrucksWarningItem).data.title.contains("timed out", ignoreCase = true)
+                }
+                
+                if (hasError) {
+                    binding.truckInventoryCardShimmer.root.visibility = View.GONE
+                    binding.truckInventoryCardInner.root.visibility = View.GONE
                 }
             }
         })
@@ -358,7 +388,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                             EVENT_EDIT_TRUCK_SUBMIT,
                             mutableListOf(PROPERTY_INVENTORY_UUID,
                                     PROPERTY_FIELD_EDITED),
-                            mutableListOf(data.inventoryId, fieldEdited)
+                            mutableListOf(data.inventoryId ?: "", fieldEdited)
                     )
                 }
             }
@@ -373,6 +403,61 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 adapter.notifyDataSetChanged()
             }
         })
+
+        // Observe FASTag stats
+        viewModel.fastagStatsData.observe(this, Observer { stats ->
+            stats?.let {
+                binding.truckInventoryCardShimmer.root.visibility = View.GONE
+                binding.truckInventoryCardInner.root.visibility = View.VISIBLE
+
+                binding.truckInventoryCardInner.tvTruckCount.text = "${it.totalTrucks} trucks in inventory"
+                binding.truckInventoryCardInner.tvFastagCount.text = it.fastagTrucksCount.toString()
+                binding.truckInventoryCardInner.tvFastagBalance.text = "₹${String.format("%,.0f", it.totalFastagBalance)}"
+            }
+        })
+        
+        // Observe FASTag balance refresh
+        viewModel.fastagBalanceRefreshData.observe(this, Observer { result ->
+            result?.let { pair ->
+                val tagId = pair.first
+                val response = pair.second
+                val newBalance = response.fastagBalance
+                
+                // Find the truck item with matching fastagTagId
+                val items = adapter.itemsList()
+                val position = items.indexOfFirst { item ->
+                    if (item is HomeTrucksRequestItem) {
+                        item.data.fastagTagId == tagId
+                    } else {
+                        false
+                    }
+                }
+                
+                if (position != -1) {
+                    // Update the balance in the data model
+                    val truckItem = items[position] as HomeTrucksRequestItem
+                    truckItem.data.fastagBalance = newBalance
+                    adapter.notifyItemChanged(position)
+
+                    recalculateFastagStats()
+                }
+            }
+        })
+        
+        // Observe FASTag balance refresh errors
+        viewModel.fastagBalanceRefreshErrorData.observe(this, Observer { result ->
+            result?.let { pair ->
+                val tagId = pair.first
+                val errorMessage = pair.second
+                
+                uiUtils.showSnackbar("Failed to refresh balance: $errorMessage")
+            }
+        })
+
+        // Add tooltip on info icon click
+        binding.truckInventoryCardInner.ivInfoIcon.setOnClickListener {
+            showTooltip(it, "This balance is the total of all available FASTag balances")
+        }
 
         if((HomeLoadsTruckFragment._instance.fromNotification||HomeLoadsTruckFragment._instance.fromDeepLink) && HomeLoadsTruckFragment._instance.vehicleNo.isNotEmpty()){
             analyticsUtil.moEngageTrackEvent(
@@ -417,11 +502,13 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
             isFirstResume = false
+            return
         }
+        refreshData()
     }
 
+
     private fun refreshData(filter: Boolean = false) {
-        binding.addTruck.visibility = View.VISIBLE
         viewModel.paginateCount = 0
         adapter.resetStaticData()
         if(!filter) {
@@ -436,6 +523,26 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         viewModel.getAllInventories()
 
         viewModel.offersLiveData.clear()
+    }
+
+    private fun recalculateFastagStats() {
+        val items = adapter.itemsList()
+        val trucksList = items.filterIsInstance<HomeTrucksRequestItem>().map { it.data }
+        
+        val fastagTrucksCount = trucksList.count { 
+            it.fastagTagStatus?.equals("Active", ignoreCase = true) == true 
+        }
+        val totalFastagBalance = trucksList
+            .filter { it.fastagTagStatus?.equals("Active", ignoreCase = true) == true }
+            .sumOf { it.fastagBalance?.toDoubleOrNull() ?: 0.0 }
+        
+        val stats = FastagStats(
+            totalTrucks = viewModel.total,
+            fastagTrucksCount = fastagTrucksCount,
+            totalFastagBalance = totalFastagBalance
+        )
+        
+        viewModel.fastagStatsData.postValue(stats)
     }
 
     override fun handleAction(actionId: String, item: BaseHomeTrucksRVAdapterItem<*>) {
@@ -461,8 +568,15 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             }
 
             HomeTrucksTimeOutAction -> {
-                binding.addTruck.visibility = View.GONE
                 refreshData()
+            }
+            
+            HomeTrucksRequestAction_BuyFastag -> {
+                val data = item.data as? HomeTrucksRequestItemData
+                submitFastagLeadRequest(
+                    vehicleCount = 1,
+                    vrn = data?.vehicleNumber
+                )
             }
 
             HomeTrucksPriorityAction -> {
@@ -521,6 +635,14 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 context?.let {
                     ActivateTruckDialog(requireContext(), item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
                 }
+            }
+            
+            HomeTrucksRequestAction_BuyFastag -> {
+                val data = item.data as? HomeTrucksRequestItemData
+                submitFastagLeadRequest(
+                    vehicleCount = 1,
+                    vrn = data?.vehicleNumber
+                )
             }
         }
     }
@@ -581,7 +703,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             analyticsUtil.moEngageTrackEvent(
                     EVENT_EDIT_TRUCK_INITIATE,
                     mutableListOf(PROPERTY_INVENTORY_UUID),
-                    mutableListOf(data.inventoryId)
+                    mutableListOf(data.inventoryId ?: "")
             )
             context?.let {  EditTruckDialog(requireContext(), data, viewModel, userPrefs, analyticsUtil, uiUtils, position).show()}
             dialog.dismiss()
@@ -596,12 +718,12 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             analyticsUtil.moEngageTrackEvent(
                     EVENT_DELETE_TRUCK,
                     mutableListOf(PROPERTY_INVENTORY_UUID),
-                    mutableListOf(data.inventoryId)
+                    mutableListOf(data.inventoryId ?: "")
             )
             analyticsUtil.moEngageTrackEvent(
                     EVENT_DELETE_TRUCK,
                     mutableListOf(PROPERTY_INVENTORY_ID),
-                    mutableListOf(data.inventoryId)
+                    mutableListOf(data.inventoryId ?: "")
             )
             viewModel.deleteTruck(data, position)
             dialog.dismiss()
@@ -639,7 +761,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 analyticsUtil.moEngageTrackEvent(
                         EVENT_DEACTIVATE_TRUCK,
                         mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
-                        mutableListOf(userPrefs.userId(), data.inventoryId, reason)
+                        mutableListOf(userPrefs.userId(), data.inventoryId ?: "", reason)
                 )
                 uiUtils.showProgress()
                 viewModel.deactivateTruck(data, reason, position)
@@ -728,9 +850,9 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         lateinit var dialog: AlertDialog
 
         // Initialize an array of vehicles
-        val arrayAvailable = arrayOf("Available", "Not Available", "Active")
+        val arrayAvailable = arrayOf("Available", "Not Available")
 
-        val arrayChecked = booleanArrayOf(false, false, false)
+        val arrayChecked = booleanArrayOf(false, false)
 
         val availableFilterList = mutableListOf<Pair<String, String>>()
 
@@ -766,9 +888,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                         }
                         "Not Available" -> {
                             filterAvailabilityTypes.add(Pair(item, "not_available"))
-                        }
-                        "Active" -> {
-                            filterAvailabilityTypes.add(Pair(item, "Active"))
                         }
                     }
 
@@ -851,19 +970,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         dialog.show()
     }
 
-    @SuppressLint("RestrictedApi")
-    fun hide() {
-        binding.addTruck.visibility = View.GONE
-        binding.addTruckFloating.visibility = View.VISIBLE
-    }
-
-    @SuppressLint("RestrictedApi")
-    fun show() {
-        binding.addTruck.visibility = View.VISIBLE
-        binding.addTruckFloating.visibility = View.GONE
-    }
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode) {
@@ -872,7 +978,9 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     refreshData()
                 }
             }
-
+            REQCODE_FASTAG_RECHARGE -> {
+                refreshData()
+            }
         }
     }
 
@@ -932,7 +1040,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
      * Home trucks rv scroll listener for search bar animation related stuff
      */
     inner class HomeTrucksRVScrollListener(
-            private val stickyView: DelhiveryAnimatedSearchBar,
+            private val stickyView: View,
             private val elevation: Float = 12f
     ) : RecyclerView.OnScrollListener() {
         /* Current toolbar elevation */
@@ -964,12 +1072,12 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 }
                 val factor =
                     (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
-                stickyView.setRatio((1 - factor))
+//                stickyView.setRatio((1 - factor))
                 defToolbarElevation
             } else {
                 stickyView.translationY = 0f
                 stickyView.alpha = 1f
-                stickyView.setRatio(0f)
+//                stickyView.setRatio(0f)
                 0f
             }
             if (toolbarElevation != this.toolbarElevation && toolbarElevationLiveData != null) {
@@ -989,11 +1097,9 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             super.onScrolled(recyclerView, dx, dy)
 
             if (visible && scrollDist > 0) {
-                hide()
                 scrollDist = 0
                 visible = false
             } else if (!visible && scrollDist < 0) {
-                show()
                 scrollDist = 0
                 visible = true
             }
@@ -1018,5 +1124,610 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     /** Create new frequent truck item*/
     private fun createTruckFrequentItem(binding: DialogBottomTruckAddBinding)=
         ViewFrequentTruckItemBinding.inflate(layoutInflater, binding.containerTrucks, false)
+
+    /**
+     * Setup truck inventory card collapse/expand functionality
+     */
+    private fun setupTruckInventoryCard() {
+        var isExpanded = true
+
+        // Set click listener on header using data binding
+        binding.truckInventoryCardInner.headerLayout.setOnClickListener {
+            isExpanded = !isExpanded
+            
+            if (isExpanded) {
+                // Expanded state - show collapse icon (up arrow)
+                binding.truckInventoryCardInner.expandableContent.visibility = View.VISIBLE
+                binding.truckInventoryCardInner.divider.visibility = View.VISIBLE
+                binding.truckInventoryCardInner.ivCollapseIcon.setImageResource(R.drawable.ic_arrow_up)
+            } else {
+                // Collapsed state - show expand icon (down arrow)
+                binding.truckInventoryCardInner.expandableContent.visibility = View.GONE
+                binding.truckInventoryCardInner.divider.visibility = View.GONE
+                binding.truckInventoryCardInner.ivCollapseIcon.setImageResource(R.drawable.ic_expand)
+            }
+        }
+
+    }
+
+    /**
+     * Show Buy FASTag bottom sheet
+     */
+    private fun showBuyFastagBottomSheet() {
+        val dialog = BuyFastagBottomSheetDialogFragment.newInstance(
+            maxTrucks = viewModel.total
+        ) { selectedCity, truckCount ->
+            submitFastagLeadRequest(
+                vehicleCount = truckCount,
+                location = "${selectedCity.cityName()},${selectedCity.state}",
+                vrn = null
+            )
+        }
+
+        dialog.show(parentFragmentManager, "BuyFastagBottomSheet")
+    }
+
+    /**
+     * Show FASTag success bottom sheet
+     */
+    private fun showFastagSuccessBottomSheet() {
+        val successDialog = FastagSuccessBottomSheetDialogFragment.newInstance()
+        successDialog.show(parentFragmentManager, "FastagSuccessBottomSheet")
+    }
+    
+    /**
+     * Generic function to submit FASTag lead request
+     * Can be called from anywhere without showing bottom sheet
+     */
+    private fun submitFastagLeadRequest(
+        vehicleCount: Int = 1,
+        location: String = "",
+        vrn: String? = null
+    ) {
+        uiUtils.showProgress()
+        
+        viewModel.submitFastagLead(
+            vehicleCount = vehicleCount,
+            location = location,
+            vrn = vrn,
+            onSuccess = { message ->
+                uiUtils.hideProgress()
+                showFastagSuccessBottomSheet()
+                uiUtils.showSnackbar(message)
+            },
+            onError = { errorMessage ->
+                uiUtils.hideProgress()
+                uiUtils.showSnackbar("Failed to submit request: $errorMessage")
+            }
+        )
+    }
+
+    /**
+     * Show filter bottom sheet with all filter options
+     */
+    private fun showFilterBottomSheet() {
+        val dialog = Dialog(requireContext())
+        val bindingDialog = DialogBottomTruckFilterBinding.inflate(layoutInflater)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(bindingDialog.root)
+
+        // Track current tab
+        var currentTab = "vehicle_type"
+
+        // Function to update tab UI
+        fun updateTabUI(selectedTab: String) {
+            // Clear search field when switching tabs
+            bindingDialog.etSearch.setText("")
+            
+            // Reset all tabs to default state
+            bindingDialog.tabVehicleType.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            bindingDialog.tabVehicleType.setTextColor(resources.getColor(R.color.text_grey))
+            bindingDialog.tabAvailability.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            bindingDialog.tabAvailability.setTextColor(resources.getColor(R.color.text_grey))
+            bindingDialog.tabTruckSize.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            bindingDialog.tabTruckSize.setTextColor(resources.getColor(R.color.text_grey))
+
+            // Get parent layout for dynamic checkboxes
+            val parentLayout = bindingDialog.llFilterContent
+            
+            // Hide ALL checkboxes first (both static and dynamic)
+            bindingDialog.cbOpenTruck.visibility = View.GONE
+            bindingDialog.cbClosedTruck.visibility = View.GONE
+            bindingDialog.cbTrailer.visibility = View.GONE
+            bindingDialog.cbAvailable.visibility = View.GONE
+            bindingDialog.cbNotAvailable.visibility = View.GONE
+
+            
+            // Get IDs of static checkboxes to avoid hiding them in the loop
+            val staticCheckboxIds = setOf(
+                R.id.cbOpenTruck,
+                R.id.cbClosedTruck,
+                R.id.cbTrailer,
+                R.id.cbAvailable,
+                R.id.cbNotAvailable,
+
+                R.id.tvFilterTitle,
+                R.id.etSearch
+            )
+            
+            if (parentLayout != null) {
+                // Hide all dynamically generated checkboxes (those with tags and not static)
+                for (i in 0 until parentLayout.childCount) {
+                    val child = parentLayout.getChildAt(i)
+                    // Only hide if it's a dynamic checkbox (has tag) and not a static one (not in staticCheckboxIds)
+                    if (child is CheckBox && child.tag != null && !staticCheckboxIds.contains(child.id)) {
+                        child.visibility = View.GONE
+                    } else if (child is TextView && child.id != R.id.tvFilterTitle && child.text.toString() == getString(R.string.msg_no_truck_sizes_available)) {
+                        child.visibility = View.GONE
+                    }
+                }
+            }
+
+            // Highlight selected tab and show appropriate content
+            when (selectedTab) {
+                "vehicle_type" -> {
+                    bindingDialog.tabVehicleType.setBackgroundColor(resources.getColor(android.R.color.white))
+                    bindingDialog.tabVehicleType.setTextColor(resources.getColor(R.color.black))
+                    bindingDialog.tvFilterTitle.text = getString(R.string.filter_by_vehicle_type)
+                    // Show vehicle type checkboxes
+                    bindingDialog.cbOpenTruck.visibility = View.VISIBLE
+                    bindingDialog.cbClosedTruck.visibility = View.VISIBLE
+                    bindingDialog.cbTrailer.visibility = View.VISIBLE
+                }
+                "availability" -> {
+                    bindingDialog.tabAvailability.setBackgroundColor(resources.getColor(android.R.color.white))
+                    bindingDialog.tabAvailability.setTextColor(resources.getColor(R.color.black))
+                    bindingDialog.tvFilterTitle.text = getString(R.string.filter_by_availability)
+                    // Show availability checkboxes
+                    bindingDialog.cbAvailable.visibility = View.VISIBLE
+                    bindingDialog.cbNotAvailable.visibility = View.VISIBLE
+
+                }
+                "truck_size" -> {
+                    bindingDialog.tabTruckSize.setBackgroundColor(resources.getColor(android.R.color.white))
+                    bindingDialog.tabTruckSize.setTextColor(resources.getColor(R.color.black))
+                    bindingDialog.tvFilterTitle.text = getString(R.string.filter_by_truck_size)
+                }
+            }
+        }
+
+        fun setupTabClickListener(
+            tab: View,
+            tabName: String,
+            bindingDialogRef: DialogBottomTruckFilterBinding,
+            onTabSelected: ((DialogBottomTruckFilterBinding) -> Unit)? = null
+        ) {
+            tab.setOnClickListener {
+                currentTab = tabName
+                updateTabUI(currentTab)
+                
+                // Common default behavior
+                bindingDialog.tvEmptyMessage.visibility = View.GONE
+                bindingDialog.etSearch.visibility = View.GONE
+                
+                // Invoke custom logic if any
+                onTabSelected?.invoke(bindingDialog)
+            }
+        }
+
+        // Tab click listeners
+        setupTabClickListener(bindingDialog.tabVehicleType, "vehicle_type", bindingDialog)
+        setupTabClickListener(bindingDialog.tabAvailability, "availability", bindingDialog)
+        
+        setupTabClickListener(bindingDialog.tabTruckSize, "truck_size", bindingDialog) {
+            onTruckSizeTabSelected(it)
+        }
+        
+        // Search functionality for truck size
+        bindingDialog.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            
+            override fun afterTextChanged(s: Editable?) {
+                val searchQuery = s?.toString()?.trim()?.lowercase() ?: ""
+                
+                // Only filter when on truck size tab
+                if (currentTab == "truck_size") {
+                    filterTruckSizeCheckboxes(bindingDialog, searchQuery)
+                }
+            }
+        })
+
+        // Close button
+        bindingDialog.ivClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // Clear Filters button
+        bindingDialog.btnClear.setOnClickListener {
+            // Reset all filters
+            viewModel.bodyTypeFilter = mutableListOf()
+            viewModel.sizeFilter = null
+            viewModel.availabilityFilter = mutableListOf()
+            
+            // Clear search field
+            bindingDialog.etSearch.setText("")
+            
+            // Reset all checkboxes
+            bindingDialog.cbOpenTruck.isChecked = false
+            bindingDialog.cbClosedTruck.isChecked = false
+            bindingDialog.cbTrailer.isChecked = false
+            bindingDialog.cbAvailable.isChecked = false
+            bindingDialog.cbNotAvailable.isChecked = false
+
+            
+            // Clear dynamically generated truck size checkboxes
+            val parentLayout = bindingDialog.llFilterContent
+            
+            if (parentLayout != null) {
+                for (i in 0 until parentLayout.childCount) {
+                    val child = parentLayout.getChildAt(i)
+                    if (child is CheckBox && child.tag != null) {
+                        child.isChecked = false
+                    }
+                }
+            }
+            
+            refreshData(filter = true)
+            dialog.dismiss()
+            uiUtils.showSnackbar("Filters cleared")
+        }
+
+        // Apply button
+        bindingDialog.btnApply.setOnClickListener {
+            // Collect vehicle type filters
+            val selectedVehicleFilters = mutableListOf<Pair<String, String>>()
+            if (bindingDialog.cbOpenTruck.isChecked) {
+                selectedVehicleFilters.add(Pair("Open", "open"))  // Fixed: Display name first, API value second
+            }
+            if (bindingDialog.cbClosedTruck.isChecked) {
+                selectedVehicleFilters.add(Pair("Closed", "closed"))
+            }
+            if (bindingDialog.cbTrailer.isChecked) {
+                selectedVehicleFilters.add(Pair("Trailer", "trailer"))
+            }
+            viewModel.bodyTypeFilter = selectedVehicleFilters
+
+            // Collect availability filters
+            val selectedAvailabilityFilters = mutableListOf<Pair<String, String>>()
+            if (bindingDialog.cbAvailable.isChecked) {
+                selectedAvailabilityFilters.add(Pair("Available", "Free"))
+            }
+            if (bindingDialog.cbNotAvailable.isChecked) {
+                selectedAvailabilityFilters.add(Pair("Not Available", "not_available"))
+            }
+
+            viewModel.availabilityFilter = selectedAvailabilityFilters
+            
+            // Collect truck size filters (dynamically generated checkboxes)
+            val parentLayout = bindingDialog.llFilterContent
+            
+            if (parentLayout != null) {
+                val selectedTruckUuids = mutableListOf<String>()
+                // Iterate through all children to find CheckBox views with tags (truck UUIDs)
+                for (i in 0 until parentLayout.childCount) {
+                    val child = parentLayout.getChildAt(i)
+                    if (child is CheckBox && child.tag != null && child.isChecked) {
+                        selectedTruckUuids.add(child.tag.toString())
+                    }
+                }
+                viewModel.sizeFilter = if (selectedTruckUuids.isNotEmpty()) {
+                    selectedTruckUuids.joinToString(",")
+                } else {
+                    null
+                }
+            }
+            
+            // Refresh data with filters
+            refreshData(filter = true)
+            
+            dialog.dismiss()
+            uiUtils.showSnackbar("Filters applied")
+        }
+
+        // Set initial checkbox states based on current filters
+        if (viewModel.bodyTypeFilter.isNotEmpty()) {
+            for (filter in viewModel.bodyTypeFilter) {
+                when (filter.first) {  // Fixed: Check display name (first), not API value
+                    "Open" -> bindingDialog.cbOpenTruck.isChecked = true
+                    "Closed" -> bindingDialog.cbClosedTruck.isChecked = true
+                    "Trailer" -> bindingDialog.cbTrailer.isChecked = true
+                }
+            }
+        }
+
+        if (viewModel.availabilityFilter.isNotEmpty()) {
+            for (filter in viewModel.availabilityFilter) {
+                when (filter.first) {
+                    "Available" -> bindingDialog.cbAvailable.isChecked = true
+                    "Not Available" -> bindingDialog.cbNotAvailable.isChecked = true
+
+                }
+            }
+        }
+
+        // Initialize with vehicle type tab selected
+        updateTabUI(currentTab)
+        
+        // Hide search bar initially since Vehicle Type is the default tab
+        bindingDialog.etSearch.visibility = View.GONE
+
+        dialog.show()
+        
+        // Set dialog height to 75% of screen height
+        val displayMetrics = resources.displayMetrics
+        val screenHeight = displayMetrics.heightPixels
+        val dialogHeight = (screenHeight * 0.75).toInt()
+        
+        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, dialogHeight)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog.window!!.setGravity(Gravity.BOTTOM)
+    }
+
+
+
+    private fun onTruckSizeTabSelected(bindingDialog: DialogBottomTruckFilterBinding) {
+        // Always show search bar in Truck Size tab
+        bindingDialog.etSearch.visibility = View.VISIBLE
+        
+        // Check if vehicle type is selected
+        if (viewModel.bodyTypeFilter.isEmpty()) {
+            // Show empty message and hide other elements
+            bindingDialog.tvFilterTitle.text = getString(R.string.filter_by_truck_size)
+            bindingDialog.tvEmptyMessage.visibility = View.VISIBLE
+            // Hide vehicle type checkboxes
+            bindingDialog.cbOpenTruck.visibility = View.GONE
+            bindingDialog.cbClosedTruck.visibility = View.GONE
+            bindingDialog.cbTrailer.visibility = View.GONE
+            return
+        }
+        
+        // Hide empty message when vehicle type is selected
+        bindingDialog.tvEmptyMessage.visibility = View.GONE
+        bindingDialog.tvFilterTitle.text = getString(R.string.filter_by_truck_size)
+        
+        // Check if truck size data is available
+        if (viewModel.truckSizeData.isEmpty()) {
+            return
+        }
+        
+        // Generate truck size checkboxes dynamically
+        generateTruckSizeCheckboxes(bindingDialog)
+    }
+
+    /**
+     * Generate truck size checkboxes dynamically based on selected vehicle types
+     */
+    private fun generateTruckSizeCheckboxes(bindingDialog: DialogBottomTruckFilterBinding) {
+        // Get the contentContainer LinearLayout, then get the ScrollView (3rd child at index 2)
+        val parentLayout = bindingDialog.llFilterContent
+        
+        if (parentLayout == null) {
+            uiUtils.showSnackbar("Error loading truck sizes")
+            return
+        }
+        
+        // Remove only dynamically added checkboxes (those with tags), not static ones
+        val childrenToRemove = mutableListOf<View>()
+        for (i in 0 until parentLayout.childCount) {
+            val child = parentLayout.getChildAt(i)
+            if (child is CheckBox && child.tag != null) {
+                childrenToRemove.add(child)
+            } else if (child is TextView && child.text.toString() == getString(R.string.msg_no_truck_sizes_available)) {
+                childrenToRemove.add(child)
+            }
+        }
+        for (child in childrenToRemove) {
+            parentLayout.removeView(child)
+        }
+        
+        // Get selected vehicle types (API values)
+        val selectedVehicleTypes = mutableListOf<String>()
+        for (filter in viewModel.bodyTypeFilter) {
+            selectedVehicleTypes.add(filter.second)
+        }
+        
+        // Filter truck sizes based on selected vehicle types
+        val afterFilter = viewModel.truckSizeData
+            .filter { selectedVehicleTypes.contains(it.truckType) }
+        val filteredTruckSizes = afterFilter
+            .distinctBy { it.truckDisplayName }
+            .sortedBy { it.defaultMG }
+        
+        if (filteredTruckSizes.isEmpty()) {
+            // Show message if no truck sizes available
+            val textView = TextView(requireContext()).apply {
+                text = getString(R.string.msg_no_truck_sizes_available)
+                setTextColor(resources.getColor(R.color.text_grey))
+                textSize = 14f
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = 20
+                }
+            }
+            parentLayout.addView(textView)
+            return
+        }
+        
+        // Get currently selected truck size UUIDs
+        val selectedTruckUuids = if (viewModel.sizeFilter.isNotNullOrEmpty()) {
+            viewModel.sizeFilter!!.split(",").toMutableList()
+        } else {
+            mutableListOf()
+        }
+        
+        // Create checkboxes for each truck size
+        for (truck in filteredTruckSizes) {
+            val checkbox = CheckBox(requireContext()).apply {
+                text = truck.truckDisplayName ?: truck.truckUuid
+                setTextColor(resources.getColor(R.color.black))
+                textSize = 14f
+                isChecked = selectedTruckUuids.contains(truck.truckUuid)
+                buttonTintList = android.content.res.ColorStateList.valueOf(resources.getColor(R.color.black))
+                tag = truck.truckUuid // Store UUID in tag for later retrieval
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = if (filteredTruckSizes.indexOf(truck) == 0) 20 else 12
+                }
+            }
+            parentLayout.addView(checkbox)
+        }
+    }
+
+    /**
+     * Filter truck size checkboxes based on search query
+     */
+    private fun filterTruckSizeCheckboxes(bindingDialog: DialogBottomTruckFilterBinding, searchQuery: String) {
+        val parentLayout = bindingDialog.llFilterContent
+        
+        if (parentLayout == null) return
+        
+        var visibleCount = 0
+        
+        // Filter checkboxes based on search query
+        for (i in 0 until parentLayout.childCount) {
+            val child = parentLayout.getChildAt(i)
+            if (child is CheckBox && child.tag != null) {
+                val checkboxText = child.text.toString().lowercase()
+                if (searchQuery.isEmpty() || checkboxText.contains(searchQuery)) {
+                    child.visibility = View.VISIBLE
+                    visibleCount++
+                } else {
+                    child.visibility = View.GONE
+                }
+            }
+        }
+        
+        // Show/hide "No results" message
+        var noResultsTextView: TextView? = null
+        for (i in 0 until parentLayout.childCount) {
+            val child = parentLayout.getChildAt(i)
+            if (child is TextView && child.text.toString().contains("No truck sizes match")) {
+                noResultsTextView = child
+                break
+            }
+        }
+        
+        if (visibleCount == 0 && searchQuery.isNotEmpty()) {
+            // Show "No results" message if not already present
+            if (noResultsTextView == null) {
+                noResultsTextView = TextView(requireContext()).apply {
+                    text = "No truck sizes match your search"
+                    setTextColor(resources.getColor(R.color.text_grey))
+                    textSize = 14f
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        topMargin = 20
+                    }
+                }
+                parentLayout.addView(noResultsTextView)
+            } else {
+                noResultsTextView.visibility = View.VISIBLE
+            }
+        } else {
+            // Hide "No results" message
+            noResultsTextView?.visibility = View.GONE
+        }
+    }
+
+    private fun showTooltip(anchorView: View, message: String) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        
+        val bindingTooltip = DialogTooltipBinding.inflate(layoutInflater)
+        val tooltipView = bindingTooltip.root
+        dialog.setContentView(tooltipView)
+        
+        val tvMessage = bindingTooltip.tvTooltipMessage
+        tvMessage.text = message
+        
+        // Measure the tooltip view to get its dimensions
+        tooltipView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val tooltipHeight = tooltipView.measuredHeight
+        
+        // Get the info icon location on screen
+        val location = IntArray(2)
+        anchorView.getLocationOnScreen(location)
+        val iconX = location[0]
+        val iconY = location[1]
+        val iconWidth = anchorView.width
+        
+        // Calculate tooltip position
+        // Position tooltip slightly above and left-aligned with the icon
+        val tooltipX = iconX - 35 // Move slightly left
+        val tooltipY = iconY - tooltipHeight - 65 // Move slightly higher above the icon
+        
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            // Remove dim background
+            clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            attributes.gravity = Gravity.TOP or Gravity.START
+            attributes.x = tooltipX
+            attributes.y = tooltipY
+            attributes.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            attributes.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+        
+        dialog.show()
+        
+        // Auto dismiss after 3 seconds
+        android.os.Handler().postDelayed({
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+        }, 3000)
+        
+        // Dismiss on click anywhere
+        tooltipView.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
+    override fun refreshFastagBalance(tagId: String) {
+        uiUtils.showProgress()
+        viewModel.refreshFastagBalance(tagId)
+        
+        // Hide progress after a short delay (will be hidden when response comes)sp
+        android.os.Handler().postDelayed({
+            uiUtils.hideProgress()
+        }, 2000)
+    }
+    
+    override fun openFastagDetails(data: HomeTrucksRequestItemData) {
+        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity::class.java).apply {
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TAG_ID, data.fastagTagId)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VRN, data.fastagVrn)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_NUMBER, data.vehicleNumber)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TRUCK_TYPE, data.truckType)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TRUCK_SIZE, data.truckSize)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.CAPACITY, data.capacity)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.OWNERSHIP, data.ownership)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.STATUS, data.latestStatus)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TAG_STATUS, data.fastagTagStatus)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.BALANCE, data.fastagBalance)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.ISSUED_BY, data.fastagIssuedBy)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.AWB, data.fastagTagId)
+        }
+        startActivity(intent)
+    }
+
+    override fun openFastagRecharge(data: HomeTrucksRequestItemData) {
+        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagRechargeActivity::class.java).apply {
+            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.TAG_ID, data.fastagTagId)
+            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
+            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
+        }
+        startActivityForResult(intent, REQCODE_FASTAG_RECHARGE)
+    }
 
 }

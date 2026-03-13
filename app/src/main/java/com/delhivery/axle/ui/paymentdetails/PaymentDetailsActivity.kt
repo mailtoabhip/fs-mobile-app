@@ -13,7 +13,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
@@ -780,7 +779,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                         val imageScopedFile =
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
                         if(viewModel.accountUpload.value == true) {
                             this.uploadImageName =
                                 "account_proof_" + System.currentTimeMillis() + "_" + userPrefs.phoneNumber +"."+ imageScopedFile.extension

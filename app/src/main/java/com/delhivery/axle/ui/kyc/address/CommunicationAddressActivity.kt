@@ -18,7 +18,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
-import com.amazonaws.util.IOUtils
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.AddAddressModel
@@ -669,7 +668,7 @@ class CommunicationAddressActivity  : BaseActivity<ActivityCommunicationAddressB
                         val imageScopedFile =
                             File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
                         val outputStream = FileOutputStream(imageScopedFile)
-                        IOUtils.copy(inputStream, outputStream)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
                         this.uploadImageName = "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         this.localImageName =  "Address_" + System.currentTimeMillis()+"."+imageScopedFile.extension
                         if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){

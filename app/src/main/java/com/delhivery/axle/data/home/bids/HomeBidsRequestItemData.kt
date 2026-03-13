@@ -140,7 +140,7 @@ data class HomeBidsRequestItemData(
   @SerializedName("nep_required") var nepRequired:Boolean? =  false,
   @SerializedName("origin_longitude")val longitude:String?,
   @SerializedName("origin_latitude")val latitude:String?,
-  @SerializedName("demand_type")val demandType:String?,
+  @SerializedName("demand_type")var demandType:String?,
   @SerializedName("intracity_slab_details")val intracitySlabDetails:List<String>?,
   @SerializedName("contract_remarks")val contractRemarks:String?,
   @SerializedName("contract_usage")val contractUsage:String?,
@@ -165,6 +165,8 @@ data class HomeBidsRequestItemData(
   @SerializedName("marketplace_advance_percentage") var marketplaceAdvancePercentage: Int? = null,
   @SerializedName("poc_name") var pocName: String? = null,
   @SerializedName("poc_contact_no") var pocContactNo: String? = null,
+  @SerializedName("request_created_by_phone") var requestCreatedByPhone: String? = null,
+  @SerializedName("tag_list") var tagList: List<String>? = null,
 
 
   //Added New Placement Details API Response keys
@@ -271,7 +273,7 @@ data class HomeBidsRequestItemData(
     return if (vendorAdvancePercent == null || vendorAdvancePercent == 0) {
       "To Pay"
     } else {
-      "Advance Payment"
+      "Advance"
     }
   }
 
@@ -279,7 +281,11 @@ data class HomeBidsRequestItemData(
    * Check if marketplace payment mode should be displayed
    */
   fun shouldShowMarketplacePaymentMode(): Boolean {
-    return !marketplacePaymentType.isNullOrEmpty() || vendorAdvancePercent != null
+      // Show payment mode when we have explicit data OR when it's a marketplace load (default to "To Pay")
+      if (!marketplacePaymentType.isNullOrEmpty() || vendorAdvancePercent != null) {
+          return true
+      }
+      return isMarketplaceLoad()
   }
 
   /**
@@ -304,7 +310,7 @@ data class HomeBidsRequestItemData(
     }
     // Fallback to vendorAdvancePercent
     return if (vendorAdvancePercent != null && vendorAdvancePercent!! > 0) {
-      "(${vendorAdvancePercent}%)"
+      "${vendorAdvancePercent}%"
     } else {
       ""
     }
@@ -350,25 +356,25 @@ data class HomeBidsRequestItemData(
      */
     fun isMarketplaceLoad(): Boolean {
         // Primary check: demand_type is spot_marketplace
-        if (demandType?.equals(DemandType.Spot_Marketplace.type, ignoreCase = true) == true) {
-            return true
-        }
+    if (demandType?.equals(DemandType.Spot_Marketplace.type, ignoreCase = true) == true) {
+      return true
+    }
 
-        // Secondary check: request_type is spot_marketplace
-        if (requestType?.equals(RequestType.SpotMarketplace.type, ignoreCase = true) == true) {
-            return true
-        }
+    // Secondary check: request_type is spot_marketplace
+    if (requestType?.equals(RequestType.SpotMarketplace.type, ignoreCase = true) == true) {
+      return true
+    }
 
-        // Tertiary check: sub_request_type is marketplace
-        if (subRequestType?.equals("marketplace", ignoreCase = true) == true) {
-            return true
-        }
+    // Tertiary check: sub_request_type is marketplace
+    if (subRequestType?.equals("marketplace", ignoreCase = true) == true) {
+      return true
+    }
 
-        // Fallback: Check if shipper data is present (for backward compatibility)
-        return !shipperName.isNullOrEmpty() ||
-                !shipperPhoneNumber.isNullOrEmpty() ||
-                shipperPrice != null ||
-                !shipperUcid.isNullOrEmpty()
+    // Fallback: Check if shipper data is present (for backward compatibility)
+    return !shipperName.isNullOrEmpty() ||
+           !shipperPhoneNumber.isNullOrEmpty() ||
+           shipperPrice != null ||
+           !shipperUcid.isNullOrEmpty()
     }
 
   /**
@@ -399,10 +405,14 @@ data class HomeBidsRequestItemData(
 
   /**
    * Get phone number for shipper/POC
-   * Uses shipperPhoneNumber if available, falls back to pocContactNo
+   * For intracity_ops: uses request_created_by_phone
+   * For others: returns empty
    */
   fun getContactPhoneNumber(): String {
-    return shipperPhoneNumber ?: pocContactNo ?: ""
+    return when {
+      demandType?.equals("intracity_ops", ignoreCase = true) == true -> requestCreatedByPhone ?: ""
+      else -> ""
+    }
   }
 
   /**
@@ -441,6 +451,8 @@ data class HomeBidsRequestItemData(
     if (demandType?.equals("Internal", ignoreCase = true) == true || 
         demandType?.equals("Intracity", ignoreCase = true) == true) {
       return "Delhivery Load"
+    } else if (tagList?.get(0) =="Facility Arranged" && demandType?.equals("intracity_ops", ignoreCase = true) == true) {
+      return "Facility Arranged"
     } else return "Client Load"
   }
   /**

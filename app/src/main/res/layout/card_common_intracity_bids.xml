@@ -39,13 +39,13 @@
                     android:id="@+id/closingTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="Closes in 2 hrs 15 min"
                     app:optionalTextColor="@{request}"
                     android:text="@{request.formattedLoadAndContractBidEndingTime()}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/cl_from_to_city" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                     android:id="@+id/load_type_layout"
@@ -56,8 +56,7 @@
                     android:orientation="horizontal"
                     android:background="@drawable/bg_load_type_100dp_corner"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/closingTime"
-                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/demand_load_type"
@@ -80,8 +79,8 @@
                     android:visibility="@{request.isItContractAndLiveBidding()}"
                     android:background="@drawable/bg_chip_pink"
                     app:layout_constraintEnd_toStartOf="@id/load_type_layout"
-                    app:layout_constraintTop_toTopOf="@id/closingTime"
-                    app:layout_constraintBottom_toBottomOf="@id/closingTime">
+                    app:layout_constraintTop_toTopOf="@id/load_type_layout"
+                    app:layout_constraintBottom_toBottomOf="@id/load_type_layout">
 
                     <View
                         android:layout_width="6dp"
@@ -138,6 +137,13 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <View
+                    android:id="@+id/divider"
+                    android:layout_marginTop="@dimen/size_8dp"
+                    android:background="@color/bg_light_grey"
+                    app:layout_constraintTop_toBottomOf="@+id/load_type_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/truckInfo"
@@ -165,11 +171,11 @@
                     android:text="@{request.intracityKms()}"
                     android:textColor="#505361"
                     android:visibility="gone"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_marginStart="@dimen/size_8dp"
                     android:drawableStart="@drawable/route"
                     android:drawableTint="@color/text_grey_v3"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
 
@@ -182,11 +188,11 @@
                     tools:text ="Advance Payment"
                     android:text="@{request.getPaymentModeDisplay()}"
                     android:textColor="#505361"
-                    tools:visibility="gone"
-                    android:layout_marginStart="@dimen/size_8dp"
+                    tools:visibility="visible"
+                    android:layout_marginEnd="@dimen/size_2dp"
                     android:drawableStart="@drawable/money_bill_wave"
                     android:drawableTint="@color/text_grey_v3"
-                    app:layout_constraintStart_toEndOf="@id/truckInfo"
+                    app:layout_constraintEnd_toStartOf="@+id/advance_payment_percentage"
                     app:layout_constraintTop_toTopOf="@id/truckInfo"
                     app:layout_constraintBottom_toBottomOf="@id/truckInfo" />
 
@@ -198,10 +204,10 @@
                     android:drawablePadding="@dimen/size_4dp"
                     tools:text ="(50%)"
                     android:textColor="#505361"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_marginStart="@dimen/size_2dp"
                     android:text="@{request.getAdvancePaymentPercentage()}"
-                    app:layout_constraintStart_toEndOf="@id/paymentType"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/paymentType"
                     app:layout_constraintBottom_toBottomOf="@id/paymentType" />
 

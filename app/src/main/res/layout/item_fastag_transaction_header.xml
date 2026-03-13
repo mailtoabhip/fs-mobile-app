@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvRecentTransactions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Recent Transactions"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#1F2937"/>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSubtext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transactions shown are from IDFC FASTags issued by Delhivery, for all vehicle usage"
+            android:textSize="12sp"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="4dp"/>
+
+    </LinearLayout>
+
+    <!-- Bottom divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0" />
+
+</LinearLayout>
+
+</layout>

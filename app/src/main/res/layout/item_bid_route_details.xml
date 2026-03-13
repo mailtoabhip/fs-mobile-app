@@ -24,8 +24,6 @@
         android:paddingBottom="@dimen/size_4dp"
         android:visibility="@{request.isItContractOrLoadV2()? View.VISIBLE : View.GONE}"
         tools:visibility="visible"
-        android:paddingStart="@dimen/size_16dp"
-        android:paddingEnd="@dimen/size_16dp"
         android:elevation="4dp">
 
         <TextView
@@ -33,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="13sp"
+            android:textSize="16sp"
             tools:text ="Navi Mumbai"
             android:text="@{request.originCityName()}"
             android:textColor="#121A31"
@@ -84,7 +82,7 @@
             android:gravity="end"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="13sp"
+            android:textSize="16sp"
             tools:text ="Jaisalmer"
             android:text="@{request.destinationCityName()}"
             android:textColor="#121A31"
@@ -101,8 +99,8 @@
             android:textSize="12sp"
             android:textColor="#505361"
             android:paddingTop="@dimen/size_4dp"
-            tools:text ="Mumbai, Maharashtra"
-            android:text="@{request.originDistrictState()}"
+            tools:text ="Maharashtra"
+            android:text="@{request.originStateName()}"
             app:layout_constraintTop_toBottomOf="@id/fromCity"
             app:layout_constraintEnd_toStartOf="@id/guidelineCenter"
             app:layout_constraintStart_toStartOf="parent" />
@@ -116,8 +114,8 @@
             android:paddingTop="@dimen/size_4dp"
             android:textColor="#505361"
             android:textAlignment="textEnd"
-            tools:text ="Uttar Pradesh, Rajasthan, Delhi NCR"
-            android:text="@{request.destinationDistrictState()}"
+            tools:text ="Rajasthan"
+            android:text="@{request.destinationStateName()}"
             app:layout_constraintStart_toEndOf="@id/guidelineCenter1"
             app:layout_constraintTop_toBottomOf="@id/toCity"
             app:layout_constraintEnd_toEndOf="parent" />

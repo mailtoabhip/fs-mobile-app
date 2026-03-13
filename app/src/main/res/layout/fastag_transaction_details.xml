@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bg_screen_gradient">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:background="@android:color/white"
+            android:fitsSystemWindows="true">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBack"
+                android:layout_width="45dp"
+                android:layout_height="25dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:paddingStart="4dp"
+                android:src="@drawable/ic_back_arrow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.515"
+                app:tint="@color/heading_black" />
+
+            <ImageView
+                android:id="@+id/ivAccount"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_support"
+                android:padding="4dp"
+                app:layout_constraintEnd_toStartOf="@id/ivHelp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="16dp"/>
+
+            <ImageView
+                android:id="@+id/ivHelp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_help"
+                android:padding="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                android:layout_marginEnd="16dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Everything below header scrolls together -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- FASTag Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardFastag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/layoutVehicleInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_vehicle_info_tint"
+                            android:padding="12dp"
+                            android:layout_marginBottom="12dp">
+
+                            <TextView
+                                android:id="@+id/tvVehicleNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:textColor="#1F2937"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"/>
+
+                            <TextView
+                                android:id="@+id/tvStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:textColor="#059669"
+                                android:background="@drawable/bg_available_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:layout_marginStart="8dp"
+                                app:layout_constraintStart_toEndOf="@id/tvVehicleNumber"
+                                app:layout_constraintTop_toTopOf="@id/tvVehicleNumber"
+                                tools:visibility="visible"
+                                tools:text="Available"
+                                app:layout_constraintBottom_toBottomOf="@id/tvVehicleNumber"/>
+
+                            <TextView
+                                android:id="@+id/tvVehicleMeta"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:textColor="#505361"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.0"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tvVehicleNumber" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size_1dp"
+                            android:layout_marginVertical="@dimen/size_12dp"
+                            android:background="#E0E0E0" />
+
+                        <TextView
+                            android:id="@+id/tvBalance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textColor="@color/heading_black"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvFastagProvider"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:textColor="@color/color_hint"
+                            android:textSize="13sp" />
+
+                        <LinearLayout
+                            android:id="@+id/layoutAwb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_6dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tvAwb"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/error_red"
+                                android:textSize="13sp" />
+
+                            <ImageView
+                                android:id="@+id/ivCopyAwb"
+                                android:layout_width="@dimen/size_16dp"
+                                android:layout_height="@dimen/size_16dp"
+                                android:layout_marginStart="@dimen/size_8dp"
+                                android:src="@drawable/ic_copy" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Recharge Button -->
+                <Button
+                    android:id="@+id/btnRecharge"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="@string/recharge"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@android:color/black"
+                    android:layout_marginHorizontal="16dp" />
+
+                <!-- Download Statement -->
+                <Button
+                    android:id="@+id/btnDownload"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="@string/download_statement"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@android:color/white"
+                    android:textColor="@android:color/black"
+                    android:layout_marginHorizontal="@dimen/size_16dp"
+                    android:layout_marginTop="@dimen/size_2dp"
+                    android:layout_marginBottom="@dimen/size_8dp" />
+
+                <!-- Recent Transactions section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@android:color/white"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/tvRecentTransactions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/recent_transactions"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="16dp" />
+
+                    <TextView
+                        android:id="@+id/tvSubtext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/recent_txn_subtitle"
+                        android:textSize="12sp"
+                        android:textColor="#8F9198"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="4dp" />
+
+                </LinearLayout>
+
+                <!-- RecyclerView wrapped to allow full height inside NestedScrollView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTransactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+</layout>
