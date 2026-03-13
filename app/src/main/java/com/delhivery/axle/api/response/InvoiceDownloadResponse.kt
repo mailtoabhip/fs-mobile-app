@@ -7,5 +7,5 @@ import com.google.gson.annotations.SerializedName
  */
 data class InvoiceDownloadData(
   @SerializedName("url")
-  val url: String = ""
+  val url: String? = null
 )

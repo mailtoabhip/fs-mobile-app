@@ -88,7 +88,6 @@ class TripDetailsViewModel @Inject constructor(
   var warehouseLiveData = MutableLiveData<String>()
   var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
   var invoiceDownloadLiveData = MutableLiveData<String>()
-  var invoiceErrorLiveData = MutableLiveData<String>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -178,6 +177,7 @@ class TripDetailsViewModel @Inject constructor(
             this.tripDetail = _res.second
             this.warehouse = _res.first.pickupLocation
             isApReconPending = _res.second.isApReconPending?:false
+            
             tripLiveData.postValue(_res)
           } else {
             error.handle()
@@ -322,6 +322,8 @@ class TripDetailsViewModel @Inject constructor(
     if (tripDetail.isSettled) {
       tripSettledLiveData.postValue(true)
     } else {
+      // Clear settled time when trip is not settled
+      settledTime = null
       tripSettledLiveData.postValue(false)
     }
 
@@ -410,12 +412,13 @@ class TripDetailsViewModel @Inject constructor(
                       if (charge.status != "success") {
                         continue
                       }
-                      var transferTime = charge.transferTime
-                      if (transferTime.isNullOrEmpty()) {
+                      // Use payment_at for payment timestamp (not transfer_time)
+                      var paymentTime = charge.paymentTimestamp
+                      if (paymentTime.isNullOrEmpty()) {
                         val cal = Calendar.getInstance()
-                        transferTime = DateUtils.formatDate(cal.time, OrionDateFormat)
+                        paymentTime = DateUtils.formatDate(cal.time, OrionDateFormat)
                       }
-                      transferTime.let {
+                      paymentTime.let {
                         val time = DateUtils.formatDate(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
                         if (charge.transactionId != transactionId) {
@@ -439,7 +442,8 @@ class TripDetailsViewModel @Inject constructor(
                           totalTDS += charge.tdsDeducted
                           if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                             paymentSettled = true
-                            settledTime = transferTime
+                            // Use payment_at for settlement timestamp
+                            settledTime = paymentTime
                           }
                           var event = capitalize(charge.head)?:""
                           when (charge.head) {
@@ -770,7 +774,7 @@ class TripDetailsViewModel @Inject constructor(
                       )} has been paid$utrString",
                       history.timeStamp()
                   )
-                  advancePaidTime = advancePay.transferTime?.let {
+                  advancePaidTime = advancePay.paymentTimestamp?.let {
                     DateUtils.formatDate(
                         DateUtils.parseDate(it, DatePatterns.OrionDateFormat),
                         DatePatterns.SimpleDateFormat
@@ -897,9 +901,9 @@ class TripDetailsViewModel @Inject constructor(
                   )} has been paid$utrString",
                   balancePay.timeStamp()
               )
-              balancePaidTime = balancePay.transferTime?.let {
+              balancePaidTime = balancePay.paymentTimestamp?.let { timestamp ->
                 DateUtils.formatDate(
-                    DateUtils.parseDate(balancePay.transferTime, DatePatterns.OrionDateFormat),
+                    DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat),
                     DatePatterns.SimpleDateFormat
                 )
               } ?: ""
@@ -1080,40 +1084,10 @@ class TripDetailsViewModel @Inject constructor(
       .onBackground()
       .progress()
       .subscribe { result, error ->
-        if (!error && result != null && result.url.isNotEmpty()) {
+        if (!error && result != null && !result.url.isNullOrEmpty()) {
           invoiceDownloadLiveData.postValue(result.url)
         } else {
-          // Handle specific error codes and extract error message from response
-          val errorMessage = when {
-            error is retrofit2.adapter.rxjava2.HttpException -> {
-              try {
-                val errorBody = error.response()?.errorBody()?.string()
-                val errorJson = com.google.gson.JsonParser.parseString(errorBody).asJsonObject
-                
-                // Extract message from error response
-                val errorObj = errorJson.getAsJsonObject("error")
-                val message = errorObj?.get("message")?.asString ?: "Unknown error"
-                
-                when (error.code()) {
-                  400 -> message // Show actual backend message
-                  401 -> "Unauthorized. Please login again"
-                  500 -> message // Show actual backend message
-                  else -> "Failed to get invoice URL"
-                }
-              } catch (e: Exception) {
-                // Fallback if parsing fails
-                when (error.code()) {
-                  400 -> "Invoice not available for this trip"
-                  401 -> "Unauthorized. Please login again"
-                  404 -> "Invoice not found"
-                  500 -> "Server error. Please try again later"
-                  else -> "Failed to get invoice URL"
-                }
-              }
-            }
-            else -> "Failed to get invoice URL"
-          }
-          invoiceErrorLiveData.postValue(errorMessage)
+          error.handle()
           invoiceDownloadLiveData.postValue(null)
         }
       }

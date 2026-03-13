@@ -158,12 +158,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       }
     })
 
-    viewModel.invoiceErrorLiveData.observe(this, Observer { errorMessage ->
-      if (errorMessage != null) {
-        uiUtils.showSnackbar(errorMessage)
-      }
-    })
-
     binding.rvPmtSummary.visibility = View.GONE
     binding.rvPmtSummary.apply {
       layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
@@ -336,38 +330,38 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private fun updateSettledMilestone() {
     val trip = binding.tripDetails ?: return
     
+    // Always start with GONE visibility for safety
+    binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
+    
     // Check if trip is settled
     if (!trip.isSettled) {
-        binding.clAdhocintracity.tvSettledTimestamp?.visibility = View.GONE
         return
     }
 
     // Use the settledTime from ViewModel (captured when balance payment was processed)
     val timestamp = viewModel.settledTime
     
-    when {
-        // Show timestamp if available
-        !timestamp.isNullOrEmpty() -> {
-            try {
-                val date = DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat)
-                val sdf = java.text.SimpleDateFormat("dd-MMM-yyyy hh:mma", java.util.Locale.ENGLISH)
-                val formattedText = "Payment made at ${sdf.format(date)}"
-                
+    // Only show timestamp if it's available and valid
+    if (!timestamp.isNullOrEmpty() && timestamp.trim().isNotEmpty()) {
+        try {
+            val date = DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat)
+            val sdf = java.text.SimpleDateFormat("dd-MMM-yyyy hh:mma", java.util.Locale.ENGLISH)
+            val formattedText = "Payment made at ${sdf.format(date)}"
+            
+            // Only show if formatting was successful
+            if (formattedText.isNotEmpty()) {
                 binding.clAdhocintracity.tvSettledTimestamp.text = formattedText
                 binding.clAdhocintracity.tvSettledTimestamp.setTextColor(
                     ContextCompat.getColor(this, R.color.sub_heading_black)
                 )
                 binding.clAdhocintracity.tvSettledTimestamp.visibility = View.VISIBLE
-            } catch (e: Exception) {
-                binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
             }
-        }
-        
-        // No timestamp available
-        else -> {
+        } catch (e: Exception) {
+            // Keep GONE if any error occurs
             binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
         }
     }
+    // If timestamp is null/empty, visibility remains GONE (set at the beginning)
   }
 
   /**

@@ -55,6 +55,5 @@ data class TripPaymentResponse(
   @SerializedName("status") val status: String,
   @SerializedName("amount") val paymentAmount: Double ?=0.0,
   @SerializedName("fuel_payout") var fuelPayout: Double ?=0.0,
-  @SerializedName("fuel_mobile_no") var fuelNumber : String? ="",
-  @SerializedName("payment_at") val paymentTimestamp: String? = null
+  @SerializedName("fuel_mobile_no") var fuelNumber : String? =""
 )
