@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityLoadWalletBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -149,6 +150,16 @@ class LoadWalletActivity : BaseActivity<ActivityLoadWalletBinding, LoadWalletVie
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
         updateActiveFilterChips(0)
+
+        // Listen for the dialog dismissal result
+        supportFragmentManager.setFragmentResultListener("PaymentStatusResult", this) { _, bundle ->
+            val status = bundle.getString("STATUS")
+            if (status == PaymentStatus.SUCCESS.name) {
+                // Trigger the refresh API
+                showBalanceShimmer()
+                viewModel.fetchWalletDetails()
+            }
+        }
     }
 
     override fun onResume() {

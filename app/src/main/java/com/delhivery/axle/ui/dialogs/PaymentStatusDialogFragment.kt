@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -88,6 +89,14 @@ class PaymentStatusDialogFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
+
+        statusLiveData.value?.let { status ->
+            parentFragmentManager.setFragmentResult(
+                "PaymentStatusResult",
+                Bundle().apply { putString("STATUS", status.name) }
+            )
+        }
+
         onDismissCallback?.invoke()
     }
 
