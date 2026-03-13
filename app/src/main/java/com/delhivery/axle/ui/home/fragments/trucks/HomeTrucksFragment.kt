@@ -44,6 +44,7 @@ import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.dialogs.FastagSuccessBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
+import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
@@ -102,8 +103,11 @@ import javax.inject.Inject
 
 
 class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTrucksViewModel>(),
-        HomeTrucksRVAdapterInterface
+        HomeTrucksRVAdapterInterface, TitleProvider
 {
+    override val title: CharSequence
+        get() = "Trucks"
+
     override fun getViewModelClass() = HomeTrucksViewModel::class.java
     override fun layoutId() = R.layout.fragment_home_trucks
 
