@@ -11,8 +11,10 @@ import android.widget.Toast
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagRechargeBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.utils.StringUtils
+import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
 
 class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, FastagRechargeViewModel>() {
 
@@ -27,6 +29,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     private var walletBalance: Double = 0.0
     private val insufficientBalanceHandler = android.os.Handler(android.os.Looper.getMainLooper())
     private var insufficientBalanceRunnable: Runnable? = null
+    private var currentBottomSheet: PaymentStatusDialogFragment? = null
 
     companion object {
         const val TAG_ID = "tag_id"
@@ -53,6 +56,16 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         if (!tagId.isNullOrEmpty()) {
             viewModel.fetchFastagStatus(tagId)
         }
+
+        // Listen for the dialog dismissal result
+        supportFragmentManager.setFragmentResultListener("PaymentStatusResult", this) { _, bundle ->
+            val status = bundle.getString("STATUS")
+            if (status == PaymentStatus.SUCCESS.name) {
+                // Or the string "SUCCESS" depending on what your Enum passes
+                viewModel.fetchWalletDetails()
+            }
+        }
+
     }
 
     override fun onDestroy() {
@@ -311,18 +324,18 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         updateSliderState()
     }
 
-    private var currentBottomSheet: PaymentStatusBottomSheet? = null
 
-    private fun showPaymentStatusBottomSheet(status: PaymentStatusBottomSheet.Status) {
+    private fun showPaymentStatusBottomSheet(status: PaymentStatus) {
         // Dismiss existing bottom sheet if any
         currentBottomSheet?.dismissAllowingStateLoss()
-
-        currentBottomSheet = PaymentStatusBottomSheet.newInstance(status)
-            .setOnDismissCallback {
+        currentBottomSheet = PaymentStatusDialogFragment.show(
+            fragmentManager = supportFragmentManager,
+            initialStatus = status,
+            onDismiss = {
                 resetSlider()
                 currentBottomSheet = null
             }
-        currentBottomSheet?.show(supportFragmentManager, "payment_status")
+        )
     }
 
     private fun setupObservers() {
@@ -346,10 +359,10 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 }
 
                 val status = when (it.status?.lowercase()) {
-                    "success" -> PaymentStatusBottomSheet.Status.SUCCESS
-                    "pending", "processing" -> PaymentStatusBottomSheet.Status.PROCESSING
-                    "failed", "failure" -> PaymentStatusBottomSheet.Status.FAILED
-                    else -> PaymentStatusBottomSheet.Status.SUCCESS
+                    "success" -> PaymentStatus.SUCCESS
+                    "pending", "processing" -> PaymentStatus.PENDING
+                    "failed", "failure" -> PaymentStatus.FAILURE
+                    else -> PaymentStatus.SUCCESS
                 }
                 showPaymentStatusBottomSheet(status)
             }
