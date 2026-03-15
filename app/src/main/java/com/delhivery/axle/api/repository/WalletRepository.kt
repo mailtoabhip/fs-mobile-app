@@ -6,6 +6,7 @@ import com.delhivery.axle.api.request.WalletRechargeReqBody
 import com.delhivery.axle.api.request.WalletRechargeRequest
 import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.api.service.WalletService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,8 +18,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class WalletRepository @Inject constructor(
-  private val walletService: WalletService
-) : BaseRepository() {
+  private val walletService: WalletService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Activate wallet

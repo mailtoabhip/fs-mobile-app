@@ -3,6 +3,7 @@ package com.delhivery.axle.injection.component
 import com.delhivery.axle.KotlinApp
 import com.delhivery.axle.injection.module.ActivityBindingModule
 import com.delhivery.axle.injection.module.AppModule
+import com.delhivery.axle.injection.module.CoroutineModule
 import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.injection.module.ServiceModule
 import com.delhivery.axle.injection.module.ViewModelFactoryModule
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [AppModule::class, ViewModelFactoryModule::class, AndroidSupportInjectionModule::class,
-      ActivityBindingModule::class, NetworkModule::class, ServiceModule::class]
+      ActivityBindingModule::class, NetworkModule::class, ServiceModule::class, CoroutineModule::class]
 )
 interface AppComponent : AndroidInjector<KotlinApp> {
   /*@Component.Builder

@@ -6,6 +6,7 @@ import com.delhivery.axle.api.service.PaymentService
 import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.TripHistoryModel
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
@@ -15,8 +16,9 @@ import javax.inject.Singleton
 @Singleton
 class PaymentRepository @Inject constructor(
   private val paymentService: PaymentService,
-  private val tripsService: TripService
-) : BaseRepository() {
+  private val tripsService: TripService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Fetch Trip's history and payments summary

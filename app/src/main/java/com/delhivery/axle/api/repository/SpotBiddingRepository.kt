@@ -4,6 +4,7 @@ import android.util.Log
 import com.delhivery.axle.api.request.InitiateCallRequest
 import com.delhivery.axle.api.response.InitiateCallResponse
 import com.delhivery.axle.api.service.SpotBiddingService
+import com.delhivery.axle.utils.ErrorLogger
 import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,8 +14,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class SpotBiddingRepository @Inject constructor(
-    private val spotBiddingService: SpotBiddingService
-) : BaseRepository() {
+    private val spotBiddingService: SpotBiddingService,
+    errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
     /**
      * Initiate a call for marketplace bidding

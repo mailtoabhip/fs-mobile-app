@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.service.PayableService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -10,8 +11,9 @@ import javax.inject.Singleton
 
 @Singleton
 class PayableRepository @Inject constructor(
-        private val payableService: PayableService
-): BaseRepository() {
+        private val payableService: PayableService,
+        errorLogger: ErrorLogger
+): BaseRepository(errorLogger) {
     /**
      * Get Charges List
      */

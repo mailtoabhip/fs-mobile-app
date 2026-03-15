@@ -13,6 +13,7 @@ import com.delhivery.axle.api.response.SearchAfter
 import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -23,8 +24,9 @@ class TransactionsRepository @Inject constructor(
   private val transactionService: TransactionService,
   private val userRepository: UserRepository,
   private val userPrefs: UserPrefs,
-  private val recommendationService: RecommendationService
-) : BaseRepository() {
+  private val recommendationService: RecommendationService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Get user transactions

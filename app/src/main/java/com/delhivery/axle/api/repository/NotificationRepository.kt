@@ -2,14 +2,16 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.NotificationReadRequest
 import com.delhivery.axle.api.service.NotificationService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class NotificationRepository @Inject constructor(
-  private val notificationService: NotificationService
-) : BaseRepository() {
+  private val notificationService: NotificationService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Mark notification with [id] as read

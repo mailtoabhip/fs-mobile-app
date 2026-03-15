@@ -7,6 +7,7 @@ import com.delhivery.axle.api.service.InventoryService
 import com.delhivery.axle.data.ClusterResponse
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
@@ -19,8 +20,9 @@ import javax.inject.Singleton
 @Singleton
 class InventoryRepository @Inject constructor(
     private val inventoryService: InventoryService,
-    private val cityService: CityService
-): BaseRepository() {
+    private val cityService: CityService,
+    errorLogger: ErrorLogger
+): BaseRepository(errorLogger) {
 
     fun getInventories(request: JsonObject) = inventoryService.getInventories(request).convertResponse()
 

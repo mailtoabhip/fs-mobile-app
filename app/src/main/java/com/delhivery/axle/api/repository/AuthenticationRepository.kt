@@ -8,6 +8,7 @@ import com.delhivery.axle.api.request.RequestOTP
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -23,8 +24,9 @@ class AuthenticationRepository @Inject constructor(
   private val umsService: UMSService,
   private val loadBoardService: LoadBoardService,
   private val userPrefs: UserPrefs,
-  private val networkInterceptor: DelhiveryNetworkInterceptor
-) : BaseRepository() {
+  private val networkInterceptor: DelhiveryNetworkInterceptor,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   init {
     /* Update JWT token from prefs to Network Interceptor */

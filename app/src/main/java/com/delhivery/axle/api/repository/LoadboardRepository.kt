@@ -13,6 +13,7 @@ import com.delhivery.axle.api.response.FastagTransactionsByTollPlazaResponse
 import com.delhivery.axle.api.response.FormConfigResponse
 import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.api.service.LoadBoardService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.errorResponseBody
@@ -21,8 +22,9 @@ import javax.inject.Inject
 import okhttp3.MultipartBody
 
 class LoadboardRepository @Inject constructor(
-    private val loadboardService: LoadBoardService
-) : BaseRepository() {
+    private val loadboardService: LoadBoardService,
+    errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
     /**
      * gst numbers

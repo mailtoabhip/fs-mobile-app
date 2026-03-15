@@ -8,6 +8,7 @@ import com.delhivery.axle.data.Quadruple
 import com.delhivery.axle.data.Quintuple
 import com.delhivery.axle.data.bids.*
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.safeEquals
 import com.delhivery.axle.utils.prefs.UserPrefs
@@ -20,8 +21,9 @@ import javax.inject.Singleton
 class BidsRepository @Inject constructor(
   private val userRepository: UserRepository,
   private val bidService: BidService,
-  private val userPrefs: UserPrefs
-) : BaseRepository() {
+  private val userPrefs: UserPrefs,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Transaction Bids along with user bid and bid count

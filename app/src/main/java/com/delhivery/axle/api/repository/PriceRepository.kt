@@ -5,6 +5,7 @@ import com.delhivery.axle.api.request.PriceDetailRequest
 import com.delhivery.axle.api.request.UpdatePriceRequest
 import com.delhivery.axle.api.service.LoadCycleService
 import com.delhivery.axle.api.service.PriceService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
@@ -16,8 +17,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class PriceRepository @Inject constructor(
-  private val priceService: PriceService
-) : BaseRepository() {
+  private val priceService: PriceService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
 
   fun shareRate(request: UpdatePriceRequest) = priceService.updatePricingData(request).convertResponse()

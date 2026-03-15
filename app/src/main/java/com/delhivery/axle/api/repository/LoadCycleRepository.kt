@@ -1,6 +1,7 @@
 package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.service.LoadCycleService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import javax.inject.Inject
@@ -11,8 +12,9 @@ import javax.inject.Singleton
  */
 @Singleton
 class LoadCycleRepository @Inject constructor(
-  private val loadsService: LoadCycleService
-) : BaseRepository() {
+  private val loadsService: LoadCycleService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Search trips basis params

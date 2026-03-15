@@ -2,6 +2,7 @@ package com.delhivery.axle.api.repository
 
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.service.FuelService
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -15,8 +16,9 @@ import javax.inject.Singleton
 @Singleton
 class FuelRepository @Inject constructor(
   private val fuelService: FuelService,
-  private val userPrefs: UserPrefs
-) : BaseRepository() {
+  private val userPrefs: UserPrefs,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   private fun walletId(): String =
 //    when (BuildConfig.FLAVOR) {

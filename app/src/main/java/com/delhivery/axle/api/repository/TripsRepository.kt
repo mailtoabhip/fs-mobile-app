@@ -12,6 +12,7 @@ import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.api.service.TripService
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -24,8 +25,9 @@ import javax.inject.Singleton
 class TripsRepository @Inject constructor(
   private val userRepository: UserRepository,
   private val tripsService: TripService,
-  private val transactionService: TransactionService
-) : BaseRepository() {
+  private val transactionService: TransactionService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /**
    * Complete trip details with transaction and trip history

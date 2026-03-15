@@ -13,6 +13,7 @@ import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.database.AppDatabase
+import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
@@ -33,8 +34,9 @@ class UserRepository @Inject constructor(
   private val userPrefs: UserPrefs,
   private val userService: UserService,
   private val umsService: UMSService,
-  private val loadBoardService: LoadBoardService
-) : BaseRepository() {
+  private val loadBoardService: LoadBoardService,
+  errorLogger: ErrorLogger
+) : BaseRepository(errorLogger) {
 
   /* JWT token */
   private val jwt by lazy {
