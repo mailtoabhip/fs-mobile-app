@@ -3,6 +3,7 @@ package com.delhivery.axle.api.repository
 import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.BidSummaryResponse
+import com.delhivery.axle.api.response.LowestBidResponse
 import com.delhivery.axle.api.service.BidService
 import com.delhivery.axle.data.Quadruple
 import com.delhivery.axle.data.Quintuple
@@ -119,21 +120,39 @@ class BidsRepository @Inject constructor(
     }!!
 
   /**
-   * Bulk call to fetch bids
+   * Bulk call to fetch bids - Coroutine version
    */
-  fun bidsForLoads(
+  suspend fun bidsForLoads(
     transactions: List<HomeBidsRequestItemData>?,
-    contractBids: Boolean?=null
-  ) = bidService.bidsForLoads(
+    contractBids: Boolean? = null
+  ): Resource<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>> = safeApiCall {
+    val response = bidService.bidsForLoadsSuspend(
       userRepository.userId(),
-      if (transactions.isNullOrEmpty()){""}else
-      transactions.map { it.transactionId }.joinToString(",") { it.toString() },
+      if (transactions.isNullOrEmpty()) "" else
+        transactions.map { it.transactionId }.joinToString(","),
+      contractBids
+    )
+    if (response.isSuccess) {
+      Pair(transactions ?: emptyList(), response.responseData!!.bids)
+    } else {
+      throw response.toHttpException()
+    }
+  }
+
+  /**
+   * Bulk call to fetch bids - RxJava version for backward compatibility
+   */
+  fun bidsForLoadsRx(
+    transactions: List<HomeBidsRequestItemData>?,
+    contractBids: Boolean? = null
+  ) = bidService.bidsForLoads(
+    userRepository.userId(),
+    if (transactions.isNullOrEmpty()) "" else
+      transactions.map { it.transactionId }.joinToString(","),
     contractBids
   )
-      .convertResponse()
-      .map {
-        Pair(transactions ?: emptyList(), it.bids)
-      }!!
+    .convertResponse()
+    .map { Pair(transactions ?: emptyList(), it.bids) }!!
 
     /**
      * Bulk call to fetch bids
@@ -253,16 +272,33 @@ class BidsRepository @Inject constructor(
         .convertResponse()
 
   /**
-   * Get lowest bid for loads
+   * Get lowest bid for loads - Coroutine version
    */
-  fun bulkLowestBidsForLoads(transactions: List<HomeBidsRequestItemData>?) =
-    bidService.bulkLowestBidsForTransactions(
-        if (transactions.isNullOrEmpty()) "" else transactions.map { it.transactionId }.joinToString(",") { it.toString() }
+  suspend fun bulkLowestBidsForLoads(
+    transactions: List<HomeBidsRequestItemData>?
+  ): Resource<Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>> = safeApiCall {
+    val response = bidService.bulkLowestBidsForTransactionsSuspend(
+      if (transactions.isNullOrEmpty()) "" else
+        transactions.map { it.transactionId }.joinToString(",")
     )
-        .convertResponse()
-        .map {
-          Pair(transactions ?: emptyList(), it)
-        }!!
+    if (response.isSuccess) {
+      Pair(transactions ?: emptyList(), response.responseData!!)
+    } else {
+      throw response.toHttpException()
+    }
+  }
+
+  /**
+   * Get lowest bid for loads - RxJava version for backward compatibility
+   */
+  fun bulkLowestBidsForLoadsRx(
+    transactions: List<HomeBidsRequestItemData>?
+  ) = bidService.bulkLowestBidsForTransactions(
+    if (transactions.isNullOrEmpty()) "" else
+      transactions.map { it.transactionId }.joinToString(",")
+  )
+    .convertResponse()
+    .map { Pair(transactions ?: emptyList(), it) }!!
 }
 
 /* User bids pagination load limit */

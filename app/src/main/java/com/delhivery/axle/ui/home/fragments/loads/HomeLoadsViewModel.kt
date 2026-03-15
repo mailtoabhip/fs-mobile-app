@@ -52,6 +52,13 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 import io.reactivex.functions.Function3
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import androidx.lifecycle.viewModelScope
+import com.delhivery.axle.api.repository.Resource
+import kotlinx.coroutines.CancellationException
 
 /**
  * Created by saurabh
@@ -144,6 +151,8 @@ class HomeLoadsViewModel @Inject constructor(
     var intracityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
     var marketPlaceListShownTracked = MutableLiveData<Boolean>().apply { value = false }
 
+    /* coroutine job for cancellation on rapid tab switching */
+    private var currentFetchJob: Job? = null
 
     /**
    * Getter/Setter for route update flag to preferences
@@ -213,220 +222,234 @@ class HomeLoadsViewModel @Inject constructor(
         
         // Fetch user data first if not available
         if (user == null) {
+            // Cancel previous fetch before starting user fetch
+            currentFetchJob?.cancel()
+            
             compositeDisposable += userRepository.getUser(false)
                 .onBackground()
                 .subscribe { userModel, error ->
                     if (!error && userModel != null) {
-                        this.user = userModel
-                        // Now proceed with fetching loads
-                        fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                        this@HomeLoadsViewModel.user = userModel
+                        // Now proceed with fetching loads using coroutines
+                        currentFetchJob = viewModelScope.launch {
+                            try {
+                                fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                            } catch (e: Exception) {
+                                if (e !is CancellationException) {
+                                    Log.e("HomeLoadsViewModel", "Error fetching loads", e)
+                                }
+                            } finally {
+                                dataLoadingLiveData.postValue(false)
+                            }
+                        }
                     } else {
                         error?.handle()
                         dataLoadingLiveData.postValue(false)
                     }
                 }
         } else {
+            // Cancel previous fetch for rapid tab switching
+            currentFetchJob?.cancel()
+            
             // User data already available, proceed with loads
-            fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+            currentFetchJob = viewModelScope.launch {
+                try {
+                    fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                } catch (e: Exception) {
+                    if (e !is CancellationException) {
+                        Log.e("HomeLoadsViewModel", "Error in fetchUserTransactions", e)
+                    }
+                } finally {
+                    dataLoadingLiveData.postValue(false)
+                }
+            }
         }
     }
     
     /**
-     * Fetch loads data (separated from user data fetching)
+     * Fetch loads data (separated from user data fetching) - Coroutine version
      */
-    private fun fetchLoadsData(
+    private suspend fun fetchLoadsData(
         paginate: Boolean, demandType: String, selectedFilter: String, 
         infoSearch: Boolean, excludeTruckTypes: String?) {
         val mainTrace = Firebase.performance.newTrace("fetch_recommended_transactions")
         val parallelTrace = Firebase.performance.newTrace("fetch_bids_for_recommended_transactions_parallel")
         mainTrace.start()
-        if(selectedFilter==DemandType.Intracity.type){
-            compositeDisposable += transactionsRepository.fetchIntracityRecommTransactions(
-                offset,
-                demandType,
-                vehicleTypes,
-                excludeTruckTypes,
-                filterVehicleType,
-                true,null,
-                searchAfter
-            ).flatMap {_res ->
-
-            offset = _res.offset?:0
-            total = _res.transactions?.size?:0
-                searchAfter =  _res.searchAfter
-                        if(total ==0) {
-                            searchAfter = null
-                            hasMoreData = false
-                        }
-            fecthToCalled = _res.offset < _res.total
-            loadPricePercent = _res.loadPricePercent
-            more_default_loads = _res.more_loads
-            loadsCountLiveData.postValue(total)
-            
-            // Speed is already set in each transaction from API response
-            // No need to override: _res.transactions?.forEach { it.speed = _res.speed }
-
-            // Check if user has marketplace access
-            val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
-
-            // Create marketplace Single conditionally
-            val marketplaceSingle = if (hasMarketplaceAccess) {
-                transactionsRepository.fetchSpotMarketplaceTransactions(
-                    onlyCount = true,
-                    limit = 100,
-                    offset = 0
-                ).subscribeOn(Schedulers.io())
-            } else {
-                // Return empty marketplace data
-                Single.just(SpotMarketplaceLoadsData(totalCount = 0, limit = 0, offset = 0, hasNext = false, transactions = emptyList()))
-            }
-
-            Single.zip(
-                transactionsRepository.fetchRecommTransactions(
-                    offset,
-                    filterDemandTypeForRecommendations(userPrefs.demandType),
-                    vehicleTypes,
-                    excludeTruckTypes,
-                    filterVehicleType,
-                    true, splitViewCount = true,
-                    searchAfter = null
-                ),
-                marketplaceSingle,
-                BiFunction { recommTrans, marketplaceTrans ->
-                    Triple(_res.transactions, _res.total, Pair(recommTrans, marketplaceTrans))
-                }
+        
+        if(selectedFilter == DemandType.Intracity.type) {
+            // --- Intracity branch ---
+            val primaryResult = transactionsRepository.fetchIntracityRecommTransactions(
+                offset, demandType, vehicleTypes, excludeTruckTypes,
+                filterVehicleType, true, null, searchAfter
             )
-
-        }
-            .onBackground()
-            .subscribe { _tRes, error ->
-                if (!error && _tRes != null) {
-                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                        /* remove progress item */
-                        add(Pair(HomeLoadsProgressItem(), Remove))
-
-                        val loads = _tRes.first ?: emptyList()
-                        var intercityCount =0
-                        var nonDlvCount = 0
-                        var marketplaceCount = 0
-                        try {
-                            if(_tRes.third.first.loadCounts!=null){
-                                for(item in _tRes.third.first.loadCounts!!.all){
-                                    if (item.key == "INTERCITY") {
-                                        intercityCount = item.count?:0
-                                    }else if(item.key == "NON_DELHIVERY"){
-                                        nonDlvCount = item.count?:0
-                                    }
-
+            
+            when (primaryResult) {
+                is Resource.Success -> {
+                    val _res = primaryResult.data!!
+                    
+                    // Update pagination state
+                    offset = _res.offset ?: 0
+                    total = _res.transactions?.size ?: 0
+                    searchAfter = _res.searchAfter
+                    if (total == 0) {
+                        searchAfter = null
+                        hasMoreData = false
+                    }
+                    fecthToCalled = _res.offset < _res.total
+                    loadPricePercent = _res.loadPricePercent
+                    more_default_loads = _res.more_loads
+                    loadsCountLiveData.postValue(total)
+                    
+                    // 2 parallel calls for split counts + marketplace
+                    val parallelResults = coroutineScope {
+                        val splitCountDeferred = async {
+                            transactionsRepository.fetchRecommTransactions(
+                                offset,
+                                filterDemandTypeForRecommendations(userPrefs.demandType),
+                                vehicleTypes, excludeTruckTypes, filterVehicleType,
+                                true, splitViewCount = true, searchAfter = null
+                            )
+                        }
+                        val marketplaceDeferred = async {
+                            if (hasMarketplaceAccess) {
+                                transactionsRepository.fetchSpotMarketplaceTransactions(
+                                    onlyCount = true, limit = 100, offset = 0
+                                )
+                            } else {
+                                Resource.Success(SpotMarketplaceLoadsData(
+                                    totalCount = 0, limit = 0, offset = 0,
+                                    hasNext = false, transactions = emptyList()
+                                ))
+                            }
+                        }
+                        Pair(splitCountDeferred.await(), marketplaceDeferred.await())
+                    }
+                    
+                    // Extract tab counts
+                    var intercityCount = 0
+                    var nonDlvCount = 0
+                    var marketplaceCount = 0
+                    
+                    when (val splitResult = parallelResults.first) {
+                        is Resource.Success -> {
+                            splitResult.data?.loadCounts?.all?.forEach { item ->
+                                when (item.key) {
+                                    "INTERCITY" -> intercityCount = item.count ?: 0
+                                    "NON_DELHIVERY" -> nonDlvCount = item.count ?: 0
                                 }
                             }
-                        }catch (e:Exception){
-                            Log.e("Errpr",e.toString())
+                        }
+                        else -> { /* counts remain 0 */ }
+                    }
+                    
+                    when (val marketplaceResult = parallelResults.second) {
+                        is Resource.Success -> {
+                            marketplaceCount = marketplaceResult.data?.totalCount ?: 0
+                            cachedMarketplaceCount = marketplaceCount
+                        }
+                        else -> { /* count remains 0 */ }
+                    }
+                    
+                    // Build UI items list
+                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        add(Pair(HomeLoadsProgressItem(), Remove))
+                        
+                        val loads = _res.transactions ?: emptyList()
+                        
+                        add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
+                        
+                        val count = total + intercityCount + nonDlvCount + marketplaceCount
+                        Log.d("viewmodel", "$total intrcity $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
+                        Log.d("count", count.toString())
+                        fullLoadsCountLiveData.postValue(count)
+                        
+                        add(Pair(
+                            HomeLoadsFilterItem(HomeLoadsFilterItemData(
+                                selectedFilter, total, intercityCount, nonDlvCount,
+                                marketplaceCount, userPrefs.demandType
+                            )), AddUpdate
+                        ))
+                        
+                        if (!paginate && userPrefs.verificationStatus.equals("failed")) {
+                            add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
                         }
                         
-                        // Extract marketplace count from the pair
-                        try {
-                            marketplaceCount = _tRes.third.second?.let { data -> data.totalCount } ?: 0
-                            cachedMarketplaceCount = marketplaceCount
-                        }catch (e:Exception){
-                            Log.e("MarketplaceCount",e.toString())
+                        if (!paginate) {
+                            add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
                         }
-
-
-                            add(
-                                Pair(
-                                    HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)),
-                                    AddUpdate
-                                )
-                            )
-                        val count = _tRes.second+intercityCount+nonDlvCount+marketplaceCount
-                        Log.d("viewmodel", "${_tRes.second} intrcity $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
-                        Log.d("count",count.toString())
-                        fullLoadsCountLiveData.postValue(count)
-                            add(
-                                Pair(
-                                    HomeLoadsFilterItem(
-                                        HomeLoadsFilterItemData(
-                                            selectedFilter,
-                                            _tRes.second,
-                                            intercityCount,
-                                            nonDlvCount,
-                                            marketplaceCount,
-                                            userDemandType = userPrefs.demandType
-                                        )
-                                    ), AddUpdate
-                                )
-                            )
-                            
-                            // Add KYC pending card if user is UNAPPROVED
-                            if (!paginate && userPrefs.verificationStatus.equals("failed")) {
-                                add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
-                            }
-                            
-                            if (!paginate) {
-                                add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
-                            }
-                               /* if (total >= 0)
-                                    add(
-                                        Pair(
-                                            HomeLoadsSummaryItem(HomeLoadsSummaryItemData(total)),
-                                            AddUpdate
-                                        )
-                                    )*/
-
+                        
                         if (total == 0 && !paginate) {
                             add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
                         }
-                            for ((index, load) in loads.toMutableList().withIndex()) {
-                                try {
-                                    load.transactionId?.let { txnIds.add(it) }
-
-                                } catch (e: Exception) {
-                                    Log.d("No Bid found for: ", load.transactionId ?: "")
-                                }
-                                // Populate payment fields from user data
-                                populatePaymentFields(load)
-                                add(Pair(HomeLoadsRequestItem(load), Add))
+                        
+                        for ((index, load) in loads.toMutableList().withIndex()) {
+                            try {
+                                load.transactionId?.let { txnIds.add(it) }
+                            } catch (e: Exception) {
+                                Log.d("No Bid found for: ", load.transactionId ?: "")
                             }
-
-                            if (!hasMoreData && !hasOrionLoadOnce && more_default_loads ) {
-                                add(Pair(HomeLoadsInfoItem(), Remove))
-                                add(Pair(HomeLoadsInfoItem(), AddUpdate))
-                            }
-                            add(Pair(HomeLoadsMoreInfoItem(), Remove))
-                            add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-
+                            populatePaymentFields(load)
+                            add(Pair(HomeLoadsRequestItem(load), Add))
+                        }
+                        
+                        if (!hasMoreData && !hasOrionLoadOnce && more_default_loads) {
+                            add(Pair(HomeLoadsInfoItem(), Remove))
+                            add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                        }
+                        add(Pair(HomeLoadsMoreInfoItem(), Remove))
+                        add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
                     }.let {
                         userLoadsData.postValue(it)
-                        if(_tRes.first?.isNotEmpty() == true && paginateCount == 0)
+                        if (_res.transactions?.isNotEmpty() == true && paginateCount == 0)
                             intracityListShownTracked.postValue(true)
                     }
-
                 }
-
-                dataLoadingLiveData.postValue(false)
+                
+                is Resource.Failure -> {
+                    // Post error state to UI (NO fallback for intracity)
+                    Log.e("HomeLoadsViewModel", "Error fetching intracity loads: ${primaryResult.apiError}")
+                    
+                    // Post empty list with error item to UI
+                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        add(Pair(HomeLoadsProgressItem(), Remove))
+                        add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
+                        add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(
+                            selectedFilter, 0, 0, 0, 0, userPrefs.demandType
+                        )), AddUpdate))
+                        add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
+                        add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+                    }.let {
+                        userLoadsData.postValue(it)
+                    }
+                }
+                
+                is Resource.Loading -> { /* not expected */ }
             }
-        }else {
+            mainTrace.stop()
+        } else {
+            // --- Non-intracity branch ---
             Log.d("Viewmod1", "in else")
-
-            compositeDisposable += transactionsRepository.fetchRecommTransactions(
+            
+            val primaryResult = transactionsRepository.fetchRecommTransactions(
                 offset,
                 filterDemandTypeForRecommendations(userPrefs.demandType),
-                vehicleTypes,
-                excludeTruckTypes,
-                filterVehicleType,
-                true,
-                searchAfter = searchAfter
+                vehicleTypes, excludeTruckTypes, filterVehicleType,
+                true, searchAfter = searchAfter
             )
-                .flatMap { _res ->
+            
+            when (primaryResult) {
+                is Resource.Success -> {
+                    val _res = primaryResult.data!!
+                    
                     Log.d("Viewmode123", "${_res.toString()}")
-
                     Log.d("Viewmode12", "${_res.transactions}")
+                    
+                    // Update pagination state
                     searchAfter = _res.searchAfter
-                    hasMoreData = searchAfter!=null
+                    hasMoreData = searchAfter != null
                     offset = _res.offset
-                    total = _res?.transactions?.size?:0
-                    if(total ==0) {
+                    total = _res.transactions?.size ?: 0
+                    if (total == 0) {
                         searchAfter = null
                         hasMoreData = false
                     }
@@ -434,212 +457,183 @@ class HomeLoadsViewModel @Inject constructor(
                     loadPricePercent = _res.loadPricePercent
                     more_default_loads = _res.more_loads
                     loadsCount += total
-
-                    // Check if user has marketplace access
-                    val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
-
-                    // Create marketplace Single conditionally
-                    val marketplaceSingle = if (hasMarketplaceAccess) {
-                        transactionsRepository.fetchSpotMarketplaceTransactions(
-                            onlyCount = true,
-                            limit = 100,
-                            offset = 0
-                        ).subscribeOn(Schedulers.io())
-                    } else {
-                        // Return empty marketplace data
-                        Single.just(SpotMarketplaceLoadsData(totalCount = 0, limit = 0, offset = 0, hasNext = false, transactions = emptyList()))
-                    }
-
-                    Single.zip(
-                        bidsRepository.bidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
-                        bidsRepository.bulkLowestBidsForLoads(_res.transactions).subscribeOn(Schedulers.io()),
-                        transactionsRepository.fetchIntracityRecommTransactions(
-                            offset,
-                            userPrefs.demandType,
-                            vehicleTypes,
-                            excludeTruckTypes,
-                            filterVehicleType,
-                            true
-                        ),
-                        transactionsRepository.fetchRecommTransactions(
-                            offset,
-                            filterDemandTypeForRecommendations(userPrefs.demandType),
-                            vehicleTypes,
-                            excludeTruckTypes,
-                            filterVehicleType,
-                            true,
-                            splitViewCount = true,
-                            searchAfter = null
-                        ).subscribeOn(Schedulers.io()),
-                        marketplaceSingle,
-                        // CORRECTED: Pass the lambda as the last argument, separated by a comma.
-                        { t1, t2, t3, t4, t5 ->
-                            data class SixTuple<A, B, C, D, E, F>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E, val sixth: F)
-                            SixTuple(
-                                t1.first,
-                                t1.second,
-                                t2.second,
-                                t3,
-                                t4,
-                                t5
+                    
+                    parallelTrace.start()
+                    
+                    // 5 parallel calls
+                    data class ParallelResults(
+                        val bids: Resource<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>>,
+                        val lowestBids: Resource<Pair<List<HomeBidsRequestItemData>, List<com.delhivery.axle.api.response.LowestBidResponse>>>,
+                        val intracity: Resource<TransactionsResponse>,
+                        val splitCount: Resource<TransactionsResponse>,
+                        val marketplace: Resource<SpotMarketplaceLoadsData>
+                    )
+                    
+                    val parallelResults = coroutineScope {
+                        val bidsDeferred = async {
+                            bidsRepository.bidsForLoads(_res.transactions)
+                        }
+                        val lowestBidsDeferred = async {
+                            bidsRepository.bulkLowestBidsForLoads(_res.transactions)
+                        }
+                        val intracityDeferred = async {
+                            transactionsRepository.fetchIntracityRecommTransactions(
+                                offset, userPrefs.demandType, vehicleTypes,
+                                excludeTruckTypes, filterVehicleType, true
                             )
                         }
-                    )
-                }
-                .onBackground()
-                // CORRECTED: The subscribe method takes two separate lambdas for success and error.
-                .subscribe({ _tRes, error ->
-                    if(error!=null) mainTrace.putAttribute("error_response_received",error.message.toString())
-                    parallelTrace.stop()
-                    mainTrace.stop()
-                    if (!error && _tRes != null) {
-                        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                            /* remove progress item */
-                            add(Pair(HomeLoadsProgressItem(), Remove))
-                           // val loadsWithBids = _tRes.first
-                            val loads = _tRes.first ?: emptyList()
-                            val bids = _tRes.second
-                            val bidTransactionIds = bids.map { it.transactionId }.toSet()
-                           /* val loads = loadsWithBids.filter { load ->
-                                load.transactionId !in bidTransactionIds
-                            }*/
-                                var nonDlvCount = 0
-                                var intercityCount = 0
-                                var marketplaceCount = 0
-
-                                try {
-                                    if(_tRes.fifth.loadCounts!=null){
-                                        for(item in _tRes.fifth.loadCounts.all){
-                                            if (item.key == "INTERCITY") {
-                                                intercityCount = item.count?:0
-                                            }else if(item.key == "NON_DELHIVERY"){
-                                                nonDlvCount = item.count?:0
-                                            }
-
-                                        }
-                                    }
-                                }catch (e:Exception){
-                                 Log.e("Errpr",e.toString())
-                                }
-                                
-                                // Extract marketplace count from the 6th element
-                                try {
-                                    marketplaceCount = _tRes.sixth?.let { data -> data.totalCount } ?: 0
-                                    cachedMarketplaceCount = marketplaceCount
-                                }catch (e:Exception){
-                                    Log.e("MarketplaceCount",e.toString())
-                                }
-                                
-                                var count = 0
-                                if(selectedFilter==DemandType.Internal.type){
-                                    count = intercityCount
-                                    loadsCountLiveData.postValue(intercityCount)
-                                }else{
-                                    count = nonDlvCount
-                                    loadsCountLiveData.postValue(nonDlvCount)
-                                }
-                                add(
-                                    Pair(
-                                        HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)),
-                                        AddUpdate
-                                    )
-                                )
-                            Log.d("LoadView", "${_tRes.fourth.total} inter $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
-                            val count1 = _tRes.fourth.total + intercityCount + nonDlvCount + marketplaceCount
-                            fullLoadsCountLiveData.postValue(count1)
-
-                            add(
-                                    Pair(
-                                        HomeLoadsFilterItem(
-                                            HomeLoadsFilterItemData(
-                                                selectedFilter,
-                                                _tRes.fourth.total,
-                                                intercityCount,
-                                                nonDlvCount,
-                                                marketplaceCount,
-                                                userDemandType = userPrefs.demandType
-                                            )
-                                        ), AddUpdate
-                                    )
-                                )
-                                
-                                // Add KYC pending card if user is UNAPPROVED
-                                if (!paginate && userPrefs.verificationStatus.equals("failed")) {
-                                    add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
-                                }
-                                
-                                if (!paginate) {
-                                    add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
-                                }
-
-                                  /*  if (total >= 0)
-                                        add(
-                                            Pair(
-                                                HomeLoadsSummaryItem(HomeLoadsSummaryItemData(count)),
-                                                AddUpdate
-                                            )
-                                        )*/
-                            if (total == 0 && !paginate) {
-                                add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
-                            }
-                                for ((index, load) in loads.toMutableList().withIndex()) {
-                                    try {
-                                        load.transactionId?.let { txnIds.add(it) }
-
-                                  /*      val lowestBid = _tRes.third.filter { b ->
-                                            b.transactionId.safeEquals(load.transactionId)
-                                        }[0]
-                                        load.lowestBid = lowestBid.minBid
-                                        load.numBids = lowestBid.numBids
-                                        load.loadPricePercent = loadPricePercent
-                                        load.transactionBid =
-                                            bids.filter { b ->
-                                                b.transactionId.safeEquals(load.transactionId)
-                                            }[0]
-                                        if (load.isDMTIndent()) {
-                                            load.bulkTransactionBids =
-                                                bids.filter { b ->
-                                                    b.transactionId.safeEquals(load.transactionId)
-                                                }
-                                        }*/
-                                    } catch (e: Exception) {
-                                        Log.d("No Bid found for: ", load.transactionId ?: "")
-                                    }
-                                    // Populate payment fields from user data
-                                    populatePaymentFields(load)
-                                    if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
-                                        add(Pair(HomeLoadsAddTruckItem(), Add))
-                                    }
-                                    add(Pair(HomeLoadsRequestItem(load), Add))
-                                }
-
-                                if (!hasMoreData && !hasOrionLoadOnce && more_default_loads && totalFetchTitle < total) {
-                                    add(Pair(HomeLoadsInfoItem(), AddUpdate))
-                                }
-                                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-
-                        }.let {
-                            userLoadsData.postValue(it)
-                            if(_tRes.first.isNotEmpty() && paginateCount == 0)
-                                intercityListShownTracked.postValue(true)
+                        val splitCountDeferred = async {
+                            transactionsRepository.fetchRecommTransactions(
+                                offset,
+                                filterDemandTypeForRecommendations(userPrefs.demandType),
+                                vehicleTypes, excludeTruckTypes, filterVehicleType,
+                                true, splitViewCount = true, searchAfter = null
+                            )
                         }
-
-                    }
-                    else {
-                        fetchSupplierTransactions(
-                            totalFetchTitle > 0,
-                            selectedFilter,
-                            demandType,
-                            infoSearch,
-                            excludeTruckTypes
+                        val marketplaceDeferred = async {
+                            if (hasMarketplaceAccess) {
+                                transactionsRepository.fetchSpotMarketplaceTransactions(
+                                    onlyCount = true, limit = 100, offset = 0
+                                )
+                            } else {
+                                Resource.Success(SpotMarketplaceLoadsData(
+                                    totalCount = 0, limit = 0, offset = 0,
+                                    hasNext = false, transactions = emptyList()
+                                ))
+                            }
+                        }
+                        
+                        ParallelResults(
+                            bidsDeferred.await(),
+                            lowestBidsDeferred.await(),
+                            intracityDeferred.await(),
+                            splitCountDeferred.await(),
+                            marketplaceDeferred.await()
                         )
                     }
-
-                    dataLoadingLiveData.postValue(false)
-                })
+                    
+                    parallelTrace.stop()
+                    mainTrace.stop()
+                    
+                    // Extract data from parallel results
+                    val loads = _res.transactions ?: emptyList()
+                    val bids = when (parallelResults.bids) {
+                        is Resource.Success -> parallelResults.bids.data?.second ?: emptyList()
+                        else -> emptyList()
+                    }
+                    
+                    // Extract tab counts
+                    var intercityCount = 0
+                    var nonDlvCount = 0
+                    var marketplaceCount = 0
+                    
+                    when (val splitResult = parallelResults.splitCount) {
+                        is Resource.Success -> {
+                            splitResult.data?.loadCounts?.all?.forEach { item ->
+                                when (item.key) {
+                                    "INTERCITY" -> intercityCount = item.count ?: 0
+                                    "NON_DELHIVERY" -> nonDlvCount = item.count ?: 0
+                                }
+                            }
+                        }
+                        else -> { /* counts remain 0 */ }
+                    }
+                    
+                    when (val marketplaceResult = parallelResults.marketplace) {
+                        is Resource.Success -> {
+                            marketplaceCount = marketplaceResult.data?.totalCount ?: 0
+                            cachedMarketplaceCount = marketplaceCount
+                        }
+                        else -> { /* count remains 0 */ }
+                    }
+                    
+                    val count = if (selectedFilter == DemandType.Internal.type) {
+                        intercityCount
+                    } else {
+                        nonDlvCount
+                    }
+                    loadsCountLiveData.postValue(count)
+                    
+                    // Build UI items list
+                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        add(Pair(HomeLoadsProgressItem(), Remove))
+                        
+                        add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
+                        
+                        val totalCount = when (val splitResult = parallelResults.splitCount) {
+                            is Resource.Success -> splitResult.data?.total ?: 0
+                            else -> 0
+                        }
+                        val fullCount = totalCount + intercityCount + nonDlvCount + marketplaceCount
+                        Log.d("LoadView", "$totalCount inter $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
+                        fullLoadsCountLiveData.postValue(fullCount)
+                        
+                        add(Pair(
+                            HomeLoadsFilterItem(HomeLoadsFilterItemData(
+                                selectedFilter, totalCount, intercityCount, nonDlvCount,
+                                marketplaceCount, userPrefs.demandType
+                            )), AddUpdate
+                        ))
+                        
+                        if (!paginate && userPrefs.verificationStatus.equals("failed")) {
+                            add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
+                        }
+                        
+                        if (!paginate) {
+                            add(Pair(HomeLoadsTruckPriorityAccessItem(), AddUpdate))
+                        }
+                        
+                        if (total == 0 && !paginate) {
+                            add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+                        }
+                        
+                        for ((index, load) in loads.toMutableList().withIndex()) {
+                            try {
+                                load.transactionId?.let { txnIds.add(it) }
+                            } catch (e: Exception) {
+                                Log.d("No Bid found for: ", load.transactionId ?: "")
+                            }
+                            populatePaymentFields(load)
+                            
+                            if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
+                                add(Pair(HomeLoadsAddTruckItem(), Add))
+                            }
+                            add(Pair(HomeLoadsRequestItem(load), Add))
+                        }
+                        
+                        if (!hasMoreData && !hasOrionLoadOnce && more_default_loads && totalFetchTitle < total) {
+                            add(Pair(HomeLoadsInfoItem(), AddUpdate))
+                        }
+                        add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+                    }.let {
+                        userLoadsData.postValue(it)
+                        if (loads.isNotEmpty() && paginateCount == 0) {
+                            intercityListShownTracked.postValue(true)
+                        }
+                    }
+                }
+                
+                is Resource.Failure -> {
+                    if (primaryResult.apiError != null) {
+                        mainTrace.putAttribute("error_response_received", primaryResult.apiError.toString())
+                    }
+                    parallelTrace.stop()
+                    mainTrace.stop()
+                    
+                    // CRITICAL: Fallback to supplier loads on error
+                    fetchSupplierTransactions(
+                        totalFetchTitle > 0,
+                        selectedFilter,
+                        demandType,
+                        infoSearch,
+                        excludeTruckTypes
+                    )
+                }
+                
+                is Resource.Loading -> { /* not expected */ }
+            }
         }
     }
-
 
     /**
    * Fetch user [Requested] transactions
@@ -697,6 +691,7 @@ class HomeLoadsViewModel @Inject constructor(
   
   /**
    * Fetch supplier loads data (separated from user data fetching)
+   * Uses RxJava wrappers for repository methods
    */
   private fun fetchSupplierLoadsData(
     paginate: Boolean, selectedFilter: String, demandType: String,
@@ -713,9 +708,9 @@ class HomeLoadsViewModel @Inject constructor(
                                   loadsCountLiveData.postValue(totalFetchTitle)
 
                                   Single.zip(
-                                      bidsRepository.bidsForLoads(t.transactions).subscribeOn(Schedulers.io()),
-                                      bidsRepository.bulkLowestBidsForLoads(t.transactions).subscribeOn(Schedulers.io()),
-                                      transactionsRepository.fetchIntracityRecommTransactions(offset,
+                                      bidsRepository.bidsForLoadsRx(t.transactions).subscribeOn(Schedulers.io()),
+                                      bidsRepository.bulkLowestBidsForLoadsRx(t.transactions).subscribeOn(Schedulers.io()),
+                                      transactionsRepository.fetchIntracityRecommTransactionsRx(offset,
                                           demandType,
                                           vehicleTypes,
                                           excludeTruckTypes,
@@ -751,7 +746,7 @@ class HomeLoadsViewModel @Inject constructor(
                     }
                     
                     // Fetch marketplace count inline
-                    compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
+                    compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactionsRx(
                         onlyCount = true,
                         limit = 100,
                         offset = 0
@@ -868,31 +863,57 @@ class HomeLoadsViewModel @Inject constructor(
     }
 
     dataLoadingLiveData.postValue(true)
-
+    
     // Fetch user data first if not available
     if (user == null) {
+      // Cancel previous fetch before starting user fetch
+      currentFetchJob?.cancel()
+      
       compositeDisposable += userRepository.getUser(false)
         .onBackground()
         .subscribe { userModel, error ->
           if (!error && userModel != null) {
-            this.user = userModel
-            // Now proceed with fetching marketplace loads
-            fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+            this@HomeLoadsViewModel.user = userModel
+            // Now proceed with fetching marketplace loads using coroutines
+            currentFetchJob = viewModelScope.launch {
+              try {
+                fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+              } catch (e: Exception) {
+                if (e !is CancellationException) {
+                  Log.e("HomeLoadsViewModel", "Error fetching marketplace loads", e)
+                }
+              } finally {
+                dataLoadingLiveData.postValue(false)
+              }
+            }
           } else {
             error?.handle()
             dataLoadingLiveData.postValue(false)
           }
         }
     } else {
+      // Cancel previous fetch for rapid tab switching
+      currentFetchJob?.cancel()
+      
       // User data already available, proceed with marketplace loads
-      fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+      currentFetchJob = viewModelScope.launch {
+        try {
+          fetchMarketplaceLoadsData(paginate, onlyCount, limit)
+        } catch (e: Exception) {
+          if (e !is CancellationException) {
+            Log.e("HomeLoadsViewModel", "Error in fetchSpotMarketplaceLoads", e)
+          }
+        } finally {
+          dataLoadingLiveData.postValue(false)
+        }
+      }
     }
   }
 
   /**
-   * Fetch marketplace loads data (separated from user data fetching)
+   * Fetch marketplace loads data (separated from user data fetching) - Coroutine version
    */
-  private fun fetchMarketplaceLoadsData(
+  private suspend fun fetchMarketplaceLoadsData(
     paginate: Boolean,
     onlyCount: Boolean,
     limit: Int
@@ -900,217 +921,226 @@ class HomeLoadsViewModel @Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_spot_marketplace_transactions")
     mainTrace.start()
 
-    // First call: Get count only
-    compositeDisposable += transactionsRepository.fetchSpotMarketplaceTransactions(
-      onlyCount = true,
-      limit = limit,
-        offset = 0
-    ).flatMap { countRes ->
-      val count = countRes.let { data -> data.totalCount } ?: 0
-      Log.d("MarketplaceDebug", "Count API Response - count: $count")
-      
-      // Store the count
-      total = count
-      cachedMarketplaceCount = total
-      loadsCountLiveData.postValue(count)
-      
-      // Second call: Get actual data with only_count=false
-      transactionsRepository.fetchSpotMarketplaceTransactions(
-        onlyCount = false,
-        limit = limit,
-          offset = offset
-      )
-    }.flatMap { _res ->
-      val transactions = _res.transactions
-      val resOffset = _res.let { data -> data.offset } ?: 0
-      val resCount = _res.let { data -> data.totalCount } ?: 0
-      Log.d("MarketplaceDebug", "Data API Response - transactions: ${transactions?.size ?: 0}, count: $resCount")
-      offset = resOffset
-      if (total == 0) {
-        hasMoreData = false
+    // Step 1: Fetch count only
+    val countResult = transactionsRepository.fetchSpotMarketplaceTransactions(
+      onlyCount = true, limit = limit, offset = 0
+    )
+    
+    when (countResult) {
+      is Resource.Success -> {
+        val count = countResult.data?.totalCount ?: 0
+        Log.d("MarketplaceDebug", "Count API Response - count: $count")
+        total = count
+        cachedMarketplaceCount = total
+        loadsCountLiveData.postValue(count)
       }
-      hasMoreData = _res.let { data -> data.hasNext } ?: false
-      Log.d("MarketplaceDebug", "About to fetch bids for ${transactions?.size ?: 0} transactions")
-
-      Single.zip(
-        bidsRepository.bidsForLoads(transactions).subscribeOn(Schedulers.io()),
-        bidsRepository.bulkLowestBidsForLoads(transactions).subscribeOn(Schedulers.io()),
-        BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>, Pair<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>>> { t1, t2 ->
-          Pair(t1, t2)
-        }
-      ).map { result ->
-        Triple(transactions, result.first.second, result.second.second)
-      }
-    }
-      .onBackground()
-      .subscribe { _tRes, error ->
+      is Resource.Failure -> {
+        Log.e("HomeLoadsViewModel", "Error fetching marketplace count: ${countResult.apiError}")
         mainTrace.stop()
-        Log.d("MarketplaceDebug", "Subscribe callback - error: $error, data: ${_tRes != null}")
-        if (!error && _tRes != null) {
-          Log.d("MarketplaceDebug", "Processing marketplace data - loads count: ${_tRes.first?.size ?: 0}, bids: ${_tRes.second?.size ?: 0}, lowestBids: ${_tRes.third?.size ?: 0}")
-          mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            /* remove progress item */
-            add(Pair(HomeLoadsProgressItem(), Remove))
-
-            val loads = _tRes.first ?: emptyList()
-            val bids = _tRes.second
-            val lowestBids = _tRes.third
-            Log.d("MarketplaceDebug", "Loads list size: ${loads.size}")
-
-            add(
-              Pair(
-                HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)),
-                AddUpdate
-              )
-            )
-            
-            // Cache the marketplace count (already set from the API response)
-            cachedMarketplaceCount = total
-
-            // Fetch other counts for filter display
-            compositeDisposable += Single.zip(
-                transactionsRepository.fetchIntracityRecommTransactions(
-                    offset, userPrefs.demandType, vehicleTypes, null, 
-                    filterVehicleType, true, onlyCount = true
-                ).subscribeOn(Schedulers.io()),
-                transactionsRepository.fetchRecommTransactions(
-                    offset,
-                    filterDemandTypeForRecommendations(userPrefs.demandType),
-                    vehicleTypes, null, filterVehicleType, true, 
-                    splitViewCount = true, searchAfter = null
-                ).subscribeOn(Schedulers.io()),
-                BiFunction { intracityRes, intercityRes ->
-                    Pair(intracityRes.total, intercityRes)
-                }
-            ).onBackground()
-            .subscribe { otherCounts, error ->
-                if (!error) {
-                    val intracityCount = otherCounts.first
-                    var intercityCount = 0
-                    var nonDlvCount = 0
-                    try {
-                        if(otherCounts.second.loadCounts!=null) {
-                            otherCounts.second.loadCounts?.let {
-                                for (item in it.all) {
-                                    if (item.key == "INTERCITY") {
-                                        intercityCount = item.count ?: 0
-                                    } else if (item.key == "NON_DELHIVERY") {
-                                        nonDlvCount = item.count ?: 0
-                                    }
-                                }
-                            }
-                        }
-                    }catch (e:Exception){
-                        Log.e("CountError",e.toString())
-                    }
-
-                    val totalAllCounts = intracityCount + intercityCount + nonDlvCount + cachedMarketplaceCount
-                    fullLoadsCountLiveData.postValue(totalAllCounts)
-
-                    // Update filter with all counts
-                    val filterItem = HomeLoadsFilterItem(
-                        HomeLoadsFilterItemData(
-                            "Marketplace",
-                            intracityCount,
-                            intercityCount,
-                            nonDlvCount,
-                            cachedMarketplaceCount,
-                            userPrefs.demandType
-                        )
-                    )
-                    userLoadsData.postValue(listOf(Pair(filterItem, AddUpdate)))
-                }
-            }
-
-            // Add filter item with marketplace count (initial with 0 for other counts)
-            add(
-              Pair(
-                HomeLoadsFilterItem(
-                  HomeLoadsFilterItemData(
-                    "Marketplace",
-                    0, // intracity count - will be updated
-                    0, // intercity count - will be updated
-                    0, // non-dlv count - will be updated
-                    cachedMarketplaceCount, // marketplace count
-                    userPrefs.demandType
-                  )
-                ), AddUpdate
-              )
-            )
-            
-            // Add KYC pending card if user is UNAPPROVED
-            if (!paginate){
-                if(userPrefs.verificationStatus.equals("failed")){
-              add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
-          }else{
-                add(Pair(HomeMarketPlaceInfoItem(), AddUpdate))
-            }
-        }
-
-
-
-            if (total == 0 && !paginate) {
-              add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
-            }
-
-            for ((index, load) in loads.toMutableList().withIndex()) {
-              try {
-                load.transactionId?.let { txnIds.add(it) }
-
-                // Find and set lowest bid for this load
-                val lowestBid = lowestBids.firstOrNull { b ->
-                  b.transactionId.safeEquals(load.transactionId)
-                }
-                lowestBid?.let {
-                  load.lowestBid = it.minBid
-                  load.numBids = it.numBids
-                }
-                load.loadPricePercent = loadPricePercent
-
-                // Find and set transaction bid
-                val transactionBid = bids.firstOrNull { b ->
-                  b.transactionId.safeEquals(load.transactionId)
-                }
-                load.transactionBid = transactionBid
-
-              } catch (e: Exception) {
-                Log.d("No Bid found for: ", load.transactionId ?: "")
-              }
-              
-              // Populate payment fields from user data
-              populatePaymentFields(load)
-              
-              if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
-                add(Pair(HomeLoadsAddTruckItem(), Add))
-              }
-              // Use HomeLoadsMarketplaceItem for marketplace loads
-              add(Pair(HomeLoadsMarketplaceItem(load), Add))
-              Log.d("MarketplaceDebug", "Added marketplace item ${index + 1}: transactionId=${load.transactionId}")
-            }
-
-            if (!hasMoreData && !hasOrionLoadOnce) {
-              //add(Pair(HomeLoadsInfoItem(), AddUpdate))
-                add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-            }
-
-            
-            Log.d("MarketplaceDebug", "Total items to post: ${this.size}")
-
-          }.let { 
-            Log.d("MarketplaceDebug", "Posting ${it.size} items to userLoadsData")
-            userLoadsData.postValue(it)
-              if(_tRes.first?.isNotEmpty() == true && paginateCount == 0)
-                  marketPlaceListShownTracked.postValue(true)
-          }
-
-        } else {
-          Log.e("MarketplaceDebug", "Error in marketplace data fetch: $error")
-          error?.handle()
-        }
-
-        dataLoadingLiveData.postValue(false)
-        Log.d("MarketplaceDebug", "Data loading completed")
+        return
       }
+      else -> { /* continue */ }
+    }
+    
+    // Step 2: Fetch actual data
+    val dataResult = transactionsRepository.fetchSpotMarketplaceTransactions(
+      onlyCount = false, limit = limit, offset = offset
+    )
+    
+    when (dataResult) {
+      is Resource.Success -> {
+        val _res = dataResult.data!!
+        val transactions = _res.transactions
+        
+        Log.d("MarketplaceDebug", "Data API Response - transactions: ${transactions?.size ?: 0}")
+        
+        // Update pagination state
+        offset = _res.offset ?: 0
+        if (total == 0) {
+          hasMoreData = false
+        }
+        hasMoreData = _res.hasNext ?: false
+        Log.d("MarketplaceDebug", "About to fetch bids for ${transactions?.size ?: 0} transactions")
+        
+        // Step 3: 2 parallel calls for bids
+        data class BidsResults(
+          val bids: Resource<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>>,
+          val lowestBids: Resource<Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>>
+        )
+        
+        val bidsResults = coroutineScope {
+          val bidsDeferred = async {
+            bidsRepository.bidsForLoads(transactions)
+          }
+          val lowestBidsDeferred = async {
+            bidsRepository.bulkLowestBidsForLoads(transactions)
+          }
+          
+          BidsResults(
+            bidsDeferred.await(),
+            lowestBidsDeferred.await()
+          )
+        }
+        
+        mainTrace.stop()
+        
+        // Extract bids data
+        val loads = transactions ?: emptyList()
+        val bids = when (bidsResults.bids) {
+          is Resource.Success -> bidsResults.bids.data?.second ?: emptyList()
+          else -> emptyList()
+        }
+        val lowestBids = when (bidsResults.lowestBids) {
+          is Resource.Success -> bidsResults.lowestBids.data?.second ?: emptyList()
+          else -> emptyList()
+        }
+        
+        Log.d("MarketplaceDebug", "Processing marketplace data - loads count: ${loads.size}, bids: ${bids.size}, lowestBids: ${lowestBids.size}")
+        
+        // Build UI items
+        mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+          add(Pair(HomeLoadsProgressItem(), Remove))
+          
+          add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
+          
+          // Cache the marketplace count (already set from the API response)
+          cachedMarketplaceCount = total
+          
+          // Fetch cross-tab counts (nested parallel call)
+          viewModelScope.launch {
+            data class CrossTabCounts(
+              val intracity: Resource<TransactionsResponse>,
+              val intercity: Resource<TransactionsResponse>
+            )
+            
+            val crossTabResults = coroutineScope {
+              val intracityDeferred = async {
+                transactionsRepository.fetchIntracityRecommTransactions(
+                  offset, userPrefs.demandType, vehicleTypes, null,
+                  filterVehicleType, true, onlyCount = true
+                )
+              }
+              val intercityDeferred = async {
+                transactionsRepository.fetchRecommTransactions(
+                  offset,
+                  filterDemandTypeForRecommendations(userPrefs.demandType),
+                  vehicleTypes, null, filterVehicleType, true,
+                  splitViewCount = true, searchAfter = null
+                )
+              }
+              
+              CrossTabCounts(
+                intracityDeferred.await(),
+                intercityDeferred.await()
+              )
+            }
+            
+            // Extract counts
+            val intracityCount = when (crossTabResults.intracity) {
+              is Resource.Success -> crossTabResults.intracity.data?.total ?: 0
+              else -> 0
+            }
+            
+            var intercityCount = 0
+            var nonDlvCount = 0
+            when (val intercityResult = crossTabResults.intercity) {
+              is Resource.Success -> {
+                intercityResult.data?.loadCounts?.all?.forEach { item ->
+                  when (item.key) {
+                    "INTERCITY" -> intercityCount = item.count ?: 0
+                    "NON_DELHIVERY" -> nonDlvCount = item.count ?: 0
+                  }
+                }
+              }
+              else -> { /* counts remain 0 */ }
+            }
+            
+            val totalAllCounts = intracityCount + intercityCount + nonDlvCount + cachedMarketplaceCount
+            fullLoadsCountLiveData.postValue(totalAllCounts)
+            
+            // Update filter with all counts
+            val filterItem = HomeLoadsFilterItem(
+              HomeLoadsFilterItemData(
+                "Marketplace", intracityCount, intercityCount,
+                nonDlvCount, cachedMarketplaceCount, userPrefs.demandType
+              )
+            )
+            userLoadsData.postValue(listOf(Pair(filterItem, AddUpdate)))
+          }
+          
+          // Add filter item with marketplace count (initial with 0 for other counts)
+          add(Pair(
+            HomeLoadsFilterItem(HomeLoadsFilterItemData(
+              "Marketplace", 0, 0, 0, cachedMarketplaceCount, userPrefs.demandType
+            )), AddUpdate
+          ))
+          
+          if (!paginate) {
+            if (userPrefs.verificationStatus.equals("failed")) {
+              add(Pair(HomeLoadsKycPendingItem(), AddUpdate))
+            } else {
+              add(Pair(HomeMarketPlaceInfoItem(), AddUpdate))
+            }
+          }
+          
+          if (total == 0 && !paginate) {
+            add(Pair(HomeLoadsWarningItem_NoLoads, AddUpdate))
+          }
+          
+          for ((index, load) in loads.toMutableList().withIndex()) {
+            try {
+              load.transactionId?.let { txnIds.add(it) }
+              
+              // Find and set lowest bid
+              val lowestBid = lowestBids.firstOrNull { b ->
+                b.transactionId.safeEquals(load.transactionId)
+              }
+              lowestBid?.let {
+                load.lowestBid = it.minBid
+                load.numBids = it.numBids
+              }
+              load.loadPricePercent = loadPricePercent
+              
+              // Find and set transaction bid
+              val transactionBid = bids.firstOrNull { b ->
+                b.transactionId.safeEquals(load.transactionId)
+              }
+              load.transactionBid = transactionBid
+              
+            } catch (e: Exception) {
+              Log.d("No Bid found for: ", load.transactionId ?: "")
+            }
+            
+            populatePaymentFields(load)
+            
+            if (index.rem(HomeLoadsAddTruckItemDataConfig) == 0 && index != 0) {
+              add(Pair(HomeLoadsAddTruckItem(), Add))
+            }
+            add(Pair(HomeLoadsMarketplaceItem(load), Add))
+            Log.d("MarketplaceDebug", "Added marketplace item ${index + 1}: transactionId=${load.transactionId}")
+          }
+          
+          if (!hasMoreData && !hasOrionLoadOnce) {
+            add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
+          }
+          
+          Log.d("MarketplaceDebug", "Total items to post: ${this.size}")
+        }.let {
+          Log.d("MarketplaceDebug", "Posting ${it.size} items to userLoadsData")
+          userLoadsData.postValue(it)
+          if (transactions?.isNotEmpty() == true && paginateCount == 0) {
+            marketPlaceListShownTracked.postValue(true)
+          }
+        }
+      }
+      
+      is Resource.Failure -> {
+        mainTrace.stop()
+        Log.e("HomeLoadsViewModel", "Error fetching marketplace data: ${dataResult.apiError}")
+      }
+      
+      is Resource.Loading -> { /* not expected */ }
+    }
   }
 
   /**
@@ -1241,7 +1271,7 @@ class HomeLoadsViewModel @Inject constructor(
    * Fetch lowest bid of a particular transaction
    */
   fun fetchLowestBid(transaction: HomeBidsRequestItemData, pos: Int) {
-    compositeDisposable += bidsRepository.bulkLowestBidsForLoads(listOf(transaction))
+    compositeDisposable += bidsRepository.bulkLowestBidsForLoadsRx(listOf(transaction))
         .onBackground()
         .progress()
         .subscribe { res, error ->

@@ -38,32 +38,130 @@ class TransactionsRepository @Inject constructor(
   ).convertResponse()
 
   /**
-   * Get user transactions
+   * Get user transactions - Coroutine version
    */
-  fun fetchRecommTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, splitViewCount:Boolean?=null, searchAfter: SearchAfter?) =
-         recommendationService.recommendationTransactions(
-           ReccomdationRequest( userPrefs.parentId,UserTripsLoadLimit,offset,
-             demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter )
-          ).convertResponse()
+  suspend fun fetchRecommTransactions(
+    offset: Int,
+    demand_type: String,
+    vehicle_type: String? = null,
+    excludeTruckTypes: String? = null,
+    filterVehicleType: Boolean? = null,
+    biddingGoingOn: Boolean = false,
+    splitViewCount: Boolean? = null,
+    searchAfter: SearchAfter?
+  ): Resource<com.delhivery.axle.api.response.TransactionsResponse> = safeApiCall {
+    val response = recommendationService.recommendationTransactions(
+      ReccomdationRequest(
+        userPrefs.parentId, UserTripsLoadLimit, offset,
+        demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter
+      )
+    )
+    if (response.isSuccess) {
+      response.responseData ?: throw Exception("Null response data")
+    } else {
+      throw response.toHttpException()
+    }
+  }
 
   /**
-   * Get user intracity transactions
+   * Get user intracity transactions - Coroutine version
    */
-  fun fetchIntracityRecommTransactions(offset: Int, demand_type: String?=null, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, onlyCount:Boolean?=null, searchAfter: SearchAfter?= null) =
-    recommendationService.recommendationIntracityTransactions(
-      ReccomdationRequest(userPrefs.parentId,UserTripsLoadLimit,offset,
-        null, vehicle_type, onlyCount = onlyCount, searchAfter = searchAfter)
-    ).convertResponse()
+  suspend fun fetchIntracityRecommTransactions(
+    offset: Int,
+    demand_type: String? = null,
+    vehicle_type: String? = null,
+    excludeTruckTypes: String? = null,
+    filterVehicleType: Boolean? = null,
+    biddingGoingOn: Boolean = false,
+    onlyCount: Boolean? = null,
+    searchAfter: SearchAfter? = null
+  ): Resource<com.delhivery.axle.api.response.TransactionsResponse> = safeApiCall {
+    android.util.Log.d("TransactionsRepository", "fetchIntracityRecommTransactions called with parentId=${userPrefs.parentId}, offset=$offset")
+    val response = recommendationService.recommendationIntracityTransactions(
+      ReccomdationRequest(
+        userPrefs.parentId, UserTripsLoadLimit, offset,
+        null, vehicle_type, onlyCount = onlyCount, searchAfter = searchAfter
+      )
+    )
+    android.util.Log.d("TransactionsRepository", "API response received: isSuccess=${response.isSuccess}, hasData=${response.responseData != null}")
+    if (response.isSuccess) {
+      response.responseData ?: throw Exception("Null response data")
+    } else {
+      android.util.Log.e("TransactionsRepository", "API returned success=false, errorBody=${response.errorBody}")
+      throw response.toHttpException()
+    }
+  }
 
   /**
-   * Get spot marketplace transactions
+   * Get user intracity transactions - RxJava version for backward compatibility
+   * Uses runBlocking as a bridge since the service only has suspend version
    */
-  fun fetchSpotMarketplaceTransactions(onlyCount: Boolean = false, limit: Int = UserTripsLoadLimit, offset: Int) =
-    transactionService.spotMarketplaceTransactions(
-      onlyCount = onlyCount,
-      limit = limit,
-      offset = offset
-    ).convertResponse()
+  fun fetchIntracityRecommTransactionsRx(
+    offset: Int,
+    demand_type: String? = null,
+    vehicle_type: String? = null,
+    excludeTruckTypes: String? = null,
+    filterVehicleType: Boolean? = null,
+    biddingGoingOn: Boolean = false,
+    onlyCount: Boolean? = null,
+    searchAfter: SearchAfter? = null
+  ) = io.reactivex.Single.fromCallable {
+    kotlinx.coroutines.runBlocking {
+      val response = recommendationService.recommendationIntracityTransactions(
+        ReccomdationRequest(
+          userPrefs.parentId, UserTripsLoadLimit, offset,
+          null, vehicle_type, onlyCount = onlyCount, searchAfter = searchAfter
+        )
+      )
+      if (response.isSuccess) {
+        response.responseData ?: throw Exception("Null response data")
+      } else {
+        throw response.toHttpException()
+      }
+    }
+  }
+
+  /**
+   * Get spot marketplace transactions - Coroutine version
+   */
+  suspend fun fetchSpotMarketplaceTransactions(
+    onlyCount: Boolean = false,
+    limit: Int = UserTripsLoadLimit,
+    offset: Int
+  ): Resource<com.delhivery.axle.api.response.SpotMarketplaceLoadsData> = safeApiCall {
+    // Use RxJava version with runBlocking bridge since TransactionService uses RxJava retrofit
+    kotlinx.coroutines.runBlocking {
+      val response = transactionService.spotMarketplaceTransactions(
+        onlyCount = onlyCount,
+        limit = limit,
+        offset = offset
+      ).blockingGet()
+      if (response.isSuccess) {
+        response.responseData ?: throw Exception("Null response data")
+      } else {
+        throw response.toHttpException()
+      }
+    }
+  }
+
+  /**
+   * Get spot marketplace transactions - RxJava version for backward compatibility
+   */
+  fun fetchSpotMarketplaceTransactionsRx(
+    onlyCount: Boolean = false,
+    limit: Int = UserTripsLoadLimit,
+    offset: Int
+  ) = transactionService.spotMarketplaceTransactions(
+    onlyCount = onlyCount,
+    limit = limit,
+    offset = offset
+  ).map { response ->
+    if (response.isSuccess) {
+      response.responseData ?: throw Exception("Null response data")
+    } else {
+      throw response.toHttpException()
+    }
+  }
 
   /**
    * Get contracts transactions

@@ -49,7 +49,7 @@ class ErrorUtils @Inject constructor(
     val errorCode = HttpErrorCode.exceptionFromCode(code())
     val errorResponseBody = try {
       gson.fromJson(
-          response().errorBody()?.string(), ErrorResponseBody::class.java
+          response()?.errorBody()?.string(), ErrorResponseBody::class.java
       )
     } catch (e: Exception) {
       //parsing exception

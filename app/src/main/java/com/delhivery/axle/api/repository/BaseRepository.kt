@@ -43,6 +43,7 @@ abstract class BaseRepository(
             throw e
         } catch (e: SocketTimeoutException) {
             errorLogger.log(e)
+            android.util.Log.e("BaseRepository", "SocketTimeoutException in safeApiCall", e)
             Resource.Failure(
                 isNetworkError = true,
                 errorCode = null,
@@ -50,6 +51,7 @@ abstract class BaseRepository(
             )
         } catch (e: IOException) {
             errorLogger.log(e)
+            android.util.Log.e("BaseRepository", "IOException in safeApiCall", e)
             Resource.Failure(
                 isNetworkError = true,
                 errorCode = null,
@@ -57,6 +59,7 @@ abstract class BaseRepository(
             )
         } catch (e: HttpException) {
             errorLogger.log(e)
+            android.util.Log.e("BaseRepository", "HttpException in safeApiCall: code=${e.code()}, message=${e.message()}", e)
             Resource.Failure(
                 isNetworkError = false,
                 errorCode = e.code(),
@@ -64,6 +67,7 @@ abstract class BaseRepository(
             )
         } catch (e: Exception) {
             errorLogger.log(e)
+            android.util.Log.e("BaseRepository", "Unknown exception in safeApiCall: ${e.javaClass.simpleName} - ${e.printStackTrace()}", e)
             Resource.Failure(
                 isNetworkError = false,
                 errorCode = null,

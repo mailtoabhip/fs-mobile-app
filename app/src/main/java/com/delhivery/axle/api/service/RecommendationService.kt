@@ -4,7 +4,6 @@ import com.delhivery.axle.api.request.ReccomdationRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.TransactionsResponse
 
-import io.reactivex.Single
 import retrofit2.http.*
 
 /**
@@ -13,16 +12,19 @@ import retrofit2.http.*
 interface RecommendationService {
 
     /**
-     * Recommendation transactions
+     * Recommendation transactions - Coroutine version
      */
     @POST("/get_sp_loads")
-    fun recommendationTransactions(
+    suspend fun recommendationTransactions(
       @Body request: ReccomdationRequest
-    ): Single<BaseResponse<TransactionsResponse>>
+    ): BaseResponse<TransactionsResponse>
 
+    /**
+     * Intracity recommendation transactions - Coroutine version
+     */
     @POST("/get_sp_intracity_loads")
-    fun recommendationIntracityTransactions(
+    suspend fun recommendationIntracityTransactions(
         @Body request: ReccomdationRequest
-    ): Single<BaseResponse<TransactionsResponse>>
+    ): BaseResponse<TransactionsResponse>
 
 }

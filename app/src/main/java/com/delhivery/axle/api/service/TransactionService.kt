@@ -154,4 +154,14 @@ interface TransactionService {
     @Query("limit") limit: Int,
     @Query("offset")  offset: Int
   ): Single<BaseResponse<SpotMarketplaceLoadsData>>
+
+  /**
+   * Spot marketplace transactions - Coroutine version
+   */
+  @GET("/v2/spot-marketplace/loads/")
+  suspend fun spotMarketplaceTransactionsSuspend(
+    @Query("only_count") onlyCount: Boolean = false,
+    @Query("limit") limit: Int,
+    @Query("offset")  offset: Int
+  ): BaseResponse<SpotMarketplaceLoadsData>
 }

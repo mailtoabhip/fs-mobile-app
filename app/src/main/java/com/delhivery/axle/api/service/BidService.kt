@@ -98,6 +98,16 @@ interface BidService {
   ): Single<BaseResponse<TransactionBidsResponseBody>>
 
   /**
+   * Get all user bids for loads basis transaction ids - Coroutine version
+   */
+  @GET("bids")
+  suspend fun bidsForLoadsSuspend(
+    @Query("supplier_id") userId: String,
+    @Query("transaction_ids") transactionIds: String? = null,
+    @Query("contract_bids") contractBids: Boolean?=null
+  ): BaseResponse<TransactionBidsResponseBody>
+
+  /**
    * List of trips
    */
   @GET("bids/axle")
@@ -131,4 +141,12 @@ interface BidService {
   fun bulkLowestBidsForTransactions(
     @Query("transaction_id_list") transactionIds: String
   ): Single<BaseResponse<List<LowestBidResponse>>>
+
+  /**
+   * Get lowest bid for [transactionIds] - Coroutine version
+   */
+  @GET("/bids/lowest")
+  suspend fun bulkLowestBidsForTransactionsSuspend(
+    @Query("transaction_id_list") transactionIds: String
+  ): BaseResponse<List<LowestBidResponse>>
 }

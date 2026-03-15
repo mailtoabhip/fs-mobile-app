@@ -71,7 +71,7 @@ class NetworkModule {
       .build()
 
   /**
-   * Get retrofit instance for
+   * Get retrofit instance for RxJava-based services
    *
    * @param urlConfig
    */
@@ -83,6 +83,24 @@ class NetworkModule {
       .baseUrl(urlConfig.url())
       .addConverterFactory(GsonConverterFactory.create(gson))
       .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+      .client(okHttpClient)
+      .build()
+
+  /**
+   * Get retrofit instance for Coroutines-based services (suspend functions)
+   * 
+   * Note: No call adapter factory is added. Retrofit 2.6+ has built-in support 
+   * for Kotlin coroutines (suspend functions).
+   *
+   * @param urlConfig
+   */
+  private fun getRetrofitForCoroutines(
+    gson: Gson,
+    okHttpClient: OkHttpClient,
+    urlConfig: UrlConfig
+  ) = Retrofit.Builder()
+      .baseUrl(urlConfig.url())
+      .addConverterFactory(GsonConverterFactory.create(gson))
       .client(okHttpClient)
       .build()
 
@@ -152,6 +170,10 @@ class NetworkModule {
 
   /**
    * Provide [TransactionService]
+   * 
+   * Note: Uses getRetrofit (with RxJava adapter) because TransactionService 
+   * contains both RxJava methods and suspend functions. The suspend function
+   * (spotMarketplaceTransactionsSuspend) will be handled via runBlocking bridge.
    */
   @Provides
   @Singleton
@@ -348,6 +370,9 @@ class NetworkModule {
 
   /**
    * Provide [Recommendation]
+   * 
+   * Note: Uses getRetrofitForCoroutines because RecommendationService 
+   * contains suspend functions for coroutines-based API calls.
    */
 
   @Provides
@@ -355,7 +380,7 @@ class NetworkModule {
   fun provideRecommendationService(
           gson: Gson,
           okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.RecommendationService).create(
+  ) = getRetrofitForCoroutines(gson, okHttpClient, UrlConfig.RecommendationService).create(
           RecommendationService::class.java
   )
 

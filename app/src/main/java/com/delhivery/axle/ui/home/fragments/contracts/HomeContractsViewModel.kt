@@ -157,8 +157,8 @@ class HomeContractsViewModel@Inject constructor(
           }
 
         Single.zip(
-          bidsRepository.bidsForLoads(filteredTransactions,true).subscribeOn(Schedulers.io()),
-          bidsRepository.bulkLowestBidsForLoads(filteredTransactions).subscribeOn(Schedulers.io()),
+          bidsRepository.bidsForLoadsRx(filteredTransactions,true).subscribeOn(Schedulers.io()),
+          bidsRepository.bulkLowestBidsForLoadsRx(filteredTransactions).subscribeOn(Schedulers.io()),
           transactionsRepository.fetchContractsSummaryCount().subscribeOn(Schedulers.io()),
           // Fetch intercity contracts for count calculation
           transactionsRepository.fetchContractsTransactions(

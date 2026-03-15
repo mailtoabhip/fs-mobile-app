@@ -116,8 +116,8 @@ class SearchResultsViewModel @Inject constructor(
           this.offset=t.offset
           this.loadPricePercent = t.loadPricePercent
           Single.zip(
-            bidsRepository.bidsForLoads(t.transactions, requestType=="contract").subscribeOn(Schedulers.io()),
-            bidsRepository.bulkLowestBidsForLoads(t.transactions).subscribeOn(Schedulers.io()),
+            bidsRepository.bidsForLoadsRx(t.transactions, requestType=="contract").subscribeOn(Schedulers.io()),
+            bidsRepository.bulkLowestBidsForLoadsRx(t.transactions).subscribeOn(Schedulers.io()),
             BiFunction<Pair<List<HomeBidsRequestItemData>, List<TransactionBid>>, Pair<List<HomeBidsRequestItemData>, List<LowestBidResponse>>,
                 Triple<List<HomeBidsRequestItemData>, List<TransactionBid>, List<LowestBidResponse>>> { t1, t2 ->
               Triple(t1.first, t1.second, t2.second)
@@ -395,7 +395,7 @@ class SearchResultsViewModel @Inject constructor(
    * Fetch lowest bid of a particular transaction
    */
   fun fetchLowestBid(transaction: HomeBidsRequestItemData, pos: Int) {
-    compositeDisposable += bidsRepository.bulkLowestBidsForLoads(listOf(transaction))
+    compositeDisposable += bidsRepository.bulkLowestBidsForLoadsRx(listOf(transaction))
       .onBackground()
       .progress()
       .subscribe { res, error ->
