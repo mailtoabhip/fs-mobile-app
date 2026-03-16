@@ -356,7 +356,54 @@
             android:layout_height="wrap_content"
             />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_settled_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:textSize="10sp"
+            android:textColor="@color/sub_heading_black"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/icon_settled"
+            app:layout_constraintTop_toBottomOf="@+id/tvSettled"
+            tools:text="Payment made at 12-Dec-2025 12:30 PM"
+            tools:visibility="visible"/>
+
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_Refresh"
+        style="@style/ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Refresh"
+        android:textAllCaps="false"
+        android:visibility="@{tripSettled ? View.GONE : View.VISIBLE}"
+        app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_download_invoice"
+        style="@style/ActionButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Download Invoice"
+        android:textAllCaps="false"
+        android:visibility="@{tripSettled ? View.VISIBLE : View.GONE}"
+        app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

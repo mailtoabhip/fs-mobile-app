@@ -92,7 +92,8 @@ data class  PaymentsResponse(
         @SerializedName("loaded_time") val loadedTime: String? = "",
         @SerializedName("tds_deducted") val tdsDeducted: Double,
         @SerializedName("vendor_name") val vendorName: String? = "",
-        @SerializedName("payee_type") val payeeType: String? = ""
+        @SerializedName("payee_type") val payeeType: String? = "",
+        @SerializedName("payment_at") val paymentTimestamp: String? = null
 )
 
 /**
@@ -103,7 +104,8 @@ data class TripPaymentsResponse(
   @SerializedName("bank_transaction_id") val bankTransactionId: String,
   @SerializedName("amount") var amount: Double,
   @SerializedName("transfer_time") val transferTime: String?,
-  @SerializedName("remarks") var remark: String? = ""
+  @SerializedName("remarks") var remark: String? = "",
+  @SerializedName("payment_at") val paymentTimestamp: String? = null
 ) {
 
   /**
