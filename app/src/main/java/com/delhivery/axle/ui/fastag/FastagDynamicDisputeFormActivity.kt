@@ -31,6 +31,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     override fun requireConnection() = true
 
     private var disputeTypeCode: String = ""
+    private var disputeTitle: String = ""
     private var transactionId: String? = null
     private var fastagId: String = ""
     private var tollPlazaId: String = ""
@@ -45,6 +46,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private var additionalDocCount = 0
 
     companion object {
+        private const val MAX_TOTAL_UPLOADS = 3
+        const val DISPUTE_TITLE = "dispute_title"
         const val EXTRA_DISPUTE_TYPE_CODE = "dispute_type_code"
         const val EXTRA_SELECTED_TRANSACTION_ID = "selected_transaction_id"
         const val EXTRA_FASTAG_ID = "fastag_id"
@@ -93,6 +96,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private fun setupUI() {
         // Get intent extras
         disputeTypeCode = intent.getStringExtra(EXTRA_DISPUTE_TYPE_CODE) ?: ""
+        disputeTitle = intent.getStringExtra(DISPUTE_TITLE) ?: ""
         transactionId = intent.getStringExtra(EXTRA_SELECTED_TRANSACTION_ID)
         fastagId = intent.getStringExtra(EXTRA_FASTAG_ID) ?: ""
         tollPlazaId = intent.getStringExtra(EXTRA_TOLL_PLAZA_ID) ?: ""
@@ -188,13 +192,12 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         }
 
         // Observe form configuration
-//        viewModel.formConfigData.observe(this) { formConfig ->//todo check
-//            // Update issue category title from API response
-//            binding.tvIssueTitle.text = formConfig.issueCategory
-//
-//            // Render form fields
-//            renderFormFields(formConfig.fields)
-//        }
+        viewModel.formConfigData.observe(this) { formConfig ->
+            binding.tvIssueTitle.text = disputeTitle
+
+            // Render form fields
+            renderFormFields(formConfig.fields)
+        }
 
         // Observe validation state
         viewModel.validationStateData.observe(this) { validationMap ->
@@ -227,33 +230,57 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         // Sort fields by display order
         val sortedFields = fields.sortedBy { it.displayOrder }
 
-        // Separate text/number fields from file fields
-        val textFields = sortedFields.filter { it.fieldTypeEnum != FieldType.FILE }
         val fileFields = sortedFields.filter { it.fieldTypeEnum == FieldType.FILE }
+        var fileHeaderInserted = false
 
-        // Render text/number fields in the main form container
-        textFields.forEach { field ->
-            val fieldView = createTextInputView(field)
-            binding.llFormFields.addView(fieldView)
-            fieldViews[field.fieldId] = fieldView
-        }
-
-        // Render file fields in the dedicated file section
+        // Prepare file upload header/hint info
         if (fileFields.isNotEmpty()) {
-            binding.llUploadDocumentsHeader.visibility = View.VISIBLE
-            binding.llFileSizeHint.visibility = View.VISIBLE
-            binding.llAdditionalDocuments.visibility = View.VISIBLE
-
-            // Build file size hint from field configs
             val maxSize = fileFields.mapNotNull { it.maxFileSizeMB }.maxOrNull() ?: 2
             val allowedTypes = fileFields.flatMap { it.allowedFileTypes ?: emptyList() }.distinct().joinToString(", ")
-            binding.tvFileSizeHint.text = "Maximum file size: 100Kb to ${maxSize}.0MB per document. ${allowedTypes.ifEmpty { "JPG, PNG" }} only"
+            binding.tvFileSizeHint.text = "Maximum file size: ${maxSize} MB per document. ${allowedTypes.ifEmpty { "JPEG," }} only"
+        }
 
-            fileFields.forEach { field ->
-                val fieldView = createFileUploadView(field)
-                binding.llFileFields.addView(fieldView)
-                fieldViews[field.fieldId] = fieldView
+        // Hide the XML-positioned containers — we'll reparent them inline
+        binding.llUploadDocumentsHeader.visibility = View.GONE
+        binding.llFileSizeHint.visibility = View.GONE
+
+        // Find the index of the last FILE field to know when to insert the hint
+        val lastFileIndex = sortedFields.indexOfLast { it.fieldTypeEnum == FieldType.FILE }
+
+        // Render all fields in displayOrder into the single form container
+        sortedFields.forEachIndexed { index, field ->
+            // Insert upload header before the first FILE field
+            if (field.fieldTypeEnum == FieldType.FILE && !fileHeaderInserted) {
+                fileHeaderInserted = true
+
+                // Reparent header into llFormFields
+                (binding.llUploadDocumentsHeader.parent as? android.view.ViewGroup)?.removeView(binding.llUploadDocumentsHeader)
+                binding.llUploadDocumentsHeader.visibility = View.VISIBLE
+                binding.llFormFields.addView(binding.llUploadDocumentsHeader)
             }
+
+            val fieldView = if (field.fieldTypeEnum == FieldType.FILE) {
+                createFileUploadView(field)
+            } else {
+                createTextInputView(field)
+            }
+            binding.llFormFields.addView(fieldView)
+            fieldViews[field.fieldId] = fieldView
+
+            // Insert file size hint right after the last FILE field
+            if (index == lastFileIndex && fileFields.isNotEmpty()) {
+                (binding.llFileSizeHint.parent as? android.view.ViewGroup)?.removeView(binding.llFileSizeHint)
+                binding.llFileSizeHint.visibility = View.VISIBLE
+                binding.llFormFields.addView(binding.llFileSizeHint)
+            }
+        }
+
+        // Show additional documents section if there are file fields and limit not reached
+        if (fileFields.isNotEmpty()) {
+            // Reparent additional documents section into llFormFields
+            (binding.llAdditionalDocuments.parent as? android.view.ViewGroup)?.removeView(binding.llAdditionalDocuments)
+            binding.llFormFields.addView(binding.llAdditionalDocuments)
+            updateAdditionalDocVisibility()
         }
     }
 
@@ -387,11 +414,32 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
             binding.llAdditionalFileFields.removeView(view)
             viewModel.removeFile(fieldId)
             fieldViews.remove(fieldId)
+            updateAdditionalDocVisibility()
         }
 
         binding.llAdditionalFileFields.addView(view)
         fieldViews[fieldId] = view
         viewModel.setFileUri(fieldId, uri, this)
+        updateAdditionalDocVisibility()
+    }
+
+    /**
+     * Count total file uploads (API file fields + additional docs) and
+     * hide the additional documents section when the limit is reached.
+     */
+    private fun getTotalFileUploadCount(): Int {
+        val apiFileCount = fieldViews.count { (id, _) -> !id.startsWith("additional_doc_") && fieldViews[id] is DynamicFileUploadView }
+        val additionalFileCount = fieldViews.count { (id, _) -> id.startsWith("additional_doc_") }
+        return apiFileCount + additionalFileCount
+    }
+
+    private fun updateAdditionalDocVisibility() {
+        binding.llAdditionalDocuments.visibility = View.VISIBLE
+        if (getTotalFileUploadCount() >= MAX_TOTAL_UPLOADS) {
+            binding.btnAddDocument.visibility = View.GONE
+        } else {
+            binding.btnAddDocument.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroy() {

@@ -52,11 +52,9 @@ object FormValidator {
             }
         }
 
-        // Check validation rule (regex) - skip if minLength/maxLength already handle length validation
+        // Check validation rule
         field.validationRule?.let { rule ->
-            // Skip regex validation if minLength or maxLength are specified (they already validate length)
-            val hasLengthConstraints = field.minLength != null || field.maxLength != null
-            if (!hasLengthConstraints && !evaluateComplexValidation(value, rule)) {
+            if (!evaluateTextValidationRule(value, rule)) {
                 return ValidationResult(
                     isValid = false,
                     errorMessage = field.validationErrorMessage 
@@ -155,31 +153,82 @@ object FormValidator {
         }
 
         uri?.let { fileUri ->
+            // Parse validationRule for FILE_TYPE and MAX_SIZE if present
+            val ruleAllowedTypes = field.validationRule?.let { parseFileTypes(it) }
+            val ruleMaxSizeMB = field.validationRule?.let { parseMaxSizeMB(it) }
+
+            // Use validationRule values, fall back to dedicated fields
+            val allowedTypes = ruleAllowedTypes ?: field.allowedFileTypes
+            val maxSizeMB = ruleMaxSizeMB ?: field.maxFileSizeMB
+
             // Validate file type
-            field.allowedFileTypes?.let { allowedTypes ->
+            allowedTypes?.let { types ->
                 val extension = getFileExtension(fileUri, context)
-                if (!allowedTypes.any { it.equals(extension, ignoreCase = true) }) {
+                if (!types.any { it.equals(extension, ignoreCase = true) }) {
                     return ValidationResult(
                         isValid = false,
-                        errorMessage = "Only ${allowedTypes.joinToString(", ")} files are allowed"
+                        errorMessage = field.validationErrorMessage
+                            ?: "Only ${types.joinToString(", ")} files are allowed"
                     )
                 }
             }
 
             // Validate file size
-            field.maxFileSizeMB?.let { maxSizeMB ->
+            maxSizeMB?.let { maxSize ->
                 val fileSizeBytes = getFileSize(fileUri, context)
                 val fileSizeMB = fileSizeBytes / (1024.0 * 1024.0)
-                if (fileSizeMB > maxSizeMB) {
+                if (fileSizeMB > maxSize) {
                     return ValidationResult(
                         isValid = false,
-                        errorMessage = "File size exceeds ${maxSizeMB}MB limit"
+                        errorMessage = field.validationErrorMessage
+                            ?: "File size exceeds ${maxSize}MB limit"
                     )
                 }
             }
         }
 
         return ValidationResult(isValid = true)
+    }
+
+    /**
+     * Evaluate validation rule for TEXT/TEXTAREA fields.
+     * Supports: "MIN_LENGTH:10, MAX_LENGTH:500" style and regex/complex rules.
+     */
+    private fun evaluateTextValidationRule(value: String, rule: String): Boolean {
+        // Check for MIN_LENGTH / MAX_LENGTH directives
+        if (rule.contains("MIN_LENGTH", ignoreCase = true) || rule.contains("MAX_LENGTH", ignoreCase = true)) {
+            val parts = rule.split(",").map { it.trim() }
+            for (part in parts) {
+                val keyValue = part.split(":").map { it.trim() }
+                if (keyValue.size == 2) {
+                    val key = keyValue[0].uppercase()
+                    val num = keyValue[1].toIntOrNull()
+                    if (key == "MIN_LENGTH" && num != null && value.length < num) return false
+                    if (key == "MAX_LENGTH" && num != null && value.length > num) return false
+                }
+            }
+            return true
+        }
+        // Fallback to complex validation (regex + AND expressions)
+        return evaluateComplexValidation(value, rule)
+    }
+
+    /**
+     * Parse FILE_TYPE from validationRule string.
+     * e.g. "FILE_TYPE: [JPG, JPEG, PNG], MAX_SIZE: 2MB" -> ["JPG", "JPEG", "PNG"]
+     */
+    private fun parseFileTypes(rule: String): List<String>? {
+        val match = Regex("FILE_TYPE\\s*:\\s*\\[([^]]+)]", RegexOption.IGNORE_CASE).find(rule)
+        return match?.groupValues?.get(1)?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
+    }
+
+    /**
+     * Parse MAX_SIZE from validationRule string.
+     * e.g. "FILE_TYPE: [JPG, JPEG, PNG], MAX_SIZE: 2MB" -> 2
+     */
+    private fun parseMaxSizeMB(rule: String): Int? {
+        val match = Regex("MAX_SIZE\\s*:\\s*(\\d+)\\s*MB", RegexOption.IGNORE_CASE).find(rule)
+        return match?.groupValues?.get(1)?.toIntOrNull()
     }
 
     /**

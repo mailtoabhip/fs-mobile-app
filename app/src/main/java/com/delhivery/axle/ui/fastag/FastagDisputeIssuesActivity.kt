@@ -73,9 +73,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
 
         viewModel.disputeIssuesData.observe(this) { response ->
             response.disputeTypes?.let { issues ->
-                val activeIssues = issues.filter { it.status == "ACTIVE" }
-                    .sortedBy { it.sortOrder }
-                adapter.submitList(activeIssues)
+                adapter.submitList(issues)
             }
         }
 
@@ -95,6 +93,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
         } else {
             // No transaction required - go directly to dispute form
             val intent = Intent(this, FastagDynamicDisputeFormActivity::class.java).apply {
+                putExtra(FastagDynamicDisputeFormActivity.DISPUTE_TITLE, disputeType.displayName)
                 putExtra(FastagDynamicDisputeFormActivity.EXTRA_DISPUTE_TYPE_CODE, disputeType.code)
                 putExtra(FastagDynamicDisputeFormActivity.EXTRA_FASTAG_ID, fastagId)
                 putExtra(FastagDynamicDisputeFormActivity.EXTRA_SHOW_TRANSACTION, false)

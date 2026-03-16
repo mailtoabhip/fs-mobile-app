@@ -260,113 +260,17 @@ class LoadboardRepository @Inject constructor(
         doc3: okhttp3.MultipartBody.Part?
     ): io.reactivex.Single<DisputeSubmissionResponse> {
         val plain = okhttp3.MediaType.parse("text/plain")
-        val additionalTxnIdBody = additionalTxnId?.let { okhttp3.RequestBody.create(plain, it) }
         return loadboardService.submitDispute(
             okhttp3.RequestBody.create(plain, txnId),
             okhttp3.RequestBody.create(plain, tollPlazaId),
             okhttp3.RequestBody.create(plain, refundAmount.toString()),
             okhttp3.RequestBody.create(plain, comment),
             okhttp3.RequestBody.create(plain, raisedAgainst),
-            additionalTxnIdBody,
+            additionalTxnId?.let { okhttp3.RequestBody.create(plain, it) },
             doc1,
             doc2,
             doc3
         ).convertResponse()
     }
 
-}
-
-/**
- * Mock data for FASTag transactions by toll plaza
- * Remove this object when the real API is deployed
- */
-object FastagTransactionsByTollPlazaMock {
-    fun getMockResponse(): FastagTransactionsByTollPlazaResponse {
-        return FastagTransactionsByTollPlazaResponse(
-            totalCount = "15",
-            nextOffset = "10",
-            transactions = listOf(
-                FastagTransactionByTollPlaza(
-                    txnId = "TXN001",
-                    tollPlazaName = "Delhi-Gurgaon Toll Plaza",
-                    txnAmount = 120.00,
-                    txnType = "DEBIT",
-                    tollPlazaId = "TOLL_001",
-                    txnDateTime = "2025-01-20T10:30:45Z"
-                ),
-                FastagTransactionByTollPlaza(
-                    txnId = "TXN002",
-                    tollPlazaName = "Mumbai-Pune Expressway",
-                    txnAmount = 250.00,
-                    txnType = "DEBIT",
-                    tollPlazaId = "TOLL_002",
-                    txnDateTime = "2025-01-19T14:15:30Z"
-                ),
-                FastagTransactionByTollPlaza(
-                    txnId = "TXN003",
-                    tollPlazaName = "Bangalore-Mysore Highway",
-                    txnAmount = 85.00,
-                    txnType = "DEBIT",
-                    tollPlazaId = "TOLL_003",
-                    txnDateTime = "2025-01-18T09:45:20Z"
-                ),
-                FastagTransactionByTollPlaza(
-                    txnId = "TXN004",
-                    tollPlazaName = "Chennai-Trichy Toll",
-                    txnAmount = 95.00,
-                    txnType = "DEBIT",
-                    tollPlazaId = "TOLL_004",
-                    txnDateTime = "2025-01-17T16:20:10Z"
-                ),
-                FastagTransactionByTollPlaza(
-                    txnId = "TXN005",
-                    tollPlazaName = "Hyderabad-Vijayawada Toll",
-                    txnAmount = 110.00,
-                    txnType = "DEBIT",
-                    tollPlazaId = "TOLL_005",
-                    txnDateTime = "2025-01-16T11:30:00Z"
-                )
-            )
-        )
-    }
-}
-
-
-object DisputeIssuesMock {
-    fun getMockResponse(): DisputeIssuesResponse {
-        return DisputeIssuesResponse(
-            disputeTypes = listOf(
-                DisputeType(
-                    code = "SERVICE_NOT_AVAILED",
-                    displayName = "Did not recognize this transaction",
-                    sortOrder = 1,
-                    status = "ACTIVE",
-                    addTxnReq = false
-                ),
-                DisputeType(
-                    code = "DUPLICATE_TRANSACTION",
-                    displayName = "Duplicate Transactions done at Toll Plaza",
-                    sortOrder = 2,
-                    status = "ACTIVE",
-                    addTxnReq = true,
-                    title = "Please select the duplicate transaction",
-                    subTitle = "Choose from the following transactions……."
-                ),
-                DisputeType(
-                    code = "VEHICLE_EXEMPTED",
-                    displayName = "Vehicle was in exempted list",
-                    sortOrder = 3,
-                    status = "ACTIVE",
-                    addTxnReq = false
-                ),
-                DisputeType(
-                    code = "EXCESS_DEBIT",
-                    displayName = "Overcharged / Excess debited",
-                    sortOrder = 4,
-                    status = "ACTIVE",
-                    addTxnReq = false
-                )
-            )
-        )
-    }
 }

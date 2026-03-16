@@ -7,6 +7,7 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
@@ -80,6 +81,17 @@ class DynamicTextInputView @JvmOverloads constructor(
                 binding.etInput.setLines(5)
                 binding.etInput.isVerticalScrollBarEnabled = true
                 binding.etInput.setHorizontallyScrolling(false)
+
+                // Allow parent ScrollView to scroll when TEXTAREA content doesn't need scrolling
+                binding.etInput.setOnTouchListener { v, event ->
+                    if (v.canScrollVertically(1) || v.canScrollVertically(-1)) {
+                        v.parent.requestDisallowInterceptTouchEvent(true)
+                        if (event.action == MotionEvent.ACTION_UP) {
+                            v.parent.requestDisallowInterceptTouchEvent(false)
+                        }
+                    }
+                    false
+                }
             }
             FieldType.TEXT -> {
                 binding.etInput.inputType = InputType.TYPE_CLASS_TEXT or 

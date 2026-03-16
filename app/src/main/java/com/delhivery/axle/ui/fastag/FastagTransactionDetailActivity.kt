@@ -71,8 +71,10 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
     private fun observeData() {
         viewModel.progressData.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.scrollContent.visibility = if (isLoading) View.GONE else View.VISIBLE
+            if (isLoading) {
+                binding.btnRaiseDispute.visibility = View.GONE
+            }
         }
 
         viewModel.transactionDisputeData.observe(this) { response ->
@@ -95,6 +97,9 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
         binding.tvTollName.text = response.tollPlazaName ?: ""
         binding.tvTransactionId.text = response.txnId ?: ""
         binding.tvDateTime.text = formatDateTime(response.txnDatetime)
+
+        // Show raise dispute button only for TOLL DEBIT transactions
+        binding.btnRaiseDispute.visibility = if (response.txnCategory.equals("TOLL DEBIT", ignoreCase = true)) View.VISIBLE else View.GONE
 
         // Dispute tracker
         val dispute = response.disputeDetails
