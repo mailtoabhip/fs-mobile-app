@@ -169,11 +169,9 @@ class NetworkModule {
   )
 
   /**
-   * Provide [TransactionService]
+   * Provide [TransactionService] for RxJava methods
    * 
-   * Note: Uses getRetrofit (with RxJava adapter) because TransactionService 
-   * contains both RxJava methods and suspend functions. The suspend function
-   * (spotMarketplaceTransactionsSuspend) will be handled via runBlocking bridge.
+   * Note: Uses getRetrofit (with RxJava adapter) for RxJava-based methods.
    */
   @Provides
   @Singleton
@@ -181,6 +179,22 @@ class NetworkModule {
     gson: Gson,
     okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.TransactionService).create(
+      TransactionService::class.java
+  )
+
+  /**
+   * Provide [TransactionService] for Coroutines (suspend functions)
+   * 
+   * Note: Uses getRetrofitForCoroutines (no call adapter) for suspend functions.
+   * This is a separate instance from the RxJava version to support both paradigms.
+   */
+  @Provides
+  @Singleton
+  @javax.inject.Named("coroutines")
+  fun provideTransactionServiceCoroutines(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ) = getRetrofitForCoroutines(gson, okHttpClient, UrlConfig.TransactionService).create(
       TransactionService::class.java
   )
 

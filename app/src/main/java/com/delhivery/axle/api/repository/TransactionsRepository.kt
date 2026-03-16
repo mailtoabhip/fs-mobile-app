@@ -22,6 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class TransactionsRepository @Inject constructor(
   private val transactionService: TransactionService,
+  @javax.inject.Named("coroutines") private val transactionServiceCoroutines: TransactionService,
   private val userRepository: UserRepository,
   private val userPrefs: UserPrefs,
   private val recommendationService: RecommendationService,
@@ -129,18 +130,15 @@ class TransactionsRepository @Inject constructor(
     limit: Int = UserTripsLoadLimit,
     offset: Int
   ): Resource<com.delhivery.axle.api.response.SpotMarketplaceLoadsData> = safeApiCall {
-    // Use RxJava version with runBlocking bridge since TransactionService uses RxJava retrofit
-    kotlinx.coroutines.runBlocking {
-      val response = transactionService.spotMarketplaceTransactions(
-        onlyCount = onlyCount,
-        limit = limit,
-        offset = offset
-      ).blockingGet()
-      if (response.isSuccess) {
-        response.responseData ?: throw Exception("Null response data")
-      } else {
-        throw response.toHttpException()
-      }
+    val response = transactionServiceCoroutines.spotMarketplaceTransactionsSuspend(
+      onlyCount = onlyCount,
+      limit = limit,
+      offset = offset
+    )
+    if (response.isSuccess) {
+      response.responseData ?: throw Exception("Null response data")
+    } else {
+      throw response.toHttpException()
     }
   }
 
