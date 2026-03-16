@@ -4,6 +4,7 @@ import com.delhivery.axle.api.request.CreateTransactionBidRequest
 import com.delhivery.axle.api.request.UpdateTransactionBidRequest
 import com.delhivery.axle.api.response.BidSummaryResponse
 import com.delhivery.axle.api.response.LowestBidResponse
+import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.BidService
 import com.delhivery.axle.data.Quadruple
 import com.delhivery.axle.data.Quintuple
@@ -131,12 +132,8 @@ class BidsRepository @Inject constructor(
       if (transactions.isNullOrEmpty()) "" else
         transactions.map { it.transactionId }.joinToString(","),
       contractBids
-    )
-    if (response.isSuccess) {
-      Pair(transactions ?: emptyList(), response.responseData!!.bids)
-    } else {
-      throw response.toHttpException()
-    }
+    ).toResource()
+    Pair(transactions ?: emptyList(), response.bids)
   }
 
   /**
@@ -280,12 +277,8 @@ class BidsRepository @Inject constructor(
     val response = bidService.bulkLowestBidsForTransactionsSuspend(
       if (transactions.isNullOrEmpty()) "" else
         transactions.map { it.transactionId }.joinToString(",")
-    )
-    if (response.isSuccess) {
-      Pair(transactions ?: emptyList(), response.responseData!!)
-    } else {
-      throw response.toHttpException()
-    }
+    ).toResource()
+    Pair(transactions ?: emptyList(), response)
   }
 
   /**

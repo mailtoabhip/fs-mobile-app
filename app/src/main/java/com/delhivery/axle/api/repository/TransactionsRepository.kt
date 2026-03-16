@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import android.util.Log
 import com.delhivery.axle.api.repository.ContractStatus.BiddingClosed
 import com.delhivery.axle.api.repository.ContractStatus.Cancelled
 import com.delhivery.axle.api.repository.ContractStatus.CollectingBids
@@ -10,6 +11,9 @@ import com.delhivery.axle.api.repository.TransactionStatus.Requested
 import com.delhivery.axle.api.request.FuelPayoutRequest
 import com.delhivery.axle.api.request.ReccomdationRequest
 import com.delhivery.axle.api.response.SearchAfter
+import com.delhivery.axle.api.response.SpotMarketplaceLoadsData
+import com.delhivery.axle.api.response.TransactionsResponse
+import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.RecommendationService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.bids.TransactionBid
@@ -50,18 +54,13 @@ class TransactionsRepository @Inject constructor(
     biddingGoingOn: Boolean = false,
     splitViewCount: Boolean? = null,
     searchAfter: SearchAfter?
-  ): Resource<com.delhivery.axle.api.response.TransactionsResponse> = safeApiCall {
-    val response = recommendationService.recommendationTransactions(
+  ): Resource<TransactionsResponse> = safeApiCall {
+    recommendationService.recommendationTransactions(
       ReccomdationRequest(
         userPrefs.parentId, UserTripsLoadLimit, offset,
         demand_type, vehicle_type, splitViewCount = splitViewCount, searchAfter = searchAfter
       )
-    )
-    if (response.isSuccess) {
-      response.responseData ?: throw Exception("Null response data")
-    } else {
-      throw response.toHttpException()
-    }
+    ).toResource()
   }
 
   /**
@@ -76,21 +75,14 @@ class TransactionsRepository @Inject constructor(
     biddingGoingOn: Boolean = false,
     onlyCount: Boolean? = null,
     searchAfter: SearchAfter? = null
-  ): Resource<com.delhivery.axle.api.response.TransactionsResponse> = safeApiCall {
-    android.util.Log.d("TransactionsRepository", "fetchIntracityRecommTransactions called with parentId=${userPrefs.parentId}, offset=$offset")
+  ): Resource<TransactionsResponse> = safeApiCall {
     val response = recommendationService.recommendationIntracityTransactions(
       ReccomdationRequest(
         userPrefs.parentId, UserTripsLoadLimit, offset,
         null, vehicle_type, onlyCount = onlyCount, searchAfter = searchAfter
       )
     )
-    android.util.Log.d("TransactionsRepository", "API response received: isSuccess=${response.isSuccess}, hasData=${response.responseData != null}")
-    if (response.isSuccess) {
-      response.responseData ?: throw Exception("Null response data")
-    } else {
-      android.util.Log.e("TransactionsRepository", "API returned success=false, errorBody=${response.errorBody}")
-      throw response.toHttpException()
-    }
+    response.toResource()
   }
 
   /**
@@ -108,17 +100,12 @@ class TransactionsRepository @Inject constructor(
     searchAfter: SearchAfter? = null
   ) = io.reactivex.Single.fromCallable {
     kotlinx.coroutines.runBlocking {
-      val response = recommendationService.recommendationIntracityTransactions(
+      recommendationService.recommendationIntracityTransactions(
         ReccomdationRequest(
           userPrefs.parentId, UserTripsLoadLimit, offset,
           null, vehicle_type, onlyCount = onlyCount, searchAfter = searchAfter
         )
-      )
-      if (response.isSuccess) {
-        response.responseData ?: throw Exception("Null response data")
-      } else {
-        throw response.toHttpException()
-      }
+      ).toResource()
     }
   }
 
@@ -129,17 +116,12 @@ class TransactionsRepository @Inject constructor(
     onlyCount: Boolean = false,
     limit: Int = UserTripsLoadLimit,
     offset: Int
-  ): Resource<com.delhivery.axle.api.response.SpotMarketplaceLoadsData> = safeApiCall {
-    val response = transactionServiceCoroutines.spotMarketplaceTransactionsSuspend(
+  ): Resource<SpotMarketplaceLoadsData> = safeApiCall {
+    transactionServiceCoroutines.spotMarketplaceTransactionsSuspend(
       onlyCount = onlyCount,
       limit = limit,
       offset = offset
-    )
-    if (response.isSuccess) {
-      response.responseData ?: throw Exception("Null response data")
-    } else {
-      throw response.toHttpException()
-    }
+    ).toResource()
   }
 
   /**
@@ -154,11 +136,7 @@ class TransactionsRepository @Inject constructor(
     limit = limit,
     offset = offset
   ).map { response ->
-    if (response.isSuccess) {
-      response.responseData ?: throw Exception("Null response data")
-    } else {
-      throw response.toHttpException()
-    }
+    response.toResource()
   }
 
   /**

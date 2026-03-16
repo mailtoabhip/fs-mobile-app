@@ -28,6 +28,25 @@ data class BaseResponse<M : Any>(
 }
 
 /**
+ * Unwraps a BaseResponse into its data payload or throws an appropriate exception.
+ *
+ * This extension function encapsulates the common pattern of checking response success,
+ * validating data presence, and throwing exceptions on failure. It should be used within
+ * safeApiCall blocks in repository methods to handle BaseResponse unwrapping consistently.
+ *
+ * @return The response data of type T when the API call succeeds and data is present
+ * @throws Exception with message "Null response data" when isSuccess is true but responseData is null
+ * @throws HttpException when isSuccess is false (via toHttpException())
+ */
+fun <T : Any> BaseResponse<T>.toResource(): T {
+  return if (isSuccess) {
+    responseData ?: throw Exception("Null response data")
+  } else {
+    throw toHttpException()
+  }
+}
+
+/**
  * Base Message response for all APIs with only message and success key
  */
 data class BaseMessageResponse(
