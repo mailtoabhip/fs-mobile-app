@@ -33,6 +33,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private var disputeTypeCode: String = ""
     private var disputeTitle: String = ""
     private var transactionId: String? = null
+    private var additionalTransactionId: String? = null
     private var fastagId: String = ""
     private var tollPlazaId: String = ""
     private var transactionTollName: String? = null
@@ -52,6 +53,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         const val EXTRA_SELECTED_TRANSACTION_ID = "selected_transaction_id"
         const val EXTRA_FASTAG_ID = "fastag_id"
         const val EXTRA_TOLL_PLAZA_ID = "toll_plaza_id"
+        const val EXTRA_TXN_ID = "txn_id"
         const val EXTRA_TRANSACTION_TOLL_NAME = "transaction_toll_name"
         const val EXTRA_TRANSACTION_TIMESTAMP = "transaction_timestamp"
         const val EXTRA_TRANSACTION_AMOUNT = "transaction_amount"
@@ -97,7 +99,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         // Get intent extras
         disputeTypeCode = intent.getStringExtra(EXTRA_DISPUTE_TYPE_CODE) ?: ""
         disputeTitle = intent.getStringExtra(DISPUTE_TITLE) ?: ""
-        transactionId = intent.getStringExtra(EXTRA_SELECTED_TRANSACTION_ID)
+        transactionId = intent.getStringExtra(EXTRA_TXN_ID)
+        additionalTransactionId = intent.getStringExtra(EXTRA_SELECTED_TRANSACTION_ID)
         fastagId = intent.getStringExtra(EXTRA_FASTAG_ID) ?: ""
         tollPlazaId = intent.getStringExtra(EXTRA_TOLL_PLAZA_ID) ?: ""
         transactionTollName = intent.getStringExtra(EXTRA_TRANSACTION_TOLL_NAME)
@@ -477,7 +480,12 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     private fun onSubmitClicked() {
-        viewModel.submitForm(disputeTypeCode, transactionId, fastagId, tollPlazaId, this)
+        viewModel.submitForm(disputeTypeCode = disputeTypeCode,
+            transactionId = transactionId,
+            additionalTxnId = additionalTransactionId,
+            fastagId = fastagId,
+            tollPlazaId = tollPlazaId,
+            this)
     }
 
     private fun handleSubmissionState(state: SubmissionState) {

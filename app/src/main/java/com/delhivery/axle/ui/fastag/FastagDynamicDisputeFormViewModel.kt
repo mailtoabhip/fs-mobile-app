@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.fastag
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormConfigResponse
@@ -14,6 +15,7 @@ import com.delhivery.axle.utils.FormValidator
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.google.gson.Gson
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -184,6 +186,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     fun submitForm(
         disputeTypeCode: String,
         transactionId: String?,
+        additionalTxnId:String?=null,
         fastagId: String,
         tollPlazaId: String,
         context: Context
@@ -256,12 +259,12 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
         progressData.value = true
 
         compositeDisposable += loadboardRepository.submitDispute(
-            txnId = txnId,
-            tollPlazaId = tollPlazaId,
-            refundAmount = refundRequestedAmount,
-            comment = comment,
-            raisedAgainst = disputeTypeCode,
-            additionalTxnId = transactionId,
+            txnId = MultipartBody.Part.createFormData("txn_id", transactionId?:""),
+            additionalTxnId = MultipartBody.Part.createFormData("additional_txn_id", additionalTxnId?:""),
+            tollPlazaId = MultipartBody.Part.createFormData("toll_plaza_id", tollPlazaId),
+            refundAmount = MultipartBody.Part.createFormData("refundRequestedAmount", Gson().toJson(refundRequestedAmount)),
+            comment = MultipartBody.Part.createFormData("comment", comment),
+            raisedAgainst = MultipartBody.Part.createFormData("raisedAgainst", disputeTypeCode),
             doc1 = fileParts.getOrNull(0),
             doc2 = fileParts.getOrNull(1),
             doc3 = fileParts.getOrNull(2)
@@ -289,7 +292,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     private fun createMultipartFromUri(uri: Uri, partName: String, context: Context): MultipartBody.Part? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-            val file = File(context.cacheDir, "upload_${System.currentTimeMillis()}")
+            val file = File(context.cacheDir, "upload_${System.currentTimeMillis()}.jpeg")
             file.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)
             }

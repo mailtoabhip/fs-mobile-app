@@ -18,6 +18,7 @@ import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.google.gson.JsonObject
 import javax.inject.Inject
+import okhttp3.MultipartBody
 
 class LoadboardRepository @Inject constructor(
     private val loadboardService: LoadBoardService
@@ -249,27 +250,26 @@ class LoadboardRepository @Inject constructor(
      * Submit dispute with multipart form data
      */
     fun submitDispute(
-        txnId: String,
-        tollPlazaId: String,
-        refundAmount: Double,
-        comment: String,
-        raisedAgainst: String,
-        additionalTxnId: String? = null,
-        doc1: okhttp3.MultipartBody.Part?,
-        doc2: okhttp3.MultipartBody.Part?,
-        doc3: okhttp3.MultipartBody.Part?
+        txnId: MultipartBody.Part?,
+        tollPlazaId: MultipartBody.Part?,
+        refundAmount: MultipartBody.Part?,
+        comment: MultipartBody.Part?,
+        raisedAgainst: MultipartBody.Part?,
+        additionalTxnId: MultipartBody.Part?=null,
+        doc1: MultipartBody.Part?,
+        doc2: MultipartBody.Part?,
+        doc3: MultipartBody.Part?
     ): io.reactivex.Single<DisputeSubmissionResponse> {
-        val plain = okhttp3.MediaType.parse("text/plain")
         return loadboardService.submitDispute(
-            okhttp3.RequestBody.create(plain, txnId),
-            okhttp3.RequestBody.create(plain, tollPlazaId),
-            okhttp3.RequestBody.create(plain, refundAmount.toString()),
-            okhttp3.RequestBody.create(plain, comment),
-            okhttp3.RequestBody.create(plain, raisedAgainst),
-            additionalTxnId?.let { okhttp3.RequestBody.create(plain, it) },
-            doc1,
-            doc2,
-            doc3
+            txnId = txnId,
+            tollPlazaId=tollPlazaId,
+            refundAmount=refundAmount,
+            comment=comment,
+            raisedAgainst=raisedAgainst,
+            additionalTxnId=additionalTxnId,
+            uploadDoc1=doc1,
+            uploadDoc2=doc2,
+            uploadDoc3=doc3
         ).convertResponse()
     }
 

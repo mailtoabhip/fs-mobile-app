@@ -20,6 +20,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
     private var fastagId: String = ""
     private var tollPlazaId: String = ""
     private var disputeTypeCode: String = ""
+    private var txnId: String = ""
 
     companion object {
         const val EXTRA_TITLE = "title"
@@ -28,6 +29,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         const val EXTRA_DISPUTE_CODE = "dispute_code"
         const val EXTRA_FASTAG_ID = "fastag_id"
         const val EXTRA_TOLL_PLAZA_ID = "toll_plaza_id"
+        const val EXTRA_TXN_ID = "txn_id"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +55,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         fastagId = intent.getStringExtra(EXTRA_FASTAG_ID) ?: ""
         tollPlazaId = intent.getStringExtra(EXTRA_TOLL_PLAZA_ID) ?: ""
         disputeTypeCode = intent.getStringExtra(EXTRA_DISPUTE_CODE) ?: ""
+        txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: ""
 
         binding.tvTitle.text = "Fastag related issues"
         binding.tvTransactionTitle.text = title
@@ -86,6 +89,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_TOLL_NAME, selectedTransaction.tollName)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_TIMESTAMP, selectedTransaction.timestamp)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_AMOUNT, selectedTransaction.amount ?: 0.0)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_TXN_ID, txnId)
                 }
                 startActivity(intent)
             }

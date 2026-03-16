@@ -6,6 +6,7 @@ import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.google.gson.JsonObject
 import io.reactivex.Single
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
@@ -329,47 +330,46 @@ interface LoadBoardService {
 
     @GET("/finance/fastag/transaction-dispute")
     fun getTransactionDispute(
-        @Query("txn_id") txnId: String
+        @Query("txn_id") txnId: String?
     ): Single<BaseResponse<TransactionDisputeResponse>>
 
     /**
      * Get FASTag transactions by toll plaza
      * New API endpoint for transaction selection
      */
-    @GET("/fastag/transactions")
+    @GET("finance/fastag/transactions/search/toll-plaza")
     fun getFastagTransactionsByTollPlaza(
         @Query("toll_plaza_id") tollPlazaId: String,
         @Query("dateTime") dateTime: String?,
         @Query("limit") limit: Int?,
         @Query("offset") offset: Int?,
-        @Query("fastagId") fastagId: String?
+        @Query("fastag_id") fastagId: String?
     ): Single<BaseResponse<FastagTransactionsByTollPlazaResponse>>
 
     /**
      * Submit dispute with multipart form data
      */
     @Multipart
-    @POST("/fastag/transactions/dispute")
+    @POST("finance/fastag/transactions/dispute")
     fun submitDispute(
-        @Part("txn_id") txnId: okhttp3.RequestBody,
-        @Part("toll_plaza_id") tollPlazaId: okhttp3.RequestBody,
-        @Part("refundRequestedAmount") refundAmount: okhttp3.RequestBody,
-        @Part("comment") comment: okhttp3.RequestBody,
-        @Part("raisedAgainst") raisedAgainst: okhttp3.RequestBody,
-        @Part("additional_txn_id") additionalTxnId: okhttp3.RequestBody?,
-        @Part uploadDoc1: okhttp3.MultipartBody.Part?,
-        @Part uploadDoc2: okhttp3.MultipartBody.Part?,
-        @Part uploadDoc3: okhttp3.MultipartBody.Part?
+        @Part txnId: MultipartBody.Part?=null,
+        @Part tollPlazaId: MultipartBody.Part?=null,
+        @Part refundAmount: MultipartBody.Part?=null,
+        @Part comment: MultipartBody.Part?=null,
+        @Part raisedAgainst: MultipartBody.Part?=null,
+        @Part additionalTxnId: MultipartBody.Part?=null,
+        @Part uploadDoc1: MultipartBody.Part?=null,
+        @Part uploadDoc2: MultipartBody.Part?=null,
+        @Part uploadDoc3: MultipartBody.Part?=null
     ): Single<BaseResponse<DisputeSubmissionResponse>>
 
-    @GET("/fastag/transactions/dispute/issues-list")
+    @GET("finance/fastag/transactions/dispute/categories")
     fun getDisputeIssuesList(
         @Query("partner") partner: String
     ): Single<BaseResponse<DisputeIssuesResponse>>
 
-    @GET("/fastag/transaction/dispute/form-config/{disputeTypeCode}")
+    @GET("finance/fastag/transaction/dispute/form-config")
     fun getDisputeFormConfig(
-        @Path("disputeTypeCode") disputeTypeCode: String
+        @Query("disputeTypeCode") disputeTypeCode: String
     ): Single<BaseResponse<List<FormField>>>
-
 }

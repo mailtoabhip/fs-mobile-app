@@ -28,6 +28,7 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
     }
 
     private var txnId: String = ""
+    private var currentResponse: TransactionDisputeResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +62,10 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
         binding.btnRaiseDispute.setOnClickListener {
             val intent = Intent(this, FastagDisputeIssuesActivity::class.java).apply {
-                putExtra(FastagDisputeIssuesActivity.EXTRA_PARTNER, "IDFC")
-                putExtra(FastagDisputeIssuesActivity.EXTRA_TXN_ID, txnId)
-                putExtra(FastagDisputeIssuesActivity.EXTRA_FASTAG_ID, "FT-9928341029")
+                putExtra(FastagDisputeIssuesActivity.EXTRA_PARTNER, currentResponse?.fastagIssuedBy ?: "IDFC")
+                putExtra(FastagDisputeIssuesActivity.EXTRA_TXN_ID, currentResponse?.txnId)
+                putExtra(FastagDisputeIssuesActivity.EXTRA_FASTAG_ID, currentResponse?.fastagId ?: "")
+                putExtra(FastagDisputeIssuesActivity.TOLL_PLAZA_ID, currentResponse?.tollPlazaId ?: "")
             }
             startActivity(intent)
         }
@@ -83,13 +85,15 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
     }
 
     private fun populateUI(response: TransactionDisputeResponse) {
+        currentResponse = response
+
         // FASTag info
         binding.tvFastagProvider.text = "${response.fastagIssuedBy ?: ""} FASTag by Delhivery"
         binding.tvFastagId.text = "FASTag ID: ${response.fastagId ?: ""}"
 
         // Amount
         val amount = response.txnAmount ?: 0.0
-        val isDebit = response.txnType == "D"
+        val isDebit = response.txnType == "Debit"
         binding.tvAmount.text = if (isDebit) "-₹${amount.toInt()}" else "+₹${amount.toInt()}"
 
         // Transaction details
