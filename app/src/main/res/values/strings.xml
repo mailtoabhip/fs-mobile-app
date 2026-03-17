@@ -1051,4 +1051,10 @@
   <string name="label_fastag_no_space">Fastag</string>
   <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
   <string name="label_bidding">Bidding</string>
+    <string name="str_details">Details</string>
+    <string name="str_reporting_time">Reporting time</string>
+    <string name="str_load_type">Load Type</string>
+    <string name="str_material_type">Material Type</string>
+    <string name="str_client_name">Client Name</string>
+
 </resources>
