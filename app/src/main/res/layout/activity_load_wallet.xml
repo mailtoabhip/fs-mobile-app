@@ -188,7 +188,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:paddingHorizontal="@dimen/size_24dp"
                     bind:tabGravity="fill"
                     bind:tabMode="fixed"
                     android:textSize="@dimen/text_14sp"

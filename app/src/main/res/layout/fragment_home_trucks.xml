@@ -149,7 +149,7 @@
                         android:layout_marginHorizontal="@dimen/size_6dp"
                         android:layout_marginVertical="@dimen/size_12dp"
                         android:clipToPadding="false"
-                        android:paddingTop="0dp" />
+                        android:paddingTop="@dimen/size_12dp" />
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

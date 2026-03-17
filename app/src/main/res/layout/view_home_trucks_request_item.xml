@@ -270,7 +270,7 @@
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btn_fastag_details"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/size_36dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/size_8dp"
                             android:text="Details"
@@ -278,8 +278,6 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_14sp"
                             android:background="@drawable/bg_all_round_corner_white_boundary"
-                            android:paddingTop="@dimen/size_6dp"
-                            android:paddingBottom="@dimen/size_6dp"
                             android:paddingStart="@dimen/size_12dp"
                             android:paddingEnd="@dimen/size_12dp"
                             android:minHeight="0dp"
@@ -291,7 +289,7 @@
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btn_fastag_recharge"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/size_36dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="@dimen/size_8dp"
                             android:text="Recharge"
@@ -299,8 +297,6 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/text_14sp"
                             android:background="@drawable/bg_button_primary_r8"
-                            android:paddingTop="@dimen/size_6dp"
-                            android:paddingBottom="@dimen/size_6dp"
                             android:paddingStart="@dimen/size_12dp"
                             android:paddingEnd="@dimen/size_12dp"
                             android:minHeight="0dp"
@@ -374,17 +370,15 @@
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_buy_fastag_card"
                         style="@style/Button.Primary"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/size_36dp"
                         android:layout_width="match_parent"
-                        android:paddingTop="@dimen/size_6dp"
-                        android:paddingBottom="@dimen/size_6dp"
                         android:paddingStart="@dimen/size_12dp"
                         android:paddingEnd="@dimen/size_12dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/size_12dp"
                         android:textSize="@dimen/text_14sp"
                         android:text="Buy FASTag"
                         android:background="@drawable/bg_button_primary_r8"
-                        android:minHeight="0dp" />
+                       />
 
                 </LinearLayout>
 

@@ -33,7 +33,7 @@ class FastagRechargeViewModel @Inject constructor(
     }
 
 
-    fun rechargeFastag(fastagId: String, amount: Int, fastagStatus: String?, fastagBalance: String?) {
+    fun rechargeFastag(fastagId: String, amount: Double, fastagStatus: String?, fastagBalance: String?) {
         showProgress()
         val request = FastagRechargeRequest(fastagId = fastagId, rechargeAmount = amount, fastagStatus = fastagStatus, fastagBalance = fastagBalance)
 

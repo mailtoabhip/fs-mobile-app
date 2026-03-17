@@ -2,7 +2,9 @@ package com.delhivery.axle.ui.fastag
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.Editable
+import android.text.Spanned
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
@@ -24,7 +26,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
 
     private var fastagStatus: String? = null
     private var fastagBalanceValue: String? = null
-    private var selectedAmount: Int = 0
+    private var selectedAmount: Double = 0.0
     private var slideStartX = 0f
     private var walletBalance: Double = 0.0
     private val insufficientBalanceHandler = android.os.Handler(android.os.Looper.getMainLooper())
@@ -90,22 +92,25 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             ).show(supportFragmentManager, "AddMoney")
         }
 
+        // Restrict to 6 digits before decimal and 2 digits after decimal
+        binding.etAmount.filters = arrayOf(DecimalDigitsInputFilter(6, 2))
+
         updateAmountDisplay(selectedAmount)
         updateSliderState()
     }
 
     private fun setupAmountChips() {
         val chips = listOf(
-            binding.chip500 to 500,
-            binding.chip1000 to 1000,
-            binding.chip1500 to 1500
+            binding.chip500 to 500.0,
+            binding.chip1000 to 1000.0,
+            binding.chip1500 to 1500.0
         )
 
         chips.forEach { (chip, amount) ->
             chip.setOnClickListener {
                 selectedAmount = amount
-                binding.etAmount.setText(amount.toString())
-                binding.etAmount.setSelection(binding.etAmount.text.length)
+                binding.etAmount.setText(amount.toInt().toString())
+                binding.etAmount.setSelection(binding.etAmount.text?.length ?: 0)
                 updateChipSelection(amount)
                 updateAmountDisplay(amount)
                 updateSliderState()
@@ -120,10 +125,10 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val raw = s?.toString() ?: ""
-                val amount = raw.trimStart('0').toIntOrNull() ?: 0
+                val amount = raw.toDoubleOrNull() ?: 0.0
                 selectedAmount = amount
 
-                val hasLeadingZero = raw.length > 1 && raw.startsWith("0")
+                val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
                 val isInvalid = amount > 100000 || hasLeadingZero
                 binding.tvAmountError.visibility = if (isInvalid) View.VISIBLE else View.GONE
 
@@ -135,11 +140,11 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         })
     }
 
-    private fun updateChipSelection(amount: Int) {
+    private fun updateChipSelection(amount: Double) {
         val chipMap = mapOf(
-            binding.chip500 to 500,
-            binding.chip1000 to 1000,
-            binding.chip1500 to 1500
+            binding.chip500 to 500.0,
+            binding.chip1000 to 1000.0,
+            binding.chip1500 to 1500.0
         )
 
         chipMap.forEach { (chip, chipAmount) ->
@@ -153,15 +158,19 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         }
     }
 
-    private fun updateAmountDisplay(amount: Int) {
-        val formatted = "₹$amount"
+    private fun updateAmountDisplay(amount: Double) {
+        val formatted = if (amount == amount.toLong().toDouble()) {
+            "₹${amount.toLong()}"
+        } else {
+            "₹${String.format("%.2f", amount)}"
+        }
         binding.tvRechargeAmount.text = formatted
         binding.tvPayableAmount.text = formatted
     }
 
     private fun updateSliderState() {
         val raw = binding.etAmount.text.toString()
-        val hasLeadingZero = raw.length > 1 && raw.startsWith("0")
+        val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
         val hasInsufficientBalance = selectedAmount > 0 && selectedAmount > walletBalance
         val isInvalidAmount = selectedAmount > 100000 || hasLeadingZero
         val enabled = selectedAmount > 0 && !hasInsufficientBalance && !isInvalidAmount
@@ -248,7 +257,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
 
         thumb.setOnTouchListener { view, event ->
             val raw = binding.etAmount.text.toString()
-            val hasLeadingZero = raw.length > 1 && raw.startsWith("0")
+            val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
             if (selectedAmount <= 0 || selectedAmount > walletBalance || selectedAmount > 100000 || hasLeadingZero) return@setOnTouchListener false
 
             when (event.action) {
@@ -375,5 +384,36 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         viewModel.exceptionLiveData.observe(this, androidx.lifecycle.Observer {
             it?.let { resetSlider() }
         })
+    }
+
+    /**
+     * InputFilter that restricts input to [maxDigitsBefore] digits before the decimal
+     * and [maxDigitsAfter] digits after the decimal.
+     */
+    private class DecimalDigitsInputFilter(
+        private val maxDigitsBefore: Int,
+        private val maxDigitsAfter: Int
+    ) : InputFilter {
+        override fun filter(
+            source: CharSequence, start: Int, end: Int,
+            dest: Spanned, dstart: Int, dend: Int
+        ): CharSequence? {
+            val result = dest.toString().substring(0, dstart) +
+                source.toString().substring(start, end) +
+                dest.toString().substring(dend)
+
+            if (result.isEmpty()) return null
+
+            val dotIndex = result.indexOf('.')
+            if (dotIndex == -1) {
+                if (result.length > maxDigitsBefore) return ""
+            } else {
+                val integerPart = result.substring(0, dotIndex)
+                val decimalPart = result.substring(dotIndex + 1)
+                if (integerPart.length > maxDigitsBefore) return ""
+                if (decimalPart.length > maxDigitsAfter) return ""
+            }
+            return null
+        }
     }
 }
