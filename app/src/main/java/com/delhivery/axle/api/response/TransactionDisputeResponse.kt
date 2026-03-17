@@ -34,6 +34,8 @@ data class DisputeDetails(
     val srId: String?,
     @SerializedName("current_status")
     val currentStatus: String?,
+    @SerializedName("current_status_color")
+    val currentStatusColor: String?,
     @SerializedName("status_timeline")
     val statusTimeline: List<StatusTimeline>?
 )

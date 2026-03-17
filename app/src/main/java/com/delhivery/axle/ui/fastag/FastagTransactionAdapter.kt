@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.api.response.FastagTransaction
 import com.delhivery.axle.databinding.ItemFastagTransactionBinding
+import androidx.core.graphics.toColorInt
 
 class FastagTransactionAdapter(
     private val vehicleData: com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData? = null
@@ -57,27 +58,31 @@ class FastagTransactionAdapter(
             binding.tvAmount.setTextColor(amountColor)
 
             // Handle dispute status visibility and styling
-            if (transaction.isDispute == true && transaction.disputeStatus?.isNotEmpty() == true) {
+            if (transaction.isDispute == true && !transaction.disputeStatus.isNullOrEmpty()) {
                 binding.tvDisputeStatus.visibility = android.view.View.VISIBLE
+                binding.tvDisputeStatus.text = transaction.disputeStatus
                 
-                when (transaction.disputeStatus.lowercase()) {
-                    "submitted" -> {
-                        binding.tvDisputeStatus.text = "Dispute submitted"
-                        setDisputeBackground(binding.tvDisputeStatus, "#FFF7ED")
-                        binding.tvDisputeStatus.setTextColor(android.graphics.Color.parseColor("#92400E"))
+                val context = binding.root.context
+                when (transaction.disputeStatusColor?.lowercase()) {
+                    "default" -> {
+                        setDisputeBackground(binding.tvDisputeStatus, "#EFEFEF".toColorInt())
+                        binding.tvDisputeStatus.setTextColor(context.getColor(com.delhivery.axle.R.color.black_text))
                     }
-                    "accepted" -> {
-                        binding.tvDisputeStatus.text = "Dispute accepted"
-                        setDisputeBackground(binding.tvDisputeStatus, "#D1FAE5")
-                        binding.tvDisputeStatus.setTextColor(android.graphics.Color.parseColor("#065F46"))
+                    "pending" -> {
+                        setDisputeBackground(binding.tvDisputeStatus, context.getColor(com.delhivery.axle.R.color.pending_bg))
+                        binding.tvDisputeStatus.setTextColor("#B45309".toColorInt())
                     }
-                    "rejected" -> {
-                        binding.tvDisputeStatus.text = "Dispute rejected"
-                        setDisputeBackground(binding.tvDisputeStatus, "#FEE2E2")
-                        binding.tvDisputeStatus.setTextColor(android.graphics.Color.parseColor("#991B1B"))
+                    "success" -> {
+                        setDisputeBackground(binding.tvDisputeStatus, "#DCFCE7".toColorInt())
+                        binding.tvDisputeStatus.setTextColor("#16A34A".toColorInt())
+                    }
+                    "failed" -> {
+                        setDisputeBackground(binding.tvDisputeStatus, "#FEE2E2".toColorInt())
+                        binding.tvDisputeStatus.setTextColor("#DC2626".toColorInt())
                     }
                     else -> {
-                        binding.tvDisputeStatus.visibility = android.view.View.GONE
+                        setDisputeBackground(binding.tvDisputeStatus, context.getColor(com.delhivery.axle.R.color.grey_bg))
+                        binding.tvDisputeStatus.setTextColor(context.getColor(com.delhivery.axle.R.color.black_text))
                     }
                 }
             } else {
@@ -103,11 +108,11 @@ class FastagTransactionAdapter(
 
         }
 
-        private fun setDisputeBackground(view: android.widget.TextView, colorHex: String) {
+        private fun setDisputeBackground(view: android.widget.TextView, color: Int) {
             val drawable = android.graphics.drawable.GradientDrawable()
             drawable.shape = android.graphics.drawable.GradientDrawable.RECTANGLE
             drawable.cornerRadius = view.context.resources.getDimension(com.delhivery.axle.R.dimen.size_16dp)
-            drawable.setColor(android.graphics.Color.parseColor(colorHex))
+            drawable.setColor(color)
             view.background = drawable
         }
 

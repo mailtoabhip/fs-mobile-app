@@ -63,9 +63,9 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
         // Set truck image based on vehicle type
         val truckImageRes = when (truckType) {
-            "closed" -> R.drawable.ic_closed
-            "open" -> R.drawable.ic_open
-            else -> R.drawable.ic_trailer
+            "closed" -> R.drawable.container
+            "open" -> R.drawable.open_body
+            else -> R.drawable.trailer
         }
         binding.ivTruckImage.setImageResource(truckImageRes)
 
@@ -115,8 +115,43 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
         binding.btnRaiseDispute.visibility = if (response.txnCategory.equals("TOLL DEBIT", ignoreCase = true) && response.disputeDetails == null) View.VISIBLE else View.GONE
 
-        // Dispute tracker
+        // Dispute status chip below amount
         val dispute = response.disputeDetails
+        if (dispute != null && !dispute.currentStatus.isNullOrEmpty()) {
+            binding.tvDisputeStatusChip.visibility = View.VISIBLE
+            binding.tvDisputeStatusChip.text = dispute.currentStatus
+
+            val chipBgColor: Int
+            val chipTextColor: Int
+            when (dispute.currentStatusColor?.lowercase()) {
+                "pending" -> {
+                    chipBgColor = getColor(R.color.pending_bg)
+                    chipTextColor = "#B45309".toColorInt()
+                }
+                "success" -> {
+                    chipBgColor = "#DCFCE7".toColorInt()
+                    chipTextColor = "#16A34A".toColorInt()
+                }
+                "failed" -> {
+                    chipBgColor = "#FEE2E2".toColorInt()
+                    chipTextColor = "#DC2626".toColorInt()
+                }
+                else -> {
+                    chipBgColor = "#EFEFEF".toColorInt()
+                    chipTextColor = getColor(R.color.black_text)
+                }
+            }
+            val chipDrawable = android.graphics.drawable.GradientDrawable()
+            chipDrawable.shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            chipDrawable.cornerRadius = resources.getDimension(R.dimen.size_16dp)
+            chipDrawable.setColor(chipBgColor)
+            binding.tvDisputeStatusChip.background = chipDrawable
+            binding.tvDisputeStatusChip.setTextColor(chipTextColor)
+        } else {
+            binding.tvDisputeStatusChip.visibility = View.GONE
+        }
+
+        // Dispute tracker
         if (dispute != null) {
             binding.cardDisputeTracker.visibility = View.VISIBLE
             binding.tvIssueCategory.text = dispute.issueCategory ?: ""

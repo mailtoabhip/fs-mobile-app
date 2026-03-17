@@ -58,8 +58,6 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: ""
 
         binding.tvTitle.text = "Fastag related issues"
-        binding.tvTransactionTitle.text = title
-        binding.tvTransactionSubtitle.text = subTitle
 
         binding.ivBack.setOnClickListener {
             finish()
