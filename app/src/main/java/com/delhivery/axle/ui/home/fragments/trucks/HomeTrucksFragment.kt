@@ -1709,18 +1709,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     
     override fun openFastagDetails(data: HomeTrucksRequestItemData) {
         val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity::class.java).apply {
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TAG_ID, data.fastagTagId)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VRN, data.fastagVrn)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_NUMBER, data.vehicleNumber)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TRUCK_TYPE, data.truckType)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TRUCK_SIZE, data.truckSize)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.CAPACITY, data.capacity)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.OWNERSHIP, data.ownership)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.STATUS, data.latestStatus)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TAG_STATUS, data.fastagTagStatus)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.BALANCE, data.fastagBalance)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.ISSUED_BY, data.fastagIssuedBy)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.AWB, data.fastagTagId)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_DATA, data)
         }
         startActivity(intent)
     }

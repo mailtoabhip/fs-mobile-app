@@ -41,12 +41,12 @@ data class DisputeDetails(
 data class StatusTimeline(
     @SerializedName("status")
     val status: String?,
-    @SerializedName("displayLabel")
-    val displayLabel: String?,
-    @SerializedName("statusMessage")
-    val statusMessage: String?,
-    @SerializedName("timestamp")
-    val timestamp: String?,
-    @SerializedName("state")
-    val state: String?
+    @SerializedName("changedAt")
+    val changedAt: String?,
+    @SerializedName("message")
+    val message: String?,
+    @SerializedName("statusChangeComments")
+    val statusChangeComments: String?,
+    @SerializedName("statusChangedBy")
+    val statusChangedBy: String?
 )

@@ -28,6 +28,7 @@ import com.delhivery.axle.databinding.FastagTransactionDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.utils.REQCODE_STORAGE
+import com.delhivery.axle.utils.extensions.getSerializable
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -57,6 +58,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         const val BALANCE = "balance"
         const val ISSUED_BY = "issued_by"
         const val AWB = "awb"
+        const val VEHICLE_DATA = "vehicle_data"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,15 +104,15 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     }
 
     private fun setupUI() {
-        // Get data from intent
-        val vehicleNumber = intent.getStringExtra(VEHICLE_NUMBER) ?: ""
-        val truckSize = intent.getStringExtra(TRUCK_SIZE) ?: ""
-        val capacity = intent.getDoubleExtra(CAPACITY, 0.0)
-        val ownership = intent.getStringExtra(OWNERSHIP) ?: ""
-        val status = intent.getStringExtra(STATUS) ?: ""
-        val balance = intent.getStringExtra(BALANCE) ?: "0"
-        val issuedBy = intent.getStringExtra(ISSUED_BY) ?: ""
-        val awb = intent.getStringExtra(AWB)
+        val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+        val vehicleNumber = vehicleData?.vehicleNumber ?: intent.getStringExtra(VEHICLE_NUMBER) ?: ""
+        val truckSize = vehicleData?.truckSize ?: intent.getStringExtra(TRUCK_SIZE) ?: ""
+        val capacity = vehicleData?.capacity ?: intent.getDoubleExtra(CAPACITY, 0.0)
+        val ownership = vehicleData?.ownership ?: intent.getStringExtra(OWNERSHIP) ?: ""
+        val status = vehicleData?.latestStatus ?: intent.getStringExtra(STATUS) ?: ""
+        val balance = vehicleData?.fastagBalance ?: intent.getStringExtra(BALANCE) ?: "0"
+        val issuedBy = vehicleData?.fastagIssuedBy ?: intent.getStringExtra(ISSUED_BY) ?: ""
+        val awb = vehicleData?.fastagTagId ?: intent.getStringExtra(AWB)
 
         // Set vehicle info
         binding.tvVehicleNumber.text = vehicleNumber
@@ -197,7 +199,8 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     }
 
     private fun setupRecyclerView() {
-        adapter = FastagTransactionAdapter()
+        val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+        adapter = FastagTransactionAdapter(vehicleData)
         binding.rvTransactions.layoutManager = LinearLayoutManager(this)
         binding.rvTransactions.adapter = adapter
     }
@@ -252,7 +255,8 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     }
 
     private fun loadData() {
-        val tagId = intent.getStringExtra(TAG_ID) ?: return
+        val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+        val tagId = vehicleData?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return
         viewModel.loadTransactions(tagId)
     }
     
@@ -337,7 +341,8 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         updateSelection(0)
         
         bindingDialog.btnDownloadStatement.setOnClickListener {
-            val tagId = intent.getStringExtra(TAG_ID) ?: return@setOnClickListener
+            val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+            val tagId = vehicleData?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return@setOnClickListener
             
             dialog.dismiss()
             

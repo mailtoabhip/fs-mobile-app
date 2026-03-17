@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.api.response.FastagTransaction
 import com.delhivery.axle.databinding.ItemFastagTransactionBinding
 
-class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
+class FastagTransactionAdapter(
+    private val vehicleData: com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData? = null
+) : ListAdapter<FastagTransaction, FastagTransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val binding = ItemFastagTransactionBinding.inflate(
@@ -16,14 +18,17 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
             parent,
             false
         )
-        return TransactionViewHolder(binding)
+        return TransactionViewHolder(binding, vehicleData)
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class TransactionViewHolder(private val binding: ItemFastagTransactionBinding) :
+    class TransactionViewHolder(
+        private val binding: ItemFastagTransactionBinding,
+        private val vehicleData: com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData?
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: FastagTransaction) {
@@ -87,6 +92,11 @@ class FastagTransactionAdapter : ListAdapter<FastagTransaction, FastagTransactio
                     putExtra(FastagTransactionDetailActivity.EXTRA_AMOUNT, transaction.amount ?: 0.0)
                     putExtra(FastagTransactionDetailActivity.EXTRA_TOLL_NAME, transaction.tollName)
                     putExtra(FastagTransactionDetailActivity.EXTRA_TIMESTAMP, formatTimestamp(transaction.timestamp ?: ""))
+                    putExtra(FastagTransactionDetailActivity.EXTRA_VEHICLE_NUMBER, vehicleData?.vehicleNumber ?: "")
+                    putExtra(FastagTransactionDetailActivity.EXTRA_TRUCK_TYPE, vehicleData?.truckType ?: "")
+                    putExtra(FastagTransactionDetailActivity.EXTRA_TRUCK_SIZE, vehicleData?.truckSize ?: "")
+                    putExtra(FastagTransactionDetailActivity.EXTRA_CAPACITY, vehicleData?.capacity ?: 0.0)
+                    putExtra(FastagTransactionDetailActivity.EXTRA_OWNERSHIP, vehicleData?.ownership() ?: "")
                 }
                 context.startActivity(intent)
             }
