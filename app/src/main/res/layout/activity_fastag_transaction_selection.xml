@@ -41,12 +41,14 @@
 
         <!-- Content -->
         <LinearLayout
+            android:id="@+id/layoutContent"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
             android:paddingVertical="@dimen/size_24dp"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/layoutHeader"
-            app:layout_constraintBottom_toTopOf="@id/btnConfirmSelection">
+            app:layout_constraintBottom_toTopOf="@id/layoutButtonContainer">
 
             <TextView
                 android:id="@+id/tvTransactionTitle"
@@ -72,14 +74,10 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="@dimen/size_8dp"
-                    app:cardElevation="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="@dimen/size_16dp">
+                    android:layout_marginHorizontal="@dimen/size_16dp"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@android:color/white">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvTransactions"
@@ -88,29 +86,64 @@
                         android:paddingVertical="@dimen/size_8dp"
                         android:clipToPadding="false" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="gone" />
-                    </LinearLayout>
-
                 </androidx.cardview.widget.CardView>
+
+            <!-- Empty State -->
+            <LinearLayout
+                android:id="@+id/layoutEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/no_transactions"
+                    android:contentDescription="No transactions" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No transactions found"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#111827"
+                    android:layout_marginTop="@dimen/size_16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="We couldn't find any other transactions\nat this toll plaza"
+                    android:textSize="13sp"
+                    android:textColor="@color/grey_text"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/size_8dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Bottom Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnConfirmSelection"
+        <!-- Bottom Button with white background -->
+        <FrameLayout
+            android:id="@+id/layoutButtonContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size_16dp"
-            android:background="@drawable/bg_action_light_black_btn_without_border"
-            android:text="Confirm Selection"
-            android:textColor="@color/selector_button_text"
-            android:textSize="16sp"
-            android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnConfirmSelection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_16dp"
+                android:background="@drawable/bg_action_light_black_btn_without_border"
+                android:text="Confirm Selection"
+                android:textColor="@color/selector_button_text"
+                android:textSize="16sp"
+                android:textAllCaps="false" />
+
+        </FrameLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

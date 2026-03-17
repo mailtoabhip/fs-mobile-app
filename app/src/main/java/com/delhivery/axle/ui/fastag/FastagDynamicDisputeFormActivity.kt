@@ -58,6 +58,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         const val EXTRA_TRANSACTION_TIMESTAMP = "transaction_timestamp"
         const val EXTRA_TRANSACTION_AMOUNT = "transaction_amount"
         const val EXTRA_SHOW_TRANSACTION = "show_transaction"
+        const val EXTRA_SUBTITLE = "subtitle"
     }
 
     // File picker launcher
@@ -189,8 +190,12 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         viewModel.progressData.observe(this) { isLoading ->
             if (isLoading) {
                 uiUtils.showProgress()
+                binding.scrollView.visibility = View.GONE
+                binding.llFooter.visibility = View.GONE
             } else {
                 uiUtils.hideProgress()
+                binding.scrollView.visibility = View.VISIBLE
+                binding.llFooter.visibility = View.VISIBLE
             }
         }
 

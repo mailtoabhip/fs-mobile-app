@@ -72,8 +72,13 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
 
     private fun observeData() {
         viewModel.progressData.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.rvDisputeIssues.visibility = if (isLoading) View.GONE else View.VISIBLE
+            if (isLoading) {
+                uiUtils.showProgress()
+                binding.rvDisputeIssues.visibility = View.GONE
+            } else {
+                uiUtils.hideProgress()
+                binding.rvDisputeIssues.visibility = View.VISIBLE
+            }
         }
 
         viewModel.disputeIssuesData.observe(this) { response ->
@@ -88,7 +93,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
         if (disputeType.addTxnReq == true) {
             // Requires transaction selection - go to transaction selection screen
             val intent = Intent(this, FastagTransactionSelectionActivity::class.java).apply {
-                putExtra(FastagTransactionSelectionActivity.EXTRA_TITLE, disputeType.title ?: "")
+                putExtra(FastagTransactionSelectionActivity.EXTRA_TITLE, disputeType.displayName ?: "")
                 putExtra(FastagTransactionSelectionActivity.EXTRA_SUBTITLE, disputeType.subTitle ?: "")
                 putExtra(FastagTransactionSelectionActivity.EXTRA_PARTNER, partner)
                 putExtra(FastagTransactionSelectionActivity.EXTRA_DISPUTE_CODE, disputeType.code)

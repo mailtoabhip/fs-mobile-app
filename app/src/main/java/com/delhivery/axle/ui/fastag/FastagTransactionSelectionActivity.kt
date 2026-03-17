@@ -84,6 +84,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_SELECTED_TRANSACTION_ID, selectedTransaction.id)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_FASTAG_ID, fastagId)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TOLL_PLAZA_ID, selectedTransaction.tollPlazaId ?: "")
+                    putExtra(FastagDynamicDisputeFormActivity.DISPUTE_TITLE, title)
+                    putExtra(FastagDynamicDisputeFormActivity.EXTRA_SUBTITLE, subTitle)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_TOLL_NAME, selectedTransaction.tollName)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_TIMESTAMP, selectedTransaction.timestamp)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_AMOUNT, selectedTransaction.amount ?: 0.0)
@@ -100,22 +102,47 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
 
     private fun observeData() {
         viewModel.progressData.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.rvTransactions.visibility = if (isLoading) View.GONE else View.VISIBLE
+            if (isLoading) {
+                uiUtils.showProgress()
+                binding.layoutContent.visibility = View.GONE
+                binding.layoutButtonContainer.visibility = View.GONE
+            } else {
+                uiUtils.hideProgress()
+                binding.layoutContent.visibility = View.VISIBLE
+                binding.layoutButtonContainer.visibility = View.VISIBLE
+            }
         }
 
         viewModel.transactionsByTollPlazaData.observe(this) { response ->
             response.transactions?.let { transactions ->
-                val transactionItems = transactions.map { txn ->
-                    TransactionItem(
-                        id = txn.txnId ?: "",
-                        tollName = txn.tollPlazaName ?: "Unknown",
-                        timestamp = formatDateTime(txn.txnDateTime ?: ""),
-                        amount = if (txn.txnType == "DEBIT") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
-                        tollPlazaId = txn.tollPlazaId
-                    )
+                if (transactions.isEmpty()) {
+                    binding.rvTransactions.visibility = View.GONE
+                    binding.layoutEmptyState.visibility = View.VISIBLE
+                    binding.btnConfirmSelection.text = "Select different issue type"
+                    binding.btnConfirmSelection.isEnabled = true
+                    binding.layoutButtonContainer.visibility = View.VISIBLE
+                    binding.btnConfirmSelection.setOnClickListener { finish() }
+                } else {
+                    binding.rvTransactions.visibility = View.VISIBLE
+                    binding.layoutEmptyState.visibility = View.GONE
+                    val transactionItems = transactions.map { txn ->
+                        TransactionItem(
+                            id = txn.txnId ?: "",
+                            tollName = txn.tollPlazaName ?: "Unknown",
+                            timestamp = formatDateTime(txn.txnDateTime ?: ""),
+                            amount = if (txn.txnType == "DEBIT") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
+                            tollPlazaId = txn.tollPlazaId
+                        )
+                    }
+                    adapter.submitList(transactionItems)
                 }
-                adapter.submitList(transactionItems)
+            } ?: run {
+                binding.rvTransactions.visibility = View.GONE
+                binding.layoutEmptyState.visibility = View.VISIBLE
+                binding.btnConfirmSelection.text = "Select different issue type"
+                binding.btnConfirmSelection.isEnabled = true
+                binding.layoutButtonContainer.visibility = View.VISIBLE
+                binding.btnConfirmSelection.setOnClickListener { finish() }
             }
         }
     }

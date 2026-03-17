@@ -46,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fillViewport="true"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/layoutHeader"
             app:layout_constraintBottom_toTopOf="@id/llFooter">
 
@@ -326,6 +327,7 @@
             android:paddingTop="@dimen/size_20dp"
             android:paddingBottom="@dimen/size_16dp"
             android:elevation="4dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
