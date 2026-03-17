@@ -30,6 +30,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         const val EXTRA_FASTAG_ID = "fastag_id"
         const val EXTRA_TOLL_PLAZA_ID = "toll_plaza_id"
         const val EXTRA_TXN_ID = "txn_id"
+        private const val REQCODE_DISPUTE_FORM = 1003
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,13 +92,25 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TRANSACTION_AMOUNT, selectedTransaction.amount ?: 0.0)
                     putExtra(FastagDynamicDisputeFormActivity.EXTRA_TXN_ID, txnId)
                 }
-                startActivity(intent)
+                startActivityForResult(intent, REQCODE_DISPUTE_FORM)
             }
         }
     }
 
     private fun loadTransactions() {
         viewModel.getTransactionsByTollPlaza(tollPlazaId = tollPlazaId, fastagId = fastagId)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQCODE_DISPUTE_FORM -> {
+                if (resultCode == RESULT_OK) {
+                    setResult(RESULT_OK)
+                    finish()
+                }
+            }
+        }
     }
 
     private fun observeData() {

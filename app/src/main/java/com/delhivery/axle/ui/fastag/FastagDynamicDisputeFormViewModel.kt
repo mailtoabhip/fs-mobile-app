@@ -275,7 +275,8 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
 
                 if (!error && response != null) {
                     submissionStateData.value = SubmissionState.Success(
-                        "Dispute submitted successfully. SR ID: ${response.srId ?: "N/A"}"
+                        "Dispute submitted successfully. SR ID: ${response.srId ?: "N/A"}",
+                        srId = response.srId
                     )
                 } else {
                     error.handle()

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
  * Response model for dispute submission
  */
 data class DisputeSubmissionResponse(
-    @SerializedName("Sr_id")
+    @SerializedName("sr_id")
     val srId: String?,
     
     @SerializedName("dispute_status")

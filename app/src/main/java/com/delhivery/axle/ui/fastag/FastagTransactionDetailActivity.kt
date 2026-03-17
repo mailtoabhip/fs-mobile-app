@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.fastag
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -27,6 +28,7 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
         const val EXTRA_TRUCK_SIZE = "truck_size"
         const val EXTRA_CAPACITY = "capacity"
         const val EXTRA_OWNERSHIP = "ownership"
+        private const val REQCODE_DISPUTE = 1001
     }
 
     private var txnId: String = ""
@@ -78,7 +80,7 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
                 putExtra(FastagDisputeIssuesActivity.EXTRA_FASTAG_ID, currentResponse?.fastagId ?: "")
                 putExtra(FastagDisputeIssuesActivity.TOLL_PLAZA_ID, currentResponse?.tollPlazaId ?: "")
             }
-            startActivity(intent)
+            startActivityForResult(intent, REQCODE_DISPUTE)
         }
     }
 
@@ -220,6 +222,17 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
             }
         } else {
             binding.cardDisputeTracker.visibility = View.GONE
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQCODE_DISPUTE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    viewModel.getTransactionDispute(txnId)
+                }
+            }
         }
     }
 

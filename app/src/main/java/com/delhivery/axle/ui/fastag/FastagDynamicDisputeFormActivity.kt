@@ -19,10 +19,12 @@ import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.data.dispute.SubmissionState
 import com.delhivery.axle.databinding.ActivityFastagDynamicDisputeFormBinding
+import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDisputeFormBinding, FastagDynamicDisputeFormViewModel>() {
 
@@ -118,7 +120,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         setupSelectedTransaction()
 
         // Setup terms and conditions
-        setupTermsAndConditions()
+//        setupTermsAndConditions()
 
         // Setup submit button - initially disabled until mandatory fields are filled
         binding.btnSubmit.isEnabled = false
@@ -500,6 +502,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
             }
             is SubmissionState.Success -> {
                 binding.btnSubmit.isEnabled = true
+                showSuccessBottomSheet(state.srId)
             }
             is SubmissionState.Error -> {
                 binding.btnSubmit.isEnabled = true
@@ -508,5 +511,34 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
                 binding.btnSubmit.isEnabled = true
             }
         }
+    }
+
+    private fun showSuccessBottomSheet(srId: String?) {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.setCanceledOnTouchOutside(false)
+
+        val dialogBinding = DialogDisputeSuccessBinding.inflate(layoutInflater)
+        bottomSheetDialog.setContentView(dialogBinding.root)
+
+        dialogBinding.tvTicketId.text = "#${srId ?: "N/A"}"
+
+        dialogBinding.ivClose.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            setResult(RESULT_OK)
+            finish()
+        }
+
+        dialogBinding.btnGoToLoads.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            val intent = Intent(this, com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("fragment_type", "load")
+            }
+            startActivity(intent)
+            finish()
+        }
+
+        bottomSheetDialog.show()
     }
 }

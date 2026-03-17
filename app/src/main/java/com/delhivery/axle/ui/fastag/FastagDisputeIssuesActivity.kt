@@ -26,6 +26,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
         const val EXTRA_TXN_ID = "txn_id"
         const val EXTRA_FASTAG_ID = "fastag_id"
         const val TOLL_PLAZA_ID = "toll_plaza_id"
+        private const val REQCODE_DISPUTE_FORM = 1002
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +90,18 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQCODE_DISPUTE_FORM -> {
+                if (resultCode == RESULT_OK) {
+                    setResult(RESULT_OK)
+                    finish()
+                }
+            }
+        }
+    }
+
     private fun onDisputeTypeSelected(disputeType: DisputeType) {
         if (disputeType.addTxnReq == true) {
             // Requires transaction selection - go to transaction selection screen
@@ -102,7 +115,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
                 putExtra(FastagDynamicDisputeFormActivity.EXTRA_TXN_ID, txnId)
 
             }
-            startActivity(intent)
+            startActivityForResult(intent, REQCODE_DISPUTE_FORM)
         } else {
             // No transaction required - go directly to dispute form
             val intent = Intent(this, FastagDynamicDisputeFormActivity::class.java).apply {
@@ -114,7 +127,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
                 putExtra(FastagDynamicDisputeFormActivity.EXTRA_TXN_ID, txnId)
 
             }
-            startActivity(intent)
+            startActivityForResult(intent, REQCODE_DISPUTE_FORM)
         }
     }
 }
