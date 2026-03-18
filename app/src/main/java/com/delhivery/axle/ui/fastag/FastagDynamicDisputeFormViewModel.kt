@@ -256,7 +256,6 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
 
         // Fire the request
         submissionStateData.value = SubmissionState.Loading
-        progressData.value = true
 
         compositeDisposable += loadboardRepository.submitDispute(
             txnId = MultipartBody.Part.createFormData("txn_id", transactionId?:""),
@@ -271,8 +270,6 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
         )
             .onBackground()
             .subscribe { response, error ->
-                progressData.value = false
-
                 if (!error && response != null) {
                     submissionStateData.value = SubmissionState.Success(
                         "Dispute submitted successfully. SR ID: ${response.srId ?: "N/A"}",

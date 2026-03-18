@@ -137,11 +137,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/size_16dp"
-                android:background="@drawable/bg_action_light_black_btn_without_border"
+                android:background="@drawable/background_all_rounded_black"
                 android:text="Confirm Selection"
-                android:textColor="@color/selector_button_text"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
-                android:textAllCaps="false" />
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:minHeight="52dp" />
 
         </FrameLayout>
 

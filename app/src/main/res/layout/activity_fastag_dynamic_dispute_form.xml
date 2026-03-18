@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/size_16dp"
-                android:text="Dispute submission  form"
+                android:text="Dispute Submission"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#615655" />

@@ -19,6 +19,7 @@ import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.data.dispute.SubmissionState
 import com.delhivery.axle.databinding.ActivityFastagDynamicDisputeFormBinding
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
@@ -111,7 +112,6 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         transactionAmount = intent.getDoubleExtra(EXTRA_TRANSACTION_AMOUNT, 0.0)
 
         // Setup header
-        binding.tvTitle.text = "Dispute submission  form"
         binding.ivBack.setOnClickListener {
             onBackPressed()
         }
@@ -124,7 +124,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
         // Setup submit button - initially disabled until mandatory fields are filled
         binding.btnSubmit.isEnabled = false
-        binding.btnSubmit.alpha = 0.5f
+        binding.btnSubmit.alpha = 0.3f
         binding.btnSubmit.setOnClickListener {
             onSubmitClicked()
         }
@@ -142,7 +142,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         if (showTransaction && transactionId != null && transactionTollName != null) {
             binding.llSelectedTransaction.visibility = View.VISIBLE
             binding.tvTransactionTollName.text = transactionTollName
-            binding.tvTransactionDateTime.text = transactionTimestamp ?: ""
+            binding.tvTransactionDateTime.text = formatTransactionDateTime(transactionTimestamp ?: "")
 
             val amountAbs = kotlin.math.abs(transactionAmount)
             binding.tvTransactionAmount.text = String.format("₹%.2f", amountAbs)
@@ -188,12 +188,9 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     private fun observeData() {
-       // Observe progress - use uiUtils loader like transaction listing
         viewModel.progressData.observe(this) { isLoading ->
             if (isLoading) {
                 uiUtils.showProgress()
-                binding.scrollView.visibility = View.GONE
-                binding.llFooter.visibility = View.GONE
             } else {
                 uiUtils.hideProgress()
                 binding.scrollView.visibility = View.VISIBLE
@@ -499,17 +496,29 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         when (state) {
             is SubmissionState.Loading -> {
                 binding.btnSubmit.isEnabled = false
+                uiUtils.showProgress()
             }
             is SubmissionState.Success -> {
+                uiUtils.hideProgress()
                 binding.btnSubmit.isEnabled = true
                 showSuccessBottomSheet(state.srId)
             }
             is SubmissionState.Error -> {
+                uiUtils.hideProgress()
                 binding.btnSubmit.isEnabled = true
             }
             is SubmissionState.Idle -> {
                 binding.btnSubmit.isEnabled = true
             }
+        }
+    }
+
+    private fun formatTransactionDateTime(dateTime: String): String {
+        return try {
+            val date = DateUtils.parseDateIst(dateTime, "dd-MM-yyyy HH:mm:ss")
+            DateUtils.formatDate(date, "dd MMM yyyy, hh:mm a")
+        } catch (e: Exception) {
+            dateTime
         }
     }
 

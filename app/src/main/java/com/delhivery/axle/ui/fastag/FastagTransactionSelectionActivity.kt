@@ -75,6 +75,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
 
         // Initially disable the confirm button
         binding.btnConfirmSelection.isEnabled = false
+        binding.btnConfirmSelection.alpha = 0.3f
 
         binding.btnConfirmSelection.setOnClickListener {
             val selectedTransaction = adapter.getSelectedTransaction()
@@ -133,6 +134,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                     binding.layoutEmptyState.visibility = View.VISIBLE
                     binding.btnConfirmSelection.text = "Select different issue type"
                     binding.btnConfirmSelection.isEnabled = true
+                    binding.btnConfirmSelection.alpha = 1.0f
                     binding.layoutButtonContainer.visibility = View.VISIBLE
                     binding.btnConfirmSelection.setOnClickListener { finish() }
                 } else {
@@ -154,6 +156,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                 binding.layoutEmptyState.visibility = View.VISIBLE
                 binding.btnConfirmSelection.text = "Select different issue type"
                 binding.btnConfirmSelection.isEnabled = true
+                binding.btnConfirmSelection.alpha = 1.0f
                 binding.layoutButtonContainer.visibility = View.VISIBLE
                 binding.btnConfirmSelection.setOnClickListener { finish() }
             }
@@ -181,5 +184,6 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         adapter.setSelectedTransaction(transaction)
         // Enable confirm button when a transaction is selected
         binding.btnConfirmSelection.isEnabled = true
+        binding.btnConfirmSelection.alpha = 1.0f
     }
 }

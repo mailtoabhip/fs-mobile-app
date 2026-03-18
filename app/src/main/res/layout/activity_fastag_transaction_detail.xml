@@ -26,6 +26,17 @@
                 android:src="@drawable/ic_back_arrow"
                 android:contentDescription="Back" />
 
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:textStyle="bold"
+                android:text="Transaction details"
+                android:textSize="18sp"
+                android:textColor="#615655" />
+
         </LinearLayout>
 
         <!-- Scrollable Content -->
