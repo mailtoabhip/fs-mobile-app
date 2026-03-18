@@ -33,15 +33,12 @@ class FastagTransactionAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: FastagTransaction) {
-            // Title: txn_event / tollName (e.g. "552003-Agra Toll Plaza")
             binding.tvTransactionId.text = transaction.tollName ?: ""
             
             binding.tvTimestamp.text = formatTimestamp(transaction.timestamp ?: "")
             
-            // Subtitle: txnEventContext (e.g. "Toll Debit", "Account Activity")
             binding.tvTollName.text = transaction.txnEventContext ?: transaction.transactionType ?: ""
-            
-            // Amount with sign
+
             val isCredit = transaction.transactionType?.contains("credit", ignoreCase = true) == true ||
                     transaction.transactionType?.contains("recharge", ignoreCase = true) == true ||
                     transaction.transactionType?.contains("refund", ignoreCase = true) == true ||
@@ -57,7 +54,6 @@ class FastagTransactionAdapter(
             }
             binding.tvAmount.setTextColor(amountColor)
 
-            // Handle dispute status visibility and styling
             if (transaction.isDispute == true && !transaction.disputeStatus.isNullOrEmpty()) {
                 binding.tvDisputeStatus.visibility = android.view.View.VISIBLE
                 binding.tvDisputeStatus.text = transaction.disputeStatus

@@ -163,10 +163,6 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         }
     }
 
-    /**
-     * Format ISO 8601 datetime to readable format
-     * Example: "2025-01-20T10:30:45Z" -> "20 Jan 2025, 10:30 AM"
-     */
     private fun formatDateTime(dateTime: String): String {
         return try {
             val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault())

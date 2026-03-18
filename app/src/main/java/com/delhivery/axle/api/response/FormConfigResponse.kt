@@ -18,13 +18,13 @@ data class FormConfigResponse(
  */
 data class FormField(
     @SerializedName("displayOrder")
-    val displayOrder: Int,
+    val displayOrder: Int?,
     
     @SerializedName("fieldType")
-    val fieldType: String,  // "NUMBER", "TEXT", "TEXTAREA", "FILE"
+    val fieldType: String?,
     
     @SerializedName("displayLabel")
-    val displayLabel: String,
+    val displayLabel: String?,
     
     @SerializedName("placeholder")
     val placeholder: String?,
@@ -64,9 +64,9 @@ data class FormField(
      */
     val fieldTypeEnum: FieldType
         get() = try {
-            FieldType.valueOf(fieldType)
+            FieldType.valueOf(fieldType?:"TEXTAREA")
         } catch (e: IllegalArgumentException) {
-            FieldType.TEXT // Default fallback
+            FieldType.TEXT
         }
 }
 
