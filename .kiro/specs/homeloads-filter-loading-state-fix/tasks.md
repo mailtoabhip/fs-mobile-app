@@ -1,0 +1,91 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Progress Item Removed Before Rendering on Filter Tab Click
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists (progress item removed before UI renders it)
+  - **Scoped PBT Approach**: Scope the property to concrete failing cases - filter tab clicks (Intracity, Intercity, Marketplace, Others)
+  - Write instrumented UI test that simulates filter tab clicks and verifies HomeLoadsProgressItem visibility in RecyclerView
+  - Add logging to track adapter operation sequence: AddUpdate (from resetStaticData) vs Remove (from ViewModel)
+  - Test that clicking any filter tab (Intracity→Marketplace, Marketplace→Intercity, etc.) shows HomeLoadsProgressItem in the adapter
+  - The test assertions should verify: `progressItemVisibleInRecyclerView()` after `refreshData()` is called
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS - progress item is NOT visible (AddUpdate followed immediately by Remove before rendering)
+  - Document counterexamples found (e.g., "Marketplace tab click: resetStaticData adds progress item, but ViewModel removes it in first state emission")
+  - Mark task complete when test is written, run, and failure is documented
+  - _Requirements: Bug Condition from design - isBugCondition(input) where resetStaticData() adds HomeLoadsProgressItem with AddUpdate AND ViewModel immediately removes it with Remove before UI renders_
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Non-Filter Loading Behavior Unchanged
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for non-filter-click loading scenarios
+  - Write property-based tests capturing observed behavior patterns from Preservation Requirements:
+    - Pagination loading: Scroll to load more shows loading indicator correctly
+    - Initial fragment load: Fragment creation shows loading correctly
+    - Pull-to-refresh: Swipe gesture shows loading correctly
+    - Error states: Error handling displays correctly
+    - Background refresh: Notification-triggered refresh works correctly
+  - Property-based testing generates many test cases for stronger guarantees across the input domain
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: Preservation Requirements from design - pagination loading, initial load, error states, StateFlow architecture must remain unchanged_
+
+- [x] 3. Fix for progress item race condition on filter tab clicks
+
+  - [x] 3.1 Modify fetchUserTransactions() to conditionally skip Remove operation when paginate=false
+    - Locate fetchUserTransactions() method in HomeLoadsViewModel.kt (around line 445)
+    - Find the line: `add(Pair(HomeLoadsProgressItem(), Remove))`
+    - Wrap this line in a conditional: only execute when `paginate == true`
+    - Implementation: `if (paginate) { add(Pair(HomeLoadsProgressItem(), Remove)) }`
+    - This prevents the ViewModel from removing the progress item that resetStaticData() just added when filter tabs are clicked
+    - When paginate=false (filter tab clicks), the progress item added by resetStaticData() will remain visible
+    - When paginate=true (scrolling to load more), the existing behavior is preserved (ViewModel removes and re-adds progress item)
+    - _Bug_Condition: isBugCondition(input) where resetStaticData() adds HomeLoadsProgressItem with AddUpdate AND ViewModel immediately removes it with Remove when paginate=false_
+    - _Expected_Behavior: Progress item added by resetStaticData() SHALL remain visible during data fetch when paginate=false (Property 1 from design)_
+    - _Preservation: When paginate=true, ViewModel MUST still remove progress item as before to preserve pagination loading behavior_
+    - _Requirements: 2.1 (Progress item visibility), 2.2 (Loading indicator during filter tab clicks), 3.1 (Pagination loading), 3.2 (Adapter operations for pagination)_
+
+  - [x] 3.2 Modify fetchSpotMarketplaceLoads() to conditionally skip Remove operation when paginate=false
+    - Locate fetchSpotMarketplaceLoads() method in HomeLoadsViewModel.kt (around line 1147)
+    - Find the line: `add(Pair(HomeLoadsProgressItem(), Remove))`
+    - Wrap this line in a conditional: only execute when `paginate == true`
+    - Implementation: `if (paginate) { add(Pair(HomeLoadsProgressItem(), Remove)) }`
+    - This prevents the ViewModel from removing the progress item that resetStaticData() just added when Marketplace tab is clicked
+    - When paginate=false (Marketplace tab click), the progress item added by resetStaticData() will remain visible
+    - When paginate=true (scrolling to load more in Marketplace), the existing behavior is preserved
+    - _Bug_Condition: isBugCondition(input) where resetStaticData() adds HomeLoadsProgressItem with AddUpdate AND ViewModel immediately removes it with Remove when paginate=false_
+    - _Expected_Behavior: Progress item added by resetStaticData() SHALL remain visible during data fetch when paginate=false (Property 1 from design)_
+    - _Preservation: When paginate=true, ViewModel MUST still remove progress item as before to preserve pagination loading behavior_
+    - _Requirements: 2.1 (Progress item visibility), 2.2 (Loading indicator during filter tab clicks), 3.1 (Pagination loading), 3.2 (Adapter operations for pagination)_
+
+  - [x] 3.3 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Progress Item Remains Visible on Filter Tab Click
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior (progress item visible in RecyclerView)
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed - progress item remains visible, no immediate Remove operation)
+    - Verify adapter operation log shows: AddUpdate (from resetStaticData) → no Remove until data is ready
+    - _Requirements: Property 1 from design - progress item visibility on filter tab clicks_
+
+  - [x] 3.4 Verify preservation tests still pass
+    - **Property 2: Preservation** - Pagination Loading Behavior Unchanged
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2 (pagination loading, initial load, error states, adapter operations)
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions - pagination loading still works correctly when paginate=true)
+    - Verify that when paginate=true, ViewModel still removes and re-adds progress item as before
+    - Confirm all tests still pass after fix (no regressions)
+    - _Requirements: Property 2 from design - pagination loading, adapter operations, data display order preserved_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Run all tests (bug condition test + preservation tests)
+  - Verify bug condition test passes (progress item remains visible in RecyclerView on filter tab clicks)
+  - Verify preservation tests pass (pagination loading, initial load, error states unchanged)
+  - Verify adapter operation sequence: no immediate Remove when paginate=false, Remove still happens when paginate=true
+  - Manually test on device: click filter tabs and verify loading indicator appears immediately
+  - Test rapid tab switching to ensure loading indicators appear consistently
+  - Test pagination: scroll to load more and verify loading indicator still works correctly
+  - Ask the user if questions arise or if additional testing is needed

@@ -99,45 +99,18 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
             _instance
         }else SearchResultsFragment._instance
 
-        if(viewModel is SearchResultsViewModel){
-            (viewModel as SearchResultsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
-                if(it!=null){
-                    disableClicks(true)
-                    enableSubmit()
-                    binding.progress.visibility = View.GONE
-                    binding.progressMsg.visibility = View.GONE
-                    dismiss()
-
-
-                }else{
-                    disableClicks(true)
-                    enableSubmit()
-                    binding.progress.visibility = View.GONE
-                    binding.progressMsg.visibility = View.GONE
-
-
-                }
-            })
-        }else{
-            (viewModel as HomeLoadsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
-                if(it!=null){
-                    disableClicks(true)
-                    enableSubmit()
-                    binding.progress.visibility = View.GONE
-                    binding.progressMsg.visibility = View.GONE
-                    dismiss()
-
-
-                }else{
-                    disableClicks(true)
-                    enableSubmit()
-                    binding.progress.visibility = View.GONE
-                    binding.progressMsg.visibility = View.GONE
-
-
-                }
-            })
-        }
+        // Note: acceptBid result is now handled via SharedFlow events in the Fragment
+        // The Fragment's handleEvent() will show the success dialog and refresh data
+        // This dialog dismisses itself after a short delay to allow the API call to complete
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            if (isShowing) {
+                disableClicks(true)
+                enableSubmit()
+                binding.progress.visibility = View.GONE
+                binding.progressMsg.visibility = View.GONE
+                dismiss()
+            }
+        }, 2000) // 2 second delay to allow API call to complete
 
         binding.editTextVehicleNumber?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) = Unit

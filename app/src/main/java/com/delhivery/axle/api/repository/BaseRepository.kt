@@ -3,8 +3,12 @@ package com.delhivery.axle.api.repository
 import android.util.Log
 import com.delhivery.axle.utils.ErrorLogger
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -76,6 +80,67 @@ abstract class BaseRepository(
             )
         }
     }
+
+    /**
+     * Wraps an API call in a Flow that emits Loading, then Success or Failure.
+     * This function enables reactive data handling with proper error handling and dispatcher management.
+     *
+     * Flow emission sequence:
+     * 1. Resource.Loading - emitted before API call starts
+     * 2. Resource.Success or Resource.Failure - emitted based on API call result
+     *
+     * Exception handling:
+     * - CancellationException: Rethrown to respect coroutine cancellation
+     * - SocketTimeoutException: Mapped to ApiError.Timeout
+     * - IOException: Mapped to ApiError.Network
+     * - HttpException: Mapped to appropriate ApiError based on HTTP status code
+     * - Other exceptions: Mapped to ApiError.Unknown
+     *
+     * The Flow uses flowOn(Dispatchers.IO) to execute network operations on the IO dispatcher.
+     *
+     * @param T The type of data returned on success
+     * @param apiCall Suspend lambda containing the API call to execute
+     * @return Flow<Resource<T>> that emits Loading, then Success or Failure
+     */
+    fun <T> safeApiCallFlow(
+        apiCall: suspend () -> T
+    ): Flow<Resource<T>> = flow {
+        emit(Resource.Loading)
+        try {
+            emit(Resource.Success(apiCall()))
+        } catch (e: CancellationException) {
+            // Respect coroutine cancellation - rethrow
+            throw e
+        } catch (e: SocketTimeoutException) {
+            errorLogger.log(e)
+            emit(Resource.Failure(
+                isNetworkError = true,
+                errorCode = null,
+                apiError = ApiError.Timeout
+            ))
+        } catch (e: IOException) {
+            errorLogger.log(e)
+            emit(Resource.Failure(
+                isNetworkError = true,
+                errorCode = null,
+                apiError = ApiError.Network
+            ))
+        } catch (e: HttpException) {
+            errorLogger.log(e)
+            emit(Resource.Failure(
+                isNetworkError = false,
+                errorCode = e.code(),
+                apiError = mapHttpCodeToApiError(e.code())
+            ))
+        } catch (e: Exception) {
+            errorLogger.log(e)
+            emit(Resource.Failure(
+                isNetworkError = false,
+                errorCode = null,
+                apiError = ApiError.Unknown
+            ))
+        }
+    }.flowOn(Dispatchers.IO)
 
     /**
      * Maps HTTP status codes to appropriate ApiError enum values.

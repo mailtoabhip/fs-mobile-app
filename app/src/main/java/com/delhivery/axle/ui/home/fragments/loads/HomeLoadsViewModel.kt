@@ -59,6 +59,81 @@ import kotlinx.coroutines.coroutineScope
 import androidx.lifecycle.viewModelScope
 import com.delhivery.axle.api.repository.Resource
 import kotlinx.coroutines.CancellationException
+import com.delhivery.axle.api.repository.ApiError
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.channels.BufferOverflow
+
+/**
+ * UI state data class for HomeLoadsFragment.
+ * Centralizes all UI state properties that were previously scattered across multiple LiveData fields.
+ */
+data class HomeLoadsUiState(
+    // Loads data
+    val loads: List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>> = emptyList(),
+    val loadsFetch: List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>> = emptyList(),
+    
+    // Loading states
+    val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    
+    // Pagination state
+    val hasMoreData: Boolean = true,
+    val offset: Int = 0,
+    val total: Int = 0,
+    val searchAfter: SearchAfter? = null,
+    
+    // Filter state
+    val selectedFilter: String = "",
+    val vehicleTypes: String? = null,
+    val filterVehicleType: Boolean? = null,
+    
+    // Tab counts
+    val intracityCount: Int = 0,
+    val intercityCount: Int = 0,
+    val nonDlvCount: Int = 0,
+    val marketplaceCount: Int = 0,
+    val fullLoadsCount: Int = 0,
+    val loadsCount: Int = 0,
+    
+    // Routes state
+    val hasRoutes: Boolean = false,
+    
+    // Error state
+    val error: ApiError? = null,
+    val isNetworkError: Boolean = false
+)
+
+/**
+ * UI event sealed class for HomeLoadsFragment.
+ * Represents one-time UI events that should not be replayed on configuration changes.
+ */
+sealed class HomeLoadsUiEvent {
+    // Bid action events
+    data class BidActionResult(val position: Int, val bid: TransactionBid) : HomeLoadsUiEvent()
+    data class BulkBidActionResult(val position: Int, val bids: List<TransactionBid>) : HomeLoadsUiEvent()
+    data class AcceptBidResult(val position: Int, val result: Any) : HomeLoadsUiEvent()
+    data class LowestBidResult(val position: Int, val data: HomeBidsRequestItemData) : HomeLoadsUiEvent()
+    data class ReviseBid(val shouldRevise: Boolean, val position: Int) : HomeLoadsUiEvent()
+    data class EditBulkResult(val code: Int, val transactionId: String) : HomeLoadsUiEvent()
+    
+    // Truck events
+    data class TruckTypesLoaded(val trucks: List<TruckResponseArray>, val data: HomeBidsRequestItemData) : HomeLoadsUiEvent()
+    
+    // Analytics tracking events
+    object TrackIntracityListShown : HomeLoadsUiEvent()
+    object TrackIntercityListShown : HomeLoadsUiEvent()
+    object TrackMarketplaceListShown : HomeLoadsUiEvent()
+    
+    // Error events
+    data class ShowErrorToast(val message: String) : HomeLoadsUiEvent()
+    data class ShowError(val error: ApiError) : HomeLoadsUiEvent()
+}
 
 /**
  * Created by saurabh
@@ -77,37 +152,6 @@ class HomeLoadsViewModel @Inject constructor(
   private val tripsRepository: TripsRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), BidDetailsCreateEditDialogInterface, BidConfirmReviseDialogInterface, BulkBidsCreateEditInterface, AcceptAdhocIntracityBidBottomDialogInterface {
-
-  /* user bids live data */
-  var userLoadsData =
-    MutableLiveData<List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
-  var userLoadsDataFetch =
-    MutableLiveData<List<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
-
-  /* route/lane preferene live data */
-  var routesLiveData = MutableLiveData<Boolean>()
-
-  /* bid action result live data */
-  var bidsActionLiveData = MutableLiveData<Pair<Int, TransactionBid>>()
-
-  var bulkBidActionLiveData = MutableLiveData<Pair<Int,List<TransactionBid>>>()
-  var acceptBidLiveData = MutableLiveData<Pair<Int,Any>>()
-
-
-    var lowestBidLiveData = MutableLiveData<Pair<Int, HomeBidsRequestItemData>>()
-
-  /* revise bid live data */
-  var reviseBidLiveData = MutableLiveData<Pair<Boolean, Int>>()
-
-  /* loads count live data */
-  var loadsCountLiveData = MutableLiveData<Int>()
-
-    var fullLoadsCountLiveData = MutableLiveData<Int>()
-
-    /* data loading live data */
-  var dataLoadingLiveData = MutableLiveData<Boolean>()
-
-  var truckGetLiveData = MutableLiveData<Pair<List<TruckResponseArray>,HomeBidsRequestItemData>>()
 
   var loadPricePercent = 0
 
@@ -136,7 +180,6 @@ class HomeLoadsViewModel @Inject constructor(
     var txnIds:ArrayList<String> = ArrayList()
 
 
-  var editBulkLiveData= MutableLiveData<Pair<Int,String>>()
   var editFlg= mutableListOf<Boolean>(false,false,false)
 
   var loadsCount:Int =0
@@ -147,12 +190,44 @@ class HomeLoadsViewModel @Inject constructor(
 
     val hasMarketplaceAccess = userPrefs.demandType.contains(DemandType.Spot_Marketplace.type)
 
-    var intercityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
-    var intracityListShownTracked = MutableLiveData<Boolean>().apply { value = false }
-    var marketPlaceListShownTracked = MutableLiveData<Boolean>().apply { value = false }
-
     /* coroutine job for cancellation on rapid tab switching */
     private var currentFetchJob: Job? = null
+
+    // StateFlow for UI state - replaces scattered LiveData properties
+    private val _uiState = MutableStateFlow(HomeLoadsUiState())
+    val uiState: StateFlow<HomeLoadsUiState> = _uiState.asStateFlow()
+
+    // SharedFlow for one-time UI events - replaces event LiveData properties
+    private val _uiEvent = MutableSharedFlow<HomeLoadsUiEvent>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val uiEvent: SharedFlow<HomeLoadsUiEvent> = _uiEvent.asSharedFlow()
+
+    /**
+     * Helper function for atomic state updates using MutableStateFlow.update {}
+     * Ensures thread-safe state mutations by using the update lambda.
+     */
+    private fun updateState(transform: (HomeLoadsUiState) -> HomeLoadsUiState) {
+        _uiState.update(transform)
+    }
+
+    /**
+     * Helper function for emitting one-time UI events.
+     * Suspend function that waits for the event to be emitted.
+     */
+    private suspend fun emitEvent(event: HomeLoadsUiEvent) {
+        _uiEvent.emit(event)
+    }
+
+    /**
+     * Helper function for sending one-time UI events without suspending.
+     * Uses tryEmit for fire-and-forget scenarios where suspension is not possible.
+     */
+    private fun sendEvent(event: HomeLoadsUiEvent) {
+        _uiEvent.tryEmit(event)
+    }
 
     /**
    * Getter/Setter for route update flag to preferences
@@ -199,6 +274,12 @@ class HomeLoadsViewModel @Inject constructor(
             offsetFetch = 0
             totalFetchTitle =0
             hasMoreData = true
+            // Update StateFlow pagination state
+            updateState { it.copy(
+                searchAfter = null,
+                offset = 0,
+                hasMoreData = true
+            )}
         } else if (paginate && !hasMoreData) {
             return
         }
@@ -209,7 +290,11 @@ class HomeLoadsViewModel @Inject constructor(
 
         if (paginate) {
             paginateCount += 1
-            Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
+            // Update StateFlow with progress item for pagination
+            updateState { it.copy(
+                loads = listOf(Pair(HomeLoadsProgressItem(), AddUpdate)),
+                isLoadingMore = true
+            )}
         }
 
         passing_vehicle_type = vehicleStr
@@ -218,7 +303,8 @@ class HomeLoadsViewModel @Inject constructor(
             vehicleTypes = null
         }
 
-        dataLoadingLiveData.postValue(true)
+        // Update StateFlow loading state
+        updateState { it.copy(isLoading = true) }
         
         // Fetch user data first if not available
         if (user == null) {
@@ -234,17 +320,18 @@ class HomeLoadsViewModel @Inject constructor(
                         currentFetchJob = viewModelScope.launch {
                             try {
                                 fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                            } catch (e: CancellationException) {
+                                // Handle CancellationException without logging errors
+                                // Do not update UI state for cancelled operations
                             } catch (e: Exception) {
-                                if (e !is CancellationException) {
-                                    Log.e("HomeLoadsViewModel", "Error fetching loads", e)
-                                }
+                                Log.e("HomeLoadsViewModel", "Error fetching loads", e)
                             } finally {
-                                dataLoadingLiveData.postValue(false)
+                                updateState { it.copy(isLoading = false, isLoadingMore = false) }
                             }
                         }
                     } else {
                         error?.handle()
-                        dataLoadingLiveData.postValue(false)
+                        updateState { it.copy(isLoading = false, isLoadingMore = false) }
                     }
                 }
         } else {
@@ -255,12 +342,13 @@ class HomeLoadsViewModel @Inject constructor(
             currentFetchJob = viewModelScope.launch {
                 try {
                     fetchLoadsData(paginate, demandType, selectedFilter, infoSearch, excludeTruckTypes)
+                } catch (e: CancellationException) {
+                    // Handle CancellationException without logging errors
+                    // Do not update UI state for cancelled operations
                 } catch (e: Exception) {
-                    if (e !is CancellationException) {
-                        Log.e("HomeLoadsViewModel", "Error in fetchUserTransactions", e)
-                    }
+                    Log.e("HomeLoadsViewModel", "Error in fetchUserTransactions", e)
                 } finally {
-                    dataLoadingLiveData.postValue(false)
+                    updateState { it.copy(isLoading = false, isLoadingMore = false) }
                 }
             }
         }
@@ -287,7 +375,7 @@ class HomeLoadsViewModel @Inject constructor(
                 is Resource.Success -> {
                     val _res = primaryResult.data!!
                     
-                    // Update pagination state
+                    // Update pagination state in local variables and StateFlow
                     offset = _res.offset ?: 0
                     total = _res.transactions?.size ?: 0
                     searchAfter = _res.searchAfter
@@ -298,7 +386,6 @@ class HomeLoadsViewModel @Inject constructor(
                     fecthToCalled = _res.offset < _res.total
                     loadPricePercent = _res.loadPricePercent
                     more_default_loads = _res.more_loads
-                    loadsCountLiveData.postValue(total)
                     
                     // 2 parallel calls for split counts + marketplace
                     val parallelResults = coroutineScope {
@@ -350,18 +437,21 @@ class HomeLoadsViewModel @Inject constructor(
                         else -> { /* count remains 0 */ }
                     }
                     
+                    // Calculate full count before building UI list
+                    val fullCount = total + intercityCount + nonDlvCount + marketplaceCount
+                    
                     // Build UI items list
-                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-                        add(Pair(HomeLoadsProgressItem(), Remove))
+                    val loadsList = mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                        if (paginate) {
+                            add(Pair(HomeLoadsProgressItem(), Remove))
+                        }
                         
                         val loads = _res.transactions ?: emptyList()
                         
                         add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
                         
-                        val count = total + intercityCount + nonDlvCount + marketplaceCount
                         Log.d("viewmodel", "$total intrcity $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
-                        Log.d("count", count.toString())
-                        fullLoadsCountLiveData.postValue(count)
+                        Log.d("count", fullCount.toString())
                         
                         add(Pair(
                             HomeLoadsFilterItem(HomeLoadsFilterItemData(
@@ -398,10 +488,27 @@ class HomeLoadsViewModel @Inject constructor(
                         }
                         add(Pair(HomeLoadsMoreInfoItem(), Remove))
                         add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-                    }.let {
-                        userLoadsData.postValue(it)
-                        if (_res.transactions?.isNotEmpty() == true && paginateCount == 0)
-                            intracityListShownTracked.postValue(true)
+                    }
+                    
+                    // Update StateFlow with loads, pagination state, and counts atomically
+                    updateState { it.copy(
+                        loads = loadsList,
+                        hasMoreData = hasMoreData,
+                        offset = offset,
+                        total = total,
+                        searchAfter = searchAfter,
+                        loadsCount = total,
+                        fullLoadsCount = fullCount,
+                        intracityCount = total,
+                        intercityCount = intercityCount,
+                        nonDlvCount = nonDlvCount,
+                        marketplaceCount = marketplaceCount,
+                        isLoadingMore = false
+                    )}
+                    
+                    // Emit tracking event for first successful fetch
+                    if (_res.transactions?.isNotEmpty() == true && paginateCount == 0) {
+                        sendEvent(HomeLoadsUiEvent.TrackIntracityListShown)
                     }
                 }
                 
@@ -409,8 +516,8 @@ class HomeLoadsViewModel @Inject constructor(
                     // Post error state to UI (NO fallback for intracity)
                     Log.e("HomeLoadsViewModel", "Error fetching intracity loads: ${primaryResult.apiError}")
                     
-                    // Post empty list with error item to UI
-                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                    // Build error UI items list
+                    val errorLoadsList = mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         add(Pair(HomeLoadsProgressItem(), Remove))
                         add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
                         add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(
@@ -418,8 +525,19 @@ class HomeLoadsViewModel @Inject constructor(
                         )), AddUpdate))
                         add(Pair(HomeLoadsWarningItem_TimeOut, AddUpdate))
                         add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-                    }.let {
-                        userLoadsData.postValue(it)
+                    }
+                    
+                    // Update StateFlow with error state
+                    updateState { it.copy(
+                        loads = errorLoadsList,
+                        error = primaryResult.apiError,
+                        isNetworkError = primaryResult.isNetworkError,
+                        isLoadingMore = false
+                    )}
+                    
+                    // Emit error event for toast/dialog
+                    primaryResult.apiError?.let { apiError ->
+                        sendEvent(HomeLoadsUiEvent.ShowError(apiError))
                     }
                 }
                 
@@ -444,7 +562,7 @@ class HomeLoadsViewModel @Inject constructor(
                     Log.d("Viewmode123", "${_res.toString()}")
                     Log.d("Viewmode12", "${_res.transactions}")
                     
-                    // Update pagination state
+                    // Update pagination state in local variables
                     searchAfter = _res.searchAfter
                     hasMoreData = searchAfter != null
                     offset = _res.offset
@@ -552,10 +670,9 @@ class HomeLoadsViewModel @Inject constructor(
                     } else {
                         nonDlvCount
                     }
-                    loadsCountLiveData.postValue(count)
                     
                     // Build UI items list
-                    mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+                    val loadsList = mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
                         add(Pair(HomeLoadsProgressItem(), Remove))
                         
                         add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
@@ -566,7 +683,6 @@ class HomeLoadsViewModel @Inject constructor(
                         }
                         val fullCount = totalCount + intercityCount + nonDlvCount + marketplaceCount
                         Log.d("LoadView", "$totalCount inter $intercityCount nonDlv $nonDlvCount marketplace $marketplaceCount")
-                        fullLoadsCountLiveData.postValue(fullCount)
                         
                         add(Pair(
                             HomeLoadsFilterItem(HomeLoadsFilterItemData(
@@ -605,11 +721,33 @@ class HomeLoadsViewModel @Inject constructor(
                             add(Pair(HomeLoadsInfoItem(), AddUpdate))
                         }
                         add(Pair(HomeLoadsMoreInfoItem(), AddUpdate))
-                    }.let {
-                        userLoadsData.postValue(it)
-                        if (loads.isNotEmpty() && paginateCount == 0) {
-                            intercityListShownTracked.postValue(true)
-                        }
+                    }
+                    
+                    // Calculate fullCount for state update
+                    val totalCount = when (val splitResult = parallelResults.splitCount) {
+                        is Resource.Success -> splitResult.data?.total ?: 0
+                        else -> 0
+                    }
+                    val fullCount = totalCount + intercityCount + nonDlvCount + marketplaceCount
+                    
+                    // Update StateFlow with loads, pagination state, and counts atomically
+                    updateState { it.copy(
+                        loads = loadsList,
+                        hasMoreData = hasMoreData,
+                        offset = offset,
+                        total = total,
+                        searchAfter = searchAfter,
+                        loadsCount = count,
+                        fullLoadsCount = fullCount,
+                        intercityCount = intercityCount,
+                        nonDlvCount = nonDlvCount,
+                        marketplaceCount = marketplaceCount,
+                        isLoadingMore = false
+                    )}
+                    
+                    // Emit tracking event for first successful fetch
+                    if (loads.isNotEmpty() && paginateCount == 0) {
+                        sendEvent(HomeLoadsUiEvent.TrackIntercityListShown)
                     }
                 }
                 
@@ -620,7 +758,19 @@ class HomeLoadsViewModel @Inject constructor(
                     parallelTrace.stop()
                     mainTrace.stop()
                     
-                    // CRITICAL: Fallback to supplier loads on error
+                    // Update error state in StateFlow
+                    updateState { it.copy(
+                        error = primaryResult.apiError,
+                        isNetworkError = primaryResult.isNetworkError,
+                        isLoadingMore = false
+                    )}
+                    
+                    // Emit error event
+                    primaryResult.apiError?.let { apiError ->
+                        sendEvent(HomeLoadsUiEvent.ShowError(apiError))
+                    }
+                    
+                    // CRITICAL: Fallback to supplier loads on error (non-intracity only)
                     fetchSupplierTransactions(
                         totalFetchTitle > 0,
                         selectedFilter,
@@ -650,7 +800,7 @@ class HomeLoadsViewModel @Inject constructor(
 
     if (paginate) {
       paginateCount += 1
-      Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsDataFetch.postValue(listOf(it)) }
+      updateState { it.copy(loadsFetch = listOf(Pair(HomeLoadsProgressItem(), AddUpdate))) }
     }
       val distinct = txnIds.distinct().toList()
       for(txn in distinct){
@@ -667,7 +817,7 @@ class HomeLoadsViewModel @Inject constructor(
       vehicleTypes = null
     }
 
-    dataLoadingLiveData.postValue(true)
+    updateState { it.copy(isLoading = true) }
     
     // Fetch user data first if not available
     if (user == null) {
@@ -680,7 +830,7 @@ class HomeLoadsViewModel @Inject constructor(
                     fetchSupplierLoadsData(paginate, selectedFilter, demandType, infoSearch, excludeTruckTypes)
                 } else {
                     error?.handle()
-                    dataLoadingLiveData.postValue(false)
+                    updateState { it.copy(isLoading = false) }
                 }
             }
     } else {
@@ -705,7 +855,7 @@ class HomeLoadsViewModel @Inject constructor(
                                   hasMoreData =t.hasNext
                                   loadPricePercent = t.loadPricePercent
                                   more_default_loads = t.more_loads
-                                  loadsCountLiveData.postValue(totalFetchTitle)
+                                  updateState { it.copy(loadsCount = totalFetchTitle) }
 
                                   Single.zip(
                                       bidsRepository.bidsForLoadsRx(t.transactions).subscribeOn(Schedulers.io()),
@@ -761,7 +911,7 @@ class HomeLoadsViewModel @Inject constructor(
                     
                   add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
                 val count = _tRes.fourth.total+intercityCount+nonDlvCount+marketplaceCount
-                fullLoadsCountLiveData.postValue(count)
+                updateState { it.copy(fullLoadsCount = count) }
                   add(Pair(HomeLoadsFilterItem(HomeLoadsFilterItemData(selectedFilter,_tRes.fourth.total,intercityCount,nonDlvCount,marketplaceCount,userPrefs.demandType)), AddUpdate))
                   if(!paginate) {
 //                    add(Pair(HomeLoadsShareRateItem(HomeLoadsShareRateItemData(true,userPrefs.shareRateBannerH1,userPrefs.shareRateBannerH3,userPrefs.shareRateBannerH2)), AddUpdate))
@@ -815,7 +965,7 @@ class HomeLoadsViewModel @Inject constructor(
 
             }
                 .let {
-                  userLoadsDataFetch.postValue(it) }
+                  updateState { state -> state.copy(loadsFetch = it) } }
 
           } else {
             mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -829,15 +979,15 @@ class HomeLoadsViewModel @Inject constructor(
               hasMoreData=false
             }
                 .let {
-                  if(!userLoadsData.value?.isNullOrEmpty()&& totalFetch>0){
-                    if(userLoadsData.value!=null && userLoadsData.value!!.size>0){
-                    it.addAll(userLoadsData.value!!)}
+                  if(!_uiState.value.loads.isNullOrEmpty() && totalFetch>0){
+                    if(_uiState.value.loads.isNotEmpty()){
+                    it.addAll(_uiState.value.loads)}
                   }
 
-                  userLoadsDataFetch.postValue(it) }
+                  updateState { state -> state.copy(loadsFetch = it) } }
           }
 
-          dataLoadingLiveData.postValue(false)
+          updateState { it.copy(isLoading = false, hasMoreData = hasMoreData, offset = offsetFetch) }
         }
   }
 
@@ -859,10 +1009,10 @@ class HomeLoadsViewModel @Inject constructor(
 
     if (paginate) {
       paginateCount += 1
-      Pair(HomeLoadsProgressItem(), AddUpdate).let { userLoadsData.postValue(listOf(it)) }
+      updateState { it.copy(loads = listOf(Pair(HomeLoadsProgressItem(), AddUpdate)), isLoadingMore = true) }
     }
 
-    dataLoadingLiveData.postValue(true)
+    updateState { it.copy(isLoading = true) }
     
     // Fetch user data first if not available
     if (user == null) {
@@ -883,12 +1033,12 @@ class HomeLoadsViewModel @Inject constructor(
                   Log.e("HomeLoadsViewModel", "Error fetching marketplace loads", e)
                 }
               } finally {
-                dataLoadingLiveData.postValue(false)
+                updateState { it.copy(isLoading = false, isLoadingMore = false) }
               }
             }
           } else {
             error?.handle()
-            dataLoadingLiveData.postValue(false)
+            updateState { it.copy(isLoading = false, isLoadingMore = false) }
           }
         }
     } else {
@@ -904,7 +1054,7 @@ class HomeLoadsViewModel @Inject constructor(
             Log.e("HomeLoadsViewModel", "Error in fetchSpotMarketplaceLoads", e)
           }
         } finally {
-          dataLoadingLiveData.postValue(false)
+          updateState { it.copy(isLoading = false, isLoadingMore = false) }
         }
       }
     }
@@ -932,7 +1082,7 @@ class HomeLoadsViewModel @Inject constructor(
         Log.d("MarketplaceDebug", "Count API Response - count: $count")
         total = count
         cachedMarketplaceCount = total
-        loadsCountLiveData.postValue(count)
+        updateState { it.copy(loadsCount = count) }
       }
       is Resource.Failure -> {
         Log.e("HomeLoadsViewModel", "Error fetching marketplace count: ${countResult.apiError}")
@@ -999,7 +1149,9 @@ class HomeLoadsViewModel @Inject constructor(
         
         // Build UI items
         mutableListOf<Pair<BaseHomeLoadsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-          add(Pair(HomeLoadsProgressItem(), Remove))
+          if (paginate) {
+            add(Pair(HomeLoadsProgressItem(), Remove))
+          }
           
           add(Pair(HomeLoadsSearchItem(HomeLoadsSearchItemData(vehicleTypes)), AddUpdate))
           
@@ -1056,7 +1208,15 @@ class HomeLoadsViewModel @Inject constructor(
             }
             
             val totalAllCounts = intracityCount + intercityCount + nonDlvCount + cachedMarketplaceCount
-            fullLoadsCountLiveData.postValue(totalAllCounts)
+            
+            // Update state with all counts atomically
+            updateState { it.copy(
+              fullLoadsCount = totalAllCounts,
+              intracityCount = intracityCount,
+              intercityCount = intercityCount,
+              nonDlvCount = nonDlvCount,
+              marketplaceCount = cachedMarketplaceCount
+            )}
             
             // Update filter with all counts
             val filterItem = HomeLoadsFilterItem(
@@ -1065,7 +1225,7 @@ class HomeLoadsViewModel @Inject constructor(
                 nonDlvCount, cachedMarketplaceCount, userPrefs.demandType
               )
             )
-            userLoadsData.postValue(listOf(Pair(filterItem, AddUpdate)))
+            updateState { it.copy(loads = listOf(Pair(filterItem, AddUpdate))) }
           }
           
           // Add filter item with marketplace count (initial with 0 for other counts)
@@ -1126,10 +1286,10 @@ class HomeLoadsViewModel @Inject constructor(
           
           Log.d("MarketplaceDebug", "Total items to post: ${this.size}")
         }.let {
-          Log.d("MarketplaceDebug", "Posting ${it.size} items to userLoadsData")
-          userLoadsData.postValue(it)
+          Log.d("MarketplaceDebug", "Posting ${it.size} items to loads state")
+          updateState { state -> state.copy(loads = it, isLoadingMore = false) }
           if (transactions?.isNotEmpty() == true && paginateCount == 0) {
-            marketPlaceListShownTracked.postValue(true)
+            sendEvent(HomeLoadsUiEvent.TrackMarketplaceListShown)
           }
         }
       }
@@ -1151,7 +1311,7 @@ class HomeLoadsViewModel @Inject constructor(
         .onBackground()
         .subscribe { _user, error ->
           if (!error) {
-            routesLiveData.postValue(_user.hasRoutes())
+            updateState { it.copy(hasRoutes = _user.hasRoutes()) }
           } else {
             error.handle()
           }
@@ -1174,12 +1334,11 @@ class HomeLoadsViewModel @Inject constructor(
       .onBackground()
       .subscribe { _tRes, error ->
          if(!error && _tRes != null){
-           truckGetLiveData.postValue(Pair(_tRes,data))
+           sendEvent(HomeLoadsUiEvent.TruckTypesLoaded(_tRes, data))
          }
         else{
           error.handle()
-          truckGetLiveData.postValue(null)
-         }
+        }
       }
   }
 
@@ -1204,7 +1363,7 @@ class HomeLoadsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            bidsActionLiveData.postValue(Pair(position, _res))
+            sendEvent(HomeLoadsUiEvent.BidActionResult(position, _res))
           } else {
             error.handle()
           }
@@ -1233,7 +1392,7 @@ class HomeLoadsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
           if (!error && _res != null) {
-            bidsActionLiveData.postValue(Pair(position, _res))
+            sendEvent(HomeLoadsUiEvent.BidActionResult(position, _res))
           } else {
             error.handle()
           }
@@ -1264,7 +1423,7 @@ class HomeLoadsViewModel @Inject constructor(
   }
 
   override fun reviseBid(transactionBid: TransactionBid?,position: Int) {
-    reviseBidLiveData.postValue(Pair(true, position))
+    sendEvent(HomeLoadsUiEvent.ReviseBid(shouldRevise = true, position = position))
   }
 
   /**
@@ -1278,9 +1437,9 @@ class HomeLoadsViewModel @Inject constructor(
           if (!error && res != null) {
             transaction.lowestBid = res.second[0].minBid
             transaction.numBids = res.second[0].numBids
-            lowestBidLiveData.postValue(Pair(pos, transaction))
+            sendEvent(HomeLoadsUiEvent.LowestBidResult(pos, transaction))
           } else {
-            lowestBidLiveData.postValue(Pair(pos, transaction))
+            sendEvent(HomeLoadsUiEvent.LowestBidResult(pos, transaction))
           }
         }
   }
@@ -1302,11 +1461,10 @@ class HomeLoadsViewModel @Inject constructor(
         .progress()
         .subscribe { _res, error ->
         if (!error && _res!=null) {
-          bulkBidActionLiveData.postValue(Pair(position, _res))
+          sendEvent(HomeLoadsUiEvent.BulkBidActionResult(position, _res))
 
         } else {
           error.handle()
-          bulkBidActionLiveData.postValue(null)
         }
       }
   }
@@ -1346,11 +1504,11 @@ class HomeLoadsViewModel @Inject constructor(
               .subscribe { _res, error ->
                 if (!error && _res!=null) {
                   editFlg[0] = true
-                  editBulkLiveData.postValue(Pair(10, transactionId))
+                  sendEvent(HomeLoadsUiEvent.EditBulkResult(10, transactionId))
                 } else {
                   error.handle()
                   editFlg[0] = true
-                  editBulkLiveData.postValue(Pair(11,transactionId))
+                  sendEvent(HomeLoadsUiEvent.EditBulkResult(11, transactionId))
                 }
               }
 
@@ -1365,13 +1523,13 @@ class HomeLoadsViewModel @Inject constructor(
               .subscribe { _res, error ->
                 if (!error && _res != null) {
                   editFlg[1]= true
-                  editBulkLiveData.postValue(Pair(20, transactionId))
+                  sendEvent(HomeLoadsUiEvent.EditBulkResult(20, transactionId))
                 }
                 else
                 {
                   error.handle()
                   editFlg[1]= true
-                  editBulkLiveData.postValue(Pair(21,transactionId))
+                  sendEvent(HomeLoadsUiEvent.EditBulkResult(21, transactionId))
 
                 }
               }
@@ -1388,12 +1546,12 @@ class HomeLoadsViewModel @Inject constructor(
               .subscribe{_res, error ->
                 if (!error && _res != null) {
                   editFlg[2]= true
-                  editBulkLiveData.postValue(Pair(30, transactionId))
+                  sendEvent(HomeLoadsUiEvent.EditBulkResult(30, transactionId))
                 }
                 else{
                   error.handle()
                   editFlg[2]= true
-                  editBulkLiveData.postValue(Pair(31,transactionId))
+                  sendEvent(HomeLoadsUiEvent.EditBulkResult(31, transactionId))
 
                 }
               }
@@ -1412,10 +1570,9 @@ class HomeLoadsViewModel @Inject constructor(
                 .progress()
                 .subscribe { _res, error ->
                     if (!error && _res != null) {
-                        bulkBidActionLiveData.postValue(Pair(position, _res))
+                        sendEvent(HomeLoadsUiEvent.BulkBidActionResult(position, _res))
                     } else {
                         error.handle()
-                        bulkBidActionLiveData.postValue(null)
                     }
                 }
     }
@@ -1435,10 +1592,9 @@ class HomeLoadsViewModel @Inject constructor(
             .onBackground()
             .subscribe { _res, error ->
                 if (!error && _res != null) {
-                    acceptBidLiveData.postValue(Pair(position, _res))
+                    sendEvent(HomeLoadsUiEvent.AcceptBidResult(position, _res))
                 } else {
                     error.handle()
-                    acceptBidLiveData.postValue(null)
                 }
             }
     }
