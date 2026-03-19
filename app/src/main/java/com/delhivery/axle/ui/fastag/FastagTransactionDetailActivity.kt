@@ -160,8 +160,19 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
             binding.tvTicketId.text = "#${dispute.srId ?: ""}"
             binding.tvComment.text = dispute.comment ?: ""
 
-            // Populate dynamic timeline from API
+            // Show escalate button if last status is Rejected
             val timeline = dispute.statusTimeline
+            val lastStatus = timeline?.lastOrNull()?.status
+            if (lastStatus.equals("Rejected", ignoreCase = true)) {
+                binding.btnEscalateTicket.visibility = View.VISIBLE
+                binding.btnEscalateTicket.setOnClickListener {
+                    callHelpline()
+                }
+            } else {
+                binding.btnEscalateTicket.visibility = View.GONE
+            }
+
+            // Populate dynamic timeline from API
             if (!timeline.isNullOrEmpty()) {
                 binding.layoutTimeline.removeAllViews()
                 binding.layoutTimeline.visibility = View.VISIBLE

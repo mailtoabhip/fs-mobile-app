@@ -203,6 +203,23 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         adapter = FastagTransactionAdapter(vehicleData)
         binding.rvTransactions.layoutManager = LinearLayoutManager(this)
         binding.rvTransactions.adapter = adapter
+
+        // RecyclerView is inside a NestedScrollView with nestedScrollingEnabled=false,
+        // so RecyclerView scroll events won't fire. Listen to NestedScrollView scroll instead.
+        val nestedScrollView = binding.rvTransactions.parent?.parent as? androidx.core.widget.NestedScrollView
+        nestedScrollView?.setOnScrollChangeListener(
+            androidx.core.widget.NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+                val contentHeight = v.getChildAt(0).measuredHeight
+                val scrollViewHeight = v.measuredHeight
+                val distanceFromBottom = contentHeight - scrollViewHeight - scrollY
+
+                if (distanceFromBottom < 300 && viewModel.hasNext) {
+                    val vehicleDataInner = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+                    val tagId = vehicleDataInner?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return@OnScrollChangeListener
+                    viewModel.loadTransactions(tagId, loadMore = true)
+                }
+            }
+        )
     }
 
     private fun setupObservers() {

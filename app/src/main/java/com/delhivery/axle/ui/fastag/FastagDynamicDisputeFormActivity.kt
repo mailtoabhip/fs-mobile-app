@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -45,8 +43,6 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private var currentFileFieldId: String? = null
     private var isAdditionalFilePicker = false
     private val fieldViews = mutableMapOf<String, View>()
-    private val validationHandler = Handler(Looper.getMainLooper())
-    private val validationRunnables = mutableMapOf<String, Runnable>()
     private var additionalDocCount = 0
 
     companion object {
@@ -83,7 +79,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        hasInlineProgress = true // Disable base progress observer - must be set before super.onCreate()
+        hasInlineProgress = true 
         super.onCreate(savedInstanceState)
         setupUI()
         observeData()
@@ -240,18 +236,15 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         val fileFields = sortedFields.filter { it.fieldTypeEnum == FieldType.FILE }
         var fileHeaderInserted = false
 
-        // Prepare file upload header/hint info
         if (fileFields.isNotEmpty()) {
             val maxSize = fileFields.mapNotNull { it.maxFileSizeMB }.maxOrNull() ?: 2
             val allowedTypes = fileFields.flatMap { it.allowedFileTypes ?: emptyList() }.distinct().joinToString(", ")
             binding.tvFileSizeHint.text = "Maximum file size: ${maxSize} MB per document. ${allowedTypes.ifEmpty { "JPEG," }} only"
         }
 
-        // Hide the XML-positioned containers — we'll reparent them inline
         binding.llUploadDocumentsHeader.visibility = View.GONE
         binding.llFileSizeHint.visibility = View.GONE
 
-        // Find the index of the last FILE field to know when to insert the hint
         val lastFileIndex = sortedFields.indexOfLast { it.fieldTypeEnum == FieldType.FILE }
 
         // Render all fields in displayOrder into the single form container
@@ -451,9 +444,6 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
     override fun onDestroy() {
         super.onDestroy()
-        // Clean up validation handlers
-        validationRunnables.values.forEach { validationHandler.removeCallbacks(it) }
-        validationRunnables.clear()
     }
 
     private fun updateFieldErrors(validationMap: Map<String, com.delhivery.axle.data.dispute.ValidationResult>) {

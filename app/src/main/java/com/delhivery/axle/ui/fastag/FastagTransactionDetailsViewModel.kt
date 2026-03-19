@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.fastag
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.response.FastagTransaction
 import com.delhivery.axle.api.response.FastagTransactionResponse
 import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -25,8 +26,11 @@ class FastagTransactionDetailsViewModel @Inject constructor(
 
     private val pageSize = 20
     private var nextOffset: Int? = 0
-    private var hasNext: Boolean = false
+    var hasNext: Boolean = false
+        private set
+    private var isLoading: Boolean = false
     private var currentTagId: String? = null
+    private val allTransactions = mutableListOf<FastagTransaction>()
 
     fun loadTransactions(tagId: String, loadMore: Boolean = false) {
         // If loading more but no more data, return
@@ -34,15 +38,20 @@ class FastagTransactionDetailsViewModel @Inject constructor(
             Log.d("FastagTransactions", "No more transactions to load")
             return
         }
+
+        // Prevent duplicate calls while loading
+        if (isLoading) return
         
         // Reset pagination if new tagId or initial load
         if (!loadMore || currentTagId != tagId) {
             currentTagId = tagId
             nextOffset = 0
             hasNext = false
+            allTransactions.clear()
         }
         
         val offset = nextOffset ?: 0
+        isLoading = true
         progressData.value = true
         
 
@@ -50,6 +59,7 @@ class FastagTransactionDetailsViewModel @Inject constructor(
             .onBackground()
             .progress()
             .subscribe{ _res, error ->
+                isLoading = false
                 progressData.value = false
                 
                 if(!error && _res != null) {
@@ -58,7 +68,10 @@ class FastagTransactionDetailsViewModel @Inject constructor(
                     hasNext = _res.hasNext ?: false
                     nextOffset = _res.nextOffset
                     
-                    transactionsData.value = _res
+                    // Accumulate transactions across pages
+                    _res.transactions?.let { allTransactions.addAll(it) }
+                    
+                    transactionsData.value = _res.copy(transactions = ArrayList(allTransactions))
                 } else {
                     error.handle()
                     errorData.value = error.message ?: "Failed to load transactions"

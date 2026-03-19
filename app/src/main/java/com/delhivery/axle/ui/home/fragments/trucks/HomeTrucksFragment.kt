@@ -141,6 +141,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     var visible = false
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
+    private var isFirstLoad = true
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -237,6 +238,11 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items ->
+                if (isFirstLoad) {
+                    isFirstLoad = false
+                    binding.initialLoader.root.visibility = View.GONE
+                    binding.coordinatorLayout.visibility = View.VISIBLE
+                }
                 adapter.operation(_items)
                 if (adapter.itemCount > 0 && userPrefs.isFirstOpenRate) {
                     userPrefs.isFirstOpenRate = false
@@ -473,6 +479,10 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             adapter.clearItems()
             viewModel.userTrucksData.postValue(null)
             viewModel.searchFlag = true
+            if (isFirstLoad) {
+                binding.coordinatorLayout.visibility = View.GONE
+                binding.initialLoader.root.visibility = View.VISIBLE
+            }
             viewModel.getAllInventories(search = true)
         }else{
             if(HomeLoadsTruckFragment._instance.fromNotification){
@@ -514,7 +524,13 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
 
     private fun refreshData(filter: Boolean = false) {
         viewModel.paginateCount = 0
-        adapter.resetStaticData()
+        if (isFirstLoad) {
+            binding.coordinatorLayout.visibility = View.GONE
+            binding.initialLoader.root.visibility = View.VISIBLE
+            adapter.clearItems()
+        } else {
+            adapter.resetStaticData()
+        }
         if(!filter) {
             if(!binding.editStickySearch.text.isNullOrEmpty())
               binding.editStickySearch.setText("")
