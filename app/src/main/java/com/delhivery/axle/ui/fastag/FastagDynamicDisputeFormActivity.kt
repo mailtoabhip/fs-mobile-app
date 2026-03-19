@@ -17,7 +17,6 @@ import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.data.dispute.SubmissionState
 import com.delhivery.axle.databinding.ActivityFastagDynamicDisputeFormBinding
-import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
@@ -504,12 +503,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     private fun formatTransactionDateTime(dateTime: String): String {
-        return try {
-            val date = DateUtils.parseDateIst(dateTime, "dd-MM-yyyy HH:mm:ss")
-            DateUtils.formatDate(date, "dd MMM yyyy, hh:mm a")
-        } catch (e: Exception) {
-            dateTime
-        }
+        if (dateTime.isEmpty()) return ""
+        return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateTime)
     }
 
     private fun showSuccessBottomSheet(srId: String?) {

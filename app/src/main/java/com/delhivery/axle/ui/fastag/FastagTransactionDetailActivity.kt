@@ -8,8 +8,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.databinding.ActivityFastagTransactionDetailBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import java.text.SimpleDateFormat
-import java.util.Locale
 import androidx.core.graphics.toColorInt
 
 class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDetailBinding, FastagTransactionDetailsViewModel>() {
@@ -249,22 +247,6 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
     private fun formatDateTime(dateString: String?): String {
         if (dateString.isNullOrEmpty()) return ""
-        return try {
-            val outputFormat = SimpleDateFormat("d MMM yyyy, hh:mm a", Locale.getDefault())
-
-            // Try dd-MM-yyyy HH:mm:ss format first (API format)
-            val dashFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-            val date = try {
-                dashFormat.parse(dateString)
-            } catch (e: Exception) {
-                // Fallback to ISO format
-                val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-                isoFormat.parse(dateString)
-            }
-
-            if (date != null) outputFormat.format(date) else dateString
-        } catch (e: Exception) {
-            dateString
-        }
+        return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateString)
     }
 }

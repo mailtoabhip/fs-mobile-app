@@ -164,16 +164,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
     }
 
     private fun formatDateTime(dateTime: String): String {
-        return try {
-            val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault())
-            inputFormat.timeZone = java.util.TimeZone.getTimeZone("UTC")
-            val date = inputFormat.parse(dateTime)
-            
-            val outputFormat = java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
-            date?.let { outputFormat.format(it) } ?: dateTime
-        } catch (e: Exception) {
-            dateTime
-        }
+        if (dateTime.isEmpty()) return ""
+        return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateTime)
     }
 
     private fun onTransactionSelected(transaction: TransactionItem) {
