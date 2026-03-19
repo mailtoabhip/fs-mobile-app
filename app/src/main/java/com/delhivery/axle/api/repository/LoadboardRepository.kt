@@ -5,12 +5,20 @@ import com.delhivery.axle.api.request.GstDetailRequest
 import com.delhivery.axle.api.request.GstNumberRequest
 import com.delhivery.axle.api.request.PanVerificationRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
+import com.delhivery.axle.api.response.DisputeIssuesResponse
+import com.delhivery.axle.api.response.DisputeSubmissionResponse
+import com.delhivery.axle.api.response.DisputeType
+import com.delhivery.axle.api.response.FastagTransactionByTollPlaza
+import com.delhivery.axle.api.response.FastagTransactionsByTollPlazaResponse
+import com.delhivery.axle.api.response.FormConfigResponse
+import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.google.gson.JsonObject
 import javax.inject.Inject
+import okhttp3.MultipartBody
 
 class LoadboardRepository @Inject constructor(
     private val loadboardService: LoadBoardService
@@ -164,6 +172,18 @@ class LoadboardRepository @Inject constructor(
             }
         }
 
+
+    /**
+     * Get transaction dispute details for FASTag
+     */
+    fun getDisputeIssues(txnId: String) = loadboardService.getTransactionDispute(txnId).convertResponse()
+
+    /**
+     * Get dispute issues list for FASTag
+     */
+    fun getDisputeIssuesList(partner: String) = loadboardService.getDisputeIssuesList(partner).convertResponse()
+
+
     fun downloadFastagTransactions(tagId: String, from_date: String?,to_date: String?) = loadboardService.downloadFastagTransactions(tagId, from_date, to_date)
 
     fun getFastagTransactions(tagId: String, limit: Int, offset: Int) = loadboardService.getFastagTransactions(tagId, offset, limit).convertResponse()
@@ -206,5 +226,51 @@ class LoadboardRepository @Inject constructor(
 
     fun fetchRechargeStatus(rechargeId: String, start: String) =
         loadboardService.fetchRechargeStatus(start, rechargeId).convertResponse()
+
+
+    /**
+     * Get FASTag transactions by toll plaza or fastag ID
+     */
+    fun getFastagTransactionsByTollPlaza(
+        tollPlazaId: String,
+        dateTime: String? = null,
+        fastagId: String? = null,
+        limit: Int? = 50,
+        offset: Int? = 0
+    ) = loadboardService.getFastagTransactionsByTollPlaza(tollPlazaId, dateTime, limit, offset, fastagId).convertResponse()
+
+    /**
+     * Get dispute form configuration
+     */
+    fun getDisputeFormConfig(disputeTypeCode: String) =
+        loadboardService.getDisputeFormConfig(disputeTypeCode).convertResponse()
+            .map { fields -> FormConfigResponse(fields) }
+
+    /**
+     * Submit dispute with multipart form data
+     */
+    fun submitDispute(
+        txnId: MultipartBody.Part?,
+        tollPlazaId: MultipartBody.Part?,
+        refundAmount: MultipartBody.Part?,
+        comment: MultipartBody.Part?,
+        raisedAgainst: MultipartBody.Part?,
+        additionalTxnId: MultipartBody.Part?=null,
+        doc1: MultipartBody.Part?,
+        doc2: MultipartBody.Part?,
+        doc3: MultipartBody.Part?
+    ): io.reactivex.Single<DisputeSubmissionResponse> {
+        return loadboardService.submitDispute(
+            txnId = txnId,
+            tollPlazaId=tollPlazaId,
+            refundAmount=refundAmount,
+            comment=comment,
+            raisedAgainst=raisedAgainst,
+            additionalTxnId=additionalTxnId,
+            uploadDoc1=doc1,
+            uploadDoc2=doc2,
+            uploadDoc3=doc3
+        ).convertResponse()
+    }
 
 }

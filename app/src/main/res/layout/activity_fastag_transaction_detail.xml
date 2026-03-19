@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent_white"
+        android:fitsSystemWindows="true">
+
+        <!-- Header -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:src="@drawable/ic_back_arrow"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:textStyle="bold"
+                android:text="Transaction details"
+                android:textSize="18sp"
+                android:textColor="#615655" />
+
+        </LinearLayout>
+
+        <!-- Scrollable Content -->
+        <ScrollView
+            android:id="@+id/scrollContent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintBottom_toTopOf="@id/btnRaiseDispute">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Single Card with all content -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/size_8dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/size_16dp">
+
+                        <!-- Vehicle Info Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingBottom="@dimen/size_16dp">
+
+                            <ImageView
+                                android:id="@+id/ivTruckImage"
+                                android:layout_width="@dimen/size_40dp"
+                                android:layout_height="@dimen/size_28dp"
+                                android:src="@drawable/ic_trailer_truck_new"
+                                />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvVehicleNumber"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="RJ-14-GH-1234"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#1E293B" />
+
+                                <TextView
+                                    android:id="@+id/tvVehicleMeta"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Own Truck | 32FTXXL | 18 MT"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/grey_text"
+                                    android:layout_marginTop="@dimen/size_4dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- FASTag Info Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/size_16dp"
+                            android:paddingBottom="@dimen/size_16dp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvFastagProvider"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="IDFC FASTag by Delhivery"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#1E293B" />
+
+                                <TextView
+                                    android:id="@+id/tvFastagId"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="FASTag ID: FT-9928341029"
+                                    android:textSize="11sp"
+                                    android:textColor="#6B7280"
+                                    android:layout_marginTop="@dimen/size_4dp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="end"
+                                android:layout_gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/tvAmount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="+₹1154"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#0F172A" />
+
+                                <TextView
+                                    android:id="@+id/tvDisputeStatusChip"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="@dimen/size_12dp"
+                                    android:paddingVertical="@dimen/size_4dp"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:layout_marginTop="@dimen/size_4dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Transaction Details Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="@dimen/size_12dp">
+
+                            <ImageView
+                                android:layout_width="@dimen/size_18dp"
+                                android:layout_height="@dimen/size_18dp"
+                                android:src="@drawable/txn_category"
+                                />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Transaction Details"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/grey_text" />
+
+                                <TextView
+                                    android:id="@+id/tvTxnCategory"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Toll - Fee/Charges"
+                                    android:textSize="13sp"
+                                    android:textColor="#334155"
+                                    android:layout_marginTop="@dimen/size_4dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="@dimen/size_12dp">
+
+                            <ImageView
+                                android:layout_width="@dimen/size_18dp"
+                                android:layout_height="@dimen/size_18dp"
+                                android:src="@drawable/ic_location_on"
+                                />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Toll Name"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/grey_text" />
+
+                                <TextView
+                                    android:id="@+id/tvTollName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Distributor > Corporate Customer"
+                                    android:textSize="13sp"
+                                    android:textColor="#334155"
+                                    android:layout_marginTop="@dimen/size_4dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Date & Time -->
+
+                        <!-- Transaction ID -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/size_12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/size_18dp"
+                                android:src="@drawable/ic_clock_schedule"
+                                app:tint="@color/grey_text" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Date &amp; Time"
+                                    android:textColor="@color/grey_text"
+                                    android:textSize="10sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDateTime"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/size_4dp"
+                                    android:text="6th Feb 2026, 5:47PM"
+                                    android:textColor="#334155"
+                                    android:textSize="13sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/size_18dp"
+                                android:layout_height="@dimen/size_18dp"
+                                android:src="@drawable/ic_fingerprint"
+                                app:tint="#8F9198" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/size_12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Transaction ID"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/grey_text" />
+
+                                <TextView
+                                    android:id="@+id/tvTransactionId"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="799293506253"
+                                    android:textSize="13sp"
+                                    android:textColor="#334155"
+                                    android:layout_marginTop="@dimen/size_4dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+
+            <!-- Dispute Tracker Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDisputeTracker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/size_8dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/size_16dp">
+
+                    <!-- Dispute Tracker Header -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dispute Tracker"
+                        android:textSize="11sp"
+                        android:textColor="@color/grey_text"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/size_16dp" />
+
+                    <!-- Issue Category + Escalate Button Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/size_12dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Issue Category"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/grey_text" />
+
+                            <TextView
+                                android:id="@+id/tvIssueCategory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Duplicate Transaction"
+                                android:textSize="13sp"
+                                android:textColor="#1E293B" />
+
+                        </LinearLayout>
+
+                        <!-- Escalate Button (visible only when last status is Rejected) -->
+                        <LinearLayout
+                            android:id="@+id/btnEscalateTicket"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_escalate_button"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="@dimen/size_12dp"
+                            android:paddingVertical="@dimen/size_8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="❗"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Escalate the ticket"
+                                android:textSize="13sp"
+                                android:textColor="#1E293B"
+                                android:layout_marginStart="@dimen/size_4dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Ticket ID -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ticket ID"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+
+                        android:textColor="@color/grey_text" />
+
+                    <TextView
+                        android:id="@+id/tvTicketId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="#234365"
+                        android:textSize="13sp"
+                        android:textColor="#1E293B"
+                        android:layout_marginBottom="@dimen/size_12dp" />
+
+                    <!-- Comment -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Comment"
+                        android:textStyle="bold"
+                        android:textColor="@color/grey_text"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/tvComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Amount debited is incorrect"
+                        android:textSize="13sp"
+                        android:textColor="#1E293B"
+                        android:layout_marginBottom="@dimen/size_56dp" />
+
+                    <!-- Timeline Section -->
+                    <LinearLayout
+                        android:id="@+id/layoutTimeline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintBottom_toTopOf="@id/btnRaiseDispute"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Bottom Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnRaiseDispute"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_16dp"
+            android:background="@drawable/bg_action_light_black_btn_without_border"
+            android:text="Raise Dispute"
+            android:textColor="@color/selector_button_text"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            android:paddingVertical="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

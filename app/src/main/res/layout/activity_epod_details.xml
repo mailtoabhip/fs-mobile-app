@@ -116,7 +116,7 @@
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:src="@drawable/ic_info_blue"
+                                android:src="@drawable/ic_info"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent"

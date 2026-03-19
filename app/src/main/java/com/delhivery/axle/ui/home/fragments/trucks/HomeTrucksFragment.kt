@@ -141,6 +141,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     var visible = false
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
+    private var isFirstLoad = true
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -237,6 +238,11 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
 
         viewModel.userTrucksData.reobserve(viewLifecycleOwner, Observer {
             it?.let { _items ->
+                if (isFirstLoad) {
+                    isFirstLoad = false
+                    binding.initialLoader.root.visibility = View.GONE
+                    binding.coordinatorLayout.visibility = View.VISIBLE
+                }
                 adapter.operation(_items)
                 if (adapter.itemCount > 0 && userPrefs.isFirstOpenRate) {
                     userPrefs.isFirstOpenRate = false
@@ -473,6 +479,10 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             adapter.clearItems()
             viewModel.userTrucksData.postValue(null)
             viewModel.searchFlag = true
+            if (isFirstLoad) {
+                binding.coordinatorLayout.visibility = View.GONE
+                binding.initialLoader.root.visibility = View.VISIBLE
+            }
             viewModel.getAllInventories(search = true)
         }else{
             if(HomeLoadsTruckFragment._instance.fromNotification){
@@ -514,7 +524,13 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
 
     private fun refreshData(filter: Boolean = false) {
         viewModel.paginateCount = 0
-        adapter.resetStaticData()
+        if (isFirstLoad) {
+            binding.coordinatorLayout.visibility = View.GONE
+            binding.initialLoader.root.visibility = View.VISIBLE
+            adapter.clearItems()
+        } else {
+            adapter.resetStaticData()
+        }
         if(!filter) {
             if(!binding.editStickySearch.text.isNullOrEmpty())
               binding.editStickySearch.setText("")
@@ -1709,18 +1725,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     
     override fun openFastagDetails(data: HomeTrucksRequestItemData) {
         val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity::class.java).apply {
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TAG_ID, data.fastagTagId)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VRN, data.fastagVrn)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_NUMBER, data.vehicleNumber)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TRUCK_TYPE, data.truckType)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TRUCK_SIZE, data.truckSize)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.CAPACITY, data.capacity)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.OWNERSHIP, data.ownership)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.STATUS, data.latestStatus)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.TAG_STATUS, data.fastagTagStatus)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.BALANCE, data.fastagBalance)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.ISSUED_BY, data.fastagIssuedBy)
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.AWB, data.fastagTagId)
+            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_DATA, data)
         }
         startActivity(intent)
     }

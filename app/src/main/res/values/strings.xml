@@ -1051,4 +1051,11 @@
   <string name="label_fastag_no_space">Fastag</string>
   <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
   <string name="label_bidding">Bidding</string>
+    <!-- Accessibility strings for dynamic dispute form -->
+    <string name="back_button">Navigate back</string>
+    <string name="upload_file_button">Upload file</string>
+    <string name="upload_file_icon">Upload icon</string>
+    <string name="remove_file">Remove file</string>
+    <string name="file_thumbnail">File preview thumbnail</string>
+
 </resources>

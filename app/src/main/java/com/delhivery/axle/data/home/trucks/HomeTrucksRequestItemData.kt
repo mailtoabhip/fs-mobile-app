@@ -7,6 +7,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.BaseKeyTypeModel
 import com.delhivery.axle.utils.StringUtils.capitalize
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class HomeTrucksRequestItemData(
     @SerializedName("latest_inventory_uuid")
@@ -256,7 +257,7 @@ data class FastagLastTransaction(
     
     @SerializedName("txn_event")
     val txnEvent: String?
-)
+) : Serializable
 
 fun List<HomeTrucksRequestItemData>.names() =
         mapIndexed { _, truckModel ->

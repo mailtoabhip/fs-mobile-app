@@ -39,8 +39,17 @@ data class FastagTransaction(
     @SerializedName("txn_event")
     val tollName: String?,
 
+    @SerializedName("txn_event_context")
+    val txnEventContext: String?,
+
     @SerializedName("txn_details")
-    val txnDetails: String?
+    val txnDetails: String?,
+    @SerializedName("is_dispute")
+    val isDispute: Boolean? = false,
+    @SerializedName("dispute_status")
+    val disputeStatus: String? = null,
+    @SerializedName("dispute_status_color")
+    val disputeStatusColor: String? = null
 )
 
 
