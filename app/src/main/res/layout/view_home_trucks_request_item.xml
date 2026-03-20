@@ -391,7 +391,7 @@
                     android:textAllCaps="false"
                     android:gravity="center"
                     android:textColor="@color/black"
-                    android:visibility="@{request.statusVisibilty()}"
+                    android:visibility="gone"
                     android:background="@drawable/bg_all_round_corner_white_boundary"
                     android:text="@string/action_activate_truck"/>
 
