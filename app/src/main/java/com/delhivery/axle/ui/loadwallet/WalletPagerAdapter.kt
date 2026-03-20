@@ -24,8 +24,8 @@ enum class WalletTabType(
     val fragment: com.delhivery.axle.ui.base.BaseFragment<*, *>,
     val title: String
 ) {
-    Transactions(0, WalletTransactionsFragment._instance, "Transactions"),
-    Recharges(1, WalletRechargesFragment._instance, "Recharges");
+    Transactions(0, WalletTransactionsFragment.newInstance(), "Transactions"),
+    Recharges(1, WalletRechargesFragment.newInstance(), "Recharges");
 
     companion object {
         fun pos(position: Int) = values().firstOrNull { it.position == position }
