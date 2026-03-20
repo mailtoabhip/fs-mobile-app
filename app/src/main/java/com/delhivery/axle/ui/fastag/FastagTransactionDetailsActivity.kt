@@ -178,9 +178,9 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
         binding.btnRecharge.setOnClickListener {
             val intent = android.content.Intent(this, FastagRechargeActivity::class.java).apply {
-                putExtra(FastagRechargeActivity.TAG_ID, getIntent().getStringExtra(TAG_ID))
-                putExtra(FastagRechargeActivity.VEHICLE_NUMBER, getIntent().getStringExtra(VEHICLE_NUMBER))
-                putExtra(FastagRechargeActivity.FASTAG_BALANCE, getIntent().getStringExtra(BALANCE) ?: "0")
+                putExtra(FastagRechargeActivity.TAG_ID, vehicleData?.fastagTagId)
+                putExtra(FastagRechargeActivity.VEHICLE_NUMBER, vehicleData?.vehicleNumber)
+                putExtra(FastagRechargeActivity.FASTAG_BALANCE, vehicleData?.fastagBalance)
             }
             startActivity(intent)
         }
