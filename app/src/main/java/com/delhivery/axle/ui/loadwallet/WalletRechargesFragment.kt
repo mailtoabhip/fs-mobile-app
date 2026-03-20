@@ -16,7 +16,7 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
     LoadWalletRVAdapterInterface {
 
     companion object {
-        val _instance by lazy { WalletRechargesFragment() }
+        fun newInstance(): WalletRechargesFragment = WalletRechargesFragment()
     }
 
     private val adapter: LoadWalletRVAdapter by lazy {
@@ -29,6 +29,8 @@ class WalletRechargesFragment : BaseFragment<FragmentWalletRechargesBinding, Loa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        adapter.resetData()
 
         val layoutManager = LinearLayoutManager(context)
         binding.rvWalletRecharges.apply {

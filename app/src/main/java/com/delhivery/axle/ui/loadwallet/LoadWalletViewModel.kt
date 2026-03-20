@@ -248,19 +248,6 @@ class LoadWalletViewModel @Inject constructor(
     }
 
     /**
-     * Refresh only wallet balance
-     */
-    fun refreshBalance() {
-        compositeDisposable += loadboardRepository.fetchWalletDetails()
-            .onBackground()
-            .subscribe { result, error ->
-                if (!error) {
-                    walletBalance.postValue("₹${StringUtils.formatAmount(result.currentBalance)}")
-                }
-            }
-    }
-
-    /**
      * Fetch wallet recharges — resets pagination and loads first page
      */
     fun fetchRecharges(filter: WalletFilter = WalletFilter()) {
@@ -374,7 +361,7 @@ class LoadWalletViewModel @Inject constructor(
     var refreshRechargeStatusErrorLiveData = MutableLiveData<String?>()
 
     fun refreshTransactionStatus(txnId: String, createdAt: String) {
-        val start = createdAt.substring(0, 10)
+        val start = createdAt.replace('T', ' ').substringBefore('+').substringBefore('Z')
 
         compositeDisposable += loadboardRepository.fetchTransactionStatus(start, txnId)
             .onBackground()

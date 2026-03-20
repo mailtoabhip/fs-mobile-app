@@ -1213,7 +1213,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             onSuccess = { message ->
                 uiUtils.hideProgress()
                 showFastagSuccessBottomSheet()
-                uiUtils.showSnackbar(message)
             },
             onError = { errorMessage ->
                 uiUtils.hideProgress()

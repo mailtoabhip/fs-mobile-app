@@ -129,7 +129,8 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 selectedAmount = amount
 
                 val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
-                val isInvalid = amount > 100000 || hasLeadingZero
+                val isZeroEntered = raw.isNotEmpty() && amount == 0.0
+                val isInvalid = isZeroEntered || amount > 100000 || hasLeadingZero
                 binding.tvAmountError.visibility = if (isInvalid) View.VISIBLE else View.GONE
 
                 updateChipSelection(amount)
@@ -208,11 +209,21 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         val normalBalance = binding.tvWalletBalance
 
         if (shouldShow) {
-            val deficit = Math.ceil(selectedAmount - walletBalance).toInt()
+            val deficit = selectedAmount - walletBalance
+            val deficitFormatted = if (deficit == deficit.toInt().toDouble()) {
+                deficit.toInt().toString()
+            } else {
+                String.format("%.2f", deficit)
+            }
             binding.tvInsufficientMessage.text =
-                "Please add at least ₹$deficit to your Delhivery Wallet to recharge your FASTag"
+                "Please add at least ₹$deficitFormatted to your Delhivery Wallet to recharge your FASTag"
 
-            lowBalanceText.text = "LOW BALANCE: ₹${StringUtils.formatAmount(walletBalance)}"
+            val balanceFormatted = if (walletBalance == walletBalance.toInt().toDouble()) {
+                StringUtils.formatAmount(walletBalance)
+            } else {
+                StringUtils.formatDecimalAmount(walletBalance)
+            }
+            lowBalanceText.text = "LOW BALANCE: ₹$balanceFormatted"
             if (lowBalanceText.visibility != View.VISIBLE) {
                 lowBalanceText.visibility = View.VISIBLE
                 normalBalance.visibility = View.GONE
@@ -349,7 +360,12 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     private fun setupObservers() {
         viewModel.walletBalanceData.observe(this, androidx.lifecycle.Observer { balance ->
             walletBalance = balance
-            binding.tvWalletBalance.text = "₹${StringUtils.formatAmount(balance)}"
+            val balanceFormatted = if (balance == balance.toInt().toDouble()) {
+                StringUtils.formatAmount(balance)
+            } else {
+                StringUtils.formatDecimalAmount(balance)
+            }
+            binding.tvWalletBalance.text = "₹$balanceFormatted"
             checkInsufficientBalanceImmediate()
         })
 
@@ -358,7 +374,14 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 resetSlider()
                 // Update wallet balance on screen
                 it.updatedWalletBalance?.let { newBalance ->
-                    binding.tvWalletBalance.text = "₹${StringUtils.formatAmount(newBalance)}"
+                    walletBalance = newBalance
+                    val balanceFormatted = if (newBalance == newBalance.toInt().toDouble()) {
+                        StringUtils.formatAmount(newBalance)
+                    } else {
+                        StringUtils.formatDecimalAmount(newBalance)
+                    }
+                    binding.tvWalletBalance.text = "₹$balanceFormatted"
+                    checkInsufficientBalanceImmediate()
                 }
                 // Update FASTag balance on screen
                 it.fastagBalance?.let { newFastagBalance ->
