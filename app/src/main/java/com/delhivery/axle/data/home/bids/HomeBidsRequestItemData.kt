@@ -371,8 +371,8 @@ data class HomeBidsRequestItemData(
     }
 
     // Fallback: Check if shipper data is present (for backward compatibility)
-    return !shipperName.isNullOrEmpty() ||
-           !shipperPhoneNumber.isNullOrEmpty() ||
+    return !pocName.isNullOrEmpty() ||
+           !pocContactNo.isNullOrEmpty() ||
            shipperPrice != null ||
            !shipperUcid.isNullOrEmpty()
     }

@@ -253,23 +253,21 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           userPrefs.setPreviousScreen(this.javaClass.name)
           
           // Check if this is a marketplace load
-          if (_item.isMarketplaceLoad()) {
-            // Open MarketPlaceBidDetailsActivity for marketplace loads
-            MarketPlaceBidDetailsActivity.start(
-              ctx,
-              _item.transactionId ?: _item.uuid ?: "",
-              _item.origin ?: "",
-              _item.destination ?: ""
-            )
-          } else if(_item.requestType==RequestType.Contract.type){
-              _item.transactionId?.let {
-                  startActivity(contractDetailsIntent(it, ctx))
-              }
-          } else {
-              _item.transactionId?.let {
-                  startActivity(contractDetailsIntent(it, ctx))
-              }
-          }
+            if (_item.isMarketplaceLoad()) {
+                // Open MarketPlaceBidDetailsActivity for marketplace loads
+                MarketPlaceBidDetailsActivity.start(
+                    ctx,
+                    _item.transactionId ?: _item.uuid ?: "",
+                    _item.origin ?: "",
+                    _item.destination ?: ""
+                )
+            } else if(_item.requestType==RequestType.Contract.type){
+                startActivity(_item.transactionId?.let {
+                    contractDetailsIntent(it, ctx)
+                } as Intent)
+            } else {
+                startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) } as Intent)
+            }
         }
       }
 
@@ -298,23 +296,21 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
           userPrefs.setPreviousScreen(this.javaClass.name)
           
           // Check if this is a marketplace load
-          if (_item.isMarketplaceLoad()) {
-            // Open MarketPlaceBidDetailsActivity for marketplace loads
-            MarketPlaceBidDetailsActivity.start(
-              ctx,
-              _item.transactionId ?: _item.uuid ?: "",
-              _item.origin ?: "",
-              _item.destination ?: ""
-            )
-          } else if(_item.requestType==RequestType.Contract.type){
-              _item.transactionId?.let {
-                  startActivity(contractDetailsIntent(it, ctx))
-              }
-          } else {
-              _item.transactionId?.let {
-                  startActivity(contractDetailsIntent(it, ctx))
-              }
-          }
+            if (_item.isMarketplaceLoad()) {
+                // Open MarketPlaceBidDetailsActivity for marketplace loads
+                MarketPlaceBidDetailsActivity.start(
+                    ctx,
+                    _item.transactionId ?: _item.uuid ?: "",
+                    _item.origin ?: "",
+                    _item.destination ?: ""
+                )
+            } else if(_item.requestType==RequestType.Contract.type){
+                startActivity(_item.transactionId?.let {
+                    contractDetailsIntent(it, ctx)
+                } as Intent)
+            } else {
+                startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) } as Intent)
+            }
         }
       }
 
