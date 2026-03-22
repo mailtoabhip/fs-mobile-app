@@ -42,6 +42,7 @@ import com.delhivery.axle.ui.home.fragments.wallet.HomeWalletViewModel
 import com.delhivery.axle.ui.kyc.gst.GstVerificationViewModel
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
+import com.delhivery.axle.ui.invoicereview.InvoiceReviewViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
@@ -400,6 +401,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(IdentityVerificationViewModel::class)
   abstract fun bindIdentityVerificationViewModel(viewModel:IdentityVerificationViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(InvoiceReviewViewModel::class)
+  abstract fun bindInvoiceReviewViewModel(viewModel: InvoiceReviewViewModel): ViewModel
 
   @Binds
   @IntoMap

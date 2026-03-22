@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <data>
+    <variable
+        name="viewModel"
+        type="com.delhivery.axle.ui.invoicereview.InvoiceReviewViewModel" />
+
+    <variable
+        name="invoice"
+        type="com.delhivery.axle.api.response.InvoiceDetailsResponse" />
+
+    <import type="android.view.View" />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:fitsSystemWindows="true">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@color/white"
+        android:elevation="@dimen/size_4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_back" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:text="Review Invoice"
+            android:textColor="@color/faded_black"
+            android:textSize="@dimen/text_18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_back"
+            app:layout_constraintTop_toTopOf="parent" />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/bottom_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+        <!-- Tax Invoice Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_tax_invoice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="@dimen/size_2dp"
+            android:layout_margin="@dimen/size_16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="@dimen/size_16dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_tax_invoice_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_tax_invoice"
+                android:textAllCaps="true"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/divider_tax_invoice_1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:background="@color/grey_bg_alpha25"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_tax_invoice_title" />
+
+            <!-- Billed From & Billed To Container -->
+            <LinearLayout
+                android:id="@+id/ll_billed_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_tax_invoice_1">
+
+                <!-- Billed From Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_billed_from"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/size_8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_all_round_corner_subtle_blue"
+                    android:paddingVertical="@dimen/size_12dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_billed_from_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:text="Billed From"
+                        android:textColor="@color/sub_heading_black"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_vendor_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="@{invoice.billedFrom.name}"
+                        android:textColor="@color/blue_700"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_billed_from_label"
+                        tools:text="Vendor Name" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_vendor_location"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:text="@{invoice.billedFrom.address}"
+                        android:textColor="@color/sub_heading_black"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_vendor_name"
+                        tools:text="Vendor Location" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_vendor_gstin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:text="@{`GSTIN: ` + invoice.billedFrom.gstin}"
+                        android:textColor="@color/sub_heading_black"
+                        android:textSize="@dimen/text_12sp"
+                        android:visibility="@{invoice.billedFrom.gstin != null ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_vendor_location"
+                        tools:text="GSTIN: 27AABCU9603R1ZM" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Billed To Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_billed_to"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_all_round_corner_subtle_blue"
+                    android:paddingVertical="@dimen/size_12dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_billed_to_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:text="Billed To"
+                        android:textColor="@color/sub_heading_black"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_billed_to_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="@{invoice.billedTo.name}"
+                        android:textColor="@color/blue_700"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_billed_to_label"
+                        tools:text="Delhivery Limited" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_billed_to_location"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:text="@{invoice.billedTo.address}"
+                        android:textColor="@color/sub_heading_black"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_billed_to_name"
+                        tools:text="Delhivery Location" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_billed_to_gstin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_8dp"
+                        android:layout_marginTop="@dimen/size_2dp"
+                        android:text="@{`GSTIN: ` + invoice.billedTo.gstin}"
+                        android:textColor="@color/sub_heading_black"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_billed_to_location"
+                        tools:text="GSTIN: 27AABCU9603R1ZM" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+              <View
+                  android:id="@+id/divider_tax_invoice_2"
+                  android:layout_width="0dp"
+                  android:layout_height="1dp"
+                  android:layout_marginTop="@dimen/size_12dp"
+                  android:background="@color/badge_background"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toBottomOf="@id/ll_billed_container" />
+
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_label_place_of_supply"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_24dp"
+                  android:text="Place of Supply:"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:visibility="@{invoice.placeOfSupply != null ? View.VISIBLE : View.GONE}"
+                  android:layout_marginEnd="@dimen/size_8dp"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toStartOf="@id/tv_place_of_supply"
+                  app:layout_constraintTop_toBottomOf="@id/divider_tax_invoice_2" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_place_of_supply"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@{invoice.placeOfSupply}"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:gravity="end"
+                  android:visibility="@{invoice.placeOfSupply != null ? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toEndOf="@id/tv_label_place_of_supply"
+                  app:layout_constraintTop_toTopOf="@id/tv_label_place_of_supply"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  tools:text="Gujarat" />
+
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_label_bank"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_8dp"
+                  android:text="Bank:"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:visibility="@{invoice.bankName != null ? View.VISIBLE : View.GONE}"
+                  android:layout_marginEnd="@dimen/size_8dp"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toStartOf="@id/tv_bank"
+                  app:layout_constraintTop_toBottomOf="@id/tv_label_place_of_supply" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_bank"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@{invoice.bankName}"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:gravity="end"
+                  android:visibility="@{invoice.bankName != null ? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toEndOf="@id/tv_label_bank"
+                  app:layout_constraintTop_toTopOf="@id/tv_label_bank"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  tools:text="DK Logistics" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_label_ac_number"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_8dp"
+                  android:text="A/C No:"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:visibility="@{invoice.bankAccountNumber != null ? View.VISIBLE : View.GONE}"
+                  android:layout_marginEnd="@dimen/size_8dp"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toStartOf="@id/tv_ac_number"
+                  app:layout_constraintTop_toBottomOf="@id/tv_label_bank" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_ac_number"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@{invoice.bankAccountNumber}"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:gravity="end"
+                  android:visibility="@{invoice.bankAccountNumber != null ? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toEndOf="@id/tv_label_ac_number"
+                  app:layout_constraintTop_toTopOf="@id/tv_label_ac_number"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  tools:text="1234567890" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_label_service"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_8dp"
+                  android:text="Service:"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:visibility="@{invoice.serviceDescription != null ? View.VISIBLE : View.GONE}"
+                  android:layout_marginEnd="@dimen/size_8dp"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toStartOf="@id/tv_service"
+                  app:layout_constraintTop_toBottomOf="@id/tv_label_ac_number" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_service"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@{invoice.serviceDescription}"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:gravity="end"
+                  android:visibility="@{invoice.serviceDescription != null ? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toEndOf="@id/tv_label_service"
+                  app:layout_constraintTop_toTopOf="@id/tv_label_service"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  tools:text="Adhoc Rental" />
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_label_sac_code"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_8dp"
+                  android:text="SAC Code:"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:layout_marginEnd="@dimen/size_8dp"
+                  android:visibility="@{invoice.sacCode != null ? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toStartOf="@id/tv_sac_code"
+                  app:layout_constraintTop_toBottomOf="@id/tv_label_service" />
+
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:id="@+id/tv_sac_code"
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:text="@{invoice.sacCode}"
+                  android:textColor="@color/sub_heading_black"
+                  android:textSize="@dimen/text_12sp"
+                  android:gravity="end"
+                  android:visibility="@{invoice.sacCode != null ? View.VISIBLE : View.GONE}"
+                  app:layout_constraintStart_toEndOf="@id/tv_label_sac_code"
+                  app:layout_constraintTop_toTopOf="@id/tv_label_sac_code"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  tools:text="9184231" />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Invoice Particulars Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_invoice_particulars"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="@dimen/size_2dp"
+            android:layout_margin="@dimen/size_16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_tax_invoice">
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+              <LinearLayout
+                  android:id="@+id/ll_invoice_particulars"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  android:layout_width="match_parent"
+                  android:paddingVertical="@dimen/size_8dp"
+                  android:paddingHorizontal="@dimen/size_16dp"
+                  android:layout_height="wrap_content"
+                  android:background="@color/button_pressed_background"
+                  android:orientation="horizontal">
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tv_particulars_title"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:text="Invoice Particulars"
+                      android:textAllCaps="true"
+                      android:layout_weight="1"
+                      android:textColor="@color/heading_black"
+                      android:textSize="@dimen/text_10sp"
+                      android:textStyle="bold"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tv_total_value"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Total Value"
+                      android:textAllCaps="true"
+                      android:textColor="@color/heading_black"
+                      android:textSize="@dimen/text_10sp"
+                      android:textStyle="bold"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent" />
+              </LinearLayout>
+
+
+            <View
+                android:id="@+id/divider_particulars"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/badge_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_invoice_particulars" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_invoice_particulars"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginHorizontal="@dimen/size_16dp"
+                android:layout_marginVertical="@dimen/size_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_particulars"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_invoice_particular" />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Invoice No Input  -->
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/tv_label_invoice_no"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="# Invoice No"
+              android:textAllCaps="true"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_10sp"
+              android:textStyle="bold"
+              android:layout_margin="@dimen/size_16dp"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@id/card_invoice_particulars" />
+
+          <androidx.appcompat.widget.AppCompatEditText
+              android:id="@+id/et_invoice_no"
+              android:layout_width="match_parent"
+              android:layout_height="46dp"
+              android:layout_marginHorizontal="@dimen/size_16dp"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:paddingHorizontal="@dimen/size_8dp"
+              android:hint="AB-123/123"
+              android:gravity="center_vertical"
+              android:textSize="@dimen/text_14sp"
+              android:background="@drawable/rounded_corner"
+              app:layout_constraintTop_toBottomOf="@id/tv_label_invoice_no"/>
+
+          <!-- Invoice Date Input  -->
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/tv_label_invoice_date"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="# Invoice Date"
+              android:textAllCaps="true"
+              android:textColor="@color/heading_black"
+              android:textSize="@dimen/text_10sp"
+              android:textStyle="bold"
+              android:layout_margin="@dimen/size_16dp"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toBottomOf="@id/et_invoice_no" />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/tv_invoice_date"
+              android:layout_width="match_parent"
+              android:layout_height="46dp"
+              android:layout_marginHorizontal="@dimen/size_16dp"
+              android:layout_marginTop="@dimen/size_4dp"
+              android:gravity="center_vertical"
+              android:textSize="@dimen/text_14sp"
+              android:background="@drawable/rounded_corner"
+              android:drawableEnd="@drawable/ic_calendar"
+              android:drawablePadding="@dimen/size_8dp"
+              android:paddingHorizontal="@dimen/size_8dp"
+              app:layout_constraintTop_toBottomOf="@id/tv_label_invoice_date"/>
+
+        <!-- Amount Summary Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_amount_summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_16dp"
+            app:cardBackgroundColor="@color/charcoal_blue"
+            app:cardCornerRadius="@dimen/size_12dp"
+            app:cardElevation="@dimen/size_2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_invoice_date">
+
+          <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="@dimen/size_20dp">
+
+            <!-- Total Taxable Value -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_taxable_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Taxable Value"
+                android:textColor="@color/gray_400"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_taxable_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{`₹ ` + String.format(`%.2f`, invoice.totalTaxableValue)}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_taxable_label"
+                tools:text="₹ 10,000.00" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_tax_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:text="@{invoice.gstDisplay != null ? invoice.gstDisplay : `GST`}"
+                android:textColor="@color/gray_400"
+                android:textSize="@dimen/text_14sp"
+                android:visibility="@{invoice.gstAmount != null &amp;&amp; invoice.gstAmount > 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_taxable_label" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_tax_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_10dp"
+                android:text="@{`₹ ` + String.format(`%.2f`, invoice.gstAmount)}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_14sp"
+                android:visibility="@{invoice.gstAmount != null &amp;&amp; invoice.gstAmount > 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_taxable_value"
+                tools:text="₹ 900.00" />
+
+            <View
+                android:id="@+id/divider_grand_total"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:background="@color/badge_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_tax_label" />
+
+            <!-- Grand Total -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_grand_total_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:text="Grand Total"
+                android:textColor="@color/gray_400"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_grand_total" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_grand_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8dp"
+                android:text="@{`₹ ` + String.format(`%.2f`, invoice.grandTotal)}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_grand_total"
+                tools:text="₹ 11,800.00" />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Action Buttons -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_buttons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="@dimen/size_2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+      <com.google.android.material.button.MaterialButton
+          android:id="@+id/btn_reject"
+          android:layout_width="0dp"
+          android:layout_height="60dp"
+          android:layout_marginEnd="@dimen/size_8dp"
+          android:text="Reject"
+          android:textSize="@dimen/text_16sp"
+          android:textAllCaps="false"
+          android:layout_marginStart="@dimen/size_16dp"
+          android:layout_marginVertical="@dimen/size_12dp"
+          android:textColor="@color/switch_red"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toStartOf="@id/btn_accept"
+          app:layout_constraintStart_toStartOf="parent"
+          app:strokeColor="@color/switch_red"
+          app:strokeWidth="@dimen/size_2dp"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <com.google.android.material.button.MaterialButton
+          android:id="@+id/btn_accept"
+          android:layout_width="0dp"
+          android:layout_height="60dp"
+          android:textAllCaps="false"
+          android:textSize="@dimen/text_16sp"
+          android:layout_marginStart="@dimen/size_8dp"
+          android:layout_marginEnd="@dimen/size_16dp"
+          android:layout_marginVertical="@dimen/size_12dp"
+          android:text="Accept"
+          app:backgroundTint="@color/black"
+          android:textColor="@color/white"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@id/btn_reject"
+          app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

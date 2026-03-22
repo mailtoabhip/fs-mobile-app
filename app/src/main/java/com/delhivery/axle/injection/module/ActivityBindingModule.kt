@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
+import com.delhivery.axle.ui.invoicereview.InvoiceReviewActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
 import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
@@ -404,6 +405,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
   internal abstract fun bindPlacementsActivity(): PlacementsActivity
+
+  /* Invoice Review activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsInvoiceReviewActivityModule::class])
+  internal abstract fun bindInvoiceReviewActivity(): InvoiceReviewActivity
 }
 
 
@@ -609,6 +615,9 @@ internal abstract class AbsFastagRechargeActivityModule : ActivityModule<FastagR
 
 @Module
 internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()
+
+@Module
+internal abstract class AbsInvoiceReviewActivityModule : ActivityModule<InvoiceReviewActivity>()
 
 /**
  * Activity Binds Module

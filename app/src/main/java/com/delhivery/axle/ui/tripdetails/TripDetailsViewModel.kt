@@ -30,6 +30,10 @@ import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.tripdetail.TripCtaConfig
+import com.delhivery.axle.data.tripdetail.TripCtaProvider
+import com.delhivery.axle.data.tripdetail.TripMilestone
+import com.delhivery.axle.data.tripdetail.TripMilestoneProvider
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemData
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryProgressItemData
@@ -157,6 +161,11 @@ class TripDetailsViewModel @Inject constructor(
   var omcID : String = ""
   var fuelCardNumber = ""
   var fuelCardAmt = ""
+  
+  // CTA configuration LiveData
+  val ctaConfigLiveData = MutableLiveData<TripCtaConfig>()
+  // Milestones LiveData for RecyclerView
+  val milestonesLiveData = MutableLiveData<List<TripMilestone>>()
 
   companion object{
     var indentList:java.lang.StringBuilder = java.lang.StringBuilder()
@@ -1093,4 +1102,37 @@ class TripDetailsViewModel @Inject constructor(
       }
   }
 
+  /**
+   * Update CTA configuration based on vendor type and trip status
+   * Uses invoice_status_info flags: showReviewInvoiceCta and showDownloadInvoice
+   * If both false or null, shows Refresh
+   */
+  fun updateCtaConfig(calledAfterSettled:Boolean) {
+      /*
+      calledAfterSettled flag is to update the milestones only when the trip is settled in old flow,
+      as before this feature, the settlement of trip was determined from tripSettledLiveData
+      */
+      if(!calledAfterSettled || tripDetail.invoiceStatusInfo==null) {
+          val ctaConfig = TripCtaProvider.getAdhocIntracityCtaConfig(
+              isSettled = tripDetail.isSettled,
+              invoiceStatusInfo = tripDetail.invoiceStatusInfo
+          )
+          ctaConfigLiveData.postValue(ctaConfig)
+      }
+  }
+
+  fun updateMilestones(calledAfterSettled:Boolean) {
+      /*
+      calledAfterSettled flag is to update the milestones only when the trip is settled in old flow,
+      as before this feature, the settlement of trip was determined from tripSettledLiveData
+      */
+      if(!calledAfterSettled || tripDetail.invoiceStatusInfo==null) {
+          val milestones = TripMilestoneProvider.getAdhocIntracityMilestones(
+              tripDetails = tripDetail,
+              isGstVerified = userPrefs.isGstVerfied,
+              settledTime = settledTime
+          )
+          milestonesLiveData.postValue(milestones)
+      }
+  }
 }

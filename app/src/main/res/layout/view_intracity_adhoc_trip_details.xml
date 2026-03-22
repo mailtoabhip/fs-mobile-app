@@ -19,12 +19,16 @@
             name="tripSettled"
             type="Boolean"
             />
+        <variable
+            name="ctaConfig"
+            type="com.delhivery.axle.data.tripdetail.TripCtaConfig"
+            />
         <import type="android.view.View" />
         <import type="androidx.core.content.ContextCompat" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -151,6 +155,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cl_transaction_info"
         android:id="@+id/tripStatusLabel"
+        app:layout_constraintBottom_toTopOf="@id/button_cta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/size_16dp"
@@ -169,240 +174,35 @@
             android:layout_marginBottom="@dimen/size_16dp"
             android:text="Trip Status"/>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon_arrival"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_trip_status"
-            app:srcCompat="@{tripDetails.truckArrivedRes()}"
-            android:layout_marginStart="@dimen/size_32dp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_milestones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_16dp"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            tools:src="@drawable/ic_current_status"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvArrival"
-            android:text="Arrived at pickup"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintTop_toTopOf="@+id/icon_arrival"
-            app:layout_constraintBottom_toBottomOf="@+id/icon_arrival"
-            app:layout_constraintStart_toEndOf="@+id/icon_arrival"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:id="@+id/viewArrival"
-            app:layout_constraintTop_toBottomOf="@+id/icon_arrival"
-            app:layout_constraintStart_toStartOf="@id/icon_arrival"
-            app:layout_constraintEnd_toEndOf="@id/icon_arrival"
-            android:layout_width="@dimen/size_2dp"
-            android:layout_height="@dimen/size_32dp"
-            android:layout_below="@+id/icon_arrival"
-            android:background="@color/black" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon_loaded"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            app:layout_constraintTop_toBottomOf="@+id/title_trip_status"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewArrival"
-            app:srcCompat="@{tripDetails.truckLoadedRes()}"
-            android:layout_marginStart="@dimen/size_32dp"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            tools:src="@drawable/ic_current_status"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvloaded"
-            android:text="Loaded"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintTop_toTopOf="@+id/icon_loaded"
-            app:layout_constraintBottom_toBottomOf="@+id/icon_loaded"
-            app:layout_constraintStart_toEndOf="@+id/icon_loaded"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:id="@+id/viewLoaded"
-            app:layout_constraintTop_toBottomOf="@+id/icon_loaded"
-            app:layout_constraintStart_toStartOf="@id/icon_loaded"
-            app:layout_constraintEnd_toEndOf="@id/icon_loaded"
-            android:layout_width="@dimen/size_2dp"
-            android:layout_height="@dimen/size_32dp"
-            android:layout_below="@+id/tvloaded"
-            android:background="@color/black" />
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon_reached"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewLoaded"
-            app:srcCompat="@{tripDetails.truckReachedRes()}"
-            android:layout_marginStart="@dimen/size_32dp"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            tools:src="@drawable/ic_current_status"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvReached"
-            android:text="Reached Destination"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintTop_toTopOf="@+id/icon_reached"
-            app:layout_constraintBottom_toBottomOf="@+id/icon_reached"
-            app:layout_constraintStart_toEndOf="@+id/icon_reached"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:id="@+id/viewReached"
-            app:layout_constraintTop_toBottomOf="@+id/icon_reached"
-            app:layout_constraintStart_toStartOf="@id/icon_reached"
-            app:layout_constraintEnd_toEndOf="@id/icon_reached"
-            android:layout_width="@dimen/size_2dp"
-            android:layout_height="@dimen/size_32dp"
-            android:layout_below="@+id/tvReached"
-            android:background="@color/black" />
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon_unloaded"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewReached"
-            app:srcCompat="@{tripDetails.truckUnloadedRes()}"
-            android:layout_marginStart="@dimen/size_32dp"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            tools:src="@drawable/ic_current_status"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvUnloaded"
-            android:text="Unloaded"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintTop_toTopOf="@+id/icon_unloaded"
-            app:layout_constraintBottom_toBottomOf="@+id/icon_unloaded"
-            app:layout_constraintStart_toEndOf="@+id/icon_unloaded"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:id="@+id/viewUnloaded"
-            app:layout_constraintTop_toBottomOf="@+id/icon_unloaded"
-            app:layout_constraintStart_toStartOf="@id/icon_unloaded"
-            app:layout_constraintEnd_toEndOf="@id/icon_unloaded"
-            android:layout_width="@dimen/size_2dp"
-            android:layout_height="@dimen/size_32dp"
-            android:layout_below="@+id/tvUnloaded"
-            android:background="@color/black" />
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon_hpod"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewUnloaded"
-            app:srcCompat="@{tripDetails.podUploadedRes()}"
-            android:layout_marginStart="@dimen/size_32dp"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            tools:src="@drawable/ic_current_status"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvHpod"
-            android:text="hPOD Submitted"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintTop_toTopOf="@+id/icon_hpod"
-            app:layout_constraintBottom_toBottomOf="@+id/icon_hpod"
-            app:layout_constraintStart_toEndOf="@+id/icon_hpod"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:id="@+id/viewhPod"
-            app:layout_constraintTop_toBottomOf="@+id/icon_hpod"
-            app:layout_constraintStart_toStartOf="@id/icon_hpod"
-            app:layout_constraintEnd_toEndOf="@id/icon_hpod"
-            android:layout_width="@dimen/size_2dp"
-            android:layout_height="@dimen/size_32dp"
-            android:layout_below="@+id/tvHpod"
-            android:background="@color/black" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon_settled"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewhPod"
-            app:srcCompat="@{tripDetails.tripSettledRes(tripSettled)}"
-            android:layout_marginStart="@dimen/size_32dp"
-            android:layout_width="@dimen/size_16dp"
-            android:layout_height="@dimen/size_16dp"
-            tools:src="@drawable/ic_current_status"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvSettled"
-            android:text="Settled"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintTop_toTopOf="@+id/icon_settled"
-            app:layout_constraintBottom_toBottomOf="@+id/icon_settled"
-            app:layout_constraintStart_toEndOf="@+id/icon_settled"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_settled_timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginTop="@dimen/size_4dp"
-            android:textSize="10sp"
-            android:textColor="@color/sub_heading_black"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/icon_settled"
-            app:layout_constraintTop_toBottomOf="@+id/tvSettled"
-            tools:text="Payment made at 12-Dec-2025 12:30 PM"
-            tools:visibility="visible"/>
-
-
-
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/item_trip_milestone"
+            tools:itemCount="7" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_Refresh"
+        android:id="@+id/button_cta"
         style="@style/ActionButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Refresh"
+        android:text="@{ctaConfig != null ? ctaConfig.buttonText : (tripSettled ? `Download Invoice` : `Refresh`)}"
         android:textAllCaps="false"
-        android:visibility="@{tripSettled ? View.GONE : View.VISIBLE}"
+        android:visibility="@{ctaConfig != null ? (ctaConfig.visible ? View.VISIBLE : View.GONE) : View.VISIBLE}"
         app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/size_16dp"
-        android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginEnd="@dimen/size_16dp"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_download_invoice"
-        style="@style/ActionButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Download Invoice"
-        android:textAllCaps="false"
-        android:visibility="@{tripSettled ? View.VISIBLE : View.GONE}"
-        app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/size_16dp"
-        android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginEnd="@dimen/size_16dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/size_16dp"
+        tools:text="Refresh"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

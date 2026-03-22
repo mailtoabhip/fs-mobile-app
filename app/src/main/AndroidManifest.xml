@@ -325,6 +325,10 @@
         <activity
             android:name=".ui.profile.PlacementsActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.invoicereview.InvoiceReviewActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

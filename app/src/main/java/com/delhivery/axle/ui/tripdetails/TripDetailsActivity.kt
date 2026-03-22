@@ -33,6 +33,8 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_POD_VIEWED
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import com.delhivery.axle.data.tripdetail.TripCtaAction
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -46,6 +48,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.delhivery.axle.ui.invoicereview.InvoiceReviewActivity
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import java.io.File
@@ -73,6 +76,17 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private var isFirstResume = true
 
   private val adapter: TripPaymentSummaryRVAdapter by lazy { TripPaymentSummaryRVAdapter(this) }
+  private val milestoneAdapter: TripMilestoneAdapter by lazy { TripMilestoneAdapter() }
+
+    private val invoiceReviewLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                InvoiceReviewActivity.RESULT_INVOICE_ACCEPTED,
+                InvoiceReviewActivity.RESULT_INVOICE_REJECTED -> {
+                    refreshData()
+                }
+            }
+        }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -100,12 +114,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.backArrow.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
-      binding.clAdhocintracity.buttonRefresh.setOnClickListener {
-          refreshData()
-      }
-      
-      binding.clAdhocintracity.buttonDownloadInvoice.setOnClickListener {
-          downloadInvoice()
+      binding.clAdhocintracity.buttonCta.setOnClickListener {
+          handleCtaClick()
       }
   }
 
@@ -140,7 +150,22 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.tripSettled = it
       binding.clAdhocintracity.tripSettled = it
       binding.viewModel = viewModel
+        viewModel.updateCtaConfig(true)
+        viewModel.updateMilestones(true)
     })
+
+      // Setup milestones RecyclerView
+      binding.clAdhocintracity.rvMilestones.apply {
+          layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+          adapter = milestoneAdapter
+      }
+    viewModel.ctaConfigLiveData.observe(this, Observer { ctaConfig ->
+      binding.clAdhocintracity.ctaConfig = ctaConfig
+    })
+    viewModel.milestonesLiveData.observe(this, Observer { milestones ->
+      milestoneAdapter.submitList(milestones)
+    })
+
     viewModel.podDownloadLiveData.observe(this, Observer {
       if (it != null) {
         downloadPOD(it.first, it.second)
@@ -325,46 +350,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   }
 
   /**
-   * Update settled milestone with payment timestamp
-   */
-  private fun updateSettledMilestone() {
-    val trip = binding.tripDetails ?: return
-    
-    // Always start with GONE visibility for safety
-    binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
-    
-    // Check if trip is settled
-    if (!trip.isSettled) {
-        return
-    }
-
-    // Use the settledTime from ViewModel (captured when balance payment was processed)
-    val timestamp = viewModel.settledTime
-    
-    // Only show timestamp if it's available and valid
-    if (!timestamp.isNullOrEmpty() && timestamp.trim().isNotEmpty()) {
-        try {
-            val date = DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat)
-            val sdf = java.text.SimpleDateFormat("dd-MMM-yyyy hh:mma", java.util.Locale.ENGLISH)
-            val formattedText = "Payment made at ${sdf.format(date)}"
-            
-            // Only show if formatting was successful
-            if (formattedText.isNotEmpty()) {
-                binding.clAdhocintracity.tvSettledTimestamp.text = formattedText
-                binding.clAdhocintracity.tvSettledTimestamp.setTextColor(
-                    ContextCompat.getColor(this, R.color.sub_heading_black)
-                )
-                binding.clAdhocintracity.tvSettledTimestamp.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            // Keep GONE if any error occurs
-            binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
-        }
-    }
-    // If timestamp is null/empty, visibility remains GONE (set at the beginning)
-  }
-
-  /**
    * Transaction details and UI updation Observer
    */
   inner class TransactionObserver : Observer<Pair<HomeBidsRequestItemData, HomeTripsItemData>?> {
@@ -381,9 +366,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           binding.clAdhocintracity.request = t.first
           binding.clAdhocintracity.layoutTransaction.request = t.first
           binding.clAdhocintracity.tripSettled = t.second.isSettled
-          
-          // Update settled milestone timestamp
-          updateSettledMilestone()
+
+          viewModel.updateCtaConfig(false)
+          viewModel.updateMilestones(false)
 
         } else {
           binding.toolbar.visibility = View.VISIBLE
@@ -656,6 +641,26 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     // Call backend API to get pre-signed URL
     viewModel.fetchInvoiceDownloadUrl()
   }
+
+    /**
+     * Handle CTA button click based on current action type
+     */
+    private fun handleCtaClick() {
+        val ctaConfig = viewModel.ctaConfigLiveData.value
+        when (ctaConfig?.action) {
+            TripCtaAction.REVIEW -> openInvoiceReview()
+            TripCtaAction.DOWNLOAD -> downloadInvoice()
+            else -> refreshData() // Default fallback
+        }
+    }
+
+    /**
+     * Open Invoice Review Activity for GST vendors
+     */
+    private fun openInvoiceReview() {
+        val intent = InvoiceReviewActivity.invoiceReviewIntent(viewModel.transactionId, this)
+        invoiceReviewLauncher.launch(intent)
+    }
 
   /**
    * Get file for invoice download
