@@ -128,9 +128,9 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 val amount = raw.toDoubleOrNull() ?: 0.0
                 selectedAmount = amount
 
-                val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
                 val isZeroEntered = raw.isNotEmpty() && amount == 0.0
-                val isInvalid = isZeroEntered || amount > 100000 || hasLeadingZero
+                val isLessThanOne = raw.isNotEmpty() && amount > 0.0 && amount < 1.0
+                val isInvalid = isZeroEntered || isLessThanOne || amount > 100000
                 binding.tvAmountError.visibility = if (isInvalid) View.VISIBLE else View.GONE
 
                 updateChipSelection(amount)
@@ -171,10 +171,9 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
 
     private fun updateSliderState() {
         val raw = binding.etAmount.text.toString()
-        val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
         val hasInsufficientBalance = selectedAmount > 0 && selectedAmount > walletBalance
-        val isInvalidAmount = selectedAmount > 100000 || hasLeadingZero
-        val enabled = selectedAmount > 0 && !hasInsufficientBalance && !isInvalidAmount
+        val isInvalidAmount = selectedAmount < 1.0 || selectedAmount > 100000
+        val enabled = selectedAmount >= 1.0 && !hasInsufficientBalance && !isInvalidAmount
         val container = binding.slideToPayContainer
         val thumb = binding.ivSlideThumb
         val label = binding.tvSlideLabel
@@ -267,9 +266,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         val container = binding.slideToPayContainer
 
         thumb.setOnTouchListener { view, event ->
-            val raw = binding.etAmount.text.toString()
-            val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
-            if (selectedAmount <= 0 || selectedAmount > walletBalance || selectedAmount > 100000 || hasLeadingZero) return@setOnTouchListener false
+            if (selectedAmount < 1.0 || selectedAmount > walletBalance || selectedAmount > 100000) return@setOnTouchListener false
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -309,7 +306,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     }
 
     private fun onSlideCompleted() {
-        if (selectedAmount <= 0) {
+        if (selectedAmount < 1.0) {
             Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
             resetSlider()
             return
