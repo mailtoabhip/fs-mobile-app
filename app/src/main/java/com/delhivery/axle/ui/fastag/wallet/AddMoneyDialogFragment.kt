@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -147,12 +148,20 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
             }
         }
     }
-
     private fun addQuickAmount(delta: Int) {
         val current = binding.etAmount.text.toString().toIntOrNull() ?: 0
+        if (current >= 100_000) {
+            Toast.makeText(requireContext(), "Maximum amount limit of ₹1,00,000 reached", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val newAmount = (current + delta).coerceAtMost(100_000)
         binding.etAmount.setText(newAmount.toString())
         binding.etAmount.setSelection(binding.etAmount.text?.length ?: 0)
+
+        if (current + delta > 100_000) {
+            Toast.makeText(requireContext(), "Amount capped at ₹1,00,000", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private val webViewLauncher = registerForActivityResult(
