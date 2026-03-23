@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FileData
+import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.databinding.ActivityPaymentDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
@@ -27,6 +28,7 @@ import com.delhivery.axle.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
 import com.delhivery.axle.utils.EVENT_SUBMIT_PAYMENT_DETAILS
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.ImageUtils
+import com.delhivery.axle.utils.KycUtils
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE_PAGE
 import com.delhivery.axle.utils.PROPERTY_TTL
@@ -211,6 +213,7 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         viewModel.userUpdateLiveData.observe(this, Observer {
             if(it){
                 userPrefs.paymentAccountNumber = viewModel.accountText.value.toString()
+                userPrefs.accNumber = KycUtils.getEncryptedAccountNo(userPrefs.paymentAccountNumber)
                 userPrefs.ifscCode = viewModel.ifscText.value.toString()
                 userPrefs.paymentAccountName = viewModel.accountHolderText.value.toString()
 
