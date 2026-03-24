@@ -145,6 +145,18 @@ object BindingAdapters {
     }
   }
 
+  @JvmStatic
+  @BindingAdapter("textRes")
+  fun setTextRes(textView: TextView, stringResId: Int?) {
+    if (stringResId != null && stringResId != 0) {
+      try {
+        textView.text = textView.context.getString(stringResId)
+      } catch (e: Exception) {
+        // Keep existing text if resource not found
+      }
+    }
+  }
+
 //    @JvmStatic
 //    @BindingAdapter("bind:font")
 //    fun bindFont(textView: TextView, fontName: String) {

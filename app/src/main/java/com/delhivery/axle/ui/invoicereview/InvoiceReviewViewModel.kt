@@ -3,15 +3,32 @@ package com.delhivery.axle.ui.invoicereview
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.InvoiceRepository
 import com.delhivery.axle.api.request.InvoiceActionRequest
-import com.delhivery.axle.api.response.BilledParty
 import com.delhivery.axle.api.response.InvoiceDetailsResponse
-import com.delhivery.axle.api.response.InvoiceParticular
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.plusAssign
 import javax.inject.Inject
+
+/**
+ * Error types for Invoice Review - Activity resolves to string resources
+ */
+enum class InvoiceReviewErrorType {
+    TRANSACTION_ID_REQUIRED,
+    INVOICE_NUMBER_REQUIRED,
+    INVOICE_NUMBER_INVALID_CHARS,
+    INVOICE_NUMBER_MAX_LENGTH,
+    INVOICE_DETAILS_NOT_LOADED,
+    INVOICE_TICKET_ID_MISSING,
+    ENTER_INVOICE_NUMBER,
+    ENTER_INVOICE_DATE,
+    ALREADY_PROCESSED
+}
+
+enum class ConfirmationType(val value: String) {
+    ACCEPT("accept"),
+    REJECT("reject")
+}
 
 /**
  * ViewModel for Invoice Review screen
@@ -22,30 +39,29 @@ class InvoiceReviewViewModel @Inject constructor(
 
     companion object {
         private val INVALID_CHARS_REGEX = Regex("[ _@.]")
-        private const val MAX_INVOICE_NUMBER_LENGTH = 16
+        const val MAX_INVOICE_NUMBER_LENGTH = 16
     }
+
     var transactionId: String = ""
+    var centerContactNumber: String = ""
 
     // Invoice details LiveData
     val invoiceDetailsLiveData = MutableLiveData<InvoiceDetailsResponse>()
 
-    // Validation errors LiveData
-    val invoiceNumberErrorLiveData = MutableLiveData<String?>()
+    // Validation errors LiveData - uses enum
+    val invoiceNumberErrorLiveData = MutableLiveData<InvoiceReviewErrorType?>()
 
     // Accept/Reject result LiveData
     val invoiceActionResponseMsgLiveData = MutableLiveData<String>()
 
-    // Error LiveData
-    val errorLiveData = MutableLiveData<String>()
+    // Error LiveData - uses enum
+    val errorLiveData = MutableLiveData<InvoiceReviewErrorType>()
 
     // Loading state
     val isLoadingLiveData = MutableLiveData<Boolean>()
 
     // Fetch error state (for showing retry button)
     val fetchErrorLiveData = MutableLiveData<Boolean>()
-
-    // Already processed flag
-    val alreadyProcessedLiveData = MutableLiveData<Boolean>()
 
     // Current invoice details (cached for retry)
     private var currentInvoice: InvoiceDetailsResponse? = null
@@ -55,23 +71,26 @@ class InvoiceReviewViewModel @Inject constructor(
      */
     fun fetchInvoiceDetails() {
         if (transactionId.isEmpty()) {
-            errorLiveData.postValue("Transaction ID is required")
+            errorLiveData.postValue(InvoiceReviewErrorType.TRANSACTION_ID_REQUIRED)
             return
         }
 
         isLoadingLiveData.postValue(true)
         fetchErrorLiveData.postValue(false)
-        
+
         compositeDisposable += invoiceRepository.getInvoiceDetails(transactionId)
             .onBackground()
-            .subscribe({ response ->
+            .progress()
+            .subscribe { response, error ->
                 isLoadingLiveData.postValue(false)
-                currentInvoice = response
-                invoiceDetailsLiveData.postValue(response)
-            }, { error ->
-                isLoadingLiveData.postValue(false)
-                error.handle()
-            })
+                if (!error) {
+                    currentInvoice = response
+                    currentInvoice?.centerContactNumber?.let{centerContactNumber = it}
+                    invoiceDetailsLiveData.postValue(response)
+                } else {
+                    error.handle()
+                }
+            }
     }
 
     /**
@@ -79,22 +98,22 @@ class InvoiceReviewViewModel @Inject constructor(
      * @return true if valid, false otherwise
      */
     fun validateInvoiceNumber(invoiceNumber: String, isRejectCase: Boolean): Boolean {
-        // Skip validation entirely for reject case with empty invoice number
+        // Skip validation for reject case with empty invoice number
         if (invoiceNumber.isEmpty() && isRejectCase) {
             invoiceNumberErrorLiveData.postValue(null)
             return true
         }
         return when {
             invoiceNumber.isEmpty() -> {
-                invoiceNumberErrorLiveData.postValue("Invoice number is required")
+                invoiceNumberErrorLiveData.postValue(InvoiceReviewErrorType.INVOICE_NUMBER_REQUIRED)
                 false
             }
             INVALID_CHARS_REGEX.containsMatchIn(invoiceNumber) -> {
-                invoiceNumberErrorLiveData.postValue("Invoice number must not contain _, @, . or space")
+                invoiceNumberErrorLiveData.postValue(InvoiceReviewErrorType.INVOICE_NUMBER_INVALID_CHARS)
                 false
             }
             invoiceNumber.length > MAX_INVOICE_NUMBER_LENGTH -> {
-                invoiceNumberErrorLiveData.postValue("Invoice number cannot exceed $MAX_INVOICE_NUMBER_LENGTH characters")
+                invoiceNumberErrorLiveData.postValue(InvoiceReviewErrorType.INVOICE_NUMBER_MAX_LENGTH)
                 false
             }
             else -> {
@@ -104,40 +123,47 @@ class InvoiceReviewViewModel @Inject constructor(
         }
     }
 
-
     /**
      * Validate all inputs
      * @return true if all inputs are valid
      */
-    fun validateInputs(invoiceNumber: String, isRejectCase:Boolean): Boolean {
-        val isNumberValid = validateInvoiceNumber(invoiceNumber,isRejectCase)
-        return isNumberValid
+    fun validateInputs(invoiceNumber: String, isRejectCase: Boolean): Boolean {
+        return validateInvoiceNumber(invoiceNumber, isRejectCase)
     }
 
+
     /**
-     * Accept the invoice with vendor invoice number and date
+     * Accept or reject the invoice with vendor invoice number and date
      */
-    fun acceptRejectInvoice(confirmationType : InvoiceConfirmationDialog.ConfirmationType, invoiceNumber: String?, invoiceDate: String?) {
+    fun acceptRejectInvoice(
+        confirmationType: ConfirmationType,
+        invoiceNumber: String?,
+        invoiceDate: String?
+    ) {
         val invoice = currentInvoice
         val ticketId = invoice?.ticketId
+
         if (invoice == null) {
-            errorLiveData.postValue("Invoice details not loaded")
+            errorLiveData.postValue(InvoiceReviewErrorType.INVOICE_DETAILS_NOT_LOADED)
             return
         }
         if (ticketId.isNullOrEmpty()) {
-            errorLiveData.postValue("Invoice ticketId missing")
+            errorLiveData.postValue(InvoiceReviewErrorType.INVOICE_TICKET_ID_MISSING)
             return
         }
 
-        val isAcceptAction = confirmationType == InvoiceConfirmationDialog.ConfirmationType.ACCEPT
+        val isAcceptAction = confirmationType == ConfirmationType.ACCEPT
 
         if (isAcceptAction && (invoiceNumber.isNullOrEmpty() || invoiceDate.isNullOrEmpty())) {
-            if (invoiceNumber.isNullOrEmpty()) errorLiveData.postValue("Please enter invoice number")
-            else errorLiveData.postValue("Please enter invoice date")
+            if (invoiceNumber.isNullOrEmpty()) {
+                errorLiveData.postValue(InvoiceReviewErrorType.ENTER_INVOICE_NUMBER)
+            } else {
+                errorLiveData.postValue(InvoiceReviewErrorType.ENTER_INVOICE_DATE)
+            }
             return
         }
 
-        // Sanitize inputs - trim and remove any potentially harmful characters
+        // Sanitize inputs
         val sanitizedInvoiceNumber = invoiceNumber?.trim()?.take(MAX_INVOICE_NUMBER_LENGTH)
         val sanitizedInvoiceDate = invoiceDate?.trim()
 
@@ -146,21 +172,20 @@ class InvoiceReviewViewModel @Inject constructor(
             action = confirmationType.value,
             vendorInvoiceNumber = sanitizedInvoiceNumber,
             vendorInvoiceDate = sanitizedInvoiceDate,
-            rejectionRemark = if(!isAcceptAction) "Rejected by Vendor" else null
+            rejectionRemark = if(!isAcceptAction) "Rejected by Vendor" else null //hardcoded for now
         )
 
         isLoadingLiveData.postValue(true)
         compositeDisposable += invoiceRepository.invoiceAction(request)
             .onBackground()
             .progress()
-            .subscribe{ response, error ->
+            .subscribe { response, error ->
                 isLoadingLiveData.postValue(false)
                 if (!error) {
-                    invoiceActionResponseMsgLiveData.postValue(response.message?:"Success")
-                }else {
+                    invoiceActionResponseMsgLiveData.postValue(response.message ?: "")
+                } else {
                     error.handle()
                 }
             }
     }
-
 }

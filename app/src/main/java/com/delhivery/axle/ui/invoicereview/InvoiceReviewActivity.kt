@@ -20,7 +20,8 @@ import java.util.Locale
 /**
  * Activity for GST vendors to review and accept/reject invoices
  */
-class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, InvoiceReviewViewModel>(), DatePickerDialog.OnDateSetListener {
+class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, InvoiceReviewViewModel>(),
+    DatePickerDialog.OnDateSetListener {
 
     companion object {
         const val EXTRA_TRANSACTION_ID = "transaction_id"
@@ -46,8 +47,7 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val transactionId = intent?.getStringExtra(EXTRA_TRANSACTION_ID)?:""
-
+        val transactionId = intent?.getStringExtra(EXTRA_TRANSACTION_ID) ?: ""
         viewModel.transactionId = transactionId
 
         setupToolbar()
@@ -57,12 +57,14 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
         setupBackNavigation()
     }
 
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
         // Handle window insets for edge-to-edge display (API 35+)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.bottomButtons)
         }
 
         observeViewModel()
@@ -84,14 +86,13 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     }
 
     private fun setupDatePicker() {
-        // Prefill with current date
         val today = Calendar.getInstance()
         selectedYear = today.get(Calendar.YEAR)
         selectedMonth = today.get(Calendar.MONTH)
         selectedDay = today.get(Calendar.DAY_OF_MONTH)
-        
+
         updateDateDisplay()
-        
+
         binding.tvInvoiceDate.setOnClickListener {
             dialogUtils.datePicker(this, minDate = -30, maxDate = 30)
         }
@@ -147,6 +148,7 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
         })
     }
 
+
     private fun observeViewModel() {
         viewModel.invoiceDetailsLiveData.observe(this, Observer { invoice ->
             binding.invoice = invoice
@@ -154,9 +156,9 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
             binding.scrollContent.visibility = View.VISIBLE
             val particulars = invoice.invoiceParticulars
             if (particulars.isNullOrEmpty()) {
-                binding.rvInvoiceParticulars.visibility = android.view.View.GONE
+                binding.rvInvoiceParticulars.visibility = View.GONE
             } else {
-                binding.rvInvoiceParticulars.visibility = android.view.View.VISIBLE
+                binding.rvInvoiceParticulars.visibility = View.VISIBLE
                 particularsAdapter.submitList(particulars)
             }
         })
@@ -174,32 +176,59 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
         })
 
         viewModel.invoiceActionResponseMsgLiveData.observe(this, Observer { message ->
+            if (message.isNotEmpty()) {
                 uiUtils.showSnackbar(message)
-                setResult(RESULT_INVOICE_REVIEWED)
-                finish()
+            }
+            setResult(RESULT_INVOICE_REVIEWED)
+            finish()
         })
 
-        viewModel.errorLiveData.observe(this, Observer { error ->
-            uiUtils.showSnackbar(error)
-        })
-        viewModel.invoiceNumberErrorLiveData.observe(this, Observer { error ->
-            error?.let{uiUtils.showSnackbar(error)}
+        viewModel.errorLiveData.observe(this, Observer { errorType ->
+            val errorMessage = getErrorMessage(errorType)
+            uiUtils.showSnackbar(errorMessage)
         })
 
-        viewModel.alreadyProcessedLiveData.observe(this, Observer { alreadyProcessed ->
-            if (alreadyProcessed) {
-                uiUtils.showSnackbar("This invoice has already been processed")
-                viewModel.fetchInvoiceDetails() // Refresh to get latest status
+        viewModel.invoiceNumberErrorLiveData.observe(this, Observer { errorType ->
+            errorType?.let {
+                val errorMessage = getErrorMessage(it)
+                uiUtils.showSnackbar(errorMessage)
             }
         })
+    }
+
+    /**
+     * Resolve error enum to string resource
+     */
+    private fun getErrorMessage(errorType: InvoiceReviewErrorType): String {
+        return when (errorType) {
+            InvoiceReviewErrorType.TRANSACTION_ID_REQUIRED ->
+                getString(R.string.error_transaction_id_required)
+            InvoiceReviewErrorType.INVOICE_NUMBER_REQUIRED ->
+                getString(R.string.error_invoice_number_required)
+            InvoiceReviewErrorType.INVOICE_NUMBER_INVALID_CHARS ->
+                getString(R.string.error_invoice_number_invalid_chars)
+            InvoiceReviewErrorType.INVOICE_NUMBER_MAX_LENGTH ->
+                getString(R.string.error_invoice_number_max_length, InvoiceReviewViewModel.MAX_INVOICE_NUMBER_LENGTH)
+            InvoiceReviewErrorType.INVOICE_DETAILS_NOT_LOADED ->
+                getString(R.string.error_invoice_details_not_loaded)
+            InvoiceReviewErrorType.INVOICE_TICKET_ID_MISSING ->
+                getString(R.string.error_invoice_ticket_id_missing)
+            InvoiceReviewErrorType.ENTER_INVOICE_NUMBER ->
+                getString(R.string.error_enter_invoice_number)
+            InvoiceReviewErrorType.ENTER_INVOICE_DATE ->
+                getString(R.string.error_enter_invoice_date)
+            InvoiceReviewErrorType.ALREADY_PROCESSED ->
+                getString(R.string.invoice_already_processed)
+        }
     }
 
     private fun showAcceptConfirmationDialog(invoiceNumber: String, invoiceDate: String) {
         InvoiceConfirmationDialog(
             context = this,
-            type = InvoiceConfirmationDialog.ConfirmationType.ACCEPT,
+            type = ConfirmationType.ACCEPT,
+            centerContactNumber = viewModel.centerContactNumber,
             onConfirm = {
-                viewModel.acceptRejectInvoice(confirmationType = InvoiceConfirmationDialog.ConfirmationType.ACCEPT, invoiceNumber, invoiceDate)
+                viewModel.acceptRejectInvoice(ConfirmationType.ACCEPT, invoiceNumber, invoiceDate)
             }
         ).show()
     }
@@ -207,13 +236,10 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     private fun showRejectConfirmationDialog(invoiceNumber: String, invoiceDate: String) {
         InvoiceConfirmationDialog(
             context = this,
-            type = InvoiceConfirmationDialog.ConfirmationType.REJECT,
+            type = ConfirmationType.REJECT,
+            centerContactNumber = viewModel.centerContactNumber,
             onConfirm = {
-                viewModel.acceptRejectInvoice(
-                    confirmationType = InvoiceConfirmationDialog.ConfirmationType.REJECT,
-                    invoiceNumber = invoiceNumber,
-                    invoiceDate = invoiceDate
-                )
+                viewModel.acceptRejectInvoice(ConfirmationType.REJECT, invoiceNumber, invoiceDate)
             }
         ).show()
     }

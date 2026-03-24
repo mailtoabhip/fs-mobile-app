@@ -1052,4 +1052,51 @@
   <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
   <string name="label_bidding">Bidding</string>
     <string name="str_tax_invoice">Tax Invoice</string>
+
+  <!-- Invoice Review Flow Strings -->
+  <string name="invoice_review_title">Review Invoice</string>
+  <string name="invoice_already_processed">This invoice has already been processed</string>
+  
+  <!-- Invoice Review Validation Messages -->
+  <string name="error_transaction_id_required">Transaction ID is required</string>
+  <string name="error_invoice_number_required">Invoice number is required</string>
+  <string name="error_invoice_number_invalid_chars">Invoice number must not contain _, @, . or space</string>
+  <string name="error_invoice_number_max_length">Invoice number cannot exceed %d characters</string>
+  <string name="error_invoice_details_not_loaded">Invoice details not loaded</string>
+  <string name="error_invoice_ticket_id_missing">Invoice ticketId missing</string>
+  <string name="error_enter_invoice_number">Please enter invoice number</string>
+  <string name="error_enter_invoice_date">Please enter invoice date</string>
+  <string name="invoice_action_success">Success</string>
+  <string name="invoice_rejection_remark">Rejected by Vendor</string>
+  
+  <!-- Invoice Confirmation Dialog -->
+  <string name="dialog_accept_invoice_title">Accept Invoice?</string>
+  <string name="dialog_accept_invoice_message">Are you sure you want to accept this invoice for payment processing?</string>
+  <string name="dialog_accept_invoice_confirm">Confirm Accept</string>
+  <string name="dialog_reject_invoice_title">Reject Invoice?</string>
+  <string name="dialog_reject_invoice_message">Please reach out to the centre at %s for re-raising of invoice acceptance request.</string>
+  <string name="dialog_reject_invoice_confirm">Confirm Reject</string>
+  
+  <!-- Trip CTA Buttons -->
+  <string name="cta_refresh">Refresh</string>
+  <string name="cta_download_invoice">Download Invoice</string>
+  <string name="cta_review_invoice">Review Invoice</string>
+    <string name="str_review_invoice">Review Invoice</string>
+    <string name="str_billed_from">Billed From</string>
+    <string name="str_billed_to">Billed To</string>
+    <string name="str_place_of_supply">Place of Supply:</string>
+    <string name="str_bank">Bank:</string>
+    <string name="atr_a_c_no">A/C No:</string>
+    <string name="str_service">Service:</string>
+    <string name="str_sac_code">SAC Code:</string>
+    <string name="str_invoice_particulars">Invoice Particulars</string>
+    <string name="str_total_value">Total Value</string>
+    <string name="str_invoice_no"># Invoice No</string>
+    <string name="str_invoice_date">Invoice Date</string>
+    <string name="hint_invoice_no_input">AB-123/123</string>
+    <string name="str_total_taxable_value">Total Taxable Value</string>
+    <string name="str_grand_total">Grand Total</string>
+    <string name="str_reject">Reject</string>
+    <string name="str_accept">Accept</string>
+    <string name="str_cancel">Cancel</string>
 </resources>

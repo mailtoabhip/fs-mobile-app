@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogInvoiceConfirmationBinding
+import androidx.core.graphics.drawable.toDrawable
 
 /**
  * Confirmation dialog for invoice accept/reject actions
@@ -16,13 +17,9 @@ import com.delhivery.axle.databinding.DialogInvoiceConfirmationBinding
 class InvoiceConfirmationDialog(
     context: Context,
     private val type: ConfirmationType,
+    private val centerContactNumber : String?,
     private val onConfirm: () -> Unit
 ) : AlertDialog(context) {
-
-    enum class ConfirmationType(val value: String) {
-        ACCEPT("accept"),
-        REJECT("reject")
-    }
 
     private lateinit var binding: DialogInvoiceConfirmationBinding
 
@@ -32,12 +29,14 @@ class InvoiceConfirmationDialog(
         binding = DialogInvoiceConfirmationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Make dialog background transparent to show rounded corners
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         window?.setLayout(
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
         )
+
+        val margin = context.resources.getDimensionPixelSize(R.dimen.size_40dp)
+        window?.decorView?.setPadding(margin, 0, margin, 0)
 
         setupDialog()
         setupClickListeners()
@@ -48,19 +47,19 @@ class InvoiceConfirmationDialog(
             ConfirmationType.ACCEPT -> {
                 binding.ivIcon.setImageResource(R.drawable.circle_check)
                 binding.ivIcon.backgroundTintList = ContextCompat.getColorStateList(context, R.color.light_green)
-                binding.tvTitle.text = "Accept Invoice?"
-                binding.tvMessage.text = "Are you sure you want to accept this invoice for payment processing?"
-                binding.btnConfirm.text = "Confirm Accept"
+                binding.tvTitle.text = context.getString(R.string.dialog_accept_invoice_title)
+                binding.tvMessage.text = context.getString(R.string.dialog_accept_invoice_message)
+                binding.btnConfirm.text = context.getString(R.string.dialog_accept_invoice_confirm)
                 binding.btnConfirm.backgroundTintList = ContextCompat.getColorStateList(context, R.color.black)
                 binding.btnConfirm.setTextColor(ContextCompat.getColor(context, R.color.white))
             }
             ConfirmationType.REJECT -> {
-                binding.ivIcon.setImageResource(R.drawable.ic_cross)
+                binding.ivIcon.setImageResource(R.drawable.ic_close)
                 binding.ivIcon.imageTintList = ContextCompat.getColorStateList(context, R.color.colorDelhiveryRed)
                 binding.ivIcon.backgroundTintList = ContextCompat.getColorStateList(context, R.color.light_red)
-                binding.tvTitle.text = "Reject Invoice?"
-                binding.tvMessage.text = "Please reach out to the centre at +91 800-123-4567 for re-raising of invoice acceptance request."
-                binding.btnConfirm.text = "Confirm Reject"
+                binding.tvTitle.text = context.getString(R.string.dialog_reject_invoice_title)
+                binding.tvMessage.text = context.getString(R.string.dialog_reject_invoice_message, centerContactNumber?:"")
+                binding.btnConfirm.text = context.getString(R.string.dialog_reject_invoice_confirm)
                 binding.btnConfirm.backgroundTintList = ContextCompat.getColorStateList(context, R.color.switch_red)
                 binding.btnConfirm.setTextColor(ContextCompat.getColor(context, R.color.white))
             }

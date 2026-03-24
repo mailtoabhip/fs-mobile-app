@@ -1,7 +1,7 @@
 package com.delhivery.axle.data.tripdetail
 
-import com.delhivery.axle.api.response.InvoiceStatus
-import com.delhivery.axle.api.response.PaymentStatus
+import androidx.annotation.StringRes
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.InvoiceStatusInfo
 
 /**
@@ -16,11 +16,11 @@ enum class TripCtaAction {
 
 /**
  * Configuration for CTA (Call-to-Action button) on trip details screen.
- * Single button with dynamic text and action.
+ * Uses StringRes for button text to support localization.
  */
 data class TripCtaConfig(
     val action: TripCtaAction = TripCtaAction.NONE,
-    val buttonText: String = "",
+    @StringRes val buttonTextRes: Int = R.string.cta_refresh,
     val visible: Boolean = true
 ) {
     val isVisible: Boolean get() = action != TripCtaAction.NONE && visible
@@ -28,7 +28,7 @@ data class TripCtaConfig(
 
 /**
  * Provider for CTA configuration based on vendor type and trip status.
- * 
+ *
  * CTA Logic:
  * - If showDownloadInvoice = true -> Show "Download Invoice"
  * - If showReviewInvoiceCta = true -> Show "Review Invoice"
@@ -40,15 +40,16 @@ object TripCtaProvider {
     ): TripCtaConfig {
         return when {
             invoiceStatusInfo == null ->
-                TripCtaConfig(action = TripCtaAction.REFRESH, buttonText = "Refresh")
+                TripCtaConfig(action = TripCtaAction.REFRESH, buttonTextRes = R.string.cta_refresh)
 
             invoiceStatusInfo.showDownloadInvoice ->
-                TripCtaConfig(action = TripCtaAction.DOWNLOAD, buttonText = "Download Invoice")
+                TripCtaConfig(action = TripCtaAction.DOWNLOAD, buttonTextRes = R.string.cta_download_invoice)
 
             invoiceStatusInfo.showReviewInvoiceCta ->
-                TripCtaConfig(action = TripCtaAction.REVIEW, buttonText = "Review Invoice")
+                TripCtaConfig(action = TripCtaAction.REVIEW, buttonTextRes = R.string.cta_review_invoice)
 
-            else -> TripCtaConfig(action = TripCtaAction.REFRESH, buttonText = "Refresh")
+            else ->
+                TripCtaConfig(action = TripCtaAction.REFRESH, buttonTextRes = R.string.cta_refresh)
         }
     }
 }

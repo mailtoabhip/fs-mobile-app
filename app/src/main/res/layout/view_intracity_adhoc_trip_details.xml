@@ -194,7 +194,8 @@
         style="@style/ActionButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@{ctaConfig != null ? ctaConfig.buttonText : (tripSettled ? `Download Invoice` : `Refresh`)}"
+        android:text="@string/cta_refresh"
+        app:textRes="@{ctaConfig.buttonTextRes}"
         android:textAllCaps="false"
         android:visibility="@{ctaConfig != null ? (ctaConfig.visible ? View.VISIBLE : View.GONE) : View.VISIBLE}"
         app:layout_constraintTop_toBottomOf="@id/tripStatusLabel"
@@ -202,7 +203,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="@dimen/size_16dp"
-        tools:text="Refresh"/>
+        tools:text="@string/cta_refresh"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

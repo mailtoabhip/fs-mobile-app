@@ -9,6 +9,7 @@ data class InvoiceDetailsResponse(
     @SerializedName("ticket_id") val ticketId: String,
     @SerializedName("orion_transaction_id") val orionTransactionId: String,
     @SerializedName("status") val status: String,
+    @SerializedName("center_contact_number") val centerContactNumber: String,
 
     // Billed From (Vendor)
     @SerializedName("billed_from") val billedFrom: BilledParty,

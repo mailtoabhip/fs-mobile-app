@@ -1117,7 +1117,7 @@ class TripDetailsViewModel @Inject constructor(
   }
     fun updateSettledMilestones(isSettled: Boolean) {
         val currentList = milestonesLiveData.value ?: return
-        val formattedTime = TripMilestoneProvider.formatDateString(settledTime)
+        val formattedTime = settledTime?.let{TripMilestoneProvider.formatDateString(settledTime)}
         val updatedList = currentList.map { milestone ->
             if (milestone.id == MilestoneIds.SETTLED) {
                 milestone.copy(
