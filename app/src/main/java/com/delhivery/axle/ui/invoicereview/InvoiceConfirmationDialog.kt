@@ -35,7 +35,7 @@ class InvoiceConfirmationDialog(
         // Make dialog background transparent to show rounded corners
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window?.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT
         )
 
@@ -46,7 +46,8 @@ class InvoiceConfirmationDialog(
     private fun setupDialog() {
         when (type) {
             ConfirmationType.ACCEPT -> {
-                binding.ivIcon.setImageResource(R.drawable.ic_check_circle_green)
+                binding.ivIcon.setImageResource(R.drawable.circle_check)
+                binding.ivIcon.backgroundTintList = ContextCompat.getColorStateList(context, R.color.light_green)
                 binding.tvTitle.text = "Accept Invoice?"
                 binding.tvMessage.text = "Are you sure you want to accept this invoice for payment processing?"
                 binding.btnConfirm.text = "Confirm Accept"
@@ -54,7 +55,9 @@ class InvoiceConfirmationDialog(
                 binding.btnConfirm.setTextColor(ContextCompat.getColor(context, R.color.white))
             }
             ConfirmationType.REJECT -> {
-                binding.ivIcon.setImageResource(R.drawable.ic_close_circle_red)
+                binding.ivIcon.setImageResource(R.drawable.ic_cross)
+                binding.ivIcon.imageTintList = ContextCompat.getColorStateList(context, R.color.colorDelhiveryRed)
+                binding.ivIcon.backgroundTintList = ContextCompat.getColorStateList(context, R.color.light_red)
                 binding.tvTitle.text = "Reject Invoice?"
                 binding.tvMessage.text = "Please reach out to the centre at +91 800-123-4567 for re-raising of invoice acceptance request."
                 binding.btnConfirm.text = "Confirm Reject"

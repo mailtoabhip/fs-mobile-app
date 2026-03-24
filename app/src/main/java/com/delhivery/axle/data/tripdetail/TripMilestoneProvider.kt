@@ -1,40 +1,23 @@
 package com.delhivery.axle.data.tripdetail
 
+import com.delhivery.axle.R
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.InvoiceStatusInfo
 import com.delhivery.axle.data.home.trips.TicketStatus
 import com.delhivery.axle.data.home.trips.TripInvoiceStatus
-import com.google.common.base.Ticker
-
-/**
- * Provider for trip milestones based on vendor type and trip status.
- * 
- * GST Vendor (7-step flow):
- * 1. Arrived at Pickup - from status_update_info(truck_arrived)
- * 2. Loaded - from status_update_info(truck_loaded)
- * 3. Mark Out / Trip Completed - from status_update_info(trip_completed)
- * 4. Ticket Closed - active when ticket_status = "closed"
- * 5. Accept Invoice / Billing Under Review - active when invoice_status = "invoice_under_review"
- * 6. Invoice Accepted - active when invoice_status in (accepted, invoiced, paid)
- * 7. Payment Released - active when invoice_status = "paid"
- * 
- * Non-GST Vendor (5-step flow):
- * 1. Arrived at Pickup - from status_update_info(truck_arrived)
- * 2. Loaded - from status_update_info(truck_loaded)
- * 3. Mark Out / Trip Completed - from status_update_info(trip_completed)
- * 4. Ticket Closed - active when ticket_status = "closed" && invoice_status exists
- * 5. Payment Released - active when invoice_status = "paid"
- */
 object TripMilestoneProvider {
-    fun getAdhocIntracityMilestones(
-        tripDetails: HomeTripsItemData,
-        isGstVerified :Boolean,
-        settledTime:String?
+
+    fun getIntracityMilestones(
+        tripDetails: HomeTripsItemData
+    ): List<TripMilestone>{
+        return getLegacyVendorMilestonesFromInfo(tripDetails)
+    }
+
+    fun getOpsArrangedIntracityMilestones(
+        tripDetails: HomeTripsItemData
     ): List<TripMilestone> {
         val invoiceStatusInfo = tripDetails.invoiceStatusInfo
-        return if(invoiceStatusInfo==null){
-                getLegacyVendorMilestonesFromInfo(tripDetails, settledTime)
-            }else if (invoiceStatusInfo.isGstVendor || isGstVerified) {
+        return if (invoiceStatusInfo?.isGstVendor == true) {
                 getGstVendorMilestonesFromInfo(tripDetails)
             } else {
                 getNonGstVendorMilestonesFromInfo(tripDetails)
@@ -46,26 +29,25 @@ object TripMilestoneProvider {
      */
     private fun getGstVendorMilestonesFromInfo(
         tripDetails: HomeTripsItemData
-    ): List<TripMilestone> {
-        val milestones = mutableListOf<TripMilestone>()
+    ): List<TripMilestone> = buildList {
         val info = tripDetails.invoiceStatusInfo
         val invoiceStatus = TripInvoiceStatus.fromValue(info?.invoiceStatus)
 
-        milestones.add(createArrivedMilestone(tripDetails))
-        milestones.add(createLoadedMilestone(tripDetails))
-        milestones.add(createTripCompletedMilestone(tripDetails))
-        milestones.add(createTicketClosedMilestone(tripDetails, true))
+        add(createArrivedMilestone(tripDetails))
+        add(createLoadedMilestone(tripDetails))
+        add(createTripCompletedMilestone(tripDetails))
+        add(createTicketClosedMilestone(tripDetails, true))
 
         val isInvoiceAccepted = invoiceStatus == TripInvoiceStatus.ACCEPTED ||
+                invoiceStatus == TripInvoiceStatus.INVOICED ||
                 invoiceStatus == TripInvoiceStatus.PAID ||
                 invoiceStatus == TripInvoiceStatus.PAYMENT_FAILED
-        // 5. Accept Invoice / Billing Under Review - active when invoice_status exists
-        val isInvoiceReviewed = invoiceStatus == TripInvoiceStatus.UNDER_FINANCE_REVIEW
+
         val acceptInvoiceStatus = when {
-            isInvoiceReviewed || isInvoiceAccepted -> MilestoneStatus.COMPLETED
+            invoiceStatus == TripInvoiceStatus.INVOICE_UNDER_REVIEW || isInvoiceAccepted -> MilestoneStatus.COMPLETED
             else -> MilestoneStatus.PENDING
         }
-        milestones.add(
+        add(
             TripMilestone(
                 id = MilestoneIds.ACCEPT_INVOICE,
                 displayName = "Accept Invoice / Billing Under Review",
@@ -73,75 +55,69 @@ object TripMilestoneProvider {
             )
         )
         
-        // 6. Invoice Accepted - active when invoice_status in (under_finance_review, paid)
         val invoiceAcceptedStatus = when {
             isInvoiceAccepted -> MilestoneStatus.COMPLETED
             else -> MilestoneStatus.PENDING
         }
-        milestones.add(
+        add(
             TripMilestone(
                 id = MilestoneIds.INVOICE_ACCEPTED,
                 displayName = "Invoice Accepted",
                 status = invoiceAcceptedStatus
             )
         )
-        milestones.add(createPaymentStatusMilestone(tripDetails ))
-        return milestones
+        add(createPaymentStatusMilestone(tripDetails))
     }
 
     /**
      * Non-GST Vendor 5-step flow using invoice_status_info
      */
     private fun getNonGstVendorMilestonesFromInfo(
-        tripDetails: HomeTripsItemData,
-    ): List<TripMilestone> {
-        val milestones = mutableListOf<TripMilestone>()
-        milestones.add(createArrivedMilestone(tripDetails))
-        milestones.add(createLoadedMilestone(tripDetails))
-        milestones.add(createTripCompletedMilestone(tripDetails))
-        milestones.add(createTicketClosedMilestone(tripDetails, false))
-        milestones.add(createPaymentStatusMilestone(tripDetails ))
-        return milestones
-    }
-
-    private fun getLegacyVendorMilestonesFromInfo(
-        tripDetails: HomeTripsItemData,
-        settledTime:String?
-    ): List<TripMilestone> {
-        val milestones = mutableListOf<TripMilestone>()
-        milestones.add(createArrivedMilestone(tripDetails))
-        milestones.add(createLoadedMilestone(tripDetails))
-        milestones.add(createReachedDestinationMilestone(tripDetails))
-        milestones.add(createUnloadedMilestone(tripDetails))
-        milestones.add(createHpodMilestone(tripDetails))
-        milestones.add(createSettledMilestone(tripDetails,settledTime))
-        return milestones
+        tripDetails: HomeTripsItemData
+    ): List<TripMilestone> = buildList {
+        add(createArrivedMilestone(tripDetails))
+        add(createLoadedMilestone(tripDetails))
+        add(createTripCompletedMilestone(tripDetails))
+        add(createTicketClosedMilestone(tripDetails, false))
+        add(createPaymentStatusMilestone(tripDetails))
     }
 
     /**
-     * Build payment subtitle from payment info
+     * Non-Ops Arranged trips 6-step flow
      */
-    private fun buildPaymentSubtitle(paymentInfo: com.delhivery.axle.data.home.trips.InvoicePaymentInfo?): String? {
-        if (paymentInfo == null) return null
-        return try {
-            val parts = mutableListOf<String>()
-            paymentInfo.amount?.let {
-                parts.add("₹${com.delhivery.axle.utils.StringUtils.formatAmount(it)}")
+    private fun getLegacyVendorMilestonesFromInfo(
+        tripDetails: HomeTripsItemData
+    ): List<TripMilestone> = buildList {
+        add(createArrivedMilestone(tripDetails))
+        add(createLoadedMilestone(tripDetails))
+        add(createReachedDestinationMilestone(tripDetails))
+        add(createUnloadedMilestone(tripDetails))
+        add(createHpodMilestone(tripDetails))
+        add(createSettledMilestone(tripDetails))
+    }
+
+    private fun formatPaymentTimestamp(info: InvoiceStatusInfo?, isSuccess: Boolean): String? {
+        if (info == null) return null
+        val paymentInfo = info.paymentInfo ?: return null
+        val timestamp = paymentInfo.paymentTimestamp?.let { formatDateString(it) } ?: return null
+        
+        return buildString {
+            if (isSuccess) {
+                append("Payment made at ")
+                append(timestamp)
+                paymentInfo.utr?.let { utr ->
+                    append("\nReference number : ")
+                    append(utr)
+                }
+            } else {
+                append("Failed at ")
+                append(timestamp)
             }
-            paymentInfo.utr?.let {
-                parts.add("UTR: $it")
-            }
-            if (parts.isNotEmpty()) parts.joinToString(" | ") else null
-        } catch (e: Exception) {
-            null
         }
     }
 
-    private fun formatPaymentTimestamp(info: InvoiceStatusInfo): String? {
-        return info.paymentInfo?.paymentTimestamp?.let { formatDateString(it) }
-    }
-
-    private fun formatDateString(timestamp: String): String? {
+     fun formatDateString(timestamp: String?): String? {
+        if (timestamp.isNullOrBlank()) return null
         return try {
             val date = com.delhivery.axle.utils.DateUtils.parseDate(
                 timestamp,
@@ -195,18 +171,18 @@ object TripMilestoneProvider {
     }
     private fun createHpodMilestone(tripDetails: HomeTripsItemData): TripMilestone {
         return TripMilestone(
-            id = MilestoneIds.UNLOADED,
+            id = MilestoneIds.HPOD_SUBMITTED,
             displayName = "hPOD Submitted",
             status = if (tripDetails.updateInfo?.tripCompletedInfo!=null) MilestoneStatus.COMPLETED else MilestoneStatus.PENDING,
             timestamp = null //tripCompletedInfo?.time?.let { formatDateString(it) }
         )
     }
-    private fun createSettledMilestone(tripDetails: HomeTripsItemData,settledTime:String?): TripMilestone {
+    private fun createSettledMilestone(tripDetails: HomeTripsItemData): TripMilestone {
         return TripMilestone(
-            id = MilestoneIds.UNLOADED,
+            id = MilestoneIds.SETTLED,
             displayName = "Settled",
             status = if (tripDetails.isSettled) MilestoneStatus.COMPLETED else MilestoneStatus.PENDING,
-            timestamp = settledTime?.let { formatDateString(it) }
+            timestamp = null
         )
     }
     /*Legacy Support Ends*/
@@ -249,15 +225,18 @@ object TripMilestoneProvider {
             TripInvoiceStatus.PAYMENT_FAILED -> "Payment Failed"
             else -> "Payment Released"
         }
+        val isFailure = invoiceStatus == TripInvoiceStatus.PAYMENT_FAILED
         return TripMilestone(
                 id = MilestoneIds.PAYMENT_RELEASED,
                 displayName = paymentDisplayName,
                 status = paymentReleasedStatus,
-                timestamp = if (invoiceStatus == TripInvoiceStatus.PAID && info!= null) formatPaymentTimestamp(info) else null,
-                subtitle = info?.let {
-                    if (invoiceStatus == TripInvoiceStatus.PAYMENT_FAILED) info.failureMessage
-                    else buildPaymentSubtitle(info.paymentInfo)
-                }
+                timestamp = if ((invoiceStatus == TripInvoiceStatus.PAID || invoiceStatus == TripInvoiceStatus.PAYMENT_FAILED) && info!= null) formatPaymentTimestamp(info, invoiceStatus == TripInvoiceStatus.PAID) else null,
+                subtitle = if (isFailure && info?.failureMessage != null) {
+                    "Failure Remarks: ${info.failureMessage}"
+                } else {
+                    null
+                },
+                subtitleColorRes = if (isFailure) R.color.failure_red else R.color.icon_color
             )
     }
 }

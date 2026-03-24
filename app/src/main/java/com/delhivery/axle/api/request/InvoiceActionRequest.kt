@@ -21,5 +21,8 @@ data class InvoiceActionRequest(
     val vendorInvoiceNumber: String? = null,
     
     @SerializedName("vendor_invoice_date")
-    val vendorInvoiceDate: String? = null
+    val vendorInvoiceDate: String? = null,
+
+    @SerializedName("rejection_remarks")
+    val rejectionRemark: String? = null
 )

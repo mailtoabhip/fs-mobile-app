@@ -25,6 +25,7 @@
   <color name="status_lost">#FF3131</color>
   <color name="status_lost_bid">#DC2626</color>
   <color name="status_lost_bg">#FEF2F2</color>
+  <color name="failure_red">#FF3B30</color>
   <color name="pending">#d36a1b</color>
   <color name="pending_status">#D97706</color>
   <color name="pending_bg">#FFFBEB</color>
@@ -186,5 +187,6 @@
     <color name="blue_50_alpha_30">#4DEFF6FF</color>
     <color name="charcoal_blue">#1F2937</color>
     <color name="gray_400">#9CA3AF</color>
+    <color name="yellow_100_alpha_80">#80FEFCE8</color>
 
 </resources>

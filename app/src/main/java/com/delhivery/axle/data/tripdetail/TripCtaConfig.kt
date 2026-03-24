@@ -36,14 +36,12 @@ data class TripCtaConfig(
  */
 object TripCtaProvider {
     fun getAdhocIntracityCtaConfig(
-        isSettled: Boolean = false,
         invoiceStatusInfo: InvoiceStatusInfo?
     ): TripCtaConfig {
         return when {
-            invoiceStatusInfo == null ->{
-                if(isSettled)TripCtaConfig(action = TripCtaAction.DOWNLOAD, buttonText = "Download Invoice")
-                else TripCtaConfig(action = TripCtaAction.REFRESH, buttonText = "Refresh")
-            }
+            invoiceStatusInfo == null ->
+                TripCtaConfig(action = TripCtaAction.REFRESH, buttonText = "Refresh")
+
             invoiceStatusInfo.showDownloadInvoice ->
                 TripCtaConfig(action = TripCtaAction.DOWNLOAD, buttonText = "Download Invoice")
 

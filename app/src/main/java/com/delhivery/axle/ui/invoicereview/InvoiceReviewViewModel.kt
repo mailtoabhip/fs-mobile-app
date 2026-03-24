@@ -20,7 +20,10 @@ class InvoiceReviewViewModel @Inject constructor(
     private val invoiceRepository: InvoiceRepository
 ) : BaseViewModel() {
 
-    // Transaction ID for the invoice
+    companion object {
+        private val INVALID_CHARS_REGEX = Regex("[ _@.]")
+        private const val MAX_INVOICE_NUMBER_LENGTH = 16
+    }
     var transactionId: String = ""
 
     // Invoice details LiveData
@@ -28,17 +31,18 @@ class InvoiceReviewViewModel @Inject constructor(
 
     // Validation errors LiveData
     val invoiceNumberErrorLiveData = MutableLiveData<String?>()
-    val invoiceDateErrorLiveData = MutableLiveData<String?>()
 
     // Accept/Reject result LiveData
-    val invoiceAcceptedLiveData = MutableLiveData<Boolean>()
-    val invoiceRejectedLiveData = MutableLiveData<Boolean>()
+    val invoiceActionResponseMsgLiveData = MutableLiveData<String>()
 
     // Error LiveData
     val errorLiveData = MutableLiveData<String>()
 
     // Loading state
     val isLoadingLiveData = MutableLiveData<Boolean>()
+
+    // Fetch error state (for showing retry button)
+    val fetchErrorLiveData = MutableLiveData<Boolean>()
 
     // Already processed flag
     val alreadyProcessedLiveData = MutableLiveData<Boolean>()
@@ -56,47 +60,7 @@ class InvoiceReviewViewModel @Inject constructor(
         }
 
         isLoadingLiveData.postValue(true)
-        
-        // TODO: Replace with actual API call when ready
-        // Using dummy data for testing
-        val dummyResponse = InvoiceDetailsResponse(
-            ticketId = "fms::ticket::abc123",
-            orionTransactionId = transactionId,
-            status = "invoice_under_review",
-            billedFrom = BilledParty(
-                name = "FLT D K Transport Service",
-                address = "RAJKOT, Gujarat",
-                gstin = "24BADPN5467Q1Z2"
-            ),
-            billedTo = BilledParty(
-                name = "DELHIVERY LIMITED",
-                address = "SURAT, Gujarat",
-                gstin = "24AAPCS9575E1ZT"
-            ),
-            placeOfSupply = "Gujarat",
-            bankName = "Dk logistics",
-            bankAccountNumber = "312213123132312",
-            serviceDescription = "Adhoc Vehicle Rental",
-            sacCode = "996601",
-            invoiceParticulars = listOf(
-                InvoiceParticular(
-                    description = "Adhoc Vehicle Rental on 12-Sep-2025, Vehicle No. -2313",
-                    amount = 685.00
-                )
-            ),
-            totalTaxableValue = 685.00,
-            sgstAmount = 41.00,
-            cgstAmount = 41.00,
-            igstAmount = 0.00,
-            gstRate = 18,
-            gstDisplay = "SGST 9% + CGST 9%",
-            gstAmount = 82.00,
-            grandTotal = 767.00
-        )
-        
-        isLoadingLiveData.postValue(false)
-        currentInvoice = dummyResponse
-        invoiceDetailsLiveData.postValue(dummyResponse)
+        fetchErrorLiveData.postValue(false)
         
         compositeDisposable += invoiceRepository.getInvoiceDetails(transactionId)
             .onBackground()
@@ -107,7 +71,6 @@ class InvoiceReviewViewModel @Inject constructor(
             }, { error ->
                 isLoadingLiveData.postValue(false)
                 error.handle()
-                errorLiveData.postValue(error.message ?: "Failed to fetch invoice details")
             })
     }
 
@@ -115,18 +78,23 @@ class InvoiceReviewViewModel @Inject constructor(
      * Validate invoice number input
      * @return true if valid, false otherwise
      */
-    fun validateInvoiceNumber(invoiceNumber: String): Boolean {
+    fun validateInvoiceNumber(invoiceNumber: String, isRejectCase: Boolean): Boolean {
+        // Skip validation entirely for reject case with empty invoice number
+        if (invoiceNumber.isEmpty() && isRejectCase) {
+            invoiceNumberErrorLiveData.postValue(null)
+            return true
+        }
         return when {
             invoiceNumber.isEmpty() -> {
                 invoiceNumberErrorLiveData.postValue("Invoice number is required")
                 false
             }
-            !invoiceNumber.matches(Regex("^[a-zA-Z0-9]+$")) -> {
-                invoiceNumberErrorLiveData.postValue("Invoice number must be alphanumeric")
+            INVALID_CHARS_REGEX.containsMatchIn(invoiceNumber) -> {
+                invoiceNumberErrorLiveData.postValue("Invoice number must not contain _, @, . or space")
                 false
             }
-            invoiceNumber.length > 50 -> {
-                invoiceNumberErrorLiveData.postValue("Invoice number cannot exceed 50 characters")
+            invoiceNumber.length > MAX_INVOICE_NUMBER_LENGTH -> {
+                invoiceNumberErrorLiveData.postValue("Invoice number cannot exceed $MAX_INVOICE_NUMBER_LENGTH characters")
                 false
             }
             else -> {
@@ -141,8 +109,8 @@ class InvoiceReviewViewModel @Inject constructor(
      * Validate all inputs
      * @return true if all inputs are valid
      */
-    fun validateInputs(invoiceNumber: String, invoiceDate: String): Boolean {
-        val isNumberValid = validateInvoiceNumber(invoiceNumber)
+    fun validateInputs(invoiceNumber: String, isRejectCase:Boolean): Boolean {
+        val isNumberValid = validateInvoiceNumber(invoiceNumber,isRejectCase)
         return isNumberValid
     }
 
@@ -151,21 +119,34 @@ class InvoiceReviewViewModel @Inject constructor(
      */
     fun acceptRejectInvoice(confirmationType : InvoiceConfirmationDialog.ConfirmationType, invoiceNumber: String?, invoiceDate: String?) {
         val invoice = currentInvoice
+        val ticketId = invoice?.ticketId
         if (invoice == null) {
             errorLiveData.postValue("Invoice details not loaded")
             return
         }
-        if(confirmationType.name == InvoiceConfirmationDialog.ConfirmationType.ACCEPT.name && (invoiceNumber.isNotNullOrEmpty() || invoiceDate.isNotNullOrEmpty())){
-            if(invoiceNumber.isNotNullOrEmpty()) errorLiveData.postValue("Please enter invoice number")
+        if (ticketId.isNullOrEmpty()) {
+            errorLiveData.postValue("Invoice ticketId missing")
+            return
+        }
+
+        val isAcceptAction = confirmationType == InvoiceConfirmationDialog.ConfirmationType.ACCEPT
+
+        if (isAcceptAction && (invoiceNumber.isNullOrEmpty() || invoiceDate.isNullOrEmpty())) {
+            if (invoiceNumber.isNullOrEmpty()) errorLiveData.postValue("Please enter invoice number")
             else errorLiveData.postValue("Please enter invoice date")
             return
         }
 
+        // Sanitize inputs - trim and remove any potentially harmful characters
+        val sanitizedInvoiceNumber = invoiceNumber?.trim()?.take(MAX_INVOICE_NUMBER_LENGTH)
+        val sanitizedInvoiceDate = invoiceDate?.trim()
+
         val request = InvoiceActionRequest(
-            ticketId = transactionId,
-            action = confirmationType.name,
-            vendorInvoiceNumber = invoiceNumber,
-            vendorInvoiceDate = invoiceDate
+            ticketId = ticketId,
+            action = confirmationType.value,
+            vendorInvoiceNumber = sanitizedInvoiceNumber,
+            vendorInvoiceDate = sanitizedInvoiceDate,
+            rejectionRemark = if(!isAcceptAction) "Rejected by Vendor" else null
         )
 
         isLoadingLiveData.postValue(true)
@@ -173,17 +154,13 @@ class InvoiceReviewViewModel @Inject constructor(
             .onBackground()
             .progress()
             .subscribe{ response, error ->
+                isLoadingLiveData.postValue(false)
                 if (!error) {
-                    isLoadingLiveData.postValue(false)
-                    if(confirmationType.name == InvoiceConfirmationDialog.ConfirmationType.ACCEPT.name) invoiceAcceptedLiveData.postValue(true)
-                    else invoiceRejectedLiveData.postValue(true)
+                    invoiceActionResponseMsgLiveData.postValue(response.message?:"Success")
                 }else {
                     error.handle()
                 }
             }
     }
-    /**
-     * Get current invoice details
-     */
-    fun getCurrentInvoice(): InvoiceDetailsResponse? = currentInvoice
+
 }

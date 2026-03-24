@@ -15,11 +15,5 @@ data class InvoiceActionResponse(
     val status: String,
     
     @SerializedName("message")
-    val message: String?,
-    
-    @SerializedName("invoice_number")
-    val invoiceNumber: String?,
-    
-    @SerializedName("invoice_url")
-    val invoiceUrl: String?
+    val message: String?
 )

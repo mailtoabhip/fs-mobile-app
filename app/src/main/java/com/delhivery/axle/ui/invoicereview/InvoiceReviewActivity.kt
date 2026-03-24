@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.DatePicker
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
@@ -23,8 +24,9 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
 
     companion object {
         const val EXTRA_TRANSACTION_ID = "transaction_id"
-        const val RESULT_INVOICE_ACCEPTED = 100
-        const val RESULT_INVOICE_REJECTED = 101
+        const val RESULT_INVOICE_REVIEWED = 100
+        private const val API_DATE_FORMAT = "yyyy-MM-dd"
+        private const val DISPLAY_DATE_FORMAT = "dd/MM/yyyy"
 
         fun invoiceReviewIntent(transactionId: String, context: Context): Intent {
             return Intent(context, InvoiceReviewActivity::class.java).apply {
@@ -37,12 +39,14 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     override fun layoutId() = R.layout.activity_invoice_review
 
     private lateinit var particularsAdapter: InvoiceParticularAdapter
+    private var selectedYear: Int = 0
+    private var selectedMonth: Int = 0
+    private var selectedDay: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: Use dummy ID for testing if not provided
-        val transactionId = intent?.getStringExtra(EXTRA_TRANSACTION_ID) ?: "TEST_TRANSACTION_123"
+        val transactionId = intent?.getStringExtra(EXTRA_TRANSACTION_ID)?:""
 
         viewModel.transactionId = transactionId
 
@@ -82,8 +86,11 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     private fun setupDatePicker() {
         // Prefill with current date
         val today = Calendar.getInstance()
-        val currentDate = "${today.get(Calendar.DAY_OF_MONTH)}/${today.get(Calendar.MONTH) + 1}/${today.get(Calendar.YEAR)}"
-        binding.tvInvoiceDate.setText(currentDate)
+        selectedYear = today.get(Calendar.YEAR)
+        selectedMonth = today.get(Calendar.MONTH)
+        selectedDay = today.get(Calendar.DAY_OF_MONTH)
+        
+        updateDateDisplay()
         
         binding.tvInvoiceDate.setOnClickListener {
             dialogUtils.datePicker(this, minDate = -30, maxDate = 30)
@@ -91,21 +98,44 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        binding.tvInvoiceDate.setText("$dayOfMonth/${monthOfYear}/$year")
+        selectedYear = year
+        selectedMonth = monthOfYear
+        selectedDay = dayOfMonth
+        updateDateDisplay()
+    }
+
+    private fun updateDateDisplay() {
+        val displayFormat = SimpleDateFormat(DISPLAY_DATE_FORMAT, Locale.getDefault())
+        val calendar = Calendar.getInstance().apply {
+            set(selectedYear, selectedMonth, selectedDay)
+        }
+        binding.tvInvoiceDate.setText(displayFormat.format(calendar.time))
+    }
+
+    private fun getApiFormattedDate(): String {
+        val apiFormat = SimpleDateFormat(API_DATE_FORMAT, Locale.getDefault())
+        val calendar = Calendar.getInstance().apply {
+            set(selectedYear, selectedMonth, selectedDay)
+        }
+        return apiFormat.format(calendar.time)
     }
 
     private fun setupClickListeners() {
         binding.btnAccept.setOnClickListener {
-            val invoiceNumber = binding.etInvoiceNo.text?.toString() ?: ""
-            val invoiceDate = binding.tvInvoiceDate.text?.toString() ?: ""
+            val invoiceNumber = binding.etInvoiceNo.text?.toString()?.trim() ?: ""
+            val invoiceDate = getApiFormattedDate()
 
-            if (viewModel.validateInputs(invoiceNumber, invoiceDate)) {
+            if (viewModel.validateInputs(invoiceNumber, false)) {
                 showAcceptConfirmationDialog(invoiceNumber, invoiceDate)
             }
         }
 
         binding.btnReject.setOnClickListener {
-            showRejectConfirmationDialog()
+            val invoiceNumber = binding.etInvoiceNo.text?.toString()?.trim() ?: ""
+            val invoiceDate = getApiFormattedDate()
+            if (viewModel.validateInputs(invoiceNumber, true)) {
+                showRejectConfirmationDialog(invoiceNumber, invoiceDate)
+            }
         }
     }
 
@@ -120,7 +150,15 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     private fun observeViewModel() {
         viewModel.invoiceDetailsLiveData.observe(this, Observer { invoice ->
             binding.invoice = invoice
-            particularsAdapter.submitList(invoice.invoiceParticulars)
+            binding.bottomButtons.visibility = View.VISIBLE
+            binding.scrollContent.visibility = View.VISIBLE
+            val particulars = invoice.invoiceParticulars
+            if (particulars.isNullOrEmpty()) {
+                binding.rvInvoiceParticulars.visibility = android.view.View.GONE
+            } else {
+                binding.rvInvoiceParticulars.visibility = android.view.View.VISIBLE
+                particularsAdapter.submitList(particulars)
+            }
         })
 
         viewModel.isLoadingLiveData.observe(this, Observer { isLoading ->
@@ -135,24 +173,17 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
             }
         })
 
-        viewModel.invoiceAcceptedLiveData.observe(this, Observer { success ->
-            if (success) {
-                uiUtils.showSnackbar("Invoice accepted successfully")
-                setResult(RESULT_INVOICE_ACCEPTED)
+        viewModel.invoiceActionResponseMsgLiveData.observe(this, Observer { message ->
+                uiUtils.showSnackbar(message)
+                setResult(RESULT_INVOICE_REVIEWED)
                 finish()
-            }
-        })
-
-        viewModel.invoiceRejectedLiveData.observe(this, Observer { success ->
-            if (success) {
-                uiUtils.showSnackbar("Invoice rejected. Please contact the centre for re-raising invoice acceptance request.")
-                setResult(RESULT_INVOICE_REJECTED)
-                finish()
-            }
         })
 
         viewModel.errorLiveData.observe(this, Observer { error ->
             uiUtils.showSnackbar(error)
+        })
+        viewModel.invoiceNumberErrorLiveData.observe(this, Observer { error ->
+            error?.let{uiUtils.showSnackbar(error)}
         })
 
         viewModel.alreadyProcessedLiveData.observe(this, Observer { alreadyProcessed ->
@@ -173,10 +204,7 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
         ).show()
     }
 
-    private fun showRejectConfirmationDialog() {
-        val invoiceNumber = binding.etInvoiceNo.text?.toString()
-        val invoiceDate = binding.tvInvoiceDate.text?.toString()
-        
+    private fun showRejectConfirmationDialog(invoiceNumber: String, invoiceDate: String) {
         InvoiceConfirmationDialog(
             context = this,
             type = InvoiceConfirmationDialog.ConfirmationType.REJECT,

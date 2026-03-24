@@ -30,6 +30,8 @@ import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.tripdetail.MilestoneIds
+import com.delhivery.axle.data.tripdetail.MilestoneStatus
 import com.delhivery.axle.data.tripdetail.TripCtaConfig
 import com.delhivery.axle.data.tripdetail.TripCtaProvider
 import com.delhivery.axle.data.tripdetail.TripMilestone
@@ -1107,32 +1109,40 @@ class TripDetailsViewModel @Inject constructor(
    * Uses invoice_status_info flags: showReviewInvoiceCta and showDownloadInvoice
    * If both false or null, shows Refresh
    */
-  fun updateCtaConfig(calledAfterSettled:Boolean) {
-      /*
-      calledAfterSettled flag is to update the milestones only when the trip is settled in old flow,
-      as before this feature, the settlement of trip was determined from tripSettledLiveData
-      */
-      if(!calledAfterSettled || tripDetail.invoiceStatusInfo==null) {
-          val ctaConfig = TripCtaProvider.getAdhocIntracityCtaConfig(
-              isSettled = tripDetail.isSettled,
-              invoiceStatusInfo = tripDetail.invoiceStatusInfo
-          )
-          ctaConfigLiveData.postValue(ctaConfig)
-      }
+  fun updateCtaConfig() {
+      val ctaConfig = TripCtaProvider.getAdhocIntracityCtaConfig(
+          invoiceStatusInfo = tripDetail.invoiceStatusInfo
+      )
+      ctaConfigLiveData.postValue(ctaConfig)
   }
-
-  fun updateMilestones(calledAfterSettled:Boolean) {
-      /*
-      calledAfterSettled flag is to update the milestones only when the trip is settled in old flow,
-      as before this feature, the settlement of trip was determined from tripSettledLiveData
-      */
-      if(!calledAfterSettled || tripDetail.invoiceStatusInfo==null) {
-          val milestones = TripMilestoneProvider.getAdhocIntracityMilestones(
-              tripDetails = tripDetail,
-              isGstVerified = userPrefs.isGstVerfied,
-              settledTime = settledTime
+    fun updateSettledMilestones(isSettled: Boolean) {
+        val currentList = milestonesLiveData.value ?: return
+        val formattedTime = TripMilestoneProvider.formatDateString(settledTime)
+        val updatedList = currentList.map { milestone ->
+            if (milestone.id == MilestoneIds.SETTLED) {
+                milestone.copy(
+                    status = if (isSettled) MilestoneStatus.COMPLETED
+                    else MilestoneStatus.PENDING,
+                    timestamp = if (isSettled && !formattedTime.isNullOrEmpty()) {
+                            "Payment made at $formattedTime"
+                        } else { null }
+                )
+            } else {
+                milestone
+            }
+        }
+        milestonesLiveData.postValue(updatedList)
+    }
+  fun updateMilestones(isOpsArranged : Boolean) {
+      val milestones = if(isOpsArranged){
+          TripMilestoneProvider.getOpsArrangedIntracityMilestones(
+              tripDetails = tripDetail
           )
-          milestonesLiveData.postValue(milestones)
+      }else{
+          TripMilestoneProvider.getIntracityMilestones(
+              tripDetails = tripDetail
+          )
       }
+      milestonesLiveData.postValue(milestones)
   }
 }

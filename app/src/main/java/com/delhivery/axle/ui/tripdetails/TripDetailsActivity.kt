@@ -34,6 +34,7 @@ import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_POD_VIEWED
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import com.delhivery.axle.api.repository.DemandType
 import com.delhivery.axle.data.tripdetail.TripCtaAction
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -81,8 +82,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     private val invoiceReviewLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
-                InvoiceReviewActivity.RESULT_INVOICE_ACCEPTED,
-                InvoiceReviewActivity.RESULT_INVOICE_REJECTED -> {
+                InvoiceReviewActivity.RESULT_INVOICE_REVIEWED -> {
                     refreshData()
                 }
             }
@@ -150,8 +150,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       binding.tripSettled = it
       binding.clAdhocintracity.tripSettled = it
       binding.viewModel = viewModel
-        viewModel.updateCtaConfig(true)
-        viewModel.updateMilestones(true)
+      viewModel.updateSettledMilestones(isSettled = it)
     })
 
       // Setup milestones RecyclerView
@@ -358,6 +357,7 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (t != null) {
         binding.error = false
         if (t.first.subRequestType == SUB_REQUEST_TYPE_INTRACITY) {
+            val isOpsArranged =  t.first.demandType == DemandType.Intracity_OPS.type
          binding.toolbar.visibility = View.GONE
           binding.intracityTitle.visibility = View.VISIBLE
           binding.llTripDetails.visibility = View.GONE
@@ -367,8 +367,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           binding.clAdhocintracity.layoutTransaction.request = t.first
           binding.clAdhocintracity.tripSettled = t.second.isSettled
 
-          viewModel.updateCtaConfig(false)
-          viewModel.updateMilestones(false)
+          if(isOpsArranged) {
+              binding.clAdhocintracity.buttonCta.visibility = View.VISIBLE
+              viewModel.updateCtaConfig()
+          }
+          else
+            binding.clAdhocintracity.buttonCta.visibility = View.GONE
+          viewModel.updateMilestones( isOpsArranged)
 
         } else {
           binding.toolbar.visibility = View.VISIBLE

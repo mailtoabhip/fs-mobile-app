@@ -11,12 +11,13 @@ data class TripMilestone(
     val displayName: String,
     val status: MilestoneStatus = MilestoneStatus.PENDING,
     val timestamp: String? = null,
-    val subtitle: String? = null
+    val subtitle: String? = null,
+    val subtitleColorRes: Int? = null
 ) {
     fun getIconRes(): Int = when (status) {
         MilestoneStatus.COMPLETED -> R.drawable.ic_check_circle_green
         MilestoneStatus.PENDING -> R.drawable.ic_rounded_circle_black
-        MilestoneStatus.FAILED -> R.drawable.ic_vector_error
+        MilestoneStatus.FAILED -> R.drawable.fs_payment_failed
     }
 }
 
@@ -55,6 +56,8 @@ object MilestoneIds {
     const val TRIP_COMPLETED = "trip_completed"
     const val REACHED_DESTINATION = "reached_destination"
     const val UNLOADED = "unloaded"
+    const val HPOD_SUBMITTED = "hpod_submitted"
+    const val SETTLED = "settled"
 
     // Invoice milestones (from invoice_status_info)
     const val TICKET_CLOSED = "ticket_closed"
