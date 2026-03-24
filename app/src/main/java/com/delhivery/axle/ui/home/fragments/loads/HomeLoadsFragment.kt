@@ -17,13 +17,9 @@ import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import kotlinx.coroutines.launch
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.DemandType
@@ -150,24 +146,235 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
       }
     }
 
-    // Collect StateFlow for UI state updates
-    viewLifecycleOwner.lifecycleScope.launch {
-      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        launch {
-          viewModel.uiState.collect { state ->
-            renderState(state)
-          }
+    viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
+
+    viewModel.userLoadsData.reobserve(viewLifecycleOwner, Observer {
+      it?.let { _items -> 
+        Log.d("MarketplaceDebug", "Fragment received ${_items.size} items from userLoadsData")
+        _items.forEach { item ->
+          Log.d("MarketplaceDebug", "Item type: ${item.first.type}, operation: ${item.second}")
         }
-        
-        launch {
-          viewModel.uiEvent.collect { event ->
-            handleEvent(event)
-          }
+        adapter.operation(_items) 
+      }
+    })
+    viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
+      it?.let { _items -> adapter.operation(_items) }
+    })
+   /* viewModel.loadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
+      userPrefs.loadCount = it.toString()
+      _title = when (it) {
+        0, null -> getString(string.label_load_request)
+        else -> "${getString(string.label_load_request)}($it)"
+      }
+    })*/
+    viewModel.fullLoadsCountLiveData.reobserve(viewLifecycleOwner, Observer {
+      Log.d("observedCount",it.toString())
+      HomeLoadsTruckFragment._instance.dataToUpdate(type = "loads",showBadge = true, count = it)
+    })
+
+    viewModel.routesLiveData.reobserve(viewLifecycleOwner, Observer {
+      when (it) {
+        false -> binding.rvLoads.apply {
+          this@HomeLoadsFragment.visible = true
+          binding.routesBanner.visibility = View.GONE
+          addOnScrollListener(BannerRVScrollListener())
+        }
+
+        true -> {
+          binding.routesBanner.visibility = View.GONE
+          this@HomeLoadsFragment.visible = false
         }
       }
-    }
+    })
 
-    viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
+    viewModel.reviseBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if (it.first) {
+        val data = adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LOADFEED_BID_REVISE_INITIATED,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+            mutableListOf(data?.transactionId.toString(),data?.numBids.toString(),data?.lowestBid.toString())
+        )
+        reviseInitiated=true
+        BidDetailsCreateEditDialog(
+                requireContext(), data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "load_screen"
+        ).show()
+      }
+    })
+
+    viewModel.bidsActionLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.toggleKeyboard()
+              .apply {
+                when {
+                  it != null -> {
+                    val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+                     oldAmount= data?.transactionBid?.bidAmount
+                    data?.transactionBid = it.second
+
+                    if (data != null) {
+                      uiUtils.showProgress()
+                      viewModel.fetchLowestBid(data, it.first)
+                    }
+                  }
+                }
+              }
+    })
+
+    viewModel.bulkBidActionLiveData.reobserve(viewLifecycleOwner, Observer {
+      if (it != null) {
+        val data = adapter.itemsList()[it.first].data as? HomeBidsRequestItemData
+        var oldAmountbids=""
+        var bidAmount =""
+        var lowestBid =0.0
+        var numBids=0
+        var oldBidCount=0
+        var newBidCount =0
+        var oldUserLowestAmount =0.0
+        var expectedArrivalPickup=""
+        if(data!=null) {
+          if(data.bulkTransactionBids.isNotEmpty()) {
+              oldBidCount=data.bulkTransactionBids.size
+            for (transactionBid in data!!.bulkTransactionBids) {
+              oldUserLowestAmount= transactionBid.bidAmount
+              if(oldUserLowestAmount>transactionBid.bidAmount){
+                oldUserLowestAmount = transactionBid.bidAmount
+              }
+              if (oldAmountbids.isNullOrEmpty()) {
+                oldAmountbids = transactionBid.bidAmount.toString()
+              } else {
+                oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
+              }
+            }
+          }
+        }
+        data?.bulkTransactionBids = it.second
+        if(data!=null &&data?.bulkTransactionBids.isNotEmpty()) {
+          newBidCount = data?.bulkTransactionBids!!.size
+        for(transactionBid in data!!.bulkTransactionBids){
+          if(data?.lowestBid!=null){
+           if(data?.lowestBid!!>transactionBid.bidAmount){
+             lowestBid = transactionBid.bidAmount
+            }else{
+              if(data?.lowestBid==oldUserLowestAmount){
+                lowestBid = transactionBid.bidAmount
+              }else{
+                lowestBid = data.lowestBid!!
+              }
+
+            }
+          }else{
+            lowestBid = transactionBid.bidAmount
+          }
+          if(bidAmount.isNullOrEmpty()){
+            bidAmount=transactionBid.bidAmount.toString()
+          }else {
+            bidAmount = bidAmount +","+ transactionBid.bidAmount.toString()
+          }
+          if(expectedArrivalPickup.isNullOrEmpty()){
+            expectedArrivalPickup=transactionBid.expectedArrivalTimePickupRemark.toString()
+          }else {
+            expectedArrivalPickup = expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
+          }
+        }
+          if(data?.numBids==0){
+            numBids = newBidCount
+          }else{
+            numBids = (data?.numBids?:0)-oldBidCount+newBidCount
+          }
+          data.numBids = numBids
+          data.lowestBid = lowestBid
+        }
+        adapter.notifyItemChanged(it.first)
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_LOADFEED_BID_SUBMIT,
+              mutableListOf(
+                  PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+                  PROPERTY_VEHICLE_REPORTING_DATE_TIME
+              ),
+              mutableListOf(
+                  data?.transactionId ?: "",numBids.toString(), bidAmount ?: "",
+                  expectedArrivalPickup
+              )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_LOADFEED_BID_REVISE_SUBMITTED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+                  PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+              mutableListOf(data?.transactionId?:"",numBids.toString()?:"",lowestBid.toString()?:" ",oldAmountbids,bidAmount)
+          )
+          reviseInitiated=false
+        }
+      }
+    })
+
+    viewModel.acceptBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      if(it!=null){
+//        dialogUtils.showSuccessBidDialog(this,
+//          resources.getString(R.string.details_submitted_successfully),
+//          null
+//        )
+          //
+          showIntracityAdhocSuccessDialog()
+          //
+          refreshData()
+      }
+    })
+
+    viewModel.editBulkLiveData.reobserve(viewLifecycleOwner, Observer {
+      if (it.first == 10) {
+        Toast.makeText(context, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if (it.first == 20) {
+        Toast.makeText(context, "Bids Updated Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if (it.first == 30) {
+        Toast.makeText(context, "Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
+      }
+      if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
+        viewModel.transactionBidForBulk(it.second, pos)
+        viewModel.editFlg = mutableListOf(false, false, false)
+      }
+    })
+
+    viewModel.lowestBidLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
+      if (it != null) {
+        var data = it.second
+        if(!reviseInitiated) {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_LOADFEED_BID_SUBMIT,
+            mutableListOf(
+              PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
+              PROPERTY_VEHICLE_REPORTING_DATE_TIME
+            ),
+            mutableListOf(
+              data?.transactionId ?: "", data?.numBids.toString(),
+              data?.bidAmountValue() ?: "",
+              data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
+            )
+          )
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_LOADFEED_BID_REVISE_SUBMITTED,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
+              PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW),
+            mutableListOf(data?.transactionId?:"",data?.numBids.toString()?:"",data?.lowestBid.toString()?:" ",oldAmount.toString()?:"",data?.bidAmountValue().toString()?:"")
+          )
+          reviseInitiated=false
+        }
+
+        BidConfirmReviseDialog(
+                requireContext(), it.second, viewModel, it.first
+        ).show()
+      }
+      adapter.notifyItemChanged(it.first)
+    })
+
+    viewModel.dataLoadingLiveData.reobserve(viewLifecycleOwner, Observer {
+      isLoadingData = it ?: false
+    })
 
     if (viewModel.isFCMTokenGenerated()) {
       userPrefs.moengageFcmTokenGenerated = true
@@ -200,336 +407,86 @@ class HomeLoadsFragment : HomeLoadsTruckBaseFragment<FragmentHomeLoadsBinding, H
 
     viewModel.updateUserAppAccess()
 
-    refreshData()
-  }
+    viewModel.truckGetLiveData.reobserve(viewLifecycleOwner, Observer {
+      uiUtils.hideProgress()
+      if (it != null) {
+        val pageTitle = if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) "EDIT BIDS" else "PLACE BIDS"
+        if (it.second.bulkTransactionBids != null && it.second.bulkTransactionBids.isNotEmpty()) {
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_LOADFEED_BID_REVISE_INITIATED,
+              mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
+              mutableListOf(
+                  it.second.transactionId.toString(), it.second?.numBids.toString(),
+                  it.second?.lowestBid.toString()
+              )
+          )
+          reviseInitiated=true
+        }else{
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_LOADFEED_BID_INITIATE,
+            mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
+            mutableListOf( it.second.transactionId?:"",(pos- STATIC_ITEM_LIST-((pos- STATIC_ITEM_LIST)/HomeLoadsAddTruckItemDataConfig)).toString(),viewModel.total.toString())
+          )
+          reviseInitiated=false
+        }
+        if (it.second.truckUUID != null) {
+          try {
+            BulkBidDetailsCreateEditDialog(
+                    requireContext(),
+                    it.second,
+                    it.second.bulkTransactionBids,
+                    it.first,
+                    viewModel,
+                    it.second.unAllocatedVolume!!,
+                    pos,
+                    analyticsUtil,
+                    userPrefs,
+                    "load_screen",
+                    pageTitle
+            ).show()
+          } catch (e: Exception) {
 
-    /**
-     * Render UI state from StateFlow
-     * Updates adapter, tab counts, routes banner, loading state, and error states
-     */
-    private fun renderState(state: HomeLoadsUiState) {
-        // Update adapter with loads
-        if (state.loads.isNotEmpty()) {
-            adapter.operation(state.loads)
+          }
+        } else {
+          Toast.makeText(context, "No Vehicle Types Found", Toast.LENGTH_SHORT).show()
         }
-        
-        // Update adapter with loadsFetch
-        if (state.loadsFetch.isNotEmpty()) {
-            adapter.operation(state.loadsFetch)
-        }
-        
-        // Update tab counts via HomeLoadsTruckFragment
-        if (state.fullLoadsCount > 0) {
-            HomeLoadsTruckFragment._instance.dataToUpdate(
-                type = "loads",
-                showBadge = true,
-                count = state.fullLoadsCount
-            )
-        }
-        
-        // Update routes banner visibility
-        when {
-            !state.hasRoutes -> {
-                binding.routesBanner.visibility = View.GONE
-                if (!visible) {
-                    visible = true
-                    binding.rvLoads.addOnScrollListener(BannerRVScrollListener())
-                }
-            }
-            state.hasRoutes -> {
-                binding.routesBanner.visibility = View.GONE
-                visible = false
-            }
-        }
-        
-        // Update loading state
-        isLoadingData = state.isLoading
-        
-        // Handle error states
-        if (state.error != null) {
-            // Error is handled via ShowError event in handleEvent
-        }
-    }
-    
-    /**
-     * Handle one-time UI events from SharedFlow
-     * Processes bid actions, truck types, analytics tracking, and error events
-     */
-    private fun handleEvent(event: HomeLoadsUiEvent) {
-        when (event) {
-            is HomeLoadsUiEvent.BidActionResult -> {
-                uiUtils.toggleKeyboard()
-                val data = adapter.itemsList()[event.position].data as? HomeBidsRequestItemData
-                oldAmount = data?.transactionBid?.bidAmount
-                data?.transactionBid = event.bid
-                
-                if (data != null) {
-                    uiUtils.showProgress()
-                    viewModel.fetchLowestBid(data, event.position)
-                }
-            }
-            
-            is HomeLoadsUiEvent.BulkBidActionResult -> {
-                val data = adapter.itemsList()[event.position].data as? HomeBidsRequestItemData
-                var oldAmountbids = ""
-                var bidAmount = ""
-                var lowestBid = 0.0
-                var numBids = 0
-                var oldBidCount = 0
-                var newBidCount = 0
-                var oldUserLowestAmount = 0.0
-                var expectedArrivalPickup = ""
-                
-                if (data != null) {
-                    if (data.bulkTransactionBids.isNotEmpty()) {
-                        oldBidCount = data.bulkTransactionBids.size
-                        for (transactionBid in data.bulkTransactionBids) {
-                            oldUserLowestAmount = transactionBid.bidAmount
-                            if (oldUserLowestAmount > transactionBid.bidAmount) {
-                                oldUserLowestAmount = transactionBid.bidAmount
-                            }
-                            if (oldAmountbids.isNullOrEmpty()) {
-                                oldAmountbids = transactionBid.bidAmount.toString()
-                            } else {
-                                oldAmountbids = oldAmountbids + "," + transactionBid.bidAmount.toString()
-                            }
-                        }
-                    }
-                }
-                
-                data?.bulkTransactionBids = event.bids
-                if (data != null && data.bulkTransactionBids.isNotEmpty()) {
-                    newBidCount = data.bulkTransactionBids.size
-                    for (transactionBid in data.bulkTransactionBids) {
-                        if (data.lowestBid != null) {
-                            if (data.lowestBid!! > transactionBid.bidAmount) {
-                                lowestBid = transactionBid.bidAmount
-                            } else {
-                                if (data.lowestBid == oldUserLowestAmount) {
-                                    lowestBid = transactionBid.bidAmount
-                                } else {
-                                    lowestBid = data.lowestBid!!
-                                }
-                            }
-                        } else {
-                            lowestBid = transactionBid.bidAmount
-                        }
-                        if (bidAmount.isNullOrEmpty()) {
-                            bidAmount = transactionBid.bidAmount.toString()
-                        } else {
-                            bidAmount = bidAmount + "," + transactionBid.bidAmount.toString()
-                        }
-                        if (expectedArrivalPickup.isNullOrEmpty()) {
-                            expectedArrivalPickup = transactionBid.expectedArrivalTimePickupRemark.toString()
-                        } else {
-                            expectedArrivalPickup = expectedArrivalPickup + transactionBid.expectedArrivalTimePickupRemark.toString()
-                        }
-                    }
-                    if (data.numBids == 0) {
-                        numBids = newBidCount
-                    } else {
-                        numBids = (data.numBids ?: 0) - oldBidCount + newBidCount
-                    }
-                    data.numBids = numBids
-                    data.lowestBid = lowestBid
-                }
-                adapter.notifyItemChanged(event.position)
-                
-                if (!reviseInitiated) {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_SUBMIT,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                            PROPERTY_VEHICLE_REPORTING_DATE_TIME
-                        ),
-                        mutableListOf(
-                            data?.transactionId ?: "", numBids.toString(), bidAmount ?: "",
-                            expectedArrivalPickup
-                        )
-                    )
-                } else {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_REVISE_SUBMITTED,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-                            PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
-                        ),
-                        mutableListOf(
-                            data?.transactionId ?: "", numBids.toString() ?: "", lowestBid.toString() ?: " ",
-                            oldAmountbids, bidAmount
-                        )
-                    )
-                    reviseInitiated = false
-                }
-            }
-            
-            is HomeLoadsUiEvent.AcceptBidResult -> {
-                showIntracityAdhocSuccessDialog()
-                refreshData()
-            }
-            
-            is HomeLoadsUiEvent.LowestBidResult -> {
-                uiUtils.hideProgress()
-                val data = event.data
-                
-                if (!reviseInitiated) {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_SUBMIT,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_USER_BID_VALUE,
-                            PROPERTY_VEHICLE_REPORTING_DATE_TIME
-                        ),
-                        mutableListOf(
-                            data?.transactionId ?: "", data?.numBids.toString(),
-                            data?.bidAmountValue() ?: "",
-                            data?.transactionBid?.expectedArrivalTimePickupRemark ?: ""
-                        )
-                    )
-                } else {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_REVISE_SUBMITTED,
-                        mutableListOf(
-                            PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE,
-                            PROPERTY_USER_BID_VALUE_OLD, PROPERTY_USER_BID_VALUE_NEW
-                        ),
-                        mutableListOf(
-                            data?.transactionId ?: "", data?.numBids.toString() ?: "",
-                            data?.lowestBid.toString() ?: " ", oldAmount.toString() ?: "",
-                            data?.bidAmountValue().toString() ?: ""
-                        )
-                    )
-                    reviseInitiated = false
-                }
-                
-                BidConfirmReviseDialog(
-                    requireContext(), event.data, viewModel, event.position
-                ).show()
-                adapter.notifyItemChanged(event.position)
-            }
-            
-            is HomeLoadsUiEvent.ReviseBid -> {
-                if (event.shouldRevise) {
-                    val data = adapter.itemsList()[event.position].data as? HomeBidsRequestItemData
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_REVISE_INITIATED,
-                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
-                        mutableListOf(
-                            data?.transactionId.toString(), data?.numBids.toString(),
-                            data?.lowestBid.toString()
-                        )
-                    )
-                    reviseInitiated = true
-                    BidDetailsCreateEditDialog(
-                        requireContext(), data!!, data!!.transactionBid, viewModel, event.position,
-                        analyticsUtil, userPrefs, "load_screen"
-                    ).show()
-                }
-            }
-            
-            is HomeLoadsUiEvent.EditBulkResult -> {
-                if (event.code == 10) {
-                    Toast.makeText(context, "Bids Created Successfully", Toast.LENGTH_SHORT).show()
-                }
-                if (event.code == 20) {
-                    Toast.makeText(context, "Bids Updated Successfully", Toast.LENGTH_SHORT).show()
-                }
-                if (event.code == 30) {
-                    Toast.makeText(context, "Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
-                }
-                if (viewModel.editFlg[0] && viewModel.editFlg[1] && viewModel.editFlg[2]) {
-                    viewModel.transactionBidForBulk(event.transactionId, pos)
-                    viewModel.editFlg = mutableListOf(false, false, false)
-                }
-            }
-            
-            is HomeLoadsUiEvent.TruckTypesLoaded -> {
-                uiUtils.hideProgress()
-                val pageTitle = if (event.data.bulkTransactionBids != null && event.data.bulkTransactionBids.isNotEmpty()) {
-                    "EDIT BIDS"
-                } else {
-                    "PLACE BIDS"
-                }
-                
-                if (event.data.bulkTransactionBids != null && event.data.bulkTransactionBids.isNotEmpty()) {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_REVISE_INITIATED,
-                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_BID_COUNT, PROPERTY_ORDER_LOWEST_BID_VALUE),
-                        mutableListOf(
-                            event.data.transactionId.toString(), event.data?.numBids.toString(),
-                            event.data?.lowestBid.toString()
-                        )
-                    )
-                    reviseInitiated = true
-                } else {
-                    analyticsUtil.moEngageTrackEvent(
-                        EVENT_LOADFEED_BID_INITIATE,
-                        mutableListOf(PROPERTY_ORDER_ID, PROPERTY_ORDER_RANK, PROPERTY_ORDER_COUNT),
-                        mutableListOf(
-                            event.data.transactionId ?: "",
-                            (pos - STATIC_ITEM_LIST - ((pos - STATIC_ITEM_LIST) / HomeLoadsAddTruckItemDataConfig)).toString(),
-                            viewModel.total.toString()
-                        )
-                    )
-                    reviseInitiated = false
-                }
-                
-                if (event.data.truckUUID != null) {
-                    try {
-                        BulkBidDetailsCreateEditDialog(
-                            requireContext(),
-                            event.data,
-                            event.data.bulkTransactionBids,
-                            event.trucks,
-                            viewModel,
-                            event.data.unAllocatedVolume!!,
-                            pos,
-                            analyticsUtil,
-                            userPrefs,
-                            "load_screen",
-                            pageTitle
-                        ).show()
-                    } catch (e: Exception) {
-                        // Handle exception
-                    }
-                } else {
-                    Toast.makeText(context, "No Vehicle Types Found", Toast.LENGTH_SHORT).show()
-                }
-            }
-            
-            is HomeLoadsUiEvent.TrackIntracityListShown -> {
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_INTRACITY_LOADS_SHOWN,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
-                )
-            }
-            
-            is HomeLoadsUiEvent.TrackIntercityListShown -> {
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_INTERCITY_LOADS_SHOWN,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
-                )
-            }
-            
-            is HomeLoadsUiEvent.TrackMarketplaceListShown -> {
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_MARKETPLACE_LOADS_SHOWN,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
-                )
-            }
-            
-            is HomeLoadsUiEvent.ShowErrorToast -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-            }
-            
-            is HomeLoadsUiEvent.ShowError -> {
-                // Handle error display - error is already shown via adapter items
-                // Additional error handling can be added here if needed
-            }
-        }
-    }
+      }
+    })
+
+      viewModel.intracityListShownTracked.observe(viewLifecycleOwner, Observer { shouldTrack ->
+          if (shouldTrack == true) {
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_INTRACITY_LOADS_SHOWN,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                  mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
+              )
+              // Reset flag to avoid duplicate tracking
+              viewModel.intracityListShownTracked.value = false
+          }
+      })
+      viewModel.intercityListShownTracked.observe(viewLifecycleOwner, Observer { shouldTrack ->
+          if (shouldTrack == true) {
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_INTERCITY_LOADS_SHOWN,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                  mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
+              )
+              // Reset flag to avoid duplicate tracking
+              viewModel.intercityListShownTracked.value = false
+          }
+      })
+      viewModel.marketPlaceListShownTracked.observe(viewLifecycleOwner, Observer { shouldTrack ->
+          if (shouldTrack == true) {
+              analyticsUtil.moEngageTrackEvent(
+                  EVENT_MARKETPLACE_LOADS_SHOWN,
+                  mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
+                  mutableListOf(viewModel.userPrefs.userId(), VALUE_LOAD_PAGE_LOADS)
+              )
+              // Reset flag to avoid duplicate tracking
+              viewModel.marketPlaceListShownTracked.value = false
+          }
+      })
+  }
 
     private fun showIntracityAdhocSuccessDialog() {
         // prepare dialog UI's and whatsapp share data
