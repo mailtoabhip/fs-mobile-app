@@ -72,7 +72,6 @@ class TripDetailsViewModel @Inject constructor(
   private val omcRepository: OMCRepository,
   private val transactionsRepository: TransactionsRepository,
   private val loadboardRepository: LoadboardRepository,
-  private val invoiceRepository: InvoiceRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -87,7 +86,6 @@ class TripDetailsViewModel @Inject constructor(
   var paymentSummaryLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
   var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
-  var invoiceDownloadLiveData = MutableLiveData<String>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -177,7 +175,6 @@ class TripDetailsViewModel @Inject constructor(
             this.tripDetail = _res.second
             this.warehouse = _res.first.pickupLocation
             isApReconPending = _res.second.isApReconPending?:false
-            
             tripLiveData.postValue(_res)
           } else {
             error.handle()
@@ -321,10 +318,6 @@ class TripDetailsViewModel @Inject constructor(
     tripDetail.isSettled = paymentSettled && recoverySettled
     if (tripDetail.isSettled) {
       tripSettledLiveData.postValue(true)
-    } else {
-      // Clear settled time when trip is not settled
-      settledTime = null
-      tripSettledLiveData.postValue(false)
     }
 
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -412,13 +405,12 @@ class TripDetailsViewModel @Inject constructor(
                       if (charge.status != "success") {
                         continue
                       }
-                      // Use payment_at for payment timestamp (not transfer_time)
-                      var paymentTime = charge.paymentTimestamp
-                      if (paymentTime.isNullOrEmpty()) {
+                      var transferTime = charge.transferTime
+                      if (transferTime.isNullOrEmpty()) {
                         val cal = Calendar.getInstance()
-                        paymentTime = DateUtils.formatDate(cal.time, OrionDateFormat)
+                        transferTime = DateUtils.formatDate(cal.time, OrionDateFormat)
                       }
-                      paymentTime.let {
+                      transferTime.let {
                         val time = DateUtils.formatDate(
                             DateUtils.parseDate(it, OrionDateFormat), DatePatterns.SimpleDateFormat)
                         if (charge.transactionId != transactionId) {
@@ -442,8 +434,7 @@ class TripDetailsViewModel @Inject constructor(
                           totalTDS += charge.tdsDeducted
                           if (charge.head == "balance" && charge.paymentType == "payment" && charge.status == "success") {
                             paymentSettled = true
-                            // Use payment_at for settlement timestamp
-                            settledTime = paymentTime
+                            settledTime = transferTime
                           }
                           var event = capitalize(charge.head)?:""
                           when (charge.head) {
@@ -774,7 +765,7 @@ class TripDetailsViewModel @Inject constructor(
                       )} has been paid$utrString",
                       history.timeStamp()
                   )
-                  advancePaidTime = advancePay.paymentTimestamp?.let {
+                  advancePaidTime = advancePay.transferTime?.let {
                     DateUtils.formatDate(
                         DateUtils.parseDate(it, DatePatterns.OrionDateFormat),
                         DatePatterns.SimpleDateFormat
@@ -901,9 +892,9 @@ class TripDetailsViewModel @Inject constructor(
                   )} has been paid$utrString",
                   balancePay.timeStamp()
               )
-              balancePaidTime = balancePay.paymentTimestamp?.let { timestamp ->
+              balancePaidTime = balancePay.transferTime?.let {
                 DateUtils.formatDate(
-                    DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat),
+                    DateUtils.parseDate(balancePay.transferTime, DatePatterns.OrionDateFormat),
                     DatePatterns.SimpleDateFormat
                 )
               } ?: ""
@@ -1076,21 +1067,5 @@ class TripDetailsViewModel @Inject constructor(
             }
   }
 
-  /**
-   * Fetch invoice download URL from backend
-   */
-  fun fetchInvoiceDownloadUrl() {
-    compositeDisposable += invoiceRepository.downloadInvoiceDocument(transactionId)
-      .onBackground()
-      .progress()
-      .subscribe { result, error ->
-        if (!error && result != null && !result.url.isNullOrEmpty()) {
-          invoiceDownloadLiveData.postValue(result.url)
-        } else {
-          error.handle()
-          invoiceDownloadLiveData.postValue(null)
-        }
-      }
-  }
 
 }
