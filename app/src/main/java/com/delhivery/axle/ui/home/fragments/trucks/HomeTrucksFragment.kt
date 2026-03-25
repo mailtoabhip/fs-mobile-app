@@ -542,6 +542,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             return
         }
         binding.editStickySearch.clearFocus()
+        updateFilterIndicator()
     }
 
     /**
@@ -574,6 +575,18 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         viewModel.getAllInventories()
 
         viewModel.offersLiveData.clear()
+        updateFilterIndicator()
+    }
+
+    /**
+     * Update filter indicator dot visibility based on active filters
+     */
+    private fun updateFilterIndicator() {
+        val hasActiveFilters = viewModel.bodyTypeFilter.isNotEmpty() || 
+                               viewModel.availabilityFilter.isNotEmpty() || 
+                               viewModel.sizeFilter?.isNotEmpty() == true
+        
+        binding.filterIndicatorDot.visibility = if (hasActiveFilters) View.VISIBLE else View.GONE
     }
 
     private fun recalculateFastagStats() {
