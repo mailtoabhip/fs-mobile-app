@@ -396,9 +396,21 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             }
         })
 
-        viewModel.fastagBlacklistedData.observe(this, androidx.lifecycle.Observer { isBlacklisted ->
-            fastagStatus = if (isBlacklisted) "blacklisted" else "active"
-            binding.layoutBlacklistWarning.visibility = if (isBlacklisted) View.VISIBLE else View.GONE
+        viewModel.fastagStatusData.observe(this, androidx.lifecycle.Observer { statusResponse ->
+            statusResponse?.let {
+                fastagStatus = it.status
+                // Display custom message if available, otherwise don't show the status message
+                if (!it.message.isNullOrEmpty()) {
+                    binding.layoutBlacklistWarning.visibility = View.VISIBLE
+                    binding.tvBlacklistMessage.text = it.message
+                } else {
+                    binding.layoutBlacklistWarning.visibility = View.GONE
+
+                }
+            } ?: run {
+                // If response is null, hide the warning
+                binding.layoutBlacklistWarning.visibility = View.GONE
+            }
         })
 
         viewModel.exceptionLiveData.observe(this, androidx.lifecycle.Observer {
