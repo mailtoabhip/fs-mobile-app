@@ -201,9 +201,7 @@ class HomeTrucksViewModel @Inject constructor(
                     if (!searchFlag && !hasActiveFilters()) {
                         // Calculate FASTag stats on background thread for large lists
                         compositeDisposable += io.reactivex.Single.fromCallable {
-                            val fastagTrucksCount = trucksList.count { 
-                                it.fastagTagStatus?.equals("Active", ignoreCase = true) == true 
-                            }
+                            val fastagTrucksCount = _res.totalFastagVehicles ?: 0
                             val totalFastagBalance = trucksList
                                 .filter { it.fastagTagStatus?.equals("Active", ignoreCase = true) == true }
                                 .sumOf { it.fastagBalance?.toDoubleOrNull() ?: 0.0 }
