@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class FastagStatusResponse(
     @SerializedName("status")
-    val status: String? = ""
-) {
-    fun isBlacklisted(): Boolean = status.equals("Blacklist", ignoreCase = true) || status.equals("Blacklisted", ignoreCase = true)
-}
+    val status: String? = null,
+    @SerializedName("message")
+    val message: String? = null
+)

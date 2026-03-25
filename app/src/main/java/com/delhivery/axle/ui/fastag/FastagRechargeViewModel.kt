@@ -5,6 +5,7 @@ import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.response.FastagRechargeResponse
+import com.delhivery.axle.api.response.FastagStatusResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -17,7 +18,7 @@ class FastagRechargeViewModel @Inject constructor(
 
     val walletBalanceData = MutableLiveData<Double>()
     val rechargeResponseData = MutableLiveData<FastagRechargeResponse>()
-    val fastagBlacklistedData = MutableLiveData<Boolean>()
+    val fastagStatusData = MutableLiveData<FastagStatusResponse>()
 
     fun fetchWalletDetails() {
         showProgress()
@@ -54,9 +55,9 @@ class FastagRechargeViewModel @Inject constructor(
         compositeDisposable += loadboardRepository.fetchFastagStatus(tagId)
             .onBackground()
             .subscribe({ response ->
-                fastagBlacklistedData.postValue(response.isBlacklisted())
+                fastagStatusData.postValue(response)
             }, { error ->
-                fastagBlacklistedData.postValue(false)
+                fastagStatusData.postValue(null)
             })
     }
 }
