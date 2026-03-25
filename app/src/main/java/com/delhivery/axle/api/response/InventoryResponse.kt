@@ -8,7 +8,8 @@ data class InventoryResponse(
     @SerializedName("has_next") val hasNext: Boolean,
     @SerializedName("count") val total: Int,
     @SerializedName("next_offset") val nextOffset: Int?,
-    @SerializedName("results") val trucks: List<HomeTrucksRequestItemData>
+    @SerializedName("results") val trucks: List<HomeTrucksRequestItemData>,
+    @SerializedName("total_fastag_vehicles") val totalFastagVehicles: Int?
 )
 
 data class PricingResponse(
