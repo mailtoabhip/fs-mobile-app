@@ -218,6 +218,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/layoutTollName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
@@ -361,79 +362,52 @@
                     android:orientation="vertical"
                     android:padding="@dimen/size_16dp">
 
-                    <!-- Dispute Tracker Header -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dispute Tracker"
-                        android:textSize="11sp"
-                        android:textColor="@color/grey_text"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="@dimen/size_16dp" />
-
-                    <!-- Issue Category + Escalate Button Row -->
+                    <!-- Dispute Tracker Header with Kebab Menu -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="@dimen/size_12dp">
+                        android:layout_marginBottom="@dimen/size_16dp">
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:text="Dispute Tracker"
+                            android:textSize="11sp"
+                            android:textColor="@color/grey_text"
+                            android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Issue Category"
-                                android:textSize="10sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/grey_text" />
-
-                            <TextView
-                                android:id="@+id/tvIssueCategory"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Duplicate Transaction"
-                                android:textSize="13sp"
-                                android:textColor="#1E293B" />
-
-                        </LinearLayout>
-
-                        <!-- Escalate Button (visible only when last status is Rejected) -->
-                        <LinearLayout
-                            android:id="@+id/btnEscalateTicket"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_escalate_button"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingHorizontal="@dimen/size_12dp"
-                            android:paddingVertical="@dimen/size_8dp"
+                        <ImageView
+                            android:id="@+id/ivDisputeKebab"
+                            android:layout_width="@dimen/size_18dp"
+                            android:layout_height="@dimen/size_18dp"
+                            android:src="@drawable/ic_kebab_icon"
+                            android:contentDescription="More options"
                             android:clickable="true"
                             android:focusable="true"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="❗"
-                                android:textSize="14sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Escalate the ticket"
-                                android:textSize="13sp"
-                                android:textColor="#1E293B"
-                                android:layout_marginStart="@dimen/size_4dp" />
-
-                        </LinearLayout>
+                            android:visibility="gone" />
 
                     </LinearLayout>
+
+                    <!-- Issue Category -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Issue Category"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/grey_text" />
+
+                    <TextView
+                        android:id="@+id/tvIssueCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Duplicate Transaction"
+                        android:textSize="13sp"
+                        android:textColor="#1E293B"
+                        android:layout_marginBottom="@dimen/size_12dp" />
 
                     <!-- Ticket ID -->
                     <TextView
