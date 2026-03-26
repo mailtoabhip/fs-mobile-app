@@ -9,6 +9,8 @@ import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.databinding.ActivityFastagTransactionDetailBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import androidx.core.graphics.toColorInt
+import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.plusAssign
 
 class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDetailBinding, FastagTransactionDetailsViewModel>() {
 
@@ -109,7 +111,12 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
         // Transaction details
         binding.tvTxnCategory.text = response.txnCategory ?: ""
-        binding.tvTollName.text = response.tollPlazaName ?: ""
+        if (!response.tollPlazaName.isNullOrEmpty()) {
+            binding.layoutTollName.visibility = View.VISIBLE
+            binding.tvTollName.text = response.tollPlazaName
+        } else {
+            binding.layoutTollName.visibility = View.GONE
+        }
         binding.tvTransactionId.text = response.txnId ?: ""
         binding.tvDateTime.text = formatDateTime(response.txnDatetime)
 
@@ -162,12 +169,23 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
             val timeline = dispute.statusTimeline
             val lastStatus = timeline?.lastOrNull()?.status
             if (lastStatus.equals("Rejected", ignoreCase = true)) {
-                binding.btnEscalateTicket.visibility = View.VISIBLE
-                binding.btnEscalateTicket.setOnClickListener {
-                    callHelpline()
+                binding.ivDisputeKebab.visibility = View.VISIBLE
+                binding.ivDisputeKebab.setOnClickListener { anchor ->
+                    val popup = android.widget.PopupMenu(this, anchor, android.view.Gravity.END)
+                    popup.menuInflater.inflate(R.menu.menu_dispute_escalate, popup.menu)
+                    popup.setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.action_escalate_ticket -> {
+                                showEscalateDialog(dispute.srId ?: "")
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                    popup.show()
                 }
             } else {
-                binding.btnEscalateTicket.visibility = View.GONE
+                binding.ivDisputeKebab.visibility = View.GONE
             }
 
             // Populate dynamic timeline from API
@@ -248,5 +266,25 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
     private fun formatDateTime(dateString: String?): String {
         if (dateString.isNullOrEmpty()) return ""
         return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateString)
+    }
+
+    private fun showEscalateDialog(ticketId: String) {
+        dialogUtils.showEscalateDialog(
+            "Want to escalate the dispute?",
+            "Please reach out to our support team. Please keep your ticket ID #$ticketId ready"
+        ) { d ->
+            compositeDisposable += requestPermission(arrayOf(android.Manifest.permission.CALL_PHONE))
+                .onBackground()
+                .subscribe { granted, error ->
+                    d.dismiss()
+                    if (error == null && granted) {
+                        if (!contactUtils.callHelpline()) {
+                            uiUtils.showSnackbar("Unable to place call")
+                        }
+                    } else {
+                        uiUtils.showSnackbar(getString(R.string.msg_call_permission))
+                    }
+                }
+        }
     }
 }
