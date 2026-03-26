@@ -454,7 +454,6 @@ class HomeTrucksViewModel @Inject constructor(
         onError: (String) -> Unit
     ) {
         val request = com.delhivery.axle.api.request.FastagLeadRequest(
-            userId = userPrefs.userId(),
             vehicleCount = vehicleCount,
             location = location,
             source = "Axle",
