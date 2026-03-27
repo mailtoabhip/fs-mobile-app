@@ -116,6 +116,7 @@ object TripMilestoneProvider {
         }
     }
 
+    /*Returns current date if invalid timestamp was passed as param*/
      fun formatDateString(timestamp: String?): String? {
         if (timestamp.isNullOrBlank()) return null
         return try {
