@@ -21,7 +21,8 @@ class FastagTransactionSelectionViewModel @Inject constructor(
         dateTime: String? = null,
         fastagId: String? = null,
         limit: Int = 20,
-        offset: Int = 0
+        offset: Int = 0,
+        txnId: String? = null
     ) {
         progressData.value = true
 
@@ -30,7 +31,8 @@ class FastagTransactionSelectionViewModel @Inject constructor(
             dateTime = dateTime,
             fastagId = fastagId,
             limit = limit,
-            offset = offset
+            offset = offset,
+            txnId = txnId
         )
             .onBackground()
             .progress()

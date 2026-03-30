@@ -1242,7 +1242,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
      */
     private fun submitFastagLeadRequest(
         vehicleCount: Int = 1,
-        location: String = "",
+        location: String? = null,
         vrn: String? = null
     ) {
         uiUtils.showProgress()

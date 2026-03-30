@@ -99,7 +99,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
     }
 
     private fun loadTransactions() {
-        viewModel.getTransactionsByTollPlaza(tollPlazaId = tollPlazaId, fastagId = fastagId)
+        viewModel.getTransactionsByTollPlaza(tollPlazaId = tollPlazaId, fastagId = fastagId, txnId = txnId)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -132,6 +132,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                 if (transactions.isEmpty()) {
                     binding.rvTransactions.visibility = View.GONE
                     binding.layoutEmptyState.visibility = View.VISIBLE
+                    binding.tvTransactionTitle.visibility = View.GONE
+                    binding.tvTransactionSubtitle.visibility = View.GONE
                     binding.btnConfirmSelection.text = "Select different issue type"
                     binding.btnConfirmSelection.isEnabled = true
                     binding.btnConfirmSelection.alpha = 1.0f
@@ -154,6 +156,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
             } ?: run {
                 binding.rvTransactions.visibility = View.GONE
                 binding.layoutEmptyState.visibility = View.VISIBLE
+                binding.tvTransactionTitle.visibility = View.GONE
+                binding.tvTransactionSubtitle.visibility = View.GONE
                 binding.btnConfirmSelection.text = "Select different issue type"
                 binding.btnConfirmSelection.isEnabled = true
                 binding.btnConfirmSelection.alpha = 1.0f

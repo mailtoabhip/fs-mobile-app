@@ -448,7 +448,7 @@ class HomeTrucksViewModel @Inject constructor(
      */
     fun submitFastagLead(
         vehicleCount: Int = 1,
-        location: String = "",
+        location: String? = null,
         vrn: String? = null,
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit
