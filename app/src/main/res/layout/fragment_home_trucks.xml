@@ -17,6 +17,7 @@
         android:background="@color/colorBackground">
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/coordinator_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -117,18 +118,34 @@
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/filter_icon"
-                            android:layout_width="46dp"
-                            android:layout_height="38dp"
-                            android:layout_marginStart="@dimen/size_4dp"
-                            android:background="@drawable/bg_edittext_outline"
-                            android:padding="@dimen/size_12dp"
-                            android:scaleType="centerInside"
-                            app:srcCompat="@drawable/ic_filter_grey_border"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:contentDescription="Filter" />
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/filter_icon"
+                                android:layout_width="46dp"
+                                android:layout_height="@dimen/size_38dp"
+                                android:layout_marginStart="@dimen/size_4dp"
+                                android:background="@drawable/bg_edittext_outline"
+                                android:padding="@dimen/size_12dp"
+                                android:scaleType="centerInside"
+                                app:srcCompat="@drawable/ic_filter_grey_border"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:contentDescription="Filter" />
+
+                            <View
+                                android:id="@+id/filter_indicator_dot"
+                                android:layout_width="@dimen/size_12dp"
+                                android:layout_height="@dimen/size_12dp"
+                                android:layout_gravity="top|end"
+                                android:layout_marginTop="@dimen/size_6dp"
+                                android:layout_marginEnd="@dimen/size_10dp"
+                                android:background="@drawable/filter_red_dot"
+                                android:visibility="gone" />
+
+                        </FrameLayout>
 
                     </LinearLayout>
 
@@ -149,11 +166,19 @@
                         android:layout_marginHorizontal="@dimen/size_6dp"
                         android:layout_marginVertical="@dimen/size_12dp"
                         android:clipToPadding="false"
-                        android:paddingTop="0dp" />
+                        android:paddingTop="@dimen/size_12dp" />
 
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+            <!-- Initial loading progress (same as app default loader) -->
+            <include
+                android:id="@+id/initial_loader"
+                layout="@layout/layout_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
     </FrameLayout>
 </layout>

@@ -114,6 +114,8 @@ class BidDetailsViewModel @Inject constructor(
 
     /**
      * Fetch placement details
+     * This method retrieves specific placement info if the user navigated from placements,
+     * using placementType, transactionId, and contractCode.
      */
     fun fetchPlacementDetails() {
         Log.d("PlacementDetails", "Fetching placement details with params: placementType='$placementType', transactionId='$transactionId', contractCode='$contractCode'")
@@ -164,6 +166,7 @@ class BidDetailsViewModel @Inject constructor(
 
   /**
    * Fetch transaction bids and update UI as per response
+   * This handles the routing of what screen/UI-state to show the user based on their current bid.
    */
   fun fetchTransactionBids( action: Boolean = false) {
     compositeDisposable += bidsRepository.transactionBids(transactionId?:"")
@@ -175,12 +178,14 @@ class BidDetailsViewModel @Inject constructor(
             //determine bid state and post to live data
             when {
               _bRes.third == 0 -> {
+                // Case 1: No bids exist for this transaction at all.
                 transactionBidLiveData.postValue(
                     BidDetailsUserBidState_PlaceBidFirst()
                 )
                 bidPriceLiveData.postValue(null)
               }
               _bRes.first.first == null -> {
+                // Case 2: Bids exist, but the logged-in user has NOT placed a bid yet.
                 transactionBidLiveData.postValue(
                     BidDetailsUserBidState_PlaceBid(
                         _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -189,6 +194,7 @@ class BidDetailsViewModel @Inject constructor(
                 bidPriceLiveData.postValue(null)
               }
               else -> if(((transaction.isDMTIndent() || dmtStatus == "dmt" ) && !fromPage )|| (dmtStatus == "dmt" && active)){
+                  // Case 3a: User HAS placed a bid, and it's a Bulk/DMT load. Emits BulkLoad_Edit state.
                   transactionBidLiveData.postValue(
                           BidDetailsUserBidState_BulkLoad_Edit(
                                   _bRes.third, _bRes.second, _bRes.first, transaction.isPMTIndent()
@@ -196,8 +202,10 @@ class BidDetailsViewModel @Inject constructor(
                   )
                   bidPriceLiveData.postValue(null)
               }else{
+                  // Case 3b: User HAS placed a bid. Let's check the status of the user's latest bid.
                   when (_bRes.first.first!!.status()) {
                       Accepted -> {
+                          // The user's bid was accepted by the client. We fetch trip details if not pending.
                           bidPriceLiveData.postValue(_bRes.first.first)
                         if(_bRes?.first?.first?.clientConfirmationPending!=null){
                           if(_bRes?.first?.first?.clientConfirmationPending==true){
@@ -211,6 +219,7 @@ class BidDetailsViewModel @Inject constructor(
                         }
                       }
                       Rejected -> {
+                          // The user's bid was rejected. We show the rejection UI.
                           try {
                               transactionBidLiveData.postValue(
                                       BidDetailsUserBidState_RejectedBid(
@@ -225,6 +234,7 @@ class BidDetailsViewModel @Inject constructor(
                           }
                       }
                       Cancelled -> {
+                          // The transaction bid was cancelled. We show the cancellation UI.
                           try {
                               transactionBidLiveData.postValue(
                                       BidDetailsUserBidState_CancelledBid(
@@ -239,6 +249,7 @@ class BidDetailsViewModel @Inject constructor(
                           }
                       }
                       else -> {
+                          // The user's bid is still active/open, allowing them to revise it.
                           if(action){
                               analyticsBucket=true
                           }

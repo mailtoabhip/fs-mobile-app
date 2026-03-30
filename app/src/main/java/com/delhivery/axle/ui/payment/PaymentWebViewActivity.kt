@@ -202,7 +202,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 binding.progressBar.visibility = View.GONE
-                
+
                 if (BuildConfig.DEBUG) {
                     android.util.Log.d("PaymentWebView", "onPageFinished: $url")
                 }

@@ -35,7 +35,7 @@ class AddMoneyDialogViewmodel @Inject constructor(
     var rechargeStartDate: String = ""
     // ── Step 1: Initiate recharge ─────────────────────────────────────────
 
-    fun initiateRecharge(amount: Int, deeplink: String) {
+    fun initiateRecharge(amount: Float, deeplink: String) {
         val request = WalletRechargeReqBody(amount = amount, deeplinkUrl = deeplink)
         compositeDisposable +=
             paymentRepository

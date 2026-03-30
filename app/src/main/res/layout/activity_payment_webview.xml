@@ -50,13 +50,12 @@
 
             <ProgressBar
                 android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:max="100"
-                android:progress="0"
-                android:progressTint="@color/colorAccent"
-                android:visibility="visible" />
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:indeterminate="true"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/black"
+                />
 
         </FrameLayout>
 

@@ -100,13 +100,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.backArrow.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
-      binding.clAdhocintracity.buttonRefresh.setOnClickListener {
-          refreshData()
-      }
-      
-      binding.clAdhocintracity.buttonDownloadInvoice.setOnClickListener {
-          downloadInvoice()
-      }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -138,7 +131,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
     viewModel.tripSettledLiveData.observe(this, Observer {
       binding.tripSettled = it
-      binding.clAdhocintracity.tripSettled = it
       binding.viewModel = viewModel
     })
     viewModel.podDownloadLiveData.observe(this, Observer {
@@ -146,15 +138,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         downloadPOD(it.first, it.second)
       } else {
         uiUtils.showSnackbar("Please try again")
-      }
-    })
-
-    viewModel.invoiceDownloadLiveData.observe(this, Observer { downloadUrl ->
-      if (downloadUrl != null && currentInvoiceFile != null ) {
-        downloadFileFromUrl(downloadUrl, currentInvoiceFile!!)
-      } else {
-        uiUtils.hideProgress()
-        resetDownloadContext()
       }
     })
 
@@ -307,7 +290,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     super.onDestroy()
   }
 
-
   private fun refreshData() {
       binding.refreshing = true
       binding.error = false
@@ -322,46 +304,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       viewModel.newPaymentTypeBalance.clear()
       viewModel.newPaymentTypeDN.clear()
       viewModel.fetchTripDetails()
-  }
-
-  /**
-   * Update settled milestone with payment timestamp
-   */
-  private fun updateSettledMilestone() {
-    val trip = binding.tripDetails ?: return
-    
-    // Always start with GONE visibility for safety
-    binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
-    
-    // Check if trip is settled
-    if (!trip.isSettled) {
-        return
-    }
-
-    // Use the settledTime from ViewModel (captured when balance payment was processed)
-    val timestamp = viewModel.settledTime
-    
-    // Only show timestamp if it's available and valid
-    if (!timestamp.isNullOrEmpty() && timestamp.trim().isNotEmpty()) {
-        try {
-            val date = DateUtils.parseDate(timestamp, DatePatterns.OrionDateFormat)
-            val sdf = java.text.SimpleDateFormat("dd-MMM-yyyy hh:mma", java.util.Locale.ENGLISH)
-            val formattedText = "Payment made at ${sdf.format(date)}"
-            
-            // Only show if formatting was successful
-            if (formattedText.isNotEmpty()) {
-                binding.clAdhocintracity.tvSettledTimestamp.text = formattedText
-                binding.clAdhocintracity.tvSettledTimestamp.setTextColor(
-                    ContextCompat.getColor(this, R.color.sub_heading_black)
-                )
-                binding.clAdhocintracity.tvSettledTimestamp.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            // Keep GONE if any error occurs
-            binding.clAdhocintracity.tvSettledTimestamp.visibility = View.GONE
-        }
-    }
-    // If timestamp is null/empty, visibility remains GONE (set at the beginning)
   }
 
   /**
@@ -380,10 +322,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           binding.clAdhocintracity.tripDetails = t.second
           binding.clAdhocintracity.request = t.first
           binding.clAdhocintracity.layoutTransaction.request = t.first
-          binding.clAdhocintracity.tripSettled = t.second.isSettled
-          
-          // Update settled milestone timestamp
-          updateSettledMilestone()
 
         } else {
           binding.toolbar.visibility = View.VISIBLE
@@ -601,75 +539,42 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   // Store current download context
   private var currentPodUrl: String? = null
   private var currentPodFile: File? = null
-  private var currentInvoiceFile: File? = null
 
   // DocumentListInterface implementation for secure download API
   override fun onDocumentListSuccess(files: List<FileData>) {
     if (files.isNotEmpty()) {
       val documentFile = files.first()
-      val downloadUrl = documentFile.downloadUrl
+      val podUrl = currentPodUrl
+      val podFile = currentPodFile
       
-      if (currentPodFile != null) {
-        // POD download
-        downloadFileFromUrl(downloadUrl, currentPodFile!!)
+      if (podUrl != null && podFile != null) {
+        // Download file from pre-signed URL
+        downloadFileFromUrl(documentFile.downloadUrl, podUrl, podFile)
       } else {
         uiUtils.hideProgress()
         uiUtils.showSnackbar("Download context lost")
+        currentPodUrl = null
+        currentPodFile = null
       }
     } else {
       uiUtils.hideProgress()
       uiUtils.showSnackbar("No documents found")
-      resetDownloadContext()
+      currentPodUrl = null
+      currentPodFile = null
     }
   }
 
   override fun onDocumentListFailure(error: String) {
     uiUtils.hideProgress()
     uiUtils.showSnackbar("Download failed: $error")
-    resetDownloadContext()
-  }
-
-  /**
-   * Reset all download contexts
-   */
-  private fun resetDownloadContext() {
     currentPodUrl = null
     currentPodFile = null
-    currentInvoiceFile = null
-  }
-
-  /**
-   * Download invoice using backend API (returns pre-signed URL directly)
-   */
-  private fun downloadInvoice() {
-    uiUtils.showProgress()
-    
-    // Prepare file for invoice
-    currentInvoiceFile = getInvoiceFile()
-    
-    if (currentInvoiceFile == null )  {
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Unable to prepare invoice file")
-      return
-    }
-    
-    // Call backend API to get pre-signed URL
-    viewModel.fetchInvoiceDownloadUrl()
-  }
-
-  /**
-   * Get file for invoice download
-   */
-  private fun getInvoiceFile(): File? {
-    val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-    val basePath = "$storageDir/${viewModel.transactionId}_invoice.pdf"
-    return File(basePath)
   }
 
   /**
    * Download file from pre-signed URL using OkHttpClient
    */
-  private fun downloadFileFromUrl(downloadUrl: String, file: File) {
+  private fun downloadFileFromUrl(downloadUrl: String, originalUrl: String, file: File) {
     compositeDisposable += io.reactivex.Observable.fromCallable {
       val client = OkHttpClient()
       val request = Request.Builder()
@@ -697,11 +602,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         uiUtils.showSnackbar("Download failed")
       }
       uiUtils.hideProgress()
-      resetDownloadContext()
+      currentPodUrl = null
+      currentPodFile = null
     }, { error ->
       uiUtils.hideProgress()
       uiUtils.showSnackbar("Download error: ${error.message}")
-      resetDownloadContext()
+      currentPodUrl = null
+      currentPodFile = null
     })
   }
 

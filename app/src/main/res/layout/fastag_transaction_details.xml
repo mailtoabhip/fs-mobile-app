@@ -7,15 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/bg_screen_gradient">
+        android:background="@drawable/bg_screen_gradient"
+        android:fitsSystemWindows="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="56dp"
-            android:background="@android:color/white"
-            android:fitsSystemWindows="true">
+            android:background="@android:color/white">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivBack"
@@ -190,7 +190,8 @@
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"
                     android:backgroundTint="@android:color/black"
-                    android:layout_marginHorizontal="16dp" />
+                    android:layout_marginHorizontal="16dp"
+                    android:visibility="gone"/>
 
                 <!-- Download Statement -->
                 <Button
@@ -202,7 +203,6 @@
                     android:backgroundTint="@android:color/white"
                     android:textColor="@android:color/black"
                     android:layout_marginHorizontal="@dimen/size_16dp"
-                    android:layout_marginTop="@dimen/size_2dp"
                     android:layout_marginBottom="@dimen/size_8dp" />
 
                 <!-- Recent Transactions section -->
@@ -232,6 +232,7 @@
                         android:textSize="12sp"
                         android:textColor="#8F9198"
                         android:layout_marginHorizontal="16dp"
+                        android:lineHeight="@dimen/size_20dp"
                         android:layout_marginTop="4dp" />
 
                 </LinearLayout>

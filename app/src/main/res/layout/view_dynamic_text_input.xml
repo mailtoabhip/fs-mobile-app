@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/size_20dp"
+        android:paddingVertical="@dimen/size_12dp">
+
+        <!-- Label with mandatory indicator -->
+        <TextView
+            android:id="@+id/tvLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#334155"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/size_10dp" />
+
+        <!-- Text Input Layout -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@android:color/white"
+            app:boxStrokeColor="@color/text_input_box_stroke"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="@dimen/size_1dp"
+            app:boxCornerRadiusTopStart="@dimen/size_8dp"
+            app:boxCornerRadiusTopEnd="@dimen/size_8dp"
+            app:boxCornerRadiusBottomStart="@dimen/size_8dp"
+            app:boxCornerRadiusBottomEnd="@dimen/size_8dp"
+            app:errorEnabled="false"
+            app:errorTextColor="@color/colorAccent"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/size_64dp"
+                android:textSize="14sp"
+                android:textColor="#0F172A"
+                android:textCursorDrawable="@null"
+                android:cursorVisible="true"
+                android:paddingHorizontal="@dimen/size_16dp"
+                android:paddingVertical="@dimen/size_12dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Help text with info icon -->
+        <LinearLayout
+            android:id="@+id/llHelpText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_info"
+                android:contentDescription="Info"
+                app:tint="#94A3B8" />
+
+            <TextView
+                android:id="@+id/tvHelpText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textColor="#64748B"
+                android:layout_marginStart="@dimen/size_6dp" />
+
+        </LinearLayout>
+
+        <!-- Character counter (for TEXTAREA) -->
+        <TextView
+            android:id="@+id/tvCharCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textSize="13sp"
+            android:textColor="#9CA3AF"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</layout>
+

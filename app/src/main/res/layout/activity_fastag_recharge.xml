@@ -12,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_screen_gradient">
+        android:background="@drawable/bg_screen_gradient"
+        android:fitsSystemWindows="true">
 
         <!-- Header -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +22,6 @@
             android:layout_height="wrap_content"
             android:minHeight="@dimen/size_56dp"
             android:background="@android:color/white"
-            android:fitsSystemWindows="true"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -82,16 +82,20 @@
                 android:padding="@dimen/size_20dp">
 
                 <!-- Vehicle Number and Balance -->
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/tvVehicleNumber"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/size_8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textSize="@dimen/text_18sp"
                         android:textStyle="bold"
                         android:textColor="#1E293B"
@@ -101,12 +105,10 @@
                         android:id="@+id/tvFastagBalance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         android:textSize="@dimen/text_14sp"
                         android:textColor="#6B7280"
                         tools:text="FASTag Balance: ₹0" />
-                </RelativeLayout>
+                </LinearLayout>
 
                 <!-- Add Amount Section -->
                 <TextView
@@ -142,16 +144,16 @@
                         android:layout_height="match_parent"
                         android:background="#E5E7EB" />
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/etAmount"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
                         android:hint="0"
+                        android:textColorHint="@color/text_grey"
                         android:importantForAutofill="no"
-                        android:inputType="number"
-                        android:maxLength="6"
+                        android:inputType="numberDecimal"
                         android:paddingHorizontal="@dimen/size_16dp"
                         android:textColor="#1E293B"
                         android:textSize="@dimen/text_18sp"
@@ -247,17 +249,20 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/size_12dp"
+                        android:layout_marginEnd="@dimen/size_8dp"
                         android:layout_toStartOf="@id/tvAddMoney"
                         android:layout_toEndOf="@id/ivWalletIcon"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Paying via: Delhivery Wallet"
                             android:textColor="#1E293B"
                             android:textSize="@dimen/text_14sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:maxLines="1" />
 
                         <TextView
                             android:id="@+id/tvWalletBalance"
@@ -453,10 +458,11 @@
                     app:tint="#212121" />
 
                 <TextView
+                    android:id="@+id/tvBlacklistMessage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Your FASTag is currently blacklisted. Recharge request may be decline by the bank."
+                    tools:text="Your FASTag is currently blacklisted. Recharge request may be decline by the bank."
                     android:textColor="#212121"
                     android:textSize="@dimen/text_14sp" />
             </LinearLayout>
