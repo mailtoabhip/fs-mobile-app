@@ -236,8 +236,9 @@ class LoadboardRepository @Inject constructor(
         dateTime: String? = null,
         fastagId: String? = null,
         limit: Int? = 50,
-        offset: Int? = 0
-    ) = loadboardService.getFastagTransactionsByTollPlaza(tollPlazaId, dateTime, limit, offset, fastagId).convertResponse()
+        offset: Int? = 0,
+        txnId: String? = null
+    ) = loadboardService.getFastagTransactionsByTollPlaza(tollPlazaId, dateTime, limit, offset, fastagId, txnId).convertResponse()
 
     /**
      * Get dispute form configuration

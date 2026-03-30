@@ -343,7 +343,8 @@ interface LoadBoardService {
         @Query("dateTime") dateTime: String?,
         @Query("limit") limit: Int?,
         @Query("offset") offset: Int?,
-        @Query("fastag_id") fastagId: String?
+        @Query("fastag_id") fastagId: String?,
+        @Query("txn_id") txnId: String?
     ): Single<BaseResponse<FastagTransactionsByTollPlazaResponse>>
 
     /**
