@@ -10,13 +10,17 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.UserTripsLoadLimit
+import com.delhivery.axle.api.request.SearchRequest
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
@@ -31,6 +35,9 @@ import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
 import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.databinding.FragmentHomePodBinding
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import com.delhivery.axle.ui.common.UiEvent
+import com.delhivery.axle.ui.common.UiState
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
 import com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
@@ -41,9 +48,12 @@ import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
+import com.delhivery.axle.utils.DatePatterns.OrionDateFormat
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DialogUtils
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.api.response.FileData
+import com.delhivery.axle.ui.common.UserIntent
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -55,7 +65,9 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Calendar
 import javax.inject.Inject
 
 class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewModel>(),
@@ -80,6 +92,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   @Inject lateinit var dialogUtils: DialogUtils
   @Inject lateinit var userPrefs: UserPrefs
   @Inject lateinit var documentUtils: DocumentUtils
+  @Inject lateinit var viewModelFlow: HomePodViewModelFlow
   
   // Store current download context
   private var currentPodUrl: String? = null
@@ -98,10 +111,37 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     super.onViewCreated(view, savedInstanceState)
     fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomePodsFragment_SetupTime")
     fragmentSetupTrace?.start()
-    binding.refreshLayout.setOnRefreshListener {
-      binding.refreshLayout.isRefreshing = false
-      refreshData()
+    
+    // Collect UI state using lifecycle-aware coroutines
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModelFlow.uiState.collect { state ->
+          renderState(state)
+        }
+      }
     }
+    
+    // Collect one-time events
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModelFlow.events.collect { event ->
+          handleEvent(event)
+        }
+      }
+    }
+    
+    // Collect pod counts
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModelFlow.podCounts.collect { podCounts ->
+          podCounts?.let {
+            // Pod counts available if needed for future use
+          }
+        }
+      }
+    }
+    
+   
 
 
     binding.rvPod.apply {
@@ -128,7 +168,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
 
     adapter.setItems(getStaticItems())
 
-    viewModel.userPodsData.observe(this, Observer {
+    viewModel.userPodsData.observe(viewLifecycleOwner, Observer {
       it?.let { _items ->
         adapter.operation(_items)
       }
@@ -145,7 +185,7 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
       isLoadingData = it ?: false
     })
 
-    viewModel.selectedLiveData.observe(this, Observer {
+    viewModel.selectedLiveData.observe(viewLifecycleOwner, Observer {
       if (it == 0) {
         viewModel.selectable = false
         binding.btnSave.visibility = View.GONE
@@ -169,7 +209,150 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
     viewModel.selectedTransactions.clear()
     viewModel.selectable = false
     binding.btnSave.visibility = View.GONE
-    viewModel.fetchTrips()
+    
+    // Build search request
+    val request = SearchRequest()
+    // Note: vendorId will be set by ViewModel internally
+    
+    // Set status-specific parameters
+    when (viewModel.status) {
+      TruckUnloaded -> {
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DATE, -14)
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        request.tripStatus = viewModel.status.statusKey
+        request.value = DateUtils.formatDate(cal.time, OrionDateFormat)
+      }
+      EPodUploaded -> {
+        request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
+        request.value = null
+      }
+      else -> {}
+    }
+    
+    // Send Search intent to ViewModel (pure MVI approach)
+    viewModelFlow.processIntent(UserIntent.Search(request))
+  }
+
+  /**
+   * Renders UI based on current UiState.
+   * This function handles all possible states exhaustively.
+   */
+  private fun renderState(state: UiState<List<HomeTripsItemData>>) {
+    when (state) {
+      is UiState.Idle -> {
+        // Initial state — only set static items if the adapter is empty.
+        // This prevents the StateFlow replay from clobbering the shimmer
+        // that resetStaticData() already added during refreshData().
+        if (adapter.itemsList().isEmpty()) {
+          adapter.setItems(getStaticItems())
+        }
+      }
+      
+      is UiState.Loading -> {
+        if (state.isRefreshing) {
+          // Pull-to-refresh in progress
+          binding.refreshLayout.isRefreshing = true
+        } else {
+          // Initial loading — mark as loading.
+          // The shimmer progress item is already added by resetStaticData(),
+          // so only do AddUpdate if it's somehow missing (defensive).
+          isLoadingData = true
+          adapter.operation(HomePodProgressItem(), DataRVAdapterOperationType.AddUpdate)
+        }
+      }
+      
+      is UiState.Success -> {
+        // Hide loading indicators
+        binding.refreshLayout.isRefreshing = false
+        isLoadingData = false
+        
+        // Remove progress item
+        val items = mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>()
+        items.add(Pair(HomePodProgressItem(), DataRVAdapterOperationType.Remove))
+        
+        // Add trip items
+        for (trip in state.data) {
+          trip.selectable = viewModel.selectable
+          items.add(Pair(HomePodTripItem(trip), DataRVAdapterOperationType.Add))
+        }
+        
+        adapter.operation(items)
+        
+        // Update title with count
+        _title = when (state.data.size) {
+          0 -> getString(string.label_pod_status)
+          else -> "${getString(string.label_pod_status)}(${state.data.size})"
+        }
+        
+        // Show/hide load more footer
+        if (state.isLoadingMore) {
+          adapter.operation(listOf(
+            Pair(HomePodProgressItem(), DataRVAdapterOperationType.AddUpdate)
+          ))
+        }
+      }
+      
+      is UiState.Empty -> {
+        // No data available
+        binding.refreshLayout.isRefreshing = false
+        isLoadingData = false
+        
+        val items = mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>()
+        items.add(Pair(HomePodProgressItem(), DataRVAdapterOperationType.Remove))
+        items.add(Pair(HomePodWarningItem_NoLoads, DataRVAdapterOperationType.AddUpdate))
+        
+        adapter.operation(items)
+        
+        _title = getString(string.label_pod_status)
+      }
+      
+      is UiState.Error -> {
+        // Error occurred
+        binding.refreshLayout.isRefreshing = false
+        isLoadingData = false
+        
+        val items = mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>()
+        items.add(Pair(HomePodProgressItem(), DataRVAdapterOperationType.Remove))
+        items.add(Pair(HomePodWarningItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
+        
+        adapter.operation(items)
+        
+        // Show error message
+        uiUtils.showSnackbar(state.message)
+      }
+    }
+  }
+
+  /**
+   * Handles one-time UI events.
+   * These events are consumed only once and don't replay after config changes.
+   */
+  private fun handleEvent(event: UiEvent) {
+    when (event) {
+      is UiEvent.ShowToast -> {
+        uiUtils.showToast(event.message)
+      }
+      
+      is UiEvent.ShowSnackbar -> {
+        if (event.action != null && event.onActionClick != null) {
+          uiUtils.showSnackbarWithAction(
+            message = event.message,
+            actionText = event.action,
+            action = { event.onActionClick.invoke() }
+          )
+        } else {
+          uiUtils.showSnackbar(event.message)
+        }
+      }
+      
+      is UiEvent.Navigate -> {
+        // Handle navigation if needed
+        // For now, navigation is handled through existing action system
+      }
+    }
   }
 
   private fun getStaticItems() = mutableListOf<BaseHomePodRVAdapterItem<*>>().apply {
@@ -352,9 +535,16 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   inner class PaginationInterface : PaginationScrollListener(
       UserTripsLoadLimit
   ) {
-    override fun loadMore() = viewModel.fetchTrips(true)
+    override fun loadMore() {
+      // Send LoadMore intent to ViewModel (pure MVI approach)
+      viewModelFlow.processIntent(UserIntent.LoadMore)
+    }
 
-    override fun hasMore() = viewModel.hasMoreData
+    override fun hasMore(): Boolean {
+      // Check if more data is available from current state
+      val currentState = viewModelFlow.uiState.value
+      return currentState is UiState.Success && currentState.hasMore
+    }
 
     override fun isLoading() = isLoadingData
   }

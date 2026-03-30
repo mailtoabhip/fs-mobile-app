@@ -173,6 +173,27 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
   }
 
   /**
+   * Show Snackbar with an action button
+   *
+   * @param message String message to display
+   * @param actionText Text for the action button
+   * @param duration Duration of snackbar, by default is [Snackbar.LENGTH_LONG]
+   * @param action Lambda to execute when action button is clicked
+   */
+  fun showSnackbarWithAction(
+    message: String,
+    actionText: String,
+    duration: Int = Snackbar.LENGTH_LONG,
+    action: () -> Unit
+  ) {
+    snackbar = Snackbar.make(activityRoot, message, duration)
+    snackbar!!.setAction(actionText) {
+      action.invoke()
+    }
+    snackbar!!.show()
+  }
+
+  /**
    * Show no internet Indefinite snackbar
    */
   fun showNoInternetSnackbar() {

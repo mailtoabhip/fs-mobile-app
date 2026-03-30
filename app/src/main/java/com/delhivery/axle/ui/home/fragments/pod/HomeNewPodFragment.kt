@@ -7,16 +7,24 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeNewPodBinding
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
- * New Home POD Fragment with ViewPager containing Pending POD and Submitted tabs
+ * New Home POD Fragment with ViewPager containing Pending POD and Submitted tabs.
+ * 
+ * This fragment has been migrated to use Flow-based architecture for pod counts.
+ * It observes pod counts from HomePodViewModelFlow using lifecycle-aware collection.
  */
 class HomeNewPodFragment : HomeBaseFragment<FragmentHomeNewPodBinding, HomePodViewModel>() {
 
@@ -27,6 +35,8 @@ class HomeNewPodFragment : HomeBaseFragment<FragmentHomeNewPodBinding, HomePodVi
 
     private var fragmentSetupTrace: Trace? = null
     private var isFirstResume = true
+
+    @Inject lateinit var viewModelFlow: HomePodViewModelFlow
 
     companion object {
         val _instance: HomeNewPodFragment by lazy { HomeNewPodFragment() }
@@ -81,7 +91,18 @@ class HomeNewPodFragment : HomeBaseFragment<FragmentHomeNewPodBinding, HomePodVi
         tab1?.let { updateTabStyle(it, true) }
         tab2?.let { updateTabStyle(it, false) }
         
-        // Observe pod counts from ViewModel
+        // Collect pod counts from Flow ViewModel using lifecycle-aware coroutines
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelFlow.podCounts.collect { podCounts ->
+                    podCounts?.let {
+                        updateTabCounts(it.pending_tab_count, it.submitted_tab_count)
+                    }
+                }
+            }
+        }
+        
+        // Keep backward compatibility with old ViewModel (can be removed after full migration)
         viewModel.podCountsLiveData.observe(viewLifecycleOwner, Observer { podCounts ->
             podCounts?.let {
                 updateTabCounts(it.pending_tab_count, it.submitted_tab_count)

@@ -80,20 +80,13 @@ class HomePodRVAdapter(private val _interface: HomePodRVAdapterInterface) :
   }
 
   /**
-   * Reset all data, remove all errors/transactions
+   * Reset all data and show shimmer for initial/refresh loading.
+   *
+   * Uses setItems() for an atomic replacement so the shimmer progress item
+   * always lands at position 1 (right after the header) with a single
+   * notifyDataSetChanged(), avoiding index-drift from piecemeal removes.
    */
   fun resetStaticData() {
-    mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-      add(Pair(HomePodHeaderItem(HomePodHeaderItemData()), Update))
-      add(Pair(HomePodProgressItem(), AddUpdate))
-      items.filter { it.type == Warning || it.type == Timeout || it.type == Pod || it.type == Search }
-          .map { Pair(it, Remove) }
-          .let {
-            addAll(it)
-          }
-    }
-        .let {
-          operation(it)
-        }
+    setItems(listOf(HomePodHeaderItem(HomePodHeaderItemData()), HomePodProgressItem()))
   }
 }

@@ -1,10 +1,16 @@
 package com.delhivery.axle.api.repository
 
 import android.util.Log
+import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.utils.ErrorLogger
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -34,9 +40,7 @@ abstract class BaseRepository(
      * @param apiCall Suspend lambda containing the API call to execute
      * @return Resource.Success with data on success, Resource.Failure with ApiError on failure
      */
-    suspend fun <T> safeApiCall(
-        apiCall: suspend () -> T
-    ): Resource<T> {
+    suspend fun <T> safeApiCall(apiCall: suspend () -> T): Resource<T> {
         return try {
             Resource.Success(apiCall())
         } catch (e: CancellationException) {
@@ -77,19 +81,104 @@ abstract class BaseRepository(
         }
     }
 
+
+
     /**
-     * Maps HTTP status codes to appropriate ApiError enum values.
+     * Executes a suspend API call and wraps the result in Flow<Resource<T>>.
+     * This utility provides consistent error handling and Loading state emission
+     * for all API calls in the application.
      *
-     * @param code HTTP status code from HttpException
+     * Flow emission sequence:
+     * 1. Resource.Loading - emitted immediately before the API call
+     * 2. Resource.Success or Resource.Failure - emitted when API call completes
+     *
+     * Exception handling:
+     * - CancellationException: Rethrown to respect coroutine cancellation
+     * - SocketTimeoutException: Mapped to ApiError.Timeout
+     * - IOException: Mapped to ApiError.Network
+     * - HttpException: Mapped to appropriate ApiError based on HTTP status code
+     * - Other exceptions: Mapped to ApiError.Unknown
+     *
+     * The function executes on Dispatchers.IO to avoid blocking the main thread.
+     *
+     * @param T The type of data expected in the API response
+     * @param apiCall Suspend function that makes the API call and returns BaseResponse<T>
+     * @return Flow that emits Resource.Loading, then Resource.Success or Resource.Failure
+     *
+     * Usage example:
+     * ```
+     * fun searchTripsFlow(request: JsonObject): Flow<Resource<SearchTripsResponse>> {
+     *     return safeApiCallFlow { loadsService.searchTrips(request) }
+     * }
+     * ```
+     */
+    fun <T : Any> safeApiCallFlow(apiCall: suspend () -> BaseResponse<T>): Flow<Resource<T>> = flow {
+        // Emit Loading state immediately
+        emit(Resource.Loading)
+
+        try {
+            // Execute the suspend API call
+            val response = apiCall()
+
+            // Use existing toResource() extension to unwrap BaseResponse
+            // This maintains consistency with existing error handling logic
+            val data = response.toResource()
+            emit(Resource.Success(data))
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            // Respect coroutine cancellation - rethrow to propagate cancellation
+            // This ensures proper cleanup when the coroutine is cancelled
+            throw e
+
+        } catch (e: SocketTimeoutException) {
+            // Request timed out - network is slow or server is not responding
+            emit(Resource.Failure(
+                isNetworkError = true,
+                errorCode = null,
+                apiError = ApiError.Timeout
+            ))
+
+        } catch (e: IOException) {
+            // Network error - no internet connection or network unavailable
+            emit(Resource.Failure(
+                isNetworkError = true,
+                errorCode = null,
+                apiError = ApiError.Network
+            ))
+
+        } catch (e: HttpException) {
+            // HTTP error - server returned an error status code
+            emit(Resource.Failure(
+                isNetworkError = false,
+                errorCode = e.code(),
+                apiError = mapHttpCodeToApiError(e.code())
+            ))
+
+        } catch (e: Exception) {
+            // Unknown error - catch-all for unexpected exceptions
+            emit(Resource.Failure(
+                isNetworkError = false,
+                errorCode = null,
+                apiError = ApiError.Unknown
+            ))
+        }
+    }.flowOn(Dispatchers.IO) // Execute on IO dispatcher to avoid blocking main thread
+
+    /**
+     * Maps HTTP status codes to ApiError enum values.
+     * Reuses the same mapping logic from BaseRepository for consistency.
+     *
+     * @param code HTTP status code from the server response
      * @return Corresponding ApiError enum value
      */
     private fun mapHttpCodeToApiError(code: Int): ApiError = when (code) {
-        401 -> ApiError.Unauthorized
-        403 -> ApiError.AccessDenied
-        404 -> ApiError.NotFound
-        503 -> ApiError.ServiceUnavailable
-        else -> ApiError.Unknown
+        401 -> ApiError.Unauthorized      // Authentication required or session expired
+        403 -> ApiError.AccessDenied      // User doesn't have permission
+        404 -> ApiError.NotFound          // Resource not found
+        503 -> ApiError.ServiceUnavailable // Server temporarily unavailable
+        else -> ApiError.Unknown          // Other HTTP errors
     }
+
+
 
     /**
      * Executes two API calls in parallel and combines their results using a transform function.

@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.base.adapter
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ abstract class BaseDataRVAdapter<
    *
    * @param items [List] of [D] items
    */
+  @SuppressLint("NotifyDataSetChanged")
   open fun setItems(items: List<D>) {
     this.items.clear()
     this.items.addAll(items)
@@ -39,6 +41,7 @@ abstract class BaseDataRVAdapter<
   /**
    * Remove all items off the list and update adapter for same
    */
+  @SuppressLint("NotifyDataSetChanged")
   fun clearItems() {
     this.items.clear()
     notifyDataSetChanged()

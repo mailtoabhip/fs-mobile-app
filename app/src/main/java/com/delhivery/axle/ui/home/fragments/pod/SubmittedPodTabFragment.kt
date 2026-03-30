@@ -1,16 +1,20 @@
 package com.delhivery.axle.ui.home.fragments.pod
 
-import android.Manifest
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
+import com.delhivery.axle.ui.common.UiEvent
+import com.delhivery.axle.ui.common.UiState
+import com.delhivery.axle.ui.common.UserIntent
+import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
+import kotlinx.coroutines.launch
 import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Dispactched
-import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Epod
-import com.delhivery.axle.data.home.pod.HomePodHeaderAction_Physical
 import com.delhivery.axle.data.home.pod.HomePodSearchAction_Search
 import com.delhivery.axle.data.home.pod.HomePodWarningAction_NoTrips
 import com.delhivery.axle.data.home.pod.HomePodWarningAction_TimeOut
@@ -19,16 +23,11 @@ import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadEpod
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_UploadTracking
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ViewDetails
 import com.delhivery.axle.data.home.trips.HomeTripsRequestAction_ShowLRList
-import com.delhivery.axle.data.home.trips.PODStatus
 import com.delhivery.axle.databinding.FragmentSubmittedPodTabBinding
-import com.delhivery.axle.data.home.trips.TripStatus.EPodUploaded
-import com.delhivery.axle.data.home.trips.TripStatus.TruckUnloaded
 import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
-import com.delhivery.axle.ui.home.fragments.pod.HomePodRVAdapterItemType.Pod
-import com.delhivery.axle.ui.home.fragments.pod.PendingPodTabFragment.PodType
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
@@ -36,17 +35,21 @@ import android.app.Activity
 import android.content.Intent
 import com.delhivery.axle.utils.REQCODE_UPLOAD_DOCKET
 import com.delhivery.axle.utils.REQCODE_UPLOAD_POD
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
+import javax.inject.Inject
 
 /**
- * Fragment for Submitted tab showing Dispatched items
+ * Fragment for Submitted tab showing Dispatched items.
+ * 
+ * This fragment uses Flow-based MVI architecture with SubmittedPodViewModelFlow.
+ * It follows the pure intent-based approach where all user actions are sent as intents.
  */
 class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding, SubmittedPodViewModel>(),HomePodRVAdapterInterface {
 
     private val adapter: HomePodRVAdapter by lazy { 
         HomePodRVAdapter(this)
     }
+
+    @Inject lateinit var viewModelFlow: SubmittedPodViewModelFlow
 
     companion object {
         fun newInstance() = SubmittedPodTabFragment()
@@ -64,13 +67,43 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
             adapter = this@SubmittedPodTabFragment.adapter
         }
 
-        // Setup pull-to-refresh
-        binding.refreshLayout.setOnRefreshListener {
-            binding.refreshLayout.isRefreshing = false
-            refreshData()
+        // Collect UI state using lifecycle-aware coroutines
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelFlow.uiState.collect { state ->
+                    renderState(state)
+                }
+            }
+        }
+        
+        // Collect one-time events
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelFlow.events.collect { event ->
+                    handleEvent(event)
+                }
+            }
+        }
+        
+        // Collect pod counts
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelFlow.podCounts.collect { podCounts ->
+                    podCounts?.let {
+                        // Get parent fragment's viewModel and update it
+                        (parentFragment as? HomeNewPodFragment)?.viewModel?.podCountsLiveData?.postValue(it)
+                    }
+                }
+            }
         }
 
-        // Observe loading state to enable/disable refresh layout
+        // Setup pull-to-refresh
+        binding.refreshLayout.setOnRefreshListener {
+            // Send Refresh intent to ViewModel (pure MVI approach)
+            viewModelFlow.processIntent(UserIntent.Refresh)
+        }
+
+        // Observe loading state to enable/disable refresh layout (backward compatibility)
         viewModel.dataLoadingLiveData.observe(viewLifecycleOwner, Observer { isLoading ->
             isLoading?.let {
                 binding.refreshLayout.isEnabled = !it
@@ -81,25 +114,115 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         binding.editStickySearch.setOnClickListener {
             handleAction(HomePodSearchAction_Search, 1, HomePodSearchItem())
         }
-        // Observe data from own view model
+        
+        // Observe data from old view model (backward compatibility)
         viewModel.userPodsData.observe(viewLifecycleOwner, Observer { items ->
             items?.let { _items ->
-                adapter.operation(_items)
+                // This is for backward compatibility only
             }
-            // Stop refreshing when data is received
             binding.refreshLayout.isRefreshing = false
         })
         
-        // Observe pod counts and pass to parent
+        // Observe pod counts from old ViewModel (backward compatibility)
         viewModel.podCountsLiveData.observe(viewLifecycleOwner, Observer { podCounts ->
             podCounts?.let {
-                // Get parent fragment's viewModel and update it
-                (parentFragment as? HomeNewPodFragment)?.viewModel?.podCountsLiveData?.postValue(it)
+                // Handled by Flow ViewModel now
             }
         })
 
-        // Initial data load
-        refreshData()
+        // Initial data load - send Search intent
+        viewModelFlow.processIntent(UserIntent.Refresh)
+    }
+
+    /**
+     * Renders UI based on current UiState.
+     * This function handles all possible states exhaustively.
+     */
+    private fun renderState(state: UiState<List<HomeTripsItemData>>) {
+        when (state) {
+            is UiState.Idle -> {
+                // Initial state
+            }
+            
+            is UiState.Loading -> {
+                if (state.isRefreshing) {
+                    binding.refreshLayout.isRefreshing = true
+                } else {
+                    isLoadingData = true
+                }
+            }
+            
+            is UiState.Success -> {
+                binding.refreshLayout.isRefreshing = false
+                isLoadingData = false
+                
+                // Build adapter items
+                val items = mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>()
+                
+                // Add trip items
+                for (trip in state.data) {
+                    items.add(Pair(HomePodTripItem(trip), DataRVAdapterOperationType.Add))
+                }
+                
+                adapter.operation(items)
+                
+                // Show/hide load more footer
+                if (state.isLoadingMore) {
+                    adapter.operation(listOf(
+                        Pair(HomePodProgressItem(), DataRVAdapterOperationType.AddUpdate)
+                    ))
+                }
+            }
+            
+            is UiState.Empty -> {
+                binding.refreshLayout.isRefreshing = false
+                isLoadingData = false
+                
+                val items = mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>()
+                items.add(Pair(HomePodWarningItem_NoLoads, DataRVAdapterOperationType.AddUpdate))
+                
+                adapter.operation(items)
+            }
+            
+            is UiState.Error -> {
+                binding.refreshLayout.isRefreshing = false
+                isLoadingData = false
+                
+                val items = mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>()
+                items.add(Pair(HomePodWarningItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
+                
+                adapter.operation(items)
+                
+                uiUtils.showSnackbar(state.message)
+            }
+        }
+    }
+
+    /**
+     * Handles one-time UI events.
+     */
+    private fun handleEvent(event: UiEvent) {
+        when (event) {
+            is UiEvent.ShowToast -> {
+                uiUtils.showToast(event.message)
+            }
+            
+            is UiEvent.ShowSnackbar -> {
+                if (event.action != null && event.onActionClick != null) {
+                    uiUtils.showSnackbarWithAction(
+                        message = event.message,
+                        actionText = event.action,
+                        action = { event.onActionClick.invoke() }
+                    )
+                } else {
+                    uiUtils.showSnackbar(event.message)
+                }
+            }
+            
+            is UiEvent.Navigate -> {
+                // Handle navigation if needed
+            }
+        }
     }
 
     private fun refreshData() {
@@ -123,9 +246,8 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         when (actionId) {
             HomePodHeaderAction_Dispactched -> {
                 if (!isLoadingData) {
-                    viewModel.status = EPodUploaded
-                    viewModel.dispatch = true
-                    refreshData()
+                    // Already showing dispatched items, just refresh
+                    viewModelFlow.processIntent(UserIntent.Refresh)
                 }
             }
 
@@ -139,7 +261,8 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
             }
 
             HomePodWarningAction_TimeOut -> {
-                refreshData()
+                // Send Retry intent to ViewModel
+                viewModelFlow.processIntent(UserIntent.Retry)
             }
 
             HomeTripsRequestAction_UploadEpod -> {
@@ -229,14 +352,14 @@ class SubmittedPodTabFragment : HomeBaseFragment<FragmentSubmittedPodTabBinding,
         when (requestCode) {
             REQCODE_UPLOAD_POD -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    // Refresh data when POD upload is successful
-                    refreshData()
+                    // Refresh data when POD upload is successful - send Refresh intent
+                    viewModelFlow.processIntent(UserIntent.Refresh)
                 }
             }
             REQCODE_UPLOAD_DOCKET -> {
-                // Refresh data when docket update is successful
+                // Refresh data when docket update is successful - send Refresh intent
                 if (resultCode == Activity.RESULT_OK) {
-                    refreshData()
+                    viewModelFlow.processIntent(UserIntent.Refresh)
                 }
             }
         }

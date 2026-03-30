@@ -60,6 +60,7 @@ import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.fastag.FastagDisputeIssuesViewModel
 import com.delhivery.axle.ui.fastag.FastagTransactionSelectionViewModel
 import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormViewModel
+import com.delhivery.axle.ui.home.fragments.pod.PendingPodViewModelFlow
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -533,4 +534,9 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelScope(AddMoneyDialogViewmodel::class)
     abstract fun bindPaymentDialogViewModel(viewModel: AddMoneyDialogViewmodel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelScope(PendingPodViewModelFlow::class)
+    abstract fun bindPendingPodViewModelFlow(viewModel:PendingPodViewModelFlow): ViewModel
 }
