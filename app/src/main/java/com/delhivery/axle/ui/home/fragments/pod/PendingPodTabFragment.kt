@@ -40,6 +40,7 @@ import com.delhivery.axle.ui.home.activity.docket.docketUpdateIntent
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
+import com.delhivery.axle.ui.home.fragments.bids.HomeBidsProgressItem
 import com.delhivery.axle.ui.searchtrip.searchIntent
 import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 import com.delhivery.axle.ui.tripdetails.uploadImageIntent
@@ -136,8 +137,44 @@ class PendingPodTabFragment :
         binding.rvPendingPod.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@PendingPodTabFragment.adapter
+            addOnScrollListener(createPaginationScrollListener())
         }
         adapter.isHPODSection = false // default to EPOD
+    }
+
+    /**
+     * Creates a scroll listener that triggers pagination when the user scrolls near the bottom.
+     * Loads more data when:
+     * - Not currently loading (initial load, refresh, or pagination)
+     * - User has scrolled to the last visible item
+     * - There's more data available (hasMore from UiState.Success)
+     */
+    private fun createPaginationScrollListener() = object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            
+            // Only trigger pagination when scrolling down
+            if (dy <= 0) return
+            
+            val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            
+            val state = viewModelFlow.state.value
+            
+            // Check if we should load more:
+            // 1. Not currently loading (any type of loading)
+            // 2. Reached the last item (or close to it)
+            // 3. Has more data available
+            val isNotLoading = !state.isLoading && !state.isRefreshing && !state.isLoadingMore
+            val hasReachedEnd = (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+            val hasMoreData = (state.uiState as? UiState.Success)?.hasMore ?: false
+            //
+            if (isNotLoading && hasReachedEnd && hasMoreData) {
+                viewModelFlow.processIntent(UserIntent.LoadMore)
+            }
+        }
     }
 
     private fun setupPodTypeTags() {
@@ -225,13 +262,25 @@ class PendingPodTabFragment :
     /**
      * Pagination footer spinner: appears at the bottom of the existing list
      * while the next page is being fetched.
+     * 
+     * Posts adapter changes to the next frame to avoid IllegalStateException
+     * when called during RecyclerView scroll/layout pass.
      */
     private fun onLoadingMore(isLoadingMore: Boolean) {
         if (isLoadingData) return // Let onLoading handle the progress items; don't interfere
-        // Safe: Add correctly notifies items.size - 1, completely missing the AddUpdate bug
-        val op = if (isLoadingMore) DataRVAdapterOperationType.Add
-                 else               DataRVAdapterOperationType.Remove
-        adapter.operation(listOf(Pair(HomePodProgressItem(), op)))
+
+        /**
+         * Post to next frame to avoid modifying adapter during scroll callback
+         *
+         * It "defers" the adapter modification to the next Looper iteration —
+         * by that time RecyclerView has completed its scroll computation and
+         * it's safe to mutate the adapter
+         */
+        binding.rvPendingPod.post {
+            val op = if (isLoadingMore) DataRVAdapterOperationType.Add
+            else               DataRVAdapterOperationType.Remove
+            adapter.operation(listOf(Pair(HomePodProgressItem(), op)))
+        }
     }
 
     /**

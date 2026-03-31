@@ -152,7 +152,7 @@ abstract class BaseDataRVAdapter<
       }
       Add -> {
         items.add(item)
-        notifyItemInserted(items.size)
+        notifyItemInserted(items.size-1)
       }
       else -> {
         val _itemIndex = items.indexById(item.key())
