@@ -10,8 +10,10 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormField
@@ -21,14 +23,21 @@ import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
+import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.WindowInsetsUtils
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
+import java.io.File
+import javax.inject.Inject
 
 class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDisputeFormBinding, FastagDynamicDisputeFormViewModel>() {
 
     override fun getViewModelClass() = FastagDynamicDisputeFormViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_dynamic_dispute_form
     override fun requireConnection() = true
+
+
+    @Inject lateinit var documentUtils: DocumentUtils
 
     private var disputeTypeCode: String = ""
     private var disputeTitle: String = ""
@@ -65,11 +74,44 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { uri ->
-                if (isAdditionalFilePicker) {
-                    handleAdditionalFileSelected(uri)
+
+                val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
+                val extension = MimeTypeMap.getSingleton()
+                    .getExtensionFromMimeType(mimeType) ?: "bin"
+
+                val timestamp = System.currentTimeMillis()
+                val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
+                var jpgFile: File
+                var jpgUri: Uri
+                if (extension.lowercase() == "png") {
+                    lifecycleScope.launch {
+                        val success = documentUtils.convertPngToJpg(
+                            sourcePath = documentUtils.getPathFromUri(
+                                context = this@FastagDynamicDisputeFormActivity,
+                                uri = uri
+                            ),
+                            destPath = destPath
+                        )
+
+                        jpgFile = File(destPath)
+                        jpgUri = Uri.fromFile(jpgFile)
+
+                        if (isAdditionalFilePicker) {
+                            handleAdditionalFileSelected(jpgUri)
+                        } else {
+                            currentFileFieldId?.let { fieldId ->
+                                handleFileSelected(fieldId, jpgUri)
+                            }
+                        }
+                    }
                 } else {
-                    currentFileFieldId?.let { fieldId ->
-                        handleFileSelected(fieldId, uri)
+
+                    if (isAdditionalFilePicker) {
+                        handleAdditionalFileSelected(uri)
+                    } else {
+                        currentFileFieldId?.let { fieldId ->
+                            handleFileSelected(fieldId, uri)
+                        }
                     }
                 }
             }
@@ -328,30 +370,13 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         return view
     }
 
-    private fun openFilePicker(field: FormField) {
+    private fun openFilePicker(field: FormField) {//here
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "*/*"
+            type = "image/*"
             addCategory(Intent.CATEGORY_OPENABLE)
 
-            // Set MIME types based on allowed file types
-            field.allowedFileTypes?.let { allowedTypes ->
-                val mimeTypes = allowedTypes.mapNotNull { type ->
-                    when (type.uppercase()) {
-                        "JPG", "JPEG" -> "image/jpeg"
-                        "PNG" -> "image/png"
-                        "PDF" -> "application/pdf"
-                        "DOC" -> "application/msword"
-                        "DOCX" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        else -> null
-                    }
-                }
-                if (mimeTypes.isNotEmpty()) {
-                    putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes.toTypedArray())
-                    if (mimeTypes.first().startsWith("image/")) {
-                        type = "image/*"
-                    }
-                }
-            }
+            val mimetypes = arrayOf("image/*")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
         }
 
         try {
@@ -366,7 +391,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "image/*"
             addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
         }
 
         try {

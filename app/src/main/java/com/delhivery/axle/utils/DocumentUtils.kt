@@ -1,5 +1,11 @@
 package com.delhivery.axle.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.net.Uri
 import android.util.Log
 import com.delhivery.axle.api.response.FileData
 import com.delhivery.axle.api.service.DocumentService
@@ -12,6 +18,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -200,6 +207,48 @@ class DocumentUtils @Inject constructor(
             Log.d("downloadByS3Path", "LOG_4")
             Log.e("DocumentUtils", "Download by s3_path exception: ${e.message}")
             listener.onDocumentListFailure(e.message ?: "Download failed")
+        }
+    }
+
+    fun getPathFromUri(context: Context, uri: Uri): String {
+        val file = File(context.cacheDir, "source_${System.currentTimeMillis()}.png")
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        }
+        return file.absolutePath
+    }
+
+    fun convertPngToJpg(sourcePath: String, destPath: String, quality: Int = 90): Boolean {
+
+        // Ensure destination path ends with .jpg
+        val finalDestPath = if (!destPath.endsWith(".jpg", ignoreCase = true)) {
+            "$destPath.jpg"
+        } else {
+            destPath
+        }
+
+        return try {
+            val bitmap = BitmapFactory.decodeFile(sourcePath)
+
+            val jpgBitmap = if (bitmap.hasAlpha()) {
+                Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888).apply {
+                    val canvas = Canvas(this)
+                    canvas.drawColor(Color.WHITE)
+                    canvas.drawBitmap(bitmap, 0f, 0f, null)
+                }
+            } else {
+                bitmap
+            }
+
+            FileOutputStream(finalDestPath).use { out ->
+                jpgBitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 

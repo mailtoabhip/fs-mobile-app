@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/size_16dp"
                     app:cardCornerRadius="@dimen/size_12dp"
-                    app:cardElevation="1dp"
+                    app:cardElevation="0dp"
                     app:cardBackgroundColor="@android:color/white">
 
                     <androidx.recyclerview.widget.RecyclerView

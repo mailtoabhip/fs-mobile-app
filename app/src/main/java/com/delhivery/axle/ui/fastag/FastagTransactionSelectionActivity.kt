@@ -147,7 +147,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                             id = txn.txnId ?: "",
                             tollName = txn.tollPlazaName ?: "Unknown",
                             timestamp = formatDateTime(txn.txnDateTime ?: ""),
-                            amount = if (txn.txnType == "DEBIT") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
+                            amount = if (txn.txnType?.toLowerCase() == "debit") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
                             tollPlazaId = txn.tollPlazaId
                         )
                     }

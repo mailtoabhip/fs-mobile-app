@@ -27,14 +27,15 @@ class FileUploadManager @Inject constructor(
         uri: Uri,
         allowedTypes: List<String>,
         maxSizeMB: Int,
-        context: Context
+        context: Context,
+        validationErrorMessage: String
     ): ValidationResult {
         // Validate file type
         val extension = getFileExtension(uri, context)
         if (!allowedTypes.any { it.equals(extension, ignoreCase = true) }) {
             return ValidationResult(
                 isValid = false,
-                errorMessage = "Only ${allowedTypes.joinToString(", ")} files are allowed"
+                errorMessage = validationErrorMessage
             )
         }
 
@@ -44,7 +45,7 @@ class FileUploadManager @Inject constructor(
         if (fileSizeMB > maxSizeMB) {
             return ValidationResult(
                 isValid = false,
-                errorMessage = "File size exceeds ${maxSizeMB}MB limit"
+                errorMessage = validationErrorMessage
             )
         }
 
