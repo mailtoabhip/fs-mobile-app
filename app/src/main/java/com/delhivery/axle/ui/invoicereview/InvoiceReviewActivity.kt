@@ -24,14 +24,14 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     DatePickerDialog.OnDateSetListener {
 
     companion object {
-        const val EXTRA_TRANSACTION_ID = "transaction_id"
+        const val EXTRA_FMS_TICKET_ID = "fms_ticket_id"
         const val RESULT_INVOICE_REVIEWED = 100
         private const val API_DATE_FORMAT = "yyyy-MM-dd"
         private const val DISPLAY_DATE_FORMAT = "dd/MM/yyyy"
 
-        fun invoiceReviewIntent(transactionId: String, context: Context): Intent {
+        fun invoiceReviewIntent(fmsTicketId: String, context: Context): Intent {
             return Intent(context, InvoiceReviewActivity::class.java).apply {
-                putExtra(EXTRA_TRANSACTION_ID, transactionId)
+                putExtra(EXTRA_FMS_TICKET_ID, fmsTicketId)
             }
         }
     }
@@ -47,8 +47,8 @@ class InvoiceReviewActivity : BaseActivity<ActivityInvoiceReviewBinding, Invoice
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val transactionId = intent?.getStringExtra(EXTRA_TRANSACTION_ID) ?: ""
-        viewModel.transactionId = transactionId
+        val fmsTicketId = intent?.getStringExtra(EXTRA_FMS_TICKET_ID) ?: ""
+        viewModel.fmsTicketId = fmsTicketId
 
         setupToolbar()
         setupRecyclerView()

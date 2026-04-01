@@ -74,13 +74,3 @@ enum class InvoiceStatus {
     @SerializedName("accepted") ACCEPTED,
     @SerializedName("rejected") REJECTED
 }
-
-/**
- * Payment status enum
- */
-enum class PaymentStatus {
-    @SerializedName("pending") PENDING,
-    @SerializedName("processing") PROCESSING,
-    @SerializedName("completed") COMPLETED,
-    @SerializedName("failed") FAILED
-}

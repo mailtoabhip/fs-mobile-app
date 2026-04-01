@@ -19,9 +19,9 @@ class InvoiceRepository @Inject constructor(
   /**
    * Download invoice document by transaction ID
    */
-  fun downloadInvoiceDocument(transactionId: String) =
+  fun downloadInvoiceDocument(ticketId: String) =
     invoiceService.downloadInvoiceDocument(
-      InvoiceDownloadRequest(orionTransactionId = transactionId)
+      InvoiceDownloadRequest(ticketId = ticketId)
     ).convertResponse()
 
     /**

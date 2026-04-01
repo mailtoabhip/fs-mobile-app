@@ -42,7 +42,7 @@ class InvoiceReviewViewModel @Inject constructor(
         const val MAX_INVOICE_NUMBER_LENGTH = 16
     }
 
-    var transactionId: String = ""
+    var fmsTicketId: String = ""
     var centerContactNumber: String = ""
 
     // Invoice details LiveData
@@ -70,7 +70,7 @@ class InvoiceReviewViewModel @Inject constructor(
      * Fetch invoice details from backend
      */
     fun fetchInvoiceDetails() {
-        if (transactionId.isEmpty()) {
+        if (fmsTicketId.isEmpty()) {
             errorLiveData.postValue(InvoiceReviewErrorType.TRANSACTION_ID_REQUIRED)
             return
         }
@@ -78,7 +78,7 @@ class InvoiceReviewViewModel @Inject constructor(
         isLoadingLiveData.postValue(true)
         fetchErrorLiveData.postValue(false)
 
-        compositeDisposable += invoiceRepository.getInvoiceDetails(transactionId)
+        compositeDisposable += invoiceRepository.getInvoiceDetails(fmsTicketId)
             .onBackground()
             .progress()
             .subscribe { response, error ->

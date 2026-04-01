@@ -93,7 +93,7 @@ class TripDetailsViewModel @Inject constructor(
   var paymentSummaryLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
   var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
-  var invoiceDownloadLiveData = MutableLiveData<String>()
+  var invoiceDownloadLiveData = MutableLiveData<String?>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -168,6 +168,7 @@ class TripDetailsViewModel @Inject constructor(
   val ctaConfigLiveData = MutableLiveData<TripCtaConfig>()
   // Milestones LiveData for RecyclerView
   val milestonesLiveData = MutableLiveData<List<TripMilestone>>()
+  var fmsTicketId: String?=""
 
   companion object{
     var indentList:java.lang.StringBuilder = java.lang.StringBuilder()
@@ -1090,8 +1091,8 @@ class TripDetailsViewModel @Inject constructor(
   /**
    * Fetch invoice download URL from backend
    */
-  fun fetchInvoiceDownloadUrl() {
-    compositeDisposable += invoiceRepository.downloadInvoiceDocument(transactionId)
+  fun fetchInvoiceDownloadUrl(fmsTicketId: String) {
+    compositeDisposable += invoiceRepository.downloadInvoiceDocument(fmsTicketId)
       .onBackground()
       .progress()
       .subscribe { result, error ->

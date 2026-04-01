@@ -357,8 +357,8 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (t != null) {
         binding.error = false
         if (t.first.subRequestType == SUB_REQUEST_TYPE_INTRACITY) {
-            val isOpsArranged =  t.first.demandType == DemandType.Intracity_OPS.type
-         binding.toolbar.visibility = View.GONE
+          val isOpsArranged = t.first.demandType == DemandType.Intracity_OPS.type
+          binding.toolbar.visibility = View.GONE
           binding.intracityTitle.visibility = View.VISIBLE
           binding.llTripDetails.visibility = View.GONE
           binding.clAdhocintracity.root.visibility = View.VISIBLE
@@ -368,8 +368,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
           binding.clAdhocintracity.tripSettled = t.second.isSettled
 
           if(isOpsArranged) {
-              binding.clAdhocintracity.buttonCta.visibility = View.VISIBLE
-              viewModel.updateCtaConfig()
+            binding.clAdhocintracity.buttonCta.visibility = View.VISIBLE
+            t.first.fmsTicketId?.let{ viewModel.fmsTicketId = it}
+            viewModel.updateCtaConfig()
           }
           else
             binding.clAdhocintracity.buttonCta.visibility = View.GONE
@@ -632,19 +633,19 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
    * Download invoice using backend API (returns pre-signed URL directly)
    */
   private fun downloadInvoice() {
-    uiUtils.showProgress()
-    
-    // Prepare file for invoice
-    currentInvoiceFile = getInvoiceFile()
-    
-    if (currentInvoiceFile == null )  {
-      uiUtils.hideProgress()
-      uiUtils.showSnackbar("Unable to prepare invoice file")
-      return
-    }
-    
-    // Call backend API to get pre-signed URL
-    viewModel.fetchInvoiceDownloadUrl()
+    viewModel.fmsTicketId?.takeIf { it.isNotEmpty() }?.let { ticketId ->
+      uiUtils.showProgress()
+      currentInvoiceFile = getInvoiceFile()
+
+      if (currentInvoiceFile == null) {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Unable to prepare invoice file")
+        return
+      }
+
+      viewModel.fetchInvoiceDownloadUrl(ticketId)
+    } ?: uiUtils.showSnackbar("Unable to fetch invoice - Missing ticket ID")
+
   }
 
     /**
@@ -663,8 +664,13 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
      * Open Invoice Review Activity for GST vendors
      */
     private fun openInvoiceReview() {
-        val intent = InvoiceReviewActivity.invoiceReviewIntent(viewModel.transactionId, this)
+      viewModel.fmsTicketId?.takeIf { it.isNotEmpty() }?.let{
+        val intent = InvoiceReviewActivity.invoiceReviewIntent(
+          it,
+          this
+        )
         invoiceReviewLauncher.launch(intent)
+      }?:uiUtils.showSnackbar("Unable to fetch invoice - Missing ticket ID")
     }
 
   /**
