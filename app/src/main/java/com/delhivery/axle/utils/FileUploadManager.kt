@@ -58,6 +58,12 @@ class FileUploadManager @Inject constructor(
      */
     fun getFileSize(uri: Uri, context: Context): Long {
         return try {
+            // For file:// URIs, read size directly from the File
+            if (uri.scheme == "file") {
+                val file = File(uri.path!!)
+                return if (file.exists()) file.length() else 0L
+            }
+
             context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
                 val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
                 cursor.moveToFirst()

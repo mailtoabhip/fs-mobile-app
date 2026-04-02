@@ -24,6 +24,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
 import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
@@ -38,6 +39,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
 
     @Inject lateinit var documentUtils: DocumentUtils
+    @Inject lateinit var fileCompressor: FileCompressor
 
     private var disputeTypeCode: String = ""
     private var disputeTitle: String = ""
@@ -80,43 +82,45 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
                     .getExtensionFromMimeType(mimeType) ?: "bin"
 
                 val timestamp = System.currentTimeMillis()
-                val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
-                var jpgFile: File
-                var jpgUri: Uri
                 if (extension.lowercase() == "png") {
                     lifecycleScope.launch {
-                        val success = documentUtils.convertPngToJpg(
+                        val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
+                        documentUtils.convertPngToJpg(
                             sourcePath = documentUtils.getPathFromUri(
                                 context = this@FastagDynamicDisputeFormActivity,
                                 uri = uri
                             ),
                             destPath = destPath
                         )
-
-                        jpgFile = File(destPath)
-                        jpgUri = Uri.fromFile(jpgFile)
-
-                        if (isAdditionalFilePicker) {
-                            handleAdditionalFileSelected(jpgUri)
-                        } else {
-                            currentFileFieldId?.let { fieldId ->
-                                handleFileSelected(fieldId, jpgUri)
-                            }
-                        }
+                        val compressedUri = compressAndGetUri(File(destPath), timestamp)
+                        dispatchFileResult(compressedUri)
                     }
                 } else {
-
-                    if (isAdditionalFilePicker) {
-                        handleAdditionalFileSelected(uri)
-                    } else {
-                        currentFileFieldId?.let { fieldId ->
-                            handleFileSelected(fieldId, uri)
-                        }
-                    }
+                    val filePath = documentUtils.getPathFromUri(
+                        context = this@FastagDynamicDisputeFormActivity,
+                        uri = uri
+                    )
+                    val compressedUri = compressAndGetUri(File(filePath), timestamp)
+                    dispatchFileResult(compressedUri)
                 }
             }
         }
         isAdditionalFilePicker = false
+    }
+
+    private fun compressAndGetUri(file: File, timestamp: Long): Uri {
+        val compressedFile = fileCompressor.compressToFile(file, "compressed_$timestamp.jpg")
+        return Uri.fromFile(compressedFile)
+    }
+
+    private fun dispatchFileResult(uri: Uri) {
+        if (isAdditionalFilePicker) {
+            handleAdditionalFileSelected(uri)
+        } else {
+            currentFileFieldId?.let { fieldId ->
+                handleFileSelected(fieldId, uri)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
