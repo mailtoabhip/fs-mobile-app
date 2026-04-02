@@ -54,6 +54,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private var isAdditionalFilePicker = false
     private val fieldViews = mutableMapOf<String, View>()
     private var additionalDocCount = 0
+    private var apiFileFieldCount = 0
 
     companion object {
         private const val MAX_TOTAL_UPLOADS = 3
@@ -279,6 +280,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         val sortedFields = fields.sortedBy { it.displayOrder }
 
         val fileFields = sortedFields.filter { it.fieldTypeEnum == FieldType.FILE }
+        apiFileFieldCount = fileFields.size
         var fileHeaderInserted = false
 
         if (fileFields.isNotEmpty()) {
@@ -463,6 +465,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
     private fun updateAdditionalDocVisibility() {
         binding.llAdditionalDocuments.visibility = View.VISIBLE
+        binding.tvAdditionalDocumentsTitle.visibility =
+            if (apiFileFieldCount >= MAX_TOTAL_UPLOADS) View.GONE else View.VISIBLE
         if (getTotalFileUploadCount() >= MAX_TOTAL_UPLOADS) {
             binding.btnAddDocument.visibility = View.GONE
         } else {
