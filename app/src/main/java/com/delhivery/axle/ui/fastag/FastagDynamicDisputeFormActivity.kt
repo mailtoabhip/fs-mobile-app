@@ -75,7 +75,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private val filePickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
 
                 val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
@@ -85,30 +85,41 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
                 val timestamp = System.currentTimeMillis()
                 if (extension.lowercase() == "png") {
                     lifecycleScope.launch {
-                        val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
-                        documentUtils.convertPngToJpg(
-                            sourcePath = documentUtils.getPathFromUri(
-                                context = this@FastagDynamicDisputeFormActivity,
-                                uri = uri
-                            ),
-                            destPath = destPath
-                        )
-                        val compressedUri = compressAndGetUri(File(destPath), timestamp)
-                        dispatchFileResult(compressedUri)
+                        try {
+                            val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
+                            val converted = documentUtils.convertPngToJpg(
+                                sourcePath = documentUtils.getPathFromUri(
+                                    context = this@FastagDynamicDisputeFormActivity,
+                                    uri = uri
+                                ),
+                                destPath = destPath
+                            )
+                            if (!converted) {
+                                dialogUtils.showErrorDialog("Selected image is corrupted or unsupported. Please choose another image.", 3L)
+                                return@launch
+                            }
+                            val compressedUri = compressAndGetUri(File(destPath), timestamp)
+                            dispatchFileResult(compressedUri)
+                        } catch (e: Exception) {
+                            dialogUtils.showErrorDialog("Selected image is corrupted or unsupported. Please choose another image.", 3L)
+                        }
                     }
                 } else {
-                    val filePath = documentUtils.getPathFromUri(
-                        context = this@FastagDynamicDisputeFormActivity,
-                        uri = uri
-                    )
-                    val compressedUri = compressAndGetUri(File(filePath), timestamp)
-                    dispatchFileResult(compressedUri)
+                    try {
+                        val filePath = documentUtils.getPathFromUri(
+                            context = this@FastagDynamicDisputeFormActivity,
+                            uri = uri
+                        )
+                        val compressedUri = compressAndGetUri(File(filePath), timestamp)
+                        dispatchFileResult(compressedUri)
+                    } catch (e: Exception) {
+                        dialogUtils.showErrorDialog("Selected image is corrupted or unsupported. Please choose another image", 3L)
+                    }
                 }
             }
         }
         isAdditionalFilePicker = false
     }
-
     private fun compressAndGetUri(file: File, timestamp: Long): Uri {
         val compressedFile = fileCompressor.compressToFile(file, "compressed_$timestamp.jpg")
         return Uri.fromFile(compressedFile)

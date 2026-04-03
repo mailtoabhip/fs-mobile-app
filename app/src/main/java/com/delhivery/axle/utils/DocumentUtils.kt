@@ -19,6 +19,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -231,6 +232,7 @@ class DocumentUtils @Inject constructor(
 
         return try {
             val bitmap = BitmapFactory.decodeFile(sourcePath)
+                ?: throw IOException("Unable to decode image. The file may be corrupted or unsupported.")
 
             val jpgBitmap = if (bitmap.hasAlpha()) {
                 Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888).apply {

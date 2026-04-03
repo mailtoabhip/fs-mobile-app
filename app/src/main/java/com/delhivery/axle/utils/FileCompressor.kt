@@ -88,6 +88,7 @@ class FileCompressor @Inject constructor(activity: DaggerAppCompatActivity) {
     options.inJustDecodeBounds = false
 
     var scaledBitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options)
+        ?: throw IOException("Unable to decode image. The file may be corrupted or unsupported.")
 
     //check the rotation of the image and display it properly
     val exif = ExifInterface(imageFile.absolutePath)
