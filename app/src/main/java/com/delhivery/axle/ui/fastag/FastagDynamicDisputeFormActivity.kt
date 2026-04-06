@@ -26,6 +26,8 @@ import com.delhivery.axle.ui.customviews.DynamicTextInputView
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.delhivery.axle.utils.extensions.MimeTypes
+import com.delhivery.axle.utils.extensions.filePickerChooser
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.io.File
@@ -387,32 +389,24 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         return view
     }
 
-    private fun openFilePicker(field: FormField) {//here
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-
-            val mimetypes = arrayOf("image/*")
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
-        }
-
-        try {
-            filePickerLauncher.launch(Intent.createChooser(intent, "Select ${field.displayLabel}"))
-        } catch (e: Exception) {
-            Toast.makeText(this, "No file picker app found", Toast.LENGTH_SHORT).show()
-        }
+    private fun openFilePicker(field: FormField) {
+        launchFilePicker(title = "Select ${field.displayLabel}", isAdditional = false)
     }
 
     private fun openAdditionalFilePicker() {
         isAdditionalFilePicker = true
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
+        launchFilePicker(title = "Select additional document", isAdditional = true)
+    }
+
+    private fun launchFilePicker(title: String, isAdditional: Boolean) {
+        if (isAdditional) {
+            isAdditionalFilePicker = true
         }
+        
+        val chooserIntent = filePickerChooser(title, MimeTypes.IMAGE_JPG, MimeTypes.IMAGE_JPEG)
 
         try {
-            filePickerLauncher.launch(Intent.createChooser(intent, "Select additional document"))
+            filePickerLauncher.launch(chooserIntent)
         } catch (e: Exception) {
             Toast.makeText(this, "No file picker app found", Toast.LENGTH_SHORT).show()
         }

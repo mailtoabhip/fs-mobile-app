@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagTransactionSelectionBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.loadwallet.TransactionType
 
 class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactionSelectionBinding, FastagTransactionSelectionViewModel>() {
 
@@ -147,7 +148,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                             id = txn.txnId ?: "",
                             tollName = txn.tollPlazaName ?: "Unknown",
                             timestamp = formatDateTime(txn.txnDateTime ?: ""),
-                            amount = if (txn.txnType?.toLowerCase() == "debit") -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
+                            amount = if (txn.txnType?.toLowerCase() == TransactionType.Debit.type) -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
                             tollPlazaId = txn.tollPlazaId
                         )
                     }
