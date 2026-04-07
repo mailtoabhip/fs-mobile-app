@@ -40,7 +40,7 @@ class InvoiceReviewViewModelTest : FunSpec({
      * Sets up the repository mock and triggers fetch.
      */
     fun loadMockInvoice(ticketId: String = "TICKET123") {
-        viewModel.transactionId = "TXN123"
+        viewModel.fmsTicketId = "TXN123"
         val mockResponse = InvoiceTestDataFactory.createInvoiceDetails(ticketId = ticketId)
         every { invoiceRepository.getInvoiceDetails("TXN123") } returns Single.just(mockResponse)
         viewModel.fetchInvoiceDetails()
@@ -174,8 +174,8 @@ class InvoiceReviewViewModelTest : FunSpec({
     context("fetchInvoiceDetails") {
         
         context("validation") {
-            test("empty transactionId posts error") {
-                viewModel.transactionId = ""
+            test("empty fmsTicketId posts error") {
+                viewModel.fmsTicketId = ""
 
                 viewModel.fetchInvoiceDetails()
 
@@ -185,7 +185,7 @@ class InvoiceReviewViewModelTest : FunSpec({
 
         context("success scenarios") {
             test("success updates invoiceDetailsLiveData") {
-                viewModel.transactionId = "TXN123"
+                viewModel.fmsTicketId = "TXN123"
                 val mockResponse = InvoiceTestDataFactory.createInvoiceDetails()
                 every { invoiceRepository.getInvoiceDetails("TXN123") } returns Single.just(mockResponse)
 
@@ -196,7 +196,7 @@ class InvoiceReviewViewModelTest : FunSpec({
             }
 
             test("updates centerContactNumber from response") {
-                viewModel.transactionId = "TXN123"
+                viewModel.fmsTicketId = "TXN123"
                 val mockResponse = InvoiceTestDataFactory.createInvoiceDetails(
                     centerContactNumber = "1234567890"
                 )
@@ -210,7 +210,7 @@ class InvoiceReviewViewModelTest : FunSpec({
 
         context("loading state") {
             test("sets loading state correctly during fetch") {
-                viewModel.transactionId = "TXN123"
+                viewModel.fmsTicketId = "TXN123"
                 val loadingStates = viewModel.isLoadingLiveData.captureValues()
                 
                 val mockResponse = InvoiceTestDataFactory.createInvoiceDetails()
@@ -224,7 +224,7 @@ class InvoiceReviewViewModelTest : FunSpec({
 
         context("error handling") {
             test("error sets exceptionLiveData") {
-                viewModel.transactionId = "TXN123"
+                viewModel.fmsTicketId = "TXN123"
                 val error = RuntimeException("Network error")
                 every { invoiceRepository.getInvoiceDetails("TXN123") } returns Single.error(error)
 
@@ -235,7 +235,7 @@ class InvoiceReviewViewModelTest : FunSpec({
             }
 
             test("network timeout sets correct error state") {
-                viewModel.transactionId = "TXN123"
+                viewModel.fmsTicketId = "TXN123"
                 val timeoutError = SocketTimeoutException("Connection timed out")
                 every { invoiceRepository.getInvoiceDetails("TXN123") } returns Single.error(timeoutError)
 
@@ -508,8 +508,8 @@ class InvoiceReviewViewModelTest : FunSpec({
     // ==================== Repository Interaction Verification ====================
 
     context("repository interactions") {
-        test("fetchInvoiceDetails calls repository with correct transactionId") {
-            viewModel.transactionId = "TXN456"
+        test("fetchInvoiceDetails calls repository with correct fmsTicketId") {
+            viewModel.fmsTicketId = "TXN456"
             every { invoiceRepository.getInvoiceDetails("TXN456") } returns 
                 Single.just(InvoiceTestDataFactory.createInvoiceDetails())
 
