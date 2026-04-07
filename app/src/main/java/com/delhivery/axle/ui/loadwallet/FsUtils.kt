@@ -20,3 +20,9 @@ fun WalletTransactionItem.transactionHeading(): String {
 fun WalletTransactionItem.amountDouble(): Double = amount.toDoubleOrNull() ?: 0.0
 
 fun UserWalletResponse.balanceFormatted(): String = "₹${StringUtils.formatAmount(currentBalance)}"
+
+
+enum class TransactionType(val type: String) {
+    Debit("Debit"),
+    Credit("Credit")
+}

@@ -10,8 +10,10 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormField
@@ -21,14 +23,25 @@ import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
+import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.delhivery.axle.utils.extensions.MimeTypes
+import com.delhivery.axle.utils.extensions.filePickerChooser
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
+import java.io.File
+import javax.inject.Inject
 
 class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDisputeFormBinding, FastagDynamicDisputeFormViewModel>() {
 
     override fun getViewModelClass() = FastagDynamicDisputeFormViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_dynamic_dispute_form
     override fun requireConnection() = true
+
+
+    @Inject lateinit var documentUtils: DocumentUtils
+    @Inject lateinit var fileCompressor: FileCompressor
 
     private var disputeTypeCode: String = ""
     private var disputeTitle: String = ""
@@ -43,6 +56,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private var isAdditionalFilePicker = false
     private val fieldViews = mutableMapOf<String, View>()
     private var additionalDocCount = 0
+    private var apiFileFieldCount = 0
 
     companion object {
         private const val MAX_TOTAL_UPLOADS = 3
@@ -63,18 +77,64 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private val filePickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             result.data?.data?.let { uri ->
-                if (isAdditionalFilePicker) {
-                    handleAdditionalFileSelected(uri)
+
+                val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
+                val extension = MimeTypeMap.getSingleton()
+                    .getExtensionFromMimeType(mimeType) ?: "bin"
+
+                val timestamp = System.currentTimeMillis()
+                if (extension.lowercase() == "png") {
+                    lifecycleScope.launch {
+                        try {
+                            val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
+                            val converted = documentUtils.convertPngToJpg(
+                                sourcePath = documentUtils.getPathFromUri(
+                                    context = this@FastagDynamicDisputeFormActivity,
+                                    uri = uri
+                                ),
+                                destPath = destPath
+                            )
+                            if (!converted) {
+                                dialogUtils.showErrorDialog("Selected image is corrupted or unsupported. Please choose another image.", 3L)
+                                return@launch
+                            }
+                            val compressedUri = compressAndGetUri(File(destPath), timestamp)
+                            dispatchFileResult(compressedUri)
+                        } catch (e: Exception) {
+                            dialogUtils.showErrorDialog("Selected image is corrupted or unsupported. Please choose another image.", 3L)
+                        }
+                    }
                 } else {
-                    currentFileFieldId?.let { fieldId ->
-                        handleFileSelected(fieldId, uri)
+                    try {
+                        val filePath = documentUtils.getPathFromUri(
+                            context = this@FastagDynamicDisputeFormActivity,
+                            uri = uri
+                        )
+                        val compressedUri = compressAndGetUri(File(filePath), timestamp)
+                        dispatchFileResult(compressedUri)
+                    } catch (e: Exception) {
+                        dialogUtils.showErrorDialog("Selected image is corrupted or unsupported. Please choose another image", 3L)
                     }
                 }
             }
         }
         isAdditionalFilePicker = false
+    }
+    private fun compressAndGetUri(file: File, timestamp: Long): Uri {
+        val compressedFile = fileCompressor.compressToFile(file, "compressed_$timestamp.jpg")
+        return Uri.fromFile(compressedFile)
+    }
+
+    private fun dispatchFileResult(uri: Uri) {
+        if (isAdditionalFilePicker) {
+            handleAdditionalFileSelected(uri)
+        } else {
+            currentFileFieldId?.let { fieldId ->
+                handleFileSelected(fieldId, uri)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -233,6 +293,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         val sortedFields = fields.sortedBy { it.displayOrder }
 
         val fileFields = sortedFields.filter { it.fieldTypeEnum == FieldType.FILE }
+        apiFileFieldCount = fileFields.size
         var fileHeaderInserted = false
 
         if (fileFields.isNotEmpty()) {
@@ -329,48 +390,23 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     private fun openFilePicker(field: FormField) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "*/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-
-            // Set MIME types based on allowed file types
-            field.allowedFileTypes?.let { allowedTypes ->
-                val mimeTypes = allowedTypes.mapNotNull { type ->
-                    when (type.uppercase()) {
-                        "JPG", "JPEG" -> "image/jpeg"
-                        "PNG" -> "image/png"
-                        "PDF" -> "application/pdf"
-                        "DOC" -> "application/msword"
-                        "DOCX" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        else -> null
-                    }
-                }
-                if (mimeTypes.isNotEmpty()) {
-                    putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes.toTypedArray())
-                    if (mimeTypes.first().startsWith("image/")) {
-                        type = "image/*"
-                    }
-                }
-            }
-        }
-
-        try {
-            filePickerLauncher.launch(Intent.createChooser(intent, "Select ${field.displayLabel}"))
-        } catch (e: Exception) {
-            Toast.makeText(this, "No file picker app found", Toast.LENGTH_SHORT).show()
-        }
+        launchFilePicker(title = "Select ${field.displayLabel}", isAdditional = false)
     }
 
     private fun openAdditionalFilePicker() {
         isAdditionalFilePicker = true
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+        launchFilePicker(title = "Select additional document", isAdditional = true)
+    }
+
+    private fun launchFilePicker(title: String, isAdditional: Boolean) {
+        if (isAdditional) {
+            isAdditionalFilePicker = true
         }
+        
+        val chooserIntent = filePickerChooser(title, MimeTypes.IMAGE_JPG, MimeTypes.IMAGE_JPEG)
 
         try {
-            filePickerLauncher.launch(Intent.createChooser(intent, "Select additional document"))
+            filePickerLauncher.launch(chooserIntent)
         } catch (e: Exception) {
             Toast.makeText(this, "No file picker app found", Toast.LENGTH_SHORT).show()
         }
@@ -434,6 +470,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
     private fun updateAdditionalDocVisibility() {
         binding.llAdditionalDocuments.visibility = View.VISIBLE
+        binding.tvAdditionalDocumentsTitle.visibility =
+            if (apiFileFieldCount >= MAX_TOTAL_UPLOADS) View.GONE else View.VISIBLE
         if (getTotalFileUploadCount() >= MAX_TOTAL_UPLOADS) {
             binding.btnAddDocument.visibility = View.GONE
         } else {

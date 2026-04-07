@@ -108,11 +108,18 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
      */
     fun updateFieldValue(fieldId: String, value: Any?) {
         fieldValues[fieldId] = value
+
+        // Clear any validation error for this field while user is editing
+        val currentValidation = validationStateData.value?.toMutableMap() ?: mutableMapOf()
+        currentValidation.remove(fieldId)
+        validationStateData.value = currentValidation
+
         checkMandatoryFieldsComplete()
     }
 
     /**
-     * Check if all mandatory fields have values and update submit button state
+     * Check if all mandatory fields have values and no validation errors exist,
+     * then update submit button state
      */
     fun checkMandatoryFieldsComplete() {
         val mandatoryFields = formConfig?.fields?.filter { it.mandatory } ?: emptyList()
@@ -132,8 +139,11 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
                 }
             }
         }
-        
-        submitEnabledData.value = allComplete
+
+        // Also disable submit if any field (mandatory or not) has a validation error
+        val hasValidationErrors = validationStateData.value?.any { !it.value.isValid } == true
+
+        submitEnabledData.value = allComplete && !hasValidationErrors
     }
 
     /**
@@ -156,7 +166,8 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
                 uri,
                 field.allowedFileTypes ?: emptyList(),
                 field.maxFileSizeMB ?: 10,
-                context
+                context,
+                validationErrorMessage = field.validationErrorMessage?:""
             )
 
             val currentValidation = validationStateData.value?.toMutableMap() ?: mutableMapOf()
@@ -173,6 +184,12 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     fun removeFile(fieldId: String) {
         fileUris.remove(fieldId)
         fieldValues.remove(fieldId)
+
+        // Clear any validation error for this field
+        val currentValidation = validationStateData.value?.toMutableMap() ?: mutableMapOf()
+        currentValidation.remove(fieldId)
+        validationStateData.value = currentValidation
+
         checkMandatoryFieldsComplete()
     }
 
@@ -295,7 +312,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
                 inputStream.copyTo(outputStream)
             }
             
-            val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
+            val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
             val requestBody = RequestBody.create(MediaType.parse(mimeType), file)
             MultipartBody.Part.createFormData(partName, file.name, requestBody)
         } catch (e: Exception) {
