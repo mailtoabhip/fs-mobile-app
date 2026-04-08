@@ -930,6 +930,34 @@ $reportingCentre
 
   }*/
 
+    fun showEscalateDialog(
+        title: String,
+        message: String,
+        positiveClickListener: (DialogInterface) -> Unit
+    ) {
+        val actionBtnColor = ResourcesCompat.getColor(activity.resources, R.color.colorAccent, null)
+
+        val dialog = AlertDialog.Builder(activity, R.style.DatePickerTheme)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Call") { d, _ -> positiveClickListener(d) }
+            .setNegativeButton("Close", null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(actionBtnColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(actionBtnColor)
+        }
+
+        if (!activity.isFinishing) {
+            dialog.show()
+            dialog.window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+    }
+
 }
 
 

@@ -49,7 +49,7 @@ class PlacementsActivity : BaseActivity<ActivityPlacementsBinding, HomePlacement
 
         // Handle window insets for edge-to-edge display (API 35+)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+            WindowInsetsUtils.applySystemWindowInsets(binding.main)
         }
 
         // Setup ViewPager with adapter
@@ -121,8 +121,7 @@ class PlacementsActivity : BaseActivity<ActivityPlacementsBinding, HomePlacement
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.nav_call).isVisible = false
-        menu.findItem(R.id.nav_filter)?.isVisible = false
+        menu.findItem(R.id.nav_call).isVisible = true
         return true
     }
 

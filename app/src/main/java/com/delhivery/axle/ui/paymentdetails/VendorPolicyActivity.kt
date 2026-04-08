@@ -57,6 +57,7 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
                 )
                 userPrefs.vendorPolicyAccepted = true
+                userPrefs.verificationStatus="pending"
                 navigationUtils.showKycSubmittedDialog()
             }
         })

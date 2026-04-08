@@ -18,6 +18,9 @@ import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
+import com.delhivery.axle.ui.fastag.FastagDisputeIssuesActivity
+import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormActivity
+import com.delhivery.axle.ui.fastag.FastagTransactionSelectionActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.invoicereview.InvoiceReviewActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
@@ -50,6 +53,7 @@ import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagRechargeActivity
+import com.delhivery.axle.ui.fastag.FastagTransactionDetailActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.ui.profile.PlacementsActivity
@@ -406,6 +410,26 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
   internal abstract fun bindPlacementsActivity(): PlacementsActivity
 
+  /* FASTag Transaction Detail activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagTransactionDetailActivityModule::class])
+  internal abstract fun bindFastagTransactionDetailActivity(): FastagTransactionDetailActivity
+
+  /* FASTag Dispute Issues activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagDisputeIssuesActivityModule::class])
+  internal abstract fun bindFastagDisputeIssuesActivity(): FastagDisputeIssuesActivity
+
+  /* FASTag Transaction Selection activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagTransactionSelectionActivityModule::class])
+  internal abstract fun bindFastagTransactionSelectionActivity(): FastagTransactionSelectionActivity
+
+  /* FASTag Dynamic Dispute Form activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagDynamicDisputeFormActivityModule::class])
+  internal abstract fun bindFastagDynamicDisputeFormActivity(): FastagDynamicDisputeFormActivity
+
   /* Invoice Review activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsInvoiceReviewActivityModule::class])
@@ -615,6 +639,18 @@ internal abstract class AbsFastagRechargeActivityModule : ActivityModule<FastagR
 
 @Module
 internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()
+
+@Module
+internal abstract class AbsFastagDisputeIssuesActivityModule : ActivityModule<FastagDisputeIssuesActivity>()
+
+@Module
+internal abstract class AbsFastagTransactionSelectionActivityModule : ActivityModule<FastagTransactionSelectionActivity>()
+
+@Module
+internal abstract class AbsFastagTransactionDetailActivityModule : ActivityModule<FastagTransactionDetailActivity>()
+
+@Module
+internal abstract class AbsFastagDynamicDisputeFormActivityModule : ActivityModule<FastagDynamicDisputeFormActivity>()
 
 @Module
 internal abstract class AbsInvoiceReviewActivityModule : ActivityModule<InvoiceReviewActivity>()

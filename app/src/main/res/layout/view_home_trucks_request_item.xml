@@ -265,21 +265,19 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:weightSum="1">
 
                         <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btn_fastag_details"
                             android:layout_width="0dp"
                             android:layout_height="@dimen/size_36dp"
                             android:layout_weight="1"
-                            android:layout_marginEnd="@dimen/size_8dp"
                             android:text="Details"
                             android:textAllCaps="false"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_14sp"
                             android:background="@drawable/bg_all_round_corner_white_boundary"
                             android:paddingStart="@dimen/size_12dp"
-                            android:paddingEnd="@dimen/size_12dp"
                             android:minHeight="0dp"
                             android:elevation="0dp"
                             android:translationZ="0dp"
@@ -303,7 +301,8 @@
                             android:elevation="0dp"
                             android:translationZ="0dp"
                             android:stateListAnimator="@null"
-                            android:outlineProvider="none"/>
+                            android:outlineProvider="none"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 
@@ -391,7 +390,7 @@
                     android:textAllCaps="false"
                     android:gravity="center"
                     android:textColor="@color/black"
-                    android:visibility="@{request.statusVisibilty()}"
+                    android:visibility="gone"
                     android:background="@drawable/bg_all_round_corner_white_boundary"
                     android:text="@string/action_activate_truck"/>
 

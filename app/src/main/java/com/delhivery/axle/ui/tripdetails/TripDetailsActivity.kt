@@ -331,7 +331,6 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     super.onDestroy()
   }
 
-
   private fun refreshData() {
       binding.refreshing = true
       binding.error = false

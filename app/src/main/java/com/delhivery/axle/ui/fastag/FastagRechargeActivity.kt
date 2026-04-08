@@ -128,8 +128,9 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 val amount = raw.toDoubleOrNull() ?: 0.0
                 selectedAmount = amount
 
-                val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
-                val isInvalid = amount > 100000 || hasLeadingZero
+                val isZeroEntered = raw.isNotEmpty() && amount == 0.0
+                val isLessThanOne = raw.isNotEmpty() && amount > 0.0 && amount < 1.0
+                val isInvalid = isZeroEntered || isLessThanOne || amount > 100000
                 binding.tvAmountError.visibility = if (isInvalid) View.VISIBLE else View.GONE
 
                 updateChipSelection(amount)
@@ -170,10 +171,9 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
 
     private fun updateSliderState() {
         val raw = binding.etAmount.text.toString()
-        val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
         val hasInsufficientBalance = selectedAmount > 0 && selectedAmount > walletBalance
-        val isInvalidAmount = selectedAmount > 100000 || hasLeadingZero
-        val enabled = selectedAmount > 0 && !hasInsufficientBalance && !isInvalidAmount
+        val isInvalidAmount = selectedAmount < 1.0 || selectedAmount > 100000
+        val enabled = selectedAmount >= 1.0 && !hasInsufficientBalance && !isInvalidAmount
         val container = binding.slideToPayContainer
         val thumb = binding.ivSlideThumb
         val label = binding.tvSlideLabel
@@ -208,11 +208,21 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         val normalBalance = binding.tvWalletBalance
 
         if (shouldShow) {
-            val deficit = Math.ceil(selectedAmount - walletBalance).toInt()
+            val deficit = selectedAmount - walletBalance
+            val deficitFormatted = if (deficit == deficit.toInt().toDouble()) {
+                deficit.toInt().toString()
+            } else {
+                String.format("%.2f", deficit)
+            }
             binding.tvInsufficientMessage.text =
-                "Please add at least ₹$deficit to your Delhivery Wallet to recharge your FASTag"
+                "Please add at least ₹$deficitFormatted to your Delhivery Wallet to recharge your FASTag"
 
-            lowBalanceText.text = "LOW BALANCE: ₹${StringUtils.formatAmount(walletBalance)}"
+            val balanceFormatted = if (walletBalance == walletBalance.toInt().toDouble()) {
+                StringUtils.formatAmount(walletBalance)
+            } else {
+                StringUtils.formatDecimalAmount(walletBalance)
+            }
+            lowBalanceText.text = "LOW BALANCE: ₹$balanceFormatted"
             if (lowBalanceText.visibility != View.VISIBLE) {
                 lowBalanceText.visibility = View.VISIBLE
                 normalBalance.visibility = View.GONE
@@ -256,9 +266,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         val container = binding.slideToPayContainer
 
         thumb.setOnTouchListener { view, event ->
-            val raw = binding.etAmount.text.toString()
-            val hasLeadingZero = raw.length > 1 && raw.startsWith("0") && !raw.startsWith("0.")
-            if (selectedAmount <= 0 || selectedAmount > walletBalance || selectedAmount > 100000 || hasLeadingZero) return@setOnTouchListener false
+            if (selectedAmount < 1.0 || selectedAmount > walletBalance || selectedAmount > 100000) return@setOnTouchListener false
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -298,7 +306,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     }
 
     private fun onSlideCompleted() {
-        if (selectedAmount <= 0) {
+        if (selectedAmount < 1.0) {
             Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
             resetSlider()
             return
@@ -349,7 +357,12 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     private fun setupObservers() {
         viewModel.walletBalanceData.observe(this, androidx.lifecycle.Observer { balance ->
             walletBalance = balance
-            binding.tvWalletBalance.text = "₹${StringUtils.formatAmount(balance)}"
+            val balanceFormatted = if (balance == balance.toInt().toDouble()) {
+                StringUtils.formatAmount(balance)
+            } else {
+                StringUtils.formatDecimalAmount(balance)
+            }
+            binding.tvWalletBalance.text = "₹$balanceFormatted"
             checkInsufficientBalanceImmediate()
         })
 
@@ -358,7 +371,14 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 resetSlider()
                 // Update wallet balance on screen
                 it.updatedWalletBalance?.let { newBalance ->
-                    binding.tvWalletBalance.text = "₹${StringUtils.formatAmount(newBalance)}"
+                    walletBalance = newBalance
+                    val balanceFormatted = if (newBalance == newBalance.toInt().toDouble()) {
+                        StringUtils.formatAmount(newBalance)
+                    } else {
+                        StringUtils.formatDecimalAmount(newBalance)
+                    }
+                    binding.tvWalletBalance.text = "₹$balanceFormatted"
+                    checkInsufficientBalanceImmediate()
                 }
                 // Update FASTag balance on screen
                 it.fastagBalance?.let { newFastagBalance ->
@@ -376,9 +396,21 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             }
         })
 
-        viewModel.fastagBlacklistedData.observe(this, androidx.lifecycle.Observer { isBlacklisted ->
-            fastagStatus = if (isBlacklisted) "blacklisted" else "active"
-            binding.layoutBlacklistWarning.visibility = if (isBlacklisted) View.VISIBLE else View.GONE
+        viewModel.fastagStatusData.observe(this, androidx.lifecycle.Observer { statusResponse ->
+            statusResponse?.let {
+                fastagStatus = it.status
+                // Display custom message if available, otherwise don't show the status message
+                if (!it.message.isNullOrEmpty()) {
+                    binding.layoutBlacklistWarning.visibility = View.VISIBLE
+                    binding.tvBlacklistMessage.text = it.message
+                } else {
+                    binding.layoutBlacklistWarning.visibility = View.GONE
+
+                }
+            } ?: run {
+                // If response is null, hide the warning
+                binding.layoutBlacklistWarning.visibility = View.GONE
+            }
         })
 
         viewModel.exceptionLiveData.observe(this, androidx.lifecycle.Observer {

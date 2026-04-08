@@ -458,10 +458,11 @@
                     app:tint="#212121" />
 
                 <TextView
+                    android:id="@+id/tvBlacklistMessage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Your FASTag is currently blacklisted. Recharge request may be decline by the bank."
+                    tools:text="Your FASTag is currently blacklisted. Recharge request may be decline by the bank."
                     android:textColor="#212121"
                     android:textSize="@dimen/text_14sp" />
             </LinearLayout>

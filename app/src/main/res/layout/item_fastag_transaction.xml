@@ -12,70 +12,105 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/size_20dp"
-        android:paddingEnd="@dimen/size_20dp"
-        android:paddingTop="@dimen/size_16dp"
-        android:paddingBottom="@dimen/size_16dp">
+        android:paddingHorizontal="@dimen/size_24dp"
+        android:paddingVertical="@dimen/size_16dp"
+        >
+
+
 
         <!-- Top Row: Transaction ID and Amount -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <!-- Transaction ID -->
-            <TextView
-                android:id="@+id/tvTransactionId"
+            <!-- LEFT BLOCK : ID + timestamp + toll -->
+            <LinearLayout
+                android:id="@+id/leftBlock"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#505361"/>
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/rightBlock">
 
-            <!-- Amount -->
+                <TextView
+                    android:id="@+id/tvTransactionId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1E293B" />
+
+                <TextView
+                    android:id="@+id/tvTimestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="13sp"
+                    android:textColor="#8F9198"/>
+
+                <TextView
+                    android:id="@+id/tvTollName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textSize="13sp"
+                    android:textColor="#8F9198"/>
+
+            </LinearLayout>
+
+            <!-- Dispute Status Capsule -->
             <TextView
-                android:id="@+id/tvAmount"
+                android:id="@+id/tvDisputeStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:paddingHorizontal="@dimen/size_8dp"
+                android:paddingVertical="@dimen/size_4dp"
+                android:layout_marginBottom="@dimen/size_4dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:includeFontPadding="false"
+                android:text="Dispute submitted"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="#1F2937"/>
-        </LinearLayout>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Timestamp -->
-        <TextView
-            android:id="@+id/tvTimestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="13sp"
-            android:textColor="#8F9198"/>
+            <LinearLayout
+                android:id="@+id/rightBlock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/size_6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvDisputeStatus">
 
-        <!-- Toll Name -->
-        <TextView
-            android:id="@+id/tvTollName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="13sp"
-            android:textColor="#8F9198"/>
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#0F172A" />
 
-        <TextView
-            android:id="@+id/tvAvailableBalance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="12sp"
-            android:textColor="#9CA3AF"
-            android:visibility="gone"/>
+                <ImageView
+                    android:id="@+id/ivDetailsIcon"
+                    android:layout_width="@dimen/size_24dp"
+                    android:layout_height="@dimen/size_24dp"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:src="@drawable/ic_chevron_right_white"
+                    app:tint="#9CA3AF" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </LinearLayout>
 
     <!-- Bottom divider -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/size_1dp"
         android:background="#E0E0E0" />
 
 </LinearLayout>

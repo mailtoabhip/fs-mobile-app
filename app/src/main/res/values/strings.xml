@@ -1051,12 +1051,19 @@
   <string name="label_fastag_no_space">Fastag</string>
   <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
   <string name="label_bidding">Bidding</string>
+    <!-- Accessibility strings for dynamic dispute form -->
+    <string name="back_button">Navigate back</string>
+    <string name="upload_file_button">Upload file</string>
+    <string name="upload_file_icon">Upload icon</string>
+    <string name="remove_file">Remove file</string>
+    <string name="file_thumbnail">File preview thumbnail</string>
+
     <string name="str_tax_invoice">Tax Invoice</string>
 
   <!-- Invoice Review Flow Strings -->
   <string name="invoice_review_title">Review Invoice</string>
   <string name="invoice_already_processed">This invoice has already been processed</string>
-  
+
   <!-- Invoice Review Validation Messages -->
   <string name="error_transaction_id_required">Transaction ID is required</string>
   <string name="error_invoice_number_required">Invoice number is required</string>
@@ -1068,7 +1075,7 @@
   <string name="error_enter_invoice_date">Please enter invoice date</string>
   <string name="invoice_action_success">Success</string>
   <string name="invoice_rejection_remark">Rejected by Vendor</string>
-  
+
   <!-- Invoice Confirmation Dialog -->
   <string name="dialog_accept_invoice_title">Accept Invoice?</string>
   <string name="dialog_accept_invoice_message">Are you sure you want to accept this invoice for payment processing?</string>
@@ -1076,7 +1083,7 @@
   <string name="dialog_reject_invoice_title">Reject Invoice?</string>
   <string name="dialog_reject_invoice_message">Please reach out to the centre at %s for re-raising of invoice acceptance request.</string>
   <string name="dialog_reject_invoice_confirm">Confirm Reject</string>
-  
+
   <!-- Trip CTA Buttons -->
   <string name="cta_refresh">Refresh</string>
   <string name="cta_download_invoice">Download Invoice</string>
