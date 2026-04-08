@@ -32,7 +32,7 @@
         android:id="@+id/tv_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@{`₹ ` + String.format(`%.2f`, item.amount)}"
+        android:text="@{item.amount != null ? `₹ ` + String.format(`%.2f`, item.amount) : `₹ 0.00`}"
         android:textColor="@color/heading_black"
         android:textSize="@dimen/text_12sp"
         android:textStyle="bold"

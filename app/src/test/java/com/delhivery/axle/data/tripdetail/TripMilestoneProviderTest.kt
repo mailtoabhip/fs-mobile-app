@@ -157,7 +157,7 @@ class TripMilestoneProviderTest : FunSpec({
                 invoiceStatusInfo = TripTestDataFactory.createGstVendorInvoiceInfo()
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones shouldHaveSize 7
             milestones[0].id shouldBe MilestoneIds.ARRIVED_AT_PICKUP
@@ -174,7 +174,7 @@ class TripMilestoneProviderTest : FunSpec({
                 invoiceStatusInfo = TripTestDataFactory.createGstVendorInvoiceInfo(invoiceStatus = null)
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[4].status shouldBe MilestoneStatus.PENDING
         }
@@ -186,7 +186,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[4].status shouldBe MilestoneStatus.COMPLETED
             milestones[5].status shouldBe MilestoneStatus.PENDING
@@ -199,7 +199,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[4].status shouldBe MilestoneStatus.COMPLETED
             milestones[5].status shouldBe MilestoneStatus.COMPLETED
@@ -212,7 +212,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[5].status shouldBe MilestoneStatus.COMPLETED
         }
@@ -224,7 +224,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[6].status shouldBe MilestoneStatus.COMPLETED
             milestones[6].displayName shouldBe "Payment Released"
@@ -235,7 +235,7 @@ class TripMilestoneProviderTest : FunSpec({
                 failureMessage = "Insufficient funds"
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[6].status shouldBe MilestoneStatus.FAILED
             milestones[6].displayName shouldBe "Payment Failed"
@@ -247,7 +247,7 @@ class TripMilestoneProviderTest : FunSpec({
                 invoiceStatusInfo = TripTestDataFactory.createGstVendorInvoiceInfo()
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[0].displayName shouldBe "Arrived at Pickup"
             milestones[1].displayName shouldBe "Loaded"
@@ -256,6 +256,29 @@ class TripMilestoneProviderTest : FunSpec({
             milestones[4].displayName shouldBe "Accept Invoice / Billing Under Review"
             milestones[5].displayName shouldBe "Invoice Accepted"
             milestones[6].displayName shouldBe "Payment Released"
+        }
+
+        test("uses isGstVerified fallback when invoiceStatusInfo.isGstVendor is null") {
+            val tripDetails = TripTestDataFactory.createBaseTripDetails(
+                invoiceStatusInfo = TripTestDataFactory.createGstVendorInvoiceInfo().copy(isGstVendor = false)
+            )
+
+            // When isGstVendor is false but isGstVerified is true, should still use non-GST flow
+            // because invoiceStatusInfo.isGstVendor takes precedence
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = true)
+
+            milestones shouldHaveSize 5 // Non-GST flow
+        }
+
+        test("invoiceStatusInfo.isGstVendor takes precedence over isGstVerified") {
+            val tripDetails = TripTestDataFactory.createBaseTripDetails(
+                invoiceStatusInfo = TripTestDataFactory.createGstVendorInvoiceInfo() // isGstVendor = true
+            )
+
+            // Even though isGstVerified is false, invoiceStatusInfo.isGstVendor = true takes precedence
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
+
+            milestones shouldHaveSize 7 // GST flow
         }
     }
 
@@ -268,7 +291,7 @@ class TripMilestoneProviderTest : FunSpec({
                 invoiceStatusInfo = TripTestDataFactory.createNonGstVendorInvoiceInfo()
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones shouldHaveSize 5
             milestones[0].id shouldBe MilestoneIds.ARRIVED_AT_PICKUP
@@ -283,7 +306,7 @@ class TripMilestoneProviderTest : FunSpec({
                 invoiceStatusInfo = TripTestDataFactory.createNonGstVendorInvoiceInfo()
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[0].status shouldBe MilestoneStatus.PENDING
             milestones[1].status shouldBe MilestoneStatus.PENDING
@@ -299,7 +322,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[4].status shouldBe MilestoneStatus.COMPLETED
         }
@@ -307,7 +330,7 @@ class TripMilestoneProviderTest : FunSpec({
         test("fully paid non-GST vendor trip") {
             val tripDetails = TripTestDataFactory.createPaidNonGstVendorTrip()
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[0].status shouldBe MilestoneStatus.COMPLETED // Arrived
             milestones[1].status shouldBe MilestoneStatus.COMPLETED // Loaded
@@ -328,7 +351,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[3].status shouldBe MilestoneStatus.COMPLETED
         }
@@ -341,7 +364,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[3].status shouldBe MilestoneStatus.COMPLETED
         }
@@ -354,7 +377,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[3].status shouldBe MilestoneStatus.COMPLETED
         }
@@ -367,7 +390,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[3].status shouldBe MilestoneStatus.PENDING
         }
@@ -383,7 +406,7 @@ class TripMilestoneProviderTest : FunSpec({
                 updateInfo = TripTestDataFactory.createStatusUpdateInfo(completed = true)
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[2].status shouldBe MilestoneStatus.COMPLETED
         }
@@ -398,7 +421,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[2].status shouldBe MilestoneStatus.PENDING
         }
@@ -408,16 +431,22 @@ class TripMilestoneProviderTest : FunSpec({
 
     context("Null Invoice Status Info") {
         
-        test("returns non-GST flow when invoiceStatusInfo is null") {
+        test("returns non-GST flow when invoiceStatusInfo is null and isGstVerified is false") {
             val tripDetails = TripTestDataFactory.createBaseTripDetails(invoiceStatusInfo = null)
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones shouldHaveSize 5
         }
-    }
 
-    // ==================== Payment Timestamp Tests ====================
+        test("returns GST flow when invoiceStatusInfo is null but isGstVerified is true") {
+            val tripDetails = TripTestDataFactory.createBaseTripDetails(invoiceStatusInfo = null)
+
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = true)
+
+            milestones shouldHaveSize 7
+        }
+    }
 
     context("Payment Timestamp") {
         
@@ -430,7 +459,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[6].status shouldBe MilestoneStatus.COMPLETED
             milestones[6].timestamp.shouldNotBeNull()
@@ -445,7 +474,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[6].status shouldBe MilestoneStatus.FAILED
             milestones[6].timestamp.shouldNotBeNull()
@@ -459,7 +488,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[6].status shouldBe MilestoneStatus.COMPLETED
             milestones[6].timestamp.shouldBeNull()
@@ -473,13 +502,12 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[6].status shouldBe MilestoneStatus.FAILED
             milestones[6].subtitle.shouldBeNull()
         }
     }
-
     // ==================== Under Finance Review Status Tests ====================
 
     context("Under Finance Review Status") {
@@ -491,7 +519,7 @@ class TripMilestoneProviderTest : FunSpec({
                 )
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[5].status shouldBe MilestoneStatus.PENDING
         }
@@ -538,7 +566,7 @@ class TripMilestoneProviderTest : FunSpec({
         test("paid GST vendor trip has all milestones completed") {
             val tripDetails = TripTestDataFactory.createPaidGstVendorTrip()
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[0].status shouldBe MilestoneStatus.COMPLETED // Arrived
             milestones[1].status shouldBe MilestoneStatus.COMPLETED // Loaded
@@ -551,7 +579,7 @@ class TripMilestoneProviderTest : FunSpec({
         test("pending invoice review trip shows correct states") {
             val tripDetails = TripTestDataFactory.createPendingInvoiceReviewTrip()
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[4].status shouldBe MilestoneStatus.COMPLETED // Accept Invoice (under review)
             milestones[5].status shouldBe MilestoneStatus.PENDING   // Invoice Accepted
@@ -569,7 +597,7 @@ class TripMilestoneProviderTest : FunSpec({
                 updateInfo = TripTestDataFactory.createStatusUpdateInfo(arrived = true)
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[0].status shouldBe MilestoneStatus.COMPLETED
             milestones[1].status shouldBe MilestoneStatus.PENDING
@@ -582,7 +610,7 @@ class TripMilestoneProviderTest : FunSpec({
                 updateInfo = null
             )
 
-            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails)
+            val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
             milestones[0].status shouldBe MilestoneStatus.PENDING
             milestones[1].status shouldBe MilestoneStatus.PENDING

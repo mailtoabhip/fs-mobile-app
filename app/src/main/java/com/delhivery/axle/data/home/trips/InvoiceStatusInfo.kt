@@ -7,22 +7,22 @@ import java.io.Serializable
  * Invoice status information for GST vendors
  */
 data class InvoiceStatusInfo(
-    @SerializedName("is_gst_vendor") val isGstVendor: Boolean,
-    @SerializedName("ticket_status") val ticketStatus: String?,//attended, closed, paid
-    @SerializedName("invoice_status") val invoiceStatus: String?,//(invoiced, paid, payment_failed, under_finance_review)
-    @SerializedName("show_review_invoice_cta") val showReviewInvoiceCta: Boolean,
-    @SerializedName("show_download_invoice") val showDownloadInvoice: Boolean,
-    @SerializedName("payment_info") val paymentInfo: InvoicePaymentInfo?,
-    @SerializedName("failure_message") val failureMessage: String?
+    @SerializedName("is_gst_vendor") val isGstVendor: Boolean? = null,
+    @SerializedName("ticket_status") val ticketStatus: String? = null,//attended, closed, paid
+    @SerializedName("invoice_status") val invoiceStatus: String? = null,//(invoiced, paid, payment_failed, under_finance_review)
+    @SerializedName("show_review_invoice_cta") val showReviewInvoiceCta: Boolean = false,
+    @SerializedName("show_download_invoice") val showDownloadInvoice: Boolean = false,
+    @SerializedName("payment_info") val paymentInfo: InvoicePaymentInfo? = null,
+    @SerializedName("failure_message") val failureMessage: String? = null
 ) : Serializable
 
 /**
  * Payment information for settled invoices
  */
 data class InvoicePaymentInfo(
-    @SerializedName("payment_timestamp") val paymentTimestamp: String?,
-    @SerializedName("utr") val utr: String?,
-    @SerializedName("amount") val amount: Double?
+    @SerializedName("payment_timestamp") val paymentTimestamp: String? = null,
+    @SerializedName("utr") val utr: String? = null,
+    @SerializedName("amount") val amount: Double? = null
 ) : Serializable
 
 

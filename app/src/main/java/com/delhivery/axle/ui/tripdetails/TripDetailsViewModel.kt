@@ -1134,7 +1134,7 @@ class TripDetailsViewModel @Inject constructor(
   fun updateMilestones(isOpsArranged : Boolean) {
       val milestones = if(isOpsArranged){
           TripMilestoneProvider.getOpsArrangedIntracityMilestones(
-              tripDetails = tripDetail
+              tripDetails = tripDetail, isGstVerified = userPrefs.isGstVerfied
           )
       }else{
           TripMilestoneProvider.getIntracityMilestones(

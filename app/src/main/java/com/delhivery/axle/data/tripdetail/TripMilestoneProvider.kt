@@ -14,10 +14,12 @@ object TripMilestoneProvider {
     }
 
     fun getOpsArrangedIntracityMilestones(
-        tripDetails: HomeTripsItemData
+        tripDetails: HomeTripsItemData,
+        isGstVerified:Boolean
     ): List<TripMilestone> {
         val invoiceStatusInfo = tripDetails.invoiceStatusInfo
-        return if (invoiceStatusInfo?.isGstVendor == true) {
+        val isGstVendor = invoiceStatusInfo?.isGstVendor ?: isGstVerified
+        return if (isGstVendor) {
                 getGstVendorMilestonesFromInfo(tripDetails)
             } else {
                 getNonGstVendorMilestonesFromInfo(tripDetails)
