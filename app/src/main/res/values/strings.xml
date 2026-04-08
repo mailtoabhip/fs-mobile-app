@@ -1,974 +1,972 @@
 <resources>
 
-  <!-- Title (title_) -->
-  <string name="title_dialog_location_setting_disabled">Enable location</string>
-  <string name="title_dialog_location_permission_disabled">Permissions</string>
-  <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
-  <string name="title_dialog_delete_route">Delete Route ?</string>
-  <string name="title_dialog_logout">Confirm Logout</string>
-  <string name="title_support">Need help? </string>
-  <string name="title_dialog_delete">Confirm Delete</string>
-  <string name="title_dialog_update">Update Available</string>
-  <string name="title_dialog_invalid_num">Invalid phone number</string>
-  <string name="title_dialog_supplier_disabled">User Disabled</string>
-  <string name="title_dialog_supplier_not_approved">User Not Approved</string>
-  <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
-  <string name="title_dialog_apply_filter">Apply filter</string>
-  <string name="title_dialog_delete_member">Delete Member</string>
-  <string name="title_account_setup">Account Setup</string>
-  <string name="title_enter_route_details">Enter route details</string>
-  <string name="title_contracts_details">Contract Details</string>
-  <string name="title_submit_details">Submit Details</string>
+    <!-- Title (title_) -->
+    <string name="title_dialog_location_setting_disabled">Enable location</string>
+    <string name="title_dialog_location_permission_disabled">Permissions</string>
+    <string name="title_confirmed_bid_details_banner">Your bid is confirmed</string>
+    <string name="title_dialog_delete_route">Delete Route ?</string>
+    <string name="title_dialog_logout">Confirm Logout</string>
+    <string name="title_support">Need help? </string>
+    <string name="title_dialog_delete">Confirm Delete</string>
+    <string name="title_dialog_update">Update Available</string>
+    <string name="title_dialog_invalid_num">Invalid phone number</string>
+    <string name="title_dialog_supplier_disabled">User Disabled</string>
+    <string name="title_dialog_supplier_not_approved">User Not Approved</string>
+    <string name="title_dialog_ledger_sent">Ledger Sent successfully</string>
+    <string name="title_dialog_apply_filter">Apply filter</string>
+    <string name="title_dialog_delete_member">Delete Member</string>
+    <string name="title_account_setup">Account Setup</string>
+    <string name="title_enter_route_details">Enter route details</string>
+    <string name="title_contracts_details">Contract Details</string>
+    <string name="title_submit_details">Submit Details</string>
 
 
-  <!--Messages (msg_)-->
-  <string name="msg_hello_world">Message Hello World</string>
-  <string name="msg_user_added">User added successfully</string>
-  <string name="msg_dialog_location_setting_disabled">Your location is set to &lt;b>“off”&lt;/b>. Please enable location to use the app&lt;br>&lt;br></string>
-  <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
-  <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
-  <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-  <string name="msg_otp_sent_to_phone_no">A 4-digit OTP has been sent to your number ending in %1$s</string>
-  <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
-  <string name="msg_select_route_welcome_user">Welcome\n%s</string>
-  <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
-  <string name="msg_select_route_pref_to_load">We would need your route preferences to fetch the best possible load requests for you.</string>
-  <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
-  <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
-  <string name="msg_be_first_to_bid">Be the first to Bid</string>
-  <string name="msg_no_bids_received">No bids received yet.</string>
-  <string name="msg_bids_received_till_now">%1$d bids received till now</string>
-  <string name="unallocated_bulk_order">Bulk Load:</string>
-  <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
-  <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
-  <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck details. Keep the details ready</string>
-  <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
-  <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
-  <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
-  <string name="msg_dialog_support"> Please reach out to our support team </string>
-  <string name="msg_delete_account"> Are you sure you want to delete your account? \n </string>
-  <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
-  <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
-  <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
-  <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please call or message us</string>
-  <string name="msg_dialog_supplier_not_approved">Your KYC is not yet complete. To enable please call or message us</string>
-  <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
-  <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
-  <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
-  <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
-  <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
-  <string name="msg_you_lost_bid">You lost the bid</string>
-  <string name="msg_your_bid">Your bid: ₹ </string>
-  <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
-  <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
-  <string name="msg_home_under_dev">Home screen is coming soon with exciting features.</string>
-  <string name="msg_image_capture_failed">Unable to capture image</string>
-  <string name="msg_file_upload_failed">File Upload Failed</string>
-  <string name="msg_file_upload_successful">File Uploaded Successfully</string>
-  <string name="msg_pick_image_intent_text">Pick Image</string>
-  <string name="msg_call_permission">Please provide permission to call</string>
-  <string name="msg_notification_permission">Please provide permission to get notification</string>
-  <string name="storage_permission">Please provide storage permission</string>
-  <string name="storage_camera_permission">Please provide storage and camera permission</string>
-  <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
-  <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
-  <string name="msg_deactivate">Are you sure you want to deactivate this truck?</string>
-  <string name="msg_reason_deactivate">Select your reason for deactivating the truck</string>
-  <string name="msg_other_source_reason">Load received from different source</string>
-  <string name="msg_others">Other</string>
-  <string name="msg_enter_unloading_details">Enter unloading destination details</string>
-  <string name="msg_priority_access_to_loads">Need priority access to loads?</string>
-  <string name="msg_add_trucks_banner">Add your trucks &amp; gain exclusive one hour access to loads</string>
-  <string name="msg_empty_field">Field can\'t be empty</string>
-  <string name="msg_truck_add_success">Truck added successfully!</string>
-  <string name="incorrect_vehicle_number">Invalid Truck Number</string>
-  <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
-  <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
-  <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
-  <string name="msg_privacy_policy"> Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
-  <string name="msg_more"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d more </font>]]> </string>
-<!--  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d More Centers </font>]]> </string>-->
-  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#121A31\'> (+%2$d centers)</font>]]> </string>
+    <!--Messages (msg_)-->
+    <string name="msg_hello_world">Message Hello World</string>
+    <string name="msg_user_added">User added successfully</string>
+    <string name="msg_dialog_location_setting_disabled">Your location is set to &lt;b>“off”&lt;/b>. Please enable location to use the app&lt;br>&lt;br></string>
+    <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
+    <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
+    <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
+    <string name="msg_otp_sent_to_phone_no">A 4-digit OTP has been sent to your number ending in %1$s</string>
+    <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
+    <string name="msg_select_route_welcome_user">Welcome\n%s</string>
+    <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
+    <string name="msg_select_route_pref_to_load">We would need your route preferences to fetch the best possible load requests for you.</string>
+    <string name="msg_pickup_location_city_based">We will show you the nearby pickup locations based on the city you enter.</string>
+    <string name="msg_use_location_as_origin_city">Use my current location as the origin city</string>
+    <string name="msg_be_first_to_bid">Be the first to Bid</string>
+    <string name="msg_no_bids_received">No bids received yet.</string>
+    <string name="msg_bids_received_till_now">%1$d bids received till now</string>
+    <string name="unallocated_bulk_order">Bulk Load:</string>
+    <string name="msg_you_have_not_placed_any_bid">You have not placed any bid</string>
+    <string name="msg_ensure_truck_statuses_are_updated">Ensure the truck statuses are updated.</string>
+    <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck details. Keep the details ready</string>
+    <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
+    <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
+    <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+    <string name="msg_dialog_support"> Please reach out to our support team </string>
+    <string name="msg_delete_account"> Are you sure you want to delete your account? \n </string>
+    <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
+    <string name="msg_dialog_update">A newer version of this app exists. Please click on update to continue using Axle.</string>
+    <string name="msg_dialog_invalid_num">You have entered an invalid number. Please check the number used. To become an Axle partner, please call or message us</string>
+    <string name="msg_dialog_supplier_disabled">Your profile has been disabled. To enable please call or message us</string>
+    <string name="msg_dialog_supplier_not_approved">Your KYC is not yet complete. To enable please call or message us</string>
+    <string name="msg_no_bids_found">Keep bidding to get more loads..</string>
+    <string name="msg_add_nearby_locations">​​Choose the nearby cities for which you also provide truck.</string>
+    <string name="msg_add_nearby_locations_deselect">Please deselect the locations where you don’t serve.</string>
+    <string name="msg_select_route_destinations">​​Select states for which you provide trucks</string>
+    <string name="msg_view_edit_route_prefs">View and edit your route preferences</string>
+    <string name="msg_you_lost_bid">You lost the bid</string>
+    <string name="msg_your_bid">Your bid: ₹ </string>
+    <string name="msg_under_dev">More features will be added soon. Your patience is appreciated.</string>
+    <string name="msg_alerts_under_dev">We are working hard to get the live notifications for your trips.</string>
+    <string name="msg_home_under_dev">Home screen is coming soon with exciting features.</string>
+    <string name="msg_image_capture_failed">Unable to capture image</string>
+    <string name="msg_file_upload_failed">File Upload Failed</string>
+    <string name="msg_file_upload_successful">File Uploaded Successfully</string>
+    <string name="msg_pick_image_intent_text">Pick Image</string>
+    <string name="msg_call_permission">Please provide permission to call</string>
+    <string name="msg_notification_permission">Please provide permission to get notification</string>
+    <string name="storage_permission">Please provide storage permission</string>
+    <string name="storage_camera_permission">Please provide storage and camera permission</string>
+    <string name="msg_more_bids_with_this_bid">%1$d more bid placed on this order</string>
+    <string name="msg_ask_admin">Ask the Admin user to Add a new User or Enable a user for Fuel Payout</string>
+    <string name="msg_deactivate">Are you sure you want to deactivate this truck?</string>
+    <string name="msg_reason_deactivate">Select your reason for deactivating the truck</string>
+    <string name="msg_other_source_reason">Load received from different source</string>
+    <string name="msg_others">Other</string>
+    <string name="msg_enter_unloading_details">Enter unloading destination details</string>
+    <string name="msg_priority_access_to_loads">Need priority access to loads?</string>
+    <string name="msg_add_trucks_banner">Add your trucks &amp; gain exclusive one hour access to loads</string>
+    <string name="msg_empty_field">Field can\'t be empty</string>
+    <string name="msg_truck_add_success">Truck added successfully!</string>
+    <string name="incorrect_vehicle_number">Invalid Truck Number</string>
+    <string name="msg_volume_of_bids">Total volume of Bids : \n%.1f MT</string>
+    <string name="msg_verified_pan_name">  PAN Holder Name - %1$s.</string>
+    <string name="msg_view_third_party_loads">Enable to view third party market loads</string>
+    <string name="msg_privacy_policy"> Our Privacy Policy outlines what personal data we collect, why we collect it, and how we use it. Our Conditions of Use govern your use of this application.</string>
+    <string name="msg_more"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d more </font>]]> </string>
+    <!--  <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#A3AAC2\'> +%2$d More Centers </font>]]> </string>-->
+    <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#121A31\'> (+%2$d centers)</font>]]> </string>
 
 
+    <!--Hints (hint_)-->
+    <string name="hint_hello_world">Hint Hello World</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_dob">Date of Birth</string>
+    <string name="hint_otp_digit" />
+    <string name="hint_enter_city_name">Enter city name</string>
+    <string name="hint_search_load">Search load</string>
+    <string name="hint_search_contracts">Search contract</string>
+    <string name="hint_search_trips">Vehicle / Destination / LR </string>
+    <string name="hint_search_trip">Search Trip</string>
+    <string name="hint_search_bids">Origin / Destination</string>
+    <string name="hint_enter_bid_value">Enter bid value (₹)</string>
+    <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
+    <string name="hint_amount">23900</string>
+    <string name="hint_user_name">Enter user name</string>
+    <string name="hint_password">Enter Password</string>
+    <string name="hint_search_trucks">Search truck by number</string>
+    <string name="hint_pmt_price">Enter PMT rate</string>
+    <string name="hint_ftl_price">Enter Full Vehicle Rate</string>
+    <string name="hint_price">Enter rate</string>
+    <string name="hint_enter_name">Enter name</string>
+    <string name="hint_number">Enter number</string>
+    <string name="hint_diesel">Enable to register them for diesel card</string>
+    <string name="hint_enter_origin">Enter origin city</string>
+    <string name="hint_enter_destination">Enter destination city or state</string>
+    <string name="hint_select_multi_cities">You can select multiple cities/states</string>
+    <string name="hint_rep_time">Vehicle available in</string>
+    <string name="hint_select_time">Select Time</string>
+    <string name="hint_search">Search</string>
+    <string name="rep_time">Vehicle Reporting Time</string>
+    <string name="hint_proof"> Do not upload proofs of Delhivery trips</string>
 
-  <!--Hints (hint_)-->
-  <string name="hint_hello_world">Hint Hello World</string>
-  <string name="hint_name">Name</string>
-  <string name="hint_dob">Date of Birth</string>
-  <string name="hint_otp_digit" />
-  <string name="hint_enter_city_name">Enter city name</string>
-  <string name="hint_search_load">Search load</string>
-  <string name="hint_search_contracts">Search contract</string>
-  <string name="hint_search_trips">Vehicle / Destination / LR </string>
-  <string name="hint_search_trip">Search Trip</string>
-  <string name="hint_search_bids">Origin / Destination</string>
-  <string name="hint_enter_bid_value">Enter bid value (₹)</string>
-  <string name="hint_enter_pmt_rate_value">Enter PMT rate value (₹ PMT)</string>
-  <string name="hint_amount">23900</string>
-  <string name="hint_user_name">Enter user name</string>
-  <string name="hint_password">Enter Password</string>
-  <string name="hint_search_trucks">Search truck by number</string>
-  <string name="hint_pmt_price">Enter PMT rate</string>
-  <string name="hint_ftl_price">Enter Full Vehicle Rate</string>
-  <string name="hint_price">Enter rate</string>
-  <string name="hint_enter_name">Enter name</string>
-  <string name="hint_number">Enter number</string>
-  <string name="hint_diesel">Enable to register them for diesel card</string>
-  <string name="hint_enter_origin">Enter origin city</string>
-  <string name="hint_enter_destination">Enter destination city or state</string>
-  <string name="hint_select_multi_cities">You can select multiple cities/states</string>
-  <string name="hint_rep_time">Vehicle available in</string>
-  <string name="hint_select_time">Select Time</string>
-  <string name="hint_search">Search</string>
-  <string name="rep_time">Vehicle Reporting Time</string>
-  <string name="hint_proof"> Do not upload proofs of Delhivery trips</string>
+    <!--Actions (action_)-->
+    <string name="action_activate_truck">Request for Load</string>
+    <string name="action_share_rate">+ Share Rate</string>
+    <string name="action_deactivate_truck">Deactivate Truck</string>
+    <string name="action_edit_truck">Edit Truck</string>
+    <string name="action_add_truck">+ Add Truck</string>
+    <string name="action_add_truck_button">Add Truck</string>
+    <string name="action_add_vehicle_type">+ Vehicle Type</string>
+    <string name="action_add_destination">Add Destination</string>
+    <string name="action_save_changes">Save Changes</string>
+    <string name="action_add_new_truck">Add new truck</string>
+    <string name="action_do_it_later">Do it later</string>
+    <string name="action_delete_truck">Delete Truck</string>
+    <string name="action_hello_world">Action Hello World</string>
+    <string name="action_add_user">Add User</string>
+    <string name="action_get_users">Get all users</string>
+    <string name="action_send_otp">Get OTP</string>
+    <string name="action_resend_otp">Resend OTP</string>
+    <string name="action_verify_otp">Verify OTP</string>
+    <string name="action_save_proceed">Save &amp; Proceed</string>
+    <string name="action_verify_aadhaar">Verify Aadhaar</string>
+    <string name="action_submit_details">Submit Details</string>
+    <string name="action_select_routes">Select Routes</string>
+    <string name="action_skip_select_routes">Skip, I’ll select later</string>
+    <string name="action_skip">SKIP</string>
+    <string name="action_search">Search</string>
+    <string name="action_place_bid">Place Your Bid</string>
+    <string name="action_start_bidding">Start Bidding</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_address">Delete Address</string>
+    <string name="action_no_dont_delete">No, Don’t Delete</string>
+    <string name="action_edit_bid">Edit Bid</string>
+    <string name="action_confirm_route">Confirm Route</string>
+    <string name="action_deselect_all_states">Deselect all states</string>
+    <string name="action_select_all_states">Select all states</string>
+    <string name="action_go_to_load_requests">GO to load requests</string>
+    <string name="action_add_more_route">Add more routes</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_save">Save</string>
 
-  <!--Actions (action_)-->
-  <string name="action_activate_truck">Request for Load</string>
-  <string name="action_share_rate">+ Share Rate</string>
-  <string name="action_deactivate_truck">Deactivate Truck</string>
-  <string name="action_edit_truck">Edit Truck</string>
-  <string name="action_add_truck">+ Add Truck</string>
-  <string name="action_add_truck_button">Add Truck</string>
-  <string name="action_add_vehicle_type">+ Vehicle Type</string>
-  <string name="action_add_destination">Add Destination</string>
-  <string name="action_save_changes">Save Changes</string>
-  <string name="action_add_new_truck">Add new truck</string>
-  <string name="action_do_it_later">Do it later</string>
-  <string name="action_delete_truck">Delete Truck</string>
-  <string name="action_hello_world">Action Hello World</string>
-  <string name="action_add_user">Add User</string>
-  <string name="action_get_users">Get all users</string>
-  <string name="action_send_otp">Get OTP</string>
-  <string name="action_resend_otp">Resend OTP</string>
-  <string name="action_verify_otp">Verify OTP</string>
-  <string name="action_save_proceed">Save &amp; Proceed</string>
-  <string name="action_verify_aadhaar">Verify Aadhaar</string>
-  <string name="action_submit_details">Submit Details</string>
-  <string name="action_select_routes">Select Routes</string>
-  <string name="action_skip_select_routes">Skip, I’ll select later</string>
-  <string name="action_skip">SKIP</string>
-  <string name="action_search">Search</string>
-  <string name="action_place_bid">Place Your Bid</string>
-  <string name="action_start_bidding">Start Bidding</string>
-  <string name="action_delete">Delete</string>
-  <string name="action_delete_address">Delete Address</string>
-  <string name="action_no_dont_delete">No, Don’t Delete</string>
-  <string name="action_edit_bid">Edit Bid</string>
-  <string name="action_confirm_route">Confirm Route</string>
-  <string name="action_deselect_all_states">Deselect all states</string>
-  <string name="action_select_all_states">Select all states</string>
-  <string name="action_go_to_load_requests">GO to load requests</string>
-  <string name="action_add_more_route">Add more routes</string>
-  <string name="action_confirm">Confirm</string>
-  <string name="action_save">Save</string>
+    <string name="action_logout_from_app">Logout from the app</string>
+    <string name="action_dismiss">DISMISS</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_revise_bid">Revise bid</string>
+    <string name="action_update_route">Update Route</string>
+    <string name="action_call_driver">Call Driver</string>
+    <string name="action_edit_bid_underline"><u>Edit?</u></string>
+    <string name="action_done">Done !</string>
 
-  <string name="action_logout_from_app">Logout from the app</string>
-  <string name="action_dismiss">DISMISS</string>
-  <string name="action_continue">Continue</string>
-  <string name="action_revise_bid">Revise bid</string>
-  <string name="action_update_route">Update Route</string>
-  <string name="action_call_driver">Call Driver</string>
-  <string name="action_edit_bid_underline"><u>Edit?</u></string>
-  <string name="action_done">Done !</string>
-
-  <string name="action_get_started">Get Started</string>
-  <string name="action_change_number">Change number</string>
-  <string name="action_proceed_account">Proceed</string>
-  <string name="action_terms_conditions">Privacy Policy</string>
-  <string name="action_create_account">Create Account</string>
-  <string name="action_login">Login</string>
-  <string name="action_verify_gst">Verify GST number</string>
-  <string name="action_submit">Submit</string>
-  <string name="action_upload_more">Upload More</string>
-  <string name="action_upload_again">Upload Again</string>
-  <string name="action_upload_rc_doc">Upload RC document</string>
-  <string name="action_cancel">Cancel</string>
-  <string name="action_start_kyc">Start KYC</string>
-  <string name="action_update_business_logo">Update business logo</string>
-  <string name="action_restart_kyc">Try Again</string>
-  <string name="action_add_member">Add Member</string>
-  <string name="action_complete_verification">Complete Verification</string>
-  <string name="action_retry_verification">Retry Verification</string>
-  <string name="action_got">Got it</string>
-  <string name="action_learn">Learn More</string>
-  <string name="action_express">Delhivery Intercity</string>
-  <string name="action_non_express">Non Delhivery Intercity</string>
-  <string name="action_intracity">Delhivery Intracity</string>
-  <string name="action_flexible_intracity">Flexible Reporting</string>
-  <string name="action_fixed_intracity">Fixed Reporting</string>
-  <string name="action_dlv_intracity">Delhivery Intracity</string>
-  <string name="action_dlv_intercity">Delhivery Intercity</string>
-  <string name="action_non_delhivery">Non Delhivery Intercity</string>
-  <string name="action_ok">Ok</string>
-  <string name="action_accept">Accept for %s</string>
-
+    <string name="action_get_started">Get Started</string>
+    <string name="action_change_number">Change number</string>
+    <string name="action_proceed_account">Proceed</string>
+    <string name="action_terms_conditions">Privacy Policy</string>
+    <string name="action_create_account">Create Account</string>
+    <string name="action_login">Login</string>
+    <string name="action_verify_gst">Verify GST number</string>
+    <string name="action_submit">Submit</string>
+    <string name="action_upload_more">Upload More</string>
+    <string name="action_upload_again">Upload Again</string>
+    <string name="action_upload_rc_doc">Upload RC document</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_start_kyc">Start KYC</string>
+    <string name="action_update_business_logo">Update business logo</string>
+    <string name="action_restart_kyc">Try Again</string>
+    <string name="action_add_member">Add Member</string>
+    <string name="action_complete_verification">Complete Verification</string>
+    <string name="action_retry_verification">Retry Verification</string>
+    <string name="action_got">Got it</string>
+    <string name="action_learn">Learn More</string>
+    <string name="action_express">Delhivery Intercity</string>
+    <string name="action_non_express">Non Delhivery Intercity</string>
+    <string name="action_intracity">Delhivery Intracity</string>
+    <string name="action_flexible_intracity">Flexible Reporting</string>
+    <string name="action_fixed_intracity">Fixed Reporting</string>
+    <string name="action_dlv_intracity">Delhivery Intracity</string>
+    <string name="action_dlv_intercity">Delhivery Intercity</string>
+    <string name="action_non_delhivery">Non Delhivery Intercity</string>
+    <string name="action_ok">Ok</string>
+    <string name="action_accept">Accept for %s</string>
 
 
-  <!--Label (label_)-->
-  <string name="label_hello_world">Label Hello World</string>
-  <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
-  <string name="label_otp">Enter OTP</string>
-  <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
-  <string name="label_phone_number">Phone Number</string>
-  <string name="label_isd_code">+91</string>
-  <string name="label_live_load_requests">Live load requests (%1$d)</string>
-  <string name="label_inr">₹ %1$d</string>
-  <string name="label_inr_s">₹ %1$s</string>
-  <string name="label_active_bids">Active Load Bids</string>
-  <string name="label_confirmed_bids">Awarded Load Bids</string>
-  <string name="label_lost_bids">Lost Load Bids</string>
-  <string name="label_contract_bids">Contract Bids</string>
-  <string name="label_my_bids">My Bids</string>
-  <string name="label_nav_load">Load</string>
-  <string name="label_nav_date">Date</string>
-  <string name="label_nav_bids">Bids</string>
-  <string name="label_nav_trucks">Trucks</string>
-  <string name="label_nav_trips">Trips</string>
-  <string name="label_nav_pods">PODs</string>
-  <string name="label_nav_loads">Loads</string>
-  <string name="label_nav_alerts">Alerts</string>
-  <string name="label_nav_payment">Axle Money</string>
-  <string name="label_nav_profile">Profile</string>
-  <string name="label_nav_helpline">HELPLINE</string>
-  <string name="label_from">From</string>
-  <string name="label_to">To</string>
-  <string name="label_target_price">Target price</string>
-  <string name="label_origin_city">Origin city</string>
-  <string name="label_origin_location">Origin Location</string>
-  <string name="label_starting_city">Starting City</string>
-  <string name="label_pickup_location">Pickup location</string>
-  <string name="label_truck_details">Truck details</string>
-  <string name="label_no_trips_yet">No trips yet !</string>
-  <string name="label_destination_city">Destination city</string>
-  <string name="label_destination_location">Destination Location</string>
-  <string name="label_ending_city">Ending City</string>
-  <string name="label_from_state">From %1$s</string>
-  <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
-  <string name="label_user_bid_amount">You have bid: ₹ </string>
-  <string name="label_user_edit_bid_amount">Your Bid: ₹ </string>
-  <string name="label_bids">%1$s Bids</string>
-  <string name="label_destination_state">Destination States(%1$s)</string>
-  <string name="label_advance_pending">Advance Pending</string>
-  <string name="label_total_pending">Total Pending : </string>
-  <string name="label_in_transit">In-transit</string>
-  <string name="label_balance_pending">Balance Pending</string>
-  <string name="label_recovery_pending">Recovery Pending</string>
-  <string name="label_complete">Complete</string>
-  <string name="label_advance_paid">Advance Paid</string>
-  <string name="label_balance_paid">Balance Paid</string>
-  <string name="label_your_recent_search">Your recent searches</string>
-  <string name="label_routes_added">Routes added</string>
-  <string name="label_bid_amount">Bid Amount</string>
-  <string name="label_error">Error</string>
-  <string name="label_vehicle">Vehicle</string>
-  <string name="label_driver">Driver</string>
-  <string name="label_contact">Contact</string>
-  <string name="label_status_history">Status history</string>
-  <string name="label_payment_summary">Payment Summary</string>
-  <string name="label_no_bids_found">No bids found</string>
-  <string name="label_your_routes">Your Routes</string>
-  <string name="label_your_team">Your Team Members</string>
-  <string name="label_accept_price">ACCEPT PRICE</string>
-  <string name="label_place_bid">Place Your Bid</string>
-  <string name="label_add_team_member">Add Team Member</string>
-  <string name="label_bidding_ended">Bidding ended</string>
-  <string name="label_destination_states">Destination States</string>
-  <string name="label_we_are_building_this_page">We are building the page</string>
-  <string name="label_coming_soon">Coming Soon</string>
-  <string name="label_trip_meter">Trip Meter</string>
-  <string name="label_add_nearby_locations">Add nearby locations?</string>
-  <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.</string>
-  <string name="label_resend_otp">Resend OTP</string>
-  <string name="Rs">\u20B9</string>
-  <string name="label_anywhere">Anywhere</string>
-  <string name="label_select_from_drop_down">*Select from drop down*</string>
-  <string name="label_something_went_wrong">Something went wrong</string>
-  <string name="label_retry">Retry</string>
-  <string name="label_vehicle_number">Vehicle Number</string>
-  <string name="label_driver_phone_no">Driver Phone No</string>
-  <string name="label_load_request">Load Request</string>
-  <string name="label_lr_number">LR Number</string>
-  <string name="label_your_balance">Your Balance</string>
-  <string name="label_view_transaction_summary">VIEW TRANSACTION SUMMARY</string>
-  <string name="label_fastag">Fast Tag</string>
-  <string name="label_bank">Bank</string>
-  <string name="label_fuel_credit">Fuel Credit</string>
-  <string name="label_transfer_amount">Transfer Axle Money to</string>
-  <string name="label_your_advance_amount">Axle Money</string>
-  <string name="label_transaction_history">Transaction History</string>
-  <string name="label_custom_dates">Custom Dates</string>
-  <string name="label_ongoing_trips">Ongoing Trips</string>
-  <string name="label_transferred_from">Transferred from</string>
-  <string name="label_transferred_to">Transferred to</string>
-  <string name="label_account_number">Account number</string>
-  <string name="label_account_owner">Owner Name</string>
-  <string name="label_transaction_status">Transaction Status</string>
-  <string name="label_date_and_time">Time, Date</string>
-  <string name="label_mobile_number">Phone Number</string>
-  <string name="label_vehicle_type">Vehicle Type</string>
-  <string name="label_trip_detail">Trip Details</string>
-  <string name="label_transaction_id">Transaction Id</string>
-  <string name="label_bank_details">Bank Details</string>
-  <string name="label_payment_details">Payment Details</string>
-  <string name="label_enter_amount">Enter Amount</string>
-  <string name="label_confirm_transfer">CONFIRM TRANSFER</string>
-  <string name="label_balance">Balance</string>
-  <string name="label_axle_money">Axle Money</string>
-  <string name="label_utr_number">UTR Number</string>
-  <string name="label_exit">EXIT</string>
-  <string name="label_mail_us">MAIL US</string>
-  <string name="label_call_us">CALL US</string>
-  <string name="label_get_started">GET STARTED</string>
-  <string name="label_wallet_faq">VIEW MORE DETAILS</string>
-  <string name="label_wallet_note">Note: On activating Axle Money, you will receive Advance amount in Axle Money instead of your bank account. You can transfer from Axle Money to your bank account easily anytime</string>
-  <string name="label_you_will_receive">You will receive</string>
-  <string name="label_when_the_trip_ends">when the trip ends</string>
-  <string name="label_transfer_success">Transfer initiated successfully for</string>
-  <string name="label_transfer_failed">Transfer initiation failed for</string>
-  <string name="label_in_process">In Process</string>
-  <string name="label_failed">Failed</string>
-  <string name="label_bid_price">Bid Price</string>
-  <string name="label_go_back">GO BACK</string>
-  <string name="label_track_transaction_status">TRACK TRANSACTION STATUS</string>
-  <string name="label_wallet">Wallet</string>
-  <string name="label_money_given">Money given</string>
-  <string name="label_create_fuel_card">CREATE FUEL CARD</string>
-  <string name="label_enter_number">Enter mobile number</string>
-  <string name="label_fuel_faq">VIEW MORE DETAILS</string>
-  <string name="label_pod_status">POD Status</string>
-  <string name="label_epod_pending">EPOD Pending</string>
-  <string name="label_physical_pending">Physical POD Pending</string>
-  <string name="label_pod_dispatched">Dispatched</string>
-  <string name="label_pod_pending">POD Pending</string>
-  <string name="label_pod_received">POD Received</string>
-  <string name="label_by_trip_status">By Trip Status</string>
-  <string name="label_view_all_trips">View all trips</string>
-  <string name="label_by_payment_status">By Payment Status</string>
-  <string name="label_download_ledger">Download Ledger</string>
-  <string name="label_awaiting_arrival">Awaiting Arrival</string>
-  <string name="label_awaiting_pod">Awaiting POD</string>
-  <string name="label_awaiting_loading">Awaiting Loading</string>
-  <string name="label_awaiting_unloading">Awaiting Unloading</string>
-  <string name="label_lr_no">LR Number</string>
-  <string name="label_truck_type">Truck Type</string>
-  <string name="label_pickup_destination_address">Pickup/ Destination Address</string>
-  <string name="label_pickup_address">Pickup Address</string>
-  <string name="label_destination_address">Destination Address</string>
-  <string name="label_charge">Charge</string>
-  <string name="label_current_status">Current Status</string>
-  <string name="label_delete_route">Delete Route?</string>
-  <string name="label_admin">Admin</string>
-  <string name="label_diesel_card">Diesel Card</string>
-  <string name="label_register_for_diesel_card">Register Team Member for Diesel Card?</string>
-  <string name="label_select_diesel_company">Select Diesel\nCompany</string>
-  <string name="label_edit_team_member">Edit Team Member</string>
-  <string name="label_yes">Yes</string>
-  <string name="label_no">No</string>
-  <string name="label_diesel_company">Diesel Company</string>
-  <string name="label_lowest_bid">lowest bid</string>
-  <string name="label_pmt_rate">PMT Rate</string>
-  <string name="label_no_of_trucks">No. of Trucks</string>
-  <string name="label_truck_count">Truck Count</string>
-  <string name="label_status">Status</string>
-  <string name="status_of_other_bid">All bid details</string>
-  <string name="label_add_diesel_payout">Add Diesel Payout</string>
-  <string name="label_diesel_payment">Diesel Payment</string>
-  <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
-  <string name="label_bank_transfer">Bank Transfer</string>
-  <string name="label_change_payment_mode">Change Payment Mode</string>
-  <string name="label_with_sign_value">₹ %1$d</string>
-  <string name="label_home">Home</string>
-  <string name="label_placements">Placements</string>
-  <string name="nav_label_trucks">My Trucks</string>
-  <string name="nav_label_bids">My Bids</string>
+    <!--Label (label_)-->
+    <string name="label_hello_world">Label Hello World</string>
+    <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
+    <string name="label_otp">Enter OTP</string>
+    <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
+    <string name="label_phone_number">Phone Number</string>
+    <string name="label_isd_code">+91</string>
+    <string name="label_live_load_requests">Live load requests (%1$d)</string>
+    <string name="label_inr">₹ %1$d</string>
+    <string name="label_inr_s">₹ %1$s</string>
+    <string name="label_active_bids">Active Load Bids</string>
+    <string name="label_confirmed_bids">Awarded Load Bids</string>
+    <string name="label_lost_bids">Lost Load Bids</string>
+    <string name="label_contract_bids">Contract Bids</string>
+    <string name="label_my_bids">My Bids</string>
+    <string name="label_nav_load">Load</string>
+    <string name="label_nav_date">Date</string>
+    <string name="label_nav_bids">Bids</string>
+    <string name="label_nav_trucks">Trucks</string>
+    <string name="label_nav_trips">Trips</string>
+    <string name="label_nav_pods">PODs</string>
+    <string name="label_nav_loads">Loads</string>
+    <string name="label_nav_alerts">Alerts</string>
+    <string name="label_nav_payment">Axle Money</string>
+    <string name="label_nav_profile">Profile</string>
+    <string name="label_nav_helpline">HELPLINE</string>
+    <string name="label_from">From</string>
+    <string name="label_to">To</string>
+    <string name="label_target_price">Target price</string>
+    <string name="label_origin_city">Origin city</string>
+    <string name="label_origin_location">Origin Location</string>
+    <string name="label_starting_city">Starting City</string>
+    <string name="label_pickup_location">Pickup location</string>
+    <string name="label_truck_details">Truck details</string>
+    <string name="label_no_trips_yet">No trips yet !</string>
+    <string name="label_destination_city">Destination city</string>
+    <string name="label_destination_location">Destination Location</string>
+    <string name="label_ending_city">Ending City</string>
+    <string name="label_from_state">From %1$s</string>
+    <string name="label_city_state">&lt;b>%1$s,&lt;/b> %2$s</string>
+    <string name="label_user_bid_amount">You have bid: ₹ </string>
+    <string name="label_user_edit_bid_amount">Your Bid: ₹ </string>
+    <string name="label_bids">%1$s Bids</string>
+    <string name="label_destination_state">Destination States(%1$s)</string>
+    <string name="label_advance_pending">Advance Pending</string>
+    <string name="label_total_pending">Total Pending : </string>
+    <string name="label_in_transit">In-transit</string>
+    <string name="label_balance_pending">Balance Pending</string>
+    <string name="label_recovery_pending">Recovery Pending</string>
+    <string name="label_complete">Complete</string>
+    <string name="label_advance_paid">Advance Paid</string>
+    <string name="label_balance_paid">Balance Paid</string>
+    <string name="label_your_recent_search">Your recent searches</string>
+    <string name="label_routes_added">Routes added</string>
+    <string name="label_bid_amount">Bid Amount</string>
+    <string name="label_error">Error</string>
+    <string name="label_vehicle">Vehicle</string>
+    <string name="label_driver">Driver</string>
+    <string name="label_contact">Contact</string>
+    <string name="label_status_history">Status history</string>
+    <string name="label_payment_summary">Payment Summary</string>
+    <string name="label_no_bids_found">No bids found</string>
+    <string name="label_your_routes">Your Routes</string>
+    <string name="label_your_team">Your Team Members</string>
+    <string name="label_accept_price">ACCEPT PRICE</string>
+    <string name="label_place_bid">Place Your Bid</string>
+    <string name="label_add_team_member">Add Team Member</string>
+    <string name="label_bidding_ended">Bidding ended</string>
+    <string name="label_destination_states">Destination States</string>
+    <string name="label_we_are_building_this_page">We are building the page</string>
+    <string name="label_coming_soon">Coming Soon</string>
+    <string name="label_trip_meter">Trip Meter</string>
+    <string name="label_add_nearby_locations">Add nearby locations?</string>
+    <string name="label_card_subheading_trip_meter">Trips completed &amp; Revenue you earned working with us.</string>
+    <string name="label_resend_otp">Resend OTP</string>
+    <string name="Rs">\u20B9</string>
+    <string name="label_anywhere">Anywhere</string>
+    <string name="label_select_from_drop_down">*Select from drop down*</string>
+    <string name="label_something_went_wrong">Something went wrong</string>
+    <string name="label_retry">Retry</string>
+    <string name="label_vehicle_number">Vehicle Number</string>
+    <string name="label_driver_phone_no">Driver Phone No</string>
+    <string name="label_load_request">Load Request</string>
+    <string name="label_lr_number">LR Number</string>
+    <string name="label_your_balance">Your Balance</string>
+    <string name="label_view_transaction_summary">VIEW TRANSACTION SUMMARY</string>
+    <string name="label_fastag">Fast Tag</string>
+    <string name="label_bank">Bank</string>
+    <string name="label_fuel_credit">Fuel Credit</string>
+    <string name="label_transfer_amount">Transfer Axle Money to</string>
+    <string name="label_your_advance_amount">Axle Money</string>
+    <string name="label_transaction_history">Transaction History</string>
+    <string name="label_custom_dates">Custom Dates</string>
+    <string name="label_ongoing_trips">Ongoing Trips</string>
+    <string name="label_transferred_from">Transferred from</string>
+    <string name="label_transferred_to">Transferred to</string>
+    <string name="label_account_number">Account number</string>
+    <string name="label_account_owner">Owner Name</string>
+    <string name="label_transaction_status">Transaction Status</string>
+    <string name="label_date_and_time">Time, Date</string>
+    <string name="label_mobile_number">Phone Number</string>
+    <string name="label_vehicle_type">Vehicle Type</string>
+    <string name="label_trip_detail">Trip Details</string>
+    <string name="label_transaction_id">Transaction Id</string>
+    <string name="label_bank_details">Bank Details</string>
+    <string name="label_payment_details">Payment Details</string>
+    <string name="label_enter_amount">Enter Amount</string>
+    <string name="label_confirm_transfer">CONFIRM TRANSFER</string>
+    <string name="label_balance">Balance</string>
+    <string name="label_axle_money">Axle Money</string>
+    <string name="label_utr_number">UTR Number</string>
+    <string name="label_exit">EXIT</string>
+    <string name="label_mail_us">MAIL US</string>
+    <string name="label_call_us">CALL US</string>
+    <string name="label_get_started">GET STARTED</string>
+    <string name="label_wallet_faq">VIEW MORE DETAILS</string>
+    <string name="label_wallet_note">Note: On activating Axle Money, you will receive Advance amount in Axle Money instead of your bank account. You can transfer from Axle Money to your bank account easily anytime</string>
+    <string name="label_you_will_receive">You will receive</string>
+    <string name="label_when_the_trip_ends">when the trip ends</string>
+    <string name="label_transfer_success">Transfer initiated successfully for</string>
+    <string name="label_transfer_failed">Transfer initiation failed for</string>
+    <string name="label_in_process">In Process</string>
+    <string name="label_failed">Failed</string>
+    <string name="label_bid_price">Bid Price</string>
+    <string name="label_go_back">GO BACK</string>
+    <string name="label_track_transaction_status">TRACK TRANSACTION STATUS</string>
+    <string name="label_wallet">Wallet</string>
+    <string name="label_money_given">Money given</string>
+    <string name="label_create_fuel_card">CREATE FUEL CARD</string>
+    <string name="label_enter_number">Enter mobile number</string>
+    <string name="label_fuel_faq">VIEW MORE DETAILS</string>
+    <string name="label_pod_status">POD Status</string>
+    <string name="label_epod_pending">EPOD Pending</string>
+    <string name="label_physical_pending">Physical POD Pending</string>
+    <string name="label_pod_dispatched">Dispatched</string>
+    <string name="label_pod_pending">POD Pending</string>
+    <string name="label_pod_received">POD Received</string>
+    <string name="label_by_trip_status">By Trip Status</string>
+    <string name="label_view_all_trips">View all trips</string>
+    <string name="label_by_payment_status">By Payment Status</string>
+    <string name="label_download_ledger">Download Ledger</string>
+    <string name="label_awaiting_arrival">Awaiting Arrival</string>
+    <string name="label_awaiting_pod">Awaiting POD</string>
+    <string name="label_awaiting_loading">Awaiting Loading</string>
+    <string name="label_awaiting_unloading">Awaiting Unloading</string>
+    <string name="label_lr_no">LR Number</string>
+    <string name="label_truck_type">Truck Type</string>
+    <string name="label_pickup_destination_address">Pickup/ Destination Address</string>
+    <string name="label_pickup_address">Pickup Address</string>
+    <string name="label_destination_address">Destination Address</string>
+    <string name="label_charge">Charge</string>
+    <string name="label_current_status">Current Status</string>
+    <string name="label_delete_route">Delete Route?</string>
+    <string name="label_admin">Admin</string>
+    <string name="label_diesel_card">Diesel Card</string>
+    <string name="label_register_for_diesel_card">Register Team Member for Diesel Card?</string>
+    <string name="label_select_diesel_company">Select Diesel\nCompany</string>
+    <string name="label_edit_team_member">Edit Team Member</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="label_diesel_company">Diesel Company</string>
+    <string name="label_lowest_bid">lowest bid</string>
+    <string name="label_pmt_rate">PMT Rate</string>
+    <string name="label_no_of_trucks">No. of Trucks</string>
+    <string name="label_truck_count">Truck Count</string>
+    <string name="label_status">Status</string>
+    <string name="status_of_other_bid">All bid details</string>
+    <string name="label_add_diesel_payout">Add Diesel Payout</string>
+    <string name="label_diesel_payment">Diesel Payment</string>
+    <string name="label_mobile_number_diesel_payout">Mobile Number for Diesel Card</string>
+    <string name="label_bank_transfer">Bank Transfer</string>
+    <string name="label_change_payment_mode">Change Payment Mode</string>
+    <string name="label_with_sign_value">₹ %1$d</string>
+    <string name="label_home">Home</string>
+    <string name="label_placements">Placements</string>
+    <string name="nav_label_trucks">My Trucks</string>
+    <string name="nav_label_bids">My Bids</string>
 
-  <string name="nav_label_contracts">Contracts</string>
-  <string name="label_unloading_locations">Drop Location</string>
-  <string name="label_current_locations">Current location</string>
-  <string name="label_more_options">More Options</string>
-  <string name="label_body_type">Select Body Type</string>
-  <string name="label_truck_number">Truck Number</string>
-  <string name="label_ownership">Ownership</string>
-  <string name="label_own_truck">Owned truck</string>
-  <string name="label_market_truck">Market truck</string>
-  <string name="label_truck_size">Truck Size</string>
-  <string name="label_truck_capacity">Truck Capacity</string>
-  <string name="label_current_city">Current City</string>
-  <string name="label_drop_city">Drop City</string>
-  <string name="label_unloading_destination">Drop Location</string>
-  <string name="label_select_truck_size">Select truck size</string>
-  <string name="label_select_truck_capacity">Select truck capacity</string>
-  <string name="label_availability">Availability</string>
-  <string name="label_truck_size_filter">Truck Size</string>
-  <string name="label_enter_unloading_destination">Drop Location</string>
-  <string name="label_price_mt">Price/MT (optional)</string>
-  <string name="label_price_ftl">Full Truck Price (optional)</string>
-  <string name="label_expected_price">Expected Rate (optional)</string>
-  <string name="label_price">Price (optional)</string>
-  <string name="label_search_by_city">Search by city name</string>
-  <string name="label_choose_options">Choose option</string>
-  <string name="label_choose_from_below">Choose one from the below trucks</string>
-  <string name="label_confirm_details">Confirm truck details</string>
+    <string name="nav_label_contracts">Contracts</string>
+    <string name="label_unloading_locations">Drop Location</string>
+    <string name="label_current_locations">Current location</string>
+    <string name="label_more_options">More Options</string>
+    <string name="label_body_type">Select Body Type</string>
+    <string name="label_truck_number">Truck Number</string>
+    <string name="label_ownership">Ownership</string>
+    <string name="label_own_truck">Owned truck</string>
+    <string name="label_market_truck">Market truck</string>
+    <string name="label_truck_size">Truck Size</string>
+    <string name="label_truck_capacity">Truck Capacity</string>
+    <string name="label_current_city">Current City</string>
+    <string name="label_drop_city">Drop City</string>
+    <string name="label_unloading_destination">Drop Location</string>
+    <string name="label_select_truck_size">Select truck size</string>
+    <string name="label_select_truck_capacity">Select truck capacity</string>
+    <string name="label_availability">Availability</string>
+    <string name="label_truck_size_filter">Truck Size</string>
+    <string name="label_enter_unloading_destination">Drop Location</string>
+    <string name="label_price_mt">Price/MT (optional)</string>
+    <string name="label_price_ftl">Full Truck Price (optional)</string>
+    <string name="label_expected_price">Expected Rate (optional)</string>
+    <string name="label_price">Price (optional)</string>
+    <string name="label_search_by_city">Search by city name</string>
+    <string name="label_choose_options">Choose option</string>
+    <string name="label_choose_from_below">Choose one from the below trucks</string>
+    <string name="label_confirm_details">Confirm truck details</string>
 
-  <!-- Filter and validation messages -->
-  <string name="filter_by_vehicle_type">Filter by Vehicle Type</string>
-  <string name="filter_by_availability">Filter by Availability</string>
-  <string name="filter_by_truck_size">Filter by Truck Size</string>
-  <string name="msg_select_vehicle_type_first">Please select vehicle type first</string>
-  <string name="msg_select_truck_size_first">Select Truck Size First</string>
-  <string name="msg_select_body_type_first">Select body type first</string>
-  <string name="msg_no_truck_types_found">No Truck Types Found</string>
-  <string name="msg_no_truck_sizes_available">No truck sizes available for selected vehicle types</string>
+    <!-- Filter and validation messages -->
+    <string name="filter_by_vehicle_type">Filter by Vehicle Type</string>
+    <string name="filter_by_availability">Filter by Availability</string>
+    <string name="filter_by_truck_size">Filter by Truck Size</string>
+    <string name="msg_select_vehicle_type_first">Please select vehicle type first</string>
+    <string name="msg_select_truck_size_first">Select Truck Size First</string>
+    <string name="msg_select_body_type_first">Select body type first</string>
+    <string name="msg_no_truck_types_found">No Truck Types Found</string>
+    <string name="msg_no_truck_sizes_available">No truck sizes available for selected vehicle types</string>
 
-  <string name="fastag_info_message">You can add FASTags for more trucks later as well. (Max: %1$d trucks in your inventory)</string>
-  <string name="label_no_loads_found">Can\'t find relevant loads?</string>
-  <string name="label_active">Active</string>
-  <string name="label_under_review">Under Review</string>
-  <string name="label_lost">Bid Lost</string>
-  <string name="label_contract_lost">You Lost</string>
-  <string name="label_contract_won">You Won</string>
-  <string name="label_cancel">Bid Cancelled</string>
-  <string name="label_pending">Bid Won\nConfirmation Pending</string>
-  <string name="label_confirm">Order Confirmed</string>
-  <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
-  <string name="label_origin_destination">Origin &amp; Destination</string>
-  <string name="hint_offer">This is not applicable for current offer period.</string>
-  <string name="label_rate">Rate</string>
-  <string name="label_date">Date</string>
-  <string name="upload_proof">Upload Proof</string>
-  <string name="label_tc_details">\u2022 Payment will be made after the proof is verified\n\n\u2022 The details added should match the proof\n\n\u0020\u0020document for the payment to be processed\n\n\u2022 Rate is collected for selected routes &amp; trucks </string>
-  <string name="label_rate1">Now Earn by adding trip details!!</string>
-  <string name="label_rate2">Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards.</string>
-  <string name="label_rate_banner">Add trip rates and earn reward</string>
-  <string name="label_rate_banner_details">Now add rates for various trips and earn cash rewards.</string>
-  <string name="label_additional_details">Address Details</string>
-  <string name="label_add_address_details">See Address Details</string>
-  <string name="label_pod_address">Delhivery Ltd. Goa HQ Office, Plot no. 59/A-1, 59/A-2, Pilerne Industrial Estate, Pilerne, Bardez, Goa 403114</string>
-  <string name="label_remark">Remarks</string>
+    <string name="fastag_info_message">You can add FASTags for more trucks later as well. (Max: %1$d trucks in your inventory)</string>
+    <string name="label_no_loads_found">Can\'t find relevant loads?</string>
+    <string name="label_active">Active</string>
+    <string name="label_under_review">Under Review</string>
+    <string name="label_lost">Bid Lost</string>
+    <string name="label_contract_lost">You Lost</string>
+    <string name="label_contract_won">You Won</string>
+    <string name="label_cancel">Bid Cancelled</string>
+    <string name="label_pending">Bid Won\nConfirmation Pending</string>
+    <string name="label_confirm">Order Confirmed</string>
+    <string name="label_rate_share">Already placed this truck?\nShare past trip rates and earn reward</string>
+    <string name="label_origin_destination">Origin &amp; Destination</string>
+    <string name="hint_offer">This is not applicable for current offer period.</string>
+    <string name="label_rate">Rate</string>
+    <string name="label_date">Date</string>
+    <string name="upload_proof">Upload Proof</string>
+    <string name="label_tc_details">\u2022 Payment will be made after the proof is verified\n\n\u2022 The details added should match the proof\n\n\u0020\u0020document for the payment to be processed\n\n\u2022 Rate is collected for selected routes &amp; trucks </string>
+    <string name="label_rate1">Now Earn by adding trip details!!</string>
+    <string name="label_rate2">Add rates for vehicles you have placed in the last 7 days with other transporters and earn cash rewards.</string>
+    <string name="label_rate_banner">Add trip rates and earn reward</string>
+    <string name="label_rate_banner_details">Now add rates for various trips and earn cash rewards.</string>
+    <string name="label_additional_details">Address Details</string>
+    <string name="label_add_address_details">See Address Details</string>
+    <string name="label_pod_address">Delhivery Ltd. Goa HQ Office, Plot no. 59/A-1, 59/A-2, Pilerne Industrial Estate, Pilerne, Bardez, Goa 403114</string>
+    <string name="label_remark">Remarks</string>
 
-  <!--Label (label_)-->
-  <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
-  <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your phone number for verification</string>
-  <string name="label_resend_otp_done">Resend OTP</string>
-  <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
-  <string name="label_resend">Didn’t receive OTP?</string>
-  <string name="label_account_setup_primary">What do you want to do in this app?</string>
-  <string name="label_account_setup_primary_select">You can always change your choice later</string>
-  <string name="label_account_setup_primary_select_postloads">Post Loads</string>
-  <string name="label_account_setup_primary_select_posttrucks">Post Trucks</string>
-  <string name="label_account_setup_primary_select_postboth">Post Loads &amp; Trucks</string>
-  <string name="label_postloads">To find both trucks &amp; loads</string>
-  <string name="label_posttrucks">To find loads in your operating routes</string>
-  <string name="label_postboth">To find both trucks &amp; loads</string>
-  <string name="label_role">What is your occupation?</string>
-  <string name="label_shipper">Shipper</string>
-  <string name="label_shipper_select">I have loads &amp; need to find trucks for them</string>
-  <string name="label_broker">Broker</string>
-  <string name="label_broker_select">I work on commission placing trucks &amp; loads</string>
-  <string name="label_owner">Fleet Owner</string>
-  <string name="label_owner_select">I have trucks &amp; need loads for them</string>
-  <string name="label_transporter">Transporter</string>
-  <string name="label_transporter_select">I have trucks &amp; also loads to ship</string>
-  <string name="label_tellus">Tell us about yourself</string>
-  <string name="label_tellus_detail">Fill in the details below to create your account</string>
-  <string name="label_agree"> I have read and I accept the </string>
-  <string name="label_agree_whatsapp">I agree to receiving updates from Delhivery through WhatsApp in relation to my use of this service</string>
-  <string name="sub_label_step1_3">Step 1 of 3</string>
-  <string name="sub_label_step2_3">Step 2 of 3</string>
-  <string name="sub_label_step3_3">Step 3 of 3</string>
-  <string name="label_identity_verification">Identity Verification</string>
-  <string name="label_pan_details">PAN details </string>
-  <string name="label_aadhaar">Aadhaar details </string>
-  <string name="label_communication_address">Office address </string>
-  <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
-  <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
-  <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
-  <string name="sub_label_gst_details">Choose a GST number for verification</string>
-  <string name="label_gst_dialog">Choose a verification method</string>
-  <string name="label_gst_dialog_option1">Verify via OTP</string>
-  <string name="label_gst_dialog_option2">Upload GST document</string>
-  <string name="label_otp_gst">Enter the 4-digit code we have sent to</string>
-  <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered aadhaar mobile number</string>
-  <string name="label_attach_image">Attach Image From</string>
-  <string name="label_camera">Camera</string>
-  <string name="label_files">Files</string>
-  <string name="label_attach">Attachments Uploaded</string>
-  <string name="sub_label_step4_4">Step 4 of 4</string>
-  <string name="label_business">Business Verification </string>
-  <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
-  <string name="label_bank_name">Bank Name</string>
-  <string name="label_ifsc">IFSC</string>
-  <string name="label_payment_terms">Payment Terms</string>
-  <string name="label_tc">Terms &amp; Conditions</string>
-  <string name="label_privacy_policy">Privacy Policy</string>
-  <string name="label_call_support">Call Support</string>
-  <string name="label_business_name">Business Name</string>
-  <string name="label_my_name">My Name</string>
-  <string name="label_my_occupation">My Occupation</string>
-  <string name="label_i_want">I want to</string>
-  <string name="label_post_load">Post Load</string>
-  <string name="label_post_truck">Post Truck</string>
-  <string name="label_both">Both</string>
-  <string name="label_third_party">View third party loads</string>
-  <string name="label_edit_member">Edit Member</string>
-  <string name="label_delete_member">Delete Member</string>
-  <string name="label_more_options_team">More options</string>
-  <string name="label_edit_route">Edit Route</string>
-  <string name="label_delete_route_option">Delete Route</string>
-  <string name="label_pan">PAN</string>
-  <string name="label_gst">GST Number</string>
-  <string name="label_cin">CIN</string>
-  <string name="label_address">Address</string>
-  <string name="label_verified">Verified</string>
-  <string name="label_account">Account</string>
-  <string name="label_kyc_details">KYC Details</string>
-  <string name="label_profile">Profile Details</string>
-  <string name="label_delhivery_wallet">Delhivery Wallet</string>
-  <string name="label_routes">My Routes</string>
-  <string name="label_earnings">My Earnings</string>
-  <string name="label_team">My Team Members</string>
-  <string name="label_share_rate">Share rate &amp; earn reward</string>
-  <string name="label_how_it_works">How does this work?</string>
-  <string name="label_pod">POD Address</string>
-  <string name="label_help">Help &amp; Support</string>
-  <string name="label_logout">Log Out</string>
-  <string name="label_delete">Delete Account</string>
-  <string name="label_ratings">Business Ratings</string>
-  <string name="label_kyc_pending">KYC verification pending!</string>
-  <string name="label_kyc_failed">KYC verification failed!</string>
-  <string name="label_member_name">Member Name</string>
-  <string name="label_create_member">Enter member details</string>
-  <string name="label_truck_rc">Business Verification Method</string>
-  <string name="label_changes">Confirm Changes?</string>
-  <string name="label_complete_business_verification">Complete Business Verification</string>
-  <string name="label_complete_delete">Delete Address</string>
-  <string name="label_aadhaar_number">Aadhaar Number</string>
-  <string name="label_origin">Origin Location</string>
-  <string name="label_destination">Destination Location</string>
-  <string name="label_truck_preference">Truck Preference</string>
-  <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
-  <string name="label_open">Open Body</string>
-  <string name="label_trailer">Trailer</string>
-  <string name="label_closed">Container</string>
-  <string name="label_dialog_rate">Rate has been successfully submitted</string>
-  <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
+    <!--Label (label_)-->
+    <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
+    <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your phone number for verification</string>
+    <string name="label_resend_otp_done">Resend OTP</string>
+    <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
+    <string name="label_resend">Didn’t receive OTP?</string>
+    <string name="label_account_setup_primary">What do you want to do in this app?</string>
+    <string name="label_account_setup_primary_select">You can always change your choice later</string>
+    <string name="label_account_setup_primary_select_postloads">Post Loads</string>
+    <string name="label_account_setup_primary_select_posttrucks">Post Trucks</string>
+    <string name="label_account_setup_primary_select_postboth">Post Loads &amp; Trucks</string>
+    <string name="label_postloads">To find both trucks &amp; loads</string>
+    <string name="label_posttrucks">To find loads in your operating routes</string>
+    <string name="label_postboth">To find both trucks &amp; loads</string>
+    <string name="label_role">What is your occupation?</string>
+    <string name="label_shipper">Shipper</string>
+    <string name="label_shipper_select">I have loads &amp; need to find trucks for them</string>
+    <string name="label_broker">Broker</string>
+    <string name="label_broker_select">I work on commission placing trucks &amp; loads</string>
+    <string name="label_owner">Fleet Owner</string>
+    <string name="label_owner_select">I have trucks &amp; need loads for them</string>
+    <string name="label_transporter">Transporter</string>
+    <string name="label_transporter_select">I have trucks &amp; also loads to ship</string>
+    <string name="label_tellus">Tell us about yourself</string>
+    <string name="label_tellus_detail">Fill in the details below to create your account</string>
+    <string name="label_agree"> I have read and I accept the </string>
+    <string name="label_agree_whatsapp">I agree to receiving updates from Delhivery through WhatsApp in relation to my use of this service</string>
+    <string name="sub_label_step1_3">Step 1 of 3</string>
+    <string name="sub_label_step2_3">Step 2 of 3</string>
+    <string name="sub_label_step3_3">Step 3 of 3</string>
+    <string name="label_identity_verification">Identity Verification</string>
+    <string name="label_pan_details">PAN details </string>
+    <string name="label_aadhaar">Aadhaar details </string>
+    <string name="label_communication_address">Office address </string>
+    <string name="sub_label_pan_details">Your PAN details are required for identity verification. Your details will remain secure.</string>
+    <string name="sub_label_aadhaar_details">Your Aadhaar details are required for verification. Your details will remain secure.</string>
+    <string name="sub_label_communication_details"> Enter your address details to use for communication</string>
+    <string name="sub_label_gst_details">Choose a GST number for verification</string>
+    <string name="label_gst_dialog">Choose a verification method</string>
+    <string name="label_gst_dialog_option1">Verify via OTP</string>
+    <string name="label_gst_dialog_option2">Upload GST document</string>
+    <string name="label_otp_gst">Enter the 4-digit code we have sent to</string>
+    <string name="label_otp_aadhaar">Enter the 6-digit code we have sent to \n registered aadhaar mobile number</string>
+    <string name="label_attach_image">Attach Image From</string>
+    <string name="label_camera">Camera</string>
+    <string name="label_files">Files</string>
+    <string name="label_attach">Attachments Uploaded</string>
+    <string name="sub_label_step4_4">Step 4 of 4</string>
+    <string name="label_business">Business Verification </string>
+    <string name="sub_label_business_details">Choose a method and verify one of your trucks.</string>
+    <string name="label_bank_name">Bank Name</string>
+    <string name="label_ifsc">IFSC</string>
+    <string name="label_payment_terms">Payment Terms</string>
+    <string name="label_tc">Terms &amp; Conditions</string>
+    <string name="label_privacy_policy">Privacy Policy</string>
+    <string name="label_call_support">Call Support</string>
+    <string name="label_business_name">Business Name</string>
+    <string name="label_my_name">My Name</string>
+    <string name="label_my_occupation">My Occupation</string>
+    <string name="label_i_want">I want to</string>
+    <string name="label_post_load">Post Load</string>
+    <string name="label_post_truck">Post Truck</string>
+    <string name="label_both">Both</string>
+    <string name="label_third_party">View third party loads</string>
+    <string name="label_edit_member">Edit Member</string>
+    <string name="label_delete_member">Delete Member</string>
+    <string name="label_more_options_team">More options</string>
+    <string name="label_edit_route">Edit Route</string>
+    <string name="label_delete_route_option">Delete Route</string>
+    <string name="label_pan">PAN</string>
+    <string name="label_gst">GST Number</string>
+    <string name="label_cin">CIN</string>
+    <string name="label_address">Address</string>
+    <string name="label_verified">Verified</string>
+    <string name="label_account">Account</string>
+    <string name="label_kyc_details">KYC Details</string>
+    <string name="label_profile">Profile Details</string>
+    <string name="label_delhivery_wallet">Delhivery Wallet</string>
+    <string name="label_routes">My Routes</string>
+    <string name="label_earnings">My Earnings</string>
+    <string name="label_team">My Team Members</string>
+    <string name="label_share_rate">Share rate &amp; earn reward</string>
+    <string name="label_how_it_works">How does this work?</string>
+    <string name="label_pod">POD Address</string>
+    <string name="label_help">Help &amp; Support</string>
+    <string name="label_logout">Log Out</string>
+    <string name="label_delete">Delete Account</string>
+    <string name="label_ratings">Business Ratings</string>
+    <string name="label_kyc_pending">KYC verification pending!</string>
+    <string name="label_kyc_failed">KYC verification failed!</string>
+    <string name="label_member_name">Member Name</string>
+    <string name="label_create_member">Enter member details</string>
+    <string name="label_truck_rc">Business Verification Method</string>
+    <string name="label_changes">Confirm Changes?</string>
+    <string name="label_complete_business_verification">Complete Business Verification</string>
+    <string name="label_complete_delete">Delete Address</string>
+    <string name="label_aadhaar_number">Aadhaar Number</string>
+    <string name="label_origin">Origin Location</string>
+    <string name="label_destination">Destination Location</string>
+    <string name="label_truck_preference">Truck Preference</string>
+    <string name="sub_label_business_identity">Choose a method to verify your business identity.</string>
+    <string name="label_open">Open Body</string>
+    <string name="label_trailer">Trailer</string>
+    <string name="label_closed">Container</string>
+    <string name="label_dialog_rate">Rate has been successfully submitted</string>
+    <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
-  <!--Error (error_-->
-  <string name="error_no_internet">No Internet connection</string>
-  <string name="error_name_required">Please enter name</string>
-  <string name="error_dob_required">Please enter Date of birth</string>
-  <string name="error_location_permission_denied">Location Permission Denied</string>
-  <string name="error_search_missing_origin">Please select origin</string>
-  <string name="error_search_missing_reporting_center">Please select reporting center</string>
-  <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
-  <string name="error_upload">Oops! Something went wrong</string>
-  <string name="error_upload_document">Try uploading the document once again</string>
-  <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
-  <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
-  <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
-
-
-  <string name="not_available">Not available</string>
-  <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
-  <string name="label_next">NEXT</string>
-  <string name="label_give_fuel_to">Give fuel to</string>
-  <string name="label_transaction_remarks">Transaction Remarks</string>
-  <string name="label_supplier_details">Suppliers Details</string>
-  <string name="label_via">Via</string>
-  <string name="label_intermediary">Intermediary Stops</string>
-  <string name="label_multi_stop">Multi-Stop</string>
-  <string name="label_pmt">PMT</string>
-  <string name="_3_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[Low Detention: Destination warehouse always unloads in < 8 hrs]]></string>
-  <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
-  <string name="_4_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[3.Short wait time at Destination (< 8 hrs)]]></string>
-
-  <string name="delhivery_load">Delhivery Load</string>
-  <string name="loading_filter">Loaded after: </string>
-  <string name="settled_filter">Only settled</string>
-  <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
-  <string name="lowest_bid_text">You currently have the lowest bid</string>
-  <string name="bid_stand_label">Where do you stand?</string>
-  <string name="label_deductions">Deductions</string>
-  <string name="label_payments">Payments</string>
-  <string name="label_recoveries_adjusted">Recoveries Adjusted</string>
-  <string name="label_pending_recovery">Pending Recovery</string>
-  <string name="call_driver">CALL DRIVER</string>
-  <string name="cancelled_bid_msg">The load request itself is cancelled</string>
-  <string name="pan_hint">Enter your PAN number</string>
-  <string name="aadhaar_hint">Enter your Aadhaar number</string>
-  <string name="pincode_hint">Pincode</string>
-  <string name="flat_hint">Flat, House no., Building</string>
-  <string name="area_hint">Area, Street, Sector, Village</string>
-  <string name="city_hint">City</string>
-  <string name="address_proof_hint">Choose Proof Documents</string>
-  <string name="allowed_char_address">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 </string>
-  <string name="allowed_char_name">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ </string>
+    <!--Error (error_-->
+    <string name="error_no_internet">No Internet connection</string>
+    <string name="error_name_required">Please enter name</string>
+    <string name="error_dob_required">Please enter Date of birth</string>
+    <string name="error_location_permission_denied">Location Permission Denied</string>
+    <string name="error_search_missing_origin">Please select origin</string>
+    <string name="error_search_missing_reporting_center">Please select reporting center</string>
+    <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
+    <string name="error_upload">Oops! Something went wrong</string>
+    <string name="error_upload_document">Try uploading the document once again</string>
+    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+    <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
+    <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
 
 
-  <string name="address_proof_attachment">Address proof attachment</string>
-  <string name="upload_document">Upload document</string>
-  <string name="truck_hint">Enter Truck Number</string>
-  <string name="label_truck">Truck RC</string>
-  <string name="lr_hint">LR Copy/Loading Note</string>
-  <string name="sub_label_step3_4">Step 3 of 4</string>
-  <string name="sub_label_address_details">Choose or add an address to use for communication</string>
-  <string name="action_add_alternate_address">+ Add alternate address</string>
-  <string name="label_address_details">Enter address details</string>
-  <string name="name_hint">Your name</string>
-  <string name="referral_hint">Referral code (optional)</string>
-  <string name="business_hint">Business name</string>
-  <string name="label_kyc">Please start KYC verification</string>
-  <string name="upload_aadhaar_text">Upload Aadhaar document</string>
-  <string name="label_aadhaar_verification">Aadhaar Verification</string>
-  <string name="details_submitted_successfully">Details submitted successfully!</string>
-  <string name="bid_placed_successfully">Bid placed successfully!</string>
-  <string name="kyc_verified_successfully">KYC verified successfully!</string>
-  <string name="kyc_verified_complete_details">Your KYC verification is complete and now you can get access to all features</string>
-  <string name="notify_kyc_verification">We will notify you when your KYC verification is complete</string>
-  <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
-  <string name="sub_label_confirm_delete">Are you sure you want to delete this address?</string>
-  <string name="sub_label_changing_from_post_truck">With this change, you will not be allowed to Post Trucks. Your trip history will still be accessible</string>
-  <string name="sub_label_changing_from_post_load">With this change, you will not be allowed to Post Loads. Your load history will still be accessible</string>
-  <string name="sub_label_changing_to_both">With this change, you can now Post Trucks &amp; Loads. Your trip &amp; load history will still be accessible</string>
-  <string name="label_edit_occupation">"Edit My Occupation "</string>
-  <string name="sub_label_vendor_policy">"By tapping “I Agree”, I have read &amp; agree to </string>
-  <string name="sub_label_vendor_link">"Delhivery’s Partner Policy"</string>
+    <string name="not_available">Not available</string>
+    <string name="label_bank_status">You will receive a confirmation from your bank within 3–4 hours about successful transfer</string>
+    <string name="label_next">NEXT</string>
+    <string name="label_give_fuel_to">Give fuel to</string>
+    <string name="label_transaction_remarks">Transaction Remarks</string>
+    <string name="label_supplier_details">Suppliers Details</string>
+    <string name="label_via">Via</string>
+    <string name="label_intermediary">Intermediary Stops</string>
+    <string name="label_multi_stop">Multi-Stop</string>
+    <string name="label_pmt">PMT</string>
+    <string name="_3_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[Low Detention: Destination warehouse always unloads in < 8 hrs]]></string>
+    <string name="low_detention_expected_detention_at_warehouse_is_8_hrs">Low Detention</string>
+    <string name="_4_low_detention_expected_detention_at_warehouse_is_8_hrs"><![CDATA[3.Short wait time at Destination (< 8 hrs)]]></string>
 
-  <string name="cin_number">CIN Number</string>
-  <string name="udyog_aadhaar_number">Udyog Aadhaar Number </string>
-  <string name="shop_establishment">Shop &amp; Establishment Number</string>
-  <string name="shop_hint"><![CDATA[Enter shop & establishment number]]></string>
-  <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
-  <string name="proof_attachment">Proof Attachment</string>
-  <string name="proof_account">Account Proof</string>
-  <string name="sub_label_proof_account">Cancelled cheque/Passbook front page</string>
-  <string name="sub_label_no_of_trucks">Number of owned trucks</string>
-  <string name="sub_label_account_number">Account Number</string>
-  <string name="sub_label_no_of_attached_trucks">Number of attached trucks </string>
-  <string name="sub_label_ifsc">IFSC Code</string>
-  <string name="sub_label_account_holder">Account Holder Name</string>
-  <string name="hint_owned_truck">Owned Truck</string>
-  <string name="hint_attached_truck">Attached truck</string>
-  <string name="sub_label_verification_method">Verification Method</string>
-  <string name="sub_label_verification_method_desc">One of your truck has to be verified</string>
-  <string name="account_holder_name_warning">Account holder name doesn’t match with name on PAN</string>
-  <string name="name_declarion_text"><![CDATA[I declare that the above mentioned bank account belongs to me & I want my advance & balance payment in the same account]]></string>
-  <string name="optional_four_c">"194C Declaration (Optional) "</string>
-  <string name="label_i_agree">I Agree</string>
-  <string name="hint_account_num">Account Number</string>
-  <string name="hint_search_city">Search by city</string>
-  <string name="hint_search_city_state">Search by city or state</string>
-  <string name="selected_cities_states">Selected Cities/States</string>
-  <string name="popular_cities">Popular Locations</string>
-
-  <string name="routes_amp_trucks"><![CDATA[Routes & Trucks]]></string>
-  <string name="kyc_details">KYC Details</string>
-  <string name="payment_details">Payment Details</string>
-  <string name="hint_for_quick_processing">For quick processing use Business PAN</string>
-  <string name="hint_for_bank_validation">₹1 will be credited to the above bank account for verification.</string>
-  <string name="add_route">Add Route</string>
-  <string name="add_your_truck_and_receive_matching_load_offers">Tell us your truck\'s current location and preferred drop location and get first preference for matching loads</string>
-  <string name="get_load_offers">Get first preference for Loads by \nadding your truck details</string>
-  <string name="we_use_your_truck_details">We\'ll use your truck\'s current location to \nfind the next load</string>
-  <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access to loads on that lane</string>
-  <string name="sharing_rate_text">By sharing rates for trucks placed in the last 7 days</string>
-  <string name="sharing_rate">₹500</string>
-  <string name="sharing_rate_rupee">/rate </string>
-  <string name="need_priority_access_to_loads">Get Priority access to loads</string>
-  <string name="earn_cash_reward">Earn cash rewards upto</string>
-  <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
-  <string name="our_privacy_policy_outlines">Our <a href="https://orion.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
-  <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
-  <string name="error_update_failed">Update Failed, Please try again</string>
-
-  <string name="earn_reward">Earn reward when proof is verified</string>
-  <string name="details_updated_based_on_proof">Details updated based on proof</string>
-  <string name="rewards_earned">Rewards Earned</string>
-  <string name="submitted_on">Submitted on</string>
-  <string name="payment_date">Payment Date</string>
-  <string name="offer_hash">Offer#</string>
-  <string name="full_details">Full Details</string>
-  <string name="utr">UTR#</string>
-  <string name="select_a_route">Select a route to share the rates</string>
-  <string name="share_proof">Share proof not older than 7 days</string>
-  <string name="rejected_due">Rejected due to </string>
-  <string name="price_banner_text">Earn ₹500 on this lane offer</string>
-  <string name="share_rate">Share Rate</string>
-  <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
-  <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Non-Delhivery Intercity - </font>  Contract for transporting non-Delhivery loads between different cities.]]></string>
-  <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intercity - </font> Contract for transporting Delhivery loads between different cities.]]></string>
-  <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intracity - </font> Contract for transporting Delhivery loads within the same city.]]></string>
-  <string name="dlv_intracity_fixed_info"><![CDATA[1. <font color=\'#5B80F7\'>Fixed Reporting - </font> Vehicle reports at a single, predefined location and time.]]></string>
-  <string name="dlv_intracity_flexible_info"><![CDATA[2. <font color=\'#5B80F7\'>Flexible Reporting - </font> Vehicle will report at multiple locations with variable reporting times.]]></string>
-  <string name="collecting_bids">Collecting Bids</string>
-  <string name="live_bidding_at">Live Bidding at</string>
-  <string name="vehicle_requirement">Vehicle Requirement</string>
-  <string name="payment_slabs">Payment Slabs</string>
-  <string name="see_full_slabs_list">See full slabs list</string>
-  <string name="tentative_total_vehicles">Tentative Total vehicles</string>
-  <string name="operating_days">Operating Days</string>
-  <string name="per_day">Per day</string>
-  <string name="per_month">Per month</string>
-  <string name="tentative_total_vehicles_count">Vehicle Per Departure ,</string>
-  <string name="daily_departure_approximately">Daily Departure</string>
-  <string name="one_way">1 Way</string>
-  <string name="trip_details">Trip Details</string>
-  <string name="payment_info">Payment Information</string>
-  <string name="trip_type">Trip Type</string>
-  <string name="per_extra_km">per extra Km</string>
-  <string name="per_extra_hour">per extra hour</string>
-  <string name="per_extra_day">per extra day</string>
-  <string name="connection_type">Connection Type</string>
-  <string name="continuous">Continuous</string>
-  <string name="bidding_will_close_in">Bidding will close in </string>
-  <string name="custom_date">10 nov</string>
-  <string name="you_have_not_bid_yet">You have not bid yet</string>
-  <string name="your_pmt_bid">Your PMT bid</string>
-  <string name="your_bid_ftl_rate">Your Bid </string>
-  <string name="higher_tha_other_by_500">Higher tha other by 500</string>
-  <string name="_2_bids_received">2 Bids received</string>
-  <string name="higher_than_other_by_500">Higher than other by 500</string>
-  <string name="your_trip_commitment">Your Trip Commitment</string>
-  <string name="place_your_bid">Place Your Bid</string>
-  <string name="bid_placed_sucessfully">Bid placed successfully</string>
-  <string name="bid_revised_sucessfully">Bid revised successfully</string>
-  <string name="your_bid">Your Bid</string>
-  <string name="invalid_amount_out_of_range">Invalid Amount, out of range.</string>
-  <string name="exceeds_tentative_trip_count">Exceeds tentative trip count</string>
-  <string name="invalid_vehicle_number">Invalid Vehicle Number</string>
-  <string name="bid_amount">Bid Amount</string>
-  <string name="important_information">Important Information</string>
-  <string name="travel_time_between_two_stops_should_not_exceed_the_time_stated_in_schedule">Travel Time, between two stops should not exceed the time stated in schedule.</string>
-  <string name="appropriate_penalties_laid_out_in_rules_will_be_levied_in_case_of_failure_to_meet_stated_drive_time">Appropriate penalties(laid out in ‘Rules’) will be levied in case of failure to meet stated Drive Time</string>
-  <string name="information">Information</string>
-  <string name="under_review">Under Review</string>
-  <string name="you_did_not_bid_for_this_contract">You did not bid for this contract</string>
-  <string name="results_will_be_announced_shortly">Results will be announced shortly</string>
-  <string name="your_bid_amount">Your Bid Amount</string>
-  <string name="trip_commitment"> Number of trips you can serve on this lane ?</string>
-  <string name="your_vehicle_number">Your Vehicle Number</string>
-  <string name="vehicle_number">Vehicle Number</string>
-  <string name="placement_days">Vehicle Can Be Placed In (Days)</string>
-  <string name="departure">Departure</string>
-  <string name="arrival">Arrival</string>
-  <string name="route_details">Route Details</string>
-  <string name="reporting_center">Reporting City</string>
-  <string name="route_schedule">Route Schedule</string>
-  <string name="only_bid_if_you_match_vehicle_type_amp_total_vehicles"><![CDATA[Only bid if you match vehicle type & total vehicles]]></string>
-  <string name="ensure_vehicle_reaches_as_per_given_schedule">Ensure vehicle reaches as per given schedule</string>
-  <string name="schedule_might_change_amp_you_will_be_notified"><![CDATA[Schedule might change & you will be notified]]></string>
-  <string name="not_meeting_travel_time_will_result_in_delay_penalty">Not meeting travel time will result in delay penalty</string>
-  <string name="for_continuous_lanes_ensure_empty_vehicle_is_always_available_for_docking_loading">For continuous lanes, ensure empty vehicle is always available for docking/loading</string>
-  <string name="note_that_the_number_of_trips_are_tentative">The number of trips is not final.</string>
-  <string name="ensure_adherence_to_no_of_trip_commitments">Be sure to keep your trip commitments.</string>
-  <string name="non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"><![CDATA[Not following the contract can hurt your performance score and may lead to cancellation.]]></string>
-  <string name="bidding_cancelled">Bidding has been Cancelled</string>
-  <string name="cancelled">Cancelled</string>
-  <string name="revise_your_bid">Revise Your Bid</string>
-  <string name="bid_received">Bids Received</string>
-  <string name="higher_than">Higher than other by"</string>
-  <string name="current_lowest">Current Lowest Bid</string>
-  <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
-  <string name="your_ftl_rate">Your Bid (FTL Rate)</string>
-  <string name="more_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by more than 5%</string>
-  <string name="less_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by approx. 5%</string>
-  <string name="not_meeting_expectation">Thank you for participating! Your service levels do not meet the expectation.</string>
-  <string name="won_contracts">Congratulations you have won the contract!</string>
-  <string name="awaiting_results">Awaiting Result</string>
-  <string name="bidding_closed">Bidding Closed</string>
-  <string name="result_declared">Result Declared</string>
-  <string name="live_bidding">Live Bidding</string>
-  <string name="live_11_12">Live bidding at 11 AM to 12 PM</string>
-  <string name="live_4_5">Live bidding at 4 PM to 5 PM</string>
-  <string name="bid_revise_successfully">Bid Revised Successfully</string>
-  <string name="view_details">View Details and Place Bid</string>
-  <string name="you_have_not_bid">You have not bid yet</string>
-  <string name="you_did_not_bid">You did not bid</string>
-  <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[You will receive start and end dates by email.]]></string>
-  <string name="rules">Guidelines</string>
-  <string name="view_on_map">Map</string>
-  <string name="status">Status</string>
-  <string name="truck_type">Type</string>
-  <string name="vehicle_type">Vehicle Type</string>
-  <string name="enter_reporting_center">Enter Reporting City</string>
-  <string name="select_reporting_center">Select Reporting City</string>
-  <string name="add_bid_only">Add bid only if you can match the vehicle type</string>
-  <string name="ensure_the_vehicle_registration">Ensure the vehicle registration number is correct</string>
-  <string name="ensure_the_same_vehicle_reports">Ensure the same vehicle reports at the center on time</string>
-  <string name="any_change_in_operating_days"><![CDATA[Any change in operating days & rates will be notified]]></string>
-  <string name="note_that_expected_payout"><![CDATA[Note that expected payout may vary basis slab & SLA]]></string>
-  <string name="reporting_time">Reporting Time</string>
-  <string name="vehicle_is_placed_selected_days">Ensure the vehicle is placed within selected days</string>
-  <string name="payment_slabs_details"><![CDATA[Monthly payout per slab is determined by vehicle type & location, and is calculated by addition of monthly average km rate for that vehicle type per slab increment.]]></string>
-  <string name="hide_slabs">Hide full slabs list</string>
-  <string name="bid_revise_error">Invalid bid: use ₹ %1$s multiples.</string>
-  <string name="remark_label">Remark</string>
-  <string name="usage_label">Usage</string>
-  <string name="no_entry_permit_label">No Entry Permit</string>
-  <string name="all">All</string>
-  <string name="account_deletion">You have requested account data deletion, please reach out to Vendor Desk</string>
-  <string name="acceptance_declaration">Upon acceptance of the load, the vehicle must arrive at least 30 minutes prior to the reporting time; failure to do so will incur a penalty</string>
-  <string name="label_driver_number">Driver Number</string>
-  <string name="label_driver_name">Driver Name</string>
-  <string name="your_placement_details_are_updated">Your placement details are updated</string>
-  <string name="entry_permit_for_required">Entry permit for %1$s required</string>
-  <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
-  <string name="load_categories">Load Categories</string>
-  <string name="placement_vehicle_type"><![CDATA[Vehicle type must match the requirement]]></string>
-  <string name="vehicle_type_amp_count"><![CDATA[Vehicle type & count must match the requirement]]></string>
-  <string name="follow_the_schedule_to_avoid_delay_penalties">Follow the schedule to avoid delay penalties</string>
-  <string name="any_schedule_changes_will_be_informed">Any schedule changes will be informed</string>
-  <string name="keep_an_empty_vehicle_ready_for_return_or_next_trip">Keep an empty vehicle ready for return or next trip</string>
-  <string name="vehicle_type_must_match_the_requirement">Vehicle type must match the requirement</string>
-  <string name="ensure_vehicle_reports_on_time">Ensure vehicle reports on time at the reporting center</string>
-  <string name="trip_count_is_tentative_and_may_change">Trip count is tentative and may change</string>
-  <string name="stick_to_your_trip_commitments">Stick to your trip commitments</string>
-  <string name="contract_violations_may_affect_your_score">Contract violations may affect your score or lead to cancellation</string>
-  <string name="start_and_end_dates_will_be_shared_via_email">Start and end dates will be communicated via email after bidding results are finalized</string>
-
-  <string name="arrow_separator_html"><![CDATA[ &rarr; ]]></string>
-  <string name="check_your_bid_status">Check your bid status and make updates anytime in the \"My Bids\" section.</string>
-  <string name="check_your_bid_revise_status"> Your bid is now the lowest and you’re in the best position to win.</string>
+    <string name="delhivery_load">Delhivery Load</string>
+    <string name="loading_filter">Loaded after: </string>
+    <string name="settled_filter">Only settled</string>
+    <string name="ap_recon_pending">Payment for this trip has been settled and balance has been paid - please reach out to your Supply POC or Vendor Desk team for more details.</string>
+    <string name="lowest_bid_text">You currently have the lowest bid</string>
+    <string name="bid_stand_label">Where do you stand?</string>
+    <string name="label_deductions">Deductions</string>
+    <string name="label_payments">Payments</string>
+    <string name="label_recoveries_adjusted">Recoveries Adjusted</string>
+    <string name="label_pending_recovery">Pending Recovery</string>
+    <string name="call_driver">CALL DRIVER</string>
+    <string name="cancelled_bid_msg">The load request itself is cancelled</string>
+    <string name="pan_hint">Enter your PAN number</string>
+    <string name="aadhaar_hint">Enter your Aadhaar number</string>
+    <string name="pincode_hint">Pincode</string>
+    <string name="flat_hint">Flat, House no., Building</string>
+    <string name="area_hint">Area, Street, Sector, Village</string>
+    <string name="city_hint">City</string>
+    <string name="address_proof_hint">Choose Proof Documents</string>
+    <string name="allowed_char_address">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 </string>
+    <string name="allowed_char_name">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ </string>
 
 
-  <string name="title_dialog_success">Details submitted successfully!</string>
-  <string name="sub_title_dialog_success">Drivers are required to mark in and out using the Driver App.</string>
-  <string name="copy_whatsapp_share">Share on Whatsapp</string>
-  <string name="driver_app_link">https://play.google.com/store/apps/details?id=com.delhivery.fmsdriver</string>
-  <string name="axle_app_link">https://play.google.com/store/apps/details?id=com.delhivery.axle</string>
-  <string name="hindi_video_link">https://youtu.be/x7YhuhHdGkA</string>
-  <string name="english_video_link">https://youtu.be/RUutFvWwyQQ</string>
-  <string name="intracity">Intracity</string>
-  <string name="intercity">Intercity</string>
+    <string name="address_proof_attachment">Address proof attachment</string>
+    <string name="upload_document">Upload document</string>
+    <string name="truck_hint">Enter Truck Number</string>
+    <string name="label_truck">Truck RC</string>
+    <string name="lr_hint">LR Copy/Loading Note</string>
+    <string name="sub_label_step3_4">Step 3 of 4</string>
+    <string name="sub_label_address_details">Choose or add an address to use for communication</string>
+    <string name="action_add_alternate_address">+ Add alternate address</string>
+    <string name="label_address_details">Enter address details</string>
+    <string name="name_hint">Your name</string>
+    <string name="referral_hint">Referral code (optional)</string>
+    <string name="business_hint">Business name</string>
+    <string name="label_kyc">Please start KYC verification</string>
+    <string name="upload_aadhaar_text">Upload Aadhaar document</string>
+    <string name="label_aadhaar_verification">Aadhaar Verification</string>
+    <string name="details_submitted_successfully">Details submitted successfully!</string>
+    <string name="bid_placed_successfully">Bid placed successfully!</string>
+    <string name="kyc_verified_successfully">KYC verified successfully!</string>
+    <string name="kyc_verified_complete_details">Your KYC verification is complete and now you can get access to all features</string>
+    <string name="notify_kyc_verification">We will notify you when your KYC verification is complete</string>
+    <string name="sub_label_complete_business_verificatin">Changing your purpose to Post Loads &amp; Trucks requires business verification.</string>
+    <string name="sub_label_confirm_delete">Are you sure you want to delete this address?</string>
+    <string name="sub_label_changing_from_post_truck">With this change, you will not be allowed to Post Trucks. Your trip history will still be accessible</string>
+    <string name="sub_label_changing_from_post_load">With this change, you will not be allowed to Post Loads. Your load history will still be accessible</string>
+    <string name="sub_label_changing_to_both">With this change, you can now Post Trucks &amp; Loads. Your trip &amp; load history will still be accessible</string>
+    <string name="label_edit_occupation">"Edit My Occupation "</string>
+    <string name="sub_label_vendor_policy">"By tapping “I Agree”, I have read &amp; agree to </string>
+    <string name="sub_label_vendor_link">"Delhivery’s Partner Policy"</string>
+
+    <string name="cin_number">CIN Number</string>
+    <string name="udyog_aadhaar_number">Udyog Aadhaar Number </string>
+    <string name="shop_establishment">Shop &amp; Establishment Number</string>
+    <string name="shop_hint"><![CDATA[Enter shop & establishment number]]></string>
+    <string name="udyog_hint">Enter Udyog Aadhaar Number</string>
+    <string name="proof_attachment">Proof Attachment</string>
+    <string name="proof_account">Account Proof</string>
+    <string name="sub_label_proof_account">Cancelled cheque/Passbook front page</string>
+    <string name="sub_label_no_of_trucks">Number of owned trucks</string>
+    <string name="sub_label_account_number">Account Number</string>
+    <string name="sub_label_no_of_attached_trucks">Number of attached trucks </string>
+    <string name="sub_label_ifsc">IFSC Code</string>
+    <string name="sub_label_account_holder">Account Holder Name</string>
+    <string name="hint_owned_truck">Owned Truck</string>
+    <string name="hint_attached_truck">Attached truck</string>
+    <string name="sub_label_verification_method">Verification Method</string>
+    <string name="sub_label_verification_method_desc">One of your truck has to be verified</string>
+    <string name="account_holder_name_warning">Account holder name doesn’t match with name on PAN</string>
+    <string name="name_declarion_text"><![CDATA[I declare that the above mentioned bank account belongs to me & I want my advance & balance payment in the same account]]></string>
+    <string name="optional_four_c">"194C Declaration (Optional) "</string>
+    <string name="label_i_agree">I Agree</string>
+    <string name="hint_account_num">Account Number</string>
+    <string name="hint_search_city">Search by city</string>
+    <string name="hint_search_city_state">Search by city or state</string>
+    <string name="selected_cities_states">Selected Cities/States</string>
+    <string name="popular_cities">Popular Locations</string>
+
+    <string name="routes_amp_trucks"><![CDATA[Routes & Trucks]]></string>
+    <string name="kyc_details">KYC Details</string>
+    <string name="payment_details">Payment Details</string>
+    <string name="hint_for_quick_processing">For quick processing use Business PAN</string>
+    <string name="hint_for_bank_validation">₹1 will be credited to the above bank account for verification.</string>
+    <string name="add_route">Add Route</string>
+    <string name="add_your_truck_and_receive_matching_load_offers">Tell us your truck\'s current location and preferred drop location and get first preference for matching loads</string>
+    <string name="get_load_offers">Get first preference for Loads by \nadding your truck details</string>
+    <string name="we_use_your_truck_details">We\'ll use your truck\'s current location to \nfind the next load</string>
+    <string name="add_your_trucks">Share your truck\'s current location &amp; gain first access to loads on that lane</string>
+    <string name="sharing_rate_text">By sharing rates for trucks placed in the last 7 days</string>
+    <string name="sharing_rate">₹500</string>
+    <string name="sharing_rate_rupee">/rate </string>
+    <string name="need_priority_access_to_loads">Get Priority access to loads</string>
+    <string name="earn_cash_reward">Earn cash rewards upto</string>
+    <string name="i_read_accept">I have read and I accept the Privacy Policy and Conditions of Use. </string>
+    <string name="our_privacy_policy_outlines">Our <a href="https://orion.delhivery.com/#/axle-app-privacy-policy">Privacy Policy</a> outlines what personal data we collect, why we collect it, and how we use it. Our <a href="https://orion.delhivery.com/#/axle-app-conditions">Conditions of Use</a> govern your use of this application.</string>
+    <string name="label_aadhaar_consent">I voluntarily submit and give my consent to Delhivery to use my Aadhaar number for Aadhaar based authentication with UIDAI for the purpose of establishing my identity and onboarding me as a supplier.</string>
+    <string name="error_update_failed">Update Failed, Please try again</string>
+
+    <string name="earn_reward">Earn reward when proof is verified</string>
+    <string name="details_updated_based_on_proof">Details updated based on proof</string>
+    <string name="rewards_earned">Rewards Earned</string>
+    <string name="submitted_on">Submitted on</string>
+    <string name="payment_date">Payment Date</string>
+    <string name="offer_hash">Offer#</string>
+    <string name="full_details">Full Details</string>
+    <string name="utr">UTR#</string>
+    <string name="select_a_route">Select a route to share the rates</string>
+    <string name="share_proof">Share proof not older than 7 days</string>
+    <string name="rejected_due">Rejected due to </string>
+    <string name="price_banner_text">Earn ₹500 on this lane offer</string>
+    <string name="share_rate">Share Rate</string>
+    <string name="xxxx_your_bid_amount_is_lowest">₹xxxx your bid amount is lowest</string>
+    <string name="non_express_load_info"><![CDATA[<font color=\'#5B80F7\'>Non-Delhivery Intercity - </font>  Contract for transporting non-Delhivery loads between different cities.]]></string>
+    <string name="express_load_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intercity - </font> Contract for transporting Delhivery loads between different cities.]]></string>
+    <string name="dlv_intracity_info"><![CDATA[<font color=\'#5B80F7\'>Delhivery Intracity - </font> Contract for transporting Delhivery loads within the same city.]]></string>
+    <string name="dlv_intracity_fixed_info"><![CDATA[1. <font color=\'#5B80F7\'>Fixed Reporting - </font> Vehicle reports at a single, predefined location and time.]]></string>
+    <string name="dlv_intracity_flexible_info"><![CDATA[2. <font color=\'#5B80F7\'>Flexible Reporting - </font> Vehicle will report at multiple locations with variable reporting times.]]></string>
+    <string name="collecting_bids">Collecting Bids</string>
+    <string name="live_bidding_at">Live Bidding at</string>
+    <string name="vehicle_requirement">Vehicle Requirement</string>
+    <string name="payment_slabs">Payment Slabs</string>
+    <string name="see_full_slabs_list">See full slabs list</string>
+    <string name="tentative_total_vehicles">Tentative Total vehicles</string>
+    <string name="operating_days">Operating Days</string>
+    <string name="per_day">Per day</string>
+    <string name="per_month">Per month</string>
+    <string name="tentative_total_vehicles_count">Vehicle Per Departure ,</string>
+    <string name="daily_departure_approximately">Daily Departure</string>
+    <string name="one_way">1 Way</string>
+    <string name="trip_details">Trip Details</string>
+    <string name="payment_info">Payment Information</string>
+    <string name="trip_type">Trip Type</string>
+    <string name="per_extra_km">per extra Km</string>
+    <string name="per_extra_hour">per extra hour</string>
+    <string name="per_extra_day">per extra day</string>
+    <string name="connection_type">Connection Type</string>
+    <string name="continuous">Continuous</string>
+    <string name="bidding_will_close_in">Bidding will close in </string>
+    <string name="custom_date">10 nov</string>
+    <string name="you_have_not_bid_yet">You have not bid yet</string>
+    <string name="your_pmt_bid">Your PMT bid</string>
+    <string name="your_bid_ftl_rate">Your Bid </string>
+    <string name="higher_tha_other_by_500">Higher tha other by 500</string>
+    <string name="_2_bids_received">2 Bids received</string>
+    <string name="higher_than_other_by_500">Higher than other by 500</string>
+    <string name="your_trip_commitment">Your Trip Commitment</string>
+    <string name="place_your_bid">Place Your Bid</string>
+    <string name="bid_placed_sucessfully">Bid placed successfully</string>
+    <string name="bid_revised_sucessfully">Bid revised successfully</string>
+    <string name="your_bid">Your Bid</string>
+    <string name="invalid_amount_out_of_range">Invalid Amount, out of range.</string>
+    <string name="exceeds_tentative_trip_count">Exceeds tentative trip count</string>
+    <string name="invalid_vehicle_number">Invalid Vehicle Number</string>
+    <string name="bid_amount">Bid Amount</string>
+    <string name="important_information">Important Information</string>
+    <string name="travel_time_between_two_stops_should_not_exceed_the_time_stated_in_schedule">Travel Time, between two stops should not exceed the time stated in schedule.</string>
+    <string name="appropriate_penalties_laid_out_in_rules_will_be_levied_in_case_of_failure_to_meet_stated_drive_time">Appropriate penalties(laid out in ‘Rules’) will be levied in case of failure to meet stated Drive Time</string>
+    <string name="information">Information</string>
+    <string name="under_review">Under Review</string>
+    <string name="you_did_not_bid_for_this_contract">You did not bid for this contract</string>
+    <string name="results_will_be_announced_shortly">Results will be announced shortly</string>
+    <string name="your_bid_amount">Your Bid Amount</string>
+    <string name="trip_commitment"> Number of trips you can serve on this lane ?</string>
+    <string name="your_vehicle_number">Your Vehicle Number</string>
+    <string name="vehicle_number">Vehicle Number</string>
+    <string name="placement_days">Vehicle Can Be Placed In (Days)</string>
+    <string name="departure">Departure</string>
+    <string name="arrival">Arrival</string>
+    <string name="route_details">Route Details</string>
+    <string name="reporting_center">Reporting City</string>
+    <string name="route_schedule">Route Schedule</string>
+    <string name="only_bid_if_you_match_vehicle_type_amp_total_vehicles"><![CDATA[Only bid if you match vehicle type & total vehicles]]></string>
+    <string name="ensure_vehicle_reaches_as_per_given_schedule">Ensure vehicle reaches as per given schedule</string>
+    <string name="schedule_might_change_amp_you_will_be_notified"><![CDATA[Schedule might change & you will be notified]]></string>
+    <string name="not_meeting_travel_time_will_result_in_delay_penalty">Not meeting travel time will result in delay penalty</string>
+    <string name="for_continuous_lanes_ensure_empty_vehicle_is_always_available_for_docking_loading">For continuous lanes, ensure empty vehicle is always available for docking/loading</string>
+    <string name="note_that_the_number_of_trips_are_tentative">The number of trips is not final.</string>
+    <string name="ensure_adherence_to_no_of_trip_commitments">Be sure to keep your trip commitments.</string>
+    <string name="non_adherence_to_contract_will_impact_your_performance_score_amp_may_result_in_contract_cancellation"><![CDATA[Not following the contract can hurt your performance score and may lead to cancellation.]]></string>
+    <string name="bidding_cancelled">Bidding has been Cancelled</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="revise_your_bid">Revise Your Bid</string>
+    <string name="bid_received">Bids Received</string>
+    <string name="higher_than">Higher than other by"</string>
+    <string name="current_lowest">Current Lowest Bid</string>
+    <string name="your_pmt_rate">Your Bid (PMT Rate)</string>
+    <string name="your_ftl_rate">Your Bid (FTL Rate)</string>
+    <string name="more_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by more than 5%</string>
+    <string name="less_than_5_percentage">Thank you for participating! Your bid was higher than the lowest bid by approx. 5%</string>
+    <string name="not_meeting_expectation">Thank you for participating! Your service levels do not meet the expectation.</string>
+    <string name="won_contracts">Congratulations you have won the contract!</string>
+    <string name="awaiting_results">Awaiting Result</string>
+    <string name="bidding_closed">Bidding Closed</string>
+    <string name="result_declared">Result Declared</string>
+    <string name="live_bidding">Live Bidding</string>
+    <string name="live_11_12">Live bidding at 11 AM to 12 PM</string>
+    <string name="live_4_5">Live bidding at 4 PM to 5 PM</string>
+    <string name="bid_revise_successfully">Bid Revised Successfully</string>
+    <string name="view_details">View Details and Place Bid</string>
+    <string name="you_have_not_bid">You have not bid yet</string>
+    <string name="you_did_not_bid">You did not bid</string>
+    <string name="frc_start_amp_end_date_will_be_informed_via_email"><![CDATA[You will receive start and end dates by email.]]></string>
+    <string name="rules">Guidelines</string>
+    <string name="view_on_map">Map</string>
+    <string name="status">Status</string>
+    <string name="truck_type">Type</string>
+    <string name="vehicle_type">Vehicle Type</string>
+    <string name="enter_reporting_center">Enter Reporting City</string>
+    <string name="select_reporting_center">Select Reporting City</string>
+    <string name="add_bid_only">Add bid only if you can match the vehicle type</string>
+    <string name="ensure_the_vehicle_registration">Ensure the vehicle registration number is correct</string>
+    <string name="ensure_the_same_vehicle_reports">Ensure the same vehicle reports at the center on time</string>
+    <string name="any_change_in_operating_days"><![CDATA[Any change in operating days & rates will be notified]]></string>
+    <string name="note_that_expected_payout"><![CDATA[Note that expected payout may vary basis slab & SLA]]></string>
+    <string name="reporting_time">Reporting Time</string>
+    <string name="vehicle_is_placed_selected_days">Ensure the vehicle is placed within selected days</string>
+    <string name="payment_slabs_details"><![CDATA[Monthly payout per slab is determined by vehicle type & location, and is calculated by addition of monthly average km rate for that vehicle type per slab increment.]]></string>
+    <string name="hide_slabs">Hide full slabs list</string>
+    <string name="bid_revise_error">Invalid bid: use ₹ %1$s multiples.</string>
+    <string name="remark_label">Remark</string>
+    <string name="usage_label">Usage</string>
+    <string name="no_entry_permit_label">No Entry Permit</string>
+    <string name="all">All</string>
+    <string name="account_deletion">You have requested account data deletion, please reach out to Vendor Desk</string>
+    <string name="acceptance_declaration">Upon acceptance of the load, the vehicle must arrive at least 30 minutes prior to the reporting time; failure to do so will incur a penalty</string>
+    <string name="label_driver_number">Driver Number</string>
+    <string name="label_driver_name">Driver Name</string>
+    <string name="your_placement_details_are_updated">Your placement details are updated</string>
+    <string name="entry_permit_for_required">Entry permit for %1$s required</string>
+    <string name="vehicle_needed">Vehicle needed for:&#160; %1$s </string>
+    <string name="load_categories">Load Categories</string>
+    <string name="placement_vehicle_type"><![CDATA[Vehicle type must match the requirement]]></string>
+    <string name="vehicle_type_amp_count"><![CDATA[Vehicle type & count must match the requirement]]></string>
+    <string name="follow_the_schedule_to_avoid_delay_penalties">Follow the schedule to avoid delay penalties</string>
+    <string name="any_schedule_changes_will_be_informed">Any schedule changes will be informed</string>
+    <string name="keep_an_empty_vehicle_ready_for_return_or_next_trip">Keep an empty vehicle ready for return or next trip</string>
+    <string name="vehicle_type_must_match_the_requirement">Vehicle type must match the requirement</string>
+    <string name="ensure_vehicle_reports_on_time">Ensure vehicle reports on time at the reporting center</string>
+    <string name="trip_count_is_tentative_and_may_change">Trip count is tentative and may change</string>
+    <string name="stick_to_your_trip_commitments">Stick to your trip commitments</string>
+    <string name="contract_violations_may_affect_your_score">Contract violations may affect your score or lead to cancellation</string>
+    <string name="start_and_end_dates_will_be_shared_via_email">Start and end dates will be communicated via email after bidding results are finalized</string>
+
+    <string name="arrow_separator_html"><![CDATA[ &rarr; ]]></string>
+    <string name="check_your_bid_status">Check your bid status and make updates anytime in the \"My Bids\" section.</string>
+    <string name="check_your_bid_revise_status"> Your bid is now the lowest and you’re in the best position to win.</string>
+
+
+    <string name="title_dialog_success">Details submitted successfully!</string>
+    <string name="sub_title_dialog_success">Drivers are required to mark in and out using the Driver App.</string>
+    <string name="copy_whatsapp_share">Share on Whatsapp</string>
+    <string name="driver_app_link">https://play.google.com/store/apps/details?id=com.delhivery.fmsdriver</string>
+    <string name="axle_app_link">https://play.google.com/store/apps/details?id=com.delhivery.axle</string>
+    <string name="hindi_video_link">https://youtu.be/x7YhuhHdGkA</string>
+    <string name="english_video_link">https://youtu.be/RUutFvWwyQQ</string>
+    <string name="intracity">Intracity</string>
+    <string name="intercity">Intercity</string>
     <string name="market_place">Market Place</string>
 
 
     <string-array name="array_truck_type">
-    <item>Choose Vehicle</item>
-    <item>Closed</item>
-    <item>Open</item>
-    <item>Trailer</item>
-  </string-array>
+        <item>Choose Vehicle</item>
+        <item>Closed</item>
+        <item>Open</item>
+        <item>Trailer</item>
+    </string-array>
 
-  <string-array name="array_status">
-    <item>Select Status</item>
-    <item>Live Bidding</item>
-    <item>Collecting Bids</item>
-    <item>Bidding Closed</item>
-    <item>Cancelled</item>
-    <item>Result Declared</item>
-  </string-array>
+    <string-array name="array_status">
+        <item>Select Status</item>
+        <item>Live Bidding</item>
+        <item>Collecting Bids</item>
+        <item>Bidding Closed</item>
+        <item>Cancelled</item>
+        <item>Result Declared</item>
+    </string-array>
 
-  <string-array name="array_truck_display_name">
-    <item>Select Vehicle Type</item>
-  </string-array>
+    <string-array name="array_truck_display_name">
+        <item>Select Vehicle Type</item>
+    </string-array>
 
-  <string-array name="array_truck_size">
-    <!--<item>Size</item>-->
-    <item>32ft</item>
-    <item>64ft</item>
-  </string-array>
+    <string-array name="array_truck_size">
+        <!--<item>Size</item>-->
+        <item>32ft</item>
+        <item>64ft</item>
+    </string-array>
 
-  <string-array name="array_address__proof_type">
-    <item>Choose Proof Document</item>
-    <item>Visiting Card</item>
-    <item>LR Copy/Loading Note</item>
-    <item>Letter Head</item>
-    <item>Udyog Aadhaar Certificate</item>
-    <item>Shop &amp; Establishment Certificate</item>
-  </string-array>
+    <string-array name="array_address__proof_type">
+        <item>Choose Proof Document</item>
+        <item>Visiting Card</item>
+        <item>LR Copy/Loading Note</item>
+        <item>Letter Head</item>
+        <item>Udyog Aadhaar Certificate</item>
+        <item>Shop &amp; Establishment Certificate</item>
+    </string-array>
 
-  <string-array name="array_address__proof_type_aadhar_flow">
-    <item>Choose Proof Document</item>
-    <item>Visiting Card</item>
-    <item>LR Copy/Loading Note</item>
-    <item>Letter Head</item>
-    <item>Udyog Aadhaar Certificate</item>
-    <item>Driving Licence</item>
-    <item>RC copy</item>
-  </string-array>
+    <string-array name="array_address__proof_type_aadhar_flow">
+        <item>Choose Proof Document</item>
+        <item>Visiting Card</item>
+        <item>LR Copy/Loading Note</item>
+        <item>Letter Head</item>
+        <item>Udyog Aadhaar Certificate</item>
+        <item>Driving Licence</item>
+        <item>RC copy</item>
+    </string-array>
 
-  <string-array name="array_occupation_post_truck">
-    <item>Fleet Owner</item>
-    <item>Transporter</item>
-    <item>Broker</item>
-  </string-array>
+    <string-array name="array_occupation_post_truck">
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
 
-  <string-array name="array_occupation_post_load">
-    <item>Shipper</item>
-    <item>Transporter</item>
-    <item>Broker</item>
-  </string-array>
+    <string-array name="array_occupation_post_load">
+        <item>Shipper</item>
+        <item>Transporter</item>
+        <item>Broker</item>
+    </string-array>
 
-  <string-array name="array_occupation_both">
-    <item>Shipper</item>
-    <item>Broker</item>
-    <item>Fleet Owner</item>
-    <item>Transporter</item>
-  </string-array>
+    <string-array name="array_occupation_both">
+        <item>Shipper</item>
+        <item>Broker</item>
+        <item>Fleet Owner</item>
+        <item>Transporter</item>
+    </string-array>
 
-  <string-array name="array_duration">
-    <item>0–2 Hours</item>
-    <item>2–4 Hours</item>
-    <item>4–6 Hours</item>
-    <item>6–12 Hours</item>
-    <item>12–18 Hours</item>
-  </string-array>
+    <string-array name="array_duration">
+        <item>0–2 Hours</item>
+        <item>2–4 Hours</item>
+        <item>4–6 Hours</item>
+        <item>6–12 Hours</item>
+        <item>12–18 Hours</item>
+    </string-array>
 
-  <!-- Basic Details Screen -->
-  <string name="label_fleet_owner_subtitle">I own and run trucks</string>
-  <string name="label_broker_subtitle">I arrange trucks for customers</string>
-  <string name="label_route_type_question">What kind of trips do you do?</string>
-  <string name="label_local_intracity">Local / Intracity</string>
-  <string name="label_local_subtitle">Trips within one city</string>
-  <string name="label_national_intercity">National / Intercity</string>
-  <string name="label_national_subtitle">Trips between cities or states</string>
-  <string name="label_city_operate">City where you operate</string>
-  <string name="hint_enter_city">Enter city</string>
-  <string name="label_truck_selection">Which trucks do you use?</string>
-  <string name="label_update_routes_later">You can update routes later from Preferred Routes.</string>
+    <!-- Basic Details Screen -->
+    <string name="label_fleet_owner_subtitle">I own and run trucks</string>
+    <string name="label_broker_subtitle">I arrange trucks for customers</string>
+    <string name="label_route_type_question">What kind of trips do you do?</string>
+    <string name="label_local_intracity">Local / Intracity</string>
+    <string name="label_local_subtitle">Trips within one city</string>
+    <string name="label_national_intercity">National / Intercity</string>
+    <string name="label_national_subtitle">Trips between cities or states</string>
+    <string name="label_city_operate">City where you operate</string>
+    <string name="hint_enter_city">Enter city</string>
+    <string name="label_truck_selection">Which trucks do you use?</string>
+    <string name="label_update_routes_later">You can update routes later from Preferred Routes.</string>
 
 
-<!-- Delayed Placement Card Strings -->
-<string name="placement_card_content_description">Placement card with delay information and details</string>
-<string name="delay_status_content_description">Delay status</string>
-<string name="client_badge_icon_content_description">Client badge icon</string>
-<string name="client_badge_text_content_description">Client badge text</string>
-<string name="close_content_description">Close</string>
-<string name="route_content_description">Route information</string>
-<string name="stops_content_description">Number of stops</string>
-<string name="fill_details">Fill Details</string>
-<string name="fill_details_content_description">Fill placement details</string>
-<string name="share_details">Share Details</string>
-<string name="share_details_content_description">Share placement details</string>
-<string name="call">Call</string>
-<string name="call_content_description">Call driver</string>
-  <string name="view_on_map_html"><u>View on map</u></string>
+    <!-- Delayed Placement Card Strings -->
+    <string name="placement_card_content_description">Placement card with delay information and details</string>
+    <string name="delay_status_content_description">Delay status</string>
+    <string name="client_badge_icon_content_description">Client badge icon</string>
+    <string name="client_badge_text_content_description">Client badge text</string>
+    <string name="close_content_description">Close</string>
+    <string name="route_content_description">Route information</string>
+    <string name="stops_content_description">Number of stops</string>
+    <string name="fill_details">Fill Details</string>
+    <string name="fill_details_content_description">Fill placement details</string>
+    <string name="share_details">Share Details</string>
+    <string name="share_details_content_description">Share placement details</string>
+    <string name="call">Call</string>
+    <string name="call_content_description">Call driver</string>
+    <string name="view_on_map_html"><u>View on map</u></string>
     <string name="search_city">Search city</string>
 
-  <!-- Truck Activity Strings -->
-  <string name="title_truck_details">Truck Details</string>
-  <string name="msg_no_inventory_found">No Inventory Found</string>
-  <string name="error_city_not_mapped">City is not mapped to cluster</string>
-  <string name="error_city_code_missing">City Code is missing</string>
-  <string name="msg_select_body_type">Select body type</string>
-  <string name="progress_adding_truck">Adding truck</string>
-  <string name="format_capacity_mt">%s MT</string>
-  <string name="intent_extra_added">Added</string>
-  <string name="intent_extra_truck_added">Truck Added</string>
+    <!-- Truck Activity Strings -->
+    <string name="title_truck_details">Truck Details</string>
+    <string name="msg_no_inventory_found">No Inventory Found</string>
+    <string name="error_city_not_mapped">City is not mapped to cluster</string>
+    <string name="error_city_code_missing">City Code is missing</string>
+    <string name="msg_select_body_type">Select body type</string>
+    <string name="progress_adding_truck">Adding truck</string>
+    <string name="format_capacity_mt">%s MT</string>
+    <string name="intent_extra_added">Added</string>
+    <string name="intent_extra_truck_added">Truck Added</string>
 
-  <!-- Security Strings -->
-  <string name="security_warning_title">Security Warning</string>
-  <string name="root_detection_message">This device appears to be rooted or modified. For security and compliance reasons, some features may be limited or unavailable.\n\nWe recommend using this app on a secure, unmodified device to ensure the safety of your business data.</string>
-  <string name="root_detection_message_blocked">This device appears to be rooted or modified. For security reasons, this app cannot be used on rooted devices.\n\nPlease unroot your device or use a different device to access this app.</string>
-  <string name="emulator_detection_message_blocked">This app cannot be used on emulator or virtual devices. For security and compliance reasons, please use a real physical device to access this app.\n\nThis restriction helps protect sensitive business data and ensures proper functionality.</string>
-  <string name="root_and_emulator_detection_message">This device has multiple security concerns detected (rooted and/or emulator). For security reasons, this app cannot be used on modified or virtual devices.\n\nPlease use a secure, unmodified physical device to access this app.</string>
-  <string name="continue_anyway">I Understand</string>
-  <string name="exit_app">Exit</string>
-  <string name="root_detected_toast">Rooted device detected. Some features may be restricted.</string>
-  <string name="emulator_detected_toast">Emulator detected. App cannot run on virtual devices.</string>
+    <!-- Security Strings -->
+    <string name="security_warning_title">Security Warning</string>
+    <string name="root_detection_message">This device appears to be rooted or modified. For security and compliance reasons, some features may be limited or unavailable.\n\nWe recommend using this app on a secure, unmodified device to ensure the safety of your business data.</string>
+    <string name="root_detection_message_blocked">This device appears to be rooted or modified. For security reasons, this app cannot be used on rooted devices.\n\nPlease unroot your device or use a different device to access this app.</string>
+    <string name="emulator_detection_message_blocked">This app cannot be used on emulator or virtual devices. For security and compliance reasons, please use a real physical device to access this app.\n\nThis restriction helps protect sensitive business data and ensures proper functionality.</string>
+    <string name="root_and_emulator_detection_message">This device has multiple security concerns detected (rooted and/or emulator). For security reasons, this app cannot be used on modified or virtual devices.\n\nPlease use a secure, unmodified physical device to access this app.</string>
+    <string name="continue_anyway">I Understand</string>
+    <string name="exit_app">Exit</string>
+    <string name="root_detected_toast">Rooted device detected. Some features may be restricted.</string>
+    <string name="emulator_detected_toast">Emulator detected. App cannot run on virtual devices.</string>
     <string name="recent_transactions">Recent Transactions</string>
     <string name="recent_txn_subtitle">Transactions shown are from IDFC FASTags issued by Delhivery, for all vehicle usage</string>
     <string name="download_statement">Download Statement</string>
@@ -1028,35 +1026,42 @@
     <string name="payable_amount">Payable Amount</string>
     <string name="slide_to_pay">Slide to recharge</string>
 
-  <!-- KYC Status Card Strings -->
-  <string name="kyc_heading_completed">You\'re all set to start bidding</string>
-  <string name="kyc_message_completed">Your account is activated. Explore and bid on available loads.</string>
-  <string name="kyc_button_completed">Browse Loads</string>
+    <!-- KYC Status Card Strings -->
+    <string name="kyc_heading_completed">You\'re all set to start bidding</string>
+    <string name="kyc_message_completed">Your account is activated. Explore and bid on available loads.</string>
+    <string name="kyc_button_completed">Browse Loads</string>
 
-  <string name="kyc_heading_start">You\'re almost ready to bid</string>
-  <string name="kyc_message_start">Complete onboarding to access live loads in your area.</string>
-  <string name="kyc_button_start">Finish setup</string>
+    <string name="kyc_heading_start">You\'re almost ready to bid</string>
+    <string name="kyc_message_start">Complete onboarding to access live loads in your area.</string>
+    <string name="kyc_button_start">Finish setup</string>
 
-  <string name="kyc_heading_continue">Continue your onboarding</string>
-  <string name="kyc_message_continue">You\'re almost done. Complete the remaining steps to start bidding.</string>
-  <string name="kyc_button_continue">Continue setup</string>
+    <string name="kyc_heading_continue">Continue your onboarding</string>
+    <string name="kyc_message_continue">You\'re almost done. Complete the remaining steps to start bidding.</string>
+    <string name="kyc_button_continue">Continue setup</string>
 
-  <string name="kyc_heading_pending">Documents are submitted</string>
-  <string name="kyc_message_pending">We’re reviewing your details. You’ll be notified once it’s done.</string>
-  <string name="kyc_button_pending">View KYC details</string>
+    <string name="kyc_heading_pending">Documents are submitted</string>
+    <string name="kyc_message_pending">We’re reviewing your details. You’ll be notified once it’s done.</string>
+    <string name="kyc_button_pending">View KYC details</string>
 
-  <string name="kyc_heading_rejected">KYC Verification Rejected</string>
-  <string name="kyc_message_rejected">Document issue detected. Please re-upload the requested document.</string>
-  <string name="kyc_button_rejected">Re-upload Document</string>
-  <string name="label_fastag_no_space">Fastag</string>
-  <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
-  <string name="label_bidding">Bidding</string>
+    <string name="kyc_heading_rejected">KYC Verification Rejected</string>
+    <string name="kyc_message_rejected">Document issue detected. Please re-upload the requested document.</string>
+    <string name="kyc_button_rejected">Re-upload Document</string>
+    <string name="label_fastag_no_space">Fastag</string>
+    <string name="label_search_city">Search Mumbai, Pune, Delhi ...</string>
+    <string name="label_bidding">Bidding</string>
     <!-- Accessibility strings for dynamic dispute form -->
     <string name="back_button">Navigate back</string>
     <string name="upload_file_button">Upload file</string>
     <string name="upload_file_icon">Upload icon</string>
     <string name="remove_file">Remove file</string>
     <string name="file_thumbnail">File preview thumbnail</string>
+    <string name="configure_new_service">Configure new service</string>
+    <string name="continue_where_you_ve_left">Continue where you’ve left</string>
+    <string name="load_services">Load Services</string>
+    <string name="know_more">Know More</string>
+    <string name="configure">Configure</string>
+    <string name="intracity_fleet_operations_with_own_vehicles">Intracity fleet operations with own vehicles</string>
+    <string name="fleet_carting">Fleet Carting</string>
 
     <string name="str_details">Details</string>
     <string name="str_reporting_time">Reporting time</string>

@@ -89,6 +89,7 @@ android {
   }
   buildFeatures {
     buildConfig = true
+    viewBinding = true
   }
   lintOptions {
     checkReleaseBuilds false
@@ -161,7 +162,8 @@ dependencies {
   //constraint layout
   implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
   implementation 'com.google.firebase:firebase-invites:17.0.0'
-  //Test libraries
+    implementation libs.androidx.activity
+    //Test libraries
   testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
   // Kotest - Test runner & assertions (JUnit 5 based) - using 5.9.x for Kotlin 1.9.x compatibility
