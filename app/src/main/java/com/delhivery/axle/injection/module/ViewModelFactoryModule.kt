@@ -43,8 +43,6 @@ import com.delhivery.axle.ui.kyc.gst.GstVerificationViewModel
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationViewModel
-import com.delhivery.axle.ui.invoicereview.InvoiceReviewViewModel
-import com.delhivery.axle.ui.comingsoon.ComingSoonViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
@@ -62,7 +60,6 @@ import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.fastag.FastagDisputeIssuesViewModel
 import com.delhivery.axle.ui.fastag.FastagTransactionSelectionViewModel
 import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormViewModel
-import com.delhivery.axle.ui.home.fragments.pod.PendingPodViewModelFlow
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -410,11 +407,6 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(InvoiceReviewViewModel::class)
-  abstract fun bindInvoiceReviewViewModel(viewModel: InvoiceReviewViewModel): ViewModel
-
-  @Binds
-  @IntoMap
   @ViewModelScope(PaymentDetailsViewModel::class)
   abstract fun bindPaymentDetailsViewModel(viewModel: PaymentDetailsViewModel): ViewModel
 
@@ -537,18 +529,8 @@ abstract class ViewModelFactoryModule {
     @ViewModelScope(AddMoneyDialogViewmodel::class)
     abstract fun bindPaymentDialogViewModel(viewModel: AddMoneyDialogViewmodel): ViewModel
 
-    @Binds
-    @IntoMap
-    @ViewModelScope(PendingPodViewModelFlow::class)
-    abstract fun bindPendingPodViewModelFlow(viewModel:PendingPodViewModelFlow): ViewModel
-
   @Binds
   @IntoMap
   @ViewModelScope(DocumentVerificationViewModel::class)
   abstract fun bindDocumentVerificationViewModel(viewModel: DocumentVerificationViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelScope(ComingSoonViewModel::class)
-  abstract fun bindComingSoonViewModel(viewModel: ComingSoonViewModel): ViewModel
 }

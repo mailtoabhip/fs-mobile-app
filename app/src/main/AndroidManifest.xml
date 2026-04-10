@@ -341,6 +341,9 @@
 
         <activity android:name=".ui.comingsoon.ComingSoonActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.kyc.documentverification.DocumentVerificationActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -212,61 +212,146 @@
           android:textSize="@dimen/text_18sp"
           android:textStyle="bold" />
 
-      <!-- Service Groups Loading Shimmer -->
+      <!-- Load Services Card -->
       <LinearLayout
-          android:id="@+id/serviceGroupsShimmer"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:visibility="gone">
-
-          <include layout="@layout/shimmer_service_group_item" />
-
-          <include layout="@layout/shimmer_service_group_item" />
-      </LinearLayout>
-
-      <!-- Service Groups Error State -->
-      <LinearLayout
-          android:id="@+id/serviceGroupsError"
+          android:id="@+id/loadServicesCard"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginHorizontal="@dimen/size_16dp"
-          android:gravity="center"
-          android:orientation="vertical"
-          android:padding="@dimen/size_24dp"
-          android:visibility="gone">
+          android:layout_marginTop="@dimen/size_16dp"
+          android:layout_marginBottom="@dimen/size_12dp"
+          android:background="@drawable/bg_service_card"
+          android:clickable="true"
+          android:focusable="true"
+          android:orientation="vertical">
 
-          <TextView
-              android:id="@+id/serviceGroupsErrorMessage"
-              android:layout_width="wrap_content"
+          <!-- Main row -->
+          <LinearLayout
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:textColor="@color/text_grey"
-              android:textSize="@dimen/text_14sp"
-              tools:text="Failed to load service groups" />
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:padding="@dimen/size_16dp">
 
-          <TextView
-              android:id="@+id/serviceGroupsRetryBtn"
-              android:layout_width="wrap_content"
+              <ImageView
+                  android:layout_width="@dimen/size_40dp"
+                  android:layout_height="@dimen/size_40dp"
+                  android:contentDescription="@string/label_load_services"
+                  android:src="@drawable/icon_loads_box" />
+
+              <LinearLayout
+                  android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="@dimen/size_12dp"
+                  android:layout_weight="1"
+                  android:orientation="vertical">
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/label_load_services"
+                      android:textColor="@android:color/black"
+                      android:textSize="@dimen/text_16sp"
+                      android:textStyle="bold" />
+
+                  <TextView
+                      android:id="@+id/loadServicesCount"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="@dimen/size_2dp"
+                      android:textColor="@color/text_grey"
+                      android:textSize="@dimen/text_12sp"
+                      tools:text="5 Services Available" />
+              </LinearLayout>
+
+              <ImageView
+                  android:layout_width="@dimen/size_20dp"
+                  android:layout_height="@dimen/size_20dp"
+                  android:contentDescription="@string/action_continue"
+                  android:src="@drawable/ic_chevron_right_dark" />
+          </LinearLayout>
+
+          <!-- Onboarding In Progress Banner -->
+          <LinearLayout
+              android:id="@+id/onboardingBanner"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/size_8dp"
-              android:padding="@dimen/size_8dp"
-              android:text="@string/label_retry"
-              android:textColor="@color/colorAccent"
-              android:textSize="@dimen/text_14sp"
-              android:textStyle="bold" />
+              android:background="@drawable/bg_onboarding_banner"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:visibility="gone"
+              android:paddingHorizontal="@dimen/size_16dp"
+              android:paddingVertical="@dimen/size_10dp">
+
+              <ImageView
+                  android:layout_width="@dimen/size_16dp"
+                  android:layout_height="@dimen/size_16dp"
+                  android:contentDescription="@string/label_configure_service_onboarding"
+                  android:src="@drawable/hourglass_empty" />
+
+              <TextView
+                  android:id="@+id/onboardingBannerText"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="@dimen/size_8dp"
+                  android:textColor="#7B6414"
+                  android:textSize="@dimen/text_12sp"
+                  android:textStyle="bold"
+                  tools:text="Onboarding In Progress (2 Services)" />
+          </LinearLayout>
       </LinearLayout>
 
-      <!-- Service Groups RecyclerView (dynamic cards from API) -->
-      <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/serviceGroupsRecyclerView"
+      <!-- Financial Services Card -->
+      <LinearLayout
+          android:id="@+id/financialServicesCard"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:clipToPadding="false"
-          android:nestedScrollingEnabled="false"
-          android:overScrollMode="never"
-          android:visibility="gone"
-          tools:itemCount="2"
-          tools:listitem="@layout/item_service_group" />
+          android:layout_marginHorizontal="@dimen/size_16dp"
+          android:layout_marginTop="@dimen/size_12dp"
+          android:background="@drawable/bg_service_card"
+          android:clickable="true"
+          android:focusable="true"
+          android:gravity="center_vertical"
+          android:orientation="horizontal"
+          android:padding="@dimen/size_16dp">
+
+          <ImageView
+              android:layout_width="@dimen/size_30dp"
+              android:layout_height="@dimen/size_24dp"
+              android:contentDescription="@string/label_financial_services"
+              android:src="@drawable/fs_icon" />
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/size_12dp"
+              android:layout_weight="1"
+              android:orientation="vertical">
+
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/label_financial_services"
+                  android:textColor="@android:color/black"
+                  android:textSize="@dimen/text_16sp"
+                  android:textStyle="bold" />
+
+              <TextView
+                  android:id="@+id/financialServicesCount"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="@dimen/size_2dp"
+                  android:textColor="@color/text_grey"
+                  android:textSize="@dimen/text_12sp"
+                  tools:text="2 Services Available" />
+          </LinearLayout>
+
+          <ImageView
+              android:layout_width="@dimen/size_20dp"
+              android:layout_height="@dimen/size_20dp"
+              android:contentDescription="@string/action_continue"
+              android:src="@drawable/ic_chevron_right_dark" />
+      </LinearLayout>
 
       <!-- We @Delhivery Section -->
       <TextView
