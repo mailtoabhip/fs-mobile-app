@@ -1074,6 +1074,18 @@
     <string name="financial_service_fuel_title">Fuel Credit</string>
     <string name="financial_service_fuel_description">Fuel credit solutions to keep your fleet moving</string>
 
+    <!-- Home Screen Revamp -->
+    <string name="label_search_home">Search loads, trips, FASTags…</string>
+    <string name="label_gps">GPS</string>
+    <string name="label_fuel_card_home">Fuel Card</string>
+    <string name="label_configure_service_onboarding">Configure Service Onboarding</string>
+    <string name="label_load_services">Load Services</string>
+    <string name="label_financial_services">Financial Services</string>
+    <string name="label_services_available">%d Services Available</string>
+    <string name="label_onboarding_in_progress">Onboarding In Progress (%d Services)</string>
+    <string name="label_we_at_delhivery">We @Delhivery</string>
+    <string name="documents_added">Documents added</string>
+
     <!-- Financial Service Info Bottom Sheet (FASTag) -->
     <string name="financial_service_fastag_title">FASTag</string>
     <string name="financial_service_fastag_icon_desc">FASTag icon</string>

@@ -36,6 +36,7 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
+import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
@@ -434,6 +435,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsInvoiceReviewActivityModule::class])
   internal abstract fun bindInvoiceReviewActivity(): InvoiceReviewActivity
+
+  /* Document Verification activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsDocumentVerificationActivityModule::class])
+  internal abstract fun bindDocumentVerificationActivity(): DocumentVerificationActivity
 }
 
 
@@ -654,6 +660,9 @@ internal abstract class AbsFastagDynamicDisputeFormActivityModule : ActivityModu
 
 @Module
 internal abstract class AbsInvoiceReviewActivityModule : ActivityModule<InvoiceReviewActivity>()
+
+@Module
+internal abstract class AbsDocumentVerificationActivityModule : ActivityModule<DocumentVerificationActivity>()
 
 /**
  * Activity Binds Module

@@ -331,6 +331,9 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity android:name=".ui.kyc.documentverification.DocumentVerificationActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.invoicereview.InvoiceReviewActivity"
             android:screenOrientation="portrait"

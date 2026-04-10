@@ -3,27 +3,27 @@
 
   <item
       android:id="@+id/nav_home"
-      android:icon="@drawable/iconcontainer__7_"
+      android:icon="@drawable/icon_home"
       android:title="@string/label_home"/>
 
   <item
       android:id="@+id/nav_loads"
-      android:icon="@drawable/ic_nav_loads"
+      android:icon="@drawable/icon_loads"
       android:title="@string/label_nav_loads"/>
 
   <item
       android:id="@+id/nav_trucks"
-      android:icon="@drawable/iconcontainer_trips"
+      android:icon="@drawable/icon_trucks"
       android:title="@string/label_nav_trucks"/>
 
   <item
       android:id="@+id/nav_pod"
-      android:icon="@drawable/iconcontainer_pods"
+      android:icon="@drawable/icon_pod"
       android:title="@string/label_nav_pods"/>
 
   <item
       android:id="@+id/nav_trips"
-      android:icon="@drawable/ic_route"
+      android:icon="@drawable/icon_trips"
       android:title="@string/label_nav_trips"/>
 
 </menu>

@@ -1,4 +1,5 @@
 package com.delhivery.axle.ui.home.activity.home
+import android.animation.ValueAnimator
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -136,9 +137,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
           /* setup toolbar */
           setSupportActionBar(binding.toolbar)
           title = "Home"
-          if (!userPrefs.userName.isEmpty()) {
-            binding.profile.text = userPrefs.userName[0].uppercase().toString()
-          }
+//          if (!userPrefs.userName.isEmpty()) {
+//            binding.profile.text = userPrefs.userName[0].uppercase().toString()
+//          }
           supportActionBar?.setDisplayShowTitleEnabled(false)
           binding.toolbarTitle.text = title
           
@@ -171,6 +172,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
 
           /* set navigation item selection listener */
           binding.bottomNav.setOnItemSelectedListener(this)
+
+          /* position the indicator on the first tab after layout */
+          binding.bottomNav.post {
+            updateNavIndicator(0)
+            binding.navIndicator.visibility = View.VISIBLE
+          }
 
           /* by default observe first fragment */
           observeFragmentLiveData()
@@ -788,8 +795,38 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(),
         }
         binding.toolbarTitle.text = title
       }
+      if (pos != -1) updateNavIndicator(pos)
       pos != -1
     }
+
+  /**
+   * Slides the top indicator bar to the selected tab position.
+   */
+  private fun updateNavIndicator(position: Int) {
+    val bottomNav = binding.bottomNav
+    val indicator = binding.navIndicator
+    val menuSize = bottomNav.menu.size()
+    if (menuSize == 0) return
+
+    val tabWidth = bottomNav.width / menuSize
+    val indicatorWidth = (tabWidth * 0.70).toInt() // indicator spans ~70% of tab width
+    val targetX = tabWidth * position + (tabWidth - indicatorWidth) / 2
+
+    // Animate the indicator sliding
+    val startX = indicator.translationX.toInt()
+    if (indicator.width != indicatorWidth) {
+      val lp = indicator.layoutParams
+      lp.width = indicatorWidth
+      indicator.layoutParams = lp
+    }
+
+    val animator = ValueAnimator.ofInt(startX, targetX)
+    animator.duration = 200
+    animator.addUpdateListener { anim ->
+      indicator.translationX = (anim.animatedValue as Int).toFloat()
+    }
+    animator.start()
+  }
 
   override fun messageClicked(p0: InAppMessage, p1: Action) {
     val url: String? = p1.actionUrl

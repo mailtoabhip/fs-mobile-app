@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.profile.MyProfileActivity
+import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
 import com.delhivery.axle.utils.EVENT_HOME_SCREEN_FASTAG_TAP
 import com.delhivery.axle.utils.EVENT_HOME_SCREEN_SHOWN
@@ -42,6 +43,8 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeFragment_SetupTime")
         fragmentSetupTrace?.start()
         setupViews()
+        setupStaticServiceCards()
+
         binding.loadsCard.setOnClickListener {
             action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
         }
@@ -53,6 +56,10 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
                 )
             }
         }
+        binding.loadServicesCard.setOnClickListener {
+            startActivity(Intent(requireContext(), DocumentVerificationActivity::class.java))
+        }
+
         binding.fastagCard.setOnClickListener {
             val (keys, values) = getCommonEventProperties()
             analyticsUtil.moEngageTrackEvent(
@@ -107,6 +114,12 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             viewModel = this@HomeFragment.viewModel
             lifecycleOwner = viewLifecycleOwner
         }
+    }
+
+    private fun setupStaticServiceCards() {
+        binding.loadServicesCount.text = getString(R.string.label_services_available, 5)
+        binding.onboardingBannerText.text = getString(R.string.label_onboarding_in_progress, 2)
+        binding.financialServicesCount.text = getString(R.string.label_services_available, 2)
     }
 
     private fun applyKycCardColors(colors: KycUiColors) {
