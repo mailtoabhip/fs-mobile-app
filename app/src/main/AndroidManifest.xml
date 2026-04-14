@@ -338,6 +338,9 @@
             android:name=".ui.invoicereview.InvoiceReviewActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
+
+        <activity android:name=".ui.comingsoon.ComingSoonActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

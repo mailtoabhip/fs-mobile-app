@@ -20,6 +20,7 @@ import com.delhivery.axle.utils.EVENT_HOME_SCREEN_SHOWN
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.VALUE_HOME_PAGE
+import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 
@@ -68,6 +69,14 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
                 values
             )
             action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
+        }
+
+        binding.gpsCard.setOnClickListener {
+            startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_GPS))
+        }
+
+        binding.fuelCardAction.setOnClickListener {
+            startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_FUEL_CARD))
         }
 
         viewModel.kycUiModel.observe(viewLifecycleOwner) { model ->
