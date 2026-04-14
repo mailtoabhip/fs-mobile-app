@@ -29,6 +29,7 @@ import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.VALUE_HOME_PAGE
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.google.android.material.snackbar.Snackbar
+import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import kotlinx.coroutines.launch

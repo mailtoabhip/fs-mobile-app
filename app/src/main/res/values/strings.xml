@@ -1191,4 +1191,14 @@
     <string name="label_we_at_delhivery">We @Delhivery</string>
     <string name="documents_added">Documents added</string>
 
+    <!-- Coming Soon Screen -->
+    <string name="coming_soon_title">%s - Coming Soon</string>
+    <string name="coming_soon_gps_subtitle">Track your trucks live and reduce delays.</string>
+    <string name="coming_soon_fuel_card_subtitle">Easy fuel payments with full expense control.</string>
+    <string name="coming_soon_notify_me">Notify Me</string>
+    <string name="coming_soon_remind_later">Remind Me Later</string>
+    <string name="coming_soon_go_to_homepage">Go to Homepage</string>
+    <string name="coming_soon_gps_notified">You\'ll be notified when GPS goes live</string>
+    <string name="coming_soon_fuel_card_notified">You\'ll be notified when fuel card goes live</string>
+
 </resources>

@@ -39,6 +39,7 @@ import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
 import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
+import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
@@ -452,6 +453,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsDocumentVerificationActivityModule::class])
   internal abstract fun bindDocumentVerificationActivity(): DocumentVerificationActivity
+
+  /* Coming Soon activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsComingSoonActivityModule::class])
+  internal abstract fun bindComingSoonActivity(): ComingSoonActivity
 }
 
 
@@ -681,6 +687,9 @@ internal abstract class AbsComingSoonActivityModule : ActivityModule<ComingSoonA
 
 @Module
 internal abstract class AbsDocumentVerificationActivityModule : ActivityModule<DocumentVerificationActivity>()
+
+@Module
+internal abstract class AbsComingSoonActivityModule : ActivityModule<ComingSoonActivity>()
 
 /**
  * Activity Binds Module
