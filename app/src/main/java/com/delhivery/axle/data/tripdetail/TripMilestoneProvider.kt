@@ -52,7 +52,7 @@ object TripMilestoneProvider {
         add(
             TripMilestone(
                 id = MilestoneIds.ACCEPT_INVOICE,
-                displayName = "Accept Invoice / Billing Under Review",
+                displayName = "Review Invoice",
                 status = acceptInvoiceStatus
             )
         )
