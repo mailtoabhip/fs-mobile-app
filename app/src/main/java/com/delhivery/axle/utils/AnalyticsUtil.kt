@@ -149,9 +149,6 @@ const val EVENT_EPOD_LIST_SHOWN = "epod_list_shown"
 const val EVENT_HPOD_LIST_SHOWN = "hpod_list_shown"
 const val EVENT_HPOD_SUBMIT_TAP = "hpod_submit_tap"
 const val EVENT_POD_SEARCH_LIST_SHOWN = "pod_search_list_shown"
-const val EVENT_EPOD_LIST_SHOWN = "epod_list_shown"
-const val EVENT_HPOD_LIST_SHOWN = "hpod_list_shown"
-
 
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
