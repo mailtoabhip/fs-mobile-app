@@ -1128,7 +1128,9 @@ data class HomeBidsRequestItemData(
   }
 
   fun bidAmountLabel()=
-    if(isItFRContract()){
+      if(isPMTIndent() && !isItContract()) {
+          "Bid Amount (Rate/MT)"
+      } else if(isItFRContract()){
       "Bid Amount Per Trip"
     } else if(isItIntraCityContract()){
       "Bid Amount Per Month"
@@ -1139,7 +1141,9 @@ data class HomeBidsRequestItemData(
     }
 
   fun bidAmountLabelEditHint()=
-    if(isItFRContract()){
+      if(isPMTIndent() && !isItContract()) {
+          "Enter PMT rate"
+      } else if(isItFRContract()){
       "Enter bid amount per trip"
     } else if(isItIntraCityContract()){
       "Enter bid amount for entire contract"
@@ -1148,6 +1152,18 @@ data class HomeBidsRequestItemData(
     } else{
       "Enter bid amount"
     }
+
+    /**
+     * Returns load type indicator text (FTL/PMT) for Intercity loads
+     */
+    fun loadTypeIndicator(): String =
+        if (isPMTIndent()) "PMT" else "FTL"
+
+    /**
+     * Returns visibility for load type indicator (only for Intercity Loads, not Contracts)
+     */
+    fun loadTypeIndicatorVisibility(): Int =
+        if (isItContract()) View.GONE else View.VISIBLE
 
   fun formattedContractBiddingEndTime()= if (contractBiddingEndTime.isNullOrBlank() || contractBiddingEndTime.equals("null", ignoreCase = true) ){
     ""}

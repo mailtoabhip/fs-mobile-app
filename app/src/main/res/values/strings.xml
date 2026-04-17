@@ -1058,4 +1058,10 @@
     <string name="remove_file">Remove file</string>
     <string name="file_thumbnail">File preview thumbnail</string>
 
+    <string name="str_details">Details</string>
+    <string name="str_reporting_time">Reporting time</string>
+    <string name="str_load_type">Load Type</string>
+    <string name="str_material_type">Material Type</string>
+    <string name="str_client_name">Client Name</string>
+
 </resources>
