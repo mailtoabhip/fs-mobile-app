@@ -68,33 +68,33 @@ fun adjustTextSizeToFit(
     // Measure text width
     val text = textView.text?.toString() ?: ""
     val textWidth = paint.measureText(text)
-    
+
     // Account for drawable (icon) width if present
     val drawableWidth = textView.compoundDrawables[0]?.intrinsicWidth ?: 0
     val drawableSpace = if (drawableWidth > 0) drawableWidth + drawablePadding else 0
-    
+
     // Account for padding
     val paddingSpace = textView.paddingStart + textView.paddingEnd
-    
+
     totalWidthNeeded += textWidth + drawableSpace + paddingSpace
-    
+
     // Add spacing between views (except for last view)
     if (index < views.size - 1) {
       totalWidthNeeded += spacingBetweenViews
     }
   }
-  
+
   // If total width exceeds available width, scale down text size proportionally
   if (totalWidthNeeded > availableWidth) {
     val scaleFactor = availableWidth / totalWidthNeeded
     val newTextSize = (defaultTextSize * scaleFactor).coerceAtLeast(minTextSize)
-    
+
     // Apply the scaled text size to all views
     views.forEach { textView ->
       textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, newTextSize)
     }
   }
-  
+
   // Request layout update
   views.forEach { it.requestLayout() }
 }
