@@ -682,6 +682,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/teamLayout"
                 android:padding="@dimen/size_16dp"
+                android:visibility="gone"
                 bind:layout_constraintTop_toBottomOf="@+id/share_layout"
                 android:layout_height="wrap_content">
 

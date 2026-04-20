@@ -122,6 +122,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         }
         viewModel.getUserLiveData.observe(this, Observer {
             if(it){
+                setTeamLayoutVisibility()
                 setVerficationStatus()
                 setIssueCount()
             }
@@ -288,12 +289,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             navigationUtils.navigate(ProfileDetailsActivity::class.java)
         }
 
-        if (viewModel.userPrefs.isParent) {
-            binding.teamLayout.visibility = View.VISIBLE
-        } else {
-            binding.teamLayout.visibility = View.GONE
-        }
-
         binding.routeLayout.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
             startActivity(userRoutesIntent(this))
@@ -351,6 +346,13 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     }
 
+    private fun setTeamLayoutVisibility(){
+        if (viewModel.userPrefs.isParent && userPrefs.verificationStatus == "success") {
+            binding.teamLayout.visibility = View.VISIBLE
+        } else {
+            binding.teamLayout.visibility = View.GONE
+        }
+    }
     private fun setIssueCount(){
         if(userPrefs.verificationStatus.equals("failed")){
             if (userPrefs.noOfVerificationIssues.isNotNullOrEmpty()){
