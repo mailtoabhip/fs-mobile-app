@@ -41,6 +41,7 @@ object TripMilestoneProvider {
         add(createTicketClosedMilestone(tripDetails, true))
 
         val isInvoiceAccepted = invoiceStatus == TripInvoiceStatus.ACCEPTED ||
+                invoiceStatus == TripInvoiceStatus.UNDER_FINANCE_REVIEW ||
                 invoiceStatus == TripInvoiceStatus.INVOICED ||
                 invoiceStatus == TripInvoiceStatus.PAID ||
                 invoiceStatus == TripInvoiceStatus.PAYMENT_FAILED
@@ -201,9 +202,8 @@ object TripMilestoneProvider {
     }
     private fun createTicketClosedMilestone(tripDetails: HomeTripsItemData, isGstUser :Boolean): TripMilestone {
         val ticketStatus = TicketStatus.fromValue(tripDetails.invoiceStatusInfo?.ticketStatus)
-        val invoiceStatus = TripInvoiceStatus.fromValue(tripDetails.invoiceStatusInfo?.invoiceStatus)
 
-        val isTicketClosed = (ticketStatus == TicketStatus.CLOSED || ticketStatus == TicketStatus.PAID) && (isGstUser || invoiceStatus != null)
+        val isTicketClosed = (ticketStatus == TicketStatus.CLOSED || ticketStatus == TicketStatus.PAID) && (isGstUser || tripDetails.invoiceStatusInfo?.invoiceStatus != null)
         val ticketClosedStatus = when {
             isTicketClosed -> MilestoneStatus.COMPLETED
             else -> MilestoneStatus.PENDING

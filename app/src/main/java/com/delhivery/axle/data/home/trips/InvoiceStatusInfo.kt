@@ -41,6 +41,7 @@ enum class TicketStatus(val value: String) {
 }
 
 enum class TripInvoiceStatus(val value: String) {
+    CREATED("created"),//only for non gst case
     INVOICED("invoiced"),
     ACCEPTED("accepted"),
     PAID("paid"),
