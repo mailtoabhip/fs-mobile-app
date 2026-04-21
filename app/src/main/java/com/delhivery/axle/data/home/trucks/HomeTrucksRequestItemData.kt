@@ -41,7 +41,7 @@ data class HomeTrucksRequestItemData(
     var unloadingDestinationCode: String,
 
     @SerializedName("ownership")
-    var ownership: String,
+    var ownership: String?=null,
 
     @SerializedName("latest_inventory_status")
     var latestStatus: String,
@@ -111,7 +111,7 @@ data class HomeTrucksRequestItemData(
     fun ownership() = when(ownership) {
         "owns_truck" -> "Own Truck"
         "market_truck" -> "Market Truck"
-        else -> capitalize((((ownership.split("_")).toTypedArray()).joinToString(" ")))
+        else -> capitalize((((ownership?.split("_"))?.toTypedArray())?.joinToString(" ")))
     }
 
     fun truckSizeAndCap() = truckSize() + " | " + truckCapacity()
