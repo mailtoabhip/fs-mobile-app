@@ -38,9 +38,9 @@ class KotlinApp : DaggerApplication() {
     super.onCreate()
 
     // CRITICAL: Check for rooted device before any initialization
-    if (!checkDeviceRootAndContinue()) {
-      return // Exit immediately if device is rooted
-    }
+//    if (!checkDeviceRootAndContinue()) {
+//      return // Exit immediately if device is rooted
+//    }
 
     setupRxJavaErrorHandler()
     setupMoEngage()
