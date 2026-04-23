@@ -30,6 +30,12 @@ import com.delhivery.axle.data.home.trips.FuelUserSpinnerOptions
 import com.delhivery.axle.data.home.trips.HomeTripsItemData
 import com.delhivery.axle.data.home.trips.TripBidDetails
 import com.delhivery.axle.data.home.trips.TripStatus
+import com.delhivery.axle.data.tripdetail.MilestoneIds
+import com.delhivery.axle.data.tripdetail.MilestoneStatus
+import com.delhivery.axle.data.tripdetail.TripCtaConfig
+import com.delhivery.axle.data.tripdetail.TripCtaProvider
+import com.delhivery.axle.data.tripdetail.TripMilestone
+import com.delhivery.axle.data.tripdetail.TripMilestoneProvider
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemData
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData
 import com.delhivery.axle.data.tripdetail.TripPaymentSummaryProgressItemData
@@ -72,6 +78,7 @@ class TripDetailsViewModel @Inject constructor(
   private val omcRepository: OMCRepository,
   private val transactionsRepository: TransactionsRepository,
   private val loadboardRepository: LoadboardRepository,
+  private val invoiceRepository: InvoiceRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel(), ChangePaymentModeInterface {
 
@@ -86,6 +93,7 @@ class TripDetailsViewModel @Inject constructor(
   var paymentSummaryLiveData = MutableLiveData<Boolean>()
   var warehouseLiveData = MutableLiveData<String>()
   var podDownloadLiveData = MutableLiveData<Pair<String, File>>()
+  var invoiceDownloadLiveData = MutableLiveData<String?>()
 
   /* payment summary */
   var chargesSummary = mutableListOf<TripChargesResponse>()
@@ -155,6 +163,12 @@ class TripDetailsViewModel @Inject constructor(
   var omcID : String = ""
   var fuelCardNumber = ""
   var fuelCardAmt = ""
+
+  // CTA configuration LiveData
+  val ctaConfigLiveData = MutableLiveData<TripCtaConfig>()
+  // Milestones LiveData for RecyclerView
+  val milestonesLiveData = MutableLiveData<List<TripMilestone>>()
+  var fmsTicketId: String?=""
 
   companion object{
     var indentList:java.lang.StringBuilder = java.lang.StringBuilder()
@@ -318,6 +332,10 @@ class TripDetailsViewModel @Inject constructor(
     tripDetail.isSettled = paymentSettled && recoverySettled
     if (tripDetail.isSettled) {
       tripSettledLiveData.postValue(true)
+    } else {
+      // Clear settled time when trip is not settled
+      settledTime = null
+      tripSettledLiveData.postValue(false)
     }
 
     mutableListOf<Pair<BaseTripPaymentSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
@@ -1067,5 +1085,62 @@ class TripDetailsViewModel @Inject constructor(
             }
   }
 
+  /**
+   * Fetch invoice download URL from backend
+   */
+  fun fetchInvoiceDownloadUrl(fmsTicketId: String) {
+    compositeDisposable += invoiceRepository.downloadInvoiceDocument(fmsTicketId)
+      .onBackground()
+      .progress()
+      .subscribe { result, error ->
+        if (!error && result != null && !result.url.isNullOrEmpty()) {
+          invoiceDownloadLiveData.postValue(result.url)
+        } else {
+          error.handle()
+          invoiceDownloadLiveData.postValue(null)
+        }
+      }
+  }
 
+  /**
+   * Update CTA configuration based on vendor type and trip status
+   * Uses invoice_status_info flags: showReviewInvoiceCta and showDownloadInvoice
+   * If both false or null, shows Refresh
+   */
+  fun updateCtaConfig() {
+      val ctaConfig = TripCtaProvider.getAdhocIntracityCtaConfig(
+          invoiceStatusInfo = tripDetail.invoiceStatusInfo
+      )
+      ctaConfigLiveData.postValue(ctaConfig)
+  }
+    fun updateSettledMilestones(isSettled: Boolean) {
+        val currentList = milestonesLiveData.value ?: return
+        val formattedTime = settledTime?.let{TripMilestoneProvider.formatDateString(settledTime)}
+        val updatedList = currentList.map { milestone ->
+            if (milestone.id == MilestoneIds.SETTLED) {
+                milestone.copy(
+                    status = if (isSettled) MilestoneStatus.COMPLETED
+                    else MilestoneStatus.PENDING,
+                    timestamp = if (isSettled && !formattedTime.isNullOrEmpty()) {
+                            "Payment made at $formattedTime"
+                        } else { null }
+                )
+            } else {
+                milestone
+            }
+        }
+        milestonesLiveData.postValue(updatedList)
+    }
+  fun updateMilestones(isOpsArranged : Boolean) {
+      val milestones = if(isOpsArranged){
+          TripMilestoneProvider.getOpsArrangedIntracityMilestones(
+              tripDetails = tripDetail, isGstVerified = userPrefs.isGstVerfied
+          )
+      }else{
+          TripMilestoneProvider.getIntracityMilestones(
+              tripDetails = tripDetail
+          )
+      }
+      milestonesLiveData.postValue(milestones)
+  }
 }

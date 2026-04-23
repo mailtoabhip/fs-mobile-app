@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <data>
+    <variable
+        name="isAccept"
+        type="Boolean" />
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/bg_dialog_rounded"
+      android:orientation="vertical"
+      android:layout_margin="@dimen/size_32dp"
+      android:paddingVertical="@dimen/size_24dp">
+
+    <!-- Icon -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="@dimen/size_64dp"
+        android:layout_height="@dimen/size_64dp"
+        android:padding="@dimen/size_16dp"
+        android:background="@drawable/bg_circle_delhivery_red"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/size_16dp"
+        app:srcCompat="@drawable/circle_check"
+        tools:src="@drawable/circle_check" />
+
+    <!-- Title -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginHorizontal="@dimen/size_20dp"
+        android:textColor="@color/charcoal_blue"
+        android:textSize="@dimen/text_18sp"
+        android:textStyle="bold"
+        tools:text="Accept Invoice?" />
+
+    <!-- Message -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginHorizontal="@dimen/size_20dp"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.3"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_14sp"
+        tools:text="Are you sure you want to accept this invoice?" />
+
+    <!-- Confirm Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_64dp"
+        android:layout_marginHorizontal="@dimen/size_20dp"
+        android:layout_marginTop="@dimen/size_24dp"
+        android:textAllCaps="false"
+        android:textSize="@dimen/text_16sp"
+        app:cornerRadius="@dimen/size_8dp"
+        tools:text="Confirm Accept" />
+
+    <!-- Cancel Button (Text only) -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/size_20dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:padding="@dimen/size_8dp"
+        android:text="@string/str_cancel"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_16sp" />
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

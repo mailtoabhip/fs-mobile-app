@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <data>
+    <variable
+        name="item"
+        type="com.delhivery.axle.api.response.InvoiceParticular" />
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingVertical="@dimen/size_8dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:text="@{item.description}"
+        android:textColor="@color/sub_heading_black"
+        android:textSize="@dimen/text_12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_amount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Adhoc Vehicle Rental on 12-Sep-2025, Vehicle No. -2313" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@{item.amount != null ? `₹ ` + String.format(`%.2f`, item.amount) : `₹ 0.00`}"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="₹ 10,000.00" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

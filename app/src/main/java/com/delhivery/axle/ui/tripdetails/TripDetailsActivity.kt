@@ -33,6 +33,9 @@ import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_POD_VIEWED
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import com.delhivery.axle.api.repository.DemandType
+import com.delhivery.axle.data.tripdetail.TripCtaAction
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -46,6 +49,7 @@ import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import com.delhivery.axle.ui.invoicereview.InvoiceReviewActivity
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import java.io.File
@@ -73,6 +77,16 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   private var isFirstResume = true
 
   private val adapter: TripPaymentSummaryRVAdapter by lazy { TripPaymentSummaryRVAdapter(this) }
+  private val milestoneAdapter: TripMilestoneAdapter by lazy { TripMilestoneAdapter() }
+
+    private val invoiceReviewLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                InvoiceReviewActivity.RESULT_INVOICE_REVIEWED -> {
+                    refreshData()
+                }
+            }
+        }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -100,6 +114,9 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     binding.backArrow.setOnClickListener {
       onBackPressedDispatcher.onBackPressed()
     }
+      binding.clAdhocintracity.buttonCta.setOnClickListener {
+          handleCtaClick()
+      }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -131,13 +148,37 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
     })
     viewModel.tripSettledLiveData.observe(this, Observer {
       binding.tripSettled = it
+      binding.clAdhocintracity.tripSettled = it
       binding.viewModel = viewModel
+      viewModel.updateSettledMilestones(isSettled = it)
     })
+
+      // Setup milestones RecyclerView
+      binding.clAdhocintracity.rvMilestones.apply {
+          layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+          adapter = milestoneAdapter
+      }
+    viewModel.ctaConfigLiveData.observe(this, Observer { ctaConfig ->
+      binding.clAdhocintracity.ctaConfig = ctaConfig
+    })
+    viewModel.milestonesLiveData.observe(this, Observer { milestones ->
+      milestoneAdapter.submitList(milestones)
+    })
+
     viewModel.podDownloadLiveData.observe(this, Observer {
       if (it != null) {
         downloadPOD(it.first, it.second)
       } else {
         uiUtils.showSnackbar("Please try again")
+      }
+    })
+
+    viewModel.invoiceDownloadLiveData.observe(this, Observer { downloadUrl ->
+      if (downloadUrl != null && currentInvoiceFile != null ) {
+        downloadFileFromUrl(downloadUrl, currentInvoiceFile!!)
+      } else {
+        uiUtils.hideProgress()
+        resetDownloadContext()
       }
     })
 
@@ -315,13 +356,24 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
       if (t != null) {
         binding.error = false
         if (t.first.subRequestType == SUB_REQUEST_TYPE_INTRACITY) {
-         binding.toolbar.visibility = View.GONE
+          val isOpsArranged = t.first.demandType == DemandType.Intracity_OPS.type
+          binding.toolbar.visibility = View.GONE
           binding.intracityTitle.visibility = View.VISIBLE
           binding.llTripDetails.visibility = View.GONE
           binding.clAdhocintracity.root.visibility = View.VISIBLE
           binding.clAdhocintracity.tripDetails = t.second
           binding.clAdhocintracity.request = t.first
           binding.clAdhocintracity.layoutTransaction.request = t.first
+          binding.clAdhocintracity.tripSettled = t.second.isSettled
+
+          if(isOpsArranged) {
+            binding.clAdhocintracity.buttonCta.visibility = View.VISIBLE
+            t.first.fmsTicketId?.let{ viewModel.fmsTicketId = it}
+            viewModel.updateCtaConfig()
+          }
+          else
+            binding.clAdhocintracity.buttonCta.visibility = View.GONE
+          viewModel.updateMilestones( isOpsArranged)
 
         } else {
           binding.toolbar.visibility = View.VISIBLE
@@ -539,42 +591,100 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
   // Store current download context
   private var currentPodUrl: String? = null
   private var currentPodFile: File? = null
+  private var currentInvoiceFile: File? = null
 
   // DocumentListInterface implementation for secure download API
   override fun onDocumentListSuccess(files: List<FileData>) {
     if (files.isNotEmpty()) {
       val documentFile = files.first()
-      val podUrl = currentPodUrl
-      val podFile = currentPodFile
+      val downloadUrl = documentFile.downloadUrl
       
-      if (podUrl != null && podFile != null) {
-        // Download file from pre-signed URL
-        downloadFileFromUrl(documentFile.downloadUrl, podUrl, podFile)
+      if (currentPodFile != null) {
+        // POD download
+        downloadFileFromUrl(downloadUrl, currentPodFile!!)
       } else {
         uiUtils.hideProgress()
         uiUtils.showSnackbar("Download context lost")
-        currentPodUrl = null
-        currentPodFile = null
       }
     } else {
       uiUtils.hideProgress()
       uiUtils.showSnackbar("No documents found")
-      currentPodUrl = null
-      currentPodFile = null
+      resetDownloadContext()
     }
   }
 
   override fun onDocumentListFailure(error: String) {
     uiUtils.hideProgress()
     uiUtils.showSnackbar("Download failed: $error")
+    resetDownloadContext()
+  }
+
+  /**
+   * Reset all download contexts
+   */
+  private fun resetDownloadContext() {
     currentPodUrl = null
     currentPodFile = null
+    currentInvoiceFile = null
+  }
+
+  /**
+   * Download invoice using backend API (returns pre-signed URL directly)
+   */
+  private fun downloadInvoice() {
+    viewModel.fmsTicketId?.takeIf { it.isNotEmpty() }?.let { ticketId ->
+      uiUtils.showProgress()
+      currentInvoiceFile = getInvoiceFile()
+
+      if (currentInvoiceFile == null) {
+        uiUtils.hideProgress()
+        uiUtils.showSnackbar("Unable to prepare invoice file")
+        return
+      }
+
+      viewModel.fetchInvoiceDownloadUrl(ticketId)
+    } ?: uiUtils.showSnackbar("Unable to fetch invoice - Missing ticket ID")
+
+  }
+
+    /**
+     * Handle CTA button click based on current action type
+     */
+    private fun handleCtaClick() {
+        val ctaConfig = viewModel.ctaConfigLiveData.value
+        when (ctaConfig?.action) {
+            TripCtaAction.REVIEW -> openInvoiceReview()
+            TripCtaAction.DOWNLOAD -> downloadInvoice()
+            else -> refreshData() // Default fallback
+        }
+    }
+
+    /**
+     * Open Invoice Review Activity for GST vendors
+     */
+    private fun openInvoiceReview() {
+      viewModel.fmsTicketId?.takeIf { it.isNotEmpty() }?.let{
+        val intent = InvoiceReviewActivity.invoiceReviewIntent(
+          it,
+          this
+        )
+        invoiceReviewLauncher.launch(intent)
+      }?:uiUtils.showSnackbar("Unable to fetch invoice - Missing ticket ID")
+    }
+
+  /**
+   * Get file for invoice download
+   */
+  private fun getInvoiceFile(): File? {
+    val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+    val basePath = "$storageDir/${viewModel.transactionId}_invoice.pdf"
+    return File(basePath)
   }
 
   /**
    * Download file from pre-signed URL using OkHttpClient
    */
-  private fun downloadFileFromUrl(downloadUrl: String, originalUrl: String, file: File) {
+  private fun downloadFileFromUrl(downloadUrl: String, file: File) {
     compositeDisposable += io.reactivex.Observable.fromCallable {
       val client = OkHttpClient()
       val request = Request.Builder()
@@ -602,13 +712,11 @@ class TripDetailsActivity : BaseActivity<ActivityTripDetailsBinding, TripDetails
         uiUtils.showSnackbar("Download failed")
       }
       uiUtils.hideProgress()
-      currentPodUrl = null
-      currentPodFile = null
+      resetDownloadContext()
     }, { error ->
       uiUtils.hideProgress()
       uiUtils.showSnackbar("Download error: ${error.message}")
-      currentPodUrl = null
-      currentPodFile = null
+      resetDownloadContext()
     })
   }
 

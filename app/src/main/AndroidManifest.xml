@@ -338,6 +338,11 @@
         <activity android:name=".ui.fastag.FastagDynamicDisputeFormActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".ui.invoicereview.InvoiceReviewActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>

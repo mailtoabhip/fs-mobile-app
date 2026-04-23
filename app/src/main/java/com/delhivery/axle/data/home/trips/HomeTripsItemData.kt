@@ -90,7 +90,8 @@ data class HomeTripsItemData(
   var paymentStatus: String = "",
   var addressExpand: Boolean = false,
   var isDelayed: Boolean = false,
-  val pod_counts: PodCounts? = null
+  val pod_counts: PodCounts? = null,
+  @SerializedName("invoice_status_info") var invoiceStatusInfo: InvoiceStatusInfo? = null
   ) : BaseKeyTypeModel<String>(), Serializable {
   override fun key() = transactionId
 
