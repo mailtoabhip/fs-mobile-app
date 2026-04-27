@@ -1063,6 +1063,35 @@
     <string name="intracity_fleet_operations_with_own_vehicles">Intracity fleet operations with own vehicles</string>
     <string name="fleet_carting">Fleet Carting</string>
 
+    <!-- Financial Services -->
+    <string name="financial_services">Financial Services</string>
+    <string name="financial_service_fastag_description">Manage and recharge FASTags for your fleet</string>
+    <string name="financial_service_wallet_title">Delhivery Wallet</string>
+    <string name="financial_service_wallet_description">Digital wallet for seamless business payments</string>
+    <string name="financial_service_fuel_title">Fuel Credit</string>
+    <string name="financial_service_fuel_description">Fuel credit solutions to keep your fleet moving</string>
+
+    <!-- Financial Service Info Bottom Sheet (FASTag) -->
+    <string name="financial_service_fastag_title">FASTag</string>
+    <string name="financial_service_fastag_icon_desc">FASTag icon</string>
+    <string name="financial_service_feature_1_title">Manage Your Fleet\'s FASTags in One Place</string>
+    <string name="financial_service_feature_1_desc">Link trucks, track balances in real-time, and recharge instantly. Keep your business moving without the wait at toll plazas.</string>
+    <string name="financial_service_feature_2_title">Faster Tolls, Smarter Savings</string>
+    <string name="financial_service_feature_2_desc">Skip the cash lanes and monitor every transaction. Get instant low-balance alerts and 24/7 support for your entire fleet.</string>
+    <string name="financial_service_feature_3_title">Total FASTag Control</string>
+    <string name="financial_service_feature_3_desc">From new requests to instant recharges, manage your truck\'s toll payments directly through the app. No more delays, just smoother drives.</string>
+
+    <!-- FTL Loads Service Info Bottom Sheet -->
+    <string name="ftl_loads_title">FTL Loads</string>
+    <string name="ftl_loads_load_type_label">Load type</string>
+    <string name="ftl_loads_load_type_value">Full Truck Load (FT)</string>
+    <string name="ftl_loads_movement_label">Movement</string>
+    <string name="ftl_loads_movement_value">PAN India</string>
+    <string name="ftl_loads_payment_mode_label">Payment Mode</string>
+    <string name="ftl_loads_payment_mode_value">Advance/ Credit (lease)</string>
+    <string name="ftl_loads_best_for_label">Best For</string>
+    <string name="ftl_loads_best_for_value">PAN India Trips for client loads</string>
+
     <string name="str_details">Details</string>
     <string name="str_reporting_time">Reporting time</string>
     <string name="str_load_type">Load Type</string>

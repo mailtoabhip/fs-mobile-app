@@ -140,15 +140,6 @@
                     android:textStyle="bold"
                     tools:text="In Progress" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_status_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1/3 Sections Completed"
-                    android:textColor="#2B2B2B"
-                    android:textSize="@dimen/text_12sp"
-                    tools:text="1/3 Sections Completed" />
-
             </LinearLayout>
 
         </LinearLayout>

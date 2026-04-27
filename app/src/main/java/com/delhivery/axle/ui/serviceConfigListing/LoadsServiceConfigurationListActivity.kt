@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 
-class ServiceConfigurationListActivity : AppCompatActivity() {
+class LoadsServiceConfigurationListActivity : AppCompatActivity() {
     
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: ServiceConfigurationAdapter
+    private lateinit var adapter: LoadsServiceConfigurationAdapter
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +61,7 @@ class ServiceConfigurationListActivity : AppCompatActivity() {
             )
         )
         
-        adapter = ServiceConfigurationAdapter(
+        adapter = LoadsServiceConfigurationAdapter(
             services = services,
             onKnowMoreClick = { service ->
                 Toast.makeText(this, "Know More: ${service.title}", Toast.LENGTH_SHORT).show()

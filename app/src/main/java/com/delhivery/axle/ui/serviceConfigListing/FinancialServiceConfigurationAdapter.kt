@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.databinding.ServiceConfigurationViewBinding
 
-class ServiceConfigurationAdapter(
+class FinancialServiceConfigurationAdapter(
     private val services: List<ServiceConfigurationModel>,
     private val onKnowMoreClick: (ServiceConfigurationModel) -> Unit,
     private val onConfigureClick: (ServiceConfigurationModel) -> Unit
-) : RecyclerView.Adapter<ServiceConfigurationAdapter.ServiceViewHolder>() {
+) : RecyclerView.Adapter<FinancialServiceConfigurationAdapter.ServiceViewHolder>() {
 
-    inner class ServiceViewHolder(private val binding: ServiceConfigurationViewBinding) : 
+    inner class ServiceViewHolder(private val binding: ServiceConfigurationViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(service: ServiceConfigurationModel) {
@@ -21,11 +21,9 @@ class ServiceConfigurationAdapter(
                 tvServiceDescription.text = service.description
                 ivServiceIcon.setImageResource(service.iconResId)
 
-                // Handle status banner visibility
                 if (service.status != null) {
                     statusBanner.visibility = View.VISIBLE
                     tvStatusTitle.text = service.status.statusText
-                    tvStatusDescription.text = service.status.statusDescription
                 } else {
                     statusBanner.visibility = View.GONE
                 }

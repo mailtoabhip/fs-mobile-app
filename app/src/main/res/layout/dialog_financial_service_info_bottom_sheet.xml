@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_rounded_top"
+        android:orientation="vertical">
+
+        <!-- Header Section -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/size_12dp"
+            android:paddingEnd="@dimen/size_12dp"
+            android:paddingTop="@dimen/size_16dp"
+            android:paddingBottom="@dimen/size_16dp">
+
+            <!-- FASTag Icon -->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_fastag_icon"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:background="@color/white"
+                android:contentDescription="@string/financial_service_fastag_icon_desc"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_fastag_home" />
+
+            <!-- Title -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/financial_service_fastag_title"
+                android:textColor="#2B2B2B"
+                android:textSize="@dimen/text_14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_close"
+                app:layout_constraintStart_toEndOf="@id/iv_fastag_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Close Button (48dp touch target, 20dp icon via padding) -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/iv_close"
+                android:layout_width="@dimen/size_48dp"
+                android:layout_height="@dimen/size_48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/close_content_description"
+                android:padding="14dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_close_dark_grey" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Header Bottom Border -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E6E6E6" />
+
+        <!-- Scrollable Content Section -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/size_12dp"
+                android:paddingEnd="@dimen/size_12dp"
+                android:paddingTop="@dimen/size_20dp"
+                android:paddingBottom="@dimen/size_20dp">
+
+                <!-- Feature Section 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/size_8dp"
+                        android:text="@string/financial_service_feature_1_title"
+                        android:textColor="#121212"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/financial_service_feature_1_desc"
+                        android:textColor="#2B2B2B"
+                        android:textSize="@dimen/text_12sp" />
+
+                </LinearLayout>
+
+                <!-- Divider 1 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_16dp"
+                    android:background="#E6E6E6" />
+
+                <!-- Feature Section 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/size_8dp"
+                        android:text="@string/financial_service_feature_2_title"
+                        android:textColor="#121212"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/financial_service_feature_2_desc"
+                        android:textColor="#2B2B2B"
+                        android:textSize="@dimen/text_12sp" />
+
+                </LinearLayout>
+
+                <!-- Divider 2 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:layout_marginBottom="@dimen/size_16dp"
+                    android:background="#E6E6E6" />
+
+                <!-- Feature Section 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/size_8dp"
+                        android:text="@string/financial_service_feature_3_title"
+                        android:textColor="#121212"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/financial_service_feature_3_desc"
+                        android:textColor="#2B2B2B"
+                        android:textSize="@dimen/text_12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+</layout>

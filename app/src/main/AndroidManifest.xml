@@ -28,7 +28,10 @@
         android:theme="@style/CustomSplashScreenTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-            android:name=".ui.serviceConfigListing.ServiceConfigurationListActivity"
+            android:name=".ui.serviceConfigListing.LoadsServiceConfigurationListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.serviceConfigListing.FinancialServiceConfigurationListActivity"
             android:exported="false" />
 
         <service
