@@ -253,7 +253,7 @@ class TripMilestoneProviderTest : FunSpec({
             milestones[1].displayName shouldBe "Loaded"
             milestones[2].displayName shouldBe "Mark Out / Trip Completed"
             milestones[3].displayName shouldBe "Ticket Closed"
-            milestones[4].displayName shouldBe "Accept Invoice / Billing Under Review"
+            milestones[4].displayName shouldBe "Review Invoice"
             milestones[5].displayName shouldBe "Invoice Accepted"
             milestones[6].displayName shouldBe "Payment Released"
         }
@@ -521,7 +521,7 @@ class TripMilestoneProviderTest : FunSpec({
 
             val milestones = TripMilestoneProvider.getOpsArrangedIntracityMilestones(tripDetails, isGstVerified = false)
 
-            milestones[5].status shouldBe MilestoneStatus.PENDING
+            milestones[5].status shouldBe MilestoneStatus.COMPLETED
         }
     }
 
