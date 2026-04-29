@@ -6,23 +6,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
+import com.delhivery.axle.ui.dialogs.FinancialServiceInfoBottomSheetDialogFragment
 
 class LoadsServiceConfigurationListActivity : AppCompatActivity() {
-    
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: LoadsServiceConfigurationAdapter
-    
+
+    private lateinit var loadsRecyclerView: RecyclerView
+    private lateinit var loadsAdapter: LoadsServiceConfigurationAdapter
+
+    private lateinit var financialRecyclerView: RecyclerView
+    private lateinit var financialAdapter: LoadsServiceConfigurationAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_configuration_list)
-        
-        setupRecyclerView()
+
+        setupLoadsRecyclerView()
+        setupFinancialRecyclerView()
         setupBackButton()
     }
-    
-    private fun setupRecyclerView() {
-        recyclerView = findViewById(R.id.configure_new_service_rv)
-        
+
+    private fun setupLoadsRecyclerView() {
+        loadsRecyclerView = findViewById(R.id.configure_new_service_rv)
+
         val services = listOf(
             ServiceConfigurationModel(
                 id = "fleet_carting",
@@ -60,8 +65,8 @@ class LoadsServiceConfigurationListActivity : AppCompatActivity() {
                 iconResId = R.drawable.ic_delhivery_load
             )
         )
-        
-        adapter = LoadsServiceConfigurationAdapter(
+
+        loadsAdapter = LoadsServiceConfigurationAdapter(
             services = services,
             onKnowMoreClick = { service ->
                 Toast.makeText(this, "Know More: ${service.title}", Toast.LENGTH_SHORT).show()
@@ -72,11 +77,58 @@ class LoadsServiceConfigurationListActivity : AppCompatActivity() {
                 // Handle configure click
             }
         )
-        
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+
+        loadsRecyclerView.layoutManager = LinearLayoutManager(this)
+        loadsRecyclerView.adapter = loadsAdapter
     }
-    
+
+    private fun setupFinancialRecyclerView() {
+        financialRecyclerView = findViewById(R.id.financial_services_rv)
+
+        val services = listOf(
+            ServiceConfigurationModel(
+                id = "fastag",
+                title = getString(R.string.financial_service_fastag_title),
+                description = getString(R.string.financial_service_fastag_description),
+                iconResId = R.drawable.ic_fastag_home
+            ),
+            ServiceConfigurationModel(
+                id = "delhivery_wallet",
+                title = getString(R.string.financial_service_wallet_title),
+                description = getString(R.string.financial_service_wallet_description),
+                iconResId = R.drawable.ic_delhivery_wallet
+            ),
+            ServiceConfigurationModel(
+                id = "fuel_credit",
+                title = getString(R.string.financial_service_fuel_title),
+                description = getString(R.string.financial_service_fuel_description),
+                iconResId = R.drawable.ic_delhivery_bolt
+            )
+        )
+
+        financialAdapter = LoadsServiceConfigurationAdapter(
+            services = services,
+            onKnowMoreClick = { service ->
+                when (service.id) {
+                    "fastag" -> showFastagInfoBottomSheet()
+                    else -> Toast.makeText(this, "Know More: ${service.title}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onConfigureClick = { service ->
+                Toast.makeText(this, "Configure: ${service.title}", Toast.LENGTH_SHORT).show()
+                // Handle configure click
+            }
+        )
+
+        financialRecyclerView.layoutManager = LinearLayoutManager(this)
+        financialRecyclerView.adapter = financialAdapter
+    }
+
+    private fun showFastagInfoBottomSheet() {
+        FinancialServiceInfoBottomSheetDialogFragment.newInstance()
+            .show(supportFragmentManager, "FinancialServiceInfoBottomSheet")
+    }
+
     private fun setupBackButton() {
         findViewById<android.view.View>(R.id.btn_back).setOnClickListener {
             onBackPressed()
