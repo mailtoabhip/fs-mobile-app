@@ -8,21 +8,102 @@ import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 import com.delhivery.axle.ui.dialogs.FinancialServiceInfoBottomSheetDialogFragment
 
-class LoadsServiceConfigurationListActivity : AppCompatActivity() {
+class ServiceConfigurationListActivity : AppCompatActivity() {
+
+    private lateinit var servicesAddedRecyclerView: RecyclerView
+    private lateinit var servicesAddedAdapter: ServiceConfigurationAdapter
+
+    private lateinit var continueWhereLeftRecyclerView: RecyclerView
+    private lateinit var continueWhereLeftAdapter: ServiceConfigurationAdapter
 
     private lateinit var loadsRecyclerView: RecyclerView
-    private lateinit var loadsAdapter: LoadsServiceConfigurationAdapter
+    private lateinit var loadsAdapter: ServiceConfigurationAdapter
 
     private lateinit var financialRecyclerView: RecyclerView
-    private lateinit var financialAdapter: LoadsServiceConfigurationAdapter
+    private lateinit var financialAdapter: ServiceConfigurationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_service_configuration_list)
 
+        setupServicesAddedRecyclerView()
+        setupContinueWhereLeftRecyclerView()
         setupLoadsRecyclerView()
         setupFinancialRecyclerView()
         setupBackButton()
+    }
+
+    private fun setupServicesAddedRecyclerView() {
+        servicesAddedRecyclerView = findViewById(R.id.services_added_rv)
+
+        val services = listOf(
+            ServiceConfigurationModel(
+                id = "fleet_linehaul_added",
+                title = "Fleet Linehaul",
+                description = "Full truck load services for Long-haul intercity movement",
+                iconResId = R.drawable.ic_delhivery_load,
+                status = ServiceStatus(
+                    statusText = "Active",
+                    statusDescription = "Service Configured",
+                    statusType = StatusType.COMPLETED
+                )
+            ),
+            ServiceConfigurationModel(
+                id = "marketplace_loads_added",
+                title = "Marketplace Loads",
+                description = "Access loads from the open marketplace",
+                iconResId = R.drawable.ic_delhivery_load,
+                status = ServiceStatus(
+                    statusText = "Active",
+                    statusDescription = "Service Configured",
+                    statusType = StatusType.COMPLETED
+                )
+            )
+        )
+
+        servicesAddedAdapter = ServiceConfigurationAdapter(
+            services = services,
+            onKnowMoreClick = { service ->
+                Toast.makeText(this, "Know More: ${service.title}", Toast.LENGTH_SHORT).show()
+            },
+            onConfigureClick = { service ->
+                Toast.makeText(this, "Configure: ${service.title}", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        servicesAddedRecyclerView.layoutManager = LinearLayoutManager(this)
+        servicesAddedRecyclerView.adapter = servicesAddedAdapter
+    }
+
+    private fun setupContinueWhereLeftRecyclerView() {
+        continueWhereLeftRecyclerView = findViewById(R.id.continue_service_rv)
+
+        val services = listOf(
+            ServiceConfigurationModel(
+                id = "fleet_carting_inprogress",
+                title = "Fleet Carting",
+                description = "Intracity fleet operations with own vehicles",
+                iconResId = R.drawable.ic_delhivery_load,
+                status = ServiceStatus(
+                    statusText = "In Progress",
+                    statusDescription = "1/3 Sections Completed",
+                    statusType = StatusType.IN_PROGRESS
+                )
+            )
+        )
+
+        continueWhereLeftAdapter = ServiceConfigurationAdapter(
+            services = services,
+            onKnowMoreClick = { service ->
+                Toast.makeText(this, "Know More: ${service.title}", Toast.LENGTH_SHORT).show()
+            },
+            onConfigureClick = { service ->
+                Toast.makeText(this, "Configure: ${service.title}", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        continueWhereLeftRecyclerView.layoutManager = LinearLayoutManager(this)
+        continueWhereLeftRecyclerView.adapter = continueWhereLeftAdapter
     }
 
     private fun setupLoadsRecyclerView() {
@@ -66,7 +147,7 @@ class LoadsServiceConfigurationListActivity : AppCompatActivity() {
             )
         )
 
-        loadsAdapter = LoadsServiceConfigurationAdapter(
+        loadsAdapter = ServiceConfigurationAdapter(
             services = services,
             onKnowMoreClick = { service ->
                 Toast.makeText(this, "Know More: ${service.title}", Toast.LENGTH_SHORT).show()
@@ -106,7 +187,7 @@ class LoadsServiceConfigurationListActivity : AppCompatActivity() {
             )
         )
 
-        financialAdapter = LoadsServiceConfigurationAdapter(
+        financialAdapter = ServiceConfigurationAdapter(
             services = services,
             onKnowMoreClick = { service ->
                 when (service.id) {

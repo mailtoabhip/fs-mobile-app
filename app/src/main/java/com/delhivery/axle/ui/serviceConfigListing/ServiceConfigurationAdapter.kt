@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.databinding.ServiceConfigurationViewBinding
 
-class LoadsServiceConfigurationAdapter(
+class ServiceConfigurationAdapter(
     private val services: List<ServiceConfigurationModel>,
     private val onKnowMoreClick: (ServiceConfigurationModel) -> Unit,
     private val onConfigureClick: (ServiceConfigurationModel) -> Unit
-) : RecyclerView.Adapter<LoadsServiceConfigurationAdapter.ServiceViewHolder>() {
+) : RecyclerView.Adapter<ServiceConfigurationAdapter.ServiceViewHolder>() {
 
     inner class ServiceViewHolder(private val binding: ServiceConfigurationViewBinding) : 
         RecyclerView.ViewHolder(binding.root) {

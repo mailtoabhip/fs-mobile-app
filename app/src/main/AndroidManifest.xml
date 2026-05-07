@@ -28,7 +28,7 @@
         android:theme="@style/CustomSplashScreenTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-            android:name=".ui.serviceConfigListing.LoadsServiceConfigurationListActivity"
+            android:name=".ui.serviceConfigListing.ServiceConfigurationListActivity"
             android:exported="false" />
 
         <service

@@ -1059,6 +1059,7 @@
     <string name="file_thumbnail">File preview thumbnail</string>
     <string name="configure_new_service">Configure new service</string>
     <string name="continue_where_you_ve_left">Continue where you’ve left</string>
+    <string name="services_added">Services Added</string>
     <string name="load_services">Load Services</string>
     <string name="know_more">Know More</string>
     <string name="configure">Configure</string>
