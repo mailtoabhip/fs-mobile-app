@@ -26,14 +26,24 @@ import com.delhivery.axle.databinding.BottomSheetStatementHistoryBinding
 import com.delhivery.axle.databinding.DialogDownloadSuccessBinding
 import com.delhivery.axle.databinding.FastagTransactionDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormActivity.Companion.EXTRA_TXN_ID
 import com.delhivery.axle.ui.profile.HelpSupportActivity
+import com.delhivery.axle.utils.EVENT_FASTAG_STATEMENT_DOWNLOADED
+import com.delhivery.axle.utils.EVENT_FASTAG_TXN_LIST_SHOWN
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_RANGE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_STORAGE
+import com.delhivery.axle.utils.VALUE_FASTAG_DISPUTE_PAGE
+import com.delhivery.axle.utils.VALUE_FASTAG_TXN_LIST_PAGE
 import com.delhivery.axle.utils.extensions.getSerializable
+import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBinding, FastagTransactionDetailsViewModel>() {
 
@@ -44,6 +54,10 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     private lateinit var adapter: FastagTransactionAdapter
     
     private var downloadID = 0L
+
+    @Inject lateinit var userPrefs: UserPrefs
+
+    private var range: String = ""
 
     companion object {
         const val TAG_ID = "tag_id"
@@ -72,10 +86,24 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
 
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_FASTAG_TXN_LIST_SHOWN,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PAGE_NAME
+            ),
+            mutableListOf(
+                userPrefs.userId(),
+                VALUE_FASTAG_TXN_LIST_PAGE
+            )
+        )
+
         setupUI()
         setupRecyclerView()
         setupObservers()
         loadData()
+
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -365,6 +393,8 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             
             val selectedId = itemIds[selectedIndex]
             val dateRange = calculateDateRange(selectedId)
+
+            range = dateRange.first + dateRange.second
             
             viewModel.downloadTransactions(tagId, dateRange.first, dateRange.second)
         }
@@ -438,6 +468,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            sendSuccessfulDownloadEvent()
             if (downloadID == id) {
                 // Run on main thread and check if activity is active
                 runOnUiThread {
@@ -447,6 +478,22 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 }
             }
         }
+    }
+
+    private fun sendSuccessfulDownloadEvent() {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_FASTAG_STATEMENT_DOWNLOADED,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PAGE_NAME,
+                PROPERTY_RANGE
+            ),
+            mutableListOf(
+                userPrefs.userId(),
+                VALUE_FASTAG_TXN_LIST_PAGE,
+                range
+            )
+        )
     }
     
     override fun onRequestPermissionsResult(

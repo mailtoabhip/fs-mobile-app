@@ -89,6 +89,22 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.refreshLayout.isRefreshing = false
         }
 
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_ADD_TRUCK_SUBMIT,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PAGE_NAME,
+                PROPERTY_TOTAL_COUNT,
+                PROPERTY_FASTAG_MAPPED
+            ),
+            mutableListOf(
+                userPrefs.userId(),
+                VALUE_TRUCKS_PAGE,
+                viewModel.addTruckLiveDataRes.value?.inventoryId?:"",
+                viewModel.addTruckLiveDataRes.value?.vehicleNumber?:"",
+            ),
+        )
+
         if(viewModel.fromLinks && viewModel.vehicleNumberIntent.isNotEmpty()){
             uiUtils.showProgress()
             viewModel.getInventory(userPrefs.userId() , viewModel.vehicleNumberIntent)
@@ -260,8 +276,18 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
                 showTruckAddedDialog()
                 analyticsUtil.moEngageTrackEvent(
                     EVENT_ADD_TRUCK_SUBMIT,
-                    mutableListOf(PROPERTY_INVENTORY_UUID),
-                    mutableListOf(viewModel.addTruckLiveDataRes.value?.inventoryId?:"")
+                    mutableListOf(
+                        PROPERTY_USER_ID,
+                        PROPERTY_INVENTORY_UUID,
+                        PROPERTY_VEHICLE_NUMBER,
+                        PROPERTY_PAGE_NAME,
+                        ),
+                    mutableListOf(
+                        userPrefs.userId(),
+                        viewModel.addTruckLiveDataRes.value?.inventoryId?:"",
+                        viewModel.addTruckLiveDataRes.value?.vehicleNumber?:"",
+                        VALUE_TRUCKS_PAGE
+                    ),
                 )
             }
             else if(it!=null && it== false){

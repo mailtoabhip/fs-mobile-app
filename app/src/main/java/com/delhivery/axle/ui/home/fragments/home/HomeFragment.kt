@@ -7,12 +7,18 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.FragmentHomeBinding
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
+import com.delhivery.axle.utils.EVENT_HOME_SCREEN_FASTAG_TAP
+import com.delhivery.axle.utils.EVENT_HOME_SCREEN_SHOWN
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.VALUE_HOME_PAGE
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 
@@ -48,6 +54,12 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             }
         }
         binding.fastagCard.setOnClickListener {
+            val (keys, values) = getCommonEventProperties()
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_HOME_SCREEN_FASTAG_TAP,
+                keys,
+                values
+            )
             action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
         }
 
@@ -73,6 +85,16 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
 
     override fun onResume() {
         super.onResume()
+
+        if (isFirstResume) {
+            val (keys, values) = getCommonEventProperties()
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_HOME_SCREEN_SHOWN,
+                keys,
+                values
+            )
+
+        }
         viewModel.refreshKycStatus()
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
@@ -114,5 +136,18 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             binding.progressBar.progress = model.progress
             binding.progressBar.visibility = if (model.progress != 0) View.VISIBLE else View.GONE
         }
+    }
+
+    private fun getCommonEventProperties(): Pair<MutableList<String>, MutableList<String>> {
+        return Pair(
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PAGE_NAME
+            ),
+            mutableListOf(
+                (activity as? HomeActivity)?.userPrefs?.userId() ?: "",
+                VALUE_HOME_PAGE
+            )
+        )
     }
 }
