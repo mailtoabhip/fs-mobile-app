@@ -4,164 +4,231 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.ServiceRequirementsResponse
 import com.delhivery.axle.databinding.ActivityDocumentVerificationBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.common.UiState
+import com.delhivery.axle.ui.kyc.dashboard.KycActivityResultHelper
+import com.delhivery.axle.ui.kyc.dashboard.KycDocType
+import kotlinx.coroutines.launch
 
 class DocumentVerificationActivity :
     BaseActivity<ActivityDocumentVerificationBinding, DocumentVerificationViewModel>() {
 
     companion object {
-        fun documentVerificationIntent(context: Context): Intent {
-            return Intent(context, DocumentVerificationActivity::class.java)
+        private const val EXTRA_SERVICE_ID = "extra_service_id"
+
+        fun documentVerificationIntent(context: Context, serviceId: String = ""): Intent {
+            return Intent(context, DocumentVerificationActivity::class.java).apply {
+                putExtra(EXTRA_SERVICE_ID, serviceId)
+            }
         }
     }
+
+    private val serviceId: String by lazy {
+        intent.getStringExtra(EXTRA_SERVICE_ID) ?: ""
+    }
+
+    private lateinit var resultHelper: KycActivityResultHelper
 
     override fun layoutId(): Int = R.layout.activity_document_verification
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Back button
+        resultHelper = KycActivityResultHelper(this) { docType, isSuccess ->
+            onDocumentResult(docType, isSuccess)
+        }
+        resultHelper.registerLaunchers()
+
         binding.ivBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Help button
         binding.ivHelp.setOnClickListener {
             // TODO: open help screen
         }
 
-        setupDocumentList()
-    }
-
-    private fun setupDocumentList() {
-        val items = buildHardcodedDocumentList()
-
-        val adapter = DocumentVerificationAdapter(items) { documentItem ->
-            // TODO: Handle document item click - navigate to upload/detail screen
-        }
-
         binding.rvDocuments.layoutManager = LinearLayoutManager(this)
-        binding.rvDocuments.adapter = adapter
 
-        updateProgress(items)
+        collectState()
+
+        // Fetch requirements from API
+        viewModel.fetchRequirements(serviceId)
     }
 
-    private fun updateProgress(items: List<Any>) {
-        val documents = items.filterIsInstance<DocumentItem>()
-        val total = documents.size
-        val uploaded = documents.count { it.status != DocumentStatus.NONE }
+    private fun collectState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    // Shimmer loading state
+                    binding.documentShimmer.root.visibility =
+                        if (state.isLoading) View.VISIBLE else View.GONE
 
-        // Update progress bar
-        binding.progressBar.max = total
-        binding.progressBar.progress = uploaded
+                    // Hide progress section during loading
+                    if (state.isLoading) {
+                        binding.progressBar.visibility = View.GONE
+                        binding.tvDocumentsCount.visibility = View.GONE
+                        binding.rvDocuments.visibility = View.GONE
+                    }
 
-        // Update count text
-        binding.tvDocumentsCount.text = "$uploaded/$total"
-
-        // Color based on completion
-        val colorRes = when {
-            uploaded == total && documents.all { it.status == DocumentStatus.VERIFIED } ->
-                R.color.bid_placed_green
-            uploaded == total ->
-                R.color.pending_font
-            else ->
-                R.color.black_title
+                    when (val uiState = state.uiState) {
+                        is UiState.Success -> {
+                            binding.rvDocuments.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.tvDocumentsCount.visibility = View.VISIBLE
+                            renderRequirements(uiState.data)
+                        }
+                        is UiState.Error -> {
+                            binding.rvDocuments.visibility = View.GONE
+                        }
+                        is UiState.Empty -> {
+                            binding.rvDocuments.visibility = View.GONE
+                        }
+                        else -> Unit
+                    }
+                }
+            }
         }
-        val color = ContextCompat.getColor(this, colorRes)
-        binding.progressBar.progressTintList = ColorStateList.valueOf(color)
-        binding.tvDocumentsCount.setTextColor(color)
     }
 
     /**
-     * Builds the hardcoded list of section headers and document items
-     * matching the provided design screenshot.
+     * Converts the server-driven response into the adapter's list format
+     * and updates the UI (progress bar, document count, RecyclerView).
      */
-    private fun buildHardcodedDocumentList(): List<Any> {
-        return listOf(
-            // Identity Section
-            "Identity",
-            DocumentItem(
-                name = "PAN Card",
-                isRequired = true,
-                status = DocumentStatus.VERIFIED
-            ),
-            DocumentItem(
-                name = "Aadhaar Card",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            ),
+    private fun renderRequirements(response: ServiceRequirementsResponse) {
+        val items = mutableListOf<Any>()
 
-            // Business Details Section
-            "Business Details",
-            DocumentItem(
-                name = "GST Details",
-                isRequired = true,
-                status = DocumentStatus.UNDER_REVIEW
-            ),
-            DocumentItem(
-                name = "MSME Certificate",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            ),
-            DocumentItem(
-                name = "Business Proof",
-                isRequired = true,
-                status = DocumentStatus.REJECTED
-            ),
-            DocumentItem(
-                name = "Client List",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            ),
+        for (section in response.sections) {
+            // Add section header
+            items.add(section.section)
 
-            // Vehicle Details Section
-            "Vehicle Details",
-            DocumentItem(
-                name = "Truck Business Proof",
-                subtitle = "RC/Bilty/LR",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            ),
+            // Add visible documents sorted by sequence
+            section.documents
+                .filter { it.isVisible }
+                .sortedBy { it.sequence }
+                .forEach { doc ->
+                    items.add(
+                        DocumentItem(
+                            name = doc.label,
+                            isRequired = doc.isRequired,
+                            status = mapStatus(doc.status),
+                            documentType = doc.documentType,
+                            isEnabled = doc.isEnabled,
+                            isCompleted = doc.isCompleted
+                        )
+                    )
+                }
+        }
 
-            // Banking & Payments Section
-            "Banking & Payments",
-            DocumentItem(
-                name = "Payment Details",
-                subtitle = "Cancelled Cheque/Bank Passbook",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            ),
-            DocumentItem(
-                name = "194C Declaration",
-                isRequired = false,
-                status = DocumentStatus.NONE
-            ),
+        val adapter = DocumentVerificationAdapter(items) { documentItem ->
+            onDocumentClick(documentItem)
+        }
+        binding.rvDocuments.adapter = adapter
 
-            // Policy & Agreements Section
-            "Policy & Agreements",
-            DocumentItem(
-                name = "Vendor Policy",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            ),
+        // Update progress from server response
+        updateProgress(response)
+    }
 
-            // Tax Information Section
-            "Tax Information",
-            DocumentItem(
-                name = "ITR",
-                isRequired = true,
-                status = DocumentStatus.NONE
-            )
-        )
+    // ────────────────────────── Click Handling ─────────────────────────
+
+    /**
+     * Handles document card click.
+     * Maps the API document_type to KycDocType and launches the appropriate screen.
+     */
+    private fun onDocumentClick(item: DocumentItem) {
+        // Don't allow click on disabled documents
+        if (!item.isEnabled || item.isCompleted) {
+//            Toast.makeText(this, "Complete previous steps first", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val docType = mapDocumentTypeToKycDocType(item.documentType)
+        if (docType != null && docType.isImplemented) {
+            resultHelper.launchForDocument(docType)
+        } else {
+            Toast.makeText(this, "${item.name} - Coming soon", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * Handles the result from a document verification screen.
+     */
+    private fun onDocumentResult(docType: KycDocType, isSuccess: Boolean) {
+        if (isSuccess) {
+            Toast.makeText(this, "${docType.displayName} verified successfully", Toast.LENGTH_SHORT).show()
+            // Refresh requirements to get updated status from server
+            viewModel.fetchRequirements(serviceId)
+        } else {
+            Toast.makeText(this, "${docType.displayName} - Verification cancelled", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // ────────────────────────── Mapping Helpers ────────────────────────
+
+    /**
+     * Maps API document_type string to KycDocType enum.
+     * This is the single mapping point — no changes needed when API goes live.
+     */
+    private fun mapDocumentTypeToKycDocType(documentType: String?): KycDocType? {
+        return when (documentType?.uppercase()) {
+            "PAN" -> KycDocType.PAN_CARD
+            "AADHAAR" -> KycDocType.AADHAAR_CARD
+            "GST" -> KycDocType.GST_DETAILS
+            "MSME" -> KycDocType.MSME_CERTIFICATE
+            "BUSINESS_PROOF" -> KycDocType.BUSINESS_PROOF
+            "CLIENT_LIST" -> KycDocType.CLIENT_LIST
+            "TRUCK_BUSINESS_PROOF" -> KycDocType.TRUCK_BUSINESS_PROOF
+            "BANK_ACCOUNT" -> KycDocType.PAYMENT_DETAILS
+            "DECLARATION_194C" -> KycDocType.DECLARATION_194C
+            "VENDOR_POLICY" -> KycDocType.VENDOR_POLICY
+            "ITR" -> KycDocType.ITR
+            else -> null
+        }
+    }
+
+    /**
+     * Maps API status string to local DocumentStatus enum.
+     */
+    private fun mapStatus(apiStatus: String): DocumentStatus {
+        return when (apiStatus.uppercase()) {
+            "APPROVED", "VERIFIED" -> DocumentStatus.VERIFIED
+            "UNDER_REVIEW" -> DocumentStatus.UNDER_REVIEW
+            "REJECTED" -> DocumentStatus.REJECTED
+            else -> DocumentStatus.NONE // PENDING, or any unknown status
+        }
+    }
+
+    /**
+     * Updates the progress bar and count text from the server-provided progress data.
+     * Color logic: VERIFIED → green, UNDER_REVIEW → yellow, else → red
+     */
+    private fun updateProgress(response: ServiceRequirementsResponse) {
+        val progress = response.progress
+
+        binding.progressBar.max = progress.requiredDocuments
+        binding.progressBar.progress = progress.completedDocuments
+        binding.tvDocumentsCount.text = "${progress.completedDocuments}/${progress.requiredDocuments}"
+
+        val colorRes = when (response.onboardingStatus.uppercase()) {
+            "VERIFIED" -> R.color.progress_green
+            "UNDER_REVIEW" -> R.color.progress_yellow
+            else -> R.color.progress_red
+        }
+        val color = ContextCompat.getColor(this, colorRes)
+        binding.progressBar.progressTintList = ColorStateList.valueOf(color)
     }
 
     override fun getViewModelClass(): Class<DocumentVerificationViewModel> =
         DocumentVerificationViewModel::class.java
-
 
     override fun requireConnection(): Boolean = true
 }

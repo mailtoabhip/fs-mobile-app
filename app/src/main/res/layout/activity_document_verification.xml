@@ -54,13 +54,13 @@
                     android:textSize="@dimen/text_16sp"
                     android:textStyle="bold" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Document Verification"
-                    android:textColor="@color/text_body_secondary"
-                    android:textSize="@dimen/text_12sp" />
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:id="@+id/tvSubtitle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Document Verification"-->
+<!--                    android:textColor="@color/text_body_secondary"-->
+<!--                    android:textSize="@dimen/text_12sp" />-->
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -131,6 +131,14 @@
                 android:orientation="vertical"
                 android:paddingTop="@dimen/size_16dp"
                 android:paddingBottom="@dimen/size_16dp">
+
+                <!-- Shimmer loading state -->
+                <include
+                    android:id="@+id/documentShimmer"
+                    layout="@layout/shimmer_document_verification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvDocuments"

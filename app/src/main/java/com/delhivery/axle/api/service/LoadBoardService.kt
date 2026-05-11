@@ -373,4 +373,28 @@ interface LoadBoardService {
     fun getDisputeFormConfig(
         @Query("disputeTypeCode") disputeTypeCode: String
     ): Single<BaseResponse<List<FormField>>>
+
+    /**
+     * Get service groups for onboarding.
+     * Uses suspend function for Flow-based architecture.
+     *
+     * @param vendorId Vendor UUID for eligibility-based group visibility
+     * @return BaseResponse<ServiceGroupsResponse> with list of service groups
+     */
+    @GET("/api/v1/onboarding/service-groups")
+    suspend fun getServiceGroups(
+        @Header("X-Vendor-Id") vendorId: String
+    ): BaseResponse<ServiceGroupsResponse>
+
+    /**
+     * Get service requirements/documents for a specific service.
+     * Uses suspend function for Flow-based architecture.
+     *
+     * @param serviceId The service identifier (e.g., "svc_fastag")
+     * @return BaseResponse<ServiceRequirementsResponse> with sections and documents
+     */
+    @GET("/api/v1/onboarding/services/{service_id}/requirements")
+    suspend fun getServiceRequirements(
+        @Path("service_id") serviceId: String
+    ): BaseResponse<ServiceRequirementsResponse>
 }

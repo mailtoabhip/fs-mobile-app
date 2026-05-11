@@ -52,11 +52,12 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             }
       onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-          userPrefs.retryVerificationOnBack=true
-          if(userPrefs.retryVerification){
-            navigationUtils.navigate(MyProfileActivity::class.java, true)
-          }
-          finish()
+//          userPrefs.retryVerificationOnBack=true
+//          if(userPrefs.retryVerification){
+//            navigationUtils.navigate(MyProfileActivity::class.java, true)
+//          }
+            setResult(RESULT_CANCELED)
+            finish()
         }
       })
 
@@ -159,10 +160,13 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
                 trackEvent(ttl.toString())
-                val bundle = Bundle()
-                bundle.putString(panKey,viewModel.panType)
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                    TotalStepsKey)!!,bundle)
+
+                setResult(RESULT_OK)
+                finish()
+//                val bundle = Bundle()
+//                bundle.putString(panKey,viewModel.panType)
+//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
+//                    TotalStepsKey)!!,bundle)
             } else {
                 uiUtils.showSnackbar(getString(string.error_update_failed))
             }

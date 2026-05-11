@@ -12,12 +12,22 @@ import com.delhivery.axle.api.response.FastagTransactionByTollPlaza
 import com.delhivery.axle.api.response.FastagTransactionsByTollPlazaResponse
 import com.delhivery.axle.api.response.FormConfigResponse
 import com.delhivery.axle.api.response.FormField
+import com.delhivery.axle.api.response.ServiceGroup
+import com.delhivery.axle.api.response.ServiceGroupsResponse
+import com.delhivery.axle.api.response.ServiceRequirementsResponse
+import com.delhivery.axle.api.response.OnboardingProgress
+import com.delhivery.axle.api.response.DocumentSection
+import com.delhivery.axle.api.response.DocumentRequirement
+import com.delhivery.axle.api.response.DocumentActions
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.errorResponseBody
 import com.google.gson.JsonObject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import okhttp3.MultipartBody
 
@@ -274,6 +284,166 @@ class LoadboardRepository @Inject constructor(
             uploadDoc2=doc2,
             uploadDoc3=doc3
         ).convertResponse()
+    }
+
+    /**
+     * Get service groups for onboarding using Flow-based architecture.
+     *
+     * This method wraps the suspend API call in Flow with Resource states:
+     * - Resource.Loading: Emitted immediately before API call
+     * - Resource.Success: Emitted when API returns data successfully
+     * - Resource.Failure: Emitted when API call fails with error details
+     *
+     * @param vendorId Vendor UUID for eligibility-based group visibility
+     * @return Flow<Resource<ServiceGroupsResponse>> that emits Loading, then Success or Failure
+     */
+    fun getServiceGroupsFlow(vendorId: String): Flow<Resource<ServiceGroupsResponse>> {
+        // TODO: Uncomment below when API is live
+        // return safeApiCallFlow { loadboardService.getServiceGroups(vendorId) }
+
+        // Mock data — remove this block when API is live
+        return flow {
+            emit(Resource.Loading)
+            kotlinx.coroutines.delay(800) // simulate network delay
+            emit(Resource.Success(
+                ServiceGroupsResponse(
+                    groups = listOf(
+                        ServiceGroup(
+                            groupId = "grp_loads",
+                            groupName = "Load Services",
+                            description = "Transportation and load services",
+                            displayOrder = 1,
+                            icon = "truck",
+                            serviceCount = 4
+                        ),
+                        ServiceGroup(
+                            groupId = "grp_finance",
+                            groupName = "Financial Services",
+                            description = "FASTag and Fuel Card products",
+                            displayOrder = 2,
+                            icon = "wallet",
+                            serviceCount = 2
+                        )
+                    )
+                )
+            ))
+        }.flowOn(kotlinx.coroutines.Dispatchers.IO)
+    }
+
+    /**
+     * Get service requirements for a specific service using Flow-based architecture.
+     *
+     * @param serviceId The service identifier (e.g., "svc_fastag")
+     * @return Flow<Resource<ServiceRequirementsResponse>> that emits Loading, then Success or Failure
+     */
+    fun getServiceRequirementsFlow(serviceId: String): Flow<Resource<ServiceRequirementsResponse>> {
+        // TODO: Uncomment below when API is live
+        // return safeApiCallFlow { loadboardService.getServiceRequirements(serviceId) }
+
+        // Mock data — remove this block when API is live
+        return flow {
+            emit(Resource.Loading)
+            kotlinx.coroutines.delay(800) // simulate network delay
+            emit(Resource.Success(
+                ServiceRequirementsResponse(
+                    serviceId = "svc_loads",
+                    providerId = "axis",
+                    configVersion = 3,
+                    onboardingStatus = "PENDING",
+                    progress = OnboardingProgress(
+                        completedDocuments = 2,
+                        requiredDocuments = 4,
+                        completionPercent = 50
+                    ),
+                    sections = listOf(
+                        DocumentSection(
+                            section = "KYC",
+                            documents = listOf(
+                                DocumentRequirement(
+                                    documentType = "PAN",
+                                    label = "PAN Card",
+                                    sequence = 1,
+                                    isRequired = true,
+                                    isVisible = true,
+                                    isCompleted = true,
+                                    isEnabled = true,
+                                    status = "APPROVED",
+                                    value = "ABCDE1234F",
+                                    fileUrl = "s3://pan.pdf",
+                                    reused = true,
+                                    verificationMode = listOf("digital", "upload"),
+                                    collectionMode = listOf("input", "upload"),
+                                    actions = DocumentActions(canEdit = false, canReupload = false)
+                                ),
+                                DocumentRequirement(
+                                    documentType = "AADHAAR",
+                                    label = "Aadhaar",
+                                    sequence = 2,
+                                    isRequired = true,
+                                    isVisible = true,
+                                    isCompleted = false,
+                                    isEnabled = false,
+                                    dependsOn = "PAN",
+                                    status = "PENDING",
+                                    verificationMode = listOf("otp", "upload"),
+                                    collectionMode = listOf("input", "upload"),
+                                    actions = DocumentActions(canEdit = false, canReupload = false)
+                                )
+                            )
+                        ),
+                        DocumentSection(
+                            section = "Business Details",
+                            documents = listOf(
+                                DocumentRequirement(
+                                    documentType = "GST",
+                                    label = "GST Details",
+                                    sequence = 1,
+                                    isRequired = true,
+                                    isVisible = true,
+                                    isCompleted = false,
+                                    isEnabled = true,
+                                    status = "UNDER_REVIEW",
+                                    verificationMode = listOf("digital"),
+                                    collectionMode = listOf("input"),
+                                    actions = DocumentActions(canEdit = false, canReupload = false)
+                                ),
+                                DocumentRequirement(
+                                    documentType = "BUSINESS_PROOF",
+                                    label = "Business Proof",
+                                    sequence = 2,
+                                    isRequired = true,
+                                    isVisible = true,
+                                    isCompleted = false,
+                                    isEnabled = true,
+                                    status = "REJECTED",
+                                    verificationMode = listOf("upload"),
+                                    collectionMode = listOf("upload"),
+                                    actions = DocumentActions(canEdit = true, canReupload = true)
+                                )
+                            )
+                        ),
+                        DocumentSection(
+                            section = "Banking & Payments",
+                            documents = listOf(
+                                DocumentRequirement(
+                                    documentType = "BANK_ACCOUNT",
+                                    label = "Payment Details",
+                                    sequence = 1,
+                                    isRequired = true,
+                                    isVisible = true,
+                                    isCompleted = false,
+                                    isEnabled = true,
+                                    status = "PENDING",
+                                    verificationMode = listOf("digital"),
+                                    collectionMode = listOf("input"),
+                                    actions = DocumentActions(canEdit = true, canReupload = false)
+                                )
+                            )
+                        )
+                    )
+                )
+            ))
+        }.flowOn(kotlinx.coroutines.Dispatchers.IO)
     }
 
 }

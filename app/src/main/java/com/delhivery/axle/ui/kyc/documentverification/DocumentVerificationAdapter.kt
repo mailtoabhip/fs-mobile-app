@@ -22,7 +22,10 @@ data class DocumentItem(
     val subtitle: String? = null,
     val isRequired: Boolean = true,
     val status: DocumentStatus = DocumentStatus.NONE,
-    val isSectionHeader: Boolean = false
+    val isSectionHeader: Boolean = false,
+    val documentType: String? = null,
+    val isEnabled: Boolean = true,
+    val isCompleted: Boolean = true,
 )
 
 enum class DocumentStatus {
@@ -139,7 +142,7 @@ class DocumentVerificationAdapter(
                 }
                 DocumentStatus.REJECTED -> {
                     binding.tvStatus.visibility = View.VISIBLE
-                    binding.ivArrow.visibility = View.GONE
+                    binding.ivArrow.visibility = View.VISIBLE
                     binding.tvStatus.text = "Rejected"
                     binding.tvStatus.setTextColor("#DC143C".toColorInt())
                     binding.tvStatus.setBackgroundResource(R.drawable.bg_status_rejected)
@@ -150,6 +153,15 @@ class DocumentVerificationAdapter(
                     binding.ivArrow.visibility = View.VISIBLE
                     binding.cardContainer.setBackgroundResource(R.drawable.bg_doc_card_default)
                 }
+            }
+
+            // Disabled state — grey tint overlay
+            if (!item.isEnabled) {
+                binding.cardContainer.alpha = 0.5f
+                binding.root.isClickable = false
+            } else {
+                binding.cardContainer.alpha = 1.0f
+                binding.root.isClickable = true
             }
         }
     }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/serviceGroupRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/size_16dp"
+    android:layout_marginBottom="@dimen/size_12dp"
+    android:background="@drawable/bg_service_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/size_16dp">
+
+    <ImageView
+        android:id="@+id/serviceGroupIcon"
+        android:layout_width="@dimen/size_40dp"
+        android:layout_height="@dimen/size_40dp"
+        android:contentDescription="@string/label_configure_service_onboarding"
+        android:src="@drawable/icon_loads_box" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/serviceGroupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold"
+            tools:text="Load Services" />
+
+        <TextView
+            android:id="@+id/serviceGroupCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_grey"
+            android:textSize="@dimen/text_12sp"
+            tools:text="5 Services Available" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="@dimen/size_20dp"
+        android:layout_height="@dimen/size_20dp"
+        android:contentDescription="@string/action_continue"
+        android:src="@drawable/ic_chevron_right_dark" />
+
+</LinearLayout>

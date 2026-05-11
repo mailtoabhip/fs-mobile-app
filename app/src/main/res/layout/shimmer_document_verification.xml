@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/size_16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Progress bar placeholder -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:background="@color/colorShimmerSecondary" />
+
+        <!-- Count placeholder -->
+        <View
+            android:layout_width="60dp"
+            android:layout_height="@dimen/size_12dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:background="@color/colorShimmerSecondary" />
+
+        <!-- Section header placeholder -->
+        <View
+            android:layout_width="80dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:background="@color/colorShimmerPrimary" />
+
+        <!-- Document card 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:background="@drawable/bg_doc_card_default"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <View
+                android:layout_width="@dimen/size_32dp"
+                android:layout_height="@dimen/size_32dp"
+                android:background="@color/colorShimmerPrimary" />
+
+            <View
+                android:layout_width="140dp"
+                android:layout_height="@dimen/size_14dp"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:background="@color/colorShimmerPrimary" />
+        </LinearLayout>
+
+        <!-- Document card 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:background="@drawable/bg_doc_card_default"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <View
+                android:layout_width="@dimen/size_32dp"
+                android:layout_height="@dimen/size_32dp"
+                android:background="@color/colorShimmerPrimary" />
+
+            <View
+                android:layout_width="100dp"
+                android:layout_height="@dimen/size_14dp"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:background="@color/colorShimmerPrimary" />
+        </LinearLayout>
+
+        <!-- Section header placeholder 2 -->
+        <View
+            android:layout_width="120dp"
+            android:layout_height="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:background="@color/colorShimmerPrimary" />
+
+        <!-- Document card 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:background="@drawable/bg_doc_card_default"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <View
+                android:layout_width="@dimen/size_32dp"
+                android:layout_height="@dimen/size_32dp"
+                android:background="@color/colorShimmerPrimary" />
+
+            <View
+                android:layout_width="110dp"
+                android:layout_height="@dimen/size_14dp"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:background="@color/colorShimmerPrimary" />
+        </LinearLayout>
+
+        <!-- Document card 4 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:background="@drawable/bg_doc_card_default"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <View
+                android:layout_width="@dimen/size_32dp"
+                android:layout_height="@dimen/size_32dp"
+                android:background="@color/colorShimmerPrimary" />
+
+            <View
+                android:layout_width="130dp"
+                android:layout_height="@dimen/size_14dp"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:background="@color/colorShimmerPrimary" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
