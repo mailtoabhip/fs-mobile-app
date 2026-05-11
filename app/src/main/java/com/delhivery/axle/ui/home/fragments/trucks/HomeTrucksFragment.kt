@@ -62,8 +62,10 @@ import com.delhivery.axle.utils.EVENT_DELETE_TRUCK
 import com.delhivery.axle.utils.EVENT_EDIT_TRUCK_INITIATE
 import com.delhivery.axle.utils.EVENT_EDIT_TRUCK_SUBMIT
 import com.delhivery.axle.utils.EVENT_REQUEST_FOR_LOAD_SUBMIT
+import com.delhivery.axle.utils.EVENT_TRUCKS_PAGE_SHOWN
 import com.delhivery.axle.utils.EVENT_VIEW_MY_TRUCK
 import com.delhivery.axle.utils.FCMUtils
+import com.delhivery.axle.utils.PROPERTY_FASTAG_MAPPED
 import com.delhivery.axle.utils.PROPERTY_FIELD_EDITED
 import com.delhivery.axle.utils.PROPERTY_INVENTORY_ID
 import com.delhivery.axle.utils.PROPERTY_INVENTORY_UUID
@@ -72,6 +74,7 @@ import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_REASON
 import com.delhivery.axle.utils.PROPERTY_SOURCE
+import com.delhivery.axle.utils.PROPERTY_TOTAL_COUNT
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PaginationScrollListener
 import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
@@ -86,6 +89,7 @@ import com.delhivery.axle.utils.VALUE_NOTIFICATION
 import com.delhivery.axle.utils.VALUE_ORIGIN
 import com.delhivery.axle.utils.VALUE_OWNERSHIP
 import com.delhivery.axle.utils.VALUE_PRICE
+import com.delhivery.axle.utils.VALUE_TRUCKS_PAGE
 import com.delhivery.axle.utils.extensions.isNotEmpty
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.getTextChangeObservable
@@ -143,6 +147,24 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     private var isFirstResume = true
     private var isFirstLoad = true
 
+
+    private fun sendAnalyticsEvent(stats: FastagStats) {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_TRUCKS_PAGE_SHOWN,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_PAGE_NAME,
+                PROPERTY_TOTAL_COUNT,
+                PROPERTY_FASTAG_MAPPED
+            ),
+            mutableListOf(
+                userPrefs.userId(),
+                VALUE_TRUCKS_PAGE,
+                stats.totalTrucks.toString(),
+                stats.fastagTrucksCount.toString(),
+            ),
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -446,6 +468,9 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                 binding.truckInventoryCardInner.tvTruckCount.text = "${it.totalTrucks} trucks in inventory"
                 binding.truckInventoryCardInner.tvFastagCount.text = it.fastagTrucksCount.toString()
                 binding.truckInventoryCardInner.tvFastagBalance.text = "₹${String.format("%,.0f", it.totalFastagBalance)}"
+
+                sendAnalyticsEvent(stats)
+
             }
         })
         

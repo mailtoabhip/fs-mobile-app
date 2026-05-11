@@ -339,6 +339,7 @@ const val EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS = "page_load_search_results
 const val EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS = "page_load_search_results_no_orders"
 const val EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS = "page_contract_search_results_with_orders"
 const val EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS = "page_contract_search_results_no_orders"
+const val EVENT_TRUCKS_PAGE_SHOWN = "trucks_page_shown"
 const val EVENT_ADD_TRUCK_INITIATE = "add_truck_initiate"
 const val EVENT_EDIT_TRUCK_INITIATE = "edit_truck_initiate"
 const val EVENT_ADD_TRUCK_SUBMIT = "add_truck_submit"

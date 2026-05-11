@@ -288,7 +288,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                             input.copyTo(output)
                         }
                     }
-                    
+                    sendSuccessfulDownloadEvent()
                     showDownloadSuccessDialog()
                     
                 } catch (e: Exception) {
@@ -468,7 +468,6 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            sendSuccessfulDownloadEvent()
             if (downloadID == id) {
                 // Run on main thread and check if activity is active
                 runOnUiThread {

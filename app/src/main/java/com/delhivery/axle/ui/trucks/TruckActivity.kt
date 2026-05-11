@@ -89,22 +89,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
             binding.refreshLayout.isRefreshing = false
         }
 
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_ADD_TRUCK_SUBMIT,
-            mutableListOf(
-                PROPERTY_USER_ID,
-                PROPERTY_PAGE_NAME,
-                PROPERTY_TOTAL_COUNT,
-                PROPERTY_FASTAG_MAPPED
-            ),
-            mutableListOf(
-                userPrefs.userId(),
-                VALUE_TRUCKS_PAGE,
-                viewModel.addTruckLiveDataRes.value?.inventoryId?:"",
-                viewModel.addTruckLiveDataRes.value?.vehicleNumber?:"",
-            ),
-        )
-
         if(viewModel.fromLinks && viewModel.vehicleNumberIntent.isNotEmpty()){
             uiUtils.showProgress()
             viewModel.getInventory(userPrefs.userId() , viewModel.vehicleNumberIntent)

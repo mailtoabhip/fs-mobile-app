@@ -114,25 +114,25 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
 
         viewModel.transactionDisputeData.observe(this) { response ->
             populateUI(response)
-        }
 
-        analyticsUtil.moEngageTrackEvent(
-            EVENT_FASTAG_TXN_DETAILS_SHOWN,
-            mutableListOf(
-                PROPERTY_USER_ID,
-                PROPERTY_PAGE_NAME,
-                PROPERTY_TRANSACTION_TYPE,
-                PROPERTY_TRANSACTION_ID,
-                PROPERTY_FASTAG_ID
-            ),
-            mutableListOf(
-                userPrefs.userId(),
-                VALUE_FASTAG_TXN_DETAILS_PAGE,
-                txnType,
-                txnId,
-                fastagId
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_FASTAG_TXN_DETAILS_SHOWN,
+                mutableListOf(
+                    PROPERTY_USER_ID,
+                    PROPERTY_PAGE_NAME,
+                    PROPERTY_TRANSACTION_TYPE,
+                    PROPERTY_TRANSACTION_ID,
+                    PROPERTY_FASTAG_ID
+                ),
+                mutableListOf(
+                    userPrefs.userId(),
+                    VALUE_FASTAG_TXN_DETAILS_PAGE,
+                    txnType,
+                    txnId,
+                    fastagId
+                )
             )
-        )
+        }
     }
 
     private fun populateUI(response: TransactionDisputeResponse) {
