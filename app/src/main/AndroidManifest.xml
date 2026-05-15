@@ -326,7 +326,7 @@
             android:name=".ui.profile.PlacementsActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".ui.fastag.FastagTransactionDetailActivity"
+        <activity android:name=".ui.fastag.FastagRaiseDisputeActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.fastag.FastagDisputeIssuesActivity"

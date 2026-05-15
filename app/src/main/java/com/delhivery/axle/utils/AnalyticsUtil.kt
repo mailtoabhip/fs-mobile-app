@@ -149,6 +149,13 @@ const val EVENT_EPOD_LIST_SHOWN = "epod_list_shown"
 const val EVENT_HPOD_LIST_SHOWN = "hpod_list_shown"
 const val EVENT_HPOD_SUBMIT_TAP = "hpod_submit_tap"
 const val EVENT_POD_SEARCH_LIST_SHOWN = "pod_search_list_shown"
+const val EVENT_HOME_SCREEN_SHOWN = "home_screen_shown"
+
+const val EVENT_HOME_SCREEN_FASTAG_TAP = "home_screen_fastag_tap"
+const val EVENT_FASTAG_TXN_LIST_SHOWN = "fastag_txn_list_shown"
+const val EVENT_FASTAG_TXN_DETAILS_SHOWN = "fastag_txn_details_shown"
+const val EVENT_FASTAG_DISPUTE_SUBMITTED = "fastag_dispute_submitted"
+const val EVENT_FASTAG_STATEMENT_DOWNLOADED = "fastag_statement_downloaded"
 
 
 const val PROPERTY_TRANSACTION_ID = "transaction_id"
@@ -238,6 +245,11 @@ const val PROPERTY_INTRACITY_CONTRACT_COUNT = "intracityContractMissingCount"
 const val PROPERTY_MISSING_TOTAL_COUNT = "missing_count"
 const val PROPERTY_DELAYED_TOTAL_COUNT = "delayed_count"
 const val PROPERTY_EXPECTED_TOTAL_COUNT = "expected_count"
+const val PROPERTY_TOTAL_COUNT = "total_count"
+const val PROPERTY_FASTAG_MAPPED = "fastag_mapped"
+const val PROPERTY_FASTAG_ID = "fastag_id"
+const val PROPERTY_DISPUTE_TYPE = "dispute_type"
+const val PROPERTY_RANGE = "range"
 
 
 
@@ -279,6 +291,9 @@ const val VALUE_ADD_TRUCK_SCROLL_BANNER = "add_truck_scroll_banner"
 const val VALUE_ADD_TRUCK_PAGE = "add_truck_page"
 const val VALUE_ADD_TRUCK_ONBOARDING_PAGE = "add_truck_onboarding_page"
 const val VALUE_ADD_TRUCK_PLACEMENT = "add_truck_from_placement"
+const val VALUE_FASTAG_TXN_LIST_PAGE = "fastag_txn_list"
+const val VALUE_FASTAG_TXN_DETAILS_PAGE = "fastag_txn_detail"
+const val VALUE_FASTAG_DISPUTE_PAGE = "fastag_dispute"
 
 
 //MoEngage Attributes and Events
@@ -324,6 +339,7 @@ const val EVENT_PAGE_LOAD_SEARCH_RESULTS_WITH_ORDERS = "page_load_search_results
 const val EVENT_PAGE_LOAD_SEARCH_RESULTS_NO_ORDERS = "page_load_search_results_no_orders"
 const val EVENT_PAGE_CONTRACT_SEARCH_RESULTS_WITH_ORDERS = "page_contract_search_results_with_orders"
 const val EVENT_PAGE_CONTRACT_SEARCH_RESULTS_NO_ORDERS = "page_contract_search_results_no_orders"
+const val EVENT_TRUCKS_PAGE_SHOWN = "trucks_page_shown"
 const val EVENT_ADD_TRUCK_INITIATE = "add_truck_initiate"
 const val EVENT_EDIT_TRUCK_INITIATE = "edit_truck_initiate"
 const val EVENT_ADD_TRUCK_SUBMIT = "add_truck_submit"
@@ -433,6 +449,10 @@ const val VALUE_VENDOR_SUBSOURCE = "new_order_vendor_match"
 const val VALUE_INVENTORY_SUBSOURCE = "new_order_inventory_match"
 
 const val VALUE_POD_STATUS = "pod_status"
+
+const val VALUE_TRUCKS_PAGE = "trucks_page"
+
+const val VALUE_HOME_PAGE = "home_screen"
 
 
 
