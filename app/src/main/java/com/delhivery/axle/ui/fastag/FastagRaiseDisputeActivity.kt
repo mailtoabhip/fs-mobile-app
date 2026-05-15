@@ -9,16 +9,27 @@ import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.databinding.ActivityFastagTransactionDetailBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import androidx.core.graphics.toColorInt
+import com.delhivery.axle.utils.EVENT_FASTAG_TXN_DETAILS_SHOWN
+import com.delhivery.axle.utils.EVENT_FASTAG_TXN_LIST_SHOWN
+import com.delhivery.axle.utils.PROPERTY_FASTAG_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.VALUE_FASTAG_TXN_DETAILS_PAGE
+import com.delhivery.axle.utils.VALUE_FASTAG_TXN_LIST_PAGE
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
-class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDetailBinding, FastagTransactionDetailsViewModel>() {
+class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailBinding, FastagTransactionDetailsViewModel>() {
 
     override fun getViewModelClass() = FastagTransactionDetailsViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_transaction_detail
     override fun requireConnection() = false
 
-    companion object {
+    companion object Companion {
         const val EXTRA_TXN_ID = "txn_id"
         const val EXTRA_AMOUNT = "amount"
         const val EXTRA_TOLL_NAME = "toll_name"
@@ -28,16 +39,25 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
         const val EXTRA_TRUCK_SIZE = "truck_size"
         const val EXTRA_CAPACITY = "capacity"
         const val EXTRA_OWNERSHIP = "ownership"
+        const val EXTRA_TRANSACTION_TYPE = "txn_type"
         private const val REQCODE_DISPUTE = 1001
     }
 
+    @Inject lateinit var userPrefs: UserPrefs
+
     private var txnId: String = ""
+
+    private var txnType: String = ""
+
     private var currentResponse: TransactionDisputeResponse? = null
+
+    private var fastagId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: ""
+        txnType = intent.getStringExtra(EXTRA_TRANSACTION_TYPE) ?: ""
 
         setupStaticUI()
         observeData()
@@ -94,6 +114,24 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
 
         viewModel.transactionDisputeData.observe(this) { response ->
             populateUI(response)
+
+            analyticsUtil.moEngageTrackEvent(
+                EVENT_FASTAG_TXN_DETAILS_SHOWN,
+                mutableListOf(
+                    PROPERTY_USER_ID,
+                    PROPERTY_PAGE_NAME,
+                    PROPERTY_TRANSACTION_TYPE,
+                    PROPERTY_TRANSACTION_ID,
+                    PROPERTY_FASTAG_ID
+                ),
+                mutableListOf(
+                    userPrefs.userId(),
+                    VALUE_FASTAG_TXN_DETAILS_PAGE,
+                    txnType,
+                    txnId,
+                    fastagId
+                )
+            )
         }
     }
 
@@ -103,6 +141,7 @@ class FastagTransactionDetailActivity : BaseActivity<ActivityFastagTransactionDe
         // FASTag info
         binding.tvFastagProvider.text = "${response.fastagIssuedBy ?: ""} FASTag by Delhivery"
         binding.tvFastagId.text = "FASTag ID: ${response.fastagId ?: ""}"
+        fastagId = response.fastagId ?: ""
 
         // Amount
         val amount = response.txnAmount ?: 0.0

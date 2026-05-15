@@ -1,0 +1,803 @@
+name: Android CI/CD
+
+on:
+  push:
+    tags:
+      - 'tag-uatDebugUnsignedApk-v*'
+      - 'tag-uatReleaseSignedApk-v*'
+      - 'tag-releaseDebugSignedApk-v*'
+      - 'tag-releaseSignedApk-v*'
+      - 'tag-releaseSignedBundle-v*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUILD_START_TIME: ""
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      firebase-configured: ${{ steps.check-secrets.outputs.firebase-configured }}
+      gchat-configured: ${{ steps.check-secrets.outputs.gchat-configured }}
+      variant: ${{ steps.variant.outputs.variant }}
+      flavor: ${{ steps.variant.outputs.flavor }}
+      flavor-cap: ${{ steps.variant.outputs.flavor-cap }}
+      build-type: ${{ steps.variant.outputs.build-type }}
+      build-type-lower: ${{ steps.variant.outputs.build-type-lower }}
+      output-type: ${{ steps.variant.outputs.output-type }}
+      signed: ${{ steps.variant.outputs.signed }}
+      build-start-time: ${{ steps.timing.outputs.start-time }}
+    steps:
+      - name: Record Build Start Time
+        id: timing
+        run: |
+          echo "start-time=$(date +%s)" >> $GITHUB_OUTPUT
+          echo "start-time-human=$(date '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Build Variant
+        id: variant
+        run: |
+          REF="${{ github.ref }}"
+          
+          # Check if this is a tag push
+          if [[ "$REF" == refs/tags/tag-* ]]; then
+            TAG_NAME="${REF#refs/tags/}"
+            
+            if [[ "$TAG_NAME" == tag-uatDebugUnsignedApk-v* ]]; then
+              FLAVOR="uat"
+              BUILD_TYPE="Debug"
+              OUTPUT_TYPE="apk"
+              SIGNED="false"
+            elif [[ "$TAG_NAME" == tag-uatReleaseSignedApk-v* ]]; then
+              FLAVOR="uat"
+              BUILD_TYPE="Release"
+              OUTPUT_TYPE="apk"
+              SIGNED="true"
+            elif [[ "$TAG_NAME" == tag-releaseDebugSignedApk-v* ]]; then
+              FLAVOR="production"
+              BUILD_TYPE="Debug"
+              OUTPUT_TYPE="apk"
+              SIGNED="true"
+            elif [[ "$TAG_NAME" == tag-releaseSignedApk-v* ]]; then
+              FLAVOR="production"
+              BUILD_TYPE="Release"
+              OUTPUT_TYPE="apk"
+              SIGNED="true"
+            elif [[ "$TAG_NAME" == tag-releaseSignedBundle-v* ]]; then
+              FLAVOR="production"
+              BUILD_TYPE="Release"
+              OUTPUT_TYPE="bundle"
+              SIGNED="true"
+            else
+              echo "::error::Unknown tag pattern: $TAG_NAME"
+              exit 1
+            fi
+          else
+            # Branch push - default to uatDebug
+            FLAVOR="uat"
+            BUILD_TYPE="Debug"
+            OUTPUT_TYPE="apk"
+            SIGNED="false"
+          fi
+          
+          BUILD_TYPE_LOWER=$(echo "$BUILD_TYPE" | tr '[:upper:]' '[:lower:]')
+          FLAVOR_CAP="$(echo ${FLAVOR:0:1} | tr '[:lower:]' '[:upper:]')${FLAVOR:1}"
+          VARIANT="${FLAVOR}${BUILD_TYPE}"
+          
+          echo "variant=$VARIANT" >> $GITHUB_OUTPUT
+          echo "flavor=$FLAVOR" >> $GITHUB_OUTPUT
+          echo "flavor-cap=$FLAVOR_CAP" >> $GITHUB_OUTPUT
+          echo "build-type=$BUILD_TYPE" >> $GITHUB_OUTPUT
+          echo "build-type-lower=$BUILD_TYPE_LOWER" >> $GITHUB_OUTPUT
+          echo "output-type=$OUTPUT_TYPE" >> $GITHUB_OUTPUT
+          echo "signed=$SIGNED" >> $GITHUB_OUTPUT
+          
+          echo "Building: $VARIANT | Output: $OUTPUT_TYPE | Signed: $SIGNED"
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/wrapper
+          key: gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: gradle-deps-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-deps-
+
+      - name: Cache Gradle Build Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches/build-cache-1
+          key: gradle-build-cache-${{ github.sha }}
+          restore-keys: |
+            gradle-build-cache-
+
+      - name: Check Firebase Secrets
+        id: check-secrets
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GCHAT_WEBHOOK_URL: ${{ secrets.GCHAT_WEBHOOK_URL }}
+        run: |
+          if [ -n "$FIREBASE_APP_ID" ] && [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "firebase-configured=true" >> $GITHUB_OUTPUT
+            echo "Firebase secrets: configured"
+          else
+            echo "firebase-configured=false" >> $GITHUB_OUTPUT
+            echo "Firebase secrets: NOT configured"
+          fi
+          if [ -n "$GCHAT_WEBHOOK_URL" ]; then
+            echo "gchat-configured=true" >> $GITHUB_OUTPUT
+            echo "GChat webhook: configured"
+          else
+            echo "gchat-configured=false" >> $GITHUB_OUTPUT
+            echo "GChat webhook: NOT configured"
+          fi
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Run Android Lint
+        run: ./gradlew lint${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }} --parallel --build-cache
+        env:
+          GRADLE_OPTS: "-Xmx2g -Dorg.gradle.daemon=true"
+
+#      - name: Upload Lint Reports
+#        uses: actions/upload-artifact@v4
+#        if: always()
+#        with:
+#          name: lint-reports
+#          path: |
+#            app/build/reports/lint-results-${{ needs.setup.outputs.variant }}.xml
+#            app/build/reports/lint-results-${{ needs.setup.outputs.variant }}.html
+#          retention-days: 7
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Run Unit Tests
+        run: ./gradlew test${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }}UnitTest
+
+      - name: Generate Coverage Report
+        run: ./gradlew koverXmlReport${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }} koverHtmlReport${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }}
+        continue-on-error: true
+
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            app/build/test-results/
+            app/build/reports/tests/
+          retention-days: 7
+
+      - name: Upload Coverage Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports
+          path: |
+            app/build/reports/kover/
+          retention-days: 7
+
+      - name: Coverage Summary
+        if: always()
+        run: |
+          echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Test Results
+          TEST_RESULTS_DIR="app/build/test-results/test${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }}UnitTest"
+          if [ -d "$TEST_RESULTS_DIR" ]; then
+            TOTAL_TESTS=$(grep -r 'tests=' "$TEST_RESULTS_DIR"/*.xml 2>/dev/null | grep -oP 'tests="\K[0-9]+' | awk '{sum+=$1} END {print sum}')
+            FAILURES=$(grep -r 'failures=' "$TEST_RESULTS_DIR"/*.xml 2>/dev/null | grep -oP 'failures="\K[0-9]+' | awk '{sum+=$1} END {print sum}')
+            PASSED=$((TOTAL_TESTS - FAILURES))
+            echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Passed: $PASSED / $TOTAL_TESTS" >> $GITHUB_STEP_SUMMARY
+            if [ "$FAILURES" -gt 0 ]; then
+              echo "❌ Failed: $FAILURES" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Coverage Report
+          KOVER_REPORT="app/build/reports/kover/report${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }}.xml"
+          if [ -f "$KOVER_REPORT" ]; then
+            echo "### Coverage Report" >> $GITHUB_STEP_SUMMARY
+            COVERAGE=$(grep -oP 'line-rate="\K[^"]+' "$KOVER_REPORT" | head -1)
+            if [ -n "$COVERAGE" ]; then
+              PERCENT=$(echo "scale=1; $COVERAGE * 100" | bc)
+              echo "📊 Line Coverage: **${PERCENT}%**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "Coverage data not available" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "### Coverage Report" >> $GITHUB_STEP_SUMMARY
+            echo "Coverage report not generated" >> $GITHUB_STEP_SUMMARY
+          fi
+
+
+  build:
+    needs: [setup, lint, test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      artifact-path: ${{ steps.build-apk.outputs.artifact-path || steps.build-bundle.outputs.artifact-path }}
+      artifact-name: ${{ steps.build-apk.outputs.artifact-name || steps.build-bundle.outputs.artifact-name }}
+      artifact-size: ${{ steps.build-apk.outputs.artifact-size || steps.build-bundle.outputs.artifact-size }}
+      artifact-size-mb: ${{ steps.build-apk.outputs.artifact-size-mb || steps.build-bundle.outputs.artifact-size-mb }}
+      checksum: ${{ steps.build-apk.outputs.checksum || steps.build-bundle.outputs.checksum }}
+      release-notes: ${{ steps.release-notes.outputs.notes }}
+    steps:
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          df -h
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Decode Keystore
+        if: needs.setup.outputs.signed == 'true'
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ runner.temp }}/release.jks
+          echo "Keystore decoded to temp location"
+
+      - name: Build APK
+        id: build-apk
+        if: needs.setup.outputs.output-type == 'apk'
+        env:
+          KEYSTORE_FILE: ${{ needs.setup.outputs.signed == 'true' && format('{0}/release.jks', runner.temp) || '' }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: |
+          ./gradlew clean assemble${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }}
+          
+          APK_DIR="app/build/outputs/apk/${{ needs.setup.outputs.flavor }}/${{ needs.setup.outputs.build-type-lower }}"
+          APK_PATH=$(find "$APK_DIR" -name "*.apk" -type f 2>/dev/null | head -1)
+          
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find app/build/outputs/apk -name "*.apk" -type f | head -1)
+          fi
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::No APK found after build"
+            exit 1
+          fi
+          
+          TIMESTAMP=$(date +%d%m%y_%H%M)
+          VERSION_NAME=$(grep -m1 "versionName" app/build.gradle | sed 's/.*"\(.*\)".*/\1/' || echo "unknown")
+          VERSION_NAME=$(echo "$VERSION_NAME" | tr -d '[:space:]')
+          
+          APK_NAME="Axle_${{ needs.setup.outputs.flavor }}_${{ needs.setup.outputs.build-type }}_${VERSION_NAME}_${TIMESTAMP}.apk"
+          APK_DIR_PATH=$(dirname "$APK_PATH")
+          NEW_APK_PATH="${APK_DIR_PATH}/${APK_NAME}"
+          
+          mv "$APK_PATH" "$NEW_APK_PATH"
+          
+          CHECKSUM=$(sha256sum "$NEW_APK_PATH" | cut -d' ' -f1)
+          
+          APK_SIZE=$(stat -c%s "$NEW_APK_PATH" 2>/dev/null || stat -f%z "$NEW_APK_PATH")
+          APK_SIZE_MB=$(echo "scale=2; $APK_SIZE / 1048576" | bc)
+          
+          echo "artifact-path=$NEW_APK_PATH" >> $GITHUB_OUTPUT
+          echo "artifact-name=$APK_NAME" >> $GITHUB_OUTPUT
+          echo "artifact-size=$APK_SIZE" >> $GITHUB_OUTPUT
+          echo "artifact-size-mb=$APK_SIZE_MB" >> $GITHUB_OUTPUT
+          echo "checksum=$CHECKSUM" >> $GITHUB_OUTPUT
+          
+          echo "APK Size: ${APK_SIZE_MB} MB"
+
+      - name: Build Bundle (AAB)
+        id: build-bundle
+        if: needs.setup.outputs.output-type == 'bundle'
+        env:
+          KEYSTORE_FILE: ${{ format('{0}/release.jks', runner.temp) }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+        run: |
+          ./gradlew clean bundle${{ needs.setup.outputs.flavor-cap }}${{ needs.setup.outputs.build-type }}
+          
+          AAB_DIR="app/build/outputs/bundle/${{ needs.setup.outputs.flavor }}${{ needs.setup.outputs.build-type }}"
+          AAB_PATH=$(find "$AAB_DIR" -name "*.aab" -type f 2>/dev/null | head -1)
+          
+          if [ -z "$AAB_PATH" ]; then
+            AAB_PATH=$(find app/build/outputs/bundle -name "*.aab" -type f | head -1)
+          fi
+          
+          if [ -z "$AAB_PATH" ]; then
+            echo "::error::No AAB found after build"
+            exit 1
+          fi
+          
+          TIMESTAMP=$(date +%d%m%y_%H%M)
+          VERSION_NAME=$(grep -m1 "versionName" app/build.gradle | sed 's/.*"\(.*\)".*/\1/' || echo "unknown")
+          VERSION_NAME=$(echo "$VERSION_NAME" | tr -d '[:space:]')
+          
+          AAB_NAME="Axle_${{ needs.setup.outputs.flavor }}_${{ needs.setup.outputs.build-type }}_${VERSION_NAME}_${TIMESTAMP}.aab"
+          AAB_DIR_PATH=$(dirname "$AAB_PATH")
+          NEW_AAB_PATH="${AAB_DIR_PATH}/${AAB_NAME}"
+          
+          mv "$AAB_PATH" "$NEW_AAB_PATH"
+          
+          CHECKSUM=$(sha256sum "$NEW_AAB_PATH" | cut -d' ' -f1)
+          
+          AAB_SIZE=$(stat -c%s "$NEW_AAB_PATH" 2>/dev/null || stat -f%z "$NEW_AAB_PATH")
+          AAB_SIZE_MB=$(echo "scale=2; $AAB_SIZE / 1048576" | bc)
+          
+          echo "artifact-path=$NEW_AAB_PATH" >> $GITHUB_OUTPUT
+          echo "artifact-name=$AAB_NAME" >> $GITHUB_OUTPUT
+          echo "artifact-size=$AAB_SIZE" >> $GITHUB_OUTPUT
+          echo "artifact-size-mb=$AAB_SIZE_MB" >> $GITHUB_OUTPUT
+          echo "checksum=$CHECKSUM" >> $GITHUB_OUTPUT
+          
+          echo "AAB Size: ${AAB_SIZE_MB} MB"
+
+#      - name: Generate Release Notes
+#        id: release-notes
+#        run: |
+#          # Get commits since last tag or last 10 commits
+#          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+#
+#          if [ -n "$LAST_TAG" ]; then
+#            COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"• %s" --no-merges | head -20)
+#          else
+#            COMMITS=$(git log -10 --pretty=format:"• %s" --no-merges)
+#          fi
+#
+#          # Create release notes
+#          NOTES="Build #${{ github.run_number }} - ${{ needs.setup.outputs.variant }}
+#
+#          Branch: ${{ github.ref_name }}
+#          Commit: ${{ github.sha }}
+#
+#          Changes:
+#          ${COMMITS}"
+#
+#          # Escape for GitHub output
+#          NOTES_ESCAPED="${NOTES//'%'/'%25'}"
+#          NOTES_ESCAPED="${NOTES_ESCAPED//$'\n'/'%0A'}"
+#          NOTES_ESCAPED="${NOTES_ESCAPED//$'\r'/'%0D'}"
+#
+#          echo "notes<<EOF" >> $GITHUB_OUTPUT
+#          echo "$NOTES" >> $GITHUB_OUTPUT
+#          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build Summary
+        run: |
+          echo "## 📦 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact | ${{ steps.build-apk.outputs.artifact-name }}${{ steps.build-bundle.outputs.artifact-name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Size | ${{ steps.build-apk.outputs.artifact-size-mb }}${{ steps.build-bundle.outputs.artifact-size-mb }} MB |" >> $GITHUB_STEP_SUMMARY
+          echo "| Variant | ${{ needs.setup.outputs.variant }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Output Type | ${{ needs.setup.outputs.output-type }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Signed | ${{ needs.setup.outputs.signed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Checksum | \`${{ steps.build-apk.outputs.checksum }}${{ steps.build-bundle.outputs.checksum }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Changelog
+          echo "## 📝 Recent Changes" >> $GITHUB_STEP_SUMMARY
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            git log ${LAST_TAG}..HEAD --pretty=format:"- %s" --no-merges | head -10 >> $GITHUB_STEP_SUMMARY
+          else
+            git log -10 --pretty=format:"- %s" --no-merges >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        if: needs.setup.outputs.output-type == 'apk'
+        with:
+          name: apk-${{ needs.setup.outputs.variant }}
+          path: ${{ steps.build-apk.outputs.artifact-path }}
+          retention-days: 7
+
+      - name: Upload Bundle Artifact
+        uses: actions/upload-artifact@v4
+        if: needs.setup.outputs.output-type == 'bundle'
+        with:
+          name: bundle-${{ needs.setup.outputs.variant }}
+          path: ${{ steps.build-bundle.outputs.artifact-path }}
+          retention-days: 7
+
+#      - name: Upload Mapping File
+#        uses: actions/upload-artifact@v4
+#        if: needs.setup.outputs.build-type == 'Release'
+#        with:
+#          name: mapping-${{ needs.setup.outputs.variant }}
+#          path: app/build/outputs/mapping/${{ needs.setup.outputs.flavor }}${{ needs.setup.outputs.build-type }}/mapping.txt
+#          retention-days: 7
+
+#      - name: Save Release Notes
+#        run: |
+#          cat << 'EOF' > release-notes.txt
+#          ${{ steps.release-notes.outputs.notes }}
+#          EOF
+#
+#      - name: Upload Release Notes Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: release-notes
+#          path: release-notes.txt
+#          retention-days: 7
+
+  upload-firebase:
+    needs: [setup, build]
+    if: needs.setup.outputs.firebase-configured == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Download APK Artifact
+        if: needs.setup.outputs.output-type == 'apk'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: apk-*
+          path: ./artifact
+          merge-multiple: true
+
+      - name: Download Bundle Artifact
+        if: needs.setup.outputs.output-type == 'bundle'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bundle-*
+          path: ./artifact
+          merge-multiple: true
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: devs
+          file: ./artifact/${{ needs.build.outputs.artifact-name }}
+          releaseNotes: |
+            Build #${{ github.run_number }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Variant: ${{ needs.setup.outputs.variant }}
+            Artifact: ${{ needs.build.outputs.artifact-name }}
+            Checksum: ${{ needs.build.outputs.checksum }}
+
+
+  # Google Chat Notification
+  notify:
+    needs: [setup, build, upload-firebase]
+    if: always() && needs.setup.outputs.gchat-configured == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Calculate Build Duration
+        id: duration
+        run: |
+          START_TIME=${{ needs.setup.outputs.build-start-time }}
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          MINUTES=$((DURATION / 60))
+          SECONDS=$((DURATION % 60))
+          echo "duration=${MINUTES}m ${SECONDS}s" >> $GITHUB_OUTPUT
+
+      - name: Determine Build Status
+        id: status
+        run: |
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "status=✅ SUCCESS" >> $GITHUB_OUTPUT
+            echo "color=#34A853" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.build.result }}" == "failure" ]; then
+            echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "color=#EA4335" >> $GITHUB_OUTPUT
+          else
+            echo "status=⚠️ ${{ needs.build.result }}" >> $GITHUB_OUTPUT
+            echo "color=#FBBC04" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout for branch detection
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Source Branch
+        id: branch
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            BRANCH=$(git branch -r --contains ${{ github.sha }} \
+              | grep -v HEAD \
+              | head -n 1 \
+              | sed 's|origin/||' \
+              | xargs)
+            echo "branch=${BRANCH:-unknown}" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "tag=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Google Chat Notification
+        run: |
+          curl -X POST "${{ secrets.GCHAT_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "cards": [{
+                "header": {
+                  "title": "Android Build ${{ steps.status.outputs.status }}",
+                  "subtitle": "${{ github.repository }}"
+                },
+                "sections": [{
+                  "widgets": [
+                    {
+                      "keyValue": {
+                        "topLabel": "Branch",
+                        "content": "${{ steps.branch.outputs.branch }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Tag",
+                        "content": "${{ steps.branch.outputs.tag || 'N/A' }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Variant",
+                        "content": "${{ needs.setup.outputs.variant }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Output",
+                        "content": "${{ needs.setup.outputs.output-type }} (${{ needs.setup.outputs.signed == 'true' && 'signed' || 'unsigned' }})"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Size",
+                        "content": "${{ needs.build.outputs.artifact-size-mb }} MB"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Build Duration",
+                        "content": "${{ steps.duration.outputs.duration }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Triggered by",
+                        "content": "${{ github.actor }}"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "widgets": [{
+                    "buttons": [{
+                      "textButton": {
+                        "text": "View Build/Artifacts",
+                        "onClick": {
+                          "openLink": {
+                            "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                          }
+                        }
+                      }
+                    }]
+                  }]
+                }]
+              }]
+            }'
+
+  # Notify on failure even if Firebase upload is skipped
+  notify-failure:
+    needs: [setup, lint, test, build]
+    if: failure() && needs.setup.outputs.gchat-configured == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Calculate Build Duration
+        id: duration
+        run: |
+          START_TIME=${{ needs.setup.outputs.build-start-time }}
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          MINUTES=$((DURATION / 60))
+          SECONDS=$((DURATION % 60))
+          echo "duration=${MINUTES}m ${SECONDS}s" >> $GITHUB_OUTPUT
+
+      - name: Determine Failed Job
+        id: failed
+        run: |
+          FAILED_JOB=""
+          [ "${{ needs.lint.result }}" == "failure" ] && FAILED_JOB="Lint"
+          [ "${{ needs.test.result }}" == "failure" ] && FAILED_JOB="Test"
+          [ "${{ needs.build.result }}" == "failure" ] && FAILED_JOB="Build"
+          echo "job=$FAILED_JOB" >> $GITHUB_OUTPUT
+
+      - name: Checkout for branch detection
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Source Branch
+        id: branch
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            BRANCH=$(git branch -r --contains ${{ github.sha }} \
+              | grep -v HEAD \
+              | head -n 1 \
+              | sed 's|origin/||' \
+              | xargs)
+            echo "branch=${BRANCH:-unknown}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Failure Notification
+        run: |
+          curl -X POST "${{ secrets.GCHAT_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "cards": [{
+                "header": {
+                  "title": "❌ Android Build FAILED",
+                  "subtitle": "${{ github.repository }}"
+                },
+                "sections": [{
+                  "widgets": [
+                    {
+                      "keyValue": {
+                        "topLabel": "Failed Job",
+                        "content": "${{ steps.failed.outputs.job }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Branch",
+                        "content": "${{ steps.branch.outputs.branch }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Build Duration",
+                        "content": "${{ steps.duration.outputs.duration }}"
+                      }
+                    },
+                    {
+                      "keyValue": {
+                        "topLabel": "Triggered by",
+                        "content": "${{ github.actor }}"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "widgets": [{
+                    "buttons": [{
+                      "textButton": {
+                        "text": "View Logs",
+                        "onClick": {
+                          "openLink": {
+                            "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                          }
+                        }
+                      }
+                    }]
+                  }]
+                }]
+              }]
+            }'

@@ -88,16 +88,17 @@ class FastagTransactionAdapter(
             // Click listener to open transaction detail
             binding.root.setOnClickListener {
                 val context = binding.root.context
-                val intent = android.content.Intent(context, FastagTransactionDetailActivity::class.java).apply {
-                    putExtra(FastagTransactionDetailActivity.EXTRA_TXN_ID, transaction.txnId)
-                    putExtra(FastagTransactionDetailActivity.EXTRA_AMOUNT, transaction.amount ?: 0.0)
-                    putExtra(FastagTransactionDetailActivity.EXTRA_TOLL_NAME, transaction.tollName)
-                    putExtra(FastagTransactionDetailActivity.EXTRA_TIMESTAMP, formatTimestamp(transaction.timestamp ?: ""))
-                    putExtra(FastagTransactionDetailActivity.EXTRA_VEHICLE_NUMBER, vehicleData?.vehicleNumber ?: "")
-                    putExtra(FastagTransactionDetailActivity.EXTRA_TRUCK_TYPE, vehicleData?.truckType ?: "")
-                    putExtra(FastagTransactionDetailActivity.EXTRA_TRUCK_SIZE, vehicleData?.truckSize ?: "")
-                    putExtra(FastagTransactionDetailActivity.EXTRA_CAPACITY, vehicleData?.capacity ?: 0.0)
-                    putExtra(FastagTransactionDetailActivity.EXTRA_OWNERSHIP, vehicleData?.ownership() ?: "")
+                val intent = android.content.Intent(context, FastagRaiseDisputeActivity::class.java).apply {
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TXN_ID, transaction.txnId)
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_AMOUNT, transaction.amount ?: 0.0)
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TOLL_NAME, transaction.tollName)
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TIMESTAMP, formatTimestamp(transaction.timestamp ?: ""))
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_VEHICLE_NUMBER, vehicleData?.vehicleNumber ?: "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRUCK_TYPE, vehicleData?.truckType ?: "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRUCK_SIZE, vehicleData?.truckSize ?: "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_CAPACITY, vehicleData?.capacity ?: 0.0)
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_OWNERSHIP, vehicleData?.ownership() ?: "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRANSACTION_TYPE, transaction.transactionType)
                 }
                 context.startActivity(intent)
             }

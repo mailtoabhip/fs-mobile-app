@@ -24,10 +24,18 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
 import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.EVENT_FASTAG_DISPUTE_SUBMITTED
 import com.delhivery.axle.utils.FileCompressor
+import com.delhivery.axle.utils.PROPERTY_DISPUTE_TYPE
+import com.delhivery.axle.utils.PROPERTY_FASTAG_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
+import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.VALUE_FASTAG_DISPUTE_PAGE
 import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.MimeTypes
 import com.delhivery.axle.utils.extensions.filePickerChooser
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.io.File
@@ -42,6 +50,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
     @Inject lateinit var documentUtils: DocumentUtils
     @Inject lateinit var fileCompressor: FileCompressor
+    @Inject lateinit var userPrefs: UserPrefs
 
     private var disputeTypeCode: String = ""
     private var disputeTitle: String = ""
@@ -528,6 +537,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
             is SubmissionState.Success -> {
                 uiUtils.hideProgress()
                 binding.btnSubmit.isEnabled = true
+                sendSuccessEvent()
                 showSuccessBottomSheet(state.srId)
             }
             is SubmissionState.Error -> {
@@ -572,5 +582,25 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         }
 
         bottomSheetDialog.show()
+    }
+
+    private fun sendSuccessEvent() {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_FASTAG_DISPUTE_SUBMITTED,
+            mutableListOf(
+                PROPERTY_USER_ID,
+                PROPERTY_TRANSACTION_ID,
+                PROPERTY_PAGE_NAME,
+                PROPERTY_DISPUTE_TYPE,
+                PROPERTY_FASTAG_ID
+                ),
+            mutableListOf(
+                userPrefs.userId(),
+                EXTRA_TXN_ID,
+                VALUE_FASTAG_DISPUTE_PAGE,
+                disputeTypeCode,
+                fastagId
+            )
+        )
     }
 }
