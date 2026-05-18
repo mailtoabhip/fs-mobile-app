@@ -114,24 +114,20 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                userPrefs.retryVerificationOnBack=true
-                val bundle = Bundle()
-                bundle.putInt(StepKey,0)
-                navigationUtils.navigateKyc(this@IdentityVerificationActivity,true,bundle)
+                setResult(RESULT_CANCELED)
                 finish()
             }
         })
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
 
         binding.textCin.setOnClickListener{
@@ -201,8 +197,8 @@ class IdentityVerificationActivity: BaseActivity<ActivityIdentityVerificationBin
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL, PROPERTY_IDENTITY_SELECTED),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString(), identityType)
                 )
-            navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                TotalStepsKey)!!,null)
+                finish()
+                setResult(RESULT_OK)
             }
         })
 

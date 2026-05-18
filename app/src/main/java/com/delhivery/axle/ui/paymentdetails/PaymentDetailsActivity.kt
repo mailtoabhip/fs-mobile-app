@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.paymentdetails
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -58,6 +59,26 @@ import javax.inject.Inject
 class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, PaymentDetailsViewModel>(),DialogUtilsInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface,
     UploadedItemRVAdapterInterface {
 
+    companion object {
+        const val EXTRA_SCREEN_MODE = "extra_screen_mode"
+        const val MODE_PAYMENT_DETAILS = "payment_details"
+        const val MODE_194C_DECLARATION = "194c_declaration"
+
+        fun intentForPayment(context: Context): Intent {
+            return Intent(context, PaymentDetailsActivity::class.java).apply {
+                putExtra(EXTRA_SCREEN_MODE, MODE_PAYMENT_DETAILS)
+            }
+        }
+
+        fun intentFor194C(context: Context): Intent {
+            return Intent(context, PaymentDetailsActivity::class.java).apply {
+                putExtra(EXTRA_SCREEN_MODE, MODE_194C_DECLARATION)
+            }
+        }
+    }
+
+    private var screenMode: String = MODE_PAYMENT_DETAILS
+
     private var isCamera: Boolean = false
     private var mPhotoFile: File? = null
     private lateinit var uploadImageName: String
@@ -90,6 +111,10 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         super.onCreate(savedInstanceState)
         activitySetupTrace = FirebasePerformance.getInstance().newTrace("PaymentDetailsActivity_SetupTime")
         activitySetupTrace?.start()
+        
+        // Get screen mode from intent
+        screenMode = intent.getStringExtra(EXTRA_SCREEN_MODE) ?: MODE_PAYMENT_DETAILS
+        
         viewModel.accountHolderText.value= getString(R.string.hint_for_bank_validation)
         if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
             binding.paymentError.visibility=View.VISIBLE
@@ -108,20 +133,20 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
         if(userPrefs.paymentAccountNumber.isNotNullOrEmpty() && !userPrefs.paymentAccountNumber.equals("Not available",true)){
             viewModel.accountText.value=userPrefs.paymentAccountNumber
         }else{
-            binding.accountNumEdittext.focusClick()
+            if (screenMode == MODE_PAYMENT_DETAILS) {
+                binding.accountNumEdittext.focusClick()
+            }
         }
         if(userPrefs.ifscCode.isNotNullOrEmpty()){
             viewModel.ifscText.value=userPrefs.ifscCode
         }
+        
+        // Apply mode-based UI restrictions
+        applyScreenModeRestrictions()
+        
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                if(userPrefs.retryVerification){
-                    navigationUtils.navigate(MyProfileActivity::class.java, true)
-                }else {
-                    val bundle = Bundle()
-                    bundle.putInt(StepKey,3)
-                    navigationUtils.navigateKyc(this@PaymentDetailsActivity,true,bundle)
-                }
+                setResult(RESULT_CANCELED)
                 finish()
             }
 
@@ -135,12 +160,11 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
 
         /* Handle window insets for edge-to-edge display (API 35+) - Apply BEFORE setSupportActionBar */
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
         
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 3)
         startTime = System.currentTimeMillis()
         accountName=true
         viewModel.accountHolderText.observe(this, Observer {
@@ -225,14 +249,13 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
                 )
 
-                if(userPrefs.retryVerification){
-                    userPrefs.paymentRejectReason="Document under verification"
-                    userPrefs.isBankDetailsRejected=false
+                if(userPrefs.retryVerification) {
+                    userPrefs.paymentRejectReason = "Document under verification"
+                    userPrefs.isBankDetailsRejected = false
                     checkStatus()
-                    navigationUtils.navigate(MyProfileActivity::class.java,true,null)
-                }else {
-                    navigationUtils.navigate(VendorPolicyActivity::class.java, true, null)
                 }
+                finish()
+                setResult(RESULT_OK)
             }else{
                 viewModel.selected194CUpload.value = userPrefs.ninteen4CDocUrl.isNotNullOrEmpty()
             }
@@ -474,6 +497,49 @@ class PaymentDetailsActivity : BaseActivity<ActivityPaymentDetailsBinding, Payme
             binding.btnSubmit.isEnabled = false
         }
     }
+    
+    /**
+     * Apply UI restrictions based on screen mode.
+     * - MODE_PAYMENT_DETAILS: User can edit payment fields, 194C section is hidden
+     * - MODE_194C_DECLARATION: User can only upload 194C, payment fields are read-only
+     */
+    private fun applyScreenModeRestrictions() {
+        when (screenMode) {
+            MODE_PAYMENT_DETAILS -> {
+                // Hide 194C upload section when opened for payment details
+                // binding.uploadDoc1.visibility = View.GONE
+                // Payment fields remain editable (default behavior)
+            }
+            MODE_194C_DECLARATION -> {
+                // Disable payment fields editing - make them read-only
+                binding.accountNumEdittext.isEnabled = false
+                binding.accountNumEdittext.alpha = 0.6f
+                binding.ifscEdittext.isEnabled = false
+                binding.ifscEdittext.alpha = 0.6f
+                binding.accountHolderEdittext1.isEnabled = false
+                binding.accountHolderEdittext1.alpha = 0.6f
+                
+                // Disable payment document upload
+                binding.uploadDocLay.isEnabled = false
+                binding.uploadDocLay.alpha = 0.6f
+                binding.docRemove.isEnabled = false
+                
+                // Show 194C upload section
+                binding.uploadDoc1.visibility = View.VISIBLE
+                
+                // Set validation flags for payment fields as already valid (since they're read-only)
+                accountNum = userPrefs.paymentAccountNumber.isNotNullOrEmpty() && 
+                             !userPrefs.paymentAccountNumber.equals("Not available", true)
+                ifsc = userPrefs.ifscCode.isNotNullOrEmpty()
+                accountName = true
+                docUpload = true
+                nameDec = true
+                
+                enableSubmitButton()
+            }
+        }
+    }
+    
     fun checkStatus(){
         if (userPrefs.panRejectReason.isNotNullOrEmpty()&& (userPrefs.panRejectReason.replace(" ", "").equals("Documentunderverification"))) {
         } else if (userPrefs.identityRejectReason.isNotNullOrEmpty() && !(userPrefs.identityRejectReason.replace(" ", "").equals("Documentunderverification"))) {

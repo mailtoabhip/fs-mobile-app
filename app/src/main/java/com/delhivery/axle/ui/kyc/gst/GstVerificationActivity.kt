@@ -97,26 +97,22 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                userPrefs.retryVerificationOnBack=true
-                val bundle = Bundle()
-                bundle.putInt(StepKey,0)
-                navigationUtils.navigateKyc(this@GstVerificationActivity,false,bundle)
+                setResult(RESULT_CANCELED)
                 finish()
             }
         })
 
         startTime = System.currentTimeMillis()
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
 
 
         if(userPrefs.retryVerification){
@@ -216,8 +212,8 @@ class GstVerificationActivity  : BaseActivity<ActivityVerifyGstBinding, GstVerif
                     mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_TTL),
                     mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", ttl.toString())
                 )
-                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                        TotalStepsKey)!!,null)
+                finish()
+                setResult(RESULT_OK)
             } else {
                 uiUtils.showSnackbar("GST verification failed, please try again")
             }

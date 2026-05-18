@@ -81,14 +81,13 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
     
         /* Handle window insets for edge-to-edge display (API 35+) */
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 1)
         startTime = System.currentTimeMillis()
         
         setupBackPress()

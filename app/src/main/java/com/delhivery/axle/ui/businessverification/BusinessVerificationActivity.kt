@@ -149,10 +149,7 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
         }
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                userPrefs.retryVerificationOnBack=true
-                val bundle = Bundle()
-                bundle.putInt(StepKey,1)
-                navigationUtils.navigateKyc(this@BusinessVerificationActivity,true,bundle)
+                setResult(RESULT_CANCELED)
                 finish()
             }
         })
@@ -162,14 +159,13 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
 
         if(userPrefs.retryVerification){
@@ -340,14 +336,9 @@ class BusinessVerificationActivity : BaseActivity<ActivityBusinessVerificationBi
                     if(!userPrefs.isBankDetailsRejected) {
                         userPrefs.verificationStatus = "pending"
                     }
-                    val bundle = Bundle()
-                    bundle.putInt(StepKey,1)
-                    navigationUtils.navigateKyc(this,true,bundle)
+                    setResult(RESULT_OK)
                 }else{
-//                    navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
-                    navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-                        TotalStepsKey)!!,null)
-
+                    setResult(RESULT_OK)
                 }
             }else{
                 showUploadImage()

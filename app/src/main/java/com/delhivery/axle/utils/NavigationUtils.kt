@@ -1,5 +1,6 @@
 package com.delhivery.axle.utils
 
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -449,7 +450,8 @@ class NavigationUtils @Inject constructor(
         if(!activity.isFinishing)
             Handler(Looper.myLooper()!!).postDelayed({
                 dialog.dismiss()
-                this.navigate(HomeActivity::class.java, true)
+                this.activity.finish()
+                this.activity.setResult(RESULT_OK)
             }, 2000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }

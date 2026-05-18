@@ -14,6 +14,7 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.kyc.pan.AuthenticationUIError
 import com.delhivery.axle.utils.extensions.errorPaymentResponseBody
 import com.delhivery.axle.utils.extensions.errorResponseBody
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -50,6 +51,7 @@ class PaymentDetailsViewModel@Inject constructor(
     // Download functionality
     var documentListLiveData = MutableLiveData<List<com.delhivery.axle.api.response.DocumentFile>>()
     var documentListErrorLiveData = MutableLiveData<String>()
+    var isBankVerified = false
     
     fun loadPaymentDocuments() {
         // This method can be called from Activity to trigger payment document loading
@@ -64,6 +66,9 @@ class PaymentDetailsViewModel@Inject constructor(
     }
 
 
+    init {
+        setBankVerificationStatus()
+    }
     fun uploadDocForVerification(verificationDocUploadRequest: VerificationDocUploadRequest){
         compositeDisposable += loadboardRepository.uploadVerificationDoc(verificationDocUploadRequest)
             .onBackground()
@@ -225,5 +230,8 @@ class PaymentDetailsViewModel@Inject constructor(
             isAccountProofDoc = true
         }
 
+    }
+    fun setBankVerificationStatus(){
+        isBankVerified = userPrefs.ifscCode.isNotNullOrEmpty() && userPrefs.accNumber.isNotNullOrEmpty() && !userPrefs.accNumber.equals("Not Available",true)
     }
 }

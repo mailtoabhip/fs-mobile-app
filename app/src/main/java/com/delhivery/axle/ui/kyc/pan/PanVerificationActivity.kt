@@ -52,12 +52,8 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
             }
       onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-//          userPrefs.retryVerificationOnBack=true
-//          if(userPrefs.retryVerification){
-//            navigationUtils.navigate(MyProfileActivity::class.java, true)
-//          }
             setResult(RESULT_CANCELED)
-            finish()
+          finish()
         }
       })
 
@@ -73,20 +69,20 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
 
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         binding.btnVerifyPan.setOnClickListener {
                  if(viewModel.panCardNumber.equals(userPrefs.pancard, ignoreCase = true)|| userPrefs.pancard.isEmpty()){
                     viewModel.updateUserDetails()
                  }else{
+                     /*First reset then update user details*/
                    viewModel.resetKycDetails(userPrefs.retryVerification)
 
                  }
@@ -160,13 +156,8 @@ class PanVerificationActivity  : BaseActivity<ActivityVerifyPanBinding, PanVerif
                 endTime = System.currentTimeMillis()
                 val ttl = endTime - startTime
                 trackEvent(ttl.toString())
-
-                setResult(RESULT_OK)
                 finish()
-//                val bundle = Bundle()
-//                bundle.putString(panKey,viewModel.panType)
-//                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
-//                    TotalStepsKey)!!,bundle)
+                setResult(RESULT_OK)
             } else {
                 uiUtils.showSnackbar(getString(string.error_update_failed))
             }

@@ -1,8 +1,10 @@
 package com.delhivery.axle.ui.profile
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -27,6 +29,7 @@ import com.delhivery.axle.databinding.ActivityMyProfileBinding
 import com.delhivery.axle.databinding.DialogAccountDeletionSubmittedBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.kyc.dashboard.KycDashboardActivity
 import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.loadwallet.loadWalletIntent
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
@@ -46,6 +49,7 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.File
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 
 class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileViewModel>(), DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface  {
@@ -329,7 +333,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
         binding.helpLayout.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
-            navigationUtils.navigate(HelpSupportActivity::class.java)
+            navigationUtils.navigate(Intent(this, KycDashboardActivity::class.java))
+            //navigationUtils.navigate(HelpSupportActivity::class.java)
         }
 
         binding.earningsLayout.setOnClickListener {

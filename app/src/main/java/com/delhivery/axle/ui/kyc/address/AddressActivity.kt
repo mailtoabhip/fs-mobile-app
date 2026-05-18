@@ -145,25 +145,20 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        setSupportActionBar(binding.progressStepLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-      WindowInsetsUtils.applyTopSystemWindowInsets(binding.progressStepLayout.toolbar)
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                userPrefs.retryVerificationOnBack=true
-                val bundle = Bundle()
-                bundle.putInt(StepKey,2)
-                navigationUtils.navigateKyc(this@AddressActivity,true,bundle)
+                setResult(RESULT_CANCELED)
                 finish()
             }
         })
-
-        navigationUtils.showProgressSteps(binding.progressStepLayout, 2)
         startTime = System.currentTimeMillis()
 
         if(!userPrefs.getAddressList().isNullOrEmpty()){
@@ -275,15 +270,11 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, CommunicationAddres
                 )
 //                navigationUtils.checkNavigationKycStep(this,intent?.extras?.getInt(CurrentStepKey)?.plus(1)!!,intent?.extras?.getInt(
 //                    TotalStepsKey)!!,null)
-                if(userPrefs.retryVerification){
-                    userPrefs.addressRejectReason= "Document under verification"
-                    val bundle = Bundle()
-                    bundle.putInt(StepKey,1)
-                    navigationUtils.navigateKyc(this,true,bundle)
-                }else {
-                    navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
+                if(userPrefs.retryVerification) {
+                    userPrefs.addressRejectReason = "Document under verification"
                 }
-
+                finish()
+                setResult(RESULT_OK)
             } else {
                 uiUtils.showSnackbar("Error encountered, Please try again.")
             }

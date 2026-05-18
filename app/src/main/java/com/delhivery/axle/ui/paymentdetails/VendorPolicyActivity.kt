@@ -37,7 +37,7 @@ class VendorPolicyActivity : BaseActivity<ActivityVendorPolicyBinding, PaymentDe
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                navigationUtils.navigate(PaymentDetailsActivity::class.java, true)
+                setResult(RESULT_CANCELED)
                 finish()
             }
         })
