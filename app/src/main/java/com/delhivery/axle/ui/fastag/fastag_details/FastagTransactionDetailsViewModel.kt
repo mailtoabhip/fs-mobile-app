@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.fastag_details
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

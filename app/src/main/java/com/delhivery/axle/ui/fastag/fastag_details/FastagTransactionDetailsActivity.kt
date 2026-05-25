@@ -1,13 +1,16 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.fastag_details
 
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Environment
@@ -16,17 +19,21 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.databinding.BottomSheetStatementHistoryBinding
 import com.delhivery.axle.databinding.DialogDownloadSuccessBinding
 import com.delhivery.axle.databinding.FastagTransactionDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormActivity.Companion.EXTRA_TXN_ID
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
 import com.delhivery.axle.utils.EVENT_FASTAG_STATEMENT_DOWNLOADED
 import com.delhivery.axle.utils.EVENT_FASTAG_TXN_LIST_SHOWN
@@ -34,8 +41,8 @@ import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_RANGE
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.REQCODE_STORAGE
-import com.delhivery.axle.utils.VALUE_FASTAG_DISPUTE_PAGE
 import com.delhivery.axle.utils.VALUE_FASTAG_TXN_LIST_PAGE
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.getSerializable
 import com.delhivery.axle.utils.prefs.UserPrefs
 import java.io.File
@@ -52,10 +59,11 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     override fun requireConnection() = true
 
     private lateinit var adapter: FastagTransactionAdapter
-    
+
     private var downloadID = 0L
 
-    @Inject lateinit var userPrefs: UserPrefs
+    @Inject
+    lateinit var userPrefs: UserPrefs
 
     private var range: String = ""
 
@@ -77,7 +85,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Register broadcast receiver for download completion
         ContextCompat.registerReceiver(
             this,
@@ -110,8 +118,8 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         super.onPostCreate(savedInstanceState)
 
         /* Handle window insets for edge-to-edge display (API 35+) */
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
     }
 
@@ -132,7 +140,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     }
 
     private fun setupUI() {
-        val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+        val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
         val vehicleNumber = vehicleData?.vehicleNumber ?: intent.getStringExtra(VEHICLE_NUMBER) ?: ""
         val truckSize = vehicleData?.truckSize ?: intent.getStringExtra(TRUCK_SIZE) ?: ""
         val capacity = vehicleData?.capacity ?: intent.getDoubleExtra(CAPACITY, 0.0)
@@ -144,34 +152,34 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
         // Set vehicle info
         binding.tvVehicleNumber.text = vehicleNumber
-        
+
         // Map ownership value
         val ownershipDisplay = when(ownership) {
             "owns_truck" -> "Own Truck"
             "market_truck" -> "Market Truck"
             else -> ownership
         }
-        
+
         binding.tvVehicleMeta.text = "$ownershipDisplay | $truckSize | $capacity MT"
         binding.tvBalance.text = "₹$balance balance available"
         binding.tvFastagProvider.text = "$issuedBy FASTag by Delhivery"
-        
+
         // Set status badge - show "Available" only if truck's latest_status is "Free"
         if (status.equals("Free", ignoreCase = true)) {
             binding.tvStatus.text = "Available"
-            binding.tvStatus.visibility = android.view.View.VISIBLE
+            binding.tvStatus.visibility = View.VISIBLE
             binding.tvStatus.setBackgroundResource(R.drawable.bg_available_pill)
         } else {
-            binding.tvStatus.visibility = android.view.View.GONE
+            binding.tvStatus.visibility = View.GONE
         }
 
         if (awb != null && awb.isNotEmpty()) {
-            binding.layoutAwb.visibility = android.view.View.VISIBLE
-            
+            binding.layoutAwb.visibility = View.VISIBLE
+
             // Create spannable string with "ID: " in gray and awb in red
             val fullText = "ID: $awb"
             val spannableString = SpannableString(fullText)
-            
+
             // Set "ID: " to gray color
             spannableString.setSpan(
                 ForegroundColorSpan(Color.parseColor("#525B7A")),
@@ -179,7 +187,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 3, // Length of "ID: "
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-            
+
             // Set awb to red color
             spannableString.setSpan(
                 ForegroundColorSpan(Color.parseColor("#FA3A2E")),
@@ -187,17 +195,17 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 fullText.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-            
+
             binding.tvAwb.text = spannableString
-            
+
             binding.ivCopyAwb.setOnClickListener {
-                val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                val clip = android.content.ClipData.newPlainText("AWB", awb)
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("AWB", awb)
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(this, "Fastag Id copied to clipboard", Toast.LENGTH_SHORT).show()
             }
         } else {
-            binding.layoutAwb.visibility = android.view.View.GONE
+            binding.layoutAwb.visibility = View.GONE
         }
 
         binding.ivBack.setOnClickListener {
@@ -205,10 +213,10 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         }
 
         binding.btnRecharge.setOnClickListener {
-            val intent = android.content.Intent(this, FastagRechargeActivity::class.java).apply {
-                putExtra(FastagRechargeActivity.TAG_ID, vehicleData?.fastagTagId)
-                putExtra(FastagRechargeActivity.VEHICLE_NUMBER, vehicleData?.vehicleNumber)
-                putExtra(FastagRechargeActivity.FASTAG_BALANCE, vehicleData?.fastagBalance)
+            val intent = Intent(this, FastagRechargeActivity::class.java).apply {
+                putExtra(FastagRechargeActivity.Companion.TAG_ID, vehicleData?.fastagTagId)
+                putExtra(FastagRechargeActivity.Companion.VEHICLE_NUMBER, vehicleData?.vehicleNumber)
+                putExtra(FastagRechargeActivity.Companion.FASTAG_BALANCE, vehicleData?.fastagBalance)
             }
             startActivity(intent)
         }
@@ -216,33 +224,33 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         binding.btnDownload.setOnClickListener {
             showStatementHistoryBottomSheet()
         }
-        
+
         binding.ivAccount.setOnClickListener {
             callHelpline()
         }
-        
+
         binding.ivHelp.setOnClickListener {
             navigationUtils.navigate(HelpSupportActivity::class.java)
         }
     }
 
     private fun setupRecyclerView() {
-        val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+        val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
         adapter = FastagTransactionAdapter(vehicleData)
         binding.rvTransactions.layoutManager = LinearLayoutManager(this)
         binding.rvTransactions.adapter = adapter
 
         // RecyclerView is inside a NestedScrollView with nestedScrollingEnabled=false,
         // so RecyclerView scroll events won't fire. Listen to NestedScrollView scroll instead.
-        val nestedScrollView = binding.rvTransactions.parent?.parent as? androidx.core.widget.NestedScrollView
+        val nestedScrollView = binding.rvTransactions.parent?.parent as? NestedScrollView
         nestedScrollView?.setOnScrollChangeListener(
-            androidx.core.widget.NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
                 val contentHeight = v.getChildAt(0).measuredHeight
                 val scrollViewHeight = v.measuredHeight
                 val distanceFromBottom = contentHeight - scrollViewHeight - scrollY
 
                 if (distanceFromBottom < 300 && viewModel.hasNext) {
-                    val vehicleDataInner = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+                    val vehicleDataInner = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
                     val tagId = vehicleDataInner?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return@OnScrollChangeListener
                     viewModel.loadTransactions(tagId, loadMore = true)
                 }
@@ -251,7 +259,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     }
 
     private fun setupObservers() {
-        viewModel.transactionsData.observe(this, androidx.lifecycle.Observer { response ->
+        viewModel.transactionsData.observe(this, Observer { response ->
             response?.transactions?.let {
                 adapter.submitList(it)
 
@@ -260,21 +268,21 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             }
         })
 
-        viewModel.errorData.observe(this, androidx.lifecycle.Observer { error ->
+        viewModel.errorData.observe(this, Observer { error ->
             error?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         })
 
-        viewModel.progressData.observe(this, androidx.lifecycle.Observer { isLoading ->
+        viewModel.progressData.observe(this, Observer { isLoading ->
             if (isLoading) {
                 uiUtils.showProgress()
             } else {
                 uiUtils.hideProgress()
             }
         })
-        
-        viewModel.downloadData.observe(this, androidx.lifecycle.Observer { responseBody ->
+
+        viewModel.downloadData.observe(this, Observer { responseBody ->
             responseBody?.let {
                 try {
                     // Save file to device
@@ -282,7 +290,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                     val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
                     storageDir?.mkdirs()
                     val file = File(storageDir, filename)
-                    
+
                     it.byteStream().use { input ->
                         file.outputStream().use { output ->
                             input.copyTo(output)
@@ -290,7 +298,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                     }
                     sendSuccessfulDownloadEvent()
                     showDownloadSuccessDialog()
-                    
+
                 } catch (e: Exception) {
                     Log.e("FastagDownload", "Error saving file", e)
                     Toast.makeText(this, "Error saving file: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -300,18 +308,18 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
     }
 
     private fun loadData() {
-        val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+        val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
         val tagId = vehicleData?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return
         viewModel.loadTransactions(tagId)
     }
-    
+
     private fun showStatementHistoryBottomSheet() {
         val dialog = Dialog(this)
         val bindingDialog = BottomSheetStatementHistoryBinding.inflate(layoutInflater)
-        
+
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(bindingDialog.root)
-        
+
         val items = listOf(
             bindingDialog.itemRecent,
             bindingDialog.itemLastWeek,
@@ -320,7 +328,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             bindingDialog.itemLast3Months,
             bindingDialog.itemLast6Months
         )
-        
+
         val itemIds = listOf(
             R.id.itemRecent,
             R.id.itemLastWeek,
@@ -329,25 +337,25 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             R.id.itemLast3Months,
             R.id.itemLast6Months
         )
-        
+
         var selectedIndex = 0
-        
+
         fun updateSelection(index: Int) {
             selectedIndex = index
             items.forEachIndexed { i, item ->
                 item.rbSelection.isChecked = (i == index)
-                
+
                 if (i == index) {
-                    item.tvTitle.setTypeface(null, android.graphics.Typeface.BOLD)
+                    item.tvTitle.setTypeface(null, Typeface.BOLD)
                 } else {
-                    item.tvTitle.setTypeface(null, android.graphics.Typeface.NORMAL)
+                    item.tvTitle.setTypeface(null, Typeface.NORMAL)
                 }
             }
         }
-        
+
         items.forEachIndexed { index, item ->
             val id = itemIds[index]
-            
+
             item.tvTitle.text = when(id) {
                 R.id.itemRecent -> "Last 24 hours"
                 R.id.itemLastWeek -> "Last 1 week"
@@ -357,48 +365,48 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 R.id.itemLast6Months -> "Last 6 months"
                 else -> ""
             }
-            
+
             val dateRange = calculateDateRange(id)
             val formattedRange = formatDateRangeForDisplay(dateRange.first, dateRange.second, id)
-            
+
             if (formattedRange.isNotEmpty()) {
                 item.tvSubtitle.text = formattedRange
-                item.tvSubtitle.visibility = android.view.View.VISIBLE
+                item.tvSubtitle.visibility = View.VISIBLE
             } else {
-                item.tvSubtitle.visibility = android.view.View.GONE
+                item.tvSubtitle.visibility = View.GONE
             }
 
             if (id == R.id.itemCurrentMonth) {
                 val cal = Calendar.getInstance()
                 item.tvSubtitle.text = SimpleDateFormat("MMMM", Locale.getDefault()).format(cal.time)
-                item.tvSubtitle.visibility = android.view.View.VISIBLE
+                item.tvSubtitle.visibility = View.VISIBLE
             }
-            
+
             item.root.setOnClickListener {
                 updateSelection(index)
             }
-            
+
             item.rbSelection.setOnClickListener {
                 updateSelection(index)
             }
         }
-        
+
         updateSelection(0)
-        
+
         bindingDialog.btnDownloadStatement.setOnClickListener {
-            val vehicleData = intent.getSerializable(VEHICLE_DATA, com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData::class.java)
+            val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
             val tagId = vehicleData?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return@setOnClickListener
-            
+
             dialog.dismiss()
-            
+
             val selectedId = itemIds[selectedIndex]
             val dateRange = calculateDateRange(selectedId)
 
             range = dateRange.first + dateRange.second
-            
+
             viewModel.downloadTransactions(tagId, dateRange.first, dateRange.second)
         }
-        
+
         dialog.show()
         dialog.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -418,11 +426,11 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             val inputFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
             val fromDate = inputFormat.parse(fromDateStr) ?: return ""
             val toDate = inputFormat.parse(toDateStr) ?: return ""
-            
+
             val dayFormat = SimpleDateFormat("d", Locale.getDefault())
             val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
             val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
-            
+
             fun getDayWithSuffix(date: Date): String {
                 val day = dayFormat.format(date).toInt()
                 val suffix = when {
@@ -434,29 +442,29 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 }
                 return "$day$suffix"
             }
-            
+
             val fromDay = getDayWithSuffix(fromDate)
             val fromMonth = monthFormat.format(fromDate)
             val fromYear = yearFormat.format(fromDate)
             val toDay = getDayWithSuffix(toDate)
             val toMonth = monthFormat.format(toDate)
             val toYear = yearFormat.format(toDate)
-            
+
             // For Current Month, we only show month name (e.g. "January")
             if (id == R.id.itemCurrentMonth) {
                 return monthFormat.format(toDate)
             }
-            
+
             // Per request: No dates for Recent transactions and Last 1 week
-            if (id == R.id.itemRecent || id == R.id.itemLastWeek) return "" 
-            
+            if (id == R.id.itemRecent || id == R.id.itemLastWeek) return ""
+
             // Show year only if years are different
             return if (fromYear == toYear) {
                 "$fromDay $fromMonth to $toDay $toMonth"
             } else {
                 "$fromDay $fromMonth $fromYear to $toDay $toMonth $toYear"
             }
-            
+
         } catch (e: Exception) {
             Log.e("FastagTransactions", "Error formatting date range", e)
             return ""
@@ -494,7 +502,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             )
         )
     }
-    
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -510,7 +518,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
             }
         }
     }
-    
+
     /**
      * Show success dialog when download completes
      */
@@ -518,10 +526,10 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         try {
             val dialog = Dialog(this)
             val bindingDialog = DialogDownloadSuccessBinding.inflate(layoutInflater)
-            
+
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(bindingDialog.root)
-            
+
             // Set window properties before showing
             dialog.window?.apply {
                 setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -529,20 +537,20 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 attributes.windowAnimations = R.style.DialogAnimation
                 setGravity(Gravity.BOTTOM)
             }
-            
+
             // Close button
             bindingDialog.ivClose.setOnClickListener {
                 dialog.dismiss()
             }
-            
+
             // Done button
             bindingDialog.btnDone.setOnClickListener {
                 dialog.dismiss()
             }
-            
+
             dialog.show()
         } catch (e: Exception) {
-            android.util.Log.e("FastagDownload", "Error showing dialog", e)
+            Log.e("FastagDownload", "Error showing dialog", e)
         }
     }
 
@@ -554,13 +562,13 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         val toDate: String
         val fromDate: String
-        
+
         when (selectedId) {
             R.id.itemRecent -> {
                 // To date: current time
                 val toCalendar = Calendar.getInstance()
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: 24 hours ago
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.add(Calendar.HOUR_OF_DAY, -24)
@@ -573,7 +581,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 toCalendar.set(Calendar.MINUTE, 59)
                 toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: start of 7 days ago
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.add(Calendar.DAY_OF_YEAR, -7)
@@ -589,7 +597,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 toCalendar.set(Calendar.MINUTE, 59)
                 toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: start of first day of current month
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.set(Calendar.DAY_OF_MONTH, 1)
@@ -605,7 +613,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 toCalendar.set(Calendar.MINUTE, 59)
                 toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: start of 1 month ago
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.add(Calendar.MONTH, -1)
@@ -621,7 +629,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 toCalendar.set(Calendar.MINUTE, 59)
                 toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: start of 3 months ago
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.add(Calendar.MONTH, -3)
@@ -637,7 +645,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 toCalendar.set(Calendar.MINUTE, 59)
                 toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: start of 6 months ago
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.add(Calendar.MONTH, -6)
@@ -653,7 +661,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 toCalendar.set(Calendar.MINUTE, 59)
                 toCalendar.set(Calendar.SECOND, 59)
                 toDate = dateFormat.format(toCalendar.time)
-                
+
                 // From date: start of 15 days ago
                 val fromCalendar = Calendar.getInstance()
                 fromCalendar.add(Calendar.DAY_OF_YEAR, -15)
@@ -663,7 +671,7 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 fromDate = dateFormat.format(fromCalendar.time)
             }
         }
-        
+
         return Pair(fromDate, toDate)
     }
 }

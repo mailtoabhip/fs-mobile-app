@@ -1,27 +1,81 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
-import android.app.Activity
+import android.Manifest
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.graphics.toColorInt
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.DisputeType
 import com.delhivery.axle.api.response.TransactionDisputeResponse
 import com.delhivery.axle.databinding.ActivityFastagTransactionDetailBinding
+import com.delhivery.axle.databinding.ItemDisputeIssueBinding
+import com.delhivery.axle.databinding.ItemDisputeTimelineBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import androidx.core.graphics.toColorInt
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsViewModel
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_FASTAG_TXN_DETAILS_SHOWN
-import com.delhivery.axle.utils.EVENT_FASTAG_TXN_LIST_SHOWN
 import com.delhivery.axle.utils.PROPERTY_FASTAG_ID
 import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_ID
 import com.delhivery.axle.utils.PROPERTY_TRANSACTION_TYPE
 import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.VALUE_FASTAG_TXN_DETAILS_PAGE
-import com.delhivery.axle.utils.VALUE_FASTAG_TXN_LIST_PAGE
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
+
+class DisputeIssuesAdapter(
+    private val onItemClick: (DisputeType) -> Unit
+) : ListAdapter<DisputeType, DisputeIssuesAdapter.ViewHolder>(DiffCallback()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemDisputeIssueBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    inner class ViewHolder(
+        private val binding: ItemDisputeIssueBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(disputeType: DisputeType) {
+            binding.tvDisputeName.text = disputeType.displayName
+
+            binding.root.setOnClickListener {
+                onItemClick(disputeType)
+            }
+        }
+    }
+
+    private class DiffCallback : DiffUtil.ItemCallback<DisputeType>() {
+        override fun areItemsTheSame(oldItem: DisputeType, newItem: DisputeType): Boolean {
+            return oldItem.code == newItem.code
+        }
+
+        override fun areContentsTheSame(oldItem: DisputeType, newItem: DisputeType): Boolean {
+            return oldItem == newItem
+        }
+    }
+}
 
 class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailBinding, FastagTransactionDetailsViewModel>() {
 
@@ -43,7 +97,8 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
         private const val REQCODE_DISPUTE = 1001
     }
 
-    @Inject lateinit var userPrefs: UserPrefs
+    @Inject
+    lateinit var userPrefs: UserPrefs
 
     private var txnId: String = ""
 
@@ -67,8 +122,8 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
     }
 
@@ -187,8 +242,8 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
                     chipTextColor = getColor(R.color.black_text)
                 }
             }
-            val chipDrawable = android.graphics.drawable.GradientDrawable()
-            chipDrawable.shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            val chipDrawable = GradientDrawable()
+            chipDrawable.shape = GradientDrawable.RECTANGLE
             chipDrawable.cornerRadius = resources.getDimension(R.dimen.size_16dp)
             chipDrawable.setColor(chipBgColor)
             binding.tvDisputeStatusChip.background = chipDrawable
@@ -210,7 +265,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
             if (lastStatus.equals("Rejected", ignoreCase = true)) {
                 binding.ivDisputeKebab.visibility = View.VISIBLE
                 binding.ivDisputeKebab.setOnClickListener { anchor ->
-                    val popup = android.widget.PopupMenu(this, anchor, android.view.Gravity.END)
+                    val popup = PopupMenu(this, anchor, Gravity.END)
                     popup.menuInflater.inflate(R.menu.menu_dispute_escalate, popup.menu)
                     popup.setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
@@ -234,7 +289,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
                 for (i in timeline.indices) {
                     val item = timeline[i]
                     val isLast = i == timeline.size - 1
-                    val itemBinding = com.delhivery.axle.databinding.ItemDisputeTimelineBinding.inflate(layoutInflater, binding.layoutTimeline, false)
+                    val itemBinding = ItemDisputeTimelineBinding.inflate(layoutInflater, binding.layoutTimeline, false)
 
                     itemBinding.tvStatusTitle.text = item.status ?: ""
 
@@ -258,7 +313,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
                         when (item.status?.lowercase()) {
                             "settled - full refund" -> {
                                 itemBinding.ivStatusIcon.setImageResource(R.drawable.ic_check_circle_green)
-                                itemBinding.ivStatusIcon.imageTintList = android.content.res.ColorStateList.valueOf("#10B981".toColorInt())
+                                itemBinding.ivStatusIcon.imageTintList = ColorStateList.valueOf("#10B981".toColorInt())
                             }
                             "rejected" -> {
                                 itemBinding.ivStatusIcon.setImageResource(R.drawable.dispute_rejected)
@@ -275,7 +330,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
                         }
                     } else {
                         itemBinding.ivStatusIcon.setImageResource(R.drawable.ic_check_circle_green)
-                        itemBinding.ivStatusIcon.imageTintList = android.content.res.ColorStateList.valueOf("#10B981".toColorInt())
+                        itemBinding.ivStatusIcon.imageTintList = ColorStateList.valueOf("#10B981".toColorInt())
                     }
 
                     // Hide connector line for last item
@@ -295,7 +350,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQCODE_DISPUTE -> {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     viewModel.getTransactionDispute(txnId)
                 }
             }
@@ -304,7 +359,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
 
     private fun formatDateTime(dateString: String?): String {
         if (dateString.isNullOrEmpty()) return ""
-        return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateString)
+        return DateUtils.formatFastagTransactionDate(dateString)
     }
 
     private fun showEscalateDialog(ticketId: String) {
@@ -312,7 +367,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
             "Want to escalate the dispute?",
             "Please reach out to our support team. Please keep your ticket ID #$ticketId ready"
         ) { d ->
-            compositeDisposable += requestPermission(arrayOf(android.Manifest.permission.CALL_PHONE))
+            compositeDisposable plusAssign requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
                 .onBackground()
                 .subscribe { granted, error ->
                     d.dismiss()

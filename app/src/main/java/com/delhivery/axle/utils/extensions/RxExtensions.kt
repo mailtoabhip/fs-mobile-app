@@ -27,7 +27,7 @@ fun <T> Observable<T>.onBackground() =
  *
  * @param disposable Disposable to be added to composite disposable
  */
-operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
+infix operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
   add(disposable)
 }
 

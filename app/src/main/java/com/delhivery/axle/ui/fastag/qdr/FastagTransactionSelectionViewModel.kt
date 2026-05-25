@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
@@ -26,7 +26,7 @@ class FastagTransactionSelectionViewModel @Inject constructor(
     ) {
         progressData.value = true
 
-        compositeDisposable += loadboardRepository.getFastagTransactionsByTollPlaza(
+        compositeDisposable plusAssign loadboardRepository.getFastagTransactionsByTollPlaza(
             tollPlazaId = tollPlazaId,
             dateTime = dateTime,
             fastagId = fastagId,

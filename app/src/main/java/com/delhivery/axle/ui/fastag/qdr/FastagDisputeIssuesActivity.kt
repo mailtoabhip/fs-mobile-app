@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,11 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.response.DisputeType
 import com.delhivery.axle.databinding.ActivityFastagDisputeIssuesBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.qdr.DisputeIssuesAdapter
+import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormActivity
+import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionActivity
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBinding, FastagDisputeIssuesViewModel>() {
 
@@ -41,8 +46,8 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
         super.onPostCreate(savedInstanceState)
 
         /* Handle window insets for edge-to-edge display (API 35+) */
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
     }
 
@@ -106,25 +111,25 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
         if (disputeType.addTxnReq == true) {
             // Requires transaction selection - go to transaction selection screen
             val intent = Intent(this, FastagTransactionSelectionActivity::class.java).apply {
-                putExtra(FastagTransactionSelectionActivity.EXTRA_TITLE, disputeType.displayName ?: "")
-                putExtra(FastagTransactionSelectionActivity.EXTRA_SUBTITLE, disputeType.subTitle ?: "")
-                putExtra(FastagTransactionSelectionActivity.EXTRA_PARTNER, partner)
-                putExtra(FastagTransactionSelectionActivity.EXTRA_DISPUTE_CODE, disputeType.code)
-                putExtra(FastagTransactionSelectionActivity.EXTRA_FASTAG_ID, fastagId)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_TOLL_PLAZA_ID, tollPlazaId)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_TXN_ID, txnId)
+                putExtra(FastagTransactionSelectionActivity.Companion.EXTRA_TITLE, disputeType.displayName ?: "")
+                putExtra(FastagTransactionSelectionActivity.Companion.EXTRA_SUBTITLE, disputeType.subTitle ?: "")
+                putExtra(FastagTransactionSelectionActivity.Companion.EXTRA_PARTNER, partner)
+                putExtra(FastagTransactionSelectionActivity.Companion.EXTRA_DISPUTE_CODE, disputeType.code)
+                putExtra(FastagTransactionSelectionActivity.Companion.EXTRA_FASTAG_ID, fastagId)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_TOLL_PLAZA_ID, tollPlazaId)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_TXN_ID, txnId)
 
             }
             startActivityForResult(intent, REQCODE_DISPUTE_FORM)
         } else {
             // No transaction required - go directly to dispute form
             val intent = Intent(this, FastagDynamicDisputeFormActivity::class.java).apply {
-                putExtra(FastagDynamicDisputeFormActivity.DISPUTE_TITLE, disputeType.displayName)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_DISPUTE_TYPE_CODE, disputeType.code)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_FASTAG_ID, fastagId)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_SHOW_TRANSACTION, false)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_TOLL_PLAZA_ID, tollPlazaId)
-                putExtra(FastagDynamicDisputeFormActivity.EXTRA_TXN_ID, txnId)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.DISPUTE_TITLE, disputeType.displayName)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_DISPUTE_TYPE_CODE, disputeType.code)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_FASTAG_ID, fastagId)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_SHOW_TRANSACTION, false)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_TOLL_PLAZA_ID, tollPlazaId)
+                putExtra(FastagDynamicDisputeFormActivity.Companion.EXTRA_TXN_ID, txnId)
 
             }
             startActivityForResult(intent, REQCODE_DISPUTE_FORM)

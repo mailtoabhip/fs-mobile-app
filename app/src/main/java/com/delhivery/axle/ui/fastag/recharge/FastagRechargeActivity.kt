@@ -1,22 +1,28 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.recharge
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
-import android.text.InputFilter
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
+import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
 import android.view.MotionEvent
-import android.view.animation.DecelerateInterpolator
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagRechargeBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.PaymentStatus
+import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.utils.StringUtils
-import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, FastagRechargeViewModel>() {
 
@@ -29,7 +35,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     private var selectedAmount: Double = 0.0
     private var slideStartX = 0f
     private var walletBalance: Double = 0.0
-    private val insufficientBalanceHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val insufficientBalanceHandler = Handler(Looper.getMainLooper())
     private var insufficientBalanceRunnable: Runnable? = null
     private var currentBottomSheet: PaymentStatusDialogFragment? = null
 
@@ -42,8 +48,8 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
 
         setupUI()
@@ -86,7 +92,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         binding.ivBack.setOnClickListener { finish() }
 
         binding.tvAddMoney.setOnClickListener {
-            AddMoneyDialogFragment.newInstance(
+            AddMoneyDialogFragment.Companion.newInstance(
                 redirectUrl = "https://www.delhivery.com/",
                 onPaymentResult = {}
             ).show(supportFragmentManager, "AddMoney")
@@ -154,7 +160,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
                 chip.setTextColor(resources.getColor(android.R.color.white, theme))
             } else {
                 chip.setBackgroundResource(R.drawable.bg_amount_chip)
-                chip.setTextColor(android.graphics.Color.parseColor("#334155"))
+                chip.setTextColor(Color.parseColor("#334155"))
             }
         }
     }
@@ -184,7 +190,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             label.setTextColor(resources.getColor(android.R.color.white, theme))
         } else {
             container.setBackgroundResource(R.drawable.bg_slide_to_pay_disabled)
-            val disabledColor = android.graphics.Color.parseColor("#99FFFFFF")
+            val disabledColor = Color.parseColor("#99FFFFFF")
             thumb.setColorFilter(disabledColor)
             label.setTextColor(disabledColor)
         }
@@ -344,7 +350,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     private fun showPaymentStatusBottomSheet(status: PaymentStatus) {
         // Dismiss existing bottom sheet if any
         currentBottomSheet?.dismissAllowingStateLoss()
-        currentBottomSheet = PaymentStatusDialogFragment.show(
+        currentBottomSheet = PaymentStatusDialogFragment.Companion.show(
             fragmentManager = supportFragmentManager,
             initialStatus = status,
             onDismiss = {
@@ -355,7 +361,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
     }
 
     private fun setupObservers() {
-        viewModel.walletBalanceData.observe(this, androidx.lifecycle.Observer { balance ->
+        viewModel.walletBalanceData.observe(this, Observer { balance ->
             walletBalance = balance
             val balanceFormatted = if (balance == balance.toInt().toDouble()) {
                 StringUtils.formatAmount(balance)
@@ -366,7 +372,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             checkInsufficientBalanceImmediate()
         })
 
-        viewModel.rechargeResponseData.observe(this, androidx.lifecycle.Observer { response ->
+        viewModel.rechargeResponseData.observe(this, Observer { response ->
             response?.let {
                 resetSlider()
                 // Update wallet balance on screen
@@ -396,7 +402,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             }
         })
 
-        viewModel.fastagStatusData.observe(this, androidx.lifecycle.Observer { statusResponse ->
+        viewModel.fastagStatusData.observe(this, Observer { statusResponse ->
             statusResponse?.let {
                 fastagStatus = it.status
                 // Display custom message if available, otherwise don't show the status message
@@ -413,7 +419,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
             }
         })
 
-        viewModel.exceptionLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.exceptionLiveData.observe(this, Observer {
             it?.let { resetSlider() }
         })
     }
