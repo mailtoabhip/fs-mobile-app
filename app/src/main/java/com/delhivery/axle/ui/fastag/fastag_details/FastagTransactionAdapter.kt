@@ -1,16 +1,25 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.fastag_details
 
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.api.response.FastagTransaction
 import com.delhivery.axle.databinding.ItemFastagTransactionBinding
 import androidx.core.graphics.toColorInt
+import com.delhivery.axle.R
+import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
+import com.delhivery.axle.ui.fastag.qdr.FastagRaiseDisputeActivity
+import com.delhivery.axle.utils.DateUtils
 
 class FastagTransactionAdapter(
-    private val vehicleData: com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData? = null
+    private val vehicleData: HomeTrucksRequestItemData? = null
 ) : ListAdapter<FastagTransaction, FastagTransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
@@ -28,7 +37,7 @@ class FastagTransactionAdapter(
 
     class TransactionViewHolder(
         private val binding: ItemFastagTransactionBinding,
-        private val vehicleData: com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData?
+        private val vehicleData: HomeTrucksRequestItemData?
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -48,24 +57,24 @@ class FastagTransactionAdapter(
             binding.tvAmount.text = amountText
             
             val amountColor = if (isCredit) {
-                android.graphics.Color.parseColor("#10B981") // Green for credit/refund
+                Color.parseColor("#10B981") // Green for credit/refund
             } else {
-                android.graphics.Color.parseColor("#0F172A")
+                Color.parseColor("#0F172A")
             }
             binding.tvAmount.setTextColor(amountColor)
 
             if (transaction.isDispute == true && !transaction.disputeStatus.isNullOrEmpty()) {
-                binding.tvDisputeStatus.visibility = android.view.View.VISIBLE
+                binding.tvDisputeStatus.visibility = View.VISIBLE
                 binding.tvDisputeStatus.text = transaction.disputeStatus
                 
                 val context = binding.root.context
                 when (transaction.disputeStatusColor?.lowercase()) {
                     "default" -> {
                         setDisputeBackground(binding.tvDisputeStatus, "#EFEFEF".toColorInt())
-                        binding.tvDisputeStatus.setTextColor(context.getColor(com.delhivery.axle.R.color.black_text))
+                        binding.tvDisputeStatus.setTextColor(context.getColor(R.color.black_text))
                     }
                     "pending" -> {
-                        setDisputeBackground(binding.tvDisputeStatus, context.getColor(com.delhivery.axle.R.color.pending_bg))
+                        setDisputeBackground(binding.tvDisputeStatus, context.getColor(R.color.pending_bg))
                         binding.tvDisputeStatus.setTextColor("#B45309".toColorInt())
                     }
                     "success" -> {
@@ -77,18 +86,18 @@ class FastagTransactionAdapter(
                         binding.tvDisputeStatus.setTextColor("#DC2626".toColorInt())
                     }
                     else -> {
-                        setDisputeBackground(binding.tvDisputeStatus, context.getColor(com.delhivery.axle.R.color.grey_bg))
-                        binding.tvDisputeStatus.setTextColor(context.getColor(com.delhivery.axle.R.color.black_text))
+                        setDisputeBackground(binding.tvDisputeStatus, context.getColor(R.color.grey_bg))
+                        binding.tvDisputeStatus.setTextColor(context.getColor(R.color.black_text))
                     }
                 }
             } else {
-                binding.tvDisputeStatus.visibility = android.view.View.GONE
+                binding.tvDisputeStatus.visibility = View.GONE
             }
 
             // Click listener to open transaction detail
             binding.root.setOnClickListener {
                 val context = binding.root.context
-                val intent = android.content.Intent(context, FastagRaiseDisputeActivity::class.java).apply {
+                val intent = Intent(context, FastagRaiseDisputeActivity::class.java).apply {
                     putExtra(FastagRaiseDisputeActivity.EXTRA_TXN_ID, transaction.txnId)
                     putExtra(FastagRaiseDisputeActivity.EXTRA_AMOUNT, transaction.amount ?: 0.0)
                     putExtra(FastagRaiseDisputeActivity.EXTRA_TOLL_NAME, transaction.tollName)
@@ -105,16 +114,16 @@ class FastagTransactionAdapter(
 
         }
 
-        private fun setDisputeBackground(view: android.widget.TextView, color: Int) {
-            val drawable = android.graphics.drawable.GradientDrawable()
-            drawable.shape = android.graphics.drawable.GradientDrawable.RECTANGLE
-            drawable.cornerRadius = view.context.resources.getDimension(com.delhivery.axle.R.dimen.size_16dp)
+        private fun setDisputeBackground(view: TextView, color: Int) {
+            val drawable = GradientDrawable()
+            drawable.shape = GradientDrawable.RECTANGLE
+            drawable.cornerRadius = view.context.resources.getDimension(R.dimen.size_16dp)
             drawable.setColor(color)
             view.background = drawable
         }
 
         private fun formatTimestamp(timestamp: String): String {
-            return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(timestamp)
+            return DateUtils.formatFastagTransactionDate(timestamp)
         }
     }
 

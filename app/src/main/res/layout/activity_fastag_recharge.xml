@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.FastagRechargeViewModel" />
+            type="com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

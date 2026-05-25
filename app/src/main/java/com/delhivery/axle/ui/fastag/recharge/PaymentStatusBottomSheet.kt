@@ -1,5 +1,6 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.recharge
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -85,7 +86,7 @@ class PaymentStatusBottomSheet : BottomSheetDialogFragment() {
             .setDuration(400).start()
     }
 
-    override fun onDismiss(dialog: android.content.DialogInterface) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         onDismissCallback?.invoke()
     }

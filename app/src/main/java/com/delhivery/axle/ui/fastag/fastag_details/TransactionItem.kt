@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.fastag_details
 
 data class TransactionItem(
     val id: String?,

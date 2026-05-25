@@ -1,11 +1,13 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.fastag_details
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.databinding.ItemTransactionSelectionBinding
+import kotlin.math.abs
 
 class TransactionSelectionAdapter(
     private val onItemClick: (TransactionItem) -> Unit
@@ -49,7 +51,7 @@ class TransactionSelectionAdapter(
 
             val amountText = transaction.amount?.let {
                 if (it < 0) {
-                    "-₹${kotlin.math.abs(transaction.amount).toInt()}"
+                    "-₹${abs(transaction.amount).toInt()}"
                 } else {
                     "+₹${transaction.amount.toInt()}"
                 }
@@ -58,9 +60,9 @@ class TransactionSelectionAdapter(
 
             val amountColor = transaction.amount?.let {
                 if (it < 0) {
-                    android.graphics.Color.parseColor("#111827")
+                    Color.parseColor("#111827")
                 } else {
-                    android.graphics.Color.parseColor("#16A34A")
+                    Color.parseColor("#16A34A")
                 }
             }
             binding.tvAmount.setTextColor(amountColor?:0)

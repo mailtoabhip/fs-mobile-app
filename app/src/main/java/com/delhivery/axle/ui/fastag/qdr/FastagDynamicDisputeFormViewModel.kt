@@ -1,12 +1,11 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormConfigResponse
-import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.data.dispute.SubmissionState
 import com.delhivery.axle.data.dispute.ValidationResult
 import com.delhivery.axle.ui.base.BaseViewModel
@@ -46,7 +45,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     fun loadFormConfig(disputeTypeCode: String) {
         progressData.value = true
 
-        compositeDisposable += loadboardRepository.getDisputeFormConfig(disputeTypeCode)
+        compositeDisposable plusAssign loadboardRepository.getDisputeFormConfig(disputeTypeCode)
             .onBackground()
             .progress()
             .subscribe { response, error ->
@@ -66,7 +65,10 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
      * Validate a single field
      */
     fun validateField(fieldId: String, value: Any?, context: Context): ValidationResult {
-        val field = formConfig?.fields?.find { it.fieldId == fieldId } ?: return ValidationResult(false, "Field not found")
+        val field = formConfig?.fields?.find { it.fieldId == fieldId } ?: return ValidationResult(
+            false,
+            "Field not found"
+        )
 
         return when (field.fieldTypeEnum) {
             FieldType.TEXT, FieldType.TEXTAREA -> {
@@ -123,7 +125,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
      */
     fun checkMandatoryFieldsComplete() {
         val mandatoryFields = formConfig?.fields?.filter { it.mandatory } ?: emptyList()
-        
+
         var allComplete = true
         for (field in mandatoryFields) {
             if (field.fieldTypeEnum == FieldType.FILE) {
@@ -158,7 +160,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
      */
     fun setFileUri(fieldId: String, uri: Uri, context: Context) {
         fileUris[fieldId] = uri
-        
+
         // Validate file immediately
         val field = formConfig?.fields?.find { it.fieldId == fieldId }
         if (field != null) {
@@ -174,7 +176,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
             currentValidation[fieldId] = validationResult
             validationStateData.value = currentValidation
         }
-        
+
         checkMandatoryFieldsComplete()
     }
 
@@ -311,7 +313,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
             file.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
-            
+
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
             val requestBody = RequestBody.create(MediaType.parse(mimeType), file)
             MultipartBody.Part.createFormData(partName, file.name, requestBody)

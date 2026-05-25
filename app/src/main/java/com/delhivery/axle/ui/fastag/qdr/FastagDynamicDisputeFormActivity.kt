@@ -1,7 +1,7 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
-import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
@@ -10,6 +10,7 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,11 +19,15 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormField
 import com.delhivery.axle.data.dispute.SubmissionState
+import com.delhivery.axle.data.dispute.ValidationResult
 import com.delhivery.axle.databinding.ActivityFastagDynamicDisputeFormBinding
 import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
+import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormViewModel
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_FASTAG_DISPUTE_SUBMITTED
 import com.delhivery.axle.utils.FileCompressor
@@ -40,6 +45,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
+import kotlin.math.abs
 
 class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDisputeFormBinding, FastagDynamicDisputeFormViewModel>() {
 
@@ -48,9 +54,12 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     override fun requireConnection() = true
 
 
-    @Inject lateinit var documentUtils: DocumentUtils
-    @Inject lateinit var fileCompressor: FileCompressor
-    @Inject lateinit var userPrefs: UserPrefs
+    @Inject
+    lateinit var documentUtils: DocumentUtils
+    @Inject
+    lateinit var fileCompressor: FileCompressor
+    @Inject
+    lateinit var userPrefs: UserPrefs
 
     private var disputeTypeCode: String = ""
     private var disputeTitle: String = ""
@@ -147,7 +156,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        hasInlineProgress = true 
+        hasInlineProgress = true
         super.onCreate(savedInstanceState)
         setupUI()
         observeData()
@@ -202,13 +211,13 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
     private fun setupSelectedTransaction() {
         // Check if we should show the transaction card
         val showTransaction = intent.getBooleanExtra(EXTRA_SHOW_TRANSACTION, true)
-        
+
         if (showTransaction && transactionId != null && transactionTollName != null) {
             binding.llSelectedTransaction.visibility = View.VISIBLE
             binding.tvTransactionTollName.text = transactionTollName
             binding.tvTransactionDateTime.text = formatTransactionDateTime(transactionTimestamp ?: "")
 
-            val amountAbs = kotlin.math.abs(transactionAmount)
+            val amountAbs = abs(transactionAmount)
             binding.tvTransactionAmount.text = String.format("₹%.2f", amountAbs)
 
             binding.tvChangeTransaction.setOnClickListener {
@@ -236,7 +245,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
                 override fun updateDrawState(ds: TextPaint) {
                     super.updateDrawState(ds)
-                    ds.color = android.graphics.Color.parseColor("#1A56DB")
+                    ds.color = Color.parseColor("#1A56DB")
                     ds.isUnderlineText = false
                     ds.isFakeBoldText = true
                 }
@@ -323,7 +332,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
                 fileHeaderInserted = true
 
                 // Reparent header into llFormFields
-                (binding.llUploadDocumentsHeader.parent as? android.view.ViewGroup)?.removeView(binding.llUploadDocumentsHeader)
+                (binding.llUploadDocumentsHeader.parent as? ViewGroup)?.removeView(binding.llUploadDocumentsHeader)
                 binding.llUploadDocumentsHeader.visibility = View.VISIBLE
                 binding.llFormFields.addView(binding.llUploadDocumentsHeader)
             }
@@ -338,7 +347,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
             // Insert file size hint right after the last FILE field
             if (index == lastFileIndex && fileFields.isNotEmpty()) {
-                (binding.llFileSizeHint.parent as? android.view.ViewGroup)?.removeView(binding.llFileSizeHint)
+                (binding.llFileSizeHint.parent as? ViewGroup)?.removeView(binding.llFileSizeHint)
                 binding.llFileSizeHint.visibility = View.VISIBLE
                 binding.llFormFields.addView(binding.llFileSizeHint)
             }
@@ -347,7 +356,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         // Show additional documents section if there are file fields and limit not reached
         if (fileFields.isNotEmpty()) {
             // Reparent additional documents section into llFormFields
-            (binding.llAdditionalDocuments.parent as? android.view.ViewGroup)?.removeView(binding.llAdditionalDocuments)
+            (binding.llAdditionalDocuments.parent as? ViewGroup)?.removeView(binding.llAdditionalDocuments)
             binding.llFormFields.addView(binding.llAdditionalDocuments)
             updateAdditionalDocVisibility()
         }
@@ -411,7 +420,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         if (isAdditional) {
             isAdditionalFilePicker = true
         }
-        
+
         val chooserIntent = filePickerChooser(title, MimeTypes.IMAGE_JPG, MimeTypes.IMAGE_JPEG)
 
         try {
@@ -492,7 +501,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         super.onDestroy()
     }
 
-    private fun updateFieldErrors(validationMap: Map<String, com.delhivery.axle.data.dispute.ValidationResult>) {
+    private fun updateFieldErrors(validationMap: Map<String, ValidationResult>) {
         validationMap.forEach { (fieldId, result) ->
             val view = fieldViews[fieldId]
             when (view) {
@@ -552,7 +561,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
     private fun formatTransactionDateTime(dateTime: String): String {
         if (dateTime.isEmpty()) return ""
-        return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateTime)
+        return DateUtils.formatFastagTransactionDate(dateTime)
     }
 
     private fun showSuccessBottomSheet(srId: String?) {
@@ -573,7 +582,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
         dialogBinding.btnGoToLoads.setOnClickListener {
             bottomSheetDialog.dismiss()
-            val intent = Intent(this, com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java).apply {
+            val intent = Intent(this, HomeActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 putExtra("fragment_type", "load")
             }

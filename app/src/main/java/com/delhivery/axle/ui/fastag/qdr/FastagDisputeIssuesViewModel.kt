@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.LoadboardRepository
@@ -20,7 +20,7 @@ class FastagDisputeIssuesViewModel @Inject constructor(
     fun getDisputeIssues(partner: String) {
         progressData.value = true
 
-        compositeDisposable += loadboardRepository.getDisputeIssuesList(partner)
+        compositeDisposable plusAssign loadboardRepository.getDisputeIssuesList(partner)
             .onBackground()
             .progress()
             .subscribe { _res, error ->

@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag
+package com.delhivery.axle.ui.fastag.qdr
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityFastagTransactionSelectionBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.fastag_details.TransactionItem
+import com.delhivery.axle.ui.fastag.fastag_details.TransactionSelectionAdapter
 import com.delhivery.axle.ui.loadwallet.TransactionType
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.WindowInsetsUtils
 
 class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactionSelectionBinding, FastagTransactionSelectionViewModel>() {
 
@@ -46,8 +50,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         super.onPostCreate(savedInstanceState)
 
         /* Handle window insets for edge-to-edge display (API 35+) */
-        if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+        if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
         }
     }
 
@@ -148,7 +152,8 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
                             id = txn.txnId ?: "",
                             tollName = txn.tollPlazaName ?: "Unknown",
                             timestamp = formatDateTime(txn.txnDateTime ?: ""),
-                            amount = if (txn.txnType?.toLowerCase() == TransactionType.Debit.type) -(txn.txnAmount ?: 0.0) else (txn.txnAmount ?: 0.0),
+                            amount = if (txn.txnType?.toLowerCase() == TransactionType.Debit.type) -(txn.txnAmount
+                                ?: 0.0) else (txn.txnAmount ?: 0.0),
                             tollPlazaId = txn.tollPlazaId
                         )
                     }
@@ -170,7 +175,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
 
     private fun formatDateTime(dateTime: String): String {
         if (dateTime.isEmpty()) return ""
-        return com.delhivery.axle.utils.DateUtils.formatFastagTransactionDate(dateTime)
+        return DateUtils.formatFastagTransactionDate(dateTime)
     }
 
     private fun onTransactionSelected(transaction: TransactionItem) {
