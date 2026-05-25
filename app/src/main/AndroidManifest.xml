@@ -313,6 +313,9 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".ui.fastag.trucks.FastagTrucksActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.loadwallet.LoadWalletActivity"
             android:screenOrientation="portrait" />
         <activity
