@@ -4,24 +4,24 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.response.ServiceGroup
 import com.delhivery.axle.databinding.FragmentHomeBinding
+import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.common.UiEvent
 import com.delhivery.axle.ui.common.UiState
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
-import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
-import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
-import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -51,18 +51,7 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         fragmentSetupTrace?.start()
         setupViews()
         setupServiceGroupsRecyclerView()
-
-        binding.loadsCard.setOnClickListener {
-            action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
-        }
-
-        binding.editStickySearch.setOnClickListener {
-            context?.let {
-                startActivity(
-                    Intent(searchLoadContractsIntent(it, "load"))
-                )
-            }
-        }
+        setupBannerCarousel()
 
         binding.fastagCard.setOnClickListener {
             action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
@@ -76,9 +65,17 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_FUEL_CARD))
         }
 
-        binding.serviceGroupsRetryBtn.setOnClickListener {
-            viewModel.retryServiceGroups()
+        binding.myTrucksCard.setOnClickListener {
+            action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
         }
+
+        binding.myLoadsCard.setOnClickListener {
+            action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+        }
+
+//        binding.serviceGroupsRetryBtn.setOnClickListener {
+//            viewModel.retryServiceGroups()
+//        }
 
         viewModel.kycUiModel.observe(viewLifecycleOwner) { model ->
             currentUiState = model.uiState
@@ -103,13 +100,10 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         collectServiceGroupsState()
         collectEvents()
 
-        // Fetch service groups from API
-        viewModel.fetchServiceGroups()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshKycStatus()
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
             isFirstResume = false
@@ -129,10 +123,6 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         serviceGroupAdapter = ServiceGroupAdapter { group ->
             onServiceGroupClicked(group)
         }
-        binding.serviceGroupsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = serviceGroupAdapter
-        }
     }
 
     private fun collectServiceGroupsState() {
@@ -140,31 +130,20 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.serviceGroupsState.collect { state ->
                     // Handle loading
-                    binding.serviceGroupsShimmer.visibility =
-                        if (state.isLoading) View.VISIBLE else View.GONE
+//                    binding.serviceGroupsShimmer.visibility =
+//                        if (state.isLoading) View.VISIBLE else View.GONE
 
                     // Handle data state
                     when (val uiState = state.uiState) {
                         is UiState.Success -> {
-                            binding.serviceGroupsRecyclerView.visibility = View.VISIBLE
-                            binding.serviceGroupsError.visibility = View.GONE
                             serviceGroupAdapter.submitList(uiState.data)
                         }
                         is UiState.Error -> {
-                            binding.serviceGroupsRecyclerView.visibility = View.GONE
-                            binding.serviceGroupsError.visibility = View.VISIBLE
-                            binding.serviceGroupsErrorMessage.text = uiState.message
                         }
                         is UiState.Empty -> {
-                            binding.serviceGroupsRecyclerView.visibility = View.GONE
-                            binding.serviceGroupsError.visibility = View.VISIBLE
-                            binding.serviceGroupsErrorMessage.text = uiState.message
-                            binding.serviceGroupsRetryBtn.visibility = View.GONE
                         }
                         else -> {
                             // Idle state — hide both, shimmer handles loading
-                            binding.serviceGroupsRecyclerView.visibility = View.GONE
-                            binding.serviceGroupsError.visibility = View.GONE
                         }
                     }
                 }
@@ -216,6 +195,72 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
                 // Default: navigate to document verification for unknown groups
                 startActivity(Intent(requireContext(), DocumentVerificationActivity::class.java))
             }
+        }
+    }
+
+    // ────────────────────────── Banner Carousel Setup ────────────────────
+
+    private fun setupBannerCarousel() {
+        // Static banners - replace with API-driven banners when available
+        val banners = listOf(
+            HomeBannerItem(imageRes = R.drawable.bg_banner_dark, deepLink = "loads"),
+            HomeBannerItem(imageRes = R.drawable.bg_banner_dark, deepLink = "trucks"),
+            HomeBannerItem(imageRes = R.drawable.bg_banner_dark, deepLink = "fastag")
+        )
+
+        val adapter = HomeBannerPagerAdapter(banners) { banner ->
+            when (banner.deepLink) {
+                "loads" -> action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+                "trucks" -> action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
+                else -> { /* no-op */ }
+            }
+        }
+
+        binding.bannerViewPager.adapter = adapter
+        setupBannerDots(banners.size)
+
+        binding.bannerViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageSelected(position: Int) {
+                updateBannerDots(position)
+            }
+        })
+    }
+
+    private fun setupBannerDots(count: Int) {
+        binding.bannerDotsContainer.removeAllViews()
+        for (i in 0 until count) {
+            val dot = View(requireContext())
+            val params = LinearLayout.LayoutParams(
+                if (i == 0) resources.getDimensionPixelSize(R.dimen.size_20dp)
+                else resources.getDimensionPixelSize(R.dimen.size_8dp),
+                resources.getDimensionPixelSize(R.dimen.size_8dp)
+            )
+            params.setMargins(
+                resources.getDimensionPixelSize(R.dimen.size_4dp), 0,
+                resources.getDimensionPixelSize(R.dimen.size_4dp), 0
+            )
+            dot.layoutParams = params
+            dot.setBackgroundResource(
+                if (i == 0) R.drawable.banner_dot_active else R.drawable.banner_dot_inactive
+            )
+            binding.bannerDotsContainer.addView(dot)
+        }
+    }
+
+    private fun updateBannerDots(selectedPosition: Int) {
+        for (i in 0 until binding.bannerDotsContainer.childCount) {
+            val dot = binding.bannerDotsContainer.getChildAt(i)
+            val params = dot.layoutParams as LinearLayout.LayoutParams
+            if (i == selectedPosition) {
+                params.width = resources.getDimensionPixelSize(R.dimen.size_20dp)
+                dot.setBackgroundResource(R.drawable.banner_dot_active)
+            } else {
+                params.width = resources.getDimensionPixelSize(R.dimen.size_8dp)
+                dot.setBackgroundResource(R.drawable.banner_dot_inactive)
+            }
+            dot.layoutParams = params
         }
     }
 

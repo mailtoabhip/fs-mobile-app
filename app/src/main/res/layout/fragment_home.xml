@@ -24,86 +24,16 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/size_24dp">
 
-            <!-- Search Bar -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/edit_sticky_search"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="@dimen/size_16dp"
-                android:layout_marginTop="@dimen/size_18dp"
-                android:layout_marginBottom="@dimen/size_24dp"
-                android:background="@drawable/bg_all_round_corner_border_4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:paddingHorizontal="@dimen/size_16dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search_icon"
-                    android:layout_width="@dimen/size_18dp"
-                    android:layout_height="@dimen/size_18dp"
-                    android:src="@drawable/ic_search_black"
-                    android:tint="@color/gray_tint"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/search_hint"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_8dp"
-                    android:ellipsize="end"
-                    android:gravity="start"
-                    android:singleLine="true"
-                    android:text="@string/label_search_home"
-                    android:textColor="@color/color_hint"
-                    android:textSize="@dimen/text_14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/search_icon"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Quick Action Icons Row -->
             <LinearLayout
                 android:id="@+id/quickActionsRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:layout_marginHorizontal="@dimen/size_16dp"
                 android:gravity="center"
-                android:orientation="horizontal"
-                >
-
-                <!-- Loads -->
-                <LinearLayout
-                    android:id="@+id/loadsCard"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <FrameLayout
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
-                        android:background="@drawable/bg_quick_action_icon">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:contentDescription="@string/label_nav_loads"
-                            android:src="@drawable/icon_loads_box" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_6dp"
-                        android:text="@string/label_nav_loads"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_12sp" />
-                </LinearLayout>
+                android:orientation="horizontal">
 
                 <!-- Fastag -->
                 <LinearLayout
@@ -111,29 +41,28 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/size_8dp"
+                    android:background="@drawable/bg_quick_action_card"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/size_16dp">
 
-                    <FrameLayout
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
-                        android:background="@drawable/bg_quick_action_icon">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="@string/label_fastag_no_space"
-                            android:src="@drawable/ic_fastag_home" />
-                    </FrameLayout>
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/label_fastag_no_space"
+                        android:src="@drawable/ic_fastag_home" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_6dp"
+                        android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_fastag_no_space"
                         android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_12sp" />
+                        android:textSize="@dimen/text_14sp" />
                 </LinearLayout>
 
                 <!-- GPS -->
@@ -142,29 +71,29 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginHorizontal="@dimen/size_4dp"
+                    android:background="@drawable/bg_quick_action_card"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/size_16dp">
 
-                    <FrameLayout
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
-                        android:background="@drawable/bg_quick_action_icon">
-
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="38dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="@string/label_gps"
-                            android:src="@drawable/ic_gps_icon" />
-                    </FrameLayout>
+                    <ImageView
+                        android:layout_width="@dimen/size_48dp"
+                        android:layout_height="@dimen/size_48dp"
+                        android:layout_marginVertical="@dimen/size_6dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/label_gps"
+                        android:src="@drawable/ic_gps_icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_6dp"
+                        android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_gps"
                         android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_12sp" />
+                        android:textSize="@dimen/text_14sp" />
                 </LinearLayout>
 
                 <!-- Fuel Card -->
@@ -173,29 +102,29 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:background="@drawable/bg_quick_action_card"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/size_16dp">
 
-                    <FrameLayout
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
-                        android:background="@drawable/bg_quick_action_icon">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="center"
-                            android:contentDescription="@string/label_fuel_card_home"
-                            android:src="@drawable/card" />
-                    </FrameLayout>
+                    <ImageView
+                        android:layout_width="@dimen/size_56dp"
+                        android:layout_height="@dimen/size_56dp"
+                        android:layout_marginVertical="@dimen/size_2dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/label_fuel_card_home"
+                        android:src="@drawable/card" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_6dp"
+                        android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_fuel_card_home"
                         android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_12sp" />
+                        android:textSize="@dimen/text_14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -207,66 +136,151 @@
                 android:layout_marginHorizontal="@dimen/size_16dp"
                 android:layout_marginTop="@dimen/size_32dp"
                 android:layout_marginBottom="@dimen/size_16dp"
-                android:text="@string/label_configure_service_onboarding"
+                android:text="@string/label_business_services"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
 
-            <!-- Service Groups Loading Shimmer -->
+<!--            &lt;!&ndash; Service Groups Loading Shimmer &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/serviceGroupsShimmer"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:visibility="gone">-->
+
+<!--                <include layout="@layout/shimmer_service_group_item" />-->
+
+<!--                <include layout="@layout/shimmer_service_group_item" />-->
+<!--            </LinearLayout>-->
+
+            <!-- Business Service Cards (My Trucks & My Loads) -->
             <LinearLayout
-                android:id="@+id/serviceGroupsShimmer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <include layout="@layout/shimmer_service_group_item" />
-
-                <include layout="@layout/shimmer_service_group_item" />
-            </LinearLayout>
-
-            <!-- Service Groups Error State -->
-            <LinearLayout
-                android:id="@+id/serviceGroupsError"
+                android:id="@+id/businessServiceCardsRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/size_16dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/size_24dp"
-                android:visibility="gone">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/serviceGroupsErrorMessage"
-                    android:layout_width="wrap_content"
+                <!-- My Trucks Card -->
+                <LinearLayout
+                    android:id="@+id/myTrucksCard"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_grey"
-                    android:textSize="@dimen/text_14sp"
-                    tools:text="Failed to load service groups" />
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/size_6dp"
+                    android:background="@drawable/bg_quick_action_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:padding="@dimen/size_16dp">
 
-                <TextView
-                    android:id="@+id/serviceGroupsRetryBtn"
-                    android:layout_width="wrap_content"
+                    <!-- Top row: Icon + Arrow -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/size_72dp"
+                            android:layout_height="@dimen/size_72dp"
+                            android:contentDescription="@string/label_my_trucks"
+                            android:src="@drawable/container" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:layout_width="@dimen/size_20dp"
+                            android:layout_height="@dimen/size_20dp"
+                            android:contentDescription="@string/action_continue"
+                            android:src="@drawable/ic_arrow_forward_black" />
+                    </LinearLayout>
+
+                    <!-- Title -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_8dp"
+                        android:text="@string/label_my_trucks"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Subtitle -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="@string/label_my_trucks_subtitle"
+                        android:textColor="#2B2B2B"
+                        android:textSize="@dimen/text_12sp" />
+                </LinearLayout>
+
+                <!-- My Loads Card -->
+                <LinearLayout
+                    android:id="@+id/myLoadsCard"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_8dp"
-                    android:padding="@dimen/size_8dp"
-                    android:text="@string/label_retry"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="@dimen/text_14sp"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/size_6dp"
+                    android:background="@drawable/bg_quick_action_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical"
+                    android:padding="@dimen/size_16dp">
+
+                    <!-- Top row: Icon + Arrow -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/size_72dp"
+                            android:layout_height="@dimen/size_64dp"
+                            android:contentDescription="@string/label_my_loads"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/home_axle_logo" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:layout_width="@dimen/size_20dp"
+                            android:layout_height="@dimen/size_20dp"
+                            android:contentDescription="@string/action_continue"
+                            android:src="@drawable/ic_arrow_forward_black" />
+                    </LinearLayout>
+
+                    <!-- Title -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_12dp"
+                        android:text="@string/label_my_loads"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Subtitle -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="@string/label_my_loads_subtitle"
+                        android:textColor="#2B2B2B"
+                        android:textSize="@dimen/text_12sp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Service Groups RecyclerView (dynamic cards from API) -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/serviceGroupsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                android:visibility="gone"
-                tools:itemCount="2"
-                tools:listitem="@layout/item_service_group" />
+
 
             <!-- We @Delhivery Section -->
             <TextView
@@ -277,10 +291,31 @@
                 android:layout_marginTop="@dimen/size_24dp"
                 android:text="@string/label_we_at_delhivery"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/text_18sp"
                 android:visibility="gone"
-
+                android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
+
+            <!-- Banner Carousel -->
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/bannerViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginHorizontal="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:clipToPadding="false"
+                android:visibility="gone"
+                android:overScrollMode="never" />
+
+            <!-- Banner Dot Indicator -->
+            <LinearLayout
+                android:id="@+id/bannerDotsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/size_12dp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="horizontal" />
 
             <!-- KYC / Bidding Card (existing) -->
             <androidx.cardview.widget.CardView

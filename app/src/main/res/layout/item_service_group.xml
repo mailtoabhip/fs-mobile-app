@@ -17,7 +17,7 @@
         android:id="@+id/serviceGroupIcon"
         android:layout_width="@dimen/size_40dp"
         android:layout_height="@dimen/size_40dp"
-        android:contentDescription="@string/label_configure_service_onboarding"
+        android:contentDescription="@string/label_business_services"
         android:src="@drawable/icon_loads_box" />
 
     <LinearLayout

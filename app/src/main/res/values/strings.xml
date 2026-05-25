@@ -1162,7 +1162,12 @@
     <string name="label_search_home">Search loads, trips, FASTags…</string>
     <string name="label_gps">GPS</string>
     <string name="label_fuel_card_home">Fuel Card</string>
-    <string name="label_configure_service_onboarding">Configure Service Onboarding</string>
+    <string name="label_business_services">Business Services</string>
+    <string name="label_my_trucks">My Trucks</string>
+    <string name="label_my_trucks_subtitle">Access your fleet services</string>
+    <string name="label_my_loads">My Loads</string>
+    <string name="label_my_loads_subtitle">Manage fleet ops via Axle App</string>
+    <string name="label_banner">Banner</string>
     <string name="label_load_services">Load Services</string>
     <string name="label_financial_services">Financial Services</string>
     <string name="label_services_available">%d Services Available</string>
