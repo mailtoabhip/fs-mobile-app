@@ -234,16 +234,7 @@
     <item name="android:textAllCaps">false</item>
   </style>
 
-  <style name="Button.Secondary" parent="Widget.AppCompat.Button">
-    <item name="android:layout_width">0dp</item>
-    <item name="android:layout_height">48dp</item>
-    <item name="android:background">@drawable/bg_button_clear_filter</item>
-    <item name="android:textColor">#111827</item>
-    <item name="android:textSize">16sp</item>
-    <item name="android:textAllCaps">false</item>
-  </style>
-
-  <style name="TransparentBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="TransparentBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
     <item name="bottomSheetStyle">@style/TransparentBottomSheet</item>
   </style>
 
