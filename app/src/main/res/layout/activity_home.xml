@@ -32,18 +32,23 @@
           android:layout_gravity="center"
           android:id="@+id/toolbar_title" />
 
-      <androidx.appcompat.widget.AppCompatTextView
+      <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/profile"
-          android:layout_width="24dp"
-          android:layout_height="24dp"
+          android:layout_width="@dimen/size_24dp"
+          android:layout_height="@dimen/size_24dp"
           android:gravity="center"
-          android:textSize="@dimen/text_12sp"
-          android:textStyle="bold"
-          android:fontFamily="sans-serif"
-          android:layout_marginEnd="@dimen/size_48dp"
           android:layout_marginStart="@dimen/size_16dp"
           android:textColor="@color/white"
-          android:background="@drawable/dark_red_circle" />
+          android:background="@drawable/hamburger_menu_icon" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/axle"
+            android:layout_width="@dimen/size_56dp"
+            android:layout_height="@dimen/size_18dp"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_48dp"
+            app:srcCompat="@drawable/home_axle_logo"
+            />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -71,7 +76,18 @@
         app:itemTextColor="@drawable/selector_bottom_nav_colors"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_home_bottom_navigation"
-        bind:shadow="@{ @dimen/size_4dp }"
-        />
+        bind:shadow="@{ @dimen/size_4dp }" />
+
+    <View
+        android:id="@+id/nav_indicator"
+        android:layout_width="@dimen/size_260dp"
+        android:layout_height="@dimen/size_2dp"
+        android:elevation="@dimen/size_10dp"
+        android:outlineProvider="none"
+        android:background="@color/black"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/bottom_nav"
+        app:layout_constraintStart_toStartOf="@id/bottom_nav" />
+
   </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

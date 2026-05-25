@@ -10,22 +10,32 @@
         android:background="@color/light_red_bg"
         android:fitsSystemWindows="true">
 
-        <!-- Progress Steps -->
-        <include
-            android:id="@+id/progress_step_layout"
-            layout="@layout/view_progress_steps"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            app:title="@string/title_account_setup"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="@dimen/height_toolbar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            />
+        <View
+            android:id="@+id/horizontalDivider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/light_line_grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         <!-- Scrollable Content -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fillViewport="true"
-            app:layout_constraintTop_toBottomOf="@id/progress_step_layout"
+            app:layout_constraintTop_toBottomOf="@id/horizontalDivider"
             app:layout_constraintBottom_toTopOf="@id/bottom_button_container">
 
             <LinearLayout

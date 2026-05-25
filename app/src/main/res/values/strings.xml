@@ -1057,6 +1057,43 @@
     <string name="upload_file_icon">Upload icon</string>
     <string name="remove_file">Remove file</string>
     <string name="file_thumbnail">File preview thumbnail</string>
+    <string name="configure_new_service">Configure new service</string>
+    <string name="continue_where_you_ve_left">Continue where you’ve left</string>
+    <string name="services_added">Services Added</string>
+    <string name="load_services">Load Services</string>
+    <string name="know_more">Know More</string>
+    <string name="configure">Configure</string>
+    <string name="intracity_fleet_operations_with_own_vehicles">Intracity fleet operations with own vehicles</string>
+    <string name="fleet_carting">Fleet Carting</string>
+
+    <!-- Financial Services -->
+    <string name="financial_services">Financial Services</string>
+    <string name="financial_service_fastag_description">Manage and recharge FASTags for your fleet</string>
+    <string name="financial_service_wallet_title">Delhivery Wallet</string>
+    <string name="financial_service_wallet_description">Digital wallet for seamless business payments</string>
+    <string name="financial_service_fuel_title">Fuel Credit</string>
+    <string name="financial_service_fuel_description">Fuel credit solutions to keep your fleet moving</string>
+
+    <!-- Financial Service Info Bottom Sheet (FASTag) -->
+    <string name="financial_service_fastag_title">FASTag</string>
+    <string name="financial_service_fastag_icon_desc">FASTag icon</string>
+    <string name="financial_service_feature_1_title">Manage Your Fleet\'s FASTags in One Place</string>
+    <string name="financial_service_feature_1_desc">Link trucks, track balances in real-time, and recharge instantly. Keep your business moving without the wait at toll plazas.</string>
+    <string name="financial_service_feature_2_title">Faster Tolls, Smarter Savings</string>
+    <string name="financial_service_feature_2_desc">Skip the cash lanes and monitor every transaction. Get instant low-balance alerts and 24/7 support for your entire fleet.</string>
+    <string name="financial_service_feature_3_title">Total FASTag Control</string>
+    <string name="financial_service_feature_3_desc">From new requests to instant recharges, manage your truck\'s toll payments directly through the app. No more delays, just smoother drives.</string>
+
+    <!-- FTL Loads Service Info Bottom Sheet -->
+    <string name="ftl_loads_title">FTL Loads</string>
+    <string name="ftl_loads_load_type_label">Load type</string>
+    <string name="ftl_loads_load_type_value">Full Truck Load (FT)</string>
+    <string name="ftl_loads_movement_label">Movement</string>
+    <string name="ftl_loads_movement_value">PAN India</string>
+    <string name="ftl_loads_payment_mode_label">Payment Mode</string>
+    <string name="ftl_loads_payment_mode_value">Advance/ Credit (lease)</string>
+    <string name="ftl_loads_best_for_label">Best For</string>
+    <string name="ftl_loads_best_for_value">PAN India Trips for client loads</string>
 
     <string name="str_details">Details</string>
     <string name="str_reporting_time">Reporting time</string>
@@ -1112,4 +1149,35 @@
     <string name="str_reject">Reject</string>
     <string name="str_accept">Accept</string>
     <string name="str_cancel">Cancel</string>
+    <!-- Error messages for Resource API states -->
+    <string name="error_timeout">Request timed out. Please try again.</string>
+    <string name="error_network">No internet connection. Please check your network.</string>
+    <string name="error_unauthorized">Session expired. Please login again.</string>
+    <string name="error_access_denied">You don\'t have permission to access this resource.</string>
+    <string name="error_not_found">The requested resource was not found.</string>
+    <string name="error_service_unavailable">Service is temporarily unavailable. Please try again later.</string>
+    <string name="error_unknown">Something went wrong. Please try again.</string>
+
+    <!-- Home Screen Revamp -->
+    <string name="label_search_home">Search loads, trips, FASTags…</string>
+    <string name="label_gps">GPS</string>
+    <string name="label_fuel_card_home">Fuel Card</string>
+    <string name="label_configure_service_onboarding">Configure Service Onboarding</string>
+    <string name="label_load_services">Load Services</string>
+    <string name="label_financial_services">Financial Services</string>
+    <string name="label_services_available">%d Services Available</string>
+    <string name="label_onboarding_in_progress">Onboarding In Progress (%d Services)</string>
+    <string name="label_we_at_delhivery">We @Delhivery</string>
+    <string name="documents_added">Documents added</string>
+
+    <!-- Coming Soon Screen -->
+    <string name="coming_soon_title">%s - Coming Soon</string>
+    <string name="coming_soon_gps_subtitle">Track your trucks live and reduce delays.</string>
+    <string name="coming_soon_fuel_card_subtitle">Easy fuel payments with full expense control.</string>
+    <string name="coming_soon_notify_me">Notify Me</string>
+    <string name="coming_soon_remind_later">Remind Me Later</string>
+    <string name="coming_soon_go_to_homepage">Go to Homepage</string>
+    <string name="coming_soon_gps_notified">You\'ll be notified when GPS goes live</string>
+    <string name="coming_soon_fuel_card_notified">You\'ll be notified when fuel card goes live</string>
+
 </resources>
