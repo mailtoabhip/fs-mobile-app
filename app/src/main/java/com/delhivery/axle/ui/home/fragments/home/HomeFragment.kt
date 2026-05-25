@@ -14,7 +14,6 @@ import com.delhivery.axle.api.response.ServiceGroup
 import com.delhivery.axle.databinding.FragmentHomeBinding
 import com.delhivery.axle.ui.common.UiEvent
 import com.delhivery.axle.ui.common.UiState
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -22,14 +21,8 @@ import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
 import com.delhivery.axle.ui.searchload.searchLoadContractsIntent
-import com.delhivery.axle.utils.EVENT_HOME_SCREEN_FASTAG_TAP
-import com.delhivery.axle.utils.EVENT_HOME_SCREEN_SHOWN
-import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
-import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.VALUE_HOME_PAGE
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.google.android.material.snackbar.Snackbar
-import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import kotlinx.coroutines.launch
@@ -57,7 +50,7 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeFragment_SetupTime")
         fragmentSetupTrace?.start()
         setupViews()
-        setupStaticServiceCards()
+        setupServiceGroupsRecyclerView()
 
         binding.loadsCard.setOnClickListener {
             action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
@@ -70,17 +63,8 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
                 )
             }
         }
-        binding.loadServicesCard.setOnClickListener {
-            startActivity(Intent(requireContext(), DocumentVerificationActivity::class.java))
-        }
 
         binding.fastagCard.setOnClickListener {
-            val (keys, values) = getCommonEventProperties()
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_HOME_SCREEN_FASTAG_TAP,
-                keys,
-                values
-            )
             action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
         }
 
@@ -125,16 +109,6 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
 
     override fun onResume() {
         super.onResume()
-
-        if (isFirstResume) {
-            val (keys, values) = getCommonEventProperties()
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_HOME_SCREEN_SHOWN,
-                keys,
-                values
-            )
-
-        }
         viewModel.refreshKycStatus()
         if (fragmentSetupTrace != null && isFirstResume) {
             fragmentSetupTrace?.stop()
@@ -147,12 +121,6 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             viewModel = this@HomeFragment.viewModel
             lifecycleOwner = viewLifecycleOwner
         }
-    }
-
-    private fun setupStaticServiceCards() {
-        binding.loadServicesCount.text = getString(R.string.label_services_available, 5)
-        binding.onboardingBannerText.text = getString(R.string.label_onboarding_in_progress, 2)
-        binding.financialServicesCount.text = getString(R.string.label_services_available, 2)
     }
 
     // ────────────────────────── Service Groups Setup ───────────────────
@@ -280,18 +248,5 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             binding.progressBar.progress = model.progress
             binding.progressBar.visibility = if (model.progress != 0) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun getCommonEventProperties(): Pair<MutableList<String>, MutableList<String>> {
-        return Pair(
-            mutableListOf(
-                PROPERTY_USER_ID,
-                PROPERTY_PAGE_NAME
-            ),
-            mutableListOf(
-                (activity as? HomeActivity)?.userPrefs?.userId() ?: "",
-                VALUE_HOME_PAGE
-            )
-        )
     }
 }

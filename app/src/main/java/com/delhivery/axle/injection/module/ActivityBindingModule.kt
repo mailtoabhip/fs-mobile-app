@@ -11,18 +11,21 @@ import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsActivity
-import com.delhivery.axle.ui.biddetails.PlacementsBidDetailsActivity
 import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
+import com.delhivery.axle.ui.biddetails.PlacementsBidDetailsActivity
 import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
+import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagDisputeIssuesActivity
 import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormActivity
+import com.delhivery.axle.ui.fastag.FastagRaiseDisputeActivity
+import com.delhivery.axle.ui.fastag.FastagRechargeActivity
+import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionSelectionActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
-import com.delhivery.axle.ui.invoicereview.InvoiceReviewActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
 import com.delhivery.axle.ui.home.activity.fuelcard.CreateFuelCardActivity
@@ -32,41 +35,36 @@ import com.delhivery.axle.ui.home.activity.transactionlist.TransactionsActivity
 import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingActivity
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsBindingModule
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeTruckLoadsFragmentBindingModule
+import com.delhivery.axle.ui.invoicereview.InvoiceReviewActivity
 import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressActivity
+import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
 import com.delhivery.axle.ui.kyc.gst.GstVerificationActivity
-import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
-import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
-import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationActivity
-import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationActivity
 import com.delhivery.axle.ui.kyc.pan.PanVerificationActivity
 import com.delhivery.axle.ui.ledger.ConsolidatedPageActivity
 import com.delhivery.axle.ui.loadwallet.LoadWalletActivity
-import com.delhivery.axle.ui.loadwallet.TransactionDetailsActivity
 import com.delhivery.axle.ui.loadwallet.RechargeDetailsActivity
+import com.delhivery.axle.ui.loadwallet.TransactionDetailsActivity
 import com.delhivery.axle.ui.loadwallet.WalletFragmentBindingModule
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
-import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.onboarding.OnboardingActivity
-import com.delhivery.axle.ui.searchCity.SearchCity
+import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.VendorPolicyActivity
-import com.delhivery.axle.ui.payment.PaymentWebViewActivity
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsActivity
-import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
-import com.delhivery.axle.ui.fastag.FastagRechargeActivity
-import com.delhivery.axle.ui.fastag.FastagRaiseDisputeActivity
 import com.delhivery.axle.ui.profile.BankDetailsActivity
 import com.delhivery.axle.ui.profile.HelpSupportActivity
+import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.ui.profile.PlacementsActivity
 import com.delhivery.axle.ui.profile.PlacementsFragmentsBindingModule
-import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
 import com.delhivery.axle.ui.profile.kycdetails.fragments.ProfileKYCFragmentBindingModule
+import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
 import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentBindingModule
+import com.delhivery.axle.ui.searchCity.SearchCity
 import com.delhivery.axle.ui.searchcitystate.SearchCityStateActivity
 import com.delhivery.axle.ui.searchcitystate.SearchOriginCityActivity
 import com.delhivery.axle.ui.searchload.SearchLoadActivity
@@ -82,9 +80,9 @@ import com.delhivery.axle.ui.team.TeamMembersActivity
 import com.delhivery.axle.ui.tripdetails.ImageViewActivity
 import com.delhivery.axle.ui.tripdetails.TripDetailsActivity
 import com.delhivery.axle.ui.tripdetails.UploadImageActivity
-import com.delhivery.axle.ui.userroutes.ManageRouteActivity
 import com.delhivery.axle.ui.trucks.AddTruckPathwayActivity
 import com.delhivery.axle.ui.trucks.TruckActivity
+import com.delhivery.axle.ui.userroutes.ManageRouteActivity
 import com.delhivery.axle.ui.userroutes.UserRoutesActivity
 import dagger.Binds
 import dagger.Module
@@ -448,16 +446,6 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsComingSoonActivityModule::class])
   internal abstract fun bindComingSoonActivity(): ComingSoonActivity
-
-  /* Document Verification activity */
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsDocumentVerificationActivityModule::class])
-  internal abstract fun bindDocumentVerificationActivity(): DocumentVerificationActivity
-
-  /* Coming Soon activity */
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsComingSoonActivityModule::class])
-  internal abstract fun bindComingSoonActivity(): ComingSoonActivity
 }
 
 
@@ -678,12 +666,6 @@ internal abstract class AbsFastagDynamicDisputeFormActivityModule : ActivityModu
 
 @Module
 internal abstract class AbsInvoiceReviewActivityModule : ActivityModule<InvoiceReviewActivity>()
-
-@Module
-internal abstract class AbsDocumentVerificationActivityModule : ActivityModule<DocumentVerificationActivity>()
-
-@Module
-internal abstract class AbsComingSoonActivityModule : ActivityModule<ComingSoonActivity>()
 
 @Module
 internal abstract class AbsDocumentVerificationActivityModule : ActivityModule<DocumentVerificationActivity>()
