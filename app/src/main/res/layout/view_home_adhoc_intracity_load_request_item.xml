@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="request"
+            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            />
+
+        <import type="android.view.View" />
+    </data>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_transaction_info"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="@dimen/size_12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llNep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_grey"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:visibility="@{request.isNEPrequired()}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingTop="@dimen/size_4dp"
+                    android:paddingBottom="@dimen/size_4dp"
+                    android:src="@drawable/warning_icon"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/nepRequired"
+                    android:text="@{@string/entry_permit_for_required(request.nepState)}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_12sp"
+                    tools:hint="Entry permit for Haryana required"
+                    android:fontFamily="sans-serif-medium"
+                    android:padding="@dimen/size_4dp"
+                   />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <include
+                app:layout_constraintTop_toBottomOf="@+id/llNep"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/layout_transaction"
+                layout="@layout/view_intracity_adhoc_transactional_info"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/btn_accept"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:background="@drawable/bg_action_light_red_btn_without_border"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/size_16dp"
+                android:paddingEnd="@dimen/size_16dp"
+                android:paddingTop="@dimen/size_12dp"
+                android:paddingBottom="@dimen/size_12dp"
+                android:layout_marginEnd="@dimen/size_12dp"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_transaction"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/confirmedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="@dimen/text_16sp"
+                    android:drawablePadding="@dimen/size_14dp"
+                    tools:text="@string/action_accept"
+                    android:text="@{ @string/action_accept(request.formatedTargetPrice()) }"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

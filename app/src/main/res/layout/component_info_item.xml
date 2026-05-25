@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="infoData"
+            type="com.delhivery.axle.data.placements.InfoItemData" />
+        <variable
+            name="isVisible"
+            type="boolean" />
+        
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="@{isVisible ? View.VISIBLE : View.GONE}">
+
+        <!-- Icon -->
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="@dimen/size_16dp"
+            android:layout_height="@dimen/size_16dp"
+            android:src="@{infoData.iconRes}"
+            android:contentDescription="@{infoData.iconContentDescription}"
+            android:layout_marginEnd="@dimen/size_8dp" />
+
+        <!-- Text -->
+        <TextView
+            android:id="@+id/tv_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@{infoData.text}"
+            android:textSize="@dimen/text_size_12sp"
+            android:textColor="@color/text_black_v1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:contentDescription="@{infoData.textContentDescription}" />
+
+    </LinearLayout>
+
+</layout>

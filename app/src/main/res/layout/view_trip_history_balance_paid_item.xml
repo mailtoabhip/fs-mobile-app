@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="history"
+        type="com.delhivery.axle.data.TripHistoryItem"
+        />
+  </data>
+  <androidx.cardview.widget.CardView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/size_8dp"
+      android:layout_marginTop="@dimen/size_4dp"
+      android:layout_marginEnd="@dimen/size_8dp"
+      android:layout_marginBottom="@dimen/size_4dp"
+      app:cardCornerRadius="@dimen/size_8dp"
+      app:cardElevation="@dimen/size_2dp"
+      >
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/size_16dp"
+        android:paddingTop="@dimen/size_12dp"
+        android:paddingEnd="@dimen/size_16dp"
+        android:paddingBottom="@dimen/size_16dp"
+        >
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_status"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:fontFamily="sans-serif-medium"
+          android:text="@{ history.heading }"
+          android:textColor="@color/heading_black"
+          tools:text="Load picked up"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_epoch"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentEnd="true"
+          android:fontFamily="sans-serif"
+          android:gravity="end"
+          android:text="@{ history.actionTime }"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_12sp"
+          tools:text="2 min ago"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_status_exp"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/text_status"
+          android:layout_marginTop="@dimen/size_4dp"
+          android:fontFamily="sans-serif"
+          android:text="@{ history.subHeading }"
+          android:textColor="@color/sub_heading_black"
+          android:textSize="@dimen/text_12sp"
+          tools:text="The load has been picked up from the origin"
+          />
+
+      <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/text_action"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/text_status_exp"
+          android:layout_alignParentEnd="true"
+          android:layout_marginTop="@dimen/size_20dp"
+          android:fontFamily="sans-serif"
+          android:paddingStart="@dimen/size_24dp"
+          android:paddingTop="@dimen/size_4dp"
+          android:paddingEnd="@dimen/size_24dp"
+          android:paddingBottom="@dimen/size_4dp"
+          android:text="VIEW INVOICE"
+          android:textColor="@color/black"
+          android:textSize="@dimen/text_14sp"
+          android:textStyle="bold"
+          />
+
+    </RelativeLayout>
+  </androidx.cardview.widget.CardView>
+</layout>

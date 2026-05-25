@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+  <data>
+
+  </data>
+
+  <androidx.appcompat.widget.LinearLayoutCompat
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/colorBackground"
+      android:keepScreenOn="true"
+      android:orientation="vertical"
+      >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        bind:shadow="@{ @dimen/size_4dp }"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:orientation="horizontal"
+        >
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_pod1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_margin="@dimen/size_4dp"
+          android:layout_weight="1"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/container_pod2"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <RelativeLayout
+            android:layout_width="@dimen/size_96dp"
+            android:layout_height="@dimen/size_96dp"
+            android:background="@drawable/bg_image"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/image_pod1"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerInside"
+              app:srcCompat="@drawable/ic_camera"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/delete_pod1"
+              style="@style/style_delete_button"
+              android:layout_width="@dimen/size_24dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentEnd="true"
+              />
+        </RelativeLayout>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_pod2"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_margin="@dimen/size_4dp"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/container_pod3"
+          app:layout_constraintStart_toEndOf="@+id/container_pod1"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <RelativeLayout
+            android:layout_width="@dimen/size_96dp"
+            android:layout_height="@dimen/size_96dp"
+            android:background="@drawable/bg_image"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/image_pod2"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerInside"
+              app:srcCompat="@drawable/ic_camera"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/delete_pod2"
+              style="@style/style_delete_button"
+              android:layout_width="@dimen/size_24dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentEnd="true"
+              />
+        </RelativeLayout>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_pod3"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_margin="@dimen/size_4dp"
+          android:layout_weight="1"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/container_pod2"
+          >
+
+        <RelativeLayout
+            android:layout_width="@dimen/size_96dp"
+            android:layout_height="@dimen/size_96dp"
+            android:background="@drawable/bg_image"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/image_pod3"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerInside"
+              app:srcCompat="@drawable/ic_camera"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/delete_pod3"
+              style="@style/style_delete_button"
+              android:layout_width="@dimen/size_24dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentEnd="true"
+              />
+        </RelativeLayout>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:orientation="horizontal"
+        >
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_pod4"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_margin="@dimen/size_4dp"
+          android:layout_weight="1"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/container_pod5"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <RelativeLayout
+            android:layout_width="@dimen/size_96dp"
+            android:layout_height="@dimen/size_96dp"
+            android:background="@drawable/bg_image"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/image_pod4"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerInside"
+              app:srcCompat="@drawable/ic_camera"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/delete_pod4"
+              style="@style/style_delete_button"
+              android:layout_width="@dimen/size_24dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentEnd="true"
+              />
+        </RelativeLayout>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_pod5"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_margin="@dimen/size_4dp"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintEnd_toStartOf="@+id/container_pod6"
+          app:layout_constraintStart_toEndOf="@+id/container_pod4"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <RelativeLayout
+            android:layout_width="@dimen/size_96dp"
+            android:layout_height="@dimen/size_96dp"
+            android:background="@drawable/bg_image"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/image_pod5"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerInside"
+              app:srcCompat="@drawable/ic_camera"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/delete_pod5"
+              style="@style/style_delete_button"
+              android:layout_width="@dimen/size_24dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentEnd="true"
+              />
+        </RelativeLayout>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+      <androidx.appcompat.widget.LinearLayoutCompat
+          android:id="@+id/container_pod6"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_margin="@dimen/size_4dp"
+          android:layout_weight="1"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/container_pod5"
+          >
+
+        <RelativeLayout
+            android:layout_width="@dimen/size_96dp"
+            android:layout_height="@dimen/size_96dp"
+            android:background="@drawable/bg_image"
+            >
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/image_pod6"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:scaleType="centerInside"
+              app:srcCompat="@drawable/ic_camera"
+              />
+
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/delete_pod6"
+              style="@style/style_delete_button"
+              android:layout_width="@dimen/size_24dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentEnd="true"
+              />
+        </RelativeLayout>
+
+      </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:layout_marginBottom="@dimen/size_4dp"
+        android:paddingStart="@dimen/size_8dp"
+        android:paddingEnd="@dimen/size_8dp"
+        android:text="*Note: All the images will be combined into single ePOD"
+        android:textColor="@color/heading_black"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_action"
+        style="@style/ActionButton"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/size_24dp"
+        android:text="Done"
+        />
+
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>
