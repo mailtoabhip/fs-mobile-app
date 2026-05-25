@@ -82,8 +82,9 @@
   <color name="custom_red">#FAF7F7</color>
   <color name="custom_grey_bg">#E5E3E3</color>
   <color name="custom_grey">#E5E5E5</color>
-    <color name="custom_dark_grey">#991C1C1C</color>
-    <color name="grey_bg_alpha25">#40E0E3EB</color>
+  <color name="custom_dark_grey">#991C1C1C</color>
+  <color name="grey_bg_alpha25">#40E0E3EB</color>
+  <color name="neutral_black_200">#2B2B2B</color>
 
   <color name="route_heading">#3D445C</color>
 
@@ -192,5 +193,9 @@
     <color name="gray_400">#9CA3AF</color>
     <color name="yellow_100_alpha_80">#80FEFCE8</color>
   <color name="black_title">#121212</color>
+
+    <!-- Profile view colors -->
+    <color name="neutral_white_300">#E6E6E6</color>
+
 
 </resources>
