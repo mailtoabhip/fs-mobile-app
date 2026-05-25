@@ -2,16 +2,12 @@ package com.delhivery.axle.ui.fastag.wallet
 
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.WalletRepository
-import com.delhivery.axle.api.request.WalletRechargeReqBody
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.utils.extensions.convertResponse
-import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 class AddMoneyDialogViewmodel @Inject constructor(
@@ -33,66 +29,58 @@ class AddMoneyDialogViewmodel @Inject constructor(
 
     var currentRechargeId: String = ""
     var rechargeStartDate: String = ""
+
     // ── Step 1: Initiate recharge ─────────────────────────────────────────
 
     fun initiateRecharge(amount: Float, deeplink: String) {
-        val request = WalletRechargeReqBody(amount = amount, deeplinkUrl = deeplink)
+        val clRequestId = UUID.randomUUID().toString()
         compositeDisposable +=
             paymentRepository
-                .initiateRecharge(request)
+                .initiateRecharge(amount, deeplink, clRequestId)
                 .convertResponse()
                 .progress()
                 .onBackground()
-                .subscribe { response, error ->
-                    if (!error && response != null) {
-                        currentRechargeId = response.rechargeId.toString()
-                        rechargeStartDate =
-                            SimpleDateFormat(
-                                "yyyy-MM-dd HH:mm:ss.S",
-                                Locale.getDefault()
-                            )
-                                .format(Date())
-                        val link = response.plodDetails?.link
-                        val rechargeId = response.rechargeId
-                        if (link != null && rechargeId != null) {
-                            rechargeInitLiveData.postValue(Pair(link, rechargeId))
-                        } else {
-                            throw NullPointerException("The value is null")
-                        }
+                .subscribe({ response ->
+                    currentRechargeId = response.rechargeId
+                    rechargeStartDate = java.text.SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm:ss.S",
+                        java.util.Locale.getDefault()
+                    ).format(java.util.Date())
+                    val link = response.paymentLinkUrl
+                    val rechargeId = response.rechargeId
+                    if (link.isNotEmpty() && rechargeId.isNotEmpty()) {
+                        rechargeInitLiveData.postValue(Pair(link, rechargeId))
                     } else {
-                        error?.handle()
                         rechargeInitLiveData.postValue(null)
                     }
-                }
+                }, {
+                    it.handle()
+                    rechargeInitLiveData.postValue(null)
+                })
     }
 
     /**
-    * ── Step 2: Poll transaction status ──────────────────────────────────
+    * ── Step 2: Poll recharge status ──────────────────────────────────
     * Called by PaymentCountdownBottomSheetFragment on each polling tick.
-    * The startDate is the timestamp when the recharge was initiated
-    * (ISO format, e.g. "2026-02-25T10:30:00").
     **/
-
     fun checkTransactionStatus(transactionId: String, startDate: String) {
         compositeDisposable +=
             paymentRepository
-                .checkTransactionStatus(transactionId, startDate)
+                .checkRechargeStatus(transactionId)
                 .convertResponse()
                 .onBackground()
-                .subscribe { response, error ->
-                    if (!error && response != null) {
-                        val status =
-                            when (response.status.lowercase()) {
-                                "success" -> PaymentStatus.SUCCESS
-                                "failed", "failure" -> PaymentStatus.FAILURE
-                                else -> PaymentStatus.PENDING
-                            }
-                        paymentStatusLiveData.postValue(status)
-                    } else {
-                        // On poll error, don't crash — leave status as PENDING
-                        // so the countdown continues and retries next tick.
-                        error?.handle()
-                    }
-                }
+                .subscribe({ response ->
+                    val status =
+                        when (response.status.lowercase()) {
+                            "success" -> PaymentStatus.SUCCESS
+                            "failed", "failure" -> PaymentStatus.FAILURE
+                            else -> PaymentStatus.PENDING
+                        }
+                    paymentStatusLiveData.postValue(status)
+                }, {
+                    // On poll error, don't crash — leave status as PENDING
+                    // so the countdown continues and retries next tick.
+                    it.handle()
+                })
     }
 }

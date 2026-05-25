@@ -6,14 +6,17 @@ import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.response.FastagRechargeResponse
 import com.delhivery.axle.api.response.FastagStatusResponse
+import com.delhivery.axle.api.service.WalletApiService
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import javax.inject.Inject
 
 class FastagRechargeViewModel @Inject constructor(
     private val loadboardRepository: LoadboardRepository,
-    private val walletRepository: WalletRepository
+    private val walletRepository: WalletRepository,
+    private val walletApiService: WalletApiService
 ) : BaseViewModel() {
 
     val walletBalanceData = MutableLiveData<Double>()
@@ -22,7 +25,8 @@ class FastagRechargeViewModel @Inject constructor(
 
     fun fetchWalletDetails() {
         showProgress()
-        compositeDisposable plusAssign loadboardRepository.fetchWalletDetails()
+        compositeDisposable += walletApiService.fetchWalletInfo()
+            .convertResponse()
             .onBackground()
             .subscribe({ response ->
                 showProgress(false)

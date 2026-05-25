@@ -206,31 +206,6 @@ class LoadboardRepository @Inject constructor(
     fun fetchFastagStatus(tagId: String) = loadboardService.fetchFastagStatus(tagId).convertResponse()
 
     /**
-     * Fetch wallet details
-     */
-    fun fetchWalletDetails() =
-        loadboardService.fetchWalletDetails().convertResponse()
-
-    fun createWallet() =
-        loadboardService.createWallet().convertResponse()
-
-    fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0) =
-        loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset).convertResponse()
-
-    fun fetchWalletTransactionList(start: String, end: String, walletId: String, limit: Int = 10, offset: Int = 0, type: String? = null) =
-        loadboardService.fetchWalletTransactionList(start, end, walletId, limit, offset, type).convertResponse()
-
-    fun fetchTransactionStatus(start: String, txnId: String) =
-        loadboardService.fetchTransactionStatus(start, txnId).convertResponse()
-
-    fun fetchWalletRechargeList(walletId: String, start: String, end: String, limit: Int = 10, offset: Int = 0) =
-        loadboardService.fetchWalletRechargeList(walletId, start, end, limit, offset).convertResponse()
-
-    fun fetchRechargeStatus(rechargeId: String, start: String) =
-        loadboardService.fetchRechargeStatus(start, rechargeId).convertResponse()
-
-
-    /**
      * Get FASTag transactions by toll plaza or fastag ID
      */
     fun getFastagTransactionsByTollPlaza(
