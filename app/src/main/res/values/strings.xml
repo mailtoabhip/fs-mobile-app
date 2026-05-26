@@ -28,7 +28,7 @@
     <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
     <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
     <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-    <string name="msg_otp_sent_to_phone_no">A 4-digit OTP has been sent to your number ending in %1$s</string>
+    <string name="msg_otp_sent_to_phone_no">We’ve sent an OTP via SMS to:\n +91 %1$s</string>
     <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
     <string name="msg_select_route_welcome_user">Welcome\n%s</string>
     <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -209,7 +209,7 @@
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
     <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
-    <string name="label_otp">Enter OTP</string>
+    <string name="label_otp">OTP Verification</string>
     <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
     <string name="label_phone_number">Phone Number</string>
     <string name="label_isd_code">+91</string>
@@ -453,7 +453,7 @@
     <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your phone number for verification</string>
     <string name="label_resend_otp_done">Resend OTP</string>
     <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
-    <string name="label_resend">Didn’t receive OTP?</string>
+    <string name="label_resend">Haven\'t receive the OTP?</string>
     <string name="label_account_setup_primary">What do you want to do in this app?</string>
     <string name="label_account_setup_primary_select">You can always change your choice later</string>
     <string name="label_account_setup_primary_select_postloads">Post Loads</string>
@@ -555,19 +555,20 @@
     <string name="label_dialog_rate">Rate has been successfully submitted</string>
     <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
-    <!--Error (error_-->
-    <string name="error_no_internet">No Internet connection</string>
-    <string name="error_name_required">Please enter name</string>
-    <string name="error_dob_required">Please enter Date of birth</string>
-    <string name="error_location_permission_denied">Location Permission Denied</string>
-    <string name="error_search_missing_origin">Please select origin</string>
-    <string name="error_search_missing_reporting_center">Please select reporting center</string>
-    <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
-    <string name="error_upload">Oops! Something went wrong</string>
-    <string name="error_upload_document">Try uploading the document once again</string>
-    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
-    <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
-    <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
+  <!--Error (error_-->
+  <string name="error_no_internet">No Internet connection</string>
+  <string name="error_name_required">Please enter name</string>
+  <string name="error_dob_required">Please enter Date of birth</string>
+  <string name="error_location_permission_denied">Location Permission Denied</string>
+  <string name="error_search_missing_origin">Please select origin</string>
+  <string name="error_search_missing_reporting_center">Please select reporting center</string>
+  <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
+  <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
+  <string name="error_upload">Oops! Something went wrong</string>
+  <string name="error_upload_document">Try uploading the document once again</string>
+  <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+  <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
+  <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
 
 
     <string name="not_available">Not available</string>

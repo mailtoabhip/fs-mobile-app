@@ -76,8 +76,6 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
         onLocationButtonClicked()
 
         userPrefs.hasLoggedIn = false
-        binding.privacyText.movementMethod = LinkMovementMethod.getInstance()
-        binding.checkWhatsapp.isChecked=true
         viewModel.whatsapp.value = true
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())
@@ -100,15 +98,6 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
             viewModel.username.observe(this, Observer {
                 checkEnable()
             })
-
-            binding.checkTerms.setOnCheckedChangeListener { buttonView, isChecked ->
-                viewModel.termsCheck.value = isChecked
-                checkEnable()
-            }
-
-            binding.checkWhatsapp.setOnCheckedChangeListener { buttonView, isChecked ->
-                viewModel.whatsapp.value = isChecked
-            }
 
             binding.btnCreateAccount.setOnClickListener {
                 viewModel.progressLiveData.postValue(true)

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
   <data>
      <variable
@@ -99,6 +98,7 @@
               android:layout_marginTop="@dimen/size_24dp"
               android:background="@drawable/bg_login_edit"
               android:hint="@string/business_hint"
+              android:visibility="gone"
               android:imeOptions="actionNext"
               android:inputType="text"
               android:paddingEnd="@dimen/size_12dp"
@@ -126,48 +126,11 @@
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
               />
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/privacyText"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/edit_referral_code"
-              android:layout_marginBottom="@dimen/size_4dp"
-              android:layout_marginStart="@dimen/size_6dp"
-              android:layout_marginTop="22dp"
-              android:fontFamily="sans-serif"
-              android:text="@string/our_privacy_policy_outlines"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_14sp"
-              />
-          <CheckBox
-              android:id="@+id/checkTerms"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/privacyText"
-              android:gravity="top"
-              android:paddingTop="@dimen/size_4dp"
-              android:text="@string/i_read_accept"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_14sp"
-              />
-
-          <CheckBox
-              android:id="@+id/checkWhatsapp"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_below="@+id/checkTerms"
-              android:layout_marginTop="@dimen/size_8dp"
-              android:gravity="top"
-              android:paddingTop="@dimen/size_4dp"
-              android:text="@string/label_agree_whatsapp"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_14sp"
-              />
 
           <androidx.appcompat.widget.AppCompatButton
               android:id="@+id/btn_create_account"
               android:layout_width="match_parent"
-              android:layout_below="@+id/checkWhatsapp"
+              android:layout_below="@+id/edit_referral_code"
               android:layout_marginTop="@dimen/size_32dp"
               android:enabled="false"
               android:text="@string/action_proceed_account"

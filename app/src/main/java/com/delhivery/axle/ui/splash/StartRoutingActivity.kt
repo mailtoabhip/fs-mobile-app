@@ -450,7 +450,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
           bundle.putString(ARGS_NOTIFICATION_FROM, notificationFrom)
 
         }
-          navigationUtils.navigate(it.java, true, bundle)
+          navigationUtils.navigate(it.java, state != Auth, bundle)
       }
     }
   }

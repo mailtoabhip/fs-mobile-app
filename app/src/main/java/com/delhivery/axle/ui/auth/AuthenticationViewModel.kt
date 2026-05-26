@@ -106,31 +106,31 @@ class AuthenticationViewModel @Inject constructor(
         }
         .onBackground()
         .subscribe { _res, error ->
-          state = if (!error && _res.first) {
+           if (!error && _res.first) {
             if(_res.third.supplierDetails?.isLoadBoardSupplier == false || _res.third.clientDetails?.isLoadBoardClient == false){
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                Disabled
+                state = Disabled
               } else{
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
-                LoadRequest
+                state = LoadRequest
               }
             }else{
               if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
                 userPrefs.hasLoggedIn = false
-                Disabled
+                state = Disabled
               }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
                 userPrefs.hasLoggedIn = false
-                AccountDetails
+                state = AccountDetails
               }  else {
                 userPrefs.hasLoggedIn = true
                 userPrefs.lastLoginTime = Date().time
                 // Check if basic details are filled
                 if (isBasicDetailsPending()) {
-                  BasicDetails
+                  state = BasicDetails
                 } else {
-                  LoadRequest
+                  state = LoadRequest
                 }
               }
             }
@@ -139,63 +139,9 @@ class AuthenticationViewModel @Inject constructor(
               userPrefs.hasLoggedIn = false
            }
           errorLiveData.postValue(Pair(InvalidOTP, ""))
-            OTP
+            //OTP
           }
         }
-  }
-
-  /**
-   * Login password
-   */
-  fun loginUsingPassword(userName:String,password:String) {
-    /* set state to login progress and verify otp */
-    state = LoginProgress
-    compositeDisposable += Single.zip(
-      authenticationRepository.loginUsingPassword(userName, password),
-      Single.timer(1000, MILLISECONDS), //add delay for animation
-      BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
-      .flatMap { _otpRes ->
-        userRepository.getUser(false)
-          .map {
-            val msg = if (_otpRes.second.isNotNullOrEmpty()) {
-              _otpRes.second
-            } else {
-              "Error validating UserName/Password"
-            }
-            Triple(_otpRes.first, msg, it)
-          }
-      }
-      .onBackground()
-      .subscribe { _res, error ->
-        state = if (!error && _res.first) {
-          if (!_res.third.isSpEnabled && !_res.third.isClientEnabled) {
-            userPrefs.hasLoggedIn = false
-            Disabled
-          } else if (_res.third.supplierDetails?.isDeleted == true) {
-            userPrefs.hasLoggedIn = false
-            Disabled
-          } else {
-            userPrefs.hasLoggedIn = true
-            userPrefs.lastLoginTime = Date().time
-              val isAccountDetailsMissing = (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty())
-              val isSupplier = _res.third.supplierDetails?.isLoadBoardSupplier == true
-              val isClient = _res.third.clientDetails?.isLoadBoardClient == true
-            // Check if basic details are filled
-            if ((isBasicDetailsPending() || isAccountDetailsMissing)   && isSupplier && isClient) {
-                if(isAccountDetailsMissing){
-                    userPrefs.hasLoggedIn = false
-                    AccountDetails
-                }else
-                    BasicDetails
-            } else {
-              LoadRequest
-            }
-          }
-        } else {
-          errorLiveData.postValue(Pair(InvalidPassword, ""))
-          Password
-        }
-      }
   }
 
   /**
