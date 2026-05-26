@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
@@ -21,6 +22,25 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
     override fun requireConnection() = true
 
     private lateinit var adapter: FastagTruckAdapter
+
+    private val searchLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val selectedVehicle = result.data?.getStringExtra(FastagSearchActivity.RESULT_VEHICLE_NUMBER)
+            selectedVehicle?.let { vehicleNumber ->
+                val truck = adapter.currentList.firstOrNull {
+                    it.vehicleNumber.equals(vehicleNumber, ignoreCase = true)
+                }
+                truck?.let {
+                    val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
+                        putExtra(FastagTransactionDetailsActivity.VEHICLE_DATA, it)
+                    }
+                    startActivity(intent)
+                }
+            }
+        }
+    }
 
     companion object {
         fun newIntent(context: Context): Intent {
@@ -55,7 +75,10 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
     private fun setupToolbar() {
         binding.ivBack.setOnClickListener { finish() }
         binding.ivSearch.setOnClickListener {
-            // TODO: Implement search functionality
+            val vehicleNumbers = ArrayList(
+                adapter.currentList.map { it.vehicleNumber }
+            )
+            searchLauncher.launch(FastagSearchActivity.newIntent(this, vehicleNumbers))
         }
     }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/size_16dp"
+    android:paddingVertical="@dimen/size_14dp">
+
+    <ImageView
+        android:layout_width="@dimen/size_18dp"
+        android:layout_height="@dimen/size_18dp"
+        android:contentDescription="@string/fastag_search_hint"
+        android:src="@drawable/ic_search_black"
+        app:tint="@color/text_grey" />
+
+    <TextView
+        android:id="@+id/tvVehicleNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_16sp"
+        tools:text="DL02NB6724" />
+
+</LinearLayout>

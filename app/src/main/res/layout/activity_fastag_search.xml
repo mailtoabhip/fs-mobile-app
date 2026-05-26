@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- Search Toolbar -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:elevation="1dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/size_12dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/size_12dp"
+            android:layout_height="@dimen/size_12dp"
+            android:contentDescription="@string/action_continue"
+            android:src="@drawable/icon_back_button" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/fastag_search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textCapCharacters"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/color_hint"
+            android:textSize="@dimen/text_16sp" />
+
+        <ImageView
+            android:id="@+id/ivClear"
+            android:layout_width="@dimen/size_20dp"
+            android:layout_height="@dimen/size_20dp"
+            android:contentDescription="@string/fastag_clear_search"
+            android:src="@drawable/ic_cancel_icon_black"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E6E6E6" />
+
+    <!-- Search Results -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSearchResults"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/size_8dp" />
+
+</LinearLayout>

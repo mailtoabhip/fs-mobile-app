@@ -316,6 +316,11 @@
             android:name=".ui.fastag.trucks.FastagTrucksActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.fastag.trucks.FastagSearchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
             android:name=".ui.loadwallet.LoadWalletActivity"
             android:screenOrientation="portrait" />
         <activity

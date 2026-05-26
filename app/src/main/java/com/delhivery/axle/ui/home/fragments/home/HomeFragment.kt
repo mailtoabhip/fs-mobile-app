@@ -67,16 +67,12 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         }
 
         binding.myTrucksCard.setOnClickListener {
-            action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
+            startActivity(FastagTrucksActivity.newIntent(requireContext()))
         }
 
         binding.myLoadsCard.setOnClickListener {
             action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
         }
-
-//        binding.serviceGroupsRetryBtn.setOnClickListener {
-//            viewModel.retryServiceGroups()
-//        }
 
         viewModel.kycUiModel.observe(viewLifecycleOwner) { model ->
             currentUiState = model.uiState

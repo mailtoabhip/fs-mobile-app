@@ -1176,6 +1176,8 @@
     <string name="fastag_balance_low">FASTag balance low</string>
     <string name="fastag_recharge">Recharge</string>
     <string name="fastag_refresh_balance">Refresh balance</string>
+    <string name="fastag_search_hint">Search vehicle number</string>
+    <string name="fastag_clear_search">Clear search</string>
     <string name="label_load_services">Load Services</string>
     <string name="label_financial_services">Financial Services</string>
     <string name="label_services_available">%d Services Available</string>
