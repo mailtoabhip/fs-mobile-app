@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -94,7 +95,7 @@
                                     android:id="@+id/tvVehicleNumber"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="RJ-14-GH-1234"
+                                    tool:text="RJ-14-GH-1234"
                                     android:textSize="18sp"
                                     android:textStyle="bold"
                                     android:textColor="#1E293B" />
@@ -103,7 +104,6 @@
                                     android:id="@+id/tvVehicleMeta"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Own Truck | 32FTXXL | 18 MT"
                                     android:textSize="12sp"
                                     android:textColor="@color/grey_text"
                                     android:layout_marginTop="@dimen/size_4dp" />
@@ -139,7 +139,7 @@
                                     android:id="@+id/tvFastagId"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="FASTag ID: FT-9928341029"
+                                    tool:text="FASTag ID: FT-9928341029"
                                     android:textSize="11sp"
                                     android:textColor="#6B7280"
                                     android:layout_marginTop="@dimen/size_4dp" />
@@ -157,7 +157,7 @@
                                     android:id="@+id/tvAmount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="+₹1154"
+                                    tool:text="+₹1154"
                                     android:textSize="18sp"
                                     android:textStyle="bold"
                                     android:textColor="#0F172A" />

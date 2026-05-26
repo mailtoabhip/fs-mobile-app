@@ -7,7 +7,6 @@ import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.JsonObject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -86,7 +85,6 @@ class FastagTrucksViewModel @Inject constructor(
                 currentCityCode = "DEL",
                 unloadingDestination = "Mumbai",
                 unloadingDestinationCode = "BOM",
-                ownership = "owns_truck",
                 latestStatus = "Free",
                 latestUUID = "uuid_001",
                 originClusterId = "cluster_01",
