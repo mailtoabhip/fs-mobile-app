@@ -240,8 +240,9 @@ interface LoadBoardService {
     /**
      * Recharge FASTag from wallet
      */
-    @POST("/finance/users/wallet/fastag/recharge")
+    @POST("/users/wallet/fastag/recharge")
     fun rechargeFastag(
+        @Header("vendorId") vendorId: String,
         @Body request: FastagRechargeRequest
     ): Single<BaseResponse<FastagRechargeResponse>>
 

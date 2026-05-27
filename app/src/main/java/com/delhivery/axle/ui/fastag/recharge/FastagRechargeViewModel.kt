@@ -11,12 +11,14 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class FastagRechargeViewModel @Inject constructor(
     private val loadboardRepository: LoadboardRepository,
     private val walletRepository: WalletRepository,
-    private val walletApiService: WalletApiService
+    private val walletApiService: WalletApiService,
+    private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
     val walletBalanceData = MutableLiveData<Double>()
@@ -30,7 +32,7 @@ class FastagRechargeViewModel @Inject constructor(
             .onBackground()
             .subscribe({ response ->
                 showProgress(false)
-                walletBalanceData.postValue(response.currentBalance)
+                walletBalanceData.postValue(response.currentBalance.toDoubleOrNull() ?: 0.0)
             }, { error ->
                 showProgress(false)
                 walletBalanceData.postValue(0.0)

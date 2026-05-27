@@ -26,7 +26,8 @@ data class WalletTransactionHistoryResponse(
     @SerializedName("total_amount") val totalAmount: String = "0.00",
     @SerializedName("has_next") val hasNext: Boolean = false,
     @SerializedName("next_cursor") val nextCursor: String? = null,
-    @SerializedName("transactions") val transactions: List<WalletTransactionItemV2> = emptyList()
+    @SerializedName("transactions") val transactions: List<WalletTransactionItemV2> = emptyList(),
+    @SerializedName("txn_remarks") val txnRemarks: String = ""
 )
 
 /**
@@ -55,7 +56,9 @@ data class WalletRechargeHistoryResponse(
     @SerializedName("opening_balance") val openingBalance: String = "0.00",
     @SerializedName("has_next") val hasNext: Boolean = false,
     @SerializedName("next_cursor") val nextCursor: String? = null,
-    @SerializedName("recharges") val recharges: List<WalletRechargeItemV2> = emptyList()
+    @SerializedName("recharges") val recharges: List<WalletRechargeItemV2> = emptyList(),
+    @SerializedName("bank_reference_no") val bankReferenceNo: String = "",
+    @SerializedName("payment_method") val paymentMethod: String = ""
 )
 
 /**

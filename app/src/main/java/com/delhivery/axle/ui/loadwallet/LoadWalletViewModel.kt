@@ -340,10 +340,11 @@ class LoadWalletViewModel @Inject constructor(
      * Create wallet via POST /api/v1/wallet
      * On success → set balance, notify walletExistsLiveData(true)
      */
-    fun createWallet() {
+    fun createWallet(email: String = "") {
         val request = JsonObject().apply {
             addProperty("user_type", "SUPPLIER")
             addProperty("phone", userPrefs.phoneNumber ?: "")
+            addProperty("email", email)
         }
         compositeDisposable += walletApiService.createWallet(request)
             .convertResponse()

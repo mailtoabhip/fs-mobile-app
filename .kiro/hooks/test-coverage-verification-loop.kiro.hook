@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Test Coverage Verification Loop",
+  "description": "After test file creation, runs structured verification, offers auto-complete, re-verify, or run local tests",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "**/*Test.kt",
+      "**/*Tests.kt",
+      "**/*Spec.kt"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A test file was created. Run STRUCTURED VERIFICATION now.\n\n## PHASE 1: FILE READING\n1. Find source file (e.g., FooTest.kt → Foo.kt)\n2. Read SOURCE file with skipPruning=true\n3. Read TEST file with skipPruning=true\n\n## PHASE 2: STRUCTURED EXTRACTION\n\nExtract items using this structure, count each:\n\n### Category A: Class Structure\n- A1: Companion object methods\n- A2: Companion object properties/constants\n- A3: Constructor parameters\n- A4: Public methods\n- A5: Private methods with observable behavior\n\n### Category B: Data Classes\n- B1: Properties\n- B2: equals/hashCode behavior (1 per class)\n- B3: copy() function (1 per class)\n\n### Category C: Enums\n- C1: Individual enum values\n- C2: Enum properties per value\n- C3: Enum total count validation (1 per enum)\n- C4: Enum ordering validation (1 per enum)\n\n### Category D: Constants & Magic Values\n- D1: Hardcoded strings\n- D2: Hardcoded numbers\n- D3: Resource references\n\n### Category E: Branching Logic\n- E1: if/else branches\n- E2: when branches\n- E3: Null checks\n\n### Category F: Callbacks & Listeners\n- F1: Success callbacks\n- F2: Failure callbacks\n- F3: Click listeners\n\n## PHASE 3: CROSS-REFERENCE\n\nCreate itemized table:\n| ID | Item | Status | Test Name |\n|----|------|--------|-----------|\n\n## PHASE 4: SUMMARY REPORT\n\n| Category | Total | Covered | Missing |\n|----------|-------|---------|---------|\n| TOTAL | X | Y | Z |\n\nList missing items with IDs.\n\n## PHASE 5: USER CHOICE\n\nAsk user:\n```\nWhat would you like to do?\n\n1. **Auto-complete** - Add all missing test cases\n2. **Run Tests Locally** - Execute ./gradlew testUatDebugUnitTest\n3. **Done** - Finish verification\n\nChoose (1, 2, or 3):\n```\n\n### If User Chooses 1 (Auto-complete):\n- Add ALL missing test cases using standard Kotest/MockK format:\n```kotlin\ncontext(\"[Category Name]\") {\n    test(\"[descriptive name in lowercase]\") {\n        // Given\n        val input = ...\n        // When\n        val result = ...\n        // Then\n        result shouldBe expected\n    }\n}\n```\n- After adding, re-run PHASE 2-4\n- Show new coverage report\n- Ask user again with same 3 options\n\n### If User Chooses 2 (Run Tests Locally):\n- Execute: ./gradlew testUatDebugUnitTest --no-daemon\n- Show test results (pass/fail)\n- After completion, ask user again with same 3 options\n\n### If User Chooses 3 (Done):\n- Respond: \"✅ Test generation complete. Final coverage: X/Y items\""
+  }
+}
