@@ -7,11 +7,10 @@ import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityAccountDetailsBinding
 import com.delhivery.axle.ui.auth.AuthenticationUIState
-import com.delhivery.axle.ui.base.BaseLocationActivity
+import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.EVENT_SUBMITTED_ABOUT_YOURSELF
 import com.delhivery.axle.utils.EVENT_VIEW_ABOUT_YOURSELF
-import com.delhivery.axle.utils.LocationFlowState
 import com.delhivery.axle.utils.PROPERTY_BUSINESS_NAME
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_TNC
@@ -26,7 +25,7 @@ import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
-class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
+class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
     init {
         StatusBarColor = Color.parseColor("#ededff")
     }
@@ -60,7 +59,7 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
         trackEvent()
-        onLocationButtonClicked()
+        //onLocationButtonClicked()
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())
 
@@ -90,6 +89,8 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
             )
             viewModel.createAccount()
         }
+
+        binding.icBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.editName.focusClick()
         if (activitySetupTrace != null && isFirstResume) {
             activitySetupTrace?.stop()
@@ -99,12 +100,6 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
 
     fun checkEnable() {
         binding.btnCreateAccount.isEnabled = (viewModel.firstName.value?.trim().isNotNullOrEmpty() && viewModel.commConsent.value == true)
-    }
-
-    override fun updateLocationFlowState(flowState: LocationFlowState) {
-          if(flowState.equals(LocationFlowState.PermissionGranted)){
-              viewModel.locationOption.value = true
-          }
     }
 
     fun trackEvent(){
@@ -138,8 +133,11 @@ class AccountDetailsActivity :BaseLocationActivity<ActivityAccountDetailsBinding
                         startActivity(intent)
                     }
                     AuthenticationUIState.AccountDetails -> {
-                        uiUtils.showProgress("Loading...")
-                        navigationUtils.navigate(AccountDetailsActivity::class.java, false)
+                        //uiUtils.showProgress("Loading...")
+                        val intent = Intent(this@AccountDetailsActivity, AccountDetailsActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                       // navigationUtils.navigate(AccountDetailsActivity::class.java, false)
                     }
                     AuthenticationUIState.Disabled -> {
                         uiUtils.hideDelhiveryProgress()

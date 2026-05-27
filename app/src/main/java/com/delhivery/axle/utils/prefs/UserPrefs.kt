@@ -38,6 +38,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
     get() = prefs.getString(PrefKeys.JWTToken, null)
 
+    var refreshToken: String?
+        set(value) = editor.putString(PrefKeys.RefreshToken, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.RefreshToken, null)
   /**
    *  Base/Origin City Code
    */
@@ -880,6 +884,15 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   var walletId: String
     set(value) = editor.putString(PrefKeys.WalletId, value).apply()
     get() = prefs.getString(PrefKeys.WalletId, "") ?: ""
+
+  /**
+   * Whether the current user is a new user (has not completed profile setup).
+   * Set to true from is_new_user in /auth/verify response.
+   * Set to false when /auth/profile returns a non-null first_name.
+   */
+  var isNewUser: Boolean
+    set(value) = editor.putBoolean(PrefKeys.IsNewUser, value).apply()
+    get() = prefs.getBoolean(PrefKeys.IsNewUser, false)
   /**
    * Clear all preferences
    */
@@ -1292,6 +1305,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
    */
   internal object PrefKeys {
     const val JWTToken = "jwt_token"
+    const val RefreshToken = "refresh_token"
     const val CityCode = "city_code"
     const val CityName = "city_name"
     const val GNCityCode = "gn_city_code"
@@ -1425,6 +1439,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val ReturningFromDeletion= "returningFromDeletion"
     const val LastLoggedInUserId= "last_logged_in_userID"
     const val WalletId = "wallet_id"
+    const val IsNewUser = "is_new_user"
   }
 }
 

@@ -1,5 +1,6 @@
 package com.delhivery.axle.api.repository
 
+import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.FsInitiateRequest
 import com.delhivery.axle.api.request.FsRefreshTokenRequest
 import com.delhivery.axle.api.request.FsUpdateProfileRequest
@@ -14,7 +15,9 @@ import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.FsAuthService
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
 import com.delhivery.axle.utils.ErrorLogger
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -70,7 +73,10 @@ class FsAuthRepository @Inject constructor(
         ).toResource()
         // Persist token and update interceptor so subsequent authenticated calls work immediately
         userPrefs.jwtToken = data.accessToken
+        userPrefs.refreshToken = data.refreshToken
         networkInterceptor.updateJWT(data.accessToken)
+        // Persist new-user flag from the verify response
+        userPrefs.isNewUser = data.isNewUser ?: false
         data
     }
 
@@ -80,8 +86,7 @@ class FsAuthRepository @Inject constructor(
      */
     suspend fun logout(): Resource<FsLogoutData> = safeApiCall {
         val data = fsAuthService.logout().toResource()
-        networkInterceptor.updateJWT(null)
-        userPrefs.jwtToken = null
+        localLogout()
         data
     }
 
@@ -95,27 +100,31 @@ class FsAuthRepository @Inject constructor(
 
     /**
      * Updates the user's profile fields.
-     * At least one of [firstName], [lastName], or [commConsent] must be non-null.
      *
-     * @param firstName   Updated first name (optional)
+     * @param firstName   Updated first name
      * @param lastName    Updated last name (optional)
-     * @param commConsent Consent to receive app updates via contact details (optional)
+     * @param commConsent Consent to receive app updates via contact details
      */
     suspend fun updateProfile(
         firstName: String? = null,
         lastName: String? = null,
         commConsent: Boolean? = null
     ): Resource<FsUpdateProfileData> = safeApiCall {
-        require(firstName != null || lastName != null || commConsent != null) {
-            "At least one of firstName, lastName, or commConsent must be provided"
+        require(firstName != null && commConsent != null) {
+            "FirstName and Communication Consent is required"
         }
-        fsAuthService.updateProfile(
+        val data = fsAuthService.updateProfile(
             FsUpdateProfileRequest(
                 firstName = firstName,
                 lastName = lastName,
                 commConsent = commConsent
             )
         ).toResource()
+        // If the server returns a non-null first_name, the user has completed profile setup
+        if (!data.user.firstName.isNullOrEmpty()) {
+            userPrefs.isNewUser = false
+        }
+        data
     }
 
     /**
@@ -138,5 +147,24 @@ class FsAuthRepository @Inject constructor(
         userPrefs.jwtToken = data.accessToken
         networkInterceptor.updateJWT(data.accessToken)
         data
+    }
+
+    fun authStatus() = when (userPrefs.jwtToken.isNotNullOrEmpty() && userPrefs.refreshToken.isNotNullOrEmpty()) {
+        true -> JWT(userPrefs.refreshToken!!).expiresAt.let { expiresAt ->
+            when (expiresAt != null && expiresAt.after(Date())) {
+                true -> true
+                false -> {
+                    /* expired: clear credentials and logout */
+                    localLogout()
+                    false
+                }
+            }
+        }
+        false -> false
+    }
+
+    fun localLogout() {
+        networkInterceptor.updateJWT(null)
+        userPrefs.clearPrefs()
     }
 }

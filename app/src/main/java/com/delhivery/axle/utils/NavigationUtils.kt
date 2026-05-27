@@ -46,9 +46,9 @@ import java.lang.Exception
  */
 @ActivityScope
 class NavigationUtils @Inject constructor(
-        private val activity: DaggerAppCompatActivity,
-        private val authRepository: AuthenticationRepository,
-        private val uiUtils: UiUtils
+    private val activity: DaggerAppCompatActivity,
+    private val authRepository: AuthenticationRepository,
+    private val uiUtils: UiUtils
 ) {
 
   @Inject lateinit var userPrefs: UserPrefs

@@ -450,10 +450,10 @@
 
     <!--Label (label_)-->
     <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
-    <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your phone number for verification</string>
+    <string name="sub_label_phone_number">We\'ll send you an OTP via SMS to confirm your phone number.</string>
     <string name="label_resend_otp_done">Resend OTP</string>
     <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
-    <string name="label_resend">Haven\'t receive the OTP?</string>
+    <string name="label_resend">Haven\'t received the OTP?</string>
     <string name="label_account_setup_primary">What do you want to do in this app?</string>
     <string name="label_account_setup_primary_select">You can always change your choice later</string>
     <string name="label_account_setup_primary_select_postloads">Post Loads</string>

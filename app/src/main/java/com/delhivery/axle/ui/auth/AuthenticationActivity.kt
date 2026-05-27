@@ -226,12 +226,14 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         when (state) {
           PhoneNo -> {
             //show keyboard
+            binding.icBack.visibility = View.INVISIBLE
             Handler(Looper.getMainLooper()).postDelayed({
               binding.editPhoneNo.requestFocus()
               uiUtils.toggleKeyboard(false)
             }, 600)
           }
           OTP -> {
+            binding.icBack.visibility = View.VISIBLE
             uiUtils.hideDelhiveryProgress()
             uiUtils.toggleKeyboard(false)
             resetVerifyButton()
@@ -246,6 +248,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           LoginProgress -> {
             // Show loading inside the verify button instead of a full-screen overlay
+            binding.icBack.visibility = View.VISIBLE
             binding.btnVerifyOtp.text = ""
             binding.btnVerifyOtp.isEnabled = false
             binding.progressVerifyOtp.visibility = View.VISIBLE

@@ -59,10 +59,12 @@ class AuthenticationViewModel @Inject constructor(
 
         userPrefs.phoneNumber = phoneNo
         otpStatusLiveData.postValue(true)
+        showProgress()
 
         viewModelScope.launch {
             when (val result = fsAuthRepository.initiate(phoneNo)) {
                 is Resource.Success -> {
+                    showProgress(false)
                     val data = result.data
                     if (data != null) {
                         loginSession = data.session
@@ -74,6 +76,7 @@ class AuthenticationViewModel @Inject constructor(
                     }
                 }
                 is Resource.Failure -> {
+                    showProgress(false)
                     otpStatusLiveData.postValue(false)
                     Log.e("AuthVM", "initiate failed: code=${result.errorCode}, error=${result.apiError}")
                     errorLiveData.postValue(Pair(InvalidOTP, "Failed to send OTP. Please try again."))

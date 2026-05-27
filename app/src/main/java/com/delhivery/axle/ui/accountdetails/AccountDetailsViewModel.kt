@@ -62,7 +62,6 @@ class AccountDetailsViewModel @Inject constructor(
                 commConsent = commConsent
             )) {
                 is Resource.Success -> {
-                    userPrefs.hasLoggedIn = true
                     userPrefs.lastLoginTime = Date().time
                     state = HomePage
                 }

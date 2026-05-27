@@ -148,6 +148,11 @@ enum class UrlConfig(
         "https://orion-user-onboarding-api-dev.delhivery.com/",
         "https://orion-user-onboarding-api-uat.delhivery.com/"
   ),
+
+    /*
+    *
+    * TODO
+    *  Update BASE urls with real endpoints*/
   FsAuthService(
       "https://fs-auth.delhivery.com/",
       "https://fs-auth-dev.delhivery.com/",

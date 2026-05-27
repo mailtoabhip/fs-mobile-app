@@ -1,9 +1,10 @@
 package com.delhivery.axle.ui.splash
 
-import com.delhivery.axle.api.repository.AuthenticationRepository
+import com.delhivery.axle.api.repository.FsAuthRepository
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.ui.splash.SplashPostState.*
-import com.delhivery.axle.utils.prefs.GlobalPrefs
+import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
+import com.delhivery.axle.ui.splash.SplashPostState.Auth
+import com.delhivery.axle.ui.splash.SplashPostState.Home
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
@@ -11,8 +12,7 @@ import javax.inject.Inject
  * View model for [StartRoutingActivity]]
  */
 class SplashViewModel @Inject constructor(
-  private val authenticationRepository: AuthenticationRepository,
-  private val globalPrefs: GlobalPrefs,
+  private val authenticationRepository: FsAuthRepository,
   private val userPrefs: UserPrefs
 ) :
     BaseViewModel() {
@@ -22,7 +22,7 @@ class SplashViewModel @Inject constructor(
    */
   fun postState() = when {
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
-    authenticationRepository.authStatus() && userPrefs.hasLoggedIn && getOldUser() && (userPrefs.userName.isEmpty() ||userPrefs.companyName.isEmpty())-> AccountDetails
+    authenticationRepository.authStatus() && userPrefs.hasLoggedIn && userPrefs.isNewUser -> AccountDetails
     else -> Auth
   }
 
@@ -60,7 +60,4 @@ class SplashViewModel @Inject constructor(
     userPrefs.podAddress=podAddress
   }
 
-  fun getOldUser():Boolean{
-    return !(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false)
-  }
 }

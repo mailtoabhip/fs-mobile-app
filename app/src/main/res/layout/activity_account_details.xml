@@ -26,8 +26,7 @@
         android:gravity="center"
         android:padding="@dimen/size_8dp"
         android:layout_marginHorizontal="@dimen/size_24dp"
-        android:layout_marginTop="@dimen/size_18dp"
-        android:layout_marginBottom="@dimen/size_12dp"
+        android:layout_marginVertical="@dimen/size_14dp"
         android:src="@drawable/icon_back_button"
         android:tint="@color/background_dark_grey"
         />
@@ -63,7 +62,7 @@
               android:lineSpacingExtra="@dimen/text_6sp"
               android:text="@string/str_get_to_know_you"
               android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_24sp"
+              android:textSize="@dimen/size_28dp"
               android:textStyle="bold"
               />
 
@@ -72,6 +71,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_below="@+id/label_tellus"
+              android:lineSpacingMultiplier="1.2"
               bind:layout_constraintTop_toBottomOf="@id/label_tellus"
               android:layout_marginBottom="@dimen/size_16dp"
               android:layout_marginTop="@dimen/size_12dp"
@@ -155,6 +155,8 @@
             android:id="@+id/communication_consent_cb"
             bind:layout_constraintTop_toBottomOf="@id/edit_last_name"
             android:layout_width="match_parent"
+            android:textSize="@dimen/text_14sp"
+            android:lineSpacingMultiplier="1.2"
             android:checked="@={viewModel.commConsent}"
             android:layout_marginTop="@dimen/size_28dp"
             android:text="@string/str_communication_consent_note"

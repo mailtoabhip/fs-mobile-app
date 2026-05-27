@@ -9,7 +9,6 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Settings.Secure
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -18,18 +17,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivitySplashBinding
-import com.delhivery.axle.fcm.ARGS_DEEPLINK_ID
-import com.delhivery.axle.fcm.ARGS_DEEPLINK_TYPE
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_FROM
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_KEY
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
-import com.delhivery.axle.fcm.ARGS_OFFER_ID
-import com.delhivery.axle.fcm.ARGS_PREFERRED_TRANSACTION_ID
-import com.delhivery.axle.fcm.ARGS_PRICING_ID
-import com.delhivery.axle.fcm.ARGS_PRICING_SORT_KEY
-import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
-import com.delhivery.axle.fcm.ARGS_VEHICLE_NUMBER
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
@@ -47,7 +34,6 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.SecurityPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -62,24 +48,22 @@ import kotlin.system.exitProcess
  */
 class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
   init {
-    StatusBarColor = Color.parseColor("#181818")
+    StatusBarColor = Color.parseColor("#FFFFFF")
   }
 
   override fun getViewModelClass() = SplashViewModel::class.java
 
   override fun layoutId() = R.layout.activity_splash
 
-
   var latestCode :Int = 0
   var currentCode :Int =0
   var type :String = ""
-  var tid :String  = ""
   lateinit var splashScreen: SplashScreen
   lateinit var isAuthenticated :SplashPostState
   var ifUpdateFalse=false
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
-    override fun requireConnection() = false
+  override fun requireConnection() = false
   @Inject lateinit var userPrefs: UserPrefs
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,20 +87,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             mutableListOf(PROPERTY_USER_ID, PROPERTY_HOUR_OF_DAY),
             mutableListOf(userPrefs.userId() , currentHourIn24Format.toString())
     )
-
-    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_KEY) ?: ""
-    transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""
-    notificationType = intent?.extras?.getString(ARGS_NOTIFICATION_TYPE) ?: ""
-    preferredTransactionId = intent?.extras?.getString(ARGS_PREFERRED_TRANSACTION_ID) ?: ""
-
-     //For Inventory only
-    vehicleNumber = intent?.extras?.getString(ARGS_VEHICLE_NUMBER) ?: ""
-
-    //For pricing
-    pricingId =  intent?.extras?.getString(ARGS_PRICING_ID) ?: ""
-    pricingSortKey =  intent?.extras?.getString(ARGS_PRICING_SORT_KEY) ?: ""
-    notificationFrom =  intent?.extras?.getString(ARGS_NOTIFICATION_FROM) ?: ""
-    pricingOfferId =  intent?.extras?.getString(ARGS_OFFER_ID) ?: ""
     isFirstResume = true
   }
   
@@ -207,9 +177,9 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
       isEmulator -> "emulator"
       else -> "unknown"
     }
-    
+
     Log.w(TAG, "Security dialog dismissed by user. Threat: $threatType")
-    
+
     // TODO: Uncomment when analytics is ready
     // analyticsUtil.moEngageTrackEvent(
     //     "security_dialog_dismissed",
@@ -228,7 +198,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   /*  userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
     userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name*/
     animate()
-    checkForDynamicLinks()
     if(!userPrefs.hasLoggedIn) {
       compositeDisposable += requestPermission(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
         .onBackground()
@@ -266,26 +235,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
             isFirstResume = false
         }
     }
-  private fun checkForDynamicLinks() {
-    FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
-            .addOnSuccessListener(this){
-              Log.d("dynamicLinkFromSplash","Dynamic link Received")
-              var deepLink: Uri? = null
-              if (it != null) {
-                deepLink = it.link
-              }
-              if(deepLink != null){
-                Log.d("dynamicLinkFromSplash","Deep link Received" +deepLink.toString())
-                type = deepLink.getQueryParameter("type")?:""
-                tid = deepLink.getQueryParameter("id")?:""
-                Log.d("dynamicLinkFromSplash","Deep link Parameters $tid $type")
-              }
-            }
-            .addOnFailureListener(this){
-              Log.d("dynamicLinkFromSplash", "getDynamicLink:onFailure")
-            }
-  }
-
   /**
    * Splash animation chain
    */
@@ -311,23 +260,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
         }
       }
 
-  }
-
-  private fun openPlayStore() {
-    val appPackageName = packageName
-    try {
-      startActivity(
-          Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName"))
-      )
-    } catch (anfe: android.content.ActivityNotFoundException) {
-      startActivity(
-          Intent(
-              Intent.ACTION_VIEW, Uri.parse(
-              "https://play.google.com/store/apps/details?id=$appPackageName"
-          )
-          )
-      )
-    }
   }
 
   private fun checkForUpdatedVersion(completedAction: (success: Boolean) -> Unit) {
@@ -359,37 +291,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
               0
             }
 
-            try {
-              viewModel.savePMTValidation(
-                  remoteConfig.getString("max_pmt_rate").toInt(),
-                  remoteConfig.getString("max_cost_per_km").toInt()
-              )
-            } catch (e: NumberFormatException) {
-              //Do Nothing
-            }
-              try{
-              viewModel.saveLoadPostKycConfig(
-                  remoteConfig.getString("onboarding_order")
-              )
-                  viewModel.saveTruckPostKycConfig(
-                      remoteConfig.getString("onboarding_order")
-                  )
-                viewModel.saveShareBannerH1Config(
-                    remoteConfig.getString("advert_share_rate_banner_h1")
-                )
-                viewModel.saveShareBannerH2Config(
-                    remoteConfig.getString("advert_share_rate_banner_h2")
-                )
-                viewModel.saveShareBannerH3Config(
-                    remoteConfig.getString("advert_share_rate_banner_h3")
-                )
-                viewModel.savePodAddress(
-                    remoteConfig.getString("pod_address")
-                )
-          } catch (e: Exception) {
-            //Do Nothing
-        }
-
             val pInfo = this.packageManager.getPackageInfo(packageName, 0)
             currentVersionCode = if (VERSION.SDK_INT >= VERSION_CODES.P) {
               pInfo.longVersionCode.toInt()
@@ -419,39 +320,13 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   }
 
   private fun postAnimate(state: SplashPostState) {
-    /**
-     * Check If it's from deep link
-     * */
     userPrefs.setPreviousScreen(this.javaClass.name)
-    if (state == Home && type != "") {
-      val bundle = Bundle()
-      bundle.putString(ARGS_DEEPLINK_TYPE , type)
-      bundle.putString(ARGS_DEEPLINK_ID , tid)
-     navigationUtils.navigate(HomeActivity::class.java, true, bundle)
-    } else {
-      when (state) {
-        Auth -> AuthenticationActivity::class
-        Home -> HomeActivity::class
-        AccountDetails -> AccountDetailsActivity::class
-      }.let {
-        val bundle = Bundle()
-        if (!TextUtils.isEmpty(notificationId)) {
-          bundle.putString(ARGS_NOTIFICATION_ID, notificationId)
-          bundle.putString(ARGS_NOTIFICATION_TYPE, notificationType)
-          bundle.putString(ARGS_TRANSACTION_IDS, transactions)
-          bundle.putString(ARGS_PREFERRED_TRANSACTION_ID, preferredTransactionId)
-          //For Inventory
-          bundle.putString(ARGS_VEHICLE_NUMBER, vehicleNumber)
-
-          //For pricing
-          bundle.putString(ARGS_PRICING_ID, pricingId)
-          bundle.putString(ARGS_PRICING_SORT_KEY, pricingSortKey)
-          bundle.putString(ARGS_OFFER_ID, pricingOfferId)
-          bundle.putString(ARGS_NOTIFICATION_FROM, notificationFrom)
-
-        }
-          navigationUtils.navigate(it.java, state != Auth, bundle)
-      }
+    when (state) {
+      Auth -> AuthenticationActivity::class
+      Home -> HomeActivity::class
+      AccountDetails -> AccountDetailsActivity::class
+    }.let {
+        navigationUtils.navigate(it.java, true)
     }
   }
 }
