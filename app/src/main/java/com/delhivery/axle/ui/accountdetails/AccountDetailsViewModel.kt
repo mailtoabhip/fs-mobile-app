@@ -1,140 +1,78 @@
 package com.delhivery.axle.ui.accountdetails
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.LoadboardRepository
-import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.request.UpdateUserRequest
-import com.delhivery.axle.ui.accountaction.AccountActionActivity
+import androidx.lifecycle.viewModelScope
+import com.delhivery.axle.api.repository.FsAuthRepository
+import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.ui.accountaction.AccountType
 import com.delhivery.axle.ui.accountrole.AccountRole
-import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIState
 import com.delhivery.axle.ui.auth.AuthenticationUIState.*
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import io.reactivex.Single
-import io.reactivex.Single.zip
-import io.reactivex.functions.BiFunction
-import retrofit2.HttpException
+import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
  * View model for [AccountDetailsActivity]
  */
 class AccountDetailsViewModel @Inject constructor(
-        private val loadboardRepository: LoadboardRepository,
-        private val userRepository: UserRepository,
-        private val userPrefs: UserPrefs
+    private val fsAuthRepository: FsAuthRepository,
+    private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
     /* states */
     var stateLiveData = MutableLiveData<AuthenticationUIState>()
-    var mode:AccountType? = null
-    var role: AccountRole? = null
     var errorAccountCreate: String? = null
-    var state: AuthenticationUIState = AuthenticationUIState.PhoneNo
+    var state: AuthenticationUIState = PhoneNo
         set(value) {
             stateLiveData.postValue(value)
         }
 
-    var updateUserStatusLiveData = MutableLiveData<String>()
     var createUserStatusLiveData = MutableLiveData<String>()
 
-    var username = MutableLiveData<String>()
-    var business_name = MutableLiveData<String>()
-    var referral_code = MutableLiveData<String>()
-    var whatsapp = MutableLiveData<Boolean>()
-    var termsCheck = MutableLiveData<Boolean>()
+    /* binding vars — username maps to first_name in the new contract */
+    var firstName = MutableLiveData<String>()
+    var lastName = MutableLiveData<String>()
+    var commConsent = MutableLiveData<Boolean>()
     var locationOption = MutableLiveData<Boolean>()
 
     /**
-     * Create user
+     * Saves the user's profile via PUT /api/v1/auth/profile.
+     * [firstName] is used as first_name, [lastName] as last_name.
+     * [commConsent] is taken from the whatsapp/comms checkbox value.
      */
-    fun createAccount(updateUserRequest: UpdateUserRequest) {
+    fun createAccount() {
         if (!isConnected) return
-        state = LoginProgress
-        updateUserRequest.phoneNumber = userPrefs.phoneNumber.toString()
-        compositeDisposable += Single.zip(
-                loadboardRepository.createUser(updateUserRequest),
-                Single.timer(1000, TimeUnit.MILLISECONDS), //add delay for animation
-        BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 }
-        ).flatMap { _otpRes ->
-            userRepository.getUser(false)
-                    .map {
-                        val msg = if (_otpRes.second.isNotNullOrEmpty()) {
-                            _otpRes.second
-                        } else {
-                            "Account not created"
-                        }
-                        Triple(_otpRes, msg, it)
-                    }
-        }
-                .onBackground()
-                .progress()
-                .subscribe { _res, error ->
-                    state = if (!error && _res.first.first) {
-                        val isSupplier = _res.third.supplierDetails?.isLoadBoardSupplier == true
-                        val isClient = _res.third.clientDetails?.isLoadBoardClient == true
-                        val isAccountDetailsMissing = (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty())
-                        if(_res.third.supplierDetails?.isLoadBoardSupplier == true || _res.third.clientDetails?.isLoadBoardClient == true){
-                            if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
-                                userPrefs.hasLoggedIn = false
-                                Disabled
-                            } else{
-                                userPrefs.hasLoggedIn = true
-                                userPrefs.lastLoginTime = Date().time
-                                // Check if basic details are filled, account details missing case is nearly impossible here, added just for safe side
-                                if (isSupplier && isClient && (isBasicDetailsPending() || isAccountDetailsMissing)) {
-                                    if(isAccountDetailsMissing){
-                                        userPrefs.hasLoggedIn = false
-                                        AccountDetails
-                                    }else
-                                        BasicDetails
-                                } else {
-                                    LoadRequest
-                                }
-                            }
-                        }else{
-                            if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
-                                userPrefs.hasLoggedIn = false
-                                Disabled
-                            }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
-                                userPrefs.hasLoggedIn = false
-                                AccountDetails
-                            } else{
-                                userPrefs.hasLoggedIn = true
-                                userPrefs.lastLoginTime = Date().time
-                                // Check if basic details are filled
-                                if (isSupplier && isClient && isBasicDetailsPending()) {
-                                    BasicDetails
-                                } else {
-                                    LoadRequest
-                                }
-                            }
-                        }
-                    } else {
-                        if (error is HttpException) {
-                            userPrefs.hasLoggedIn = false
-                        }
-                        errorAccountCreate = _res.first.second
-                        OTP
-                    }
-                }
-    }
 
-    /**
-     * Check if basic details (vendor type, route type, lanes) are pending
-     */
-    private fun isBasicDetailsPending(): Boolean {
-        return userPrefs.getLanesPreference().isNullOrEmpty() &&
-               userPrefs.truckTypes.isNullOrEmpty() &&
-               userPrefs.onboardingStatus == "details_pending" &&
-               (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty())
+        val firstName = firstName.value?.trim()
+        val lastName = lastName.value?.trim()
+        val commConsent = commConsent.value ?: false
+
+        if (firstName.isNullOrEmpty()) return
+
+        state = LoginProgress
+
+        viewModelScope.launch {
+            when (val result = fsAuthRepository.updateProfile(
+                firstName = firstName,
+                lastName = lastName?.ifEmpty { null },
+                commConsent = commConsent
+            )) {
+                is Resource.Success -> {
+                    userPrefs.hasLoggedIn = true
+                    userPrefs.lastLoginTime = Date().time
+                    state = HomePage
+                }
+                is Resource.Failure -> {
+                    Log.e("AccountDetailsVM", "updateProfile failed: code=${result.errorCode}, error=${result.apiError}")
+                    errorAccountCreate = "Something went wrong. Please try again."
+                    state = OTP // reuses OTP state to show snackbar error in the Activity
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
     }
 }

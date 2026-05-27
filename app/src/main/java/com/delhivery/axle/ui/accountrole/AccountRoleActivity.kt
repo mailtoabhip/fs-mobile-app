@@ -4,23 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.request.UpdateUserRequest
 import com.delhivery.axle.databinding.ActivityAccountRoleBinding
-import com.delhivery.axle.databinding.ActivityVerifyPanBinding
 import com.delhivery.axle.ui.accountaction.*
-import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
-import com.delhivery.axle.ui.accountdetails.accountDetailIntent
 import com.delhivery.axle.ui.auth.AuthenticationActivity
-import com.delhivery.axle.ui.auth.AuthenticationUIState
-
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.utils.*
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
@@ -75,7 +67,7 @@ class AccountRoleActivity  : BaseActivity<ActivityAccountRoleBinding, AccountRol
         //set up the mode
         binding.btnProceed.setOnClickListener {
             viewModel.updateUser(UpdateUserRequest(userRole = viewModel.roleLiveData.value?.title))
-            startActivity(accountDetailIntent(this, viewModel.modeLiveData.value, viewModel.roleLiveData.value))
+            //startActivity(accountDetailIntent(this))
         }
 
         binding.shipperLayout.setOnClickListener {

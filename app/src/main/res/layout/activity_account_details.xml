@@ -9,30 +9,43 @@
         />
   </data>
 
-  <androidx.appcompat.widget.LinearLayoutCompat
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/parent_cl"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/white"
       android:orientation="vertical"
       android:fitsSystemWindows="true">
 
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_toolbar"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ic_back"
+        android:layout_width="@dimen/size_28dp"
+        android:layout_height="@dimen/size_28dp"
+        bind:layout_constraintTop_toTopOf="parent"
+        bind:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"
+        android:padding="@dimen/size_8dp"
+        android:layout_marginHorizontal="@dimen/size_24dp"
+        android:layout_marginTop="@dimen/size_18dp"
+        android:layout_marginBottom="@dimen/size_12dp"
+        android:src="@drawable/icon_back_button"
+        android:tint="@color/background_dark_grey"
         />
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/horizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_1dp"
+        android:layout_marginTop="@dimen/size_10dp"
+        bind:layout_constraintTop_toBottomOf="@id/ic_back"
+        android:padding="0dp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:id="@+id/scView"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        bind:layout_constraintTop_toBottomOf="@id/horizontalDivider">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-      <RelativeLayout
+      <androidx.constraintlayout.widget.ConstraintLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
            android:orientation="vertical"
@@ -40,20 +53,15 @@
           android:paddingStart="@dimen/size_24dp"
           android:paddingEnd="@dimen/size_24dp">
 
-        <RelativeLayout
-            android:id="@+id/account_details_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/label_tellus"
-              android:layout_width="wrap_content"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="@dimen/size_16dp"
               android:fontFamily="sans-serif"
+              bind:layout_constraintTop_toTopOf="parent"
               android:lineSpacingExtra="@dimen/text_6sp"
-              android:text="@string/label_tellus"
+              android:text="@string/str_get_to_know_you"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_24sp"
               android:textStyle="bold"
@@ -61,16 +69,33 @@
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/label_select_tellus"
-              android:layout_width="wrap_content"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_below="@+id/label_tellus"
+              bind:layout_constraintTop_toBottomOf="@id/label_tellus"
               android:layout_marginBottom="@dimen/size_16dp"
               android:layout_marginTop="@dimen/size_12dp"
               android:fontFamily="sans-serif"
               android:gravity="start"
-              android:text="@string/label_tellus_detail"
+              android:text="@string/str_tell_us_your_name"
               android:textColor="@color/sub_heading_black"
-              android:textSize="@dimen/text_16sp"
+              android:textSize="@dimen/text_14sp"
+              />
+
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/tv_first_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/label_tellus"
+              bind:layout_constraintTop_toBottomOf="@id/label_select_tellus"
+              bind:layout_constraintStart_toStartOf="parent"
+              android:layout_marginBottom="@dimen/size_16dp"
+              android:layout_marginTop="@dimen/size_24dp"
+              android:fontFamily="sans-serif"
+              android:gravity="start"
+              android:text="@string/str_first_name"
+              android:textColor="@color/sub_heading_black"
+              android:textSize="@dimen/text_14sp"
               />
           <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
               android:id="@+id/edit_name"
@@ -78,73 +103,77 @@
               android:layout_height="@dimen/edit_text_height"
               android:layout_below="@+id/label_select_tellus"
               android:layout_marginBottom="16dp"
-              android:layout_marginTop="@dimen/size_32dp"
+              android:layout_marginTop="@dimen/size_8dp"
               android:background="@drawable/bg_login_edit"
-              android:hint="@string/name_hint"
+              android:hint="@string/str_enter_here"
+              bind:layout_constraintTop_toBottomOf="@id/tv_first_name"
               android:imeOptions="actionNext"
               android:inputType="text"
               android:paddingEnd="@dimen/size_12dp"
               android:paddingStart="@dimen/size_12dp"
-              android:text="@={viewModel.username}"
-              android:textColor="@color/heading_black"
-              android:textSize="@dimen/text_16sp"
-              />
-          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
-              android:id="@+id/edit_business_name"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/edit_text_height"
-              android:layout_below="@+id/edit_name"
-              android:layout_marginBottom="16dp"
-              android:layout_marginTop="@dimen/size_24dp"
-              android:background="@drawable/bg_login_edit"
-              android:hint="@string/business_hint"
-              android:visibility="gone"
-              android:imeOptions="actionNext"
-              android:inputType="text"
-              android:paddingEnd="@dimen/size_12dp"
-              android:paddingStart="@dimen/size_12dp"
-              android:text="@={viewModel.business_name}"
+              android:text="@={viewModel.firstName}"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
               />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_last_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/label_tellus"
+            bind:layout_constraintTop_toBottomOf="@id/edit_name"
+            bind:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:text="@string/str_last_name"
+            android:textColor="@color/sub_heading_black"
+            android:textSize="@dimen/text_14sp"
+            />
+
 
           <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
-              android:id="@+id/edit_referral_code"
+              android:id="@+id/edit_last_name"
               android:layout_width="match_parent"
               android:layout_height="@dimen/edit_text_height"
-              android:layout_below="@+id/edit_business_name"
               android:layout_marginBottom="16dp"
-              android:layout_marginTop="@dimen/size_24dp"
+              android:layout_marginTop="@dimen/size_8dp"
+              bind:layout_constraintTop_toBottomOf="@id/tv_last_name"
               android:background="@drawable/bg_login_edit"
-              android:hint="@string/referral_hint"
+              android:hint="@string/str_enter_here"
               android:imeOptions="actionDone"
               android:inputType="text"
               android:paddingEnd="@dimen/size_12dp"
               android:paddingStart="@dimen/size_12dp"
-              android:text="@={viewModel.referral_code}"
+              android:text="@={viewModel.lastName}"
               android:textColor="@color/heading_black"
               android:textSize="@dimen/text_16sp"
               />
 
+        <CheckBox
+            android:id="@+id/communication_consent_cb"
+            bind:layout_constraintTop_toBottomOf="@id/edit_last_name"
+            android:layout_width="match_parent"
+            android:checked="@={viewModel.commConsent}"
+            android:layout_marginTop="@dimen/size_28dp"
+            android:text="@string/str_communication_consent_note"
+            android:layout_height="wrap_content"/>
+
           <androidx.appcompat.widget.AppCompatButton
               android:id="@+id/btn_create_account"
               android:layout_width="match_parent"
-              android:layout_below="@+id/edit_referral_code"
-              android:layout_marginTop="@dimen/size_32dp"
+              android:layout_marginTop="@dimen/size_24dp"
+              bind:layout_constraintTop_toBottomOf="@id/communication_consent_cb"
               android:enabled="false"
-              android:text="@string/action_proceed_account"
+              android:text="@string/action_continue"
               android:textAllCaps="false"
               style="@style/ActionButton"
               />
-        </RelativeLayout>
-
-
-      </RelativeLayout>
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-  </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 
 

@@ -429,4 +429,17 @@ class NetworkModule {
   fun provideDocumentUtils(
     documentService: DocumentService
   ): DocumentUtils = DocumentUtils(documentService)
+
+  /**
+   * Provide [FsAuthService] for FS Auth Service (signup, login, profile, token refresh).
+   * Uses the coroutines-based Retrofit instance — no RxJava adapter needed.
+   */
+  @Provides
+  @Singleton
+  fun provideFsAuthService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ): FsAuthService = getRetrofitForCoroutines(gson, okHttpClient, UrlConfig.FsAuthService).create(
+    FsAuthService::class.java
+  )
 }

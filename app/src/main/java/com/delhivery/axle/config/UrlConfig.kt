@@ -148,10 +148,10 @@ enum class UrlConfig(
         "https://orion-user-onboarding-api-dev.delhivery.com/",
         "https://orion-user-onboarding-api-uat.delhivery.com/"
   ),
-  FastagService(
-        "https://orion-user-loadboard.delhivery.com/",
-        "https://orion-user-onboarding-api-dev.delhivery.com/",
-        "https://orion-user-onboarding-api-uat.delhivery.com/"
+  FsAuthService(
+      "https://fs-auth.delhivery.com/",
+      "https://fs-auth-dev.delhivery.com/",
+      "https://orion-user-onboarding-api-uat.delhivery.com"  // Android emulator loopback → Mac localhost; replace with Mac's LAN IP for physical device
   ),
   AppID(
   "83", "371", "371"

@@ -34,51 +34,6 @@ class AuthenticationRepository @Inject constructor(
   }
 
   /**
-   * Send otp to phone number and return if success and error message
-   */
-  fun sendOTP(phoneNo: String) =
-    loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
-      .map {
-        Pair(true, it.successMsg)
-      }
-      .onErrorReturn {
-        /* handle error if needed */
-        Pair(false, it.errorResponseBody()?.errorBody?.errorMessage.toString())
-      }
-
-  /**
-   * Verify OTP
-   */
-  fun verifyOTP(
-    phoneNo: String,
-    otp: String
-  ) = loadBoardService.otpLogin(OTPLoginRequest.getRequest(phoneNo, otp))
-      .map {
-        it.responseData?.jwtToken?.let { it1 -> handleJWTToken(it1) }
-        Pair(true, "")
-      }
-      .onErrorReturn {
-        /* handle error if needed */
-        Pair(false, "Invalid OTP")
-      }
-
-  /**
-   * Verify Password Login
-   */
-  fun loginUsingPassword(
-    userName: String,
-    password: String
-  ) = umsService.requestPasswordVerification(PasswordLoginRequest.getRequest(userName, password))
-    .map {
-      handleJWTToken(it.jwtToken)
-      Pair(true, "")
-    }
-    .onErrorReturn {
-      /* handle error if needed */
-      Pair(false, "Invalid Password")
-    }
-
-  /**
    * Handle jwt token post success login
    */
   private fun handleJWTToken(jwtToken: String) {

@@ -1206,4 +1206,12 @@
     <string name="coming_soon_gps_notified">You\'ll be notified when GPS goes live</string>
     <string name="coming_soon_fuel_card_notified">You\'ll be notified when fuel card goes live</string>
 
+
+    <string name="str_get_to_know_you">Let’s get to know you</string>
+    <string name="str_tell_us_your_name">Tell us your name to personalize your experience</string>
+    <string name="str_first_name">First Name</string>
+    <string name="str_last_name">Last Name</string>
+    <string name="str_enter_here">Enter Here</string>
+    <string name="str_communication_consent_note">I agree to receive app updates and communications via my contact details.</string>
+<!--    <string name=""></string>-->
 </resources>
