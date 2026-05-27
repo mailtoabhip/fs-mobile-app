@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.trucks.FastagTrucksViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:contentDescription="@string/action_continue"
+                android:src="@drawable/ic_back_arrow" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_weight="1"
+                android:text="@string/label_fastag_title"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ivSearch"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:contentDescription="@string/label_search_home"
+                android:src="@drawable/ic_search_black" />
+
+        </LinearLayout>
+
+        <!-- Content -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/size_24dp">
+
+                    <!-- Promotional Banner -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/bannerCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_16dp"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        app:cardBackgroundColor="#F0F0F0"
+                        app:cardCornerRadius="@dimen/size_16dp"
+                        app:cardElevation="0dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="120dp"
+                            android:padding="@dimen/size_16dp">
+
+                            <TextView
+                                android:id="@+id/tvBannerTitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/fastag_banner_title"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toStartOf="@id/ivBannerImage"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/btnBuyFastag"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/size_12dp"
+                                android:background="@drawable/bg_all_round_corner_solid_black"
+                                android:paddingHorizontal="@dimen/size_16dp"
+                                android:paddingVertical="@dimen/size_8dp"
+                                android:text="@string/fastag_buy_cta"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/text_12sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tvBannerTitle" />
+
+                            <ImageView
+                                android:id="@+id/ivBannerImage"
+                                android:layout_width="120dp"
+                                android:layout_height="80dp"
+                                android:contentDescription="@string/label_fastag_title"
+                                android:scaleType="fitEnd"
+                                android:src="@drawable/container_truck"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Your FASTags Section Title -->
+                    <TextView
+                        android:id="@+id/tvSectionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_16dp"
+                        android:layout_marginTop="@dimen/size_24dp"
+                        android:layout_marginBottom="@dimen/size_12dp"
+                        android:text="@string/fastag_your_fastags"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/text_18sp"
+                        android:textStyle="bold" />
+
+                    <!-- Loading Shimmer -->
+                    <LinearLayout
+                        android:id="@+id/shimmerLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <include layout="@layout/shimmer_service_group_item" />
+                        <include layout="@layout/shimmer_service_group_item" />
+                        <include layout="@layout/shimmer_service_group_item" />
+                    </LinearLayout>
+
+                    <!-- FASTag Trucks RecyclerView -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvFastagTrucks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_fastag_truck" />
+
+                    <!-- Empty State -->
+                    <LinearLayout
+                        android:id="@+id/emptyState"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/size_48dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fastag_no_fastags"
+                            android:textColor="@color/text_grey"
+                            android:textSize="@dimen/text_14sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
+</layout>

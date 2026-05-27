@@ -1168,6 +1168,16 @@
     <string name="label_my_loads">My Loads</string>
     <string name="label_my_loads_subtitle">Manage fleet ops via Axle App</string>
     <string name="label_banner">Banner</string>
+    <string name="label_fastag_title">FASTag</string>
+    <string name="fastag_banner_title">Simplify your toll payments</string>
+    <string name="fastag_buy_cta">Buy FASTag</string>
+    <string name="fastag_your_fastags">Your FASTags</string>
+    <string name="fastag_no_fastags">No FASTags linked to your trucks yet</string>
+    <string name="fastag_balance_low">FASTag balance low</string>
+    <string name="fastag_recharge">Recharge</string>
+    <string name="fastag_refresh_balance">Refresh balance</string>
+    <string name="fastag_search_hint">Search vehicle number</string>
+    <string name="fastag_clear_search">Clear search</string>
     <string name="label_load_services">Load Services</string>
     <string name="label_financial_services">Financial Services</string>
     <string name="label_services_available">%d Services Available</string>
