@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="hasSelection"
+            type="Boolean" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.fastag.issuance.SelectFasTagActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="Select FASTag"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
+
+        <!-- Subtitle -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:text="Add vehicle class quantities for fleet expansion"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <!-- RecyclerView for vehicle classes -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVehicleClasses"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/size_8dp"
+            app:layout_constraintBottom_toTopOf="@id/btnContinue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
+
+        <!-- Continue Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnContinue"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_48dp"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:background="@{hasSelection ? @drawable/bg_all_round_corner_solid_black : @drawable/bg_all_round_corner_light_grey}"
+            android:enabled="@{hasSelection}"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

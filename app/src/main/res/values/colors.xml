@@ -192,5 +192,15 @@
     <color name="gray_400">#9CA3AF</color>
     <color name="yellow_100_alpha_80">#80FEFCE8</color>
   <color name="black_title">#121212</color>
+    <color name="neutral_white_300">#E6E6E6</color>
+
+    <!-- Vehicle class list colors -->
+
+    <color name="class_red">#FF5B00</color>
+    <color name="class_yellow">#F2EC00</color>
+    <color name="class_green">#5EB02E</color>
+    <color name="class_pink">#DF1096</color>
+    <color name="class_blue">#0078BA</color>
+
 
 </resources>

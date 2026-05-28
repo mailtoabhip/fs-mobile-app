@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_48dp"
+        android:layout_marginHorizontal="@dimen/size_16dp"
+        android:background="@drawable/bg_all_round_corner_solid_black"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_16sp"
+        tools:text="Proceed" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSecondary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_48dp"
+        android:layout_marginHorizontal="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:background="@drawable/bg_all_round_corner_grey_boundary"
+        android:textAllCaps="false"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_16sp"
+        tools:text="Cancel" />
+
+</LinearLayout>

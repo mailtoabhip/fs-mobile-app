@@ -4,13 +4,8 @@ package com.delhivery.axle.ui.profile.raterewards
 import android.os.Bundle
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityShareRateGetRewardsBinding
-import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_TYPE
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.activity.home.OFFER_APPROVED
-import com.delhivery.axle.ui.home.fragments.HomeFragmentType.LoadsTruckFragment
-import com.delhivery.axle.ui.home.fragments.NavigateHomeFragmentAction
 import com.delhivery.axle.ui.profile.raterewards.fragments.BaseShareRateGetRewardsFragmentAction
 import com.delhivery.axle.ui.profile.raterewards.fragments.NavigateShareRateGetRewardsFragmentAction
 import com.delhivery.axle.ui.profile.raterewards.fragments.ShareRateGetRewardsFragmentActionType.Navigate
@@ -22,8 +17,6 @@ import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
-
-
 
 
 class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBinding, ShareRateGetRewardsViewModel>() {
@@ -66,11 +59,6 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
 
     binding.shareRateRewardsTabLayout.setupWithViewPager(binding.viewpager)
 
-    if((intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)
-        ?: "") == OFFER_APPROVED
-    ){
-    fragmentAction((NavigateShareRateGetRewardsFragmentAction(RewardsFragment)))
-    }
   }
 
   override fun onResume() {

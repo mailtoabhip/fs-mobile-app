@@ -117,6 +117,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           }
 
           observeFragmentLiveData()
+
+          /* setup viewpager */
+          binding.viewpager.apply {
+            offscreenPageLimit = OFF_SET_LIMIT
+            adapter = pagerAdapter
+          }
+
           binding.profile.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
             analyticsUtil.moEngageTrackEvent(

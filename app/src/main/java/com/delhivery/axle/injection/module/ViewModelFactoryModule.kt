@@ -44,6 +44,11 @@ import com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.delhivery.axle.ui.kyc.address.CommunicationAddressViewModel
 import com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationViewModel
 import com.delhivery.axle.ui.comingsoon.ComingSoonViewModel
+import com.delhivery.axle.ui.fastag.issuance.SalesCodeViewModel
+import com.delhivery.axle.ui.fastag.issuance.SelectFasTagViewModel
+import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupViewModel
+import com.delhivery.axle.ui.fastag.issuance.FastagCollectionViewModel
+import com.delhivery.axle.ui.fastag.issuance.AddVehicleViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
 import com.delhivery.axle.ui.ledger.ConsolidatedPageViewModel
@@ -539,4 +544,29 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(ComingSoonViewModel::class)
   abstract fun bindComingSoonViewModel(viewModel: ComingSoonViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SalesCodeViewModel::class)
+  abstract fun bindSalesCodeViewModel(viewModel: SalesCodeViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(SelectFasTagViewModel::class)
+  abstract fun bindSelectFasTagViewModel(viewModel: SelectFasTagViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PaymentBreakupViewModel::class)
+  abstract fun bindPaymentBreakupViewModel(viewModel: PaymentBreakupViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagCollectionViewModel::class)
+  abstract fun bindFastagCollectionViewModel(viewModel: FastagCollectionViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AddVehicleViewModel::class)
+  abstract fun bindAddVehicleViewModel(viewModel: AddVehicleViewModel): ViewModel
 }

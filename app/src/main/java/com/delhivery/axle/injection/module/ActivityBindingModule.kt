@@ -25,6 +25,13 @@ import com.delhivery.axle.ui.fastag.FastagRaiseDisputeActivity
 import com.delhivery.axle.ui.fastag.FastagRechargeActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.FastagTransactionSelectionActivity
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
+import com.delhivery.axle.ui.fastag.issuance.AddVehicleActivity
+import com.delhivery.axle.ui.fastag.issuance.FastagCollectionActivity
+import com.delhivery.axle.ui.fastag.issuance.FastagKycActivity
+import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity
+import com.delhivery.axle.ui.fastag.issuance.PaymentMethodActivity
+import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -446,6 +453,41 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsComingSoonActivityModule::class])
   internal abstract fun bindComingSoonActivity(): ComingSoonActivity
+
+  /* Buy FASTag activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsBuyFasTagActivityModule::class])
+  internal abstract fun bindBuyFasTagActivity(): BuyFasTagActivity
+
+  /* Select FASTag activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsSelectFasTagActivityModule::class])
+  internal abstract fun bindSelectFasTagActivity(): SelectFasTagActivity
+
+  /* Add Vehicle activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAddVehicleActivityModule::class])
+  internal abstract fun bindAddVehicleActivity(): AddVehicleActivity
+
+  /* FASTag KYC activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagKycActivityModule::class])
+  internal abstract fun bindFastagKycActivity(): FastagKycActivity
+
+  /* Payment Method activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPaymentMethodActivityModule::class])
+  internal abstract fun bindPaymentMethodActivity(): PaymentMethodActivity
+
+  /* Payment Breakup activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPaymentBreakupActivityModule::class])
+  internal abstract fun bindPaymentBreakupActivity(): PaymentBreakupActivity
+
+  /* FASTag Collection activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagCollectionActivityModule::class])
+  internal abstract fun bindFastagCollectionActivity(): FastagCollectionActivity
 }
 
 
@@ -672,6 +714,27 @@ internal abstract class AbsDocumentVerificationActivityModule : ActivityModule<D
 
 @Module
 internal abstract class AbsComingSoonActivityModule : ActivityModule<ComingSoonActivity>()
+
+@Module
+internal abstract class AbsBuyFasTagActivityModule : ActivityModule<BuyFasTagActivity>()
+
+@Module
+internal abstract class AbsSelectFasTagActivityModule : ActivityModule<SelectFasTagActivity>()
+
+@Module
+internal abstract class AbsAddVehicleActivityModule : ActivityModule<AddVehicleActivity>()
+
+@Module
+internal abstract class AbsFastagKycActivityModule : ActivityModule<FastagKycActivity>()
+
+@Module
+internal abstract class AbsPaymentMethodActivityModule : ActivityModule<PaymentMethodActivity>()
+
+@Module
+internal abstract class AbsPaymentBreakupActivityModule : ActivityModule<PaymentBreakupActivity>()
+
+@Module
+internal abstract class AbsFastagCollectionActivityModule : ActivityModule<FastagCollectionActivity>()
 
 /**
  * Activity Binds Module

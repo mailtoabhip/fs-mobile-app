@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="hasSelection"
+            type="Boolean" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.fastag.issuance.FastagKycActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="KYC"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
+
+        <!-- Title -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:text="Verify your Identity"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <!-- Subtitle -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:text="Choose your preferred KYC method"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <!-- Full KYC Card (Greyed out / Disabled) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFullKyc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:alpha="0.5"
+            app:cardBackgroundColor="#F5F5F5"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E0E3EB"
+            app:strokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Recommended badge -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvRecommended"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/badge_recommended"
+                    android:paddingHorizontal="@dimen/size_8dp"
+                    android:paddingVertical="@dimen/size_4dp"
+                    android:text="Recommended"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_10sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- KYC Icon -->
+                <ImageView
+                    android:id="@+id/ivKycIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    android:src="@drawable/full_kyc_doc_image"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvRecommended" />
+
+                <!-- Full KYC Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvFullKycTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:text="Full KYC"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/rbFullKyc"
+                    app:layout_constraintStart_toEndOf="@id/ivKycIcon"
+                    app:layout_constraintTop_toTopOf="@id/ivKycIcon" />
+
+                <!-- Full KYC Description -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvFullKycDesc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_2dp"
+                    android:text="Access higher limits and fleet benefits"
+                    android:textColor="@color/background_dark_grey"
+                    android:textSize="@dimen/text_12sp"
+                    app:layout_constraintEnd_toStartOf="@id/rbFullKyc"
+                    app:layout_constraintStart_toEndOf="@id/ivKycIcon"
+                    app:layout_constraintTop_toBottomOf="@id/tvFullKycTitle" />
+
+                <!-- Radio Button (disabled) -->
+                <RadioButton
+                    android:id="@+id/rbFullKyc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    app:layout_constraintBottom_toBottomOf="@id/tvFullKycDesc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/ivKycIcon" />
+
+                <!-- Benefit text with checkmark -->
+                <ImageView
+                    android:id="@+id/ivCheck"
+                    android:layout_width="@dimen/size_16dp"
+                    android:layout_height="@dimen/size_16dp"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:src="@drawable/ic_check_green"
+                    app:layout_constraintStart_toStartOf="@id/tvFullKycTitle"
+                    app:layout_constraintTop_toBottomOf="@id/tvFullKycDesc" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvBenefit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_8dp"
+                    android:text="Get higher limits, fleet benefits, and priority support."
+                    android:textColor="@color/background_dark_grey"
+                    android:textSize="@dimen/text_12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivCheck"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivCheck"
+                    app:layout_constraintTop_toTopOf="@id/ivCheck" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardFullKyc"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:background="#E6E6E6"/>
+
+        <!-- Other KYC Options (Expandable) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardOtherKyc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E0E3EB"
+            app:strokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Dropdown Header -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/otherKycHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_48dp"
+                    android:paddingHorizontal="@dimen/size_16dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvOtherKycLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Other KYC options"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/ivDropdown"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/ivDropdown"
+                        android:layout_width="@dimen/size_24dp"
+                        android:layout_height="@dimen/size_24dp"
+                        android:src="@drawable/ic_arrow_drop_down_black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Express KYC (Hidden by default, shown on expand) -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/expressKycContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_16dp"
+                    android:visibility="gone">
+
+                    <!-- Express KYC Title -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvExpressKycTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Express KYC"
+                        android:textColor="@color/heading_black"
+                        android:textSize="@dimen/text_16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/rbExpressKyc"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Express KYC Description -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tvExpressKycDesc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="Quick verification with basic documents"
+                        android:textColor="@color/background_dark_grey"
+                        android:textSize="@dimen/text_12sp"
+                        app:layout_constraintEnd_toStartOf="@id/rbExpressKyc"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvExpressKycTitle" />
+
+                    <!-- Radio Button -->
+                    <RadioButton
+                        android:id="@+id/rbExpressKyc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="@id/tvExpressKycDesc"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvExpressKycTitle" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Bottom Buttons -->
+        <include
+            android:id="@+id/bottomButtons"
+            layout="@layout/layout_bottom_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

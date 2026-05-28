@@ -8,7 +8,6 @@ import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.network.ConnectionLiveData
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
-import com.google.firebase.perf.network.FirebasePerfOkHttpClient
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -433,6 +432,15 @@ class NetworkModule {
   ) = getRetrofit(gson, okHttpClient, UrlConfig.InvoiceService).create(
     InvoiceService::class.java
   )
+
+    @Provides
+    @Singleton
+    fun provideSalesCodeService(
+        gson: Gson,
+        okHttpClient: OkHttpClient
+    ) = getRetrofit(gson, okHttpClient, UrlConfig.SaleCodeService).create(
+        FasTAGIssuanceService::class.java
+    )
 
   /**
    * Provide DocumentUtils for secure document upload/download

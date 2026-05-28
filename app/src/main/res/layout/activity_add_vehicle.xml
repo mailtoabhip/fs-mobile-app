@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="truckNumber"
+            type="String" />
+
+        <import type="android.text.TextUtils" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.fastag.issuance.AddVehicleActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="Add Vehicle"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
+
+        <!-- Number Plate Image -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/plateContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:background="@drawable/bg_number_plate_container"
+            android:padding="@dimen/size_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <ImageView
+                android:id="@+id/ivNumberPlate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_launcher_foreground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Label -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_28dp"
+            android:text="Enter your truck number here"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/plateContainer" />
+
+        <!-- Input Field -->
+        <EditText
+            android:id="@+id/etTruckNumber"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_48dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:background="@drawable/bg_edit_text_outline"
+            android:hint="e.g. KA01MJ1234"
+            android:inputType="textCapCharacters"
+            android:maxLength="12"
+            android:paddingHorizontal="@dimen/size_12dp"
+            android:singleLine="true"
+            android:text="@={truckNumber}"
+            android:textColor="@color/heading_black"
+            android:textColorHint="@color/color_hint"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLabel" />
+
+        <!-- Continue Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnContinue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:background="@{TextUtils.isEmpty(truckNumber) ? @drawable/bg_all_round_corner_light_grey : @drawable/bg_all_round_corner_solid_black}"
+            android:enabled="@{!TextUtils.isEmpty(truckNumber)}"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

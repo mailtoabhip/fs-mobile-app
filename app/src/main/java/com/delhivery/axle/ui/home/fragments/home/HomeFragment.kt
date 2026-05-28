@@ -16,6 +16,7 @@ import com.delhivery.axle.databinding.FragmentHomeBinding
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.common.UiEvent
 import com.delhivery.axle.ui.common.UiState
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -54,7 +55,7 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         setupBannerCarousel()
 
         binding.fastagCard.setOnClickListener {
-            action(NavigateHomeFragmentAction(HomeFragmentType.TruckFragment))
+            startActivity(Intent(requireContext(), BuyFasTagActivity::class.java))
         }
 
         binding.gpsCard.setOnClickListener {

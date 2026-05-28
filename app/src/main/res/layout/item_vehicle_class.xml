@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.delhivery.axle.ui.fastag.issuance.VehicleClassItem" />
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardVehicleClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="@dimen/size_8dp"
+        app:cardElevation="1dp"
+        app:strokeColor="#E0E3EB"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_16dp">
+
+            <!-- Color indicator bar -->
+            <View
+                android:id="@+id/colorIndicator"
+                android:layout_width="4dp"
+                android:layout_height="0dp"
+                android:background="@color/colorDelhiveryRed"
+                app:layout_constraintBottom_toBottomOf="@id/tvWeightRange"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvClassName" />
+
+            <!-- Vehicle Class Name -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvClassName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:text="@{item.className}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/rbSelect"
+                app:layout_constraintStart_toEndOf="@id/colorIndicator"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Vehicle Class 5" />
+
+            <!-- Weight Range -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvWeightRange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:text="@{item.weightRange}"
+                android:textColor="@color/background_dark_grey"
+                android:textSize="@dimen/text_12sp"
+                app:layout_constraintEnd_toStartOf="@id/rbSelect"
+                app:layout_constraintStart_toEndOf="@id/colorIndicator"
+                app:layout_constraintTop_toBottomOf="@id/tvClassName"
+                tools:text="7500 - 12000 KGs" />
+
+            <!-- Vehicle Types Chip Container -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:layout_marginTop="@dimen/size_12dp"
+                app:chipSpacingHorizontal="@dimen/size_4dp"
+                app:chipSpacingVertical="@dimen/size_4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/rbSelect"
+                app:layout_constraintStart_toEndOf="@id/colorIndicator"
+                app:layout_constraintTop_toBottomOf="@id/tvWeightRange" />
+
+            <!-- Radio Button -->
+            <RadioButton
+                android:id="@+id/rbSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{item.selected}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvClassName"
+                app:layout_constraintBottom_toBottomOf="@id/tvWeightRange" />
+
+            <!-- Counter (commented out - kept for future use) -->
+            <!--
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btnDecrease"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="@id/tvCount"
+                app:layout_constraintEnd_toStartOf="@id/tvCount"
+                app:layout_constraintTop_toTopOf="@id/tvCount"
+                app:srcCompat="@drawable/ic_baseline_remove_24" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/size_8dp"
+                android:minWidth="24dp"
+                android:gravity="center"
+                android:text="@{String.valueOf(item.quantity)}"
+                android:textColor="@color/heading_black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btnIncrease"
+                app:layout_constraintEnd_toStartOf="@id/btnIncrease"
+                app:layout_constraintTop_toTopOf="@id/btnIncrease"
+                tools:text="0" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btnIncrease"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvClassName"
+                app:layout_constraintBottom_toBottomOf="@id/tvWeightRange"
+                app:srcCompat="@drawable/ic_add_black_24dp" />
+            -->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
