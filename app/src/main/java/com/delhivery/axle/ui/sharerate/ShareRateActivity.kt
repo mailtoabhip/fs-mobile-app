@@ -37,8 +37,6 @@ import com.delhivery.axle.fcm.ARGS_PRICING_ID
 import com.delhivery.axle.fcm.ARGS_PRICING_SORT_KEY
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.businessverification.DocUploadAdapter
-import com.delhivery.axle.ui.home.activity.home.OFFER_LANE_UPLOADED
-import com.delhivery.axle.ui.home.activity.home.OFFER_REJECTED
 import com.delhivery.axle.ui.loadAlert.HomeLoadAlertRequestItemData
 import com.delhivery.axle.ui.searchCity.searchCityIntent
 import com.delhivery.axle.ui.trucks.TruckSizeAdapter
@@ -121,24 +119,6 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        if( intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)!=null) {
-            if(intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)== OFFER_REJECTED) {
-                priceId = intent?.extras?.getString(ARGS_PRICING_ID)
-                priceSortKey = intent?.extras?.getString(ARGS_PRICING_SORT_KEY)
-
-                if (priceId != null && priceSortKey != null) {
-                    viewModel.getPricingData(PriceDetailRequest(priceId!!, priceSortKey!!))
-                }
-            }else if(intent?.extras?.getString(ARGS_NOTIFICATION_TYPE)== OFFER_LANE_UPLOADED){
-               if(intent?.extras?.getString(ARGS_OFFER_ID)!=null)
-                viewModel.searchOffer(intent?.extras?.getString(ARGS_OFFER_ID)!!).observe(this, Observer {
-                    if (it!=null) {
-                        val yourRewardsItemData = YourRewardsItemData(pricingId=it.offerId!!, originCity = it.oc, originCityCode = it.occ, destinationCity = it.dc, destinationCityCode = it.dcc, truckDisplayName = it.tdn)
-                        fillODVTData(yourRewardsItemData)
-                    }
-                })
-            }
-        }
         viewModel.origin = intent?.extras?.getString("originname")?.let { CityModel(it, intent?.extras?.getString("occ")) }
         viewModel.destination = intent?.extras?.getString("destname")?.let { CityModel(it, intent?.extras?.getString("dcc")) }
 
