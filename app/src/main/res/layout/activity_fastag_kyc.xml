@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/size_12dp"
                     android:layout_marginTop="@dimen/size_2dp"
-                    android:text="Access higher limits and fleet benefits"
+                    android:text="@string/full_kyc_subtitle"
                     android:textColor="@color/background_dark_grey"
                     android:textSize="@dimen/text_12sp"
                     app:layout_constraintEnd_toStartOf="@id/rbFullKyc"
@@ -162,7 +162,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/size_8dp"
-                    android:text="Get higher limits, fleet benefits, and priority support."
+                    android:text="@string/full_kyc_desc"
                     android:textColor="@color/background_dark_grey"
                     android:textSize="@dimen/text_12sp"
                     app:layout_constraintBottom_toBottomOf="@id/ivCheck"
@@ -235,50 +235,124 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Express KYC (Hidden by default, shown on expand) -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/expressKycContent"
+                <!-- eKYC and Express KYC (Hidden by default, shown on expand) -->
+                <LinearLayout
+                    android:id="@+id/expandedKycContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/size_16dp"
-                    android:visibility="gone">
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
-                    <!-- Express KYC Title -->
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvExpressKycTitle"
-                        android:layout_width="0dp"
+                    <!-- eKYC Option -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ekycContent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Express KYC"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/rbExpressKyc"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:padding="@dimen/size_16dp">
 
-                    <!-- Express KYC Description -->
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvExpressKycDesc"
-                        android:layout_width="0dp"
+                        <!-- eKYC Icon -->
+                        <ImageView
+                            android:id="@+id/ivEkycIcon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/image_ekyc"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <!-- eKYC Title -->
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvEkycTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_12dp"
+                            android:text="@string/e_kyc_title"
+                            android:textColor="@color/heading_black"
+                            android:textSize="@dimen/text_14sp"
+                            app:layout_constraintEnd_toStartOf="@id/rbEkyc"
+                            app:layout_constraintStart_toEndOf="@id/ivEkycIcon"
+                            app:layout_constraintTop_toTopOf="@id/ivEkycIcon" />
+
+                        <!-- eKYC Description -->
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvEkycDesc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_12dp"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:text="@string/e_kyc_subtitle"
+                            android:textColor="@color/background_dark_grey"
+                            android:textSize="@dimen/text_12sp"
+                            app:layout_constraintEnd_toStartOf="@id/rbEkyc"
+                            app:layout_constraintStart_toEndOf="@id/ivEkycIcon"
+                            app:layout_constraintTop_toBottomOf="@id/tvEkycTitle" />
+
+                        <!-- Radio Button -->
+                        <RadioButton
+                            android:id="@+id/rbEkyc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintBottom_toBottomOf="@id/tvEkycDesc"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tvEkycTitle" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Express KYC Option -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/expressKycContent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/size_4dp"
-                        android:text="Quick verification with basic documents"
-                        android:textColor="@color/background_dark_grey"
-                        android:textSize="@dimen/text_12sp"
-                        app:layout_constraintEnd_toStartOf="@id/rbExpressKyc"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvExpressKycTitle" />
+                        android:padding="@dimen/size_16dp">
 
-                    <!-- Radio Button -->
-                    <RadioButton
-                        android:id="@+id/rbExpressKyc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="@id/tvExpressKycDesc"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tvExpressKycTitle" />
+                        <!-- Express KYC Icon -->
+                        <ImageView
+                            android:id="@+id/ivExpressKycIcon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/image_epresskyc"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <!-- Express KYC Title -->
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvExpressKycTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_12dp"
+                            android:text="@string/express_kyc_title"
+                            android:textColor="@color/heading_black"
+                            android:textSize="@dimen/text_14sp"
+                            app:layout_constraintEnd_toStartOf="@id/rbExpressKyc"
+                            app:layout_constraintStart_toEndOf="@id/ivExpressKycIcon"
+                            app:layout_constraintTop_toTopOf="@id/ivExpressKycIcon" />
+
+                        <!-- Express KYC Description -->
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvExpressKycDesc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_12dp"
+                            android:layout_marginTop="@dimen/size_4dp"
+                            android:text="@string/express_kyc_subtitle"
+                            android:textColor="@color/background_dark_grey"
+                            android:textSize="@dimen/text_12sp"
+                            app:layout_constraintEnd_toStartOf="@id/rbExpressKyc"
+                            app:layout_constraintStart_toEndOf="@id/ivExpressKycIcon"
+                            app:layout_constraintTop_toBottomOf="@id/tvExpressKycTitle" />
+
+                        <!-- Radio Button -->
+                        <RadioButton
+                            android:id="@+id/rbExpressKyc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintBottom_toBottomOf="@id/tvExpressKycDesc"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tvExpressKycTitle" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -52,24 +52,30 @@ class FastagKycActivity : DaggerAppCompatActivity() {
             toggleOtherKycOptions()
         }
 
-        // Express KYC selection
-        binding.rbExpressKyc.setOnClickListener {
-            selectExpressKyc()
-        }
+        // eKYC selection
+        binding.rbEkyc.setOnClickListener { selectEkyc() }
+        binding.ekycContent.setOnClickListener { selectEkyc() }
 
-        binding.expressKycContent.setOnClickListener {
-            selectExpressKyc()
-        }
+        // Express KYC selection
+        binding.rbExpressKyc.setOnClickListener { selectExpressKyc() }
+        binding.expressKycContent.setOnClickListener { selectExpressKyc() }
     }
 
     private fun toggleOtherKycOptions() {
         isOtherKycExpanded = !isOtherKycExpanded
-        binding.expressKycContent.visibility = if (isOtherKycExpanded) View.VISIBLE else View.GONE
+        binding.expandedKycContent.visibility = if (isOtherKycExpanded) View.VISIBLE else View.GONE
         binding.ivDropdown.rotation = if (isOtherKycExpanded) 180f else 0f
+    }
+
+    private fun selectEkyc() {
+        binding.rbEkyc.isChecked = true
+        binding.rbExpressKyc.isChecked = false
+        binding.hasSelection = true
     }
 
     private fun selectExpressKyc() {
         binding.rbExpressKyc.isChecked = true
+        binding.rbEkyc.isChecked = false
         binding.hasSelection = true
     }
 
@@ -80,6 +86,8 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         binding.bottomButtons.btnPrimary.setOnClickListener {
             if (binding.rbExpressKyc.isChecked) {
                 showOtpBottomSheet()
+            } else if (binding.rbEkyc.isChecked) {
+                // TODO: Navigate to eKYC flow
             }
         }
 

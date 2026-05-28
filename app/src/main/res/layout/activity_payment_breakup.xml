@@ -251,7 +251,7 @@
                                 android:id="@+id/ivWalletIcon"
                                 android:layout_width="@dimen/size_24dp"
                                 android:layout_height="@dimen/size_24dp"
-                                android:src="@drawable/ic_launcher_foreground"
+                                android:src="@drawable/ic_delhivery_wallet"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -269,9 +269,9 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Paying via wallet"
+                                    android:text="@string/paying_wallet_title"
                                     android:textColor="@color/heading_black"
-                                    android:textSize="@dimen/text_14sp" />
+                                    android:textSize="@dimen/text_12sp" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/tvWalletBalance"
@@ -290,8 +290,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Add Money"
                                 android:textColor="#1E88E5"
-                                android:textSize="@dimen/text_14sp"
-                                android:textStyle="bold"
+                                android:textSize="@dimen/text_12sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -307,18 +306,19 @@
                             android:background="@drawable/bg_warning_container"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:padding="@dimen/size_8dp">
+                            android:padding="@dimen/size_8dp"
+                            android:visibility="@{viewModel.isWalletSufficient ? View.GONE : View.VISIBLE}">
 
                             <ImageView
                                 android:layout_width="@dimen/size_16dp"
                                 android:layout_height="@dimen/size_16dp"
-                                android:src="@drawable/ic_error_circle_red" />
+                                android:src="@drawable/ic_vector_error" />
 
                             <com.google.android.material.textview.MaterialTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/size_8dp"
-                                android:text="Wallet balance is lower than the item value"
+                                android:text="@string/wallet_balance_warning"
                                 android:textColor="#E53935"
                                 android:textSize="@dimen/text_12sp" />
 
