@@ -120,32 +120,6 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
 
 //            ?.setIcon(R.drawable.ic_home_truck_icon)
 
-        if(activity!!.fromDeepLink){
-            binding.tabLayout.getTabAt(1)?.select()
-            activity.fromDeepLink = false
-            if(activity.vehicleNum.isNotEmpty())
-               vehicleNo = activity.vehicleNum
-            fromDeepLink=true
-        }
-        if(activity!!.fromDeepLinkContract){
-            binding.tabLayout.getTabAt(2)?.select()
-            activity.fromDeepLinkContract = false
-            fromContractDeepLink=true
-        }
-
-        if(activity.fromNotification){
-            binding.tabLayout.getTabAt(1)?.select()
-            activity.fromNotification = false
-            if(activity.vehicleNum.isNotEmpty())
-                vehicleNo = activity.vehicleNum
-            fromNotification=true
-        }
-
-        if(activity!!.fromNotificationContract){
-            binding.tabLayout.getTabAt(2)?.select()
-            activity.fromNotificationContract = false
-            fromNotificationContract=true
-        }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
