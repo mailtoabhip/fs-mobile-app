@@ -2,11 +2,11 @@ package com.delhivery.axle.network
 
 import android.util.Log
 import com.delhivery.axle.BuildConfig
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.Interceptor
 import okhttp3.Request
 import java.io.IOException
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +17,8 @@ import javax.inject.Singleton
 @Singleton
 class DelhiveryNetworkInterceptor @Inject constructor(
   var userPrefs: UserPrefs,
-  var connectionLiveData: ConnectionLiveData
+  var connectionLiveData: ConnectionLiveData,
+  private val deviceInfoProvider: DeviceInfoProvider
 ) : Interceptor {
 
   private var jwtToken: String? = userPrefs.jwtToken
@@ -38,16 +39,27 @@ class DelhiveryNetworkInterceptor @Inject constructor(
         if (!connectionLiveData.isConnected()) {
             throw IOException("No internet connection")
         }
-      if (jwtToken.isNotNullOrEmpty()) {
-        if (BuildConfig.DEBUG) {
-          Log.d("Authorization", "Bearer $jwtToken")
-        }
-        builder.addHeader("Authorization", "Bearer $jwtToken")
-      } else {
-        Log.d("DelhiveryInterceptor", "intercept:: no jwt token")
+
+      /* Device & request metadata headers — only these go out */
+      val requestId = UUID.randomUUID().toString()
+      builder.header("X-Device-Id", deviceInfoProvider.deviceId)
+      builder.header("X-Device-Model", deviceInfoProvider.deviceModel)
+      builder.header("X-App-Version", deviceInfoProvider.appVersion)
+      builder.header("X-Platform", deviceInfoProvider.platform)
+      builder.header("X-OS-Version", deviceInfoProvider.osVersion)
+      builder.header("X-Request-Id", requestId)
+      builder.header("X-Client-Ip", deviceInfoProvider.publicIp)
+
+      if (BuildConfig.DEBUG) {
+        Log.d("DelhiveryInterceptor", "Headers → X-Device-Id=${deviceInfoProvider.deviceId}, " +
+            "X-Device-Model=${deviceInfoProvider.deviceModel}, " +
+            "X-App-Version=${deviceInfoProvider.appVersion}, " +
+            "X-Platform=${deviceInfoProvider.platform}, " +
+            "X-OS-Version=${deviceInfoProvider.osVersion}, " +
+            "X-Request-Id=$requestId, " +
+            "X-Client-Ip=${deviceInfoProvider.publicIp}")
       }
-      /* request for json response */
-      builder.addHeader("Accept", "application/json")
+
       chain.proceed(builder.build())
     }
 
