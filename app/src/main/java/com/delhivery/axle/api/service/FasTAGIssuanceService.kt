@@ -1,10 +1,16 @@
 package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.ConfirmCollectionRequest
+import com.delhivery.axle.api.request.KycInitiateRequest
+import com.delhivery.axle.api.request.KycVerifyRequest
 import com.delhivery.axle.api.request.ValidateSalesRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ConfirmCollectionResponse
 import com.delhivery.axle.api.response.FastagOrdersResponse
+import com.delhivery.axle.api.response.KycOnboardValidateResponse
+import com.delhivery.axle.api.response.KycInitiateResponse
+import com.delhivery.axle.api.response.KycTypesResponse
+import com.delhivery.axle.api.response.KycVerifyResponse
 import com.delhivery.axle.api.response.ValidateSalesCodeResponse
 import com.delhivery.axle.api.response.VehicleCheckResponse
 import com.delhivery.axle.api.response.VehicleClassResponse
@@ -39,4 +45,24 @@ interface FasTAGIssuanceService {
     suspend fun checkVehicle(
         @Query("vehicle_number") vehicleNumber: String
     ): BaseResponse<VehicleCheckResponse>
+
+    @GET("/fastag/tag-issuance/v1/kyc/onboard-validate")
+    suspend fun kycOnboardValidate(
+        @Query("bank_code") bankCode: String
+    ): BaseResponse<KycOnboardValidateResponse>
+
+    @GET("/fastag/tag-issuance/v1/kyc/types")
+    suspend fun getKycTypes(
+        @Query("bank_code") bankCode: String
+    ): BaseResponse<KycTypesResponse>
+
+    @POST("/fastag/tag-issuance/v1/kyc/initiate")
+    suspend fun initiateKyc(
+        @Body request: KycInitiateRequest
+    ): BaseResponse<KycInitiateResponse>
+
+    @POST("/fastag/tag-issuance/v1/kyc/verify-and-create")
+    suspend fun verifyAndCreateKyc(
+        @Body request: KycVerifyRequest
+    ): BaseResponse<KycVerifyResponse>
 }

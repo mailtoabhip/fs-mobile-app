@@ -63,4 +63,48 @@ class SalesCodeRepository @Inject constructor(
                 response.toResource()
             }
         }
+
+    suspend fun kycOnboardValidate(bankCode: String): Resource<com.delhivery.axle.api.response.KycOnboardValidateResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = salesCodeService.kycOnboardValidate(bankCode)
+                response.toResource()
+            }
+        }
+
+    suspend fun getKycTypes(bankCode: String): Resource<com.delhivery.axle.api.response.KycTypesResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = salesCodeService.getKycTypes(bankCode)
+                response.toResource()
+            }
+        }
+
+    suspend fun initiateKyc(bankCode: String, kycType: String): Resource<com.delhivery.axle.api.response.KycInitiateResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val request = com.delhivery.axle.api.request.KycInitiateRequest(bankCode = bankCode, kycType = kycType)
+                val response = salesCodeService.initiateKyc(request)
+                response.toResource()
+            }
+        }
+
+    suspend fun verifyAndCreateKyc(
+        journeyId: String,
+        otp: String,
+        bankCode: String,
+        kycType: String
+    ): Resource<com.delhivery.axle.api.response.KycVerifyResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val request = com.delhivery.axle.api.request.KycVerifyRequest(
+                    journeyId = journeyId,
+                    otp = otp,
+                    bankCode = bankCode,
+                    kycType = kycType
+                )
+                val response = salesCodeService.verifyAndCreateKyc(request)
+                response.toResource()
+            }
+        }
 }

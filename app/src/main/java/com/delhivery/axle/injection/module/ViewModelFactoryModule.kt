@@ -48,6 +48,7 @@ import com.delhivery.axle.ui.fastag.issuance.SalesCodeViewModel
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagViewModel
 import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupViewModel
 import com.delhivery.axle.ui.fastag.issuance.FastagCollectionViewModel
+import com.delhivery.axle.ui.fastag.issuance.FastagKycViewModel
 import com.delhivery.axle.ui.fastag.issuance.AddVehicleViewModel
 import com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel
 import com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel
@@ -569,4 +570,9 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(AddVehicleViewModel::class)
   abstract fun bindAddVehicleViewModel(viewModel: AddVehicleViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagKycViewModel::class)
+  abstract fun bindFastagKycViewModel(viewModel: FastagKycViewModel): ViewModel
 }

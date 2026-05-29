@@ -24,7 +24,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_toolbar"
+            android:layout_height="wrap_content"
             android:background="@android:color/white"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,30 +33,18 @@
             app:title="Add Vehicle"
             app:titleTextAppearance="@style/Toolbar.TitleText" />
 
-        <!-- Number Plate Image -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/plateContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_16dp"
-            android:layout_marginTop="@dimen/size_16dp"
-            android:background="@drawable/bg_number_plate_container"
-            android:padding="@dimen/size_24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <ImageView
                 android:id="@+id/ivNumberPlate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_launcher_foreground"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_add_vehicle_new"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Label -->
         <com.google.android.material.textview.MaterialTextView
@@ -69,7 +57,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/plateContainer" />
+            app:layout_constraintTop_toBottomOf="@id/ivNumberPlate" />
 
         <!-- Input Field -->
         <EditText
