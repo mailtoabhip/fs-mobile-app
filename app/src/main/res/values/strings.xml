@@ -1162,6 +1162,7 @@
     <string name="label_search_home">Search loads, trips, FASTags…</string>
     <string name="label_gps">GPS</string>
     <string name="label_fuel_card_home">Fuel Card</string>
+    <string name="label_fastag_pending_actions">FASTag pending actions (%1$d)</string>
     <string name="label_business_services">Business Services</string>
     <string name="label_my_trucks">My Trucks</string>
     <string name="label_my_trucks_subtitle">Access your fleet services</string>
@@ -1172,7 +1173,16 @@
     <string name="fastag_banner_title">Simplify your toll payments</string>
     <string name="fastag_buy_cta">Buy FASTag</string>
     <string name="fastag_your_fastags">Your FASTags</string>
-    <string name="fastag_no_fastags">No FASTags linked to your trucks yet</string>
+    <string name="fastag_no_fastags_heading">No purchases yet!</string>
+    <string name="fastag_no_fastags_description">You don’t have any FASTags linked to your account. Buy a new FASTag for seamless toll payments.</string>
+    <string name="pending_actions_title">Pending Actions</string>
+    <string name="pending_actions_empty_title">No Pending Actions</string>
+    <string name="pending_actions_empty_description">All your FASTag orders are up to date. No actions required at this time.</string>
+    <string name="assign_vehicle_title">Assign Vehicle</string>
+    <string name="activate_vehicle_title">Activate Vehicle</string>
+    <string name="handover_vehicle_title">Handover Vehicle</string>
+    <string name="kyc_vehicle_title">KYC Verification</string>
+    <string name="select_vehicle_title">Select vehicle</string>
     <string name="fastag_balance_low">FASTag balance low</string>
     <string name="fastag_recharge">Recharge</string>
     <string name="fastag_refresh_balance">Refresh balance</string>

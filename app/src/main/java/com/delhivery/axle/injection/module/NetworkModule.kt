@@ -411,6 +411,18 @@ class NetworkModule {
   )
 
   /**
+   * Provide [FastagService]
+   */
+  @Provides
+  @Singleton
+  fun provideFastagService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.FastagService).create(
+          FastagService::class.java
+  )
+
+  /**
    * Provide DocumentService for secure document upload/download
    */
   @Provides

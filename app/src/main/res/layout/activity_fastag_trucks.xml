@@ -67,7 +67,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:paddingBottom="@dimen/size_24dp">
 
@@ -78,13 +78,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/size_16dp"
                         android:layout_marginTop="@dimen/size_16dp"
-                        app:cardBackgroundColor="#F0F0F0"
                         app:cardCornerRadius="@dimen/size_16dp"
                         app:cardElevation="0dp">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/buy_fastag_background_banner"
                             android:minHeight="120dp"
                             android:padding="@dimen/size_16dp">
 
@@ -92,6 +92,7 @@
                                 android:id="@+id/tvBannerTitle"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/size_8dp"
                                 android:text="@string/fastag_banner_title"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/text_16sp"
@@ -104,7 +105,7 @@
                                 android:id="@+id/btnBuyFastag"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/size_12dp"
+                                android:layout_marginTop="@dimen/size_16dp"
                                 android:background="@drawable/bg_all_round_corner_solid_black"
                                 android:paddingHorizontal="@dimen/size_16dp"
                                 android:paddingVertical="@dimen/size_8dp"
@@ -120,12 +121,55 @@
                                 android:layout_height="80dp"
                                 android:contentDescription="@string/label_fastag_title"
                                 android:scaleType="fitEnd"
-                                android:src="@drawable/container_truck"
+                                android:src="@drawable/buy_fastag_truck"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
+
+                    <!-- FASTag Pending Actions Card -->
+                    <LinearLayout
+                        android:id="@+id/fastagPendingCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/size_16dp"
+                        android:layout_marginTop="@dimen/size_24dp"
+                        android:background="@drawable/bg_fastag_pending_card"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/size_16dp"
+                        android:paddingVertical="@dimen/size_14dp"
+                        >
+
+                        <ImageView
+                            android:layout_width="@dimen/size_20dp"
+                            android:layout_height="@dimen/size_20dp"
+                            android:contentDescription="@string/label_fastag_title"
+                            android:src="@drawable/fs_pending_clock" />
+
+                        <TextView
+                            android:id="@+id/tvFastagPendingText"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size_10dp"
+                            android:layout_weight="1"
+                            android:textColor="#7B6414"
+                            android:textSize="@dimen/text_14sp"
+                            android:textStyle="bold"
+                            tools:text="FASTag pending actions (8)" />
+
+                        <ImageView
+                            android:layout_width="@dimen/size_20dp"
+                            android:layout_height="@dimen/size_20dp"
+                            android:contentDescription="@string/action_continue"
+                            android:src="@drawable/ic_chevron_right_dark"
+                            app:tint="#7B6414" />
+
+                    </LinearLayout>
 
                     <!-- Your FASTags Section Title -->
                     <TextView
@@ -169,18 +213,52 @@
                     <LinearLayout
                         android:id="@+id/emptyState"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="@dimen/size_48dp"
+                        android:paddingHorizontal="@dimen/size_24dp"
                         android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/size_96dp"
+                            android:layout_height="@dimen/size_96dp"
+                            android:layout_marginBottom="@dimen/size_16dp"
+                            android:src="@drawable/fastag_empty_box" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/fastag_no_fastags"
-                            android:textColor="@color/text_grey"
-                            android:textSize="@dimen/text_14sp" />
+                            android:text="@string/fastag_no_fastags_heading"
+                            android:textAlignment="center"
+                            android:textColor="@color/black_title"
+                            android:textSize="@dimen/text_20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_16dp"
+                            android:text="@string/fastag_no_fastags_description"
+                            android:textAlignment="center"
+                            android:textColor="#2B2B2B"
+                            android:textSize="@dimen/text_12sp"
+                            android:lineSpacingExtra="4dp" />
+
+                        <TextView
+                            android:id="@+id/btnEmptyBuyFastag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size_32dp"
+                            android:background="@drawable/bg_all_round_corner_solid_black"
+                            android:gravity="center"
+                            android:paddingVertical="@dimen/size_16dp"
+                            android:text="@string/fastag_buy_cta"
+                            android:paddingHorizontal="@dimen/size_16dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/text_16sp"
+                            android:textStyle="bold" />
+
                     </LinearLayout>
 
                 </LinearLayout>

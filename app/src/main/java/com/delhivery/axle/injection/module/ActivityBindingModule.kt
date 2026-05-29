@@ -26,6 +26,8 @@ import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionActivity
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity
+import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
+import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -414,6 +416,16 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsFastagTrucksActivityModule::class])
   internal abstract fun bindFastagTrucksActivity(): FastagTrucksActivity
 
+  /* FASTag Pending Actions activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsPendingActionsActivityModule::class])
+  internal abstract fun bindPendingActionsActivity(): PendingActionsActivity
+
+  /* Assign Vehicle activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsAssignVehicleActivityModule::class])
+  internal abstract fun bindAssignVehicleActivity(): AssignVehicleActivity
+
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
   internal abstract fun bindPlacementsActivity(): PlacementsActivity
@@ -657,6 +669,12 @@ internal abstract class AbsFastagRechargeActivityModule : ActivityModule<FastagR
 
 @Module
 internal abstract class AbsFastagTrucksActivityModule : ActivityModule<FastagTrucksActivity>()
+
+@Module
+internal abstract class AbsPendingActionsActivityModule : ActivityModule<PendingActionsActivity>()
+
+@Module
+internal abstract class AbsAssignVehicleActivityModule : ActivityModule<AssignVehicleActivity>()
 
 @Module
 internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()

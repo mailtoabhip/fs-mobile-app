@@ -15,6 +15,7 @@ import com.delhivery.axle.api.response.ServiceGroup
 import com.delhivery.axle.databinding.FragmentHomeBinding
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity
+import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
 import com.delhivery.axle.ui.common.UiEvent
 import com.delhivery.axle.ui.common.UiState
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
@@ -57,6 +58,24 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         binding.fastagCard.setOnClickListener {
             startActivity(FastagTrucksActivity.newIntent(requireContext()))
         }
+
+        // FASTag Pending Actions Card
+        binding.fastagPendingCard.setOnClickListener {
+            startActivity(PendingActionsActivity.newIntent(requireContext()))
+        }
+
+        viewModel.fastagPendingCount.observe(viewLifecycleOwner) { count ->
+            if (count > 0) {
+                binding.fastagPendingCard.visibility = View.VISIBLE
+                binding.tvFastagPendingText.text =
+                    getString(R.string.label_fastag_pending_actions, count)
+            } else {
+                binding.fastagPendingCard.visibility = View.GONE
+            }
+        }
+
+        // TODO: Replace with real API data. For now, show mock pending count.
+        viewModel.setFastagPendingCount(8)
 
         binding.gpsCard.setOnClickListener {
             startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_GPS))

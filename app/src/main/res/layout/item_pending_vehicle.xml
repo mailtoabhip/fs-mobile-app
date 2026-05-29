@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/size_12dp">
+
+    <!-- Tag Icon with background -->
+    <FrameLayout
+        android:layout_width="@dimen/size_36dp"
+        android:layout_height="@dimen/size_36dp"
+        android:background="@drawable/bg_tag_icon_rectangle">
+
+        <ImageView
+            android:id="@+id/ivTagIcon"
+            android:layout_width="@dimen/size_20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/label_fastag_title"
+            android:src="@drawable/ic_fs_pending_tag" />
+
+    </FrameLayout>
+
+    <!-- Vehicle Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvVehicleClass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/neutral_black_200"
+            android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
+            tools:text="Vehicle Class 5" />
+
+        <TextView
+            android:id="@+id/tvVehicleRef"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:textColor="@color/text_body_secondary"
+            android:textSize="@dimen/text_12sp"
+            tools:text="DL01CA1234  |  #607318-001-0000343" />
+
+    </LinearLayout>
+
+    <!-- Action Badge with clock icon -->
+    <TextView
+        android:id="@+id/tvActionBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_badge_pending_action"
+        android:drawablePadding="@dimen/size_4dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/size_10dp"
+        android:paddingVertical="@dimen/size_6dp"
+        android:textSize="@dimen/text_12sp"
+        android:textStyle="bold"
+        android:textColor="#7B6414"
+        app:drawableStartCompat="@drawable/fs_pending_clock"
+        tools:text="KYC" />
+
+</LinearLayout>
