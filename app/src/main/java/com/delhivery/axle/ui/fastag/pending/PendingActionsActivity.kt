@@ -59,17 +59,14 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
             binding.shimmerLayout.visibility = if (loading) View.VISIBLE else View.GONE
             if (loading) {
                 binding.rvPendingOrders.visibility = View.GONE
-                binding.emptyState.visibility = View.GONE
             }
         })
 
         viewModel.pendingOrders.observe(this, Observer { orders ->
             if (orders.isNullOrEmpty()) {
                 binding.rvPendingOrders.visibility = View.GONE
-                binding.emptyState.visibility = View.VISIBLE
             } else {
                 binding.rvPendingOrders.visibility = View.VISIBLE
-                binding.emptyState.visibility = View.GONE
                 adapter.submitList(orders)
             }
         })

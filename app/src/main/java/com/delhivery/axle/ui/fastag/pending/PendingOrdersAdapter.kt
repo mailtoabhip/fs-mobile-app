@@ -1,12 +1,12 @@
 package com.delhivery.axle.ui.fastag.pending
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +32,11 @@ class PendingOrdersAdapter : ListAdapter<PendingOrder, PendingOrdersAdapter.Orde
         private val ivExpandCollapse: ImageView = itemView.findViewById(R.id.ivExpandCollapse)
         private val headerLayout: View = itemView.findViewById(R.id.headerLayout)
         private val vehiclesContainer: LinearLayout = itemView.findViewById(R.id.vehiclesContainer)
+        private val divider: View = itemView.findViewById(R.id.divider)
 
         fun bind(order: PendingOrder) {
             tvOrderId.text = "Order ID: ${order.orderId}"
-            tvOrderMeta.text = "${order.date}  |  ${order.pendingCount} Pending Actions"
+            tvOrderMeta.text = order.date
 
             updateExpandState(order.isExpanded)
 
@@ -49,6 +50,7 @@ class PendingOrdersAdapter : ListAdapter<PendingOrder, PendingOrdersAdapter.Orde
             val order = getItem(adapterPosition)
             if (isExpanded) {
                 ivExpandCollapse.setImageResource(R.drawable.ic_chevron_up)
+                divider.visibility = View.VISIBLE
                 vehiclesContainer.visibility = View.VISIBLE
                 vehiclesContainer.removeAllViews()
                 order.vehicles.forEach { vehicle ->
@@ -59,6 +61,7 @@ class PendingOrdersAdapter : ListAdapter<PendingOrder, PendingOrdersAdapter.Orde
                 }
             } else {
                 ivExpandCollapse.setImageResource(R.drawable.ic_chevron_down)
+                divider.visibility = View.GONE
                 vehiclesContainer.visibility = View.GONE
             }
         }
@@ -78,32 +81,37 @@ class PendingOrdersAdapter : ListAdapter<PendingOrder, PendingOrdersAdapter.Orde
             tvVehicleRef.text = refParts.joinToString("  |  ")
             tvVehicleRef.visibility = if (refParts.isEmpty()) View.GONE else View.VISIBLE
 
-            // Set action badge
+            // Set action badge text
             tvActionBadge.text = vehicle.actionType.displayName
 
-            val context = view.context
-            when (vehicle.actionType) {
-                PendingActionType.ASSIGNMENT -> {
-                    tvActionBadge.setTextColor(ContextCompat.getColor(context, R.color.pending_status))
-                    tvActionBadge.setBackgroundResource(R.drawable.bg_badge_assignment)
-                    ivTagIcon.setColorFilter(ContextCompat.getColor(context, R.color.pending_status))
-                }
-                PendingActionType.ACTIVATION -> {
-                    tvActionBadge.setTextColor(ContextCompat.getColor(context, R.color.pending_status))
-                    tvActionBadge.setBackgroundResource(R.drawable.bg_badge_activation)
-                    ivTagIcon.setColorFilter(ContextCompat.getColor(context, R.color.pending_status))
-                }
-                PendingActionType.HANDOVER -> {
-                    tvActionBadge.setTextColor(ContextCompat.getColor(context, R.color.pending_status))
-                    tvActionBadge.setBackgroundResource(R.drawable.bg_badge_handover)
-                    ivTagIcon.setColorFilter(ContextCompat.getColor(context, R.color.gray_400))
-                }
-                PendingActionType.KYV -> {
-                    tvActionBadge.setTextColor(ContextCompat.getColor(context, R.color.pending_status))
-                    tvActionBadge.setBackgroundResource(R.drawable.bg_badge_kyv)
-                    ivTagIcon.setColorFilter(ContextCompat.getColor(context, R.color.pending_status))
-                }
+            // Set tag icon color based on vehicle class colorCode
+            val tagColor = mapColor(view.context, vehicle.colorCode)
+            ivTagIcon.setColorFilter(tagColor)
+        }
+
+        /**
+         * Map color code string to actual color resource.
+         */
+        private fun mapColor(context: Context, colorCode: String): Int {
+            return when (colorCode.uppercase()) {
+                "RED" -> context.getColor(R.color.class_red)
+                "YELLOW" -> context.getColor(R.color.class_yellow)
+                "GREEN" -> context.getColor(R.color.class_green)
+                "PINK" -> context.getColor(R.color.class_pink)
+                "BLUE" -> context.getColor(R.color.class_blue)
+                else -> context.getColor(R.color.class_green)
             }
+        }
+
+        /**
+         * Create a lighter version of the color for the background.
+         */
+        private fun adjustAlpha(color: Int, factor: Float): Int {
+            val alpha = (255 * factor).toInt()
+            val red = android.graphics.Color.red(color)
+            val green = android.graphics.Color.green(color)
+            val blue = android.graphics.Color.blue(color)
+            return android.graphics.Color.argb(alpha, red, green, blue)
         }
     }
 

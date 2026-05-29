@@ -13,12 +13,15 @@ data class PendingOrder(
 
 /**
  * Represents a vehicle within a pending order that requires action.
+ *
+ * @param colorCode Color code string from API: "RED", "YELLOW", "GREEN", "PINK", "BLUE"
  */
 data class PendingVehicle(
     val vehicleClass: String,
     val referenceId: String?,
     val vehicleNumber: String?,
-    val actionType: PendingActionType
+    val actionType: PendingActionType,
+    val colorCode: String = "GREEN"
 )
 
 /**
@@ -28,5 +31,5 @@ enum class PendingActionType(val displayName: String) {
     ASSIGNMENT("Assignment"),
     ACTIVATION("Activation"),
     HANDOVER("Handover"),
-    KYV("KYV")
+    KYC("KYC")
 }

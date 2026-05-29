@@ -145,12 +145,14 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
             if (trucks.isNullOrEmpty()) {
                 binding.rvFastagTrucks.visibility = View.GONE
                 binding.emptyState.visibility = View.VISIBLE
-                binding.tvSectionTitle.visibility = View.VISIBLE
+                binding.tvSectionTitle.visibility = View.GONE
+                binding.bannerCard.visibility = View.GONE
                 binding.fastagPendingCard.visibility = View.GONE
             } else {
                 binding.rvFastagTrucks.visibility = View.VISIBLE
                 binding.emptyState.visibility = View.GONE
                 binding.tvSectionTitle.visibility = View.VISIBLE
+                binding.bannerCard.visibility = View.VISIBLE
                 adapter.submitList(trucks)
 
                 // Show pending card with count of trucks needing action (low balance)

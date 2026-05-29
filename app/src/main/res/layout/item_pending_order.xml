@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginHorizontal="@dimen/size_16dp"
-    android:layout_marginVertical="@dimen/size_4dp"
+    android:layout_marginVertical="@dimen/size_6dp"
     android:background="@drawable/bg_pending_order_card"
     android:padding="@dimen/size_16dp">
 
@@ -32,7 +32,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
-                tools:text="Order ID: #23415" />
+                tools:text="Order ID: #41641" />
 
             <TextView
                 android:id="@+id/tvOrderMeta"
@@ -40,8 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_4dp"
                 android:textColor="#6B7280"
-                android:textSize="@dimen/text_12sp"
-                tools:text="26 May 2026  |  4 Pending Actions" />
+                android:textSize="@dimen/text_14sp"
+                tools:text="26 May 2026" />
 
         </LinearLayout>
 
@@ -54,12 +54,21 @@
 
     </LinearLayout>
 
+    <!-- Divider (shown when expanded) -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/size_12dp"
+        android:background="#E5E7EB"
+        android:visibility="gone" />
+
     <!-- Expandable Vehicles Container -->
     <LinearLayout
         android:id="@+id/vehiclesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_12dp"
+        android:layout_marginTop="@dimen/size_4dp"
         android:orientation="vertical"
         android:visibility="gone" />
 

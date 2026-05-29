@@ -84,37 +84,6 @@
                 android:paddingVertical="@dimen/size_8dp"
                 tools:listitem="@layout/item_pending_order" />
 
-            <!-- Empty State -->
-            <LinearLayout
-                android:id="@+id/emptyState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="@dimen/size_48dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pending_actions_empty_title"
-                    android:textAlignment="center"
-                    android:textColor="#111C2D"
-                    android:textSize="@dimen/text_20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_12dp"
-                    android:text="@string/pending_actions_empty_description"
-                    android:textAlignment="center"
-                    android:textColor="#45474C"
-                    android:textSize="@dimen/text_14sp" />
-
-            </LinearLayout>
-
         </FrameLayout>
 
     </LinearLayout>

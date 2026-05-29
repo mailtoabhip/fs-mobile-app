@@ -28,33 +28,24 @@ class PendingActionsViewModel @Inject constructor() : BaseViewModel() {
     private fun getMockPendingOrders(): List<PendingOrder> {
         return listOf(
             PendingOrder(
-                orderId = "#23415",
+                orderId = "#41641",
                 date = "26 May 2026",
                 pendingCount = 4,
                 vehicles = listOf(
-                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", null, PendingActionType.ASSIGNMENT),
-                    PendingVehicle("Vehicle Class 6", "#607318-001-0000343", null, PendingActionType.ACTIVATION),
-                    PendingVehicle("Vehicle Class 7", null, null, PendingActionType.HANDOVER),
-                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", "DL01CA1234", PendingActionType.KYV)
+                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", null, PendingActionType.ASSIGNMENT, "RED"),
+                    PendingVehicle("Vehicle Class 6", "#607318-001-0000343", null, PendingActionType.ACTIVATION, "YELLOW"),
+                    PendingVehicle("Vehicle Class 7", null, null, PendingActionType.KYC, "GREEN"),
+                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", "DL01CA1234", PendingActionType.HANDOVER, "RED")
                 ),
                 isExpanded = true
-            ),
-            PendingOrder(
-                orderId = "#62711",
-                date = "01 May 2026",
-                pendingCount = 2,
-                vehicles = listOf(
-                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", null, PendingActionType.ASSIGNMENT),
-                    PendingVehicle("Vehicle Class 6", "#607318-001-0000343", null, PendingActionType.ACTIVATION)
-                )
             ),
             PendingOrder(
                 orderId = "#42612",
                 date = "23 April 2026",
                 pendingCount = 2,
                 vehicles = listOf(
-                    PendingVehicle("Vehicle Class 7", null, null, PendingActionType.HANDOVER),
-                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", "DL01CA1234", PendingActionType.KYV)
+                    PendingVehicle("Vehicle Class 7", null, null, PendingActionType.KYC, "GREEN"),
+                    PendingVehicle("Vehicle Class 5", "#607318-001-0000343", "DL01CA1234", PendingActionType.HANDOVER, "RED")
                 )
             )
         )
