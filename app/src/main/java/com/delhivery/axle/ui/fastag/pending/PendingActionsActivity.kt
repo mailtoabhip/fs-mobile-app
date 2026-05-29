@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityPendingActionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, PendingActionsViewModel>() {
@@ -47,7 +48,17 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
     }
 
     private fun setupRecyclerView() {
-        adapter = PendingOrdersAdapter()
+        adapter = PendingOrdersAdapter { vehicle ->
+            startActivity(
+                AssignVehicleActivity.newIntent(
+                    context = this,
+                    vehicleClass = vehicle.vehicleClass,
+                    referenceId = vehicle.referenceId,
+                    colorCode = vehicle.colorCode,
+                    actionType = vehicle.actionType
+                )
+            )
+        }
         binding.rvPendingOrders.apply {
             layoutManager = LinearLayoutManager(this@PendingActionsActivity)
             adapter = this@PendingActionsActivity.adapter

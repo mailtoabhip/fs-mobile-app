@@ -17,7 +17,7 @@
         <ImageView
             android:id="@+id/ivTagIcon"
             android:layout_width="@dimen/size_20dp"
-            android:layout_height="@dimen/size_20dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/label_fastag_title"
             android:src="@drawable/ic_fs_pending_tag" />

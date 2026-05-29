@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
 
-class PendingOrdersAdapter : ListAdapter<PendingOrder, PendingOrdersAdapter.OrderViewHolder>(
+class PendingOrdersAdapter(
+    private val onVehicleClick: (PendingVehicle) -> Unit
+) : ListAdapter<PendingOrder, PendingOrdersAdapter.OrderViewHolder>(
     OrderDiffCallback()
 ) {
 
@@ -87,6 +89,11 @@ class PendingOrdersAdapter : ListAdapter<PendingOrder, PendingOrdersAdapter.Orde
             // Set tag icon color based on vehicle class colorCode
             val tagColor = mapColor(view.context, vehicle.colorCode)
             ivTagIcon.setColorFilter(tagColor)
+
+            // Click to open assign vehicle screen
+            view.setOnClickListener {
+                onVehicleClick(vehicle)
+            }
         }
 
         /**

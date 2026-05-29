@@ -1178,6 +1178,11 @@
     <string name="pending_actions_title">Pending Actions</string>
     <string name="pending_actions_empty_title">No Pending Actions</string>
     <string name="pending_actions_empty_description">All your FASTag orders are up to date. No actions required at this time.</string>
+    <string name="assign_vehicle_title">Assign Vehicle</string>
+    <string name="activate_vehicle_title">Activate Vehicle</string>
+    <string name="handover_vehicle_title">Handover Vehicle</string>
+    <string name="kyc_vehicle_title">KYC Verification</string>
+    <string name="select_vehicle_title">Select vehicle</string>
     <string name="fastag_balance_low">FASTag balance low</string>
     <string name="fastag_recharge">Recharge</string>
     <string name="fastag_refresh_balance">Refresh balance</string>
