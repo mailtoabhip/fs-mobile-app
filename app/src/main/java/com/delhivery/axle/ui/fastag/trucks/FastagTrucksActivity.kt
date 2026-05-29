@@ -12,6 +12,7 @@ import com.delhivery.axle.databinding.ActivityFastagTrucksBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
+import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
@@ -68,8 +69,6 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
 
     override fun onResume() {
         super.onResume()
-        // Refresh on return from recharge
-        viewModel.fetchFastagTrucks()
     }
 
     private fun setupToolbar() {
@@ -113,13 +112,23 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
 
     private fun setupBanner() {
         binding.btnBuyFastag.setOnClickListener {
-            val dialog =
-                BuyFastagBottomSheetDialogFragment.newInstance { selectedCity, truckCount ->
-                    // Handle buy FASTag submission
-                    uiUtils.showSnackbar("FASTag request submitted")
-                }
-            dialog.show(supportFragmentManager, "BuyFastagBottomSheet")
+            showBuyFastagDialog()
         }
+        binding.btnEmptyBuyFastag.setOnClickListener {
+            showBuyFastagDialog()
+        }
+        binding.fastagPendingCard.setOnClickListener {
+            startActivity(PendingActionsActivity.newIntent(this))
+        }
+    }
+
+    private fun showBuyFastagDialog() {
+        val dialog =
+            BuyFastagBottomSheetDialogFragment.newInstance { selectedCity, truckCount ->
+                // Handle buy FASTag submission
+                uiUtils.showSnackbar("FASTag request submitted")
+            }
+        dialog.show(supportFragmentManager, "BuyFastagBottomSheet")
     }
 
     private fun setupObservers() {
@@ -136,10 +145,26 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
             if (trucks.isNullOrEmpty()) {
                 binding.rvFastagTrucks.visibility = View.GONE
                 binding.emptyState.visibility = View.VISIBLE
+                binding.tvSectionTitle.visibility = View.VISIBLE
+                binding.fastagPendingCard.visibility = View.GONE
             } else {
                 binding.rvFastagTrucks.visibility = View.VISIBLE
                 binding.emptyState.visibility = View.GONE
+                binding.tvSectionTitle.visibility = View.VISIBLE
                 adapter.submitList(trucks)
+
+                // Show pending card with count of trucks needing action (low balance)
+                val pendingCount = trucks.count { truck ->
+                    val balance = truck.fastagBalance?.toDoubleOrNull() ?: 0.0
+                    balance < 100
+                }
+                if (pendingCount > 0) {
+                    binding.fastagPendingCard.visibility = View.VISIBLE
+                    binding.tvFastagPendingText.text =
+                        getString(R.string.label_fastag_pending_actions, pendingCount)
+                } else {
+                    binding.fastagPendingCard.visibility = View.GONE
+                }
             }
         })
 
