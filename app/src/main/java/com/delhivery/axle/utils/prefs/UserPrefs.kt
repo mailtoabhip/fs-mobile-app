@@ -23,6 +23,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         context
 ) {
   override fun prefsName() = PrefNames.UserPrefs
+  override val isEncrypted = true
 
   companion object {
     // Cache TypeToken instances as static fields to prevent ProGuard/R8 obfuscation issues

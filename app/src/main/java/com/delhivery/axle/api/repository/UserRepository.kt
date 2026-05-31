@@ -71,7 +71,7 @@ class UserRepository @Inject constructor(
    * Get user
    */
   fun getUser(cache: Boolean = true): Single<UserModel> = if (!cache || user == null) {
-    loadBoardService.userDetails(userId()).convertResponse().map {
+    loadBoardService.userDetails().convertResponse().map {
       it.userModel[0]
     }.onBackground()
         .doOnSuccess {

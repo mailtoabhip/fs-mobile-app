@@ -149,18 +149,24 @@ class FsAuthRepository @Inject constructor(
         data
     }
 
-    fun authStatus() = when (userPrefs.jwtToken.isNotNullOrEmpty() && userPrefs.refreshToken.isNotNullOrEmpty()) {
-        true -> JWT(userPrefs.refreshToken!!).expiresAt.let { expiresAt ->
-            when (expiresAt != null && expiresAt.after(Date())) {
-                true -> true
-                false -> {
-                    /* expired: clear credentials and logout */
-                    localLogout()
-                    false
-                }
-            }
+    fun authStatus(): Boolean {
+        if (!userPrefs.jwtToken.isNotNullOrEmpty() || !userPrefs.refreshToken.isNotNullOrEmpty()) {
+            return false
         }
-        false -> false
+        return try {
+            val expiresAt = JWT(userPrefs.refreshToken!!).expiresAt
+            if (expiresAt != null && expiresAt.after(Date())) {
+                true
+            } else {
+                /* expired: clear credentials and logout */
+                localLogout()
+                false
+            }
+        } catch (e: Exception) {
+            /* malformed token: clear credentials and logout */
+            localLogout()
+            false
+        }
     }
 
     fun localLogout() {

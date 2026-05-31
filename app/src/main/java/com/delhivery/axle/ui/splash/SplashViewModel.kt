@@ -21,8 +21,8 @@ class SplashViewModel @Inject constructor(
    * Post splash state
    */
   fun postState() = when {
-    authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
     authenticationRepository.authStatus() && userPrefs.hasLoggedIn && userPrefs.isNewUser -> AccountDetails
+    authenticationRepository.authStatus() && userPrefs.hasLoggedIn -> Home
     else -> Auth
   }
 

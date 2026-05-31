@@ -90,10 +90,8 @@ interface LoadBoardService {
     /**
      * patch user details
      */
-    @GET("/get_user")
-    fun userDetails(
-            @Query("uuid") userId: String
-    ): Single<BaseResponse<UserRespone>>
+    @GET("api/v1/auth/profile")
+    fun userDetails(): Single<BaseResponse<UserRespone>>
 
     /**
      * kyc docs

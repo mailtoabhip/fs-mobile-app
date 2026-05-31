@@ -277,6 +277,9 @@ dependencies {
 
     //fragment ktx dependency
     implementation "androidx.fragment:fragment-ktx:1.8.9"
+
+    // Encrypted SharedPreferences
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

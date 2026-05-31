@@ -50,6 +50,17 @@ class DelhiveryNetworkInterceptor @Inject constructor(
       builder.header("X-Request-Id", requestId)
       builder.header("X-Client-Ip", deviceInfoProvider.publicIp)
 
+      /* Attach Bearer token for all authenticated endpoints */
+      val path = chain.request().url().encodedPath()
+      if (path != "/api/v1/auth/initiate" && path != "/api/v1/auth/verify") {
+        jwtToken?.let { token ->
+          builder.header("Authorization", "Bearer $token")
+          if (BuildConfig.DEBUG) {
+            Log.d("DelhiveryInterceptor", "Authorization → Bearer ${token.take(8)}…")
+          }
+        }
+      }
+
       if (BuildConfig.DEBUG) {
         Log.d("DelhiveryInterceptor", "Headers → X-Device-Id=${deviceInfoProvider.deviceId}, " +
             "X-Device-Model=${deviceInfoProvider.deviceModel}, " +

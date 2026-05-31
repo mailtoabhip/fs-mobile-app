@@ -114,7 +114,7 @@ enum class UrlConfig(
   LoadboardService(
           "https://orion-user-loadboard.delhivery.com",
           "https://orion-user-onboarding-api-dev.delhivery.com",
-          "https://orion-user-onboarding-api-uat.delhivery.com"
+          "https://api.devfinserv.com"
   ),
   PriceService(
           "https://orion-contract-api-mum.delhivery.com/",
@@ -156,7 +156,7 @@ enum class UrlConfig(
   FsAuthService(
       "https://fs-auth.delhivery.com/",
       "https://fs-auth-dev.delhivery.com/",
-      "https://orion-user-onboarding-api-uat.delhivery.com"  // Android emulator loopback → Mac localhost; replace with Mac's LAN IP for physical device
+      "https://api.devfinserv.com"  // Android emulator loopback → Mac localhost; replace with Mac's LAN IP for physical device
   ),
   AppID(
   "83", "371", "371"

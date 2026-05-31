@@ -10,11 +10,12 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewOtpInputBinding
 import com.delhivery.axle.databinding.ViewOtpInputCellBinding
 
 /**
- * Full-width OTP input view with 4 equal cells.
+ * Full-width OTP input view with configurable equal cells.
  *
  * Normal state : grey border  (@drawable/bg_login_edit)
  * Error state  : red border   (@drawable/bg_otp_cell_error)
@@ -35,7 +36,7 @@ class OtpInputView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    /** Called when all [DIGIT_COUNT] digits have been entered. */
+    /** Called when all [digitCount] digits have been entered. */
     var onOtpComplete: ((CharArray) -> Unit)? = null
 
     private val binding = ViewOtpInputBinding.inflate(LayoutInflater.from(context), this, true)
@@ -44,7 +45,13 @@ class OtpInputView @JvmOverloads constructor(
     // Tracks whether we're in error state so focus changes don't prematurely clear it
     private var isInErrorState = false
 
+    /** Number of OTP digits (default 4, configurable via XML). */
+    private var digitCount: Int = DEFAULT_DIGIT_COUNT
+
     init {
+        context.obtainStyledAttributes(attrs, R.styleable.OtpInputView, 0, 0).use {
+            digitCount = it.getInteger(R.styleable.OtpInputView_otpDigitCount, DEFAULT_DIGIT_COUNT)
+        }
         buildCells()
     }
 
@@ -77,7 +84,7 @@ class OtpInputView @JvmOverloads constructor(
     private fun buildCells() {
         binding.otpCellContainer.removeAllViews()
         cells.clear()
-        repeat(DIGIT_COUNT) { index ->
+        repeat(digitCount) { index ->
             val cellBinding = ViewOtpInputCellBinding.inflate(
                 LayoutInflater.from(context), binding.otpCellContainer, false
             )
@@ -140,7 +147,7 @@ class OtpInputView @JvmOverloads constructor(
                 cells.forEach { it.error = false }
             }
             if (s?.isNotEmpty() == true) {
-                if (index < DIGIT_COUNT - 1) {
+                if (index < digitCount - 1) {
                     focusCell(index + 1, clearText = false)
                 } else {
                     submitIfComplete()
@@ -161,6 +168,6 @@ class OtpInputView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val DIGIT_COUNT = 4
+        private const val DEFAULT_DIGIT_COUNT = 4
     }
 }
