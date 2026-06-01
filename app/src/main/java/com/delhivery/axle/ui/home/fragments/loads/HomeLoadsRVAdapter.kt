@@ -42,7 +42,6 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
     parent: ViewGroup,
     viewType: Int
   ) = when (HomeLoadsRVAdapterItemType.byTypeId(viewType)) {
-    Search -> ViewHomeLoadsSearchPlaceholderItemV2Binding.inflate(inflater, parent, false)
     Progress -> ViewHomeLoadsProgressItemBinding.inflate(inflater, parent, false)
     Warning -> ViewWarningItemBinding.inflate(inflater, parent, false)
     Info -> ViewHomeLoadsInfoItemBinding.inflate(inflater, parent, false)
@@ -62,7 +61,6 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
   }
 
   override fun createVH(binding: ViewDataBinding) = when (binding) {
-    is ViewHomeLoadsSearchPlaceholderItemV2Binding -> HomeLoadsSearchItemVH(binding)
     is ViewHomeLoadsProgressItemBinding -> HomeLoadsProgressItemVH(binding)
     is ViewWarningItemBinding -> HomeLoadsWarningItemVH(binding)
     is ViewHomeLoadsInfoItemBinding -> HomeLoadsInfoItemVH(binding)
@@ -90,7 +88,6 @@ class HomeLoadsRVAdapter(private val _interface: HomeLoadsRVAdapterInterface) :
       is HomeLoadsMarketplaceItemVH -> holder.bind(item as HomeLoadsMarketplaceItem, _interface)
       is HomeLoadsKycPendingItemVH -> holder.bind(item as HomeLoadsKycPendingItem, _interface)
       is HomeLoadsProgressItemVH -> holder.bind(item as HomeLoadsProgressItem, _interface)
-      is HomeLoadsSearchItemVH -> holder.bind(item as HomeLoadsSearchItem, _interface)
       is HomeLoadsWarningItemVH -> holder.bind(item as HomeLoadsWarningItem, _interface)
       is HomeLoadsTimeOutItemVH -> holder.bind(item as HomeLoadsTimeoutItem, _interface)
       is HomeLoadsInfoItemVH -> holder.bind(item as HomeLoadsInfoItem, _interface)

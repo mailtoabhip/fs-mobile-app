@@ -254,7 +254,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                     for (i in dmtBidSummaryItemDataList) {
                         removedBids.addAll(i.bidIds)
                     }
-                    dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, unAllocatedLoad)
+                    //dialogInterface.editBids(transaction.key(), position, createPayload, modifyPayload, removedBids, unAllocatedLoad)
                 } else {
                     for (item in adapter.itemsList()) {
                         val bidData = item.data as DmtBidSummaryItemData
@@ -263,7 +263,7 @@ class BulkBidDetailsCreateEditDialog @Inject constructor(
                             createPayload.add(VehicleBidData(bidData.pmtRate, bidData.vehicleCapacity, bidData.truckCount, bidData.vehicleType, freightCost, bidData.expectedArrivalTimePickup, bidData.expectedArrivalTimePickupRemark))
                         }
                     }
-                    dialogInterface.createBids(transaction.key(), position, createPayload, unAllocatedLoad)
+                   // dialogInterface.createBids(transaction.key(), position, createPayload, unAllocatedLoad)
                 }
                 dismiss()
             }

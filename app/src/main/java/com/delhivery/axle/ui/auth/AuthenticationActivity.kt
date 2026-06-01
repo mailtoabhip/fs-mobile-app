@@ -1,11 +1,9 @@
 package com.delhivery.axle.ui.auth
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -16,16 +14,30 @@ import com.delhivery.axle.databinding.ActivityAuthenticationBinding
 import com.delhivery.axle.fcm.ARGS_NOTIFICATION_ID
 import com.delhivery.axle.receiver.OTPReceiverInterface
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
-import com.delhivery.axle.ui.auth.AuthenticationUIError.*
-import com.delhivery.axle.ui.auth.AuthenticationUIState.*
+import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
+import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
+import com.delhivery.axle.ui.auth.AuthenticationUIError.None
+import com.delhivery.axle.ui.auth.AuthenticationUIState.AccountDetails
+import com.delhivery.axle.ui.auth.AuthenticationUIState.Disabled
+import com.delhivery.axle.ui.auth.AuthenticationUIState.HomePage
+import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
+import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
+import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.custom.DelhiveryOTPViewInterface
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.EVENT_LOGIN
+import com.delhivery.axle.utils.EVENT_OTP_RESEND
+import com.delhivery.axle.utils.EVENT_OTP_SEND
+import com.delhivery.axle.utils.EVENT_OTP_VERIFIED
+import com.delhivery.axle.utils.PROPERTY_MOBILE_NUMBER_ENTERED
+import com.delhivery.axle.utils.PROPERTY_OTP_SEND_COUNT
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.USER_PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.USER_PROPERTY_UUID
 import com.delhivery.axle.utils.extensions.errorVibrate
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
+import com.delhivery.axle.utils.extensions.onLengthReached
 import com.delhivery.axle.utils.extensions.safeDispose
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
@@ -42,8 +54,7 @@ import javax.inject.Inject
 /**
  * Authentication screen
  */
-class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(),
-        DelhiveryOTPViewInterface, OTPReceiverInterface {
+class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, AuthenticationViewModel>(), OTPReceiverInterface {
 
   override fun getViewModelClass() = AuthenticationViewModel::class.java
 
@@ -64,7 +75,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    notificationId = intent?.extras?.getString(ARGS_NOTIFICATION_ID) ?: ""
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("AuthenticationActivity_SetupTime")
     activitySetupTrace?.start()
   }
@@ -84,42 +94,27 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         when (binding.state) {
-          PhoneNo -> {
-            finish()
-          }
-          OTP -> viewModel.state = PhoneNo
-          Password -> viewModel.state = PhoneNo
-          LoginProgress -> {/* do nothing when loading */
-          }
-          else -> {
-          }
+          PhoneNo -> finish()
+          OTP, LoginProgress -> viewModel.state = PhoneNo
+          else -> { }
         }
-
       }
     })
-    /*move to back screen*/
-    binding.btnChangeNumber.setOnClickListener {
+
+    binding.icBack.setOnClickListener {
       when (binding.state) {
-        PhoneNo -> {
-          onBackPressedDispatcher.onBackPressed()
-        }
-        OTP -> viewModel.state = PhoneNo
-        LoginProgress -> {/* do nothing when loading */
-        }
-        else -> {
-        }
+        PhoneNo -> onBackPressedDispatcher.onBackPressed()
+        OTP, LoginProgress -> viewModel.state = PhoneNo
+        else -> { }
       }
     }
 
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
       // raisedFocus()
-      lengthAction(9){
-        binding.btnSendOtp.isEnabled = false
-      }
-
-      lengthAction(10) {
-        binding.btnSendOtp.isEnabled = true
+      onLengthReached(10) {reached ->
+        binding.btnSendOtp.isEnabled = reached
+        binding.ivCheck.visibility = if (reached)View.VISIBLE else View.GONE
       }
     }
 
@@ -133,21 +128,28 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
-    viewModel.otpStatusLiveData.observe(this, Observer {
-      if (it == true) {
+    viewModel.otpStatusLiveData.observe(this, Observer { started ->
+      if (started == true) {
+        timeoutDisposable.safeDispose()
         timeoutDisposable = Observable.interval(0L, 1L, TimeUnit.SECONDS)
                 .onBackground()
-                .subscribe {
-                  val timeLeft = 15L - it
-                  if (timeLeft > 0) {
-                    val f: NumberFormat = DecimalFormat("00")
-                    binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:"+ f.format(timeLeft!!)
-                    binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext,R.color.color_hint))
-                  } else if (timeLeft == 0L) {
-                    binding.btnResendOtp.text = getString(string.label_resend_otp_done)
-                    binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
-                  } else {
-                    viewModel.otpStatusLiveData.postValue(false)
+                .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe { tick ->
+                  val timeLeft = 15L - tick
+                  when {
+                    timeLeft > 0 -> {
+                      val f: NumberFormat = DecimalFormat("00")
+                      binding.btnResendOtp.text = "${getString(string.label_resend_otp)} 00:${f.format(timeLeft)}"
+                      binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext, R.color.color_hint))
+                      binding.btnResendOtp.isEnabled = false
+                    }
+                    else -> {
+                      // timeLeft <= 0: countdown done, enable resend and stop the timer
+                      binding.btnResendOtp.text = getString(string.label_resend_otp_done)
+                      binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                      binding.btnResendOtp.isEnabled = true
+                      timeoutDisposable.safeDispose()
+                    }
                   }
                 }
       } else {
@@ -156,13 +158,12 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     })
 
     /* otp view interface */
-    binding.otpView.otpViewInterface = this
+    binding.otpView.onOtpComplete = { otp -> viewModel.verifyOTP(otp) }
 
     /* Initiate state */
     viewModel.state = PhoneNo
 
     binding.btnResendOtp.setOnClickListener {
-      // Capture event
       analyticsUtil.moEngageTrackEvent(
               EVENT_OTP_RESEND,
               mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
@@ -170,7 +171,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       )
       viewModel.otpSendCount +=1
       binding.otpError.visibility = View.GONE
-      viewModel.sendOTP()
+      viewModel.resendOTP()
     }
 
     binding.btnSendOtp.setOnClickListener {
@@ -184,18 +185,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       viewModel.sendOTP()
     }
 
-    binding.loginUsingPassword.setOnClickListener{
-      viewModel.state = Password
-    }
 
-    binding.loginButton.setOnClickListener{
-      performLogin()
-    }
-
-
-    if (notificationId.isNotEmpty()) {
-      markNotificationRead()
-    }
   }
 
   override fun onResume() {
@@ -206,19 +196,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     }
   }
 
-  override fun markNotificationRead() {
-    super.markNotificationRead()
-    viewModel.markNotificationRead(notificationId)
-  }
 
-
-  override fun otpSubmitted(otp: CharArray) {
-    binding.btnVerifyOtp.isEnabled = true
-    viewModel.verifyOTP(otp)
-  }
 
   override fun otpFound(otp: String) {
-    otpSubmitted(otp.toCharArray())
+    viewModel.verifyOTP(otp.toCharArray())
   }
 
   fun maskPhoneNumber(phone: String): String {
@@ -228,34 +209,11 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       "X".repeat(phone.length)
     }
   }
-  private fun performLogin() {
-    var flag= true
-    if(binding.tilUserId.editText?.text == null  || binding.editUserId.text.toString() == ""){
-      binding.tilUserId.isErrorEnabled = true
-      binding.tilUserId.error ="Field can't be empty"
-      flag= false
-    }
-    else{
-      binding.tilUserId.isErrorEnabled = false
-      binding.tilUserId.error = null
-    }
 
-    if(binding.tilUserPassword.editText?.text == null  || binding.editUserPassword.text.toString() == ""){
-      binding.tilUserPassword.isErrorEnabled = true
-      binding.tilUserPassword.error ="Field can't be empty"
-      flag= false
-    }
-    else{
-      binding.tilUserPassword.isErrorEnabled = false
-      binding.tilUserPassword.error = null
-    }
-
-    if(flag){
-      val userId=  binding.tilUserId.editText?.text.toString()
-      val userPassword = binding.tilUserPassword.editText?.text.toString()
-     // viewModel.loginUsingPassword("offroll@gmail.com","Off@12345678")
-      viewModel.loginUsingPassword(userId,userPassword)
-    }
+  private fun resetVerifyButton() {
+    binding.progressVerifyOtp.visibility = View.GONE
+    binding.btnVerifyOtp.text = getString(string.action_verify_otp)
+    binding.btnVerifyOtp.isEnabled = false // stays disabled until next OTP entry
   }
 
   /**
@@ -268,17 +226,18 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         when (state) {
           PhoneNo -> {
             //show keyboard
+            binding.icBack.visibility = View.INVISIBLE
             Handler(Looper.getMainLooper()).postDelayed({
               binding.editPhoneNo.requestFocus()
               uiUtils.toggleKeyboard(false)
             }, 600)
           }
           OTP -> {
+            binding.icBack.visibility = View.VISIBLE
             uiUtils.hideDelhiveryProgress()
-            //show keyboard and clear otp
             uiUtils.toggleKeyboard(false)
-            binding.otpView.clear(focusedIndex = 0, animate = false)
-
+            resetVerifyButton()
+            binding.otpView.clear()
             /* show masked phone no */
             viewModel.phoneNo.let {
               if (it.length > 2) {
@@ -287,15 +246,16 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               }
             }
           }
-          Password ->{
-            uiUtils.hideDelhiveryProgress()
-          }
           LoginProgress -> {
-            //hide keyboard show progress view
-            uiUtils.showProgress("Loading...")
+            // Show loading inside the verify button instead of a full-screen overlay
+            binding.icBack.visibility = View.VISIBLE
+            binding.btnVerifyOtp.text = ""
+            binding.btnVerifyOtp.isEnabled = false
+            binding.progressVerifyOtp.visibility = View.VISIBLE
+            uiUtils.toggleKeyboard(true)
           }
           /* Login success, user routes found - navigate to load requests */
-          LoadRequest -> {
+          HomePage -> {
             analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
             userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
             // Capture event
@@ -321,20 +281,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             }
             uiUtils.showProgress("Loading...")
             navigationUtils.navigate(AccountDetailsActivity::class.java, true)
-          }
-          BasicDetails -> {
-            analyticsUtil.moEngageTrackEvent(EVENT_LOGIN)
-            userPrefs.setPreviousScreen(AuthenticationActivity::class.java.name)
-            userPrefs.userId().let {
-              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_UUID,it)
-              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_UNIQUE_ID,it)
-            }
-            userPrefs.phoneNumber?.let {
-              analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
-              analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
-            }
-            uiUtils.hideDelhiveryProgress()
-            navigationUtils.navigate(BasicDetailsActivity::class.java, true)
           }
           Disabled -> {
             userPrefs.userId().let {
@@ -372,36 +318,21 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           InvalidPhoneNo -> {
             binding.editPhoneNo.errorVibrate()
           }
-          InvalidOTP -> {   //Invalid OTP
+          InvalidOTP -> {
             binding.otpError.visibility = View.VISIBLE
+            binding.otpView.showError(true)
+            resetVerifyButton()
             uiUtils.hideProgress()
           }
-          InvalidPassword -> {   //Invalid password clear fields
-            navigationUtils.navigate(InvalidActivity::class.java, false)
-            uiUtils.hideProgress()
-            uiUtils.hideDelhiveryProgress()
-
-          }
-          None -> {/* nothing */
+          None -> {
             binding.otpError.visibility = View.GONE
+            binding.otpView.showError(false)
+            resetVerifyButton()
             uiUtils.hideProgress()
           }
-
         }
-      }
-    }
-  }
 
-  override fun onActivityResult(
-          requestCode: Int,
-          resultCode: Int,
-          data: Intent?
-  ) {
-    super.onActivityResult(requestCode, resultCode, data)
-    when (requestCode) {
-      REQCODE_ADD_ROUTES -> navigationUtils.navigate(
-              HomeActivity::class.java, true
-      )
+      }
     }
   }
 }

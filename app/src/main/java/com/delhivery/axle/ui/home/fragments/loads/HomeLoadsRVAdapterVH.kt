@@ -682,23 +682,6 @@ internal class HomeLoadsProgressItemVH(binding: ViewHomeLoadsProgressItemBinding
 }
 
 /**
- * Search item view holder
- */
-internal class HomeLoadsSearchItemVH(binding: ViewHomeLoadsSearchPlaceholderItemV2Binding) :
-    BaseHomeLoadsRVAdapterViewHolder<ViewHomeLoadsSearchPlaceholderItemV2Binding, HomeLoadsSearchItem>(
-            binding
-    ) {
-  override fun bind(
-          item: HomeLoadsSearchItem,
-          _interface: HomeLoadsRVAdapterInterface
-  ) {
-    binding.editStickySearch.clickToAction(HomeLoadsSearchAction_Search,item,_interface)
-    binding.filterIcon.clickToAction(HomeLoadsVehicleFilterAction,item,_interface)
-    //binding.spinnerTruckDisplayName.text = "Vehicle Type"+if(item.data.query?.split(",")?.size==0)"" else " : " + item.data.query?.split(",")?.joinToString(", ")
-  }
-}
-
-/**
  * Bids warning item view holder
  */
 internal class HomeLoadsWarningItemVH(binding: ViewWarningItemBinding) :

@@ -10,8 +10,8 @@ import com.delhivery.axle.api.service.UMSService
 import com.delhivery.axle.api.service.UserService
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.data.RouteMappingModel
+import com.delhivery.axle.api.response.FsUserProfile
 import com.delhivery.axle.data.UserModel
-import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.database.AppDatabase
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
@@ -71,8 +71,8 @@ class UserRepository @Inject constructor(
    * Get user
    */
   fun getUser(cache: Boolean = true): Single<UserModel> = if (!cache || user == null) {
-    loadBoardService.userDetails(userId()).convertResponse().map {
-      it.userModel[0]
+    loadBoardService.userDetails().convertResponse().map { profile ->
+      profile.toUserModel()
     }.onBackground()
         .doOnSuccess {
           if (it != null) {
@@ -84,24 +84,45 @@ class UserRepository @Inject constructor(
     Single.just(user)
   }
 
-  /**
-   * Update user routes and get all routes
-   */
-  fun updateUserRoutes(routes: List<RouteMappingModel>) =
-    userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes).getRequest())
-
-  /**
-   * Update app access flag
-   */
-  fun updateUserAppAccess() = userService.updateUserAppAccess(userId(), UpdateUserAccessRequest())
-
-  /**
-   * Update FCM token
-   */
-  fun updateFCMToken(fcmToken: String) =
-    userService.updateFCMToken(
-        userId(), UpdateUserFCMTokenRequest.getRequest(fcmToken)
-    ).convertMessageResponse()
+  private fun FsUserProfile.toUserModel() = UserModel(
+    supplierDetails = null,
+    truckTypes = null,
+    clientDetails = null,
+    userId = id,
+    phoneNumber = phone,
+    phoneNo = phone,
+    userName = buildString {
+      if (!firstName.isNullOrEmpty()) append(firstName)
+      if (!lastName.isNullOrEmpty()) {
+        if (isNotEmpty()) append(" ")
+        append(lastName)
+      }
+    }.takeIf { it.isNotEmpty() },
+    demandType = emptyList(),
+    isUserVerified = isActive == true,
+    selectionChangeCount = null,
+    userMode = null,
+    userRole = null,
+    userType = null,
+    businessName = null,
+    referralCode = null,
+    otherAddress = null,
+    businessAddress = null,
+    isPanVerified = null,
+    isAadhaarVerified = null,
+    isGstVerified = null,
+    isRcVerified = null,
+    verificationStatus = null,
+    profileImageUrl = null,
+    name = null,
+    canViewThirdPartyLoads = null,
+    isIdentityVerified = null,
+    isGstsByPanNotRegistered = null,
+    isTruckingDocumentUploaded = null,
+    noOfVerificationIssues = null,
+    isBankDetailsRejected = null,
+    isAddressSameAsGST = null,
+  )
 
   /**
    * Get delegation token for AWS
@@ -112,12 +133,6 @@ class UserRepository @Inject constructor(
    * Fetch roles and permissions
    */
   fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
-
-  /**
-   * Delete User routes
-   */
-  fun deleteUserRoutes(routes: List<RouteMappingModel>) =userService.deleteUserRoute(userId(), UpdateUserRoutesRequest(routes).getRequest())
-
   /**
    * get omc details
    */

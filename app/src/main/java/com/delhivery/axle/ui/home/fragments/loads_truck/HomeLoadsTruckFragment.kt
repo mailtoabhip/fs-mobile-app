@@ -9,7 +9,6 @@ import com.delhivery.axle.databinding.FragmentHomeLoadsTruckBinding
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.*
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.trucks.HomeTrucksFragment
 import com.delhivery.axle.utils.EVENT_HOME_LOADS_TAB_CLICK
 import com.delhivery.axle.utils.EVENT_HOME_MY_TRUCKS_TAB_CLICK
@@ -61,18 +60,11 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
     }
 
     /* home fragments pager adapter */
-    private lateinit var pagerAdapter : HomeLoadsTruckFragmentsAdapter
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeLoadsTruckFragment_SetupTime")
         fragmentSetupTrace?.start()
-        pagerAdapter= HomeLoadsTruckFragmentsAdapter(childFragmentManager)
 
         val activity: HomeActivity? = activity as HomeActivity?
-        binding.viewpager.apply {
-            offscreenPageLimit = HomeLoadsTruckFragmentType.count()
-            adapter = pagerAdapter
-            }
         binding.tabLayout.setupWithViewPager(binding.viewpager)
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -130,20 +122,19 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
                     textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
                 }
                 if(tab?.position==0){
-                    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+                   // userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
                     userPrefs.setPreviousScreen(HomeTrucksFragment::class.java.name)
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_LOADS_TAB_CLICK, mutableListOf(
                         PROPERTY_ORDER_COUNT),
                         mutableListOf(userPrefs.loadCount))
                 }else if(tab?.position==1){
-                    userPrefs.currentNavigationTab = HomeTrucksFragment::class.java.name
-                    userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+                  //  userPrefs.currentNavigationTab = HomeTrucksFragment::class.java.name
+                    //userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_MY_TRUCKS_TAB_CLICK,mutableListOf(
                         PROPERTY_INVENTORY_COUNT),
                         mutableListOf(userPrefs.inventoryCount))
                 }else if(tab?.position==2){
-                    userPrefs.currentNavigationTab = HomeContractsFragment::class.java.name
-                    userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
+                   // userPrefs.setPreviousScreen(HomeLoadsFragment::class.java.name)
                     analyticsUtil.moEngageTrackEvent(EVENT_HOME_CONTRACT_TAB_CLICK,mutableListOf(PROPERTY_USER_ID,
                         PROPERTY_PHONE_NO,
                         PROPERTY_CONTRACT_TYPE),

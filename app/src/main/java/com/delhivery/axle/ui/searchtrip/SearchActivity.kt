@@ -410,8 +410,6 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>(),
   inner class PaginationInterface : PaginationScrollListener(
       UserSearchLimit
   ) {
-    override fun loadMore() = viewModel.searchTrips(true)
-
     override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData

@@ -535,10 +535,6 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   inner class PaginationInterface : PaginationScrollListener(
       UserTripsLoadLimit
   ) {
-    override fun loadMore() {
-      // Send LoadMore intent to ViewModel (pure MVI approach)
-      viewModelFlow.processIntent(UserIntent.LoadMore)
-    }
 
     override fun hasMore(): Boolean {
       // Check if more data is available from current state

@@ -299,7 +299,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
                     )
 
                     if(viewModel.selected_truck_capacity.isNotNullOrEmpty() && !viewModel.selected_truck_capacity.toString().equals("null")){
-                        viewModel.sharerate()
+                       // viewModel.sharerate()
                         binding.errorTruck.visibility = View.GONE
                     }else{
                         uiUtils.showToast("Please choose both truck size and capacity")
@@ -413,7 +413,7 @@ class ShareRateActivity : BaseActivity<ActivityShareRateBinding, ShareRateViewMo
     }
 
     private fun initializeData() {
-        viewModel.fetchTruckType()
+       // viewModel.fetchTruckType()
        // viewModel.fetchSupplierTrucks()
     }
 

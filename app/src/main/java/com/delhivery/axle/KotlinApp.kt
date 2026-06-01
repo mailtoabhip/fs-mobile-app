@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.os.Build
 import android.util.Log
 import com.delhivery.axle.R.drawable
+import com.delhivery.axle.network.DeviceInfoProvider
 import com.delhivery.axle.utils.RootDetectionUtil
 import com.delhivery.axle.utils.prefs.SecurityPrefs
 import com.moengage.core.DataCenter
@@ -19,6 +20,10 @@ import androidx.work.WorkManager
 import com.delhivery.axle.injection.module.DaggerWorkerFactory
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.InterruptedIOException
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -32,6 +37,9 @@ class KotlinApp : DaggerApplication() {
 
   @Inject
   lateinit var workerFactory: DaggerWorkerFactory
+
+  @Inject
+  lateinit var deviceInfoProvider: DeviceInfoProvider
 
 
   override fun onCreate() {
@@ -51,6 +59,11 @@ class KotlinApp : DaggerApplication() {
                     .setWorkerFactory(workerFactory)
                     .build()
     )
+
+    // Fetch public IP in background — interceptor reads cached value via @Volatile
+    CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+      deviceInfoProvider.fetchPublicIp()
+    }
   }
 
   /**

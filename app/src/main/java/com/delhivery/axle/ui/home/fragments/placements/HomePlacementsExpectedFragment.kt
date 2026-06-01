@@ -15,40 +15,34 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import com.delhivery.axle.R
-import com.delhivery.axle.databinding.FragmentHomePlacementsExpectedBinding
-import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.data.home.placements.HomePlacementRequested_ViewDetails
 import com.delhivery.axle.data.home.placements.HomePlacementsCallDriver
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.data.home.placements.HomePlacementsShareOnWhatsapp
 import com.delhivery.axle.data.home.placements.HomePlacementsTimeoutItemAction
 import com.delhivery.axle.databinding.DialogDurationFiltersBinding
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
-import com.delhivery.axle.ui.biddetails.placementsBidDetailsIntent
-import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
+import com.delhivery.axle.databinding.FragmentHomePlacementsExpectedBinding
 import com.delhivery.axle.ui.contractDetails.placementsContractDetailsIntent
-import com.delhivery.axle.ui.placementdetails.placementDetailsIntent
-import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsRVAdapterInterface
+import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.placementdetails.FilterDurationAdapter
 import com.delhivery.axle.ui.placementdetails.FilterItemOnClickListener
 import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
 import com.delhivery.axle.utils.DialogUtils
-import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_DEMAND_CARD_CLICKED
+import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_EXPECTED_TAB
 import com.delhivery.axle.utils.EVENT_HOME_PLACEMENT_FILTER
 import com.delhivery.axle.utils.LoadTypeUtils
 import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_EXPECTED_TIME
 import com.delhivery.axle.utils.PROPERTY_MISSING_FLAG
-import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_USER_ID
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 /**
@@ -199,10 +193,6 @@ class HomePlacementsExpectedFragment : HomeBaseFragment<FragmentHomePlacementsEx
                     val context = this.context
                     Log.d("transactionId", "$transactionId")
                     Log.d("contractCode", "$contractCode")
-                    if ((transactionId.isNotNullOrEmpty() || contractCode.isNotNullOrEmpty()) && context != null) {
-                        val intent = placementsBidDetailsIntent(placementType = LoadTypeUtils.getLoadType(data.loadType?:"N/A"), transactionId = transactionId, contractCode = contractCode, context, forPlacement = true, homePlacementsItemData = data)
-                        startActivity(intent)
-                    }
                 }else if(data.loadType==LoadTypes.intracityRegular.name || data.loadType==LoadTypes.ftlRegular.name ){
                     val transactionId = data.transactionId
                     val contractCode = data.contractCode

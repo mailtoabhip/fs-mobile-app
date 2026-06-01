@@ -3,8 +3,6 @@ package com.delhivery.axle.ui.biddetails
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.BidsRepository
-import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.SpotBiddingRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.response.InitiateCallResponse
@@ -25,7 +23,6 @@ import javax.inject.Inject
  */
 class MarketPlaceBidDetailsViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
-    private val bidsRepository: BidsRepository,
     private val spotBiddingRepository: SpotBiddingRepository
 ) : BaseViewModel() {
 
@@ -92,46 +89,15 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
                             null
                         }
                     }
-                    fetchTransactionBids()
+                    //fetchTransactionBids()
                 } else {
                     error.handle()
                     bidEndTime = null
                     _transactionLiveData.postValue(null)
                     // Still fetch bids even if transaction details fail
-                    fetchTransactionBids()
+                    //fetchTransactionBids()
                 }
                 isTransactionDetailsLoaded = true
-                updateLoadingState()
-            }
-    }
-
-    /**
-     * Fetch transaction bids to check if user already has a bid
-     */
-    fun fetchTransactionBids() {
-        compositeDisposable += bidsRepository.transactionBids(transactionId)
-            .onBackground()
-            .subscribe { _bRes, error ->
-                if (!error) {
-                    // Extract user's existing bid (if any)
-                    val userBid = _bRes.first.first
-                    userExistingBid = userBid
-                    _userBidLiveData.postValue(userBid)
-                    // Enable call button if user has placed a bid
-                    _isCallButtonActiveLiveData.postValue(userBid != null)
-                    
-                    // Determine bid status based on API response
-                    determineBidStatus(userBid, _bRes.first.second.second)
-                } else {
-                    // If error or no bid found, set to null
-                    userExistingBid = null
-                    _userBidLiveData.postValue(null)
-                    // Disable call button if no bid
-                    _isCallButtonActiveLiveData.postValue(false)
-                    // No bid placed state
-                    _bidStatusLiveData.postValue(MarketplaceBidStatus.NoBid)
-                }
-                isUserBidsLoaded = true
                 updateLoadingState()
             }
     }
@@ -197,113 +163,6 @@ class MarketPlaceBidDetailsViewModel @Inject constructor(
         if (isTransactionDetailsLoaded && isUserBidsLoaded) {
             _isLoadingLiveData.postValue(false)
         }
-    }
-
-    /**
-     * Place or revise a bid with the specified amount
-     * Automatically determines whether to create new bid or edit existing bid
-     */
-    fun placeBid(bidId: String, bidAmount: Int) {
-        if (userExistingBid == null) {
-            // No existing bid - Create new bid
-            createNewBid(bidId, bidAmount)
-        } else {
-            // Existing bid found - Edit/Revise bid
-            reviseBid(bidId, bidAmount)
-        }
-    }
-
-    /**
-     * Create a new bid
-     */
-    private fun createNewBid(bidId: String, bidAmount: Int) {
-        _isBidPlacementLoadingLiveData.postValue(true)
-        compositeDisposable += bidsRepository.createBid(
-            isPMT = false,
-            transactionId = bidId,
-            amount = bidAmount,
-            pmtRate = 0,
-            commercialType = "FTL",
-            expectedArrivalTimePickup = null,
-            expectedArrivalTimePickupRemark = null,
-            tentativeTripsCount = null,
-            vehicleNumber = null,
-            placementDays = null,
-            demandType = "marketplace"
-        )
-            .onBackground()
-            .progress()
-            .subscribe { response, error ->
-                _isBidPlacementLoadingLiveData.postValue(false)
-                if (!error && response.isSuccess) {
-                    // Enable call button immediately after successful bid placement
-                    _isCallButtonActiveLiveData.postValue(true)
-                    _bidPlacementResultLiveData.postValue(
-                        BidPlacementResult(success = true, message = "Bid placed successfully")
-                    )
-                    // Refresh transaction details after placing bid
-                    loadBidDetails(bidId)
-                } else {
-                    error.handle()
-                    _bidPlacementResultLiveData.postValue(
-                        BidPlacementResult(
-                            success = false,
-                            errorMessage = error.message ?: "Failed to place bid"
-                        )
-                    )
-                }
-            }
-    }
-
-    /**
-     * Revise/Edit an existing bid
-     */
-    private fun reviseBid(bidId: String, bidAmount: Int) {
-        val existingBidId = userExistingBid?.key() ?: run {
-            _bidPlacementResultLiveData.postValue(
-                BidPlacementResult(success = false, errorMessage = "Bid ID not found")
-            )
-            return
-        }
-
-        _isBidPlacementLoadingLiveData.postValue(true)
-        compositeDisposable += bidsRepository.editBid(
-            isPMT = false,
-            transactionId = bidId,
-            bidId = existingBidId,
-            amount = bidAmount,
-            commercialType = "FTL",
-            pmtRate = 0,
-            expectedArrivalTimePickup = null,
-            expectedArrivalTimePickupRemark = null,
-            tentativeTripsCount = null,
-            vehicleNumber = null,
-            placementDays = null,
-            demandType = "spot_marketplace",
-            originator = "axle-app"
-        )
-            .onBackground()
-            .progress()
-            .subscribe { response, error ->
-                _isBidPlacementLoadingLiveData.postValue(false)
-                if (!error && response.isSuccess) {
-                    // Keep call button enabled after successful bid revision
-                    _isCallButtonActiveLiveData.postValue(true)
-                    _bidPlacementResultLiveData.postValue(
-                        BidPlacementResult(success = true, message = "Bid revised successfully")
-                    )
-                    // Refresh transaction details after revising bid
-                    loadBidDetails(bidId)
-                } else {
-                    error.handle()
-                    _bidPlacementResultLiveData.postValue(
-                        BidPlacementResult(
-                            success = false,
-                            errorMessage = error.message ?: "Failed to revise bid"
-                        )
-                    )
-                }
-            }
     }
 
     /**

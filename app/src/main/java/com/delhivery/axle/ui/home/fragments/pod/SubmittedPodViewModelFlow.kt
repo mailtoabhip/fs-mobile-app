@@ -101,11 +101,6 @@ class SubmittedPodViewModelFlow @Inject constructor(
             }
 
             val request = buildRequest(currentOffset)
-
-            loadCycleRepository.searchTripsFlow(request)
-                .collect { resource ->
-                    handleResource(resource, paginate)
-                }
         }
     }
 

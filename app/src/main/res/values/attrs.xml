@@ -4,6 +4,10 @@
     <attr format="boolean" name="state_error" />
   </declare-styleable>
 
+  <declare-styleable name="OtpInputView">
+    <attr format="integer" name="otpDigitCount" />
+  </declare-styleable>
+
   <declare-styleable name="DelhiveryOnboardingArcView">
     <attr format="enum" name="direction">
       <enum name="top" value="0" />

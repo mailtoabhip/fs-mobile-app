@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.searchload.fragments.searchload
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.service.CityService
 import com.delhivery.axle.api.service.TransactionService
 import com.delhivery.axle.data.CityModel
@@ -25,7 +24,6 @@ class SearchLoadFragmentViewModel @Inject constructor(
   private val appDB: AppDatabase,
   private val cityService: CityService,
   private val transactionService: TransactionService,
-  private val bidsRepository: BidsRepository
 ) : BaseViewModel() {
 
   var citiesLiveData = MutableLiveData<List<CityModel>>()

@@ -17,17 +17,6 @@ class HomeFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdap
   override fun getPageTitle(position: Int) = HomeFragmentType.pos(position)!!.title
 }
 
-class HomeLoadsTruckFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
-    fragmentManager
-){
-    override fun getCount() = HomeLoadsTruckFragmentType.count()
-
-    override fun getItem(position: Int) =HomeLoadsTruckFragmentType.pos(position)!!.fragment
-
-    override fun getPageTitle(position: Int) = HomeLoadsTruckFragmentType.pos(position)!!.title
-
-
-}
 
 class HomePlacementsFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
     fragmentManager

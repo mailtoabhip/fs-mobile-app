@@ -57,7 +57,7 @@ interface OTPReceiverInterface {
 }
 
 private const val SMS_BUNDLE = "pdus"
-private const val OTP_REGEX = "[0-9]{1,4}"
+private const val OTP_REGEX = "[0-9]{4,8}"
 private const val FORMAT = "format"
 
 /* otp intent filter */

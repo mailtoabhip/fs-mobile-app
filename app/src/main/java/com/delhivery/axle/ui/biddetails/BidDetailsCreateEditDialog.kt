@@ -225,19 +225,6 @@ class BidDetailsCreateEditDialog @Inject constructor(
         } else require(
                 !(transactionBid?.bidAmount != null && abs(transactionBid.bidAmount - amount) < 500)
         ) { "*Bid difference should be more than ₹500" }
-        if (transactionBid == null) {
-          dialogInterface.createBid(
-                  transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
-                  transaction.biddingType
-                          ?: "FTL", position, expectedArrivalTimePickup, expectedArrivalTimePickupRemark
-          )
-        } else {
-          dialogInterface.editBid(
-                  transaction.isPMTIndent(), transaction.key(), transactionBid.key(),
-                  amount, pmtRate, transaction.biddingType ?: "FTL", position,
-                  expectedArrivalTimePickup, expectedArrivalTimePickupRemark
-          )
-        }
         dismiss()
       } else {
         throw IllegalArgumentException("*Invalid amount")
