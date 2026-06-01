@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="@dimen/size_16dp"
+    android:layout_marginVertical="@dimen/size_6dp"
+    android:background="@drawable/bg_pending_order_card"
+    android:padding="@dimen/size_16dp">
+
+    <!-- Header: Order ID + Date + Expand/Collapse -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvOrderId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold"
+                tools:text="Order ID: #41641" />
+
+            <TextView
+                android:id="@+id/tvOrderMeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_4dp"
+                android:textColor="#6B7280"
+                android:textSize="@dimen/text_14sp"
+                tools:text="26 May 2026" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivExpandCollapse"
+            android:layout_width="@dimen/size_24dp"
+            android:layout_height="@dimen/size_24dp"
+            android:contentDescription="@string/action_continue"
+            android:src="@drawable/ic_chevron_down" />
+
+    </LinearLayout>
+
+    <!-- Divider (shown when expanded) -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/size_12dp"
+        android:background="#E5E7EB"
+        android:visibility="gone" />
+
+    <!-- Expandable Vehicles Container -->
+    <LinearLayout
+        android:id="@+id/vehiclesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -129,15 +129,15 @@
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_14sp" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnSecondary"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="@dimen/size_8dp"
-                android:background="@drawable/background_grey_border"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_14sp" />
+<!--            <androidx.appcompat.widget.AppCompatButton-->
+<!--                android:id="@+id/btnSecondary"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="52dp"-->
+<!--                android:layout_marginTop="@dimen/size_8dp"-->
+<!--                android:background="@drawable/background_grey_border"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                android:textSize="@dimen/text_14sp" />-->
         </LinearLayout>
 
     </LinearLayout>

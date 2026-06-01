@@ -17,6 +17,7 @@
         android:background="@color/light_red_bg"
         android:orientation="vertical"
       android:fitsSystemWindows="true">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             app:title="@string/title_account_setup"

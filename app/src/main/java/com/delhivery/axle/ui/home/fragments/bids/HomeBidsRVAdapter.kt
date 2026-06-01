@@ -8,15 +8,12 @@ import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.SUB_REQUEST_TYPE_INTRACITY
 import com.delhivery.axle.databinding.CardBidsDelhiveryMarketplaceBinding
-import com.delhivery.axle.databinding.CardCommonBidsBinding
 import com.delhivery.axle.databinding.CardCommonBidsV2Binding
 import com.delhivery.axle.databinding.CardCommonIntracityBidsBinding
 import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
 import com.delhivery.axle.databinding.ViewBidsHeaderNewItemBinding
 import com.delhivery.axle.databinding.ViewBidsSearchbarNewItemBinding
 import com.delhivery.axle.databinding.ViewContractsBidItemBinding
-import com.delhivery.axle.databinding.ViewContractsBidResultsBinding
-import com.delhivery.axle.databinding.ViewHomeBidsHeaderItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeSearchItemBinding

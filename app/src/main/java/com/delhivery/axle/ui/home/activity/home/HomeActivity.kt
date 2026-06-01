@@ -20,6 +20,7 @@ import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
+import com.delhivery.axle.ui.home.fragments.HomeFragmentType
 import com.delhivery.axle.ui.profile.MyProfileActivity
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.EVENT_CALL_VENDOR_DESK
@@ -113,7 +114,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           /* Handle window insets for edge-to-edge display (API 35+) */
           if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
-            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.bottomNav)
           }
 
           observeFragmentLiveData()
@@ -143,8 +143,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
       ).setAction("Update") {
         // Responds to click on the action
         checkForAppUpdate(false)
-      }.setAnchorView(binding.bottomNav)
-        .show()
+      }.show()
 
     }
   }
@@ -275,7 +274,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
   override fun popupSnackbarForCompleteUpdate() {
     val snackbar = Snackbar.make(findViewById(android.R.id.content), "An update has just been downloaded.", Snackbar.LENGTH_INDEFINITE)
-    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }.anchorView = binding.bottomNav
+    snackbar.setAction("RESTART") { appUpdateManager.completeUpdate() }
     snackbar.show()
   }
 }

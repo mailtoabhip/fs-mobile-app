@@ -61,12 +61,15 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
 import com.delhivery.axle.ui.payment.PaymentWebViewViewModel
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
-import com.delhivery.axle.ui.fastag.FastagTransactionDetailsViewModel
-import com.delhivery.axle.ui.fastag.FastagRechargeViewModel
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsViewModel
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
+import com.delhivery.axle.ui.fastag.trucks.FastagTrucksViewModel
+import com.delhivery.axle.ui.fastag.pending.PendingActionsViewModel
+import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
-import com.delhivery.axle.ui.fastag.FastagDisputeIssuesViewModel
-import com.delhivery.axle.ui.fastag.FastagTransactionSelectionViewModel
-import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -485,6 +488,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagRechargeViewModel::class)
   abstract fun bindFastagRechargeViewModel(viewModel: FastagRechargeViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagTrucksViewModel::class)
+  abstract fun bindFastagTrucksViewModel(viewModel: FastagTrucksViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PendingActionsViewModel::class)
+  abstract fun bindPendingActionsViewModel(viewModel: PendingActionsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AssignVehicleViewModel::class)
+  abstract fun bindAssignVehicleViewModel(viewModel: AssignVehicleViewModel): ViewModel
 
   @Binds
   @IntoMap

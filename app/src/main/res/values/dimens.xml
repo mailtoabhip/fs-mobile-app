@@ -1,84 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <!-- dimens/sizes/margins/paddings -->
-  <dimen name="size_1dp">1dp</dimen>
-  <dimen name="size_2dp">2dp</dimen>
-  <dimen name="size_4dp">4dp</dimen>
-  <dimen name="size_6dp">6dp</dimen>
-  <dimen name="size_8dp">8dp</dimen>
-  <dimen name="size_10dp">10dp</dimen>
-  <dimen name="size_12dp">12dp</dimen>
-  <dimen name="size_14dp">14dp</dimen>
-  <dimen name="size_16dp">16dp</dimen>
-  <dimen name="size_18dp">18dp</dimen>
-  <dimen name="size_20dp">20dp</dimen>
-  <dimen name="size_24dp">24dp</dimen>
-  <dimen name="size_28dp">28dp</dimen>
-  <dimen name="size_32dp">32dp</dimen>
-  <dimen name="size_36dp">36dp</dimen>
-  <dimen name="size_38dp">38dp</dimen>
-  <dimen name="size_40dp">40dp</dimen>
-  <dimen name="size_42dp">42dp</dimen>
-  <dimen name="size_48dp">48dp</dimen>
-  <dimen name="size_56dp">56dp</dimen>
-  <dimen name="size_64dp">64dp</dimen>
-  <dimen name="size_72dp">72dp</dimen>
-  <dimen name="size_80dp">80dp</dimen>
-  <dimen name="size_96dp">96dp</dimen>
-  <dimen name="size_140dp">140dp</dimen>
-  <dimen name="size_160dp">160dp</dimen>
-  <dimen name="size_240dp">240dp</dimen>
-  <dimen name="size_180dp">180dp</dimen>
-  <dimen name="size_260dp">260dp</dimen>
-  <dimen name="size_280dp">280dp</dimen>
-  <dimen name="size_300dp">300dp</dimen>
-  <dimen name="size_30dp">30dp</dimen>
-  <dimen name="size_120dp">120dp</dimen>
-  <dimen name="size_90dp">90dp</dimen>
-  <dimen name="size_230dp">230dp</dimen>
-  <dimen name="size_270dp">270dp</dimen>
-  <dimen name="size_11dp">11dp</dimen>
-  <dimen name="size_3dp">3dp</dimen>
-  <dimen name="size_84dp">84dp</dimen>
-  <dimen name="size_130dp">130dp</dimen>
-  <dimen name="size_210dp">210dp</dimen>
-  <dimen name="size_250dp">250dp</dimen>
+    <!-- dimens/sizes/margins/paddings -->
+    <dimen name="size_1dp">1dp</dimen>
+    <dimen name="size_2dp">2dp</dimen>
+    <dimen name="size_4dp">4dp</dimen>
+    <dimen name="size_6dp">6dp</dimen>
+    <dimen name="size_8dp">8dp</dimen>
+    <dimen name="size_10dp">10dp</dimen>
+    <dimen name="size_12dp">12dp</dimen>
+    <dimen name="size_14dp">14dp</dimen>
+    <dimen name="size_16dp">16dp</dimen>
+    <dimen name="size_18dp">18dp</dimen>
+    <dimen name="size_20dp">20dp</dimen>
+    <dimen name="size_24dp">24dp</dimen>
+    <dimen name="size_28dp">28dp</dimen>
+    <dimen name="size_32dp">32dp</dimen>
+    <dimen name="size_36dp">36dp</dimen>
+    <dimen name="size_38dp">38dp</dimen>
+    <dimen name="size_40dp">40dp</dimen>
+    <dimen name="size_42dp">42dp</dimen>
+    <dimen name="size_48dp">48dp</dimen>
+    <dimen name="size_56dp">56dp</dimen>
+    <dimen name="size_64dp">64dp</dimen>
+    <dimen name="size_72dp">72dp</dimen>
+    <dimen name="size_80dp">80dp</dimen>
+    <dimen name="size_96dp">96dp</dimen>
+    <dimen name="size_140dp">140dp</dimen>
+    <dimen name="size_160dp">160dp</dimen>
+    <dimen name="size_240dp">240dp</dimen>
+    <dimen name="size_180dp">180dp</dimen>
+    <dimen name="size_260dp">260dp</dimen>
+    <dimen name="size_280dp">280dp</dimen>
+    <dimen name="size_300dp">300dp</dimen>
+    <dimen name="size_30dp">30dp</dimen>
+    <dimen name="size_120dp">120dp</dimen>
+    <dimen name="size_90dp">90dp</dimen>
+    <dimen name="size_230dp">230dp</dimen>
+    <dimen name="size_270dp">270dp</dimen>
+    <dimen name="size_11dp">11dp</dimen>
+    <dimen name="size_3dp">3dp</dimen>
+    <dimen name="size_84dp">84dp</dimen>
+    <dimen name="size_130dp">130dp</dimen>
+    <dimen name="size_210dp">210dp</dimen>
+    <dimen name="size_250dp">250dp</dimen>
 
-  <!-- Text sizes -->
-  <dimen name="text_2sp">2sp</dimen>
-  <dimen name="text_4sp">4sp</dimen>
-  <dimen name="text_6sp">6sp</dimen>
-  <dimen name="text_8sp">8sp</dimen>
-  <dimen name="text_10sp">10sp</dimen>
-  <dimen name="text_12sp">12sp</dimen>
-  <dimen name="text_14sp">14sp</dimen>
-  <dimen name="text_16sp">16sp</dimen>
-  <dimen name="text_20sp">20sp</dimen>
-  <dimen name="text_24sp">24sp</dimen>
-  <dimen name="text_26sp">26sp</dimen>
-  <dimen name="text_18sp">18sp</dimen>
+    <!-- Text sizes -->
+    <dimen name="text_2sp">2sp</dimen>
+    <dimen name="text_4sp">4sp</dimen>
+    <dimen name="text_6sp">6sp</dimen>
+    <dimen name="text_8sp">8sp</dimen>
+    <dimen name="text_10sp">10sp</dimen>
+    <dimen name="text_12sp">12sp</dimen>
+    <dimen name="text_14sp">14sp</dimen>
+    <dimen name="text_16sp">16sp</dimen>
+    <dimen name="text_20sp">20sp</dimen>
+    <dimen name="text_24sp">24sp</dimen>
+    <dimen name="text_26sp">26sp</dimen>
+    <dimen name="text_18sp">18sp</dimen>
 
-  <!--<dimen name="height_toolbar">?attr/actionBarSize</dimen>-->
-  <dimen name="height_toolbar">@dimen/abc_action_bar_default_height_material</dimen>
+    <!--<dimen name="height_toolbar">?attr/actionBarSize</dimen>-->
+    <dimen name="height_toolbar">@dimen/abc_action_bar_default_height_material</dimen>
 
-  <dimen name="edit_text_raise_focus_z">2dp</dimen>
-  <dimen name="action_btn_elevation">2dp</dimen>
-  <dimen name="distance_otp_vibrate">8dp</dimen>
-  <dimen name="toolbar_elevation">4dp</dimen>
-  <dimen name="edit_text_height">42dp</dimen>
+    <dimen name="edit_text_raise_focus_z">2dp</dimen>
+    <dimen name="action_btn_elevation">2dp</dimen>
+    <dimen name="distance_otp_vibrate">8dp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="edit_text_height">42dp</dimen>
 
-  <!-- delhivery progress view -->
-  <dimen name="delhivery_progress_view_rotation_ball_radius">6dp</dimen>
-  <dimen name="delhivery_progress_view_orbit_thickness">2dp</dimen>
+    <!-- delhivery progress view -->
+    <dimen name="delhivery_progress_view_rotation_ball_radius">6dp</dimen>
+    <dimen name="delhivery_progress_view_orbit_thickness">2dp</dimen>
 
-  <!-- delhivery view pager indicator -->
-  <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
-  <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
+    <!-- delhivery view pager indicator -->
+    <dimen name="delhivery_view_pager_indicator_dot_radius">6dp</dimen>
+    <dimen name="delhivery_view_pager_indicator_dots_gap">8dp</dimen>
     <dimen name="size_5dp">5dp</dimen>
 
 
-<!-- Delayed Placement Card Dimensions -->
-<dimen name="text_size_12sp">12sp</dimen>
-<dimen name="text_size_14sp">14sp</dimen>
+    <!-- Delayed Placement Card Dimensions -->
+    <dimen name="text_size_12sp">12sp</dimen>
+    <dimen name="text_size_14sp">14sp</dimen>
 </resources>

@@ -25,9 +25,7 @@ import com.delhivery.axle.databinding.LoadDelhiveryIntercityBinding
 import com.delhivery.axle.databinding.ViewHomeBidsProgressItemBinding
 import com.delhivery.axle.databinding.ViewHomeBidsSearchSpinnerItemBinding
 import com.delhivery.axle.databinding.ViewHomeContractsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeContractsRequestItemBinding
 import com.delhivery.axle.databinding.ViewHomeLoadsProgressItemBinding
-import com.delhivery.axle.databinding.ViewHomeLoadsRequestItemBinding
 import com.delhivery.axle.databinding.ViewWarningItemBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseViewHolder

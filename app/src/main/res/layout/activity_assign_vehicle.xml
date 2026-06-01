@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:contentDescription="@string/action_continue"
+                android:src="@drawable/ic_back_arrow" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_18sp"
+                android:textStyle="bold"
+                android:text="Assign Vehicle" />
+
+        </LinearLayout>
+
+        <!-- Vehicle Class Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/size_16dp"
+            android:paddingVertical="@dimen/size_16dp">
+
+            <!-- Tag Icon with background -->
+            <FrameLayout
+                android:layout_width="@dimen/size_36dp"
+                android:layout_height="@dimen/size_36dp"
+                android:background="@drawable/bg_tag_icon_rectangle">
+
+                <ImageView
+                    android:id="@+id/ivTagIcon"
+                    android:layout_width="@dimen/size_20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/label_fastag_title"
+                    android:src="@drawable/ic_fs_pending_tag" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvVehicleClass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/neutral_black_200"
+                    android:textSize="@dimen/text_14sp"
+                    android:textStyle="bold"
+                    tools:text="Vehicle Class 5" />
+
+                <TextView
+                    android:id="@+id/tvReferenceId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_2dp"
+                    android:textColor="@color/text_body_secondary"
+                    android:textSize="@dimen/text_10sp"
+                    tools:text="#607318-001-0000343" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Select Vehicle Section -->
+        <TextView
+            android:id="@+id/tvSelectVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/size_16dp"
+            android:paddingTop="@dimen/size_20dp"
+            android:paddingBottom="@dimen/size_12dp"
+            android:text="@string/select_vehicle_title"
+            android:textColor="@color/neutral_black_200"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold" />
+
+        <!-- Loading Shimmer -->
+        <LinearLayout
+            android:id="@+id/shimmerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/size_16dp"
+            android:visibility="gone">
+
+            <include layout="@layout/shimmer_service_group_item" />
+            <include layout="@layout/shimmer_service_group_item" />
+        </LinearLayout>
+
+        <!-- Vehicles List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVehicles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            tools:listitem="@layout/item_select_vehicle" />
+
+    </LinearLayout>
+</layout>

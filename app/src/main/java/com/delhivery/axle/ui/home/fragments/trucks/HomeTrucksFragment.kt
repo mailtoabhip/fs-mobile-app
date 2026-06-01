@@ -44,6 +44,8 @@ import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.dialogs.FastagSuccessBottomSheetDialogFragment
 import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
@@ -1901,17 +1903,17 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     }
     
     override fun openFastagDetails(data: HomeTrucksRequestItemData) {
-        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity::class.java).apply {
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_DATA, data)
+        val intent = Intent(requireContext(), FastagTransactionDetailsActivity::class.java).apply {
+            putExtra(FastagTransactionDetailsActivity.VEHICLE_DATA, data)
         }
         startActivity(intent)
     }
 
     override fun openFastagRecharge(data: HomeTrucksRequestItemData) {
-        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagRechargeActivity::class.java).apply {
-            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.TAG_ID, data.fastagTagId)
-            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
-            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
+        val intent = Intent(requireContext(), FastagRechargeActivity::class.java).apply {
+            putExtra(FastagRechargeActivity.TAG_ID, data.fastagTagId)
+            putExtra(FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
+            putExtra(FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
         }
         startActivityForResult(intent, REQCODE_FASTAG_RECHARGE)
     }

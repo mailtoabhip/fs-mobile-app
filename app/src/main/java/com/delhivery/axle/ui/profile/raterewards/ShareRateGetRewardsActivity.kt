@@ -58,7 +58,6 @@ class ShareRateGetRewardsActivity: BaseActivity<ActivityShareRateGetRewardsBindi
     }
 
     binding.shareRateRewardsTabLayout.setupWithViewPager(binding.viewpager)
-
   }
 
   override fun onResume() {

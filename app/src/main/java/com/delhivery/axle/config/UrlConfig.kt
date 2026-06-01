@@ -148,6 +148,11 @@ enum class UrlConfig(
         "https://orion-user-onboarding-api-dev.delhivery.com/",
         "https://orion-user-onboarding-api-uat.delhivery.com/"
   ),
+  FastagService(
+        "https://orion-user-loadboard.delhivery.com/",
+        "https://orion-user-onboarding-api-dev.delhivery.com/",
+        "https://orion-user-onboarding-api-uat.delhivery.com/"
+  ),
   SaleCodeService(
       "https://financial-api.delhiveryfinserv.com",
       "https://financial-api.intdevfinserv.com",
