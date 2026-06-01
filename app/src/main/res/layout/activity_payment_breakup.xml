@@ -60,129 +60,13 @@
                     android:textSize="@dimen/text_18sp"
                     android:textStyle="bold" />
 
-                <!-- Issuance Fee -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- Breakup Items RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBreakup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_24dp">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Issuance Fee"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvIssuanceFee"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{`₹` + String.valueOf(viewModel.issuanceFee)}"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="₹100" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Security Deposit -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_16dp">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Security Deposit"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvSecurityDeposit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{`₹` + String.valueOf(viewModel.securityDeposit)}"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="₹200" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Minimum Recharge -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_16dp">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Minimum Recharge"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvMinRecharge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{`₹` + String.valueOf(viewModel.minimumRecharge)}"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="₹200" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Platform Fee -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_16dp">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Platform fee"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvPlatformFee"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{`₹` + String.valueOf(viewModel.platformFee)}"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="₹200" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:nestedScrollingEnabled="false" />
 
                 <!-- Divider -->
                 <View
@@ -212,24 +96,23 @@
                         android:id="@+id/tvGrandTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{`₹` + String.valueOf(viewModel.grandTotal)}"
+                        android:text="@{`₹` + viewModel.grandTotal}"
                         android:textColor="@color/heading_black"
                         android:textSize="@dimen/text_16sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="₹400" />
+                        tools:text="₹3399" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Wallet Section (visible only when balance < grand total) -->
+                <!-- Wallet Section -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardWallet"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_24dp"
-                    android:visibility="@{viewModel.isWalletSufficient ? View.GONE : View.VISIBLE}"
                     app:cardBackgroundColor="@android:color/white"
                     app:cardCornerRadius="@dimen/size_8dp"
                     app:cardElevation="0dp"
@@ -251,7 +134,7 @@
                                 android:id="@+id/ivWalletIcon"
                                 android:layout_width="@dimen/size_24dp"
                                 android:layout_height="@dimen/size_24dp"
-                                android:src="@drawable/ic_delhivery_wallet"
+                                android:src="@drawable/ic_launcher_foreground"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -269,15 +152,15 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/paying_wallet_title"
+                                    android:text="Paying via wallet"
                                     android:textColor="@color/heading_black"
-                                    android:textSize="@dimen/text_12sp" />
+                                    android:textSize="@dimen/text_14sp" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/tvWalletBalance"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@{`Wallet Balance: ₹` + String.valueOf(viewModel.walletBalance)}"
+                                    android:text="@{`Wallet Balance: ₹` + viewModel.walletBalance}"
                                     android:textColor="@color/background_dark_grey"
                                     android:textSize="@dimen/text_12sp"
                                     tools:text="Wallet Balance: ₹0" />
@@ -290,7 +173,8 @@
                                 android:layout_height="wrap_content"
                                 android:text="Add Money"
                                 android:textColor="#1E88E5"
-                                android:textSize="@dimen/text_12sp"
+                                android:textSize="@dimen/text_14sp"
+                                android:textStyle="bold"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -312,15 +196,17 @@
                             <ImageView
                                 android:layout_width="@dimen/size_16dp"
                                 android:layout_height="@dimen/size_16dp"
-                                android:src="@drawable/ic_vector_error" />
+                                android:src="@drawable/ic_error_circle_red" />
 
                             <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/tvWarningMessage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/size_8dp"
-                                android:text="@string/wallet_balance_warning"
+                                android:text="@{viewModel.warningMessage}"
                                 android:textColor="#E53935"
-                                android:textSize="@dimen/text_12sp" />
+                                android:textSize="@dimen/text_12sp"
+                                tools:text="Wallet balance is lower than the item value" />
 
                         </LinearLayout>
 

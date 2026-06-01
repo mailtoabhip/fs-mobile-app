@@ -16,6 +16,10 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
     override fun layoutId() = R.layout.activity_payment_breakup
     override fun requireConnection() = true
 
+    private var salesCode = ""
+    private var paymentMethod = ""
+    private var items: List<com.delhivery.axle.api.request.PaymentBreakupItem> = emptyList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,8 +35,41 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         setupToolbar()
         setupClickListeners()
 
-        // TODO: Replace with actual API call
-        viewModel.fetchPaymentBreakup()
+        // Fetch payment breakup from API
+        salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
+        paymentMethod = intent.getStringExtra(EXTRA_PAYMENT_METHOD) ?: "FULL_PAYMENT"
+        @Suppress("DEPRECATION")
+        items = intent.getSerializableExtra(EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem> ?: arrayListOf()
+
+        observeViewModel()
+        viewModel.fetchPaymentBreakup(salesCode, paymentMethod, items)
+    }
+
+    companion object {
+        const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_PAYMENT_METHOD = "extra_payment_method"
+        const val EXTRA_ITEMS = "extra_items"
+    }
+
+    private fun observeViewModel() {
+        viewModel.breakupState.observe(this) { resource ->
+            when (resource) {
+                is com.delhivery.axle.api.repository.Resource.Loading -> {
+                    // TODO: Show loading
+                }
+                is com.delhivery.axle.api.repository.Resource.Success -> {
+                    resource.data?.let { data ->
+                        binding.rvBreakup.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+                        binding.rvBreakup.adapter = BreakupLineAdapter(data.breakup)
+                    }
+                }
+                is com.delhivery.axle.api.repository.Resource.Failure -> {
+                    val message = resource.errorMessage
+                        ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
+                    android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -71,7 +108,7 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
             onPaymentResult = { success ->
                 if (success) {
                     // Refresh wallet balance after successful payment
-                    viewModel.fetchPaymentBreakup()
+                    viewModel.fetchPaymentBreakup(salesCode, paymentMethod, items)
                 }
             }
         ).show(supportFragmentManager, "AddMoneyDialog")

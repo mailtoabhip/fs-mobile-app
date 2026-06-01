@@ -36,6 +36,14 @@ class SalesCodeFragment : Fragment() {
 
         setupClickListeners()
         observeViewModel()
+
+        // Listen for "Change" from AgentConfirmationFragment
+        parentFragmentManager.setFragmentResultListener("change_sales_code", viewLifecycleOwner) { _, _ ->
+            binding.etSalesCode.requestFocus()
+            binding.etSalesCode.setSelection(binding.etSalesCode.text?.length ?: 0)
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.showSoftInput(binding.etSalesCode, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     private fun setupClickListeners() {

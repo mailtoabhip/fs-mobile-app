@@ -155,8 +155,8 @@ enum class UrlConfig(
   ),
   SaleCodeService(
       "https://financial-api.delhiveryfinserv.com",
-      "https://financial-api.intdevfinserv.com",
-      "https://financial-api.intdevfinserv.com"
+      "https://financial-fastag-dev.delhivery.com",
+      "https://financial-fastag-dev.delhivery.com"
   ),
   AppID(
   "83", "371", "371"

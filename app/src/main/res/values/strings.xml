@@ -1218,6 +1218,7 @@
     <string name="express_kyc_subtitle">Quickest activation with lowest limits</string>
     <string name="wallet_balance_warning">Wallet balance is lower than the item value</string>
     <string name="paying_wallet_title">Paying via wallet</string>
+    <string name="request_sales_code_subtitle">Our team will connect with you shortly</string>
 
 
 

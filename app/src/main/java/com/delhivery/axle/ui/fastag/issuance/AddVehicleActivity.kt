@@ -78,22 +78,25 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
-                    if (data.isEligible && !data.isHotlisted) {
-                        isVehicleEligible = true
-                        binding.btnContinue.isEnabled = true
-                        binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
-                        // Show vehicle class confirmation bottom sheet
-                        showVehicleClassConfirmBottomSheet(data)
-                    } else if (data.isHotlisted) {
-                        isVehicleEligible = false
-                        binding.btnContinue.isEnabled = false
-                        binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
-                        showHotlistedBottomSheet(data)
-                    } else {
-                        isVehicleEligible = false
-                        binding.btnContinue.isEnabled = false
-                        binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
-                        Toast.makeText(this, data.message ?: "Vehicle not eligible", Toast.LENGTH_SHORT).show()
+                    when (data.status) {
+                        "ELIGIBLE" -> {
+                            isVehicleEligible = true
+                            binding.btnContinue.isEnabled = true
+                            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
+                            showVehicleBottomSheet(data)
+                        }
+                        "HOTLISTED", "ALREADY_ISSUED" -> {
+                            isVehicleEligible = false
+                            binding.btnContinue.isEnabled = false
+                            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+                            showVehicleBottomSheet(data)
+                        }
+                        else -> {
+                            isVehicleEligible = false
+                            binding.btnContinue.isEnabled = false
+                            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+                            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 
@@ -134,6 +137,33 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                 }
             }
         }
+
+        // TODO: Uncomment when create order API is integrated
+        /*
+        viewModel.createOrderState.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    // TODO: Show loading
+                }
+
+                is Resource.Success -> {
+                    val data = resource.data ?: return@observe
+                    // Order created — navigate to PaymentBreakupActivity
+                    val intent = Intent(this, PaymentBreakupActivity::class.java).apply {
+                        putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, data.salesCode)
+                        putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                    }
+                    startActivity(intent)
+                }
+
+                is Resource.Failure -> {
+                    val message = resource.errorMessage
+                        ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        */
     }
 
     private fun isValidVehicleNumber(vehicleNumber: String): Boolean {
@@ -156,28 +186,16 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     //     startActivity(intent)
     // }
 
-    private fun showHotlistedBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
-        VehicleDetailsBottomSheet.newHotlisted(
-            vehicleNumber = data.vehicleNumber,
-            balance = data.balance ?: "0",
-            provider = data.provider ?: "",
-            vehicleClass = data.vehicleClassDisplay ?: "",
-            colorCode = data.tagColor ?: "GREEN",
-            issuerPhone = data.issuerPhone ?: ""
-        ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
-    }
-
-    private fun showVehicleClassConfirmBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
-        VehicleDetailsBottomSheet.newConfirm(
-            vehicleNumber = data.vehicleNumber,
-            vehicleClass = data.vehicleClassDisplay ?: "",
-            tagColor = data.tagColor ?: "",
-            vehicleType = data.vehicleType ?: "",
-            colorCode = data.tagColor ?: "GREEN",
-            onConfirm = {
-                // Call KYC onboard validate API
-                viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code from response
-            }
+    private fun showVehicleBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
+        VehicleDetailsBottomSheet.fromResponse(
+            response = data,
+            issuerPhone = "",
+            onAction = if (data.eligible) {
+                {
+                    // Call KYC onboard validate API on confirm
+                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                }
+            } else null
         ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
     }
 

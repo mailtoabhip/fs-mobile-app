@@ -199,14 +199,7 @@
     <color name="vehicle_class_green">#16A34A</color>
     <color name="vehicle_class_green_bg">#F0FDF4</color>
 
-    <!-- Vehicle class colors (from API) -->
-    <color name="class_red">#FF5B00</color>
-    <color name="class_yellow">#F2EC00</color>
-    <color name="class_green">#5EB02E</color>
-    <color name="class_pink">#DF1096</color>
-    <color name="class_blue">#0078BA</color>
   <color name="black_title">#121212</color>
-    <color name="neutral_white_300">#E6E6E6</color>
 
     <!-- Vehicle class list colors -->
 

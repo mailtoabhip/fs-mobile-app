@@ -19,12 +19,6 @@ import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
-import com.delhivery.axle.ui.fastag.FastagDisputeIssuesActivity
-import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormActivity
-import com.delhivery.axle.ui.fastag.FastagRaiseDisputeActivity
-import com.delhivery.axle.ui.fastag.FastagRechargeActivity
-import com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity
-import com.delhivery.axle.ui.fastag.FastagTransactionSelectionActivity
 import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
 import com.delhivery.axle.ui.fastag.issuance.AddVehicleActivity
 import com.delhivery.axle.ui.fastag.issuance.FastagCollectionActivity

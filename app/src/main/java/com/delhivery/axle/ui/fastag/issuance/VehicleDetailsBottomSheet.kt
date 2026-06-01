@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.delhivery.axle.R
+import com.delhivery.axle.api.response.VehicleCheckResponse
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
- * Unified bottom sheet for vehicle details.
- * Handles both hotlisted and eligible (confirm) states.
+ * Unified bottom sheet for vehicle verification results.
+ * Handles ELIGIBLE, ALREADY_ISSUED, and HOTLISTED states.
+ * All text comes from the API response — no hardcoding.
  */
 class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
 
@@ -31,8 +33,9 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
 
         val args = arguments ?: return
 
-        val isHotlisted = args.getBoolean(ARG_IS_HOTLISTED, false)
+        val title = args.getString(ARG_TITLE, "")
         val vehicleNumber = args.getString(ARG_VEHICLE_NUMBER, "")
+        val status = args.getString(ARG_STATUS, "")
         val col1Label = args.getString(ARG_COL1_LABEL, "")
         val col1Value = args.getString(ARG_COL1_VALUE, "")
         val col2Label = args.getString(ARG_COL2_LABEL, "")
@@ -43,16 +46,28 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
         val colorCode = args.getString(ARG_COLOR_CODE, "GREEN")
         val issuerPhone = args.getString(ARG_ISSUER_PHONE, "")
 
-        // Title
-        view.findViewById<TextView>(R.id.tvTitle).text =
-            if (isHotlisted) "FASTag Hotlisted" else "Confirm Vehicle Class & Details"
+        // Title from API
+        view.findViewById<TextView>(R.id.tvTitle).text = title
 
         // Vehicle number
         view.findViewById<TextView>(R.id.tvVehicleNumber).text = vehicleNumber
 
         // Status badge
         val badge = view.findViewById<TextView>(R.id.tvStatusBadge)
-        badge.visibility = if (isHotlisted) View.VISIBLE else View.GONE
+        when (status) {
+            "HOTLISTED" -> {
+                badge.visibility = View.VISIBLE
+                badge.text = "Hotlisted"
+                badge.setBackgroundResource(R.drawable.bg_hotlisted_badge)
+            }
+            "ALREADY_ISSUED" -> {
+                badge.visibility = View.VISIBLE
+                badge.text = "Active"
+                badge.setBackgroundResource(R.drawable.bg_status_active)
+                badge.setTextColor(requireContext().getColor(R.color.class_green))
+            }
+            else -> badge.visibility = View.GONE
+        }
 
         // Color indicator
         view.findViewById<View>(R.id.colorIndicator).setBackgroundColor(mapColor(colorCode))
@@ -67,13 +82,17 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
 
         // Button
         val btnAction = view.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btnAction)
-        btnAction.text = buttonText
+        if (buttonText.isNullOrEmpty()) {
+            btnAction.visibility = View.GONE
+        } else {
+            btnAction.text = buttonText
+        }
 
         view.findViewById<View>(R.id.ivClose).setOnClickListener { dismiss() }
 
         btnAction.setOnClickListener {
             dismiss()
-            if (isHotlisted && issuerPhone.isNotEmpty()) {
+            if ((status == "HOTLISTED" || status == "ALREADY_ISSUED") && issuerPhone.isNotEmpty()) {
                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$issuerPhone"))
                 startActivity(intent)
             } else {
@@ -85,6 +104,7 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
     private fun mapColor(colorCode: String): Int {
         return when (colorCode.uppercase()) {
             "RED" -> requireContext().getColor(R.color.class_red)
+            "ORANGE" -> requireContext().getColor(R.color.class_red)
             "YELLOW" -> requireContext().getColor(R.color.class_yellow)
             "GREEN" -> requireContext().getColor(R.color.class_green)
             "PINK" -> requireContext().getColor(R.color.class_pink)
@@ -95,8 +115,9 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "VehicleDetailsBottomSheet"
-        private const val ARG_IS_HOTLISTED = "arg_is_hotlisted"
+        private const val ARG_TITLE = "arg_title"
         private const val ARG_VEHICLE_NUMBER = "arg_vehicle_number"
+        private const val ARG_STATUS = "arg_status"
         private const val ARG_COL1_LABEL = "arg_col1_label"
         private const val ARG_COL1_VALUE = "arg_col1_value"
         private const val ARG_COL2_LABEL = "arg_col2_label"
@@ -108,57 +129,51 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_ISSUER_PHONE = "arg_issuer_phone"
 
         /**
-         * Show for hotlisted vehicle
+         * Create from API response — no hardcoding needed
          */
-        fun newHotlisted(
-            vehicleNumber: String,
-            balance: String,
-            provider: String,
-            vehicleClass: String,
-            colorCode: String,
-            issuerPhone: String
+        fun fromResponse(
+            response: VehicleCheckResponse,
+            issuerPhone: String = "",
+            onAction: (() -> Unit)? = null
         ): VehicleDetailsBottomSheet {
+            val vc = response.vehicleClass
             return VehicleDetailsBottomSheet().apply {
+                this.onAction = onAction
                 arguments = Bundle().apply {
-                    putBoolean(ARG_IS_HOTLISTED, true)
-                    putString(ARG_VEHICLE_NUMBER, vehicleNumber)
-                    putString(ARG_COL1_LABEL, "Balance")
-                    putString(ARG_COL1_VALUE, "₹$balance")
-                    putString(ARG_COL2_LABEL, "Provider")
-                    putString(ARG_COL2_VALUE, provider)
-                    putString(ARG_COL3_LABEL, "Vehicle Class")
-                    putString(ARG_COL3_VALUE, vehicleClass)
-                    putString(ARG_BUTTON_TEXT, "Call Issuer")
-                    putString(ARG_COLOR_CODE, colorCode)
+                    putString(ARG_TITLE, response.title)
+                    putString(ARG_VEHICLE_NUMBER, response.vrn)
+                    putString(ARG_STATUS, response.status)
+                    putString(ARG_COLOR_CODE, vc?.colorCode ?: "GREEN")
+                    putString(ARG_BUTTON_TEXT, response.actionLabel ?: if (response.eligible) "Confirm" else "")
                     putString(ARG_ISSUER_PHONE, issuerPhone)
-                }
-            }
-        }
 
-        /**
-         * Show for eligible vehicle (confirm class)
-         */
-        fun newConfirm(
-            vehicleNumber: String,
-            vehicleClass: String,
-            tagColor: String,
-            vehicleType: String,
-            colorCode: String,
-            onConfirm: () -> Unit
-        ): VehicleDetailsBottomSheet {
-            return VehicleDetailsBottomSheet().apply {
-                this.onAction = onConfirm
-                arguments = Bundle().apply {
-                    putBoolean(ARG_IS_HOTLISTED, false)
-                    putString(ARG_VEHICLE_NUMBER, vehicleNumber)
-                    putString(ARG_COL1_LABEL, "Vehicle Class")
-                    putString(ARG_COL1_VALUE, vehicleClass)
-                    putString(ARG_COL2_LABEL, "Tag Color")
-                    putString(ARG_COL2_VALUE, tagColor)
-                    putString(ARG_COL3_LABEL, "Vehicle Type")
-                    putString(ARG_COL3_VALUE, vehicleType)
-                    putString(ARG_BUTTON_TEXT, "Confirm")
-                    putString(ARG_COLOR_CODE, colorCode)
+                    // Column data based on status
+                    when (response.status) {
+                        "ELIGIBLE" -> {
+                            putString(ARG_COL1_LABEL, "Vehicle Class")
+                            putString(ARG_COL1_VALUE, vc?.displayName ?: "")
+                            putString(ARG_COL2_LABEL, "Tag Color")
+                            putString(ARG_COL2_VALUE, vc?.colorCode ?: "")
+                            putString(ARG_COL3_LABEL, "Vehicle Type")
+                            putString(ARG_COL3_VALUE, vc?.vehicleTypes?.joinToString(", ") ?: "")
+                        }
+                        "HOTLISTED", "ALREADY_ISSUED" -> {
+                            putString(ARG_COL1_LABEL, "Vehicle Class")
+                            putString(ARG_COL1_VALUE, vc?.displayName ?: "")
+                            putString(ARG_COL2_LABEL, "Card Stage")
+                            putString(ARG_COL2_VALUE, response.cardStage ?: "")
+                            putString(ARG_COL3_LABEL, "Vehicle Type")
+                            putString(ARG_COL3_VALUE, vc?.vehicleTypes?.joinToString(", ") ?: "")
+                        }
+                        else -> {
+                            putString(ARG_COL1_LABEL, "Vehicle Class")
+                            putString(ARG_COL1_VALUE, vc?.displayName ?: "")
+                            putString(ARG_COL2_LABEL, "Color")
+                            putString(ARG_COL2_VALUE, vc?.colorCode ?: "")
+                            putString(ARG_COL3_LABEL, "Type")
+                            putString(ARG_COL3_VALUE, vc?.vehicleTypes?.joinToString(", ") ?: "")
+                        }
+                    }
                 }
             }
         }
