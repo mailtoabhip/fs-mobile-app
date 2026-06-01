@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.pending.assign.FastagAssignmentViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/size_16dp"
+                android:layout_height="@dimen/size_16dp"
+                android:contentDescription="@string/action_continue"
+                android:src="@drawable/icon_back_button" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_weight="1"
+                android:text="@string/fastag_assignment_title"
+                android:textColor="@color/black_title"
+                android:textSize="@dimen/text_14sp"
+                />
+
+        </LinearLayout>
+
+        <!-- Scrollable Content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Section Title -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upload_rc_image_title"
+                    android:textColor="@color/neutral_black_200"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold" />
+
+                <!-- Vehicle Info Card -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:background="@drawable/bg_vehicle_info_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/size_16dp"
+                    android:paddingVertical="@dimen/size_14dp">
+
+                    <TextView
+                        android:id="@+id/tvVehicleNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/neutral_black_200"
+                        android:textSize="@dimen/text_14sp"
+                        tools:text="Vehicle Number: DL01CA1268" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:text="@string/upload_rc_disclaimer"
+                        android:textColor="@color/text_body_secondary"
+                        android:textSize="@dimen/text_12sp"
+                        android:lineSpacingExtra="2dp" />
+
+                </LinearLayout>
+
+                <!-- Upload RC Front -->
+                <com.delhivery.axle.ui.common.UploadCardView
+                    android:id="@+id/uploadRcFront"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_20dp"
+                    app:uploadTitle="@string/upload_rc_front"
+                    app:uploadSubtitle="@string/upload_file_format_info" />
+
+                <!-- Upload RC Back -->
+                <com.delhivery.axle.ui.common.UploadCardView
+                    android:id="@+id/uploadRcBack"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_12dp"
+                    app:uploadTitle="@string/upload_rc_back"
+                    app:uploadSubtitle="@string/upload_file_format_info" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Continue Button (sticky at bottom) -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_solid_black"
+            android:elevation="0dp"
+            android:enabled="false"
+            android:gravity="center"
+            android:paddingVertical="@dimen/size_16dp"
+            android:stateListAnimator="@null"
+            android:text="@string/action_continue"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</layout>

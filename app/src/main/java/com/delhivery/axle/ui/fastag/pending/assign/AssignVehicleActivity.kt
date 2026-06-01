@@ -89,8 +89,13 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
 
     private fun setupRecyclerView() {
         adapter = SelectVehicleAdapter { vehicle ->
-            // TODO: Handle vehicle selection
-            uiUtils.showSnackbar("Selected: ${vehicle.vehicleNumber}")
+            startActivity(
+                FastagAssignmentActivity.newIntent(
+                    context = this,
+                    vehicleNumber = vehicle.vehicleNumber,
+                    chassisNumber = vehicle.chassisNumber
+                )
+            )
         }
         binding.rvVehicles.apply {
             layoutManager = LinearLayoutManager(this@AssignVehicleActivity)
