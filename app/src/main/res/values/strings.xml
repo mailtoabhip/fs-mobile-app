@@ -1244,5 +1244,16 @@
     <string name="take_photo_option">Take photo</string>
     <string name="upload_status_uploaded">Uploaded</string>
     <string name="upload_remove_action">Remove</string>
+    <string name="sample_image_link">Sample Image</string>
+    <string name="upload_vehicle_images_title">Upload your vehicle images</string>
+    <string name="upload_vehicle_disclaimer">Please ensure you upload clear photos of your vehicle for verification.</string>
+    <string name="upload_vehicle_front">Upload Vehicle Front</string>
+    <string name="upload_vehicle_side">Upload Vehicle Side</string>
+    <string name="take_photo_action">Take Photo</string>
+    <string name="vehicle_assignment_title">Vehicle Assignment</string>
+    <string name="vehicle_front_image_title">Vehicle Front Image</string>
+    <string name="vehicle_side_image_title">Vehicle Side Image</string>
+    <string name="vehicle_front_guidelines">\u2022 Ensure the size of image is less than 2500 KB or 2.5 MB\n\u2022 Ensure the complete front view of the vehicle is visible along with VRN\n\u2022 Ensure VRN Input should match with VRN on fixed number plate of Front Image.\n\u2022 Ensure VRN is clearly visible in the image</string>
+    <string name="vehicle_side_guidelines">\u2022 Ensure the complete side image of the vehicle is captured and number of axles are clearly of visible.\n\u2022 Ensure MVC is as per Vehicle Image.\n\u2022 Ensure the side image is of the same vehicle for which onboarding is being done.\n\u2022 Ensure the Number of axles match with number of axles tag is issued on.</string>
 
 </resources>

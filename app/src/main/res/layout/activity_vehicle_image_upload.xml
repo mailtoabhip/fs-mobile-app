@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.pending.assign.FastagAssignmentViewModel" />
+            type="com.delhivery.axle.ui.fastag.pending.assign.VehicleImageUploadViewModel" />
     </data>
 
     <LinearLayout
@@ -38,10 +38,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_16dp"
                 android:layout_weight="1"
-                android:text="@string/fastag_assignment_title"
+                android:text="@string/vehicle_assignment_title"
                 android:textColor="@color/black_title"
-                android:textSize="@dimen/text_14sp"
-                />
+                android:textSize="@dimen/text_14sp" />
 
         </LinearLayout>
 
@@ -63,7 +62,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/upload_rc_image_title"
+                    android:text="@string/upload_vehicle_images_title"
                     android:textColor="@color/neutral_black_200"
                     android:textSize="@dimen/text_16sp"
                     />
@@ -75,8 +74,8 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:background="@drawable/bg_vehicle_info_card"
                     android:orientation="vertical"
-                    android:paddingHorizontal="@dimen/size_16dp"
-                    android:paddingVertical="@dimen/size_14dp">
+                    android:paddingHorizontal="@dimen/size_12dp"
+                    android:paddingVertical="@dimen/size_12dp">
 
                     <TextView
                         android:id="@+id/tvVehicleNumber"
@@ -90,29 +89,29 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
-                        android:text="@string/upload_rc_disclaimer"
+                        android:text="@string/upload_vehicle_disclaimer"
                         android:textColor="@color/text_body_secondary"
                         android:textSize="@dimen/text_12sp"
                         android:lineSpacingExtra="2dp" />
 
                 </LinearLayout>
 
-                <!-- Upload RC Front -->
+                <!-- Upload Vehicle Front -->
                 <com.delhivery.axle.ui.common.UploadCardView
-                    android:id="@+id/uploadRcFront"
+                    android:id="@+id/uploadVehicleFront"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_20dp"
-                    app:uploadTitle="@string/upload_rc_front"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    app:uploadTitle="@string/upload_vehicle_front"
                     app:uploadSubtitle="@string/upload_file_format_info" />
 
-                <!-- Upload RC Back -->
+                <!-- Upload Vehicle Side -->
                 <com.delhivery.axle.ui.common.UploadCardView
-                    android:id="@+id/uploadRcBack"
+                    android:id="@+id/uploadVehicleSide"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_12dp"
-                    app:uploadTitle="@string/upload_rc_back"
+                    app:uploadTitle="@string/upload_vehicle_side"
                     app:uploadSubtitle="@string/upload_file_format_info" />
 
             </LinearLayout>

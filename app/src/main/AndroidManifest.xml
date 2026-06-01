@@ -343,6 +343,9 @@
             android:name=".ui.fastag.pending.assign.FastagAssignmentActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.fastag.pending.assign.VehicleImageUploadActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.fastag.trucks.FastagSearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"

@@ -40,6 +40,7 @@ class UploadCardView @JvmOverloads constructor(
     private val ivUploadIcon: ImageView
     private val tvTitle: TextView
     private val tvSubtitle: TextView
+    private val tvSampleImage: TextView
     private val btnUpload: AppCompatButton
 
     // Uploaded state views
@@ -53,6 +54,7 @@ class UploadCardView @JvmOverloads constructor(
     private var onUploadClick: (() -> Unit)? = null
     private var onReuploadClick: (() -> Unit)? = null
     private var onRemoveClick: (() -> Unit)? = null
+    private var onSampleImageClick: (() -> Unit)? = null
 
     private var isUploaded = false
 
@@ -63,6 +65,7 @@ class UploadCardView @JvmOverloads constructor(
         ivUploadIcon = findViewById(R.id.ivUploadIcon)
         tvTitle = findViewById(R.id.tvUploadTitle)
         tvSubtitle = findViewById(R.id.tvUploadSubtitle)
+        tvSampleImage = findViewById(R.id.tvSampleImage)
         btnUpload = findViewById(R.id.btnUpload)
 
         // Uploaded state
@@ -83,6 +86,10 @@ class UploadCardView @JvmOverloads constructor(
 
         btnRemove.setOnClickListener {
             onRemoveClick?.invoke()
+        }
+
+        tvSampleImage.setOnClickListener {
+            onSampleImageClick?.invoke()
         }
 
         // Read custom attributes
@@ -114,6 +121,21 @@ class UploadCardView @JvmOverloads constructor(
     }
 
     /**
+     * Show the "Sample Image" link next to the title
+     */
+    fun showSampleImageLink(listener: () -> Unit) {
+        tvSampleImage.visibility = View.VISIBLE
+        onSampleImageClick = listener
+    }
+
+    /**
+     * Set custom button text (e.g., "Take Photo" instead of "Upload")
+     */
+    fun setButtonText(text: String) {
+        btnUpload.text = text
+    }
+
+    /**
      * Transition to uploaded state showing thumbnail, file name, and action buttons.
      */
     fun setUploadedFile(file: File, displayName: String? = null) {
@@ -123,6 +145,7 @@ class UploadCardView @JvmOverloads constructor(
         ivUploadIcon.visibility = View.GONE
         tvTitle.visibility = View.GONE
         tvSubtitle.visibility = View.GONE
+        tvSampleImage.visibility = View.GONE
         btnUpload.visibility = View.GONE
 
         // Show uploaded state
@@ -152,6 +175,7 @@ class UploadCardView @JvmOverloads constructor(
         ivUploadIcon.visibility = View.GONE
         tvTitle.visibility = View.GONE
         tvSubtitle.visibility = View.GONE
+        tvSampleImage.visibility = View.GONE
         btnUpload.visibility = View.GONE
 
         // Show uploaded state
@@ -180,6 +204,7 @@ class UploadCardView @JvmOverloads constructor(
         ivUploadIcon.visibility = View.GONE
         tvTitle.visibility = View.GONE
         tvSubtitle.visibility = View.GONE
+        tvSampleImage.visibility = View.GONE
         btnUpload.visibility = View.GONE
 
         // Show uploaded state
@@ -205,6 +230,7 @@ class UploadCardView @JvmOverloads constructor(
         tvTitle.visibility = View.VISIBLE
         tvSubtitle.visibility = View.VISIBLE
         btnUpload.visibility = View.VISIBLE
+        // tvSampleImage visibility is preserved (controlled by showSampleImageLink)
 
         // Hide uploaded state
         ivThumbnail.visibility = View.GONE

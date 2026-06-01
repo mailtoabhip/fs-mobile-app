@@ -28,10 +28,23 @@
         android:layout_marginStart="@dimen/size_8dp"
         android:textColor="@color/neutral_black_200"
         android:textSize="@dimen/text_14sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvSampleImage"
         app:layout_constraintStart_toEndOf="@id/ivUploadIcon"
         app:layout_constraintTop_toTopOf="@id/ivUploadIcon"
         tools:text="Upload RC Front" />
+
+    <!-- Sample Image link (optional, hidden by default) -->
+    <TextView
+        android:id="@+id/tvSampleImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_image_link"
+        android:textColor="#2396FB"
+        android:textSize="@dimen/text_10sp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvUploadTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="gone" />
 
     <!-- Subtitle (default state) -->
     <TextView
