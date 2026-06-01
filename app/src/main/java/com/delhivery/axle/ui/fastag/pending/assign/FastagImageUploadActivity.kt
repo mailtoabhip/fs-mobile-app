@@ -9,27 +9,32 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
-import com.delhivery.axle.databinding.ActivityVehicleImageUploadBinding
+import com.delhivery.axle.databinding.ActivityFastagImageUploadBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.dialogs.SampleImageBottomSheetDialogFragment
+import com.delhivery.axle.ui.dialogs.UploadOptionsBottomSheetDialogFragment
+import com.delhivery.axle.ui.dialogs.VehicleVerifiedBottomSheetDialogFragment
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
+import com.delhivery.axle.utils.extensions.MimeTypes
+import com.delhivery.axle.utils.extensions.filePickerChooser
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
-class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBinding, VehicleImageUploadViewModel>() {
+class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding, FastagImageUploadViewModel>() {
 
-    override fun getViewModelClass() = VehicleImageUploadViewModel::class.java
-    override fun layoutId() = R.layout.activity_vehicle_image_upload
+    override fun getViewModelClass() = FastagImageUploadViewModel::class.java
+    override fun layoutId() = R.layout.activity_fastag_image_upload
     override fun requireConnection() = true
 
     @Inject
@@ -37,22 +42,26 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
     @Inject
     lateinit var fileCompressor: FileCompressor
 
-    private var vehicleFrontUploaded = false
-    private var vehicleSideUploaded = false
-
-    private var currentUploadTarget: UploadTarget = UploadTarget.VEHICLE_FRONT
+    private var fastagImageUploaded = false
     private var mPhotoFile: File? = null
-
-    private enum class UploadTarget {
-        VEHICLE_FRONT, VEHICLE_SIDE
-    }
 
     companion object {
         private const val EXTRA_VEHICLE_NUMBER = "extra_vehicle_number"
 
         fun newIntent(context: Context, vehicleNumber: String): Intent {
-            return Intent(context, VehicleImageUploadActivity::class.java).apply {
+            return Intent(context, FastagImageUploadActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_NUMBER, vehicleNumber)
+            }
+        }
+    }
+
+    // File picker launcher
+    private val filePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let { uri ->
+                handleFileResult(uri)
             }
         }
     }
@@ -63,8 +72,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             mPhotoFile?.let { file ->
-                val uri = Uri.fromFile(file)
-                handleFileResult(uri)
+                handleFileResult(Uri.fromFile(file))
             }
         }
     }
@@ -76,89 +84,69 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
 
         setupToolbar()
         setupVehicleInfo(vehicleNumber)
-        setupUploadCards()
-        updateContinueButton()
+        setupUploadCard()
+        updateSubmitButton()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
-            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
+            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnSubmit)
         }
     }
 
     private fun setupToolbar() {
         binding.ivBack.setOnClickListener { finish() }
+        binding.ivHelp.setOnClickListener {
+            // TODO: Open help/support
+        }
     }
 
     private fun setupVehicleInfo(vehicleNumber: String) {
         binding.tvVehicleNumber.text = "Vehicle Number: $vehicleNumber"
     }
 
-    private fun setupUploadCards() {
-        // Vehicle Front card
-        binding.uploadVehicleFront.setTitle(getString(R.string.upload_vehicle_front))
-        binding.uploadVehicleFront.setSubtitle(getString(R.string.upload_file_format_info))
-        binding.uploadVehicleFront.setButtonText(getString(R.string.take_photo_action))
-        binding.uploadVehicleFront.showSampleImageLink {
-            showSampleImageBottomSheet(
-                getString(R.string.vehicle_front_image_title),
-                R.drawable.vehicle_front,
-                getString(R.string.vehicle_front_guidelines)
-            )
+    private fun setupUploadCard() {
+        binding.uploadFastagImage.setOnUploadClickListener {
+            showUploadOptionsBottomSheet()
         }
-        binding.uploadVehicleFront.setOnUploadClickListener {
-            currentUploadTarget = UploadTarget.VEHICLE_FRONT
-            requestCameraPermissions()
-        }
-        binding.uploadVehicleFront.setOnRemoveClickListener {
-            binding.uploadVehicleFront.resetUploadState()
-            binding.uploadVehicleFront.setButtonText(getString(R.string.take_photo_action))
-            vehicleFrontUploaded = false
-            updateContinueButton()
+        binding.uploadFastagImage.setOnRemoveClickListener {
+            binding.uploadFastagImage.resetUploadState()
+            fastagImageUploaded = false
+            updateSubmitButton()
         }
 
-        // Vehicle Side card
-        binding.uploadVehicleSide.setTitle(getString(R.string.upload_vehicle_side))
-        binding.uploadVehicleSide.setSubtitle(getString(R.string.upload_file_format_info))
-        binding.uploadVehicleSide.setButtonText(getString(R.string.take_photo_action))
-        binding.uploadVehicleSide.showSampleImageLink {
-            showSampleImageBottomSheet(
-                getString(R.string.vehicle_side_image_title),
-                R.drawable.vehicle_side,
-                getString(R.string.vehicle_side_guidelines)
-            )
-        }
-        binding.uploadVehicleSide.setOnUploadClickListener {
-            currentUploadTarget = UploadTarget.VEHICLE_SIDE
-            requestCameraPermissions()
-        }
-        binding.uploadVehicleSide.setOnRemoveClickListener {
-            binding.uploadVehicleSide.resetUploadState()
-            binding.uploadVehicleSide.setButtonText(getString(R.string.take_photo_action))
-            vehicleSideUploaded = false
-            updateContinueButton()
-        }
-
-        // Continue button
-        binding.btnContinue.setOnClickListener {
-            if (vehicleFrontUploaded && vehicleSideUploaded) {
+        binding.btnSubmit.setOnClickListener {
+            if (fastagImageUploaded) {
                 val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
-                startActivity(FastagImageUploadActivity.newIntent(this, vehicleNumber))
+                showVehicleVerifiedBottomSheet(vehicleNumber)
             }
         }
     }
 
-    // ---- Sample Image Bottom Sheet ----
-
-    private fun showSampleImageBottomSheet(title: String, imageRes: Int, guidelines: String) {
-        val bottomSheet = SampleImageBottomSheetDialogFragment.newInstance(
-            title = title,
-            sampleImageRes = imageRes,
-            guidelines = guidelines
+    private fun showUploadOptionsBottomSheet() {
+        val bottomSheet = UploadOptionsBottomSheetDialogFragment.newInstance(
+            title = getString(R.string.upload_fastag_image_label),
+            onUploadFile = { launchFilePicker() },
+            onTakePhoto = { requestCameraPermissions() }
         )
-        bottomSheet.show(supportFragmentManager, "sample_image")
+        bottomSheet.show(supportFragmentManager, "upload_options")
+    }
+
+    // ---- File Picker ----
+
+    private fun launchFilePicker() {
+        val chooserIntent = filePickerChooser(
+            "Select file",
+            MimeTypes.IMAGE_JPG,
+            MimeTypes.IMAGE_JPEG
+        )
+        try {
+            filePickerLauncher.launch(chooserIntent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No file picker app found", Toast.LENGTH_SHORT).show()
+        }
     }
 
     // ---- Camera ----
@@ -196,12 +184,8 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
     }
 
     private fun createImageFile(): File {
-        val prefix = when (currentUploadTarget) {
-            UploadTarget.VEHICLE_FRONT -> "vehicle_front_"
-            UploadTarget.VEHICLE_SIDE -> "vehicle_side_"
-        }
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(prefix, ".jpg", storageDir)
+        return File.createTempFile("fastag_image_", ".jpg", storageDir)
     }
 
     // ---- Handle file result ----
@@ -212,10 +196,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
             .getExtensionFromMimeType(mimeType) ?: "bin"
 
         val timestamp = System.currentTimeMillis()
-        val outputFileName = when (currentUploadTarget) {
-            UploadTarget.VEHICLE_FRONT -> "Vehicle_Front_${timestamp}.jpg"
-            UploadTarget.VEHICLE_SIDE -> "Vehicle_Side_${timestamp}.jpg"
-        }
+        val outputFileName = "FASTag_Image_${timestamp}.jpg"
 
         if (extension.lowercase() == "png") {
             lifecycleScope.launch {
@@ -223,7 +204,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
                     val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
                     val converted = documentUtils.convertPngToJpg(
                         sourcePath = documentUtils.getPathFromUri(
-                            context = this@VehicleImageUploadActivity,
+                            context = this@FastagImageUploadActivity,
                             uri = uri
                         ),
                         destPath = destPath
@@ -249,7 +230,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         } else {
             try {
                 val filePath = documentUtils.getPathFromUri(
-                    context = this@VehicleImageUploadActivity,
+                    context = this@FastagImageUploadActivity,
                     uri = uri
                 )
                 val compressedFile = fileCompressor.compressToFile(
@@ -266,22 +247,26 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
     }
 
     private fun onFileReady(file: File) {
-        when (currentUploadTarget) {
-            UploadTarget.VEHICLE_FRONT -> {
-                binding.uploadVehicleFront.setUploadedFile(file, "Vehicle_Front.jpg")
-                vehicleFrontUploaded = true
-            }
-            UploadTarget.VEHICLE_SIDE -> {
-                binding.uploadVehicleSide.setUploadedFile(file, "Vehicle_Side.jpg")
-                vehicleSideUploaded = true
-            }
-        }
-        updateContinueButton()
+        binding.uploadFastagImage.setUploadedFile(file, "FASTag_Image.jpg")
+        fastagImageUploaded = true
+        updateSubmitButton()
     }
 
-    private fun updateContinueButton() {
-        val enabled = vehicleFrontUploaded && vehicleSideUploaded
-        binding.btnContinue.isEnabled = enabled
-        binding.btnContinue.alpha = if (enabled) 1.0f else 0.5f
+    private fun updateSubmitButton() {
+        binding.btnSubmit.isEnabled = fastagImageUploaded
+        binding.btnSubmit.alpha = if (fastagImageUploaded) 1.0f else 0.5f
+    }
+
+    private fun showVehicleVerifiedBottomSheet(vehicleNumber: String) {
+        val bottomSheet = VehicleVerifiedBottomSheetDialogFragment.newInstance(
+            vehicleNumber = vehicleNumber,
+            onGoToHomepage = {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
+            }
+        )
+        bottomSheet.show(supportFragmentManager, "vehicle_verified")
     }
 }

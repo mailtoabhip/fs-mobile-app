@@ -1255,5 +1255,12 @@
     <string name="vehicle_side_image_title">Vehicle Side Image</string>
     <string name="vehicle_front_guidelines">\u2022 Ensure the size of image is less than 2500 KB or 2.5 MB\n\u2022 Ensure the complete front view of the vehicle is visible along with VRN\n\u2022 Ensure VRN Input should match with VRN on fixed number plate of Front Image.\n\u2022 Ensure VRN is clearly visible in the image</string>
     <string name="vehicle_side_guidelines">\u2022 Ensure the complete side image of the vehicle is captured and number of axles are clearly of visible.\n\u2022 Ensure MVC is as per Vehicle Image.\n\u2022 Ensure the side image is of the same vehicle for which onboarding is being done.\n\u2022 Ensure the Number of axles match with number of axles tag is issued on.</string>
+    <string name="know_your_vehicle_title">Know Your Vehicle</string>
+    <string name="upload_fastag_image_title">Upload your FASTag image</string>
+    <string name="upload_fastag_image_label">Upload FASTag Image</string>
+    <string name="submit_for_verification">Submit for Verification</string>
+    <string name="vehicle_verified_title">Vehicle verified</string>
+    <string name="vehicle_verified_subtitle">Vehicle number: %1$s has been successfully authenticated</string>
+    <string name="go_to_homepage">Go to Homepage</string>
 
 </resources>
