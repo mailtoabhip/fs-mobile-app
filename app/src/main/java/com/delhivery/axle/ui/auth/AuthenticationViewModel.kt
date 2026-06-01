@@ -88,6 +88,38 @@ class AuthenticationViewModel @Inject constructor(
     }
 
     /**
+     * Resends OTP (POST /api/v1/auth/resend).
+     * Keeps the user on the OTP screen on success.
+     */
+    fun resendOTP() {
+        if (!isConnected) return
+
+        if (phoneNo.length < 10) {
+            errorLiveData.postValue(Pair(InvalidPhoneNo, null))
+            return
+        }
+
+        otpStatusLiveData.postValue(true)
+        showProgress()
+
+        viewModelScope.launch {
+            when (val result = fsAuthRepository.resend(phoneNo)) {
+                is Resource.Success -> {
+                    showProgress(false)
+                    otpStatusLiveData.postValue(true)
+                }
+                is Resource.Failure -> {
+                    showProgress(false)
+                    otpStatusLiveData.postValue(false)
+                    Log.e("AuthVM", "resend failed: code=${result.errorCode}, error=${result.apiError}")
+                    errorLiveData.postValue(Pair(InvalidOTP, "Failed to resend OTP. Please try again."))
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
+    }
+
+    /**
      * Verify OTP (POST /api/v1/auth/verify).
      * Routes to [AccountDetails] for new users, [HomePage] for existing users.
      */

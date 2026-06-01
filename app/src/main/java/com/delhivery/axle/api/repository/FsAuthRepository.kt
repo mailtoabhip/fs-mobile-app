@@ -3,11 +3,13 @@ package com.delhivery.axle.api.repository
 import com.auth0.android.jwt.JWT
 import com.delhivery.axle.api.request.FsInitiateRequest
 import com.delhivery.axle.api.request.FsRefreshTokenRequest
+import com.delhivery.axle.api.request.FsResendRequest
 import com.delhivery.axle.api.request.FsUpdateProfileRequest
 import com.delhivery.axle.api.request.FsVerifyRequest
 import com.delhivery.axle.api.response.FsInitiateData
 import com.delhivery.axle.api.response.FsLogoutData
 import com.delhivery.axle.api.response.FsRefreshTokenData
+import com.delhivery.axle.api.response.FsResendData
 import com.delhivery.axle.api.response.FsUpdateProfileData
 import com.delhivery.axle.api.response.FsUserProfile
 import com.delhivery.axle.api.response.FsVerifyData
@@ -55,6 +57,16 @@ class FsAuthRepository @Inject constructor(
     }
 
     /**
+     * Resends OTP for the given phone number.
+     * POST /api/v1/auth/resend
+     *
+     * @param phone 10-digit phone number (without country code)
+     */
+    suspend fun resend(phone: String): Resource<FsResendData> = safeApiCall {
+        fsAuthService.resend(FsResendRequest(phone = phone)).toResource()
+    }
+
+    /**
      * Verifies OTP for both signup and login flows.
      * Stores the access token in prefs and updates the network interceptor on success.
      * POST /api/v1/auth/verify
@@ -75,7 +87,6 @@ class FsAuthRepository @Inject constructor(
         userPrefs.jwtToken = data.accessToken
         userPrefs.refreshToken = data.refreshToken
         networkInterceptor.updateJWT(data.accessToken)
-        // Persist new-user flag from the verify response
         userPrefs.isNewUser = data.isNewUser ?: false
         data
     }
@@ -86,7 +97,7 @@ class FsAuthRepository @Inject constructor(
      */
     suspend fun logout(): Resource<FsLogoutData> = safeApiCall {
         val data = fsAuthService.logout().toResource()
-        localLogout()
+        //localLogout()
         data
     }
 

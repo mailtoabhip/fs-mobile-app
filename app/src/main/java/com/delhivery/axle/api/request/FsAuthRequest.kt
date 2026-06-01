@@ -32,6 +32,13 @@ data class FsUpdateProfileRequest(
 )
 
 /**
+ * Request body for POST /api/v1/auth/resend
+ */
+data class FsResendRequest(
+    @SerializedName("phone") val phone: String
+)
+
+/**
  * Request body for POST /api/v1/auth/refresh
  */
 data class FsRefreshTokenRequest(

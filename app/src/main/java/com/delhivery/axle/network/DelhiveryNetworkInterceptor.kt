@@ -21,15 +21,13 @@ class DelhiveryNetworkInterceptor @Inject constructor(
   private val deviceInfoProvider: DeviceInfoProvider
 ) : Interceptor {
 
-  private var jwtToken: String? = userPrefs.jwtToken
-
   /**
-   * Update jwt token
-   *
-   * @param jwtToken new JWT Token, by  default clears token
+   * Update jwt token — kept for backward compatibility with callers that
+   * explicitly refresh the cached value, but the interceptor now always
+   * reads directly from [userPrefs] so stale-cache issues are impossible.
    */
   fun updateJWT(jwtToken: String? = null) {
-    this.jwtToken = jwtToken
+    userPrefs.jwtToken = jwtToken
   }
 
   override fun intercept(chain: Interceptor.Chain) =
@@ -52,8 +50,11 @@ class DelhiveryNetworkInterceptor @Inject constructor(
 
       /* Attach Bearer token for all authenticated endpoints */
       val path = chain.request().url().encodedPath()
-      if (path != "/api/v1/auth/initiate" && path != "/api/v1/auth/verify") {
-        jwtToken?.let { token ->
+      val isUnauthenticated = path == "/api/v1/auth/initiate"
+          || path == "/api/v1/auth/verify"
+          || path == "/api/v1/auth/resend"
+      if (!isUnauthenticated) {
+        userPrefs.jwtToken?.let { token ->
           builder.header("Authorization", "Bearer $token")
           if (BuildConfig.DEBUG) {
             Log.d("DelhiveryInterceptor", "Authorization → Bearer ${token.take(8)}…")

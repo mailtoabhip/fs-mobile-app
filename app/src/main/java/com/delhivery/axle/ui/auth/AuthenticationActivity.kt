@@ -171,7 +171,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       )
       viewModel.otpSendCount +=1
       binding.otpError.visibility = View.GONE
-      viewModel.sendOTP()
+      viewModel.resendOTP()
     }
 
     binding.btnSendOtp.setOnClickListener {

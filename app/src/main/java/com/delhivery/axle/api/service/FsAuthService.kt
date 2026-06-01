@@ -2,12 +2,14 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.FsInitiateRequest
 import com.delhivery.axle.api.request.FsRefreshTokenRequest
+import com.delhivery.axle.api.request.FsResendRequest
 import com.delhivery.axle.api.request.FsUpdateProfileRequest
 import com.delhivery.axle.api.request.FsVerifyRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.FsInitiateData
 import com.delhivery.axle.api.response.FsLogoutData
 import com.delhivery.axle.api.response.FsRefreshTokenData
+import com.delhivery.axle.api.response.FsResendData
 import com.delhivery.axle.api.response.FsUpdateProfileData
 import com.delhivery.axle.api.response.FsUserProfile
 import com.delhivery.axle.api.response.FsVerifyData
@@ -48,6 +50,15 @@ interface FsAuthService {
     suspend fun verify(
         @Body request: FsVerifyRequest
     ): BaseResponse<FsVerifyData>
+
+    /**
+     * Resends OTP for the given phone number.
+     * POST /api/v1/auth/resend
+     */
+    @POST("api/v1/auth/resend")
+    suspend fun resend(
+        @Body request: FsResendRequest
+    ): BaseResponse<FsResendData>
 
     /**
      * Revokes all refresh tokens for the user across all devices.

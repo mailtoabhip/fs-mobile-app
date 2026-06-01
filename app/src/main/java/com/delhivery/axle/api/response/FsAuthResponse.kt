@@ -48,7 +48,19 @@ data class FsVerifyData(
     @SerializedName("access_token") val accessToken: String,
     @SerializedName("refresh_token") val refreshToken: String,
     @SerializedName("id_token") val idToken: String,
-    @SerializedName("is_new_user") val isNewUser: Boolean?
+    @SerializedName("is_new_user") val isNewUser: Boolean?,
+    @SerializedName("user_id") val userId: String?
+)
+
+// ---------------------------------------------------------------------------
+// Resend  —  POST /api/v1/auth/resend
+// ---------------------------------------------------------------------------
+
+/**
+ * `data` payload inside the resend-OTP response.
+ */
+data class FsResendData(
+    @SerializedName("message") val message: String
 )
 
 // ---------------------------------------------------------------------------

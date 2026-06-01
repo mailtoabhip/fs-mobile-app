@@ -1104,6 +1104,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       .apply()
     editor.remove(PrefKeys.ReturningFromDeletion)
       .apply()
+    editor.remove(PrefKeys.IsNewUser)
+      .apply()
     editor.commit()
   }
 
