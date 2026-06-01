@@ -3,7 +3,6 @@ package com.delhivery.axle.ui.home.fragments
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.home.HomeFragment
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomePodsFragment
 import com.delhivery.axle.ui.home.fragments.pod.HomeNewPodFragment

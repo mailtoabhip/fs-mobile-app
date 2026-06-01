@@ -34,9 +34,6 @@ class LoadCycleRepository @Inject constructor(
    * @param request JsonObject containing search parameters (origin, destination, vehicle type, etc.)
    * @return Flow<Resource<SearchTripsResponse>> that emits Loading, then Success or Failure
    */
-  fun searchTripsFlow(request: JsonObject): Flow<Resource<SearchTripsResponse>> {
-    return safeApiCallFlow { loadsService.searchTrips(request) }
-  }
 
   /**
    * Get frequent lanes using Flow-based architecture.
@@ -49,18 +46,11 @@ class LoadCycleRepository @Inject constructor(
    * @param request JsonObject containing request parameters
    * @return Flow<Resource<FrequentTripsResponse>> that emits Loading, then Success or Failure
    */
-  fun getFrequentLanesFlow(request: JsonObject): Flow<Resource<FrequentTripsResponse>> {
-    return safeApiCallFlow { loadsService.getFrequentLanes(request) }
-  }
 
 
   /**
    * Search trips basis params
    */
-  fun searchTrips(request: JsonObject) = loadsService.searchTripsRxJava(request).convertResponse()
-
-  fun getFrequentLanes(request: JsonObject) = loadsService.getFrequentLanesRxJava(request).convertResponse()
-
 
 }
 

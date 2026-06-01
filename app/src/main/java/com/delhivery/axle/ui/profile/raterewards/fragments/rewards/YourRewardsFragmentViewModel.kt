@@ -1,7 +1,6 @@
 package com.delhivery.axle.ui.profile.raterewards.fragments.rewards
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.data.yourrewards.RangeCondition
@@ -20,7 +19,7 @@ import com.google.gson.Gson
 
 
 
-class YourRewardsFragmentViewModel   @Inject constructor(  private val inventoryRepository: InventoryRepository,private val truckRepository: TruckRepository,private val userRepository: UserRepository,
+class YourRewardsFragmentViewModel   @Inject constructor(private val truckRepository: TruckRepository,private val userRepository: UserRepository,
   val userPrefs: UserPrefs
 ): BaseViewModel() {
 

@@ -166,7 +166,7 @@ class AddTruckBottomSheetDialog(
     }
 
     private fun fetchTruckTypes() {
-        viewModel.fetchTruckType()
+       // viewModel.fetchTruckType()
     }
 
     private fun showProgress(message: String = "Adding truck...") {
@@ -250,7 +250,7 @@ class AddTruckBottomSheetDialog(
 
         if (flag) {
             showProgress("Adding truck...")
-            viewModel.addNewTruck(sourcedAs.uppercase())
+           // viewModel.addNewTruck(sourcedAs.uppercase())
         }
     }
 

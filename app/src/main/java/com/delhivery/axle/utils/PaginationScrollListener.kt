@@ -18,19 +18,9 @@ abstract class PaginationScrollListener(private val pageSize: Int, private val i
         val visibleItemCount = childCount
         val totalItemCount = itemCount
         val firstVisible = findFirstVisibleItemPosition()
-        if (!isLoading() && hasMore()) {
-          if (visibleItemCount + firstVisible >= totalItemCount && firstVisible >= 0 && (totalItemCount >= pageSize || isConsolidatedApi)) {
-            loadMore()
-          }
-        }
       }
     }
   }
-
-  /**
-   * Load more items/paginate
-   */
-  abstract fun loadMore()
 
   /**
    * Check is has more items

@@ -170,9 +170,6 @@ class PendingPodViewModelFlow @Inject constructor(
                     )
                 }
             }
-
-            loadCycleRepository.searchTripsFlow(buildRequest(currentOffset))
-                .collect { resource -> handleResource(resource, paginate) }
         }
     }
 

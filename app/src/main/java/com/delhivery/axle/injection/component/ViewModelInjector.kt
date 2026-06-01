@@ -2,7 +2,6 @@ package com.delhivery.axle.injection.component
 
 import com.delhivery.axle.injection.module.NetworkModule
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
-import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.businessverification.BusinessVerificationViewModel
 import com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel
@@ -14,7 +13,6 @@ import com.delhivery.axle.ui.home.activity.wallet.WalletOnboardingViewModel
 import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
@@ -117,11 +115,6 @@ interface ViewModelInjector {
   fun inject(viewModel: HomeBidsViewModel)
 
   /**
-   * Injects [HomeLoadsViewModel]
-   */
-  fun inject(viewModel: HomeLoadsViewModel)
-
-  /**
    * Injects [HomeTripsViewModel]
    */
   fun inject(viewModel: HomeTripsViewModel)
@@ -150,11 +143,6 @@ interface ViewModelInjector {
    * Injects [BidsViewModel]
    */
   fun inject(viewModel: BidsViewModel)
-
-  /**
-   * Injects [BidDetailsViewModel]
-   */
-  fun inject(viewModel: BidDetailsViewModel)
 
   /**
    * Injects [SearchLoadViewModel]

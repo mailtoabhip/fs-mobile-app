@@ -5,7 +5,6 @@ import android.os.Build.VERSION_CODES
 import android.provider.Settings.Secure
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
-import com.delhivery.axle.api.repository.InventoryRepository
 import com.delhivery.axle.api.repository.PriceRepository
 import com.delhivery.axle.api.repository.TruckRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -35,7 +34,6 @@ import javax.inject.Inject
  * View model for [LoadAlertActivity]
  */
 class ShareRateViewModel @Inject constructor(
-    private val inventoryRepository: InventoryRepository,
     val truckRepository: TruckRepository,
     private val userPrefs: UserPrefs,
     private val userRepository: UserRepository,
@@ -62,19 +60,6 @@ class ShareRateViewModel @Inject constructor(
   var documentProofUrl= mutableListOf<String>()
   
 
-    fun fetchTruckType() {
-        compositeDisposable += truckRepository.getTruckType()
-            .onBackground()
-            .subscribe { _tRes, error ->
-                if(!error && _tRes != null){
-                    truckGetLiveData.postValue(_tRes)
-                }
-                else{
-                    error.handle()
-                    truckGetLiveData.postValue(null)
-                }
-            }
-    }
 
   fun getPricingData(priceDetailRequest: PriceDetailRequest) {
     compositeDisposable += priceRepository.getPricingData(priceDetailRequest)
@@ -91,52 +76,6 @@ class ShareRateViewModel @Inject constructor(
       }
   }
 
-    fun sharerate() {
-        if (origin!!.orionDbCityCode != null && destination!!.orionDbCityCode != null) {
-            compositeDisposable += inventoryRepository.getOriginDestinationCluster(origin!!.orionDbCityCode
-                    ?: "", destination!!.orionDbCityCode ?: "")
-                    .flatMap { t ->
-                        val updatePriceRequest = UpdatePriceRequest(
-                                "axle_app",
-                                origin?.orionDbCityCode,
-                                origin?.city,
-                                 t.first,
-                                destination?.orionDbCityCode,
-                                destination?.city,
-                               t.second,
-                                selected_truck_type,
-                                if(selected_truck_capacity.isNotNullOrEmpty())selected_truck_capacity?.trim()?.replace(" ", "")?.replace("MT", "")?.toDouble() else null,
-                                selected_vehicle_number,
-                                expectedPrice,
-                                tripDate,
-                                userPrefs.parentId,
-                                userPrefs.parentName,
-                                null,
-                                priceUnit,
-                                proofType?.lowercase()?.replace(" ", "_"),
-                                documentProofUrl,
-                                userPrefs.phoneNumber?.replace("+91", "")
-                        )
-
-                        priceRepository.shareRate(updatePriceRequest)
-                    }
-                    .onBackground()
-                    .progress()
-                    .subscribe { _res, error ->
-                        if (!error && _res!=null) {
-                            rateUpdatedLiveData.postValue(true)
-                        } else {
-                            val errorMessage = error.errorResponseBody()?.dataBody
-                            if (errorMessage != null) {
-                                errorrateUpdatedLiveData.postValue(errorMessage.errorBody)
-                            } else {
-                                error.handle()
-                            }
-                            rateUpdatedLiveData.postValue(false)
-                        }
-                    }
-        }
-    }
 
     // Removed delegation token logic - direct upload now handled in Activity
     

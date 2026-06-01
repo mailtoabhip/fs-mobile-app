@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reusable left-side prefix box for phone/currency inputs (rounded on left only) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:topLeftRadius="8dp"
+        android:bottomLeftRadius="8dp"
+        android:topRightRadius="0dp"
+        android:bottomRightRadius="0dp" />
+    <solid android:color="#F5F5F5" />
+    <stroke android:color="#E0E3EB" android:width="1dp" />
+</shape>

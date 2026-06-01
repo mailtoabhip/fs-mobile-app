@@ -206,3 +206,17 @@ fun AppCompatButton.setEnabledState(enabled: Boolean) {
         setTextColor(Color.parseColor("#94A3B8"))
     }
 }
+
+/**
+ * Triggers [action] with true when text length reaches [length], false when it drops below.
+ * Use as a lightweight replacement for DelhiveryOTPViewEditText.lengthAction() on plain EditTexts.
+ */
+fun EditText.onLengthReached(length: Int, action: (reached: Boolean) -> Unit) {
+    addTextChangedListener(object : android.text.TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        override fun afterTextChanged(s: android.text.Editable?) {
+            action((s?.length ?: 0) >= length)
+        }
+    })
+}

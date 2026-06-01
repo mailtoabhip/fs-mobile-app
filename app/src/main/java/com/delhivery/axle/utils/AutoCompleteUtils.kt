@@ -4,7 +4,6 @@ import android.widget.Toast
 import com.delhivery.axle.api.response.DriverDataResponse
 import com.delhivery.axle.api.response.TruckDisplayNameItem
 import com.delhivery.axle.api.service.CityService
-import com.delhivery.axle.api.service.InventoryService
 import com.delhivery.axle.api.service.TPSService
 import com.delhivery.axle.data.CityModel
 import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
@@ -30,7 +29,6 @@ import javax.inject.Inject
 @ActivityScope
 class AutoCompleteUtils @Inject constructor(
   private val cityService: CityService,
-  private val inventoryService: InventoryService,
   private val tpsService: TPSService,
   private val activity: DaggerAppCompatActivity
 ) {
@@ -79,7 +77,7 @@ class AutoCompleteUtils @Inject constructor(
         val d = RxTextView.textChanges(editText)
                 .filter { it.length >= 2 }
                 .subscribe({
-                    resetNetworkTruckSuggestions(it.toString(), editText, action)
+                    //resetNetworkTruckSuggestions(it.toString(), editText, action)
                 }, {
                     it.printStackTrace()
                 })
@@ -271,58 +269,6 @@ class AutoCompleteUtils @Inject constructor(
           }
     }
   }
-
-    private fun resetNetworkTruckSuggestions(
-            query: String,
-            editText: DelhiveryTrucksAutoEditText,
-            action: (String) -> Unit
-    ) {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("supplier_id", userPrefs.parentId)
-
-        jsonObject.addProperty("offset", 0)
-        jsonObject.addProperty("limit", 10)
-        jsonObject.addProperty("vehicle_prefix",query)
-
-        disposable?.dispose()
-        if(userPrefs.jwtToken != null) {
-            disposable = inventoryService.getInventories(jsonObject)
-                    .onBackground()
-                    .doOnSubscribe {
-                        editText.post {
-                            editText.progress()
-                            editText.dismissDropDown()
-                        }
-                    }
-                    .doFinally {
-                        try{
-                            editText.post {
-                                editText.progress(false)
-                                // Only show dropdown if not in selection progress
-                                if (!editText.isSelectionInProgress()) {
-                                    editText.showDropDown()
-                                }
-                            }
-                        }catch (e:Exception){
-
-                        }
-                    }
-                    .subscribe { _res, _err ->
-                        if (!_err && _res != null) {
-                            _res.responseData?.let { res ->
-                                val arrayList = ArrayList<String>()
-                                for(item in res.trucks.names())
-                                    arrayList.add(item)
-                                arrayList.add("Add New Truck")
-                                editText.setItems(arrayList) {
-                                    disposable?.dispose()
-                                    action(it)
-                                }
-                            }
-                        }
-                    }
-        }
-    }
 
     private fun resetNetworkDriverNameSuggestions(
         query: String,

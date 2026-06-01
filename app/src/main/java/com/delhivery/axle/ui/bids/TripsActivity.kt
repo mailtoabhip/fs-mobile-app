@@ -480,7 +480,7 @@ class TripsActivity : BaseActivity<ActivityTripsBinding, TripsViewModel>(),
 
   private fun refreshData(intent: Boolean = false) {
     intentRefresh = intent
-    viewModel.fetchTripsSummary()
+    //viewModel.fetchTripsSummary()
     fetchTripDetails()
   }
 

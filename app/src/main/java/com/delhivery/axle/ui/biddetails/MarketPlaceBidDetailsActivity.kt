@@ -131,7 +131,7 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
 
             // Place Bid button
             btnPlaceBid.setOnClickListener {
-                placeBid()
+                //placeBid()
             }
 
             // Call button
@@ -414,7 +414,7 @@ class MarketPlaceBidDetailsActivity : BaseActivity<ActivityMarketplaceBidDetails
                     )
                 )
             }
-            viewModel.placeBid(it, bidAmount)
+           // viewModel.placeBid(it, bidAmount)
         } ?: run {
             Toast.makeText(this, "Invalid bid ID", Toast.LENGTH_SHORT).show()
         }

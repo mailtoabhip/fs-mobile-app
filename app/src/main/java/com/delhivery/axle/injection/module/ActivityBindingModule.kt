@@ -10,10 +10,7 @@ import com.delhivery.axle.ui.accountrole.AccountRoleActivity
 import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.auth.InvalidActivity
-import com.delhivery.axle.ui.biddetails.BidDetailsActivity
 import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
-import com.delhivery.axle.ui.biddetails.PlacementsBidDetailsActivity
-import com.delhivery.axle.ui.bids.BidsActivity
 import com.delhivery.axle.ui.bids.TripsActivity
 import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
@@ -26,15 +23,15 @@ import com.delhivery.axle.ui.fastag.issuance.FastagKycActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentMethodActivity
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
+import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
+import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagRaiseDisputeActivity
-import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
-import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionActivity
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity
-import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
-import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -141,25 +138,11 @@ abstract class ActivityBindingModule {
   )
   internal abstract fun bindHomeActivity(): HomeActivity
 
-  /* Active/Lost/Confirm Bids activity*/
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsBidsActivityModule::class])
-  internal abstract fun bindBidsActivity(): BidsActivity
-
   /* Advance/Balance/InTransit/Completed Trips activity*/
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsTripsActivityModule::class])
   internal abstract fun bindTripsActivity(): TripsActivity
 
-  /* Bid Details activity */
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsBidDetailsActivityModule::class])
-  internal abstract fun bindBidDetailsActivity(): BidDetailsActivity
-
-  /* New Placements Bid Details activity */
-  @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsPlacementsBidDetailsActivityModule::class])
-  internal abstract fun bindPlacementsBidDetailsActivity(): PlacementsBidDetailsActivity
 
   /* MarketPlace Bid Details activity */
   @ActivityScope
@@ -536,16 +519,9 @@ internal abstract class AbsOnboardingActivityModule : ActivityModule<OnboardingA
 internal abstract class AbsHomeActivityModule : ActivityModule<HomeActivity>()
 
 @Module
-internal abstract class AbsBidsActivityModule : ActivityModule<BidsActivity>()
-
-@Module
 internal abstract class AbsTripsActivityModule : ActivityModule<TripsActivity>()
 
-@Module
-internal abstract class AbsBidDetailsActivityModule : ActivityModule<BidDetailsActivity>()
 
-@Module
-internal abstract class AbsPlacementsBidDetailsActivityModule : ActivityModule<PlacementsBidDetailsActivity>()
 
 @Module
 internal abstract class AbsPlacementsContractDetailsActivityModule : ActivityModule<PlacementsContractDetailsActivity>()

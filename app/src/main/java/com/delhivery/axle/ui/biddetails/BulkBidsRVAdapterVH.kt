@@ -1,28 +1,18 @@
 package com.delhivery.axle.ui.biddetails
 
-import android.content.Intent
-import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.widget.TextViewCompat
 import androidx.databinding.ViewDataBinding
 import com.delhivery.axle.R
 import com.delhivery.axle.data.biddetail.EXPAND_CARD
-import com.delhivery.axle.data.biddetail.OPEN_CONFIRMED_BID
-import com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemAction
-import com.delhivery.axle.databinding.*
+import com.delhivery.axle.databinding.ViewBidDetailItemBinding
+import com.delhivery.axle.databinding.ViewProgressItemBinding
+import com.delhivery.axle.databinding.ViewTimeOutItemBinding
 import com.delhivery.axle.ui.base.BaseViewHolder
-import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.ui.bids.BidsActivity
-import com.delhivery.axle.ui.bids.userBidsIntent
-import com.delhivery.axle.ui.tripdetails.*
-import com.delhivery.axle.utils.prefs.UserPrefs
-import javax.inject.Inject
+import com.delhivery.axle.ui.tripdetails.tripDetailsIntent
 
 abstract class BaseBulkBidsRVAdapterVH<out B: ViewDataBinding,
     IT : BaseBulkBidSummaryRVAdapterItem<*>>(binding: B) : BaseViewHolder<B>(binding) {

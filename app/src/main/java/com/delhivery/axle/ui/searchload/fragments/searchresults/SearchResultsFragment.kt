@@ -28,9 +28,6 @@ import com.delhivery.axle.databinding.FragmentSearchResultsBinding
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType
 import com.delhivery.axle.ui.base.adapter.DataRVAdapterOperationType.Add
 import com.delhivery.axle.ui.biddetails.AcceptAdhocIntracityBidBottomDialog
-import com.delhivery.axle.ui.biddetails.BidDetailsCreateEditDialog
-import com.delhivery.axle.ui.biddetails.BulkBidDetailsCreateEditDialog
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.contractDetails.contractDetailsIntent
 import com.delhivery.axle.ui.dialogs.BidConfirmReviseDialog
 import com.delhivery.axle.ui.home.activity.home.orderRank
@@ -164,9 +161,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       if (it.first) {
         val data = _adapter.itemsList()[it.second].data as? HomeBidsRequestItemData
         reviseInitiated=true
-        BidDetailsCreateEditDialog(
-          requireContext(), data!!, data!!.transactionBid, viewModel, it.second, analyticsUtil, userPrefs, "search_screen"
-        ).show()
       }
     })
 
@@ -182,7 +176,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                 _adapter.notifyItemChanged(it.first)
                 if (data != null) {
                   uiUtils.showProgress()
-                  viewModel.fetchLowestBid(data, it.first)
+                  //viewModel.fetchLowestBid(data, it.first)
                 }
 
               }
@@ -331,7 +325,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         Toast.makeText(context,"Bids Deleted Successfully", Toast.LENGTH_SHORT).show()
       }
       if(viewModel.editFlg[0] &&  viewModel.editFlg[1] && viewModel.editFlg[2]){
-        viewModel.transactionBidForBulk(it.second, pos)
+       // viewModel.transactionBidForBulk(it.second, pos)
         viewModel.editFlg = mutableListOf(false, false, false)
       }
     })
@@ -359,13 +353,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
           )
           reviseInitiated=false
         }
-        if(it.second.truckUUID != null) {
-          BulkBidDetailsCreateEditDialog(requireContext(), it.second, it.second.bulkTransactionBids, it.first, viewModel, it.second.unAllocatedVolume!!,
-            pos, analyticsUtil, userPrefs, "load_screen", pageTitle).show()
-        }
-        else{
-          Toast.makeText(context, "No Vehicle Types Found",Toast.LENGTH_SHORT).show()
-        }
       }
     })
 
@@ -379,7 +366,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
 
   private fun refreshData() {
     _adapter.resetStaticData(requestType?:"load")
-    viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType, isFlexible =isFlexible,includeFlexibleContracts=includeFlexibleContracts)
+    //viewModel.searchLoad(false, origin, destination, type, displayName, status, requestType, contractType, isFlexible =isFlexible,includeFlexibleContracts=includeFlexibleContracts)
   }
 
   private fun setupSpinners() {
@@ -443,7 +430,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
       binding.checkBoxFlexibleIntracity.isChecked =isFlexible==true
     }
 
-    viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType,isFlexible,includeFlexibleContracts)
+    //viewModel.searchLoad(false, origin, destination, type,displayName, status,requestType,contractType,isFlexible,includeFlexibleContracts)
   }
 
   /**
@@ -554,7 +541,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
         if(_item.subRequestType!= SUB_REQUEST_TYPE_INTRACITY)
         context?.let {
           userPrefs.setPreviousScreen(this.javaClass.name)
-          startActivity(bidDetailsIntent(_item.key(), it, if (_item.isDMTIndent()) "dmt" else ""))
         }
       }
       }
@@ -574,7 +560,7 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
             val data = item.data as HomeBidsRequestItemData
             if (data.isDMTIndent()) {
               uiUtils.showProgress()
-              viewModel.fetchTruckType(data)
+              //viewModel.fetchTruckType(data)
             }
             else{
               item.data.let {
@@ -596,9 +582,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
                   )
                   reviseInitiated=true
                 }
-                BidDetailsCreateEditDialog(
-                  requireContext(), it, it.transactionBid, viewModel, position, analyticsUtil, userPrefs , "load_screen"
-                ).show()
               }
             }
           }
@@ -613,8 +596,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
               analyticsUtil,
               userPrefs,
               viewModel,
-              null,
-              SearchResultsFragment._instance,
               uiUtils
             ).show()
 
@@ -747,7 +728,6 @@ class SearchResultsFragment : SearchLoadBaseFragment<FragmentSearchResultsBindin
   }
 
   inner class PaginationInterface: PaginationScrollListener(UserTripsLoadLimit){
-    override fun loadMore()=viewModel.searchLoad(true, origin, destination, type, displayName, status, requestType, contractType,isFlexible,includeFlexibleContracts)
 
     override fun hasMore() = viewModel.hasMoreData
 

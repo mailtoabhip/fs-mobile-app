@@ -129,13 +129,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
         it?.let { _items ->
           adapter.operation(_items)
           val intercityCount = _items.count { item -> item.first.type == HomeContractsRVAdapterItemType.Contracts }
-            if(viewModel.paginateCount==0 && intercityCount > 0 && contractType != ContractType.INTRACITY.name && userPrefs.currentNavigationTab == HomeTrucksFragment::class.java.name){
-                analyticsUtil.moEngageTrackEvent(
-                    EVENT_INTERCITY_CONTRACTS_SHOWN,
-                    mutableListOf(PROPERTY_USER_ID, PROPERTY_PAGE_NAME),
-                    mutableListOf(userPrefs.userId(), VALUE_LOAD_PAGE_CONTRACTS)
-                )
-            }
       }
     })
     viewModel.userLoadsDataFetch.reobserve(viewLifecycleOwner, Observer {
@@ -179,7 +172,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
     viewModel.paginateCount = 0
     viewModel.hasOrionLoadOnce = false
     adapter.resetStaticData()
-    viewModel.fetchUserTransactions(false, demandType,contractType,isflexible,includeFlexibleContract)
   }
 
   override fun handleAction(
@@ -436,8 +428,6 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(UserTripsLoadLimit) {
-    override fun loadMore() = viewModel.fetchUserTransactions(true, demandType, contractType, isflexible, includeFlexibleContract)
-
     override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData

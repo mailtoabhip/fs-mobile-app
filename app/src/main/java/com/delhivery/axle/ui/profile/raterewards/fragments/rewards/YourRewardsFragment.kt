@@ -332,8 +332,6 @@ class YourRewardsFragment : ShareRateGetRewardsBaseFragment<FragmentYourRewardsB
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchSupplierRewards(true)
-
     override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData

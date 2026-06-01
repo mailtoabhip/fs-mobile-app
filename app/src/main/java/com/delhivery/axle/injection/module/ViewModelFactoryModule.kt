@@ -11,7 +11,6 @@ import com.delhivery.axle.ui.accountaction.AccountActionViewModel
 import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
 import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
-import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
@@ -29,7 +28,6 @@ import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel
 import com.delhivery.axle.ui.home.fragments.home.HomeFragmentViewModel
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
@@ -180,10 +178,6 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(HomePlacementsViewModel::class)
   abstract fun bindHomePlacementsViewModel(homePlacementsViewModel: HomePlacementsViewModel): ViewModel
 
-  @Binds
-  @IntoMap
-  @ViewModelScope(HomeLoadsViewModel::class)
-  abstract fun bindHomeLoadsViewModel(homeLoadsViewModel: HomeLoadsViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -224,11 +218,6 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(TripsViewModel::class)
   abstract fun bindTripsViewModel(tripsViewModel: TripsViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelScope(BidDetailsViewModel::class)
-  abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap
