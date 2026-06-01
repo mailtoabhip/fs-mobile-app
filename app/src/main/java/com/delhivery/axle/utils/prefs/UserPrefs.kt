@@ -43,6 +43,21 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
         set(value) = editor.putString(PrefKeys.RefreshToken, value)
             .apply()
         get() = prefs.getString(PrefKeys.RefreshToken, null)
+
+    var firstName: String?
+        set(value) = editor.putString(PrefKeys.FirstName, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.FirstName, null)
+
+    var lastName: String?
+        set(value) = editor.putString(PrefKeys.LastName, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.LastName, null)
+
+    var commConsent: Boolean
+        set(value) = editor.putBoolean(PrefKeys.CommConsent, value)
+            .apply()
+        get() = prefs.getBoolean(PrefKeys.CommConsent, false)
   /**
    *  Base/Origin City Code
    */
@@ -522,6 +537,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     }
     return arrayItems
   }
+
+    fun isProfilePending(): Boolean{
+        return firstName.isNullOrEmpty() || lastName.isNullOrEmpty() || !commConsent
+    }
 
 
   /**
@@ -1309,6 +1328,9 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   internal object PrefKeys {
     const val JWTToken = "jwt_token"
     const val RefreshToken = "refresh_token"
+    const val FirstName = "first_name"
+    const val LastName = "last_name"
+    const val CommConsent = "comm_consent"
     const val CityCode = "city_code"
     const val CityName = "city_name"
     const val GNCityCode = "gn_city_code"

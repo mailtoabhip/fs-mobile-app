@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
 import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
 import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -52,17 +53,18 @@ class AuthenticationViewModel @Inject constructor(
     fun sendOTP() {
         if (!isConnected) return
 
-        if (phoneNo.length < 10) {
+        val rawPhone = phoneNo.replace(" ", "")
+        if (rawPhone.length < 10) {
             errorLiveData.postValue(Pair(InvalidPhoneNo, null))
             return
         }
 
-        userPrefs.phoneNumber = phoneNo
+        userPrefs.phoneNumber = rawPhone
         otpStatusLiveData.postValue(true)
         showProgress()
 
         viewModelScope.launch {
-            when (val result = fsAuthRepository.initiate(phoneNo)) {
+            when (val result = fsAuthRepository.initiate(rawPhone)) {
                 is Resource.Success -> {
                     showProgress(false)
                     val data = result.data
@@ -94,7 +96,8 @@ class AuthenticationViewModel @Inject constructor(
     fun resendOTP() {
         if (!isConnected) return
 
-        if (phoneNo.length < 10) {
+        val rawPhone = phoneNo.replace(" ", "")
+        if (rawPhone.length < 10) {
             errorLiveData.postValue(Pair(InvalidPhoneNo, null))
             return
         }
@@ -103,7 +106,7 @@ class AuthenticationViewModel @Inject constructor(
         showProgress()
 
         viewModelScope.launch {
-            when (val result = fsAuthRepository.resend(phoneNo)) {
+            when (val result = fsAuthRepository.resend(rawPhone)) {
                 is Resource.Success -> {
                     showProgress(false)
                     otpStatusLiveData.postValue(true)
@@ -121,23 +124,50 @@ class AuthenticationViewModel @Inject constructor(
 
     /**
      * Verify OTP (POST /api/v1/auth/verify).
-     * Routes to [AccountDetails] for new users, [HomePage] for existing users.
+     * On success, fetches user profile to decide navigation:
+     *  - Profile has first_name → existing user → [HomePage]
+     *  - Profile missing first_name → new user → [AccountDetails]
      */
     fun verifyOTP(otp: CharArray) {
         if (!isConnected) return
 
         state = LoginProgress
         val otpString = otp.joinToString("")
+        val rawPhone = phoneNo.replace(" ", "")
 
         viewModelScope.launch {
-            when (val result = fsAuthRepository.verify(phoneNo, otpString, loginSession)) {
+            when (val result = fsAuthRepository.verify(rawPhone, otpString, loginSession)) {
                 is Resource.Success -> {
                     val tokens = result.data
                     if (tokens != null) {
                         // Token is persisted and interceptor updated inside FsAuthRepository.verify()
                         userPrefs.hasLoggedIn = true
                         userPrefs.lastLoginTime = Date().time
-                        state = if (tokens.isNewUser == true) AccountDetails else HomePage
+
+                        // Fetch profile to determine navigation
+                        when (val profileResult = fsAuthRepository.getProfile()) {
+                            is Resource.Success -> {
+                                val profile = profileResult.data
+                                if (profile != null && profile.firstName.isNotNullOrEmpty() && profile.lastName.isNotNullOrEmpty()) {
+                                    // Existing user with completed profile
+                                    userPrefs.userName = "${profile.firstName} ${profile.lastName.orEmpty()}".trim()
+                                    userPrefs.phoneNumber = profile.phone
+                                    userPrefs.firstName =  profile.firstName
+                                    userPrefs.lastName =  profile.lastName
+                                    state = HomePage
+                                } else {
+                                    // New user or incomplete profile
+                                    state = AccountDetails
+                                }
+                            }
+                            is Resource.Failure -> {
+                                // Profile fetch failed — show error and let user retry OTP
+                                Log.w("AuthVM", "Profile fetch failed: ${profileResult.apiError}")
+                                errorLiveData.postValue(Pair(InvalidOTP, "Something went wrong. Please try again."))
+                                state = OTP
+                            }
+                            Resource.Loading -> { /* no-op */ }
+                        }
                     } else {
                         errorLiveData.postValue(Pair(InvalidOTP, ""))
                     }

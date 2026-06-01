@@ -46,7 +46,7 @@ class DelhiveryNetworkInterceptor @Inject constructor(
       builder.header("X-Platform", deviceInfoProvider.platform)
       builder.header("X-OS-Version", deviceInfoProvider.osVersion)
       builder.header("X-Request-Id", requestId)
-      builder.header("X-Client-Ip", deviceInfoProvider.publicIp)
+      builder.header("X-Client-Ip", deviceInfoProvider.awaitPublicIp())
 
       /* Attach Bearer token for all authenticated endpoints */
       val path = chain.request().url().encodedPath()
@@ -69,7 +69,7 @@ class DelhiveryNetworkInterceptor @Inject constructor(
             "X-Platform=${deviceInfoProvider.platform}, " +
             "X-OS-Version=${deviceInfoProvider.osVersion}, " +
             "X-Request-Id=$requestId, " +
-            "X-Client-Ip=${deviceInfoProvider.publicIp}")
+            "X-Client-Ip=${deviceInfoProvider.awaitPublicIp()}")
       }
 
       chain.proceed(builder.build())

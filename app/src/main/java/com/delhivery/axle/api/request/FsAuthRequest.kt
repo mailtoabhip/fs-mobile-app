@@ -42,6 +42,5 @@ data class FsResendRequest(
  * Request body for POST /api/v1/auth/refresh
  */
 data class FsRefreshTokenRequest(
-    @SerializedName("refresh_token") val refreshToken: String,
-    @SerializedName("access_token") val accessToken: String
+    @SerializedName("refresh_token") val refreshToken: String
 )
