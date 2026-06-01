@@ -16,8 +16,6 @@ import com.delhivery.axle.R.string
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.data.home.bids.*
 import com.delhivery.axle.databinding.FragmentHomeBidsBinding
-import com.delhivery.axle.ui.biddetails.BidDetailsActivity
-import com.delhivery.axle.ui.biddetails.bidDetailsIntent
 import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.delhivery.axle.ui.bids.BidType
 import com.delhivery.axle.ui.bids.BulkBidDetailsDialog
@@ -216,7 +214,7 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
     //set bidType
     viewModel.bidType = bidType
     //
-    viewModel.fetchBidsSummary(bidType = bidType) // bids counts are fetched from this api
+   // viewModel.fetchBidsSummary(bidType = bidType) // bids counts are fetched from this api
     //
     viewModel.fetchBids(bidType = bidType) //pass specific status to fetch ongoing/ won/ lost
   }
@@ -265,8 +263,6 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
                 startActivity(_item.transactionId?.let {
                     contractDetailsIntent(it, ctx)
                 } as Intent)
-            } else {
-                startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) } as Intent)
             }
         }
       }
@@ -308,8 +304,6 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
                 startActivity(_item.transactionId?.let {
                     contractDetailsIntent(it, ctx)
                 } as Intent)
-            } else {
-                startActivity(_item.transactionId?.let { bidDetailsIntent(it, ctx) } as Intent)
             }
         }
       }
@@ -480,8 +474,6 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
       //
-    override fun loadMore() = viewModel.fetchBids(bidType = viewModel.bidType, paginate = true)
-
     override fun hasMore() = viewModel.hasMoreData
 
     override fun isLoading() = isLoadingData

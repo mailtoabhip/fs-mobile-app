@@ -209,11 +209,6 @@ interface LoadBoardService {
     ): Single<DelegationTokenResponse>
 
 
-    @POST("list_sp_trucks")
-    fun getInventories(
-        @Body request: JsonObject
-    ):Single<InventoryResponse>
-
     /**
      * Get FASTag balance
      */

@@ -61,52 +61,6 @@ class SearchViewModel @Inject constructor(
     request.limit = UserSearchLimit
     request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
     request.vendorId = userRepository.userId()
-    compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
-        .onBackground()
-        .subscribe { res, error ->
-          if (!error) {
-            offset += res.trips.size
-            hasMoreData = res.hasNext
-            total = res.total
-            mutableListOf<Pair<BaseSearchRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              add(Pair(SearchProgressItem(), Remove))
-              if (!paginate && total > 0) {
-                add(
-                    Pair(
-                        SearchedQueryItem(
-                            SearchRequest(
-                                vehicleNumber = request.vehicleNumber, lr = request.lr,
-                                result = total
-                            )
-                        ), Add
-                    )
-                )
-                // Signal that search list with data is shown (only for initial search, not pagination)
-                searchListShownTracked.postValue(true)
-              }
-
-              if (total == 0) {
-                add(Pair(SearchWarningItem_NoResult, AddUpdate))
-              } else {
-                for (trip in res.trips) {
-                  add(Pair(SearchDataItem(trip), Add))
-                }
-              }
-            }
-                .let {
-                  searchLiveData.postValue(it)
-                }
-          } else {
-            mutableListOf<Pair<BaseSearchRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              add(Pair(SearchProgressItem(), Remove))
-              add(Pair(SearchWarningItem_NoResult, AddUpdate))
-            }
-                .let {
-                  searchLiveData.postValue(it)
-                }
-          }
-          dataLoadingLiveData.postValue(false)
-        }
   }
 
   /**

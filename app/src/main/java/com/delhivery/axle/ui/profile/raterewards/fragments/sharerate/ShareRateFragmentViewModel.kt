@@ -141,32 +141,5 @@ class ShareRateFragmentViewModel  @Inject constructor(
     jsonObject.add("source_fields", arr)
     jsonObject.addProperty("offset", 0)
     jsonObject.addProperty("limit", 10000)
-    compositeDisposable += loadCycleRepository.getFrequentLanes(jsonObject)
-      .onBackground()
-      .subscribe { _res, error ->
-        if (!error) {
-          mutableListOf<Pair<BaseShareRateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            add(Pair(ShareRatesProgressItem(), Remove))
-
-            if (_res.trips.isNotEmpty()) {
-                for (vt in _res.trips) {
-                  fetchSpecificDatabaseOffers(vt.originCityId?:"",vt.destinationCityId?:"",vt.truckDisplayName?:"") }
-            } else {
-                  fetchTenOffers()
-            }
-          }
-            .let {
-              userOfferRoutesData.postValue(it)
-            }
-        } else {
-          mutableListOf<Pair<BaseShareRateRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-            add(Pair(ShareRatesProgressItem(), DataRVAdapterOperationType.Remove))
-            add(Pair(ShareRatesWarningItem_TimeOut, DataRVAdapterOperationType.AddUpdate))
-          }
-            .let { userOfferRoutesData.postValue(it) }
-        }
-
-        dataLoadingLiveData.postValue(false)
-      }
   }
 }

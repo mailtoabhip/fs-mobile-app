@@ -128,15 +128,6 @@
             android:name=".ui.onboarding.OnboardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.bids.BidsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.biddetails.BidDetailsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.biddetails.PlacementsBidDetailsActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.biddetails.MarketPlaceBidDetailsActivity"
             android:screenOrientation="portrait" />
         <activity

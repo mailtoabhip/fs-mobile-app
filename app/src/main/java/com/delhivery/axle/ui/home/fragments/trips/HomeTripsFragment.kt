@@ -70,9 +70,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
             mutableListOf(PROPERTY_USER_ID),
             mutableListOf(userPrefs.userId())
     )
-
-    viewModel.fetchTripsSummary()
-
     viewModel.progressLiveData.reobserve(viewLifecycleOwner, ProgressObserver())
 
     viewModel.dataLoadingLiveData.observe(viewLifecycleOwner, Observer {
@@ -93,7 +90,6 @@ class HomeTripsFragment : HomeBaseFragment<FragmentHomeTripsBinding, HomeTripsVi
     binding.refreshLayout.setOnRefreshListener {
       binding.refreshLayout.isRefreshing = false
       uiUtils.showProgress()
-      viewModel.fetchTripsSummary()
     }
 
     binding.downloadContainer.setOnClickListener {

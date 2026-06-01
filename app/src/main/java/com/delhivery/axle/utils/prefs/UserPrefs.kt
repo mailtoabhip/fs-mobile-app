@@ -6,7 +6,6 @@ import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.data.RouteMappingModel
 import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.injection.qualifier.ApplicationContext
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -873,16 +872,6 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     set(value) = editor.putString(PrefKeys.totalInventoryCount,value)
       .apply()
     get() = prefs.getString(PrefKeys.totalInventoryCount, "") ?: "0"
-
-  var previousNavigationTab: String
-    set(value) = editor.putString(PrefKeys.previousNavigationTab,value)
-      .apply()
-    get() = prefs.getString(PrefKeys.previousNavigationTab, HomeLoadsFragment::class.java.name) ?:""
-
-  var currentNavigationTab: String
-    set(value) = editor.putString(PrefKeys.currentNavigationTab,value)
-      .apply()
-    get() = prefs.getString(PrefKeys.currentNavigationTab, HomeLoadsFragment::class.java.name) ?:""
 
   fun setPreviousScreen(previousScreen:String){
     userPreviousScreen =previousScreen

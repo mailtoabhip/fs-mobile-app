@@ -91,7 +91,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         if(viewModel.fromLinks && viewModel.vehicleNumberIntent.isNotEmpty()){
             uiUtils.showProgress()
-            viewModel.getInventory(userPrefs.userId() , viewModel.vehicleNumberIntent)
         }
 
         if(viewModel.truckTypeIntent.isNotEmpty()){
@@ -188,8 +187,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
         binding.btnAddTruck.setOnClickListener{
            validateFieldsAndAddTruck()
         }
-
-        viewModel.fetchTruckType()
 
         /** Observe live data*/
         viewModel.inventoryLiveData.observe(this, Observer {
@@ -445,7 +442,6 @@ class TruckActivity : BaseActivity<ActivityTruckBinding, TruckViewModel>() {
 
         if(flag) {
             uiUtils.showProgress(getString(R.string.progress_adding_truck))
-            viewModel.addNewTruck(sourcedAs.uppercase())
         }
 
     }

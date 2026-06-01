@@ -85,25 +85,6 @@ class UserRepository @Inject constructor(
   }
 
   /**
-   * Update user routes and get all routes
-   */
-  fun updateUserRoutes(routes: List<RouteMappingModel>) =
-    userService.updateUserRoutes(userId(), UpdateUserRoutesRequest(routes).getRequest())
-
-  /**
-   * Update app access flag
-   */
-  fun updateUserAppAccess() = userService.updateUserAppAccess(userId(), UpdateUserAccessRequest())
-
-  /**
-   * Update FCM token
-   */
-  fun updateFCMToken(fcmToken: String) =
-    userService.updateFCMToken(
-        userId(), UpdateUserFCMTokenRequest.getRequest(fcmToken)
-    ).convertMessageResponse()
-
-  /**
    * Get delegation token for AWS
    */
   fun getDelegationToken(target: String) = loadBoardService.getDelegationToken(target)
@@ -112,12 +93,6 @@ class UserRepository @Inject constructor(
    * Fetch roles and permissions
    */
   fun fetchUserRoles() = umsService.fetchUserRole(userId(), UrlConfig.AppID.url())
-
-  /**
-   * Delete User routes
-   */
-  fun deleteUserRoutes(routes: List<RouteMappingModel>) =userService.deleteUserRoute(userId(), UpdateUserRoutesRequest(routes).getRequest())
-
   /**
    * get omc details
    */

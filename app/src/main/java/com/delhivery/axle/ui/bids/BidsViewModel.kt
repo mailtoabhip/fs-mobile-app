@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.bids
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.BidsRepository
 import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
@@ -47,11 +46,7 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-/**
- * View model for [BidsActivity]
- */
 class BidsViewModel @Inject constructor(
-  private val bidsRepository: BidsRepository,
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
   private val loadCycleRepository: LoadCycleRepository,
@@ -122,105 +117,6 @@ class BidsViewModel @Inject constructor(
     val mainTrace = Firebase.performance.newTrace("fetch_bids_by_type")
     val parallelTrace = Firebase.performance.newTrace("fetch_bids_by_type_and_lowest_bids_on_txns_parallel")
     mainTrace.start()
-    compositeDisposable += bidsRepository.userBids(offset, statuses, pending,contract,onlyFrcBids,bidSuggestion)
-        .flatMap { _res ->
-          total = _res.first
-          offset = _res.third
-          hasMoreData = _res.fourth
-          bidsCountLiveData.postValue(total)
-          if (!paginate && _res.first == 0) {
-            Single.error(NoBidsFoundException())
-          } else {
-            parallelTrace.start()
-            Single.zip(
-                transactionsRepository.bulkTransactions(_res.second).subscribeOn(Schedulers.io()),
-                bidsRepository.bulkLowestBidsForTransactions(_res.second).subscribeOn(Schedulers.io()),
-                bidsRepository.bidsForBulkLoads(_res.second).subscribeOn(Schedulers.io()),
-                Function3<Pair<List<TransactionBid>, TransactionsResponse>, List<LowestBidResponse>,Pair<List<TransactionBid>, List<TransactionBid>>,
-                        Quintuple<List<TransactionBid>, TransactionsResponse, List<LowestBidResponse>, List<TransactionBid>,List<TransactionBid>>> { t1, t2,t3 ->
-                  Quintuple(t1.first, t1.second, t2,t3.first,t3.second)
-                })
-          }
-        }
-        .onBackground()
-        .progress()
-        .subscribe { _res, error ->
-          if(error != null) mainTrace.putAttribute("error_response_received", error.message.toString())
-          mainTrace.stop()
-          parallelTrace.stop()
-          if (!error) {
-
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomeBidsProgressItem(), Remove))
-
-              if (!paginate && total == 0) {
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-                /* post all transactions mapped to bids as add */
-              } else {
-                val bids = _res.first
-                val transactions = _res.second.transactions ?: emptyList()
-                val map: MutableMap<String, MutableList<TransactionBid>?> = HashMap()
-                for (bid in _res.fifth) {
-                  val key: String = bid.transactionId!!
-                  if (map.containsKey(key)) {
-                    val list: MutableList<TransactionBid>? = map[key]
-                    list!!.add(bid)
-                  } else {
-                    val list: MutableList<TransactionBid> = ArrayList<TransactionBid>()
-                    list.add(bid)
-                    map[key] = list
-                  }
-                }
-                var index = 0
-                for (transaction in transactions) {
-                  try {
-                    val lowestBid = _res.third.filter { b ->
-                      b.transactionId.safeEquals(
-                          transaction.transactionId
-                      )
-                    }[0]
-                   // transaction.bulkTransactionBids = _res.fourth
-                    transaction.numBids = lowestBid.numBids
-                    transaction.lowestBid = lowestBid.minBid
-                    transaction.loadPricePercent = _res.second.loadPricePercent
-                    index++
-                    transaction.transactionBid = bids.filter { b ->
-                      b.transactionId.safeEquals(transaction.transactionId)
-                    }[0]
-                    transaction.bulkTransactionBids= map[transaction.transactionId]!!
-                  } catch (e: Exception) {
-                    transaction.transactionId?.let { Log.d("No Bid found for: ", it) }
-                  }
-                  if(bidType==ContractBid){
-                    add(Pair(HomeContractsBidsRequestItem(transaction), Add))
-                  }else{
-                    add(Pair(HomeBidsRequestItem(transaction), Add))
-                  }
-
-                }
-              }
-            }
-                .let {
-                  bidsLiveData.postValue(it)
-                }
-          } else {
-            mutableListOf<Pair<BaseHomeBidsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomeBidsProgressItem(), Remove))
-              if (error is NoBidsFoundException) {
-                /* add no bids warning item */
-                add(Pair(HomeBidsWarningItem_NoBids, AddUpdate))
-              } else {
-                /* add api time out item */
-                add(Pair(HomeBidsWarningItem_TimeOut, AddUpdate))
-              }
-            }
-                .let { bidsLiveData.postValue(it) }
-          }
-
-          dataLoadingLiveData.postValue(false)
-        }
   }
 
   /**
@@ -228,29 +124,6 @@ class BidsViewModel @Inject constructor(
    */
   var transactionBidLiveData = MutableLiveData<BidDetailsUserBidState>()
   lateinit var transaction: HomeBidsRequestItemData
-
-   fun fetchTransactionBids() {
-    compositeDisposable += bidsRepository.transactionBids(transactionId)
-      .onBackground()
-      .progress()
-      .subscribe { _bRes, error ->
-        if (!error) {
-          //determine bid state and post to live data
-        //  if (requestType == "dmt") {
-            transactionBidLiveData.postValue(
-              BidDetailsUserBidState_BulkLoad_Edit(
-                _bRes.third, _bRes.second, _bRes.first,true
-              )
-            )
-
-        //  }
-        }
-        else {
-          error.handle()
-        }
-      }
-  }
-
 
 
   override fun getUserBulkBidsAgainstTrans(userBids: List<TransactionBid>?): ArrayList<Pair<BaseBulkBidSummaryRVAdapterItem<*>, DataRVAdapterOperationType>>? {

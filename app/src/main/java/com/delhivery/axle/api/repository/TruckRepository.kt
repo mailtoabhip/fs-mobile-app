@@ -10,9 +10,6 @@ class TruckRepository @Inject constructor(
     private val truckService: TruckService,
     errorLogger: ErrorLogger
 ) : BaseRepository(errorLogger) {
-
-    fun getTruckType()=truckService.getTrucks().convertResponse()
-
     fun getSupplierRewards(jsonObject: JsonObject)=truckService.getSupplierRewards(jsonObject).convertResponse()
 
 }

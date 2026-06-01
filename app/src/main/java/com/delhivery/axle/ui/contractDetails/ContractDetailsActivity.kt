@@ -3,7 +3,9 @@ package com.delhivery.axle.ui.contractDetails
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -13,6 +15,7 @@ import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -21,18 +24,15 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
+import com.delhivery.axle.api.repository.ContractType
 import com.delhivery.axle.api.repository.RequestType
 import com.delhivery.axle.api.repository.TransactionStatus
 import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
-import com.delhivery.axle.data.bids.TransactionBid
 import com.delhivery.axle.data.bids.TransactionBidStatus.Accepted
 import com.delhivery.axle.data.bids.TransactionBidStatus.Cancelled
 import com.delhivery.axle.data.bids.TransactionBidStatus.Open
@@ -41,10 +41,10 @@ import com.delhivery.axle.data.home.bids.HaltCenters
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.data.home.bids.PaymentSlabs
 import com.delhivery.axle.data.home.bids.SecondaryReportingCenters
-import com.delhivery.axle.data.home.placements.HOME_PLACEMENT_ITEM_DATA
 import com.delhivery.axle.data.home.placements.HomePlacementsItemData
 import com.delhivery.axle.databinding.ActivityContractDetailsBinding
 import com.delhivery.axle.databinding.DialogContractsBidSuccessBinding
+import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.biddetails.BidDetailsContractCancelled
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState
@@ -53,70 +53,54 @@ import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_EditBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_LoadingBids
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBid
 import com.delhivery.axle.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
-import com.delhivery.axle.ui.bids.BidType
-import com.delhivery.axle.ui.bids.userBidsIntent
 import com.delhivery.axle.ui.dialogs.AddTruckBottomSheetDialogFragment
 import com.delhivery.axle.ui.home.activity.home.homeActivityIntent
 import com.delhivery.axle.ui.home.fragments.contracts.REFRESH_ON_BACK
-import com.delhivery.axle.ui.trucks.truckIntent
+import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
+import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
+import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.delhivery.axle.ui.profile.PlacementsActivity
 import com.delhivery.axle.utils.AutoCompleteUtils
 import com.delhivery.axle.utils.BidSuccessInterface
 import com.delhivery.axle.utils.DateUtils
-import com.delhivery.axle.utils.EVENT_ADD_TRUCK_INITIATE
+import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
 import com.delhivery.axle.utils.EVENT_HOME_CONTRACT_CARD_CLICK
+import com.delhivery.axle.utils.EVENT_INTERCITY_CONTRACTS_BID_SUBMIT
+import com.delhivery.axle.utils.EVENT_INTRACITY_CONTRACTS_BID_SUBMIT
 import com.delhivery.axle.utils.EVENT_REVISE_CONTRACT_BID
 import com.delhivery.axle.utils.EVENT_SUBMIT_CONTRACT_BID
 import com.delhivery.axle.utils.PROPERTY_BID_AMOUNT_DIFF
 import com.delhivery.axle.utils.PROPERTY_CONTRACT_TYPE
+import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
 import com.delhivery.axle.utils.PROPERTY_IS_FLEXIBLE
 import com.delhivery.axle.utils.PROPERTY_ORDER_ID
+import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
 import com.delhivery.axle.utils.PROPERTY_PHONE_NO
 import com.delhivery.axle.utils.PROPERTY_SOURCE
 import com.delhivery.axle.utils.PROPERTY_STATUS
 import com.delhivery.axle.utils.PROPERTY_USER_ID
-import com.delhivery.axle.utils.REQCODE_ADD_TRUCK
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.StringUtils.capitalize
-import com.delhivery.axle.utils.VALUE_ADD_TRUCK_PLACEMENT
 import com.delhivery.axle.utils.VALUE_APP_FLOW
-import com.delhivery.axle.utils.VALUE_BANNER
+import com.delhivery.axle.utils.VALUE_LISTING
+import com.delhivery.axle.utils.VALUE_LOAD_PAGE_CONTRACTS_BIDS
+import com.delhivery.axle.utils.VALUE_ORDER_LISTING
+import com.delhivery.axle.utils.VALUE_SEARCH
+import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.focusClick
 import com.delhivery.axle.utils.extensions.getSerializableExtra
-import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.prefs.APPROVED
 import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UNAPPROVED
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
+import com.google.gson.Gson
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
 import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.math.abs
-import android.database.Cursor
-import android.graphics.drawable.ColorDrawable
-import android.view.Gravity
-import android.view.WindowManager
-import com.delhivery.axle.api.repository.ContractType
-import com.delhivery.axle.databinding.DialogPlacementDetailsEditBinding
-import com.delhivery.axle.ui.home.fragments.placements.LoadTypes
-import com.delhivery.axle.ui.home.fragments.placements.PlacementTypes
-import com.delhivery.axle.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
-import com.delhivery.axle.ui.profile.PlacementsActivity
-import com.delhivery.axle.utils.DetailsSubmittedSuccessInterface
-import com.delhivery.axle.utils.EVENT_INTERCITY_CONTRACTS_BID_SUBMIT
-import com.delhivery.axle.utils.EVENT_INTRACITY_CONTRACTS_BID_SUBMIT
-import com.delhivery.axle.utils.PROPERTY_DEMAND_TYPE
-import com.delhivery.axle.utils.PROPERTY_PAGE_NAME
-import com.delhivery.axle.utils.VALUE_LISTING
-import com.delhivery.axle.utils.VALUE_LOAD_PAGE_CONTRACTS_BIDS
-import com.delhivery.axle.utils.VALUE_ORDER_LISTING
-import com.delhivery.axle.utils.VALUE_SEARCH
-import com.delhivery.axle.utils.VALUE_SEARCH_LISITING
-import com.google.gson.Gson
 
 class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
 
@@ -617,11 +601,11 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
                   )
               )
           }
-        viewModel.createBid(
+       /* viewModel.createBid(
           transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
           transaction.biddingType
             ?: "FTL", 0,if(binding.cardInput.etTripNumber.text.isNullOrEmpty())null else Integer.parseInt(binding.cardInput.etTripNumber.text.toString()),if(binding.cardInput.etVehicleNumber.text.isNullOrEmpty())null else binding.cardInput.etVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.cardInput.spinnerPlacementDays.selectedItem.toString() else null
-        )
+        )*/
       } else {
         analyticsUtil.moEngageTrackEvent(
           EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
@@ -630,10 +614,10 @@ class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, Cont
             PROPERTY_IS_FLEXIBLE),
           mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(), (amount-transaction.transactionBid?.bidAmount!!).toString(),source,transaction.isFlexible.toString()))
 
-        viewModel.editBid(
+      /*  viewModel.editBid(
           viewModel.transaction.isPMTIndent(), transaction.key(), transaction.transactionBid!!.key(),
           amount, pmtRate, transaction.biddingType ?: "FTL", 0,if(binding.cardInput.etTripNumber.text.isNullOrEmpty())null else Integer.parseInt(binding.cardInput.etTripNumber.text.toString()),if(binding.cardInput.etVehicleNumber.text.isNullOrEmpty())null else binding.cardInput.etVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.cardInput.spinnerPlacementDays.selectedItem.toString() else null
-        )
+        )*/
       }
 
     } catch (e: IllegalArgumentException) {

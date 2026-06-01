@@ -298,8 +298,6 @@ class ConsolidatedPageActivity: BaseActivity<ActivityConsolidatedPageBinding, Co
     }
 
     inner class PaginationInterface : PaginationScrollListener(UserSearchLimitConsolidatedAPI, isConsolidatedApi = true) {
-        override fun loadMore() = viewModel.initiateLedgerData(viewModel.currentStartMonth, viewModel.currentStartYear, viewModel.currentEndMonth, viewModel.currentEndYear, true, isRecent)
-
         override fun hasMore() = viewModel.hasMoreData
 
         override fun isLoading() = isLoadingData

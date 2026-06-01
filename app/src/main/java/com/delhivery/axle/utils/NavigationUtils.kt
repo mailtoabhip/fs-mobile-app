@@ -32,7 +32,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationUIState.AccountDetails
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity

@@ -34,7 +34,6 @@ import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationActivity
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.splash.SplashPostState.AccountDetails
 import com.delhivery.axle.ui.splash.SplashPostState.Auth
 import com.delhivery.axle.ui.splash.SplashPostState.Home
@@ -226,8 +225,8 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
     /* start splash animation */
-    userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
-    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
+  /*  userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
+    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name*/
     animate()
     checkForDynamicLinks()
     if(!userPrefs.hasLoggedIn) {

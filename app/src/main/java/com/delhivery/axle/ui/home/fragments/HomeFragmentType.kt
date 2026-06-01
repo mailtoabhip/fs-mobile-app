@@ -5,7 +5,6 @@ import com.delhivery.axle.ui.base.BaseFragment
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsFragment
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsFragment
 import com.delhivery.axle.ui.home.fragments.home.HomeFragment
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsDelayedFragment
@@ -56,7 +55,6 @@ enum class HomeLoadsTruckFragmentType(
   val fragment: HomeLoadsTruckBaseFragment<*, *>,
   val title: String
 ){
-  LoadsFragment(R.id.nav_loads,0,HomeLoadsFragment._instance, "Loads"),
   ContractsFragment(R.id.nav_trucks,1, HomeContractsFragment._instance,"Contracts"),
   BidsFragment(R.id.nav_trips, 2, HomeBidsFragment._instance, "Bids & Requests");
   companion object {

@@ -174,7 +174,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         fragmentSetupTrace?.start()
         viewModel.fetchData()
 
-        viewModel.fetchTruckType()
+       // viewModel.fetchTruckType()
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
@@ -721,12 +721,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             HomeTrucksRequestAction_EditTruck -> {
                 showOptionsDialog(item.data as HomeTrucksRequestItemData, position)
             }
-
-            HomeTrucksRequestAction_ActivateTruck -> {
-                context?.let {
-                    ActivateTruckDialog(requireContext(), item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
-                }
-            }
             
             HomeTrucksRequestAction_BuyFastag -> {
                 val data = item.data as? HomeTrucksRequestItemData
@@ -796,11 +790,10 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     mutableListOf(PROPERTY_INVENTORY_UUID),
                     mutableListOf(data.inventoryId ?: "")
             )
-            context?.let {  EditTruckDialog(requireContext(), data, viewModel, userPrefs, analyticsUtil, uiUtils, position).show()}
             dialog.dismiss()
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
-            showDeactivateDialog(position, data)
+           // showDeactivateDialog(position, data)
             dialog.dismiss()
         }
 
@@ -816,7 +809,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     mutableListOf(PROPERTY_INVENTORY_ID),
                     mutableListOf(data.inventoryId ?: "")
             )
-            viewModel.deleteTruck(data, position)
             dialog.dismiss()
         }
 
@@ -827,49 +819,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         dialog.window!!.setGravity(Gravity.BOTTOM)
 
     }
-
-    private fun showDeactivateDialog(position: Int, data: HomeTrucksRequestItemData) {
-        val dialog = Dialog(context!!)
-        val bindingDialogDeactivate= DialogBottomTruckDeactivateBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialogDeactivate.root)
-
-        bindingDialogDeactivate.closeBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        bindingDialogDeactivate.btnDeactivate.setOnClickListener {
-            var reason: String = ""
-            if (bindingDialogDeactivate.otherSource.isChecked){
-                reason = bindingDialogDeactivate.otherSource.text.toString()
-            }
-             else if( bindingDialogDeactivate.other.isChecked) {
-                 reason = bindingDialogDeactivate.other.text.toString()
-            }
-
-            if(reason != "") {
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_DEACTIVATE_TRUCK,
-                        mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
-                        mutableListOf(userPrefs.userId(), data.inventoryId ?: "", reason)
-                )
-                uiUtils.showProgress()
-                viewModel.deactivateTruck(data, reason, position)
-                dialog.dismiss()
-            }
-            else{
-                uiUtils.showSnackbar("Select Reason for deactivating truck")
-            }
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
     private fun showSizeFilterDialog() {
         lateinit var dialog: AlertDialog
 
@@ -1202,7 +1151,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
      * Pagination interface
      */
     inner class PaginationInterface : PaginationScrollListener(10) {
-        override fun loadMore() = viewModel.getAllInventories(true)
 
         override fun hasMore() = viewModel.hasMoreData
 

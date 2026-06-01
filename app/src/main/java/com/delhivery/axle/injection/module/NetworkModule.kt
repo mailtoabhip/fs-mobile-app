@@ -121,18 +121,6 @@ class NetworkModule {
   )
 
   /**
-   * Bid service
-   */
-  @Provides
-  @Singleton
-  fun provideBidService(
-    gson: Gson,
-    okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(
-      BidService::class.java
-  )
-
-  /**
    * TPS service
    */
   @Provides
@@ -341,19 +329,6 @@ class NetworkModule {
       okHttpClient: OkHttpClient
   ) = getRetrofit(gson, okHttpClient, UrlConfig.OMCService).create(
           OMCService::class.java
-  )
-
-
-  /**
-   * Provide [InventoryService]
-   */
-  @Provides
-  @Singleton
-  fun provideInventoryService(
-    gson: Gson,
-    okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.InventoryService).create(
-    InventoryService::class.java
   )
 
   /**

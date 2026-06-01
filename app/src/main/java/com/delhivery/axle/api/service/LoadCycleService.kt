@@ -42,14 +42,6 @@ interface LoadCycleService {
 
 
   /**
-   * Search trips
-   */
-  @POST("/trips")
-  fun searchTripsRxJava(
-    @Body request: JsonObject
-  ): Single<BaseResponse<SearchTripsResponse>>
-
-  /**
    * Get frequent operated lanes for vendor in last 60 days
    */
   @POST("/trips")
