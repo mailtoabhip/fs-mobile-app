@@ -2,7 +2,6 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.*
 import com.delhivery.axle.api.response.*
-import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -91,7 +90,7 @@ interface LoadBoardService {
      * patch user details
      */
     @GET("api/v1/auth/profile")
-    fun userDetails(): Single<BaseResponse<UserRespone>>
+    fun userDetails(): Single<BaseResponse<FsUserProfile>>
 
     /**
      * kyc docs

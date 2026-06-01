@@ -457,6 +457,12 @@ class NavigationUtils @Inject constructor(
 
     /* Auto redirect if user details are pending */
     fun navigateOnboardingDetails() {
+        if (userPrefs.userName.isEmpty()) {
+            userPrefs.hasLoggedIn = false
+            val intent = Intent(activity, AccountDetailsActivity::class.java)
+            this.navigate(intent, true, null)
+            return
+        }
         if (userPrefs.isLoadBoardClient && userPrefs.isLoadBoardSupplier) {
             if (!userPrefs.isUserVerfied) {
                 userPrefs.setPreviousScreen(activity.javaClass.name)

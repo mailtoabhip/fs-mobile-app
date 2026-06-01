@@ -158,6 +158,11 @@ enum class UrlConfig(
       "https://fs-auth-dev.delhivery.com/",
       "https://api.devfinserv.com"  // Android emulator loopback → Mac localhost; replace with Mac's LAN IP for physical device
   ),
+    FastagService(
+        "https://fs-auth.delhivery.com/",
+        "https://fs-auth-dev.delhivery.com/",
+        "https://api.devfinserv.com"
+    ),
   AppID(
   "83", "371", "371"
   );
