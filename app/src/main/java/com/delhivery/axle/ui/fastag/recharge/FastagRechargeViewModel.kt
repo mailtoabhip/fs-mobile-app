@@ -6,14 +6,19 @@ import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.response.FastagRechargeResponse
 import com.delhivery.axle.api.response.FastagStatusResponse
+import com.delhivery.axle.api.service.WalletApiService
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class FastagRechargeViewModel @Inject constructor(
     private val loadboardRepository: LoadboardRepository,
-    private val walletRepository: WalletRepository
+    private val walletRepository: WalletRepository,
+    private val walletApiService: WalletApiService,
+    private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
     val walletBalanceData = MutableLiveData<Double>()
@@ -22,11 +27,14 @@ class FastagRechargeViewModel @Inject constructor(
 
     fun fetchWalletDetails() {
         showProgress()
-        compositeDisposable plusAssign loadboardRepository.fetchWalletDetails()
+        compositeDisposable += walletApiService.fetchWalletInfo(
+            userId = userPrefs.userId()
+        )
+            .convertResponse()
             .onBackground()
             .subscribe({ response ->
                 showProgress(false)
-                walletBalanceData.postValue(response.currentBalance)
+                walletBalanceData.postValue(response.currentBalance.toDoubleOrNull() ?: 0.0)
             }, { error ->
                 showProgress(false)
                 walletBalanceData.postValue(0.0)
@@ -43,7 +51,7 @@ class FastagRechargeViewModel @Inject constructor(
             fastagBalance = fastagBalance
         )
 
-        compositeDisposable += loadboardRepository.rechargeFastag(request)
+        compositeDisposable += loadboardRepository.rechargeFastag("",request)
             .onBackground()
             .subscribe({ response ->
                 showProgress(false)

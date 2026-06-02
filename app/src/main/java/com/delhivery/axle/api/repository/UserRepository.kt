@@ -88,7 +88,7 @@ class UserRepository @Inject constructor(
     supplierDetails = null,
     truckTypes = null,
     clientDetails = null,
-    userId = id,
+    userId = id ?: "",
     phoneNumber = phone,
     phoneNo = phone,
     userName = buildString {

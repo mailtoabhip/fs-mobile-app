@@ -99,7 +99,7 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
     }
 
     fun checkEnable() {
-        binding.btnCreateAccount.isEnabled = (viewModel.firstName.value?.trim().isNotNullOrEmpty() && viewModel.commConsent.value == true)
+        binding.btnCreateAccount.isEnabled = (viewModel.firstName.value?.trim().isNotNullOrEmpty() && viewModel.lastName.value?.trim().isNotNullOrEmpty() && viewModel.commConsent.value == true)
     }
 
     fun trackEvent(){

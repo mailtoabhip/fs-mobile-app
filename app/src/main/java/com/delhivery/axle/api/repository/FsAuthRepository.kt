@@ -87,7 +87,9 @@ class FsAuthRepository @Inject constructor(
         userPrefs.jwtToken = data.accessToken
         userPrefs.refreshToken = data.refreshToken
         networkInterceptor.updateJWT(data.accessToken)
-        userPrefs.isNewUser = data.isNewUser ?: false
+        userPrefs.firstName = data.profileDetails.firstName
+        userPrefs.lastName = data.profileDetails.lastName
+        userPrefs.commConsent = data.profileDetails.commConsent?:false
         data
     }
 
@@ -106,7 +108,11 @@ class FsAuthRepository @Inject constructor(
      * Requires a valid token — call after [verify] or on app resume.
      */
     suspend fun getProfile(): Resource<FsUserProfile> = safeApiCall {
-        fsAuthService.getProfile().toResource()
+        val data = fsAuthService.getProfile().toResource()
+        userPrefs.firstName = data.firstName
+        userPrefs.lastName = data.lastName
+        userPrefs.commConsent = data.commConsent?:false
+        data
     }
 
     /**
@@ -121,8 +127,8 @@ class FsAuthRepository @Inject constructor(
         lastName: String? = null,
         commConsent: Boolean? = null
     ): Resource<FsUpdateProfileData> = safeApiCall {
-        require(firstName != null && commConsent != null) {
-            "FirstName and Communication Consent is required"
+        require(firstName != null && lastName != null && commConsent != null) {
+            "Name and Communication Consent is required"
         }
         val data = fsAuthService.updateProfile(
             FsUpdateProfileRequest(
@@ -143,41 +149,36 @@ class FsAuthRepository @Inject constructor(
      * Updates the interceptor with the new access token on success.
      *
      * @param refreshToken The refresh token received during login or signup
-     * @param accessToken  The expired access token
      */
-    suspend fun refreshToken(
-        refreshToken: String,
-        accessToken: String
+/*    suspend fun refreshToken(
+        refreshToken: String
     ): Resource<FsRefreshTokenData> = safeApiCall {
         val data = fsAuthService.refreshToken(
             FsRefreshTokenRequest(
-                refreshToken = refreshToken,
-                accessToken = accessToken
+                refreshToken = refreshToken
             )
         ).toResource()
         userPrefs.jwtToken = data.accessToken
         networkInterceptor.updateJWT(data.accessToken)
         data
-    }
+    }*/
 
-    fun authStatus(): Boolean {
-        if (!userPrefs.jwtToken.isNotNullOrEmpty() || !userPrefs.refreshToken.isNotNullOrEmpty()) {
-            return false
-        }
-        return try {
+    fun isTokenPresent(): Boolean {
+        return userPrefs.jwtToken.isNotNullOrEmpty() && userPrefs.refreshToken.isNotNullOrEmpty()
+        /*return try {
             val expiresAt = JWT(userPrefs.refreshToken!!).expiresAt
             if (expiresAt != null && expiresAt.after(Date())) {
                 true
             } else {
-                /* expired: clear credentials and logout */
+                *//* expired: clear credentials and logout *//*
                 localLogout()
                 false
             }
         } catch (e: Exception) {
-            /* malformed token: clear credentials and logout */
+            *//* malformed token: clear credentials and logout *//*
             localLogout()
             false
-        }
+        }*/
     }
 
     fun localLogout() {

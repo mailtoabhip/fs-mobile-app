@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="agentName"
+            type="String" />
+
+        <variable
+            name="agentCode"
+            type="String" />
+
+        <variable
+            name="agentStatus"
+            type="String" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <!-- Agent Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAgent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            app:cardBackgroundColor="#F5F5F5"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/neutral_white_300"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Assigned Agent label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvAssignedAgentLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Assigned Agent"
+                    android:textColor="@color/grey_500"
+                    android:textSize="@dimen/text_14sp"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Active status badge -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvAgentStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sales_active_badge"
+                    android:paddingHorizontal="@dimen/size_8dp"
+                    android:paddingVertical="@dimen/size_4dp"
+                    android:text="@{agentStatus}"
+                    android:textColor="#4CAF50"
+                    android:textSize="@dimen/text_12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Agent Name -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvAgentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:text="@{agentName}"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAssignedAgentLabel"
+                    tools:text="Rajesh Kumar"/>
+
+                <!-- Agent Code -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvAgentCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:text="@{agentCode}"
+                    android:textColor="@color/background_dark_grey"
+                    android:textSize="@dimen/text_12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAgentName"
+                    tools:text="AXLE123"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Bottom Buttons -->
+        <include
+            android:id="@+id/bottomButtons"
+            layout="@layout/layout_bottom_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

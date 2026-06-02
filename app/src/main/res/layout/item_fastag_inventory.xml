@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/size_16dp"
+    android:paddingVertical="@dimen/size_12dp">
+
+    <!-- Color dot -->
+    <View
+        android:id="@+id/colorDot"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_circle_dot"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvClassName"
+        app:layout_constraintBottom_toBottomOf="@id/tvClassName" />
+
+    <!-- Class Name -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvClassName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_14sp"
+        app:layout_constraintEnd_toStartOf="@id/tvUnits"
+        app:layout_constraintStart_toEndOf="@id/colorDot"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Vehicle Class 5" />
+
+    <!-- Vehicle Types -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvVehicleTypes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_12dp"
+        android:layout_marginTop="@dimen/size_2dp"
+        android:textColor="@color/background_dark_grey"
+        android:textSize="@dimen/text_10sp"
+        app:layout_constraintEnd_toStartOf="@id/tvUnits"
+        app:layout_constraintStart_toEndOf="@id/colorDot"
+        app:layout_constraintTop_toBottomOf="@id/tvClassName"
+        tools:text="LCV, Mini Bus" />
+
+    <!-- Units -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvUnits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="4 Units" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

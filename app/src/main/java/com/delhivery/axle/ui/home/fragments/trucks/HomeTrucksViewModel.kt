@@ -170,19 +170,7 @@ class HomeTrucksViewModel @Inject constructor(
     }
 
     fun fetchData() {
-        val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-        val periodicSyncDataWork = PeriodicWorkRequest.Builder(MyWorker::class.java, 24, TimeUnit.HOURS)
-                .addTag(TAG_SYNC_DATA)
-                .setConstraints(constraints) // setting a backoff on case the work needs to retry
-                .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
-                .build()
-        mWorkManager?.enqueueUniquePeriodicWork(
-                SYNC_DATA_WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,  //Existing Periodic Work policy
-                periodicSyncDataWork //work request
-        )
+        // Worker disabled — offers sync no longer needed
     }
 
     fun refreshFastagBalance(tagId: String) {

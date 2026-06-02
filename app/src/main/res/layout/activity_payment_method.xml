@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="hasSelection"
+            type="Boolean" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.fastag.issuance.PaymentMethodActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="Payment Method"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
+
+        <!-- Title -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:text="Continue for payment"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <!-- Subtitle -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:text="Choose your preferred payment method"
+            android:textColor="@color/background_dark_grey"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <!-- Full Payment Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFullPayment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E0E3EB"
+            app:strokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Icon -->
+                <ImageView
+                    android:id="@+id/ivFullPaymentIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_launcher_foreground"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvFullPaymentTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:text="Full Payment"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/rbFullPayment"
+                    app:layout_constraintStart_toEndOf="@id/ivFullPaymentIcon"
+                    app:layout_constraintTop_toTopOf="@id/ivFullPaymentIcon" />
+
+                <!-- Description -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvFullPaymentDesc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:text="Do complete payment now for immediate delivery"
+                    android:textColor="@color/background_dark_grey"
+                    android:textSize="@dimen/text_12sp"
+                    app:layout_constraintEnd_toStartOf="@id/rbFullPayment"
+                    app:layout_constraintStart_toEndOf="@id/ivFullPaymentIcon"
+                    app:layout_constraintTop_toBottomOf="@id/tvFullPaymentTitle" />
+
+                <!-- Radio Button -->
+                <RadioButton
+                    android:id="@+id/rbFullPayment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/tvFullPaymentDesc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tvFullPaymentTitle" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Security Deposit Only Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSecurityDeposit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="@dimen/size_8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E0E3EB"
+            app:strokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardFullPayment">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Icon -->
+                <ImageView
+                    android:id="@+id/ivSecurityDepositIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_launcher_foreground"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvSecurityDepositTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:text="Security Deposit Only"
+                    android:textColor="@color/heading_black"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/rbSecurityDeposit"
+                    app:layout_constraintStart_toEndOf="@id/ivSecurityDepositIcon"
+                    app:layout_constraintTop_toTopOf="@id/ivSecurityDepositIcon" />
+
+                <!-- Description -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvSecurityDepositDesc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size_12dp"
+                    android:layout_marginTop="@dimen/size_4dp"
+                    android:text="Pay security deposit only. Pay remaining later."
+                    android:textColor="@color/background_dark_grey"
+                    android:textSize="@dimen/text_12sp"
+                    app:layout_constraintEnd_toStartOf="@id/rbSecurityDeposit"
+                    app:layout_constraintStart_toEndOf="@id/ivSecurityDepositIcon"
+                    app:layout_constraintTop_toBottomOf="@id/tvSecurityDepositTitle" />
+
+                <!-- Radio Button -->
+                <RadioButton
+                    android:id="@+id/rbSecurityDeposit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/tvSecurityDepositDesc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tvSecurityDepositTitle" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Bottom Buttons -->
+        <include
+            android:id="@+id/bottomButtons"
+            layout="@layout/layout_bottom_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

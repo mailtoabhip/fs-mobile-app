@@ -8,6 +8,7 @@ import com.delhivery.axle.api.request.WalletUpdateRequest
 import com.delhivery.axle.api.service.WalletService
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class WalletRepository @Inject constructor(
   private val walletService: WalletService,
+  private val userPrefs: UserPrefs,
   errorLogger: ErrorLogger
 ) : BaseRepository(errorLogger) {
 
@@ -26,25 +28,31 @@ class WalletRepository @Inject constructor(
    * Activate wallet
    */
   fun activateWallet() = walletService.activateWallet(
-      WalletUpdateRequest.getRequest(false)
+      userId = userPrefs.userId(),
+      payload = WalletUpdateRequest.getRequest(false)
   ).convertResponse()
 
   /**
    * Fetches user wallet data
    */
-  fun fetchWalletData() = walletService.fetchWalletData().convertResponse()
+  fun fetchWalletData() = walletService.fetchWalletData(
+      userId = userPrefs.userId()
+  ).convertResponse()
 
   /**
    * Fetches wallet transactions
    */
-  fun fetchWalletTransactions() = walletService.fetchWalletTransactions().convertResponse()
+  fun fetchWalletTransactions() = walletService.fetchWalletTransactions(
+      userId = userPrefs.userId()
+  ).convertResponse()
 
   /**
    * Tranfer [amount] from wallet to bank
    */
   fun transferToBank(amount: Int) =
     walletService.transferToBank(
-        BankTransferRequest.getRequest(amount.toString())
+        userId = userPrefs.userId(),
+        payload = BankTransferRequest.getRequest(amount.toString())
     ).convertResponse()
 
   /**
@@ -56,7 +64,8 @@ class WalletRepository @Inject constructor(
     amount: String,
     tripId: String
   ) = walletService.createFuelCard(
-      CreateFuelCardRequest.getRequest(mobile, vehicleNum, tripId, vehicleNum, amount)
+      userId = userPrefs.userId(),
+      payload = CreateFuelCardRequest.getRequest(mobile, vehicleNum, tripId, vehicleNum, amount)
   ).convertResponse()
 
 }

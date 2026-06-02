@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName
  * User profile returned by GET /api/v1/auth/profile and PUT /api/v1/auth/profile.
  */
 data class FsUserProfile(
-    @SerializedName("id") val id: String,
+    @SerializedName("user_id") val id: String,
     @SerializedName("phone") val phone: String,
     @SerializedName("first_name") val firstName: String?,
     @SerializedName("last_name") val lastName: String?,
@@ -47,9 +47,10 @@ data class FsInitiateData(
 data class FsVerifyData(
     @SerializedName("access_token") val accessToken: String,
     @SerializedName("refresh_token") val refreshToken: String,
-    @SerializedName("id_token") val idToken: String,
+    @SerializedName("profile_details") val profileDetails: FsUserProfile, // May contain only First name and last name here
+    /*@SerializedName("id_token") val idToken: String,
     @SerializedName("is_new_user") val isNewUser: Boolean?,
-    @SerializedName("user_id") val userId: String?
+    @SerializedName("user_id") val userId: String?*/
 )
 
 // ---------------------------------------------------------------------------

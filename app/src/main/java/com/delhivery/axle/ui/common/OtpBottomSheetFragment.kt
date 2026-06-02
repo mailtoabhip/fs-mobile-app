@@ -1,0 +1,148 @@
+package com.delhivery.axle.ui.common
+
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import com.delhivery.axle.databinding.BottomSheetOtpBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+
+class OtpBottomSheetFragment : BottomSheetDialogFragment() {
+
+    private var _binding: BottomSheetOtpBinding? = null
+    private val binding get() = _binding!!
+
+    private var maskedNumber: String = ""
+    private var countDownTimer: CountDownTimer? = null
+    private var onOtpSubmit: ((String) -> Unit)? = null
+    private var onResendOtp: (() -> Unit)? = null
+
+    private lateinit var otpFields: List<EditText>
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = BottomSheetOtpBinding.inflate(inflater, container, false)
+        binding.maskedNumber = maskedNumber
+        binding.isOtpFilled = false
+        binding.timerText = "00:30"
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        otpFields = listOf(
+            binding.etOtp1, binding.etOtp2, binding.etOtp3,
+            binding.etOtp4, binding.etOtp5, binding.etOtp6
+        )
+
+        setupOtpInputs()
+        setupClickListeners()
+        startResendTimer()
+    }
+
+    private fun setupOtpInputs() {
+        otpFields.forEachIndexed { index, editText ->
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    if (s?.length == 1 && index < otpFields.size - 1) {
+                        otpFields[index + 1].requestFocus()
+                    }
+                    binding.isOtpFilled = isAllFieldsFilled()
+                }
+            })
+
+            editText.setOnKeyListener { _, keyCode, event ->
+                if (keyCode == android.view.KeyEvent.KEYCODE_DEL
+                    && event.action == android.view.KeyEvent.ACTION_DOWN
+                    && editText.text.isEmpty()
+                    && index > 0
+                ) {
+                    otpFields[index - 1].requestFocus()
+                    otpFields[index - 1].text.clear()
+                }
+                false
+            }
+        }
+    }
+
+    private fun setupClickListeners() {
+        binding.ivClose.setOnClickListener {
+            dismiss()
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            val otp = getOtp()
+            if (otp.length == 6) {
+                onOtpSubmit?.invoke(otp)
+            }
+        }
+
+        binding.tvResend.setOnClickListener {
+            onResendOtp?.invoke()
+            binding.tvResend.visibility = View.GONE
+            binding.tvResendTimer.visibility = View.VISIBLE
+            startResendTimer()
+        }
+    }
+
+    private fun startResendTimer() {
+        countDownTimer?.cancel()
+        countDownTimer = object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val seconds = millisUntilFinished / 1000
+                binding.timerText = String.format("00:%02d", seconds)
+            }
+
+            override fun onFinish() {
+                binding.tvResendTimer.visibility = View.GONE
+                binding.tvResend.visibility = View.VISIBLE
+            }
+        }.start()
+    }
+
+    private fun isAllFieldsFilled(): Boolean {
+        return otpFields.all { it.text.length == 1 }
+    }
+
+    private fun getOtp(): String {
+        return otpFields.joinToString("") { it.text.toString() }
+    }
+
+    fun clearOtp() {
+        otpFields.forEach { it.text.clear() }
+        otpFields.first().requestFocus()
+        binding.isOtpFilled = false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        countDownTimer?.cancel()
+        _binding = null
+    }
+
+    companion object {
+        const val TAG = "OtpBottomSheet"
+
+        fun newInstance(
+            maskedNumber: String,
+            onSubmit: (String) -> Unit,
+            onResend: (() -> Unit)? = null
+        ): OtpBottomSheetFragment {
+            return OtpBottomSheetFragment().apply {
+                this.maskedNumber = maskedNumber
+                this.onOtpSubmit = onSubmit
+                this.onResendOtp = onResend
+            }
+        }
+    }
+}

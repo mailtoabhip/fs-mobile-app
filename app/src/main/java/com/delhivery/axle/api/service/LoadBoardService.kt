@@ -240,8 +240,9 @@ interface LoadBoardService {
     /**
      * Recharge FASTag from wallet
      */
-    @POST("/finance/users/wallet/fastag/recharge")
+    @POST("/users/wallet/fastag/recharge")
     fun rechargeFastag(
+        @Header("vendorId") vendorId: String,
         @Body request: FastagRechargeRequest
     ): Single<BaseResponse<FastagRechargeResponse>>
 
@@ -252,73 +253,6 @@ interface LoadBoardService {
     fun fetchFastagStatus(
         @Query("tag_id") tagId: String
     ): Single<BaseResponse<FastagStatusResponse>>
-
-
-    @POST("/finance/users/wallet/recharge")
-    fun initiateRecharge(
-        @Body walletRechargeReq: WalletRechargeReqBody
-    ) : Single<BaseResponse<WalletRechargeData>>
-
-    @GET("/finance/users/wallet/recharge")
-    fun checkRechargeStatus(
-        @Query("recharge_id") rechargeId: String,
-        @Query("start") startDate : String
-    ) : Single<BaseResponse<WalletRechargeStatusResponse>>
-
-    /**
-     * Get wallet details
-     */
-    @GET("/finance/users/wallet/")
-    fun fetchWalletDetails(): Single<BaseResponse<UserWalletResponse>>
-
-    /**
-     * Create wallet
-     */
-    @POST("/finance/users/wallet/")
-    fun createWallet(@Body body: JsonObject = JsonObject()): Single<BaseResponse<UserWalletResponse>>
-
-    /**
-     * Get wallet transaction listing
-     */
-    @GET("/finance/users/wallet/transactions/list")
-    fun fetchWalletTransactionList(
-        @Query("start") start: String,
-        @Query("end") end: String,
-        @Query("wallet_id") walletId: String,
-        @Query("limit") limit: Int = 10,
-        @Query("offset") offset: Int = 0,
-        @Query("type") type: String? = null
-    ): Single<BaseResponse<WalletTransactionListResponse>>
-
-    /**
-     * Get single transaction status
-     */
-    @GET("/finance/users/wallet/transactions")
-    fun fetchTransactionStatus(
-        @Query("start") start: String,
-        @Query("txn_id") txnId: String
-    ): Single<BaseResponse<WalletTransactionStatusResponse>>
-
-    /**
-     * Get wallet recharge transactions
-     */
-    @GET("/finance/users/wallet/recharge/transactions")
-    fun fetchWalletRechargeList(
-        @Query("wallet_id") walletId: String,
-        @Query("start") start: String,
-        @Query("end") end: String,
-        @Query("limit") limit: Int = 10,
-        @Query("offset") offset: Int = 0
-    ): Single<BaseResponse<WalletRechargeListResponse>>
-
-    /**
-     * Get single recharge status
-     */
-    @GET("/finance/users/wallet/recharge")
-    fun fetchRechargeStatus(
-        @Query("start") start: String,
-        @Query("recharge_id") rechargeId: String
-    ): Single<BaseResponse<WalletRechargeStatusResponse>>
 
     @GET("/finance/fastag/transaction-dispute")
     fun getTransactionDispute(

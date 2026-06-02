@@ -91,7 +91,6 @@
     <string name="msg_more_reporting_centers"><![CDATA[%1$s<font color=\'#121A31\'> (+%2$d centers)</font>]]> </string>
 
 
-
     <!--Hints (hint_)-->
     <string name="hint_hello_world">Hint Hello World</string>
     <string name="hint_name">Name</string>
@@ -203,7 +202,6 @@
     <string name="action_non_delhivery">Non Delhivery Intercity</string>
     <string name="action_ok">Ok</string>
     <string name="action_accept">Accept for %s</string>
-
 
 
     <!--Label (label_)-->
@@ -1205,6 +1203,25 @@
     <string name="coming_soon_go_to_homepage">Go to Homepage</string>
     <string name="coming_soon_gps_notified">You\'ll be notified when GPS goes live</string>
     <string name="coming_soon_fuel_card_notified">You\'ll be notified when fuel card goes live</string>
+
+    <!-- Buy FasTAG -->
+    <string name="toolbar_heading">Buy FASTag</string>
+    <string name="sales_code_title">Sales Code</string>
+    <string name="no_sales_code_btn">I don\u0027t have sales code</string>
+    <string name="sales_confirm_btn_title">Confirm</string>
+    <string name="sales_change_btn_title">Change</string>
+    <string name="express_kyc_title">Express KYC</string>
+    <string name="e_kyc_title">eKYC</string>
+    <string name="full_kyc_title">Full KYC</string>
+    <string name="full_kyc_subtitle">Access higher limits and fleet benefits</string>
+    <string name="full_kyc_desc">Get higher limits, fleet benefits, and priority support.</string>
+    <string name="e_kyc_subtitle">Verify digitally for quick activation</string>
+    <string name="express_kyc_subtitle">Quickest activation with lowest limits</string>
+    <string name="wallet_balance_warning">Wallet balance is lower than the item value</string>
+    <string name="paying_wallet_title">Paying via wallet</string>
+    <string name="request_sales_code_subtitle">Our team will connect with you shortly</string>
+
+
 
 
     <string name="str_get_to_know_you">Let’s get to know you</string>

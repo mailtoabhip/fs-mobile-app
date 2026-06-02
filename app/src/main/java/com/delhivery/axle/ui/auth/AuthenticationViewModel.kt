@@ -13,6 +13,7 @@ import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
 import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
 import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
 import com.delhivery.axle.ui.base.BaseViewModel
+import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -52,17 +53,18 @@ class AuthenticationViewModel @Inject constructor(
     fun sendOTP() {
         if (!isConnected) return
 
-        if (phoneNo.length < 10) {
+        val rawPhone = phoneNo.replace(" ", "")
+        if (rawPhone.length < 10) {
             errorLiveData.postValue(Pair(InvalidPhoneNo, null))
             return
         }
 
-        userPrefs.phoneNumber = phoneNo
+        userPrefs.phoneNumber = rawPhone
         otpStatusLiveData.postValue(true)
         showProgress()
 
         viewModelScope.launch {
-            when (val result = fsAuthRepository.initiate(phoneNo)) {
+            when (val result = fsAuthRepository.initiate(rawPhone)) {
                 is Resource.Success -> {
                     showProgress(false)
                     val data = result.data
@@ -94,7 +96,8 @@ class AuthenticationViewModel @Inject constructor(
     fun resendOTP() {
         if (!isConnected) return
 
-        if (phoneNo.length < 10) {
+        val rawPhone = phoneNo.replace(" ", "")
+        if (rawPhone.length < 10) {
             errorLiveData.postValue(Pair(InvalidPhoneNo, null))
             return
         }
@@ -103,7 +106,7 @@ class AuthenticationViewModel @Inject constructor(
         showProgress()
 
         viewModelScope.launch {
-            when (val result = fsAuthRepository.resend(phoneNo)) {
+            when (val result = fsAuthRepository.resend(rawPhone)) {
                 is Resource.Success -> {
                     showProgress(false)
                     otpStatusLiveData.postValue(true)
@@ -121,23 +124,33 @@ class AuthenticationViewModel @Inject constructor(
 
     /**
      * Verify OTP (POST /api/v1/auth/verify).
-     * Routes to [AccountDetails] for new users, [HomePage] for existing users.
+     * On success, checks prefs (populated by verify response) to decide navigation:
+     *  - firstName & lastName present → existing user → [HomePage]
+     *  - Missing → new user → [AccountDetails]
      */
     fun verifyOTP(otp: CharArray) {
         if (!isConnected) return
 
         state = LoginProgress
         val otpString = otp.joinToString("")
+        val rawPhone = phoneNo.replace(" ", "")
 
         viewModelScope.launch {
-            when (val result = fsAuthRepository.verify(phoneNo, otpString, loginSession)) {
+            when (val result = fsAuthRepository.verify(rawPhone, otpString, loginSession)) {
                 is Resource.Success -> {
                     val tokens = result.data
                     if (tokens != null) {
                         // Token is persisted and interceptor updated inside FsAuthRepository.verify()
                         userPrefs.hasLoggedIn = true
                         userPrefs.lastLoginTime = Date().time
-                        state = if (tokens.isNewUser == true) AccountDetails else HomePage
+
+                        // verify() already saves firstName/lastName to prefs — use them directly
+                        if (userPrefs.firstName.isNotNullOrEmpty() && userPrefs.lastName.isNotNullOrEmpty()) {
+                            userPrefs.userName = "${userPrefs.firstName} ${userPrefs.lastName.orEmpty()}".trim()
+                            state = HomePage
+                        } else {
+                            state = AccountDetails
+                        }
                     } else {
                         errorLiveData.postValue(Pair(InvalidOTP, ""))
                     }

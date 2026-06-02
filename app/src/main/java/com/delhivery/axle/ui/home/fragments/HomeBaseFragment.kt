@@ -47,6 +47,8 @@ abstract class HomeBaseFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseF
    *
    */
   protected fun action(action: BaseHomeFragmentAction) {
-   // (activity as HomeActivity?)?.apply { fragmentAction(action) }
+/*
+    (activity as HomeActivity?)?.apply { fragmentAction(action) }
+*/
   }
 }

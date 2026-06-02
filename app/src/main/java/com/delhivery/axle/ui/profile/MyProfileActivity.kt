@@ -111,6 +111,14 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             confirmLogout()
         }
 
+        viewModel.logoutResultLiveData.observe(this) { success ->
+            if (success) {
+                navigationUtils.logout("Successfully logged out", "fromUser")
+            } else {
+                uiUtils.showSnackbar("Logout failed. Please try again.")
+            }
+        }
+
         viewModel.accountDeleteLiveData.observe(this) {
             if (it) {
                 analyticsUtil.moEngageTrackEvent(EVENT_USER_DELETE_ACCOUNT)
@@ -165,7 +173,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             Handler(Looper.myLooper()!!).postDelayed({
                 dialog.dismiss()
                 viewModel.logout()
-                navigationUtils.logout("Successfully logged out","fromUser")
             }, 3000)
         dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
@@ -215,7 +222,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                             mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))
                     )
                     viewModel.logout()
-                    navigationUtils.logout("Successfully logged out","fromUser")
                 }
         )
     }
