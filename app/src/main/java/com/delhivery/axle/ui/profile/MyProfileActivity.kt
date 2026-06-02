@@ -157,7 +157,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
         binding.helpLayout.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
-            navigationUtils.navigate(HelpSupportActivity::class.java)
+          //  navigationUtils.navigate(HelpSupportActivity::class.java)
+         callHelpline()
         }
 
     }
