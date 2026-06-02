@@ -34,7 +34,8 @@ import javax.inject.Singleton
 class TokenAuthenticator @Inject constructor(
     private val userPrefs: UserPrefs,
     private val networkInterceptor: DelhiveryNetworkInterceptor,
-    private val deviceInfoProvider: DeviceInfoProvider
+    private val deviceInfoProvider: DeviceInfoProvider,
+    private val sessionManager: SessionManager
 ) : Authenticator {
 
     companion object {
@@ -184,9 +185,12 @@ class TokenAuthenticator @Inject constructor(
                     Log.w(TAG, "Refresh error body (raw): $responseBody")
                 }
 
-                if (code == 401) {
-                    Log.w(TAG, "Refresh token expired or revoked, user must re-login")
-                }
+                // Refresh failed — clear local session so user is forced to re-login
+                Log.w(TAG, "Clearing local session due to refresh failure")
+                networkInterceptor.updateJWT(null)
+                userPrefs.clearPrefs()
+                sessionManager.onSessionExpired()
+
                 null
             }
         } catch (e: Exception) {

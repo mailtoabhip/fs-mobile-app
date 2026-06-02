@@ -194,10 +194,9 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     /* Observe session expired — force navigate to login */
     sessionManager.sessionExpired.observe(this, Observer { expired ->
       if (expired == true
-          && this !is com.delhivery.axle.ui.auth.AuthenticationActivity
           && this !is com.delhivery.axle.ui.splash.StartRoutingActivity) {
         sessionManager.resetSessionExpired()
-        val intent = Intent(this, com.delhivery.axle.ui.auth.AuthenticationActivity::class.java)
+        val intent = Intent(this, com.delhivery.axle.ui.splash.StartRoutingActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
