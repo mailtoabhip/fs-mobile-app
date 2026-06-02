@@ -346,9 +346,9 @@ class LoadWalletViewModel @Inject constructor(
      */
     fun createWallet(email: String = "") {
         val request = JsonObject().apply {
-            addProperty("user_type", "SUPPLIER")
-            addProperty("phone", userPrefs.phoneNumber ?: "")
-            addProperty("email", email)
+           // addProperty("user_type", "SUPPLIER")
+            addProperty("phone", userPrefs.phoneNumber?.replace("+91","") ?: "")
+           // addProperty("email", email)
         }
         compositeDisposable += walletApiService.createWallet(
             userId = userPrefs.userId(),
