@@ -90,7 +90,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     private fun setupRecyclerView() {
         adapter = SelectVehicleAdapter { vehicle ->
             startActivity(
-                FastagAssignmentActivity.newIntent(
+                VehicleDetailsActivity.newIntent(
                     context = this,
                     vehicleNumber = vehicle.vehicleNumber,
                     chassisNumber = vehicle.chassisNumber

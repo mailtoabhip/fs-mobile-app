@@ -67,6 +67,7 @@ import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleViewModel
 import com.delhivery.axle.ui.fastag.pending.assign.FastagAssignmentViewModel
 import com.delhivery.axle.ui.fastag.pending.assign.VehicleImageUploadViewModel
 import com.delhivery.axle.ui.fastag.pending.assign.FastagImageUploadViewModel
+import com.delhivery.axle.ui.fastag.pending.assign.VehicleDetailsViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionViewModel
@@ -510,6 +511,11 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagImageUploadViewModel::class)
   abstract fun bindFastagImageUploadViewModel(viewModel: FastagImageUploadViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(VehicleDetailsViewModel::class)
+  abstract fun bindVehicleDetailsViewModel(viewModel: VehicleDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap

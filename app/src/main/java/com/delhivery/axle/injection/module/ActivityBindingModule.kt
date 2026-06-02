@@ -37,6 +37,7 @@ import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
 import com.delhivery.axle.ui.fastag.pending.assign.FastagAssignmentActivity
 import com.delhivery.axle.ui.fastag.pending.assign.VehicleImageUploadActivity
 import com.delhivery.axle.ui.fastag.pending.assign.FastagImageUploadActivity
+import com.delhivery.axle.ui.fastag.pending.assign.VehicleDetailsActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
 import com.delhivery.axle.ui.home.activity.fuel.ActiveTripsActivity
@@ -436,6 +437,11 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsFastagImageUploadActivityModule::class])
   internal abstract fun bindFastagImageUploadActivity(): FastagImageUploadActivity
 
+  /* Vehicle Details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsVehicleDetailsActivityModule::class])
+  internal abstract fun bindVehicleDetailsActivity(): VehicleDetailsActivity
+
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
   internal abstract fun bindPlacementsActivity(): PlacementsActivity
@@ -722,6 +728,9 @@ internal abstract class AbsVehicleImageUploadActivityModule : ActivityModule<Veh
 
 @Module
 internal abstract class AbsFastagImageUploadActivityModule : ActivityModule<FastagImageUploadActivity>()
+
+@Module
+internal abstract class AbsVehicleDetailsActivityModule : ActivityModule<VehicleDetailsActivity>()
 
 @Module
 internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()

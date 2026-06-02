@@ -1262,5 +1262,11 @@
     <string name="vehicle_verified_title">Vehicle verified</string>
     <string name="vehicle_verified_subtitle">Vehicle number: %1$s has been successfully authenticated</string>
     <string name="go_to_homepage">Go to Homepage</string>
+    <string name="vehicle_details_title">Vehicle details</string>
+    <string name="vehicle_number_label">Vehicle number</string>
+    <string name="commercial_vehicle_label">Commerical vehicle</string>
+    <string name="exempted_vehicle_status_label">Exempted vehicle status</string>
+    <string name="vehicle_class_label">Vehicle class</string>
+    <string name="continue_to_assign_fastag">Continue to Assign FASTag</string>
 
 </resources>
