@@ -290,10 +290,12 @@ class LoadWalletViewModel @Inject constructor(
                         WalletHistoryItemData(
                             title = "Recharge",
                             amount = recharge.amount.toDoubleOrNull() ?: 0.0,
-                            dateTime = recharge.createdAt,
+                            dateTime = recharge.rechargeDate ?: recharge.createdAt,
                             status = recharge.status,
                             txnNumber = recharge.rechargeId,
-                            type = "credit"
+                            type = "credit",
+                            bankReferenceNo = recharge.bankReferenceNo,
+                            addedVia = recharge.paymentMethod
                         )
                     }
 
