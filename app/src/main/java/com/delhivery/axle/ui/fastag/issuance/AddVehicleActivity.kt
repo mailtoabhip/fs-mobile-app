@@ -193,9 +193,16 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             onAction = if (data.eligible) {
                 {
                     // Navigate directly to PaymentBreakupActivity for testing wallet flow
+                    val items = arrayListOf(
+                        com.delhivery.axle.api.request.PaymentBreakupItem(
+                            vehicleClass = data.vehicleClass?.vehicleClass ?: "",
+                            quantity = 1
+                        )
+                    )
                     val intent = Intent(this, PaymentBreakupActivity::class.java).apply {
                         putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
                         putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                        putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
                     }
                     startActivity(intent)
                 }
