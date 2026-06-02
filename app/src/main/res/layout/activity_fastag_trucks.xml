@@ -218,7 +218,8 @@
                         android:gravity="center"
                         android:orientation="vertical"
                         android:paddingHorizontal="@dimen/size_24dp"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <ImageView
                             android:layout_width="@dimen/size_96dp"

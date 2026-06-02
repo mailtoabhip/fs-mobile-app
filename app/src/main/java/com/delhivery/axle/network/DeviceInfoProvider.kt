@@ -6,8 +6,11 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import com.delhivery.axle.injection.qualifier.ApplicationContext
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,6 +46,8 @@ class DeviceInfoProvider @Inject constructor(
     var publicIp: String = ""
         private set
 
+    private val ipDeferred = CompletableDeferred<String>()
+
     init {
         Log.d(TAG, "──────────────────────────────────────")
         Log.d(TAG, "Device info collected:")
@@ -66,9 +71,28 @@ class DeviceInfoProvider @Inject constructor(
                 URL("https://api.ipify.org").readText().trim()
             }
             publicIp = ip
+            ipDeferred.complete(ip)
             Log.d(TAG, "Public IP fetched successfully: $publicIp")
         } catch (e: Exception) {
             Log.w(TAG, "Failed to fetch public IP: ${e.message}")
+            ipDeferred.complete("")
+        }
+    }
+
+    /**
+     * Returns the public IP, blocking up to [timeoutMs] for the fetch to complete.
+     * Safe to call from OkHttp interceptor threads (IO).
+     * Returns empty string if the fetch hasn't completed within the timeout.
+     */
+    fun awaitPublicIp(timeoutMs: Long = 5000L): String {
+        if (publicIp.isNotEmpty()) return publicIp
+        return try {
+            runBlocking {
+                withTimeoutOrNull(timeoutMs) { ipDeferred.await() } ?: ""
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Timeout waiting for public IP: ${e.message}")
+            ""
         }
     }
 

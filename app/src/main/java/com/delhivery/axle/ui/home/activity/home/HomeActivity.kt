@@ -120,7 +120,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
           /* setup viewpager */
           binding.viewpager.apply {
-            offscreenPageLimit = HomeFragmentType.count()
+            offscreenPageLimit = OFF_SET_LIMIT
             adapter = pagerAdapter
           }
 

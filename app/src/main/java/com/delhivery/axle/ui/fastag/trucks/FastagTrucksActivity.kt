@@ -12,6 +12,7 @@ import com.delhivery.axle.databinding.ActivityFastagTrucksBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
 import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -112,10 +113,10 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
 
     private fun setupBanner() {
         binding.btnBuyFastag.setOnClickListener {
-            showBuyFastagDialog()
+           startActivity(Intent(this@FastagTrucksActivity, BuyFasTagActivity::class.java))
         }
         binding.btnEmptyBuyFastag.setOnClickListener {
-            showBuyFastagDialog()
+            startActivity(Intent(this@FastagTrucksActivity, BuyFasTagActivity::class.java))
         }
         binding.fastagPendingCard.setOnClickListener {
             startActivity(PendingActionsActivity.newIntent(this))
