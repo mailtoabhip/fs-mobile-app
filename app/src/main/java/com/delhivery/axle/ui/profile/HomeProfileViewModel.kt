@@ -33,17 +33,14 @@ class HomeProfileViewModel @Inject constructor(
 
   var tripEarningLiveData = MutableLiveData<Map<Int, MonthlyEarning?>>()
 
-  var userRoleLiveData = MutableLiveData<Boolean>()
   var getUserLiveData = MutableLiveData<Boolean>()
 
   var verificationStatus = MutableLiveData<String>()
 
-  var kycDetailData = MutableLiveData<Pair<KYCDetailResponse, String>>()
 
   var accountDeleteLiveData = MutableLiveData<Boolean>(false)
   var logoutResultLiveData = MutableLiveData<Boolean>()
 
-  var podAddress:String=userPrefs.podAddress?:""
 
   /* states */
   var stateLiveData = MutableLiveData<ProfileUIState>()
@@ -92,34 +89,6 @@ class HomeProfileViewModel @Inject constructor(
   }
 
 
-
-  /**
-   * Verify user has permission as can_create_secondary_sp
-   */
-  fun verifyRole() {
-    compositeDisposable += userRepository.fetchUserRoles()
-        .onBackground()
-        .subscribe { res, error ->
-          if (!error) {
-            if (res != null && !res.roles.isNullOrEmpty()) {
-              var permission = false
-              res.permissions.forEach {
-                if (it.name == "can_create_secondary_sp") {
-                  permission = true
-                }
-              }
-              if (permission) {
-                userRoleLiveData.postValue(true)
-              } else {
-                userRoleLiveData.postValue(false)
-              }
-            }
-          } else {
-            userRoleLiveData.postValue(false)
-          }
-        }
-  }
-
   fun logout() {
     userPrefs.lastLoggedInUserId = userPrefs.userId()
     Log.i("LoggedInUser", userPrefs.lastLoggedInUserId)
@@ -157,27 +126,17 @@ class HomeProfileViewModel @Inject constructor(
   }
 
   // Removed download delegation token logic - new API only supports upload
-  
+
   // Download functionality
   var documentListLiveData = MutableLiveData<List<com.delhivery.axle.api.response.DocumentFile>>()
   var documentListErrorLiveData = MutableLiveData<String>()
-  
+
   fun loadProfileImages() {
     // This method can be called from Activity to trigger profile image loading
     // The actual API call is handled by DocumentUtils in the Activity
     documentListLiveData.postValue(emptyList()) // Initialize empty list
   }
 
-  fun getKYCDetails(redirect:String) {
-    compositeDisposable += loadboardRepository.getKycDetails(userRepository.userId())
-            .onBackground()
-            .subscribe { _res, error ->
-              if (!error) {
-                kycDetailData.postValue(Pair(_res,redirect))
-              } else
-                error.handle()
-            }
-  }
   fun getUser() {
     compositeDisposable += userRepository.getUser(false)
         .onBackground()
