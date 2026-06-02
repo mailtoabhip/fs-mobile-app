@@ -74,9 +74,9 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     super.onCreate(savedInstanceState)
     
     // CRITICAL: Check for rooted device and show blocking dialog if detected
-/*    if (checkAndHandleRootedDevice()) {
+    if (checkAndHandleRootedDevice()) {
       return // Root dialog shown, activity will be blocked
-    }*/
+    }
     
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("StartRoutingActivity_SetupTime")
     activitySetupTrace?.start()
