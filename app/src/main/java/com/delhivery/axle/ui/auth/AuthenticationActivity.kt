@@ -183,8 +183,23 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       }
     })
 
-    /* otp view interface */
-    binding.otpView.onOtpComplete = { otp -> viewModel.verifyOTP(otp) }
+    /* otp view — no auto-submit, user clicks verify button */
+    binding.btnVerifyOtp.setOnClickListener {
+      val otp = binding.otpView.text?.toString() ?: ""
+      if (otp.length == 6 || otp.length == 8) {
+        viewModel.verifyOTP(otp.toCharArray())
+      }
+    }
+
+    /* Enable verify button when OTP length is valid */
+    binding.otpView.addTextChangedListener(object : android.text.TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      override fun afterTextChanged(s: android.text.Editable?) {
+        val len = s?.length ?: 0
+        binding.btnVerifyOtp.isEnabled = (len == 6 || len == 8)
+      }
+    })
 
     /* Initiate state */
     viewModel.state = PhoneNo
@@ -196,8 +211,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               mutableListOf(viewModel.phoneNo)
       )
       viewModel.otpSendCount +=1
-      binding.otpView.clear()
-      binding.otpView.showError(false)
+      binding.otpView.text?.clear()
       binding.otpError.visibility = View.GONE
       viewModel.resendOTP()
     }
@@ -265,12 +279,21 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             uiUtils.hideDelhiveryProgress()
             uiUtils.toggleKeyboard(false)
             resetVerifyButton()
-            binding.otpView.clear()
+            binding.otpView.text?.clear()
             /* show masked phone no */
             viewModel.phoneNo.let {
               if (it.length > 2) {
-                binding.textOtpSentToPhoneNo.text =
-                        getString(string.msg_otp_sent_to_phone_no, maskPhoneNumber(it))
+                val fullText = getString(string.msg_otp_sent_to_phone_no, maskPhoneNumber(it))
+                val spannable = android.text.SpannableString(fullText)
+                val newlineIndex = fullText.indexOf('\n')
+                if (newlineIndex >= 0) {
+                  spannable.setSpan(
+                    android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+                    newlineIndex + 1, fullText.length,
+                    android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                  )
+                }
+                binding.textOtpSentToPhoneNo.text = spannable
               }
             }
           }
@@ -348,13 +371,12 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           InvalidOTP -> {
             binding.otpError.visibility = View.VISIBLE
-            binding.otpView.showError(true)
+            binding.otpView.text?.clear()
             resetVerifyButton()
             uiUtils.hideProgress()
           }
           None -> {
             binding.otpError.visibility = View.GONE
-            binding.otpView.showError(false)
             resetVerifyButton()
             uiUtils.hideProgress()
           }

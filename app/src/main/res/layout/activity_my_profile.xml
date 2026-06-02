@@ -89,7 +89,6 @@
                 android:text="@{viewModel.userName}"
                 bind:layout_constraintHorizontal_chainStyle="packed"
                 bind:layout_constraintStart_toEndOf="@+id/picLayout"
-               bind:layout_constraintRight_toLeftOf="@+id/verifyBadge"
                 android:textColor="@color/heading_black"
                 android:fontFamily="sans-serif"
                 android:layout_marginTop="@dimen/size_24dp"
@@ -106,7 +105,6 @@
                 bind:layout_constraintTop_toBottomOf="@+id/company_name"
                 bind:layout_constraintHorizontal_chainStyle="packed"
                 bind:layout_constraintStart_toEndOf="@+id/picLayout"
-                bind:layout_constraintRight_toLeftOf="@+id/verifyBadge"
                 android:textColor="@color/heading_black"
                 android:layout_marginBottom="4dp"
                 android:layout_marginTop="4dp"
@@ -221,7 +219,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/logoutLayout"
                 android:padding="@dimen/size_16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/helpLayout"
+                bind:layout_constraintTop_toBottomOf="@+id/div3"
                 android:layout_height="wrap_content">
 
                 <ImageView
