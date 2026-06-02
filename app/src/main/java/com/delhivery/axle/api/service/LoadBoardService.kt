@@ -2,7 +2,6 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.*
 import com.delhivery.axle.api.response.*
-import com.delhivery.axle.data.UserRespone
 import com.delhivery.axle.data.gst.GstDetailItemData
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -90,10 +89,8 @@ interface LoadBoardService {
     /**
      * patch user details
      */
-    @GET("/get_user")
-    fun userDetails(
-            @Query("uuid") userId: String
-    ): Single<BaseResponse<UserRespone>>
+    @GET("api/v1/auth/profile")
+    fun userDetails(): Single<BaseResponse<FsUserProfile>>
 
     /**
      * kyc docs
@@ -208,11 +205,6 @@ interface LoadBoardService {
         @Query("target_id") targetId: String
     ): Single<DelegationTokenResponse>
 
-
-    @POST("list_sp_trucks")
-    fun getInventories(
-        @Body request: JsonObject
-    ):Single<InventoryResponse>
 
     /**
      * Get FASTag balance

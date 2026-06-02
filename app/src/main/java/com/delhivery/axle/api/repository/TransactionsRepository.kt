@@ -34,15 +34,6 @@ class TransactionsRepository @Inject constructor(
 ) : BaseRepository(errorLogger) {
 
   /**
-   * Get user transactions
-   */
-  fun fetchLoadBoardTransactions(offset: Int, demand_type: String, vehicle_type: String?= null,excludeTruckTypes: String?= null, filterVehicleType: Boolean?= null, biddingGoingOn:Boolean = false, txnIds:String? = null) =
-    transactionService.loadBoardTransactions(
-      userRepository.userId(), offset, UserTripsLoadLimit, demand_type, vehicle_type,
-      "yes", excludeTruckTypes, filterVehicleType, biddingGoingOn, txnIds
-  ).convertResponse()
-
-  /**
    * Get user transactions - Coroutine version
    */
   suspend fun fetchRecommTransactions(

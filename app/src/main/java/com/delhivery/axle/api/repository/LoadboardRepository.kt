@@ -175,16 +175,6 @@ class LoadboardRepository @Inject constructor(
      */
     fun getFastagBalance(tagId: String) = loadboardService.getFastagBalance(tagId).convertResponse()
 
-    fun getInventories(request: JsonObject) = loadboardService.getInventories(request)
-        .map { response ->
-            if (response.success) {
-                response
-            } else {
-                throw Exception("API returned success: false")
-            }
-        }
-
-
     /**
      * Get transaction dispute details for FASTag
      */

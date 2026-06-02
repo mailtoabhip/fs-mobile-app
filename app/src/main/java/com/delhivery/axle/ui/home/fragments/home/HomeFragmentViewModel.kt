@@ -22,6 +22,19 @@ class HomeFragmentViewModel @Inject constructor(
     private val _kycUiModel = MutableLiveData<KycUiModel>()
     val kycUiModel: LiveData<KycUiModel> = _kycUiModel
 
+    // ────────────────────────── FASTag Pending Actions ─────────────────
+
+    private val _fastagPendingCount = MutableLiveData<Int>(0)
+    val fastagPendingCount: LiveData<Int> = _fastagPendingCount
+
+    /**
+     * Set the FASTag pending actions count.
+     * Call this after fetching truck inventory data.
+     */
+    fun setFastagPendingCount(count: Int) {
+        _fastagPendingCount.value = count
+    }
+
     // ────────────────────────── Service Groups (new) ───────────────────
 
     /**

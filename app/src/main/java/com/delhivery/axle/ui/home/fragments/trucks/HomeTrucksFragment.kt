@@ -43,6 +43,8 @@ import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.dialogs.FastagSuccessBottomSheetDialogFragment
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
@@ -172,7 +174,7 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         fragmentSetupTrace?.start()
         viewModel.fetchData()
 
-        viewModel.fetchTruckType()
+       // viewModel.fetchTruckType()
 
         binding.refreshLayout.setOnRefreshListener {
             binding.refreshLayout.isRefreshing = false
@@ -719,12 +721,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
             HomeTrucksRequestAction_EditTruck -> {
                 showOptionsDialog(item.data as HomeTrucksRequestItemData, position)
             }
-
-            HomeTrucksRequestAction_ActivateTruck -> {
-                context?.let {
-                    ActivateTruckDialog(requireContext(), item.data as HomeTrucksRequestItemData, viewModel, userPrefs, analyticsUtil, uiUtils, position, HomeLoadsTruckFragment._instance.fromDeepLink, HomeLoadsTruckFragment._instance.fromNotification).show()
-                }
-            }
             
             HomeTrucksRequestAction_BuyFastag -> {
                 val data = item.data as? HomeTrucksRequestItemData
@@ -794,11 +790,10 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     mutableListOf(PROPERTY_INVENTORY_UUID),
                     mutableListOf(data.inventoryId ?: "")
             )
-            context?.let {  EditTruckDialog(requireContext(), data, viewModel, userPrefs, analyticsUtil, uiUtils, position).show()}
             dialog.dismiss()
         }
         bindingDialog.deactivateTruckLayout.setOnClickListener {
-            showDeactivateDialog(position, data)
+           // showDeactivateDialog(position, data)
             dialog.dismiss()
         }
 
@@ -814,7 +809,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
                     mutableListOf(PROPERTY_INVENTORY_ID),
                     mutableListOf(data.inventoryId ?: "")
             )
-            viewModel.deleteTruck(data, position)
             dialog.dismiss()
         }
 
@@ -825,49 +819,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         dialog.window!!.setGravity(Gravity.BOTTOM)
 
     }
-
-    private fun showDeactivateDialog(position: Int, data: HomeTrucksRequestItemData) {
-        val dialog = Dialog(context!!)
-        val bindingDialogDeactivate= DialogBottomTruckDeactivateBinding.inflate(layoutInflater)
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(bindingDialogDeactivate.root)
-
-        bindingDialogDeactivate.closeBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        bindingDialogDeactivate.btnDeactivate.setOnClickListener {
-            var reason: String = ""
-            if (bindingDialogDeactivate.otherSource.isChecked){
-                reason = bindingDialogDeactivate.otherSource.text.toString()
-            }
-             else if( bindingDialogDeactivate.other.isChecked) {
-                 reason = bindingDialogDeactivate.other.text.toString()
-            }
-
-            if(reason != "") {
-                analyticsUtil.moEngageTrackEvent(
-                        EVENT_DEACTIVATE_TRUCK,
-                        mutableListOf(PROPERTY_USER_ID, PROPERTY_INVENTORY_ID, PROPERTY_REASON),
-                        mutableListOf(userPrefs.userId(), data.inventoryId ?: "", reason)
-                )
-                uiUtils.showProgress()
-                viewModel.deactivateTruck(data, reason, position)
-                dialog.dismiss()
-            }
-            else{
-                uiUtils.showSnackbar("Select Reason for deactivating truck")
-            }
-        }
-
-        dialog.show()
-        dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog.window!!.setGravity(Gravity.BOTTOM)
-    }
-
     private fun showSizeFilterDialog() {
         lateinit var dialog: AlertDialog
 
@@ -1200,7 +1151,6 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
      * Pagination interface
      */
     inner class PaginationInterface : PaginationScrollListener(10) {
-        override fun loadMore() = viewModel.getAllInventories(true)
 
         override fun hasMore() = viewModel.hasMoreData
 
@@ -1898,17 +1848,17 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
     }
     
     override fun openFastagDetails(data: HomeTrucksRequestItemData) {
-        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity::class.java).apply {
-            putExtra(com.delhivery.axle.ui.fastag.FastagTransactionDetailsActivity.VEHICLE_DATA, data)
+        val intent = Intent(requireContext(), FastagTransactionDetailsActivity::class.java).apply {
+            putExtra(FastagTransactionDetailsActivity.VEHICLE_DATA, data)
         }
         startActivity(intent)
     }
 
     override fun openFastagRecharge(data: HomeTrucksRequestItemData) {
-        val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.FastagRechargeActivity::class.java).apply {
-            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.TAG_ID, data.fastagTagId)
-            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
-            putExtra(com.delhivery.axle.ui.fastag.FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
+        val intent = Intent(requireContext(), FastagRechargeActivity::class.java).apply {
+            putExtra(FastagRechargeActivity.TAG_ID, data.fastagTagId)
+            putExtra(FastagRechargeActivity.VEHICLE_NUMBER, data.vehicleNumber)
+            putExtra(FastagRechargeActivity.FASTAG_BALANCE, data.fastagBalance ?: "0")
         }
         startActivityForResult(intent, REQCODE_FASTAG_RECHARGE)
     }

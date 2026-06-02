@@ -2,7 +2,10 @@ package com.delhivery.axle.ui.profile
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.delhivery.axle.api.repository.FsAuthRepository
 import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
@@ -16,6 +19,7 @@ import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -23,6 +27,7 @@ class HomeProfileViewModel @Inject constructor(
   private val transactionsRepository: TransactionsRepository,
   private val userRepository: UserRepository,
   private val loadboardRepository: LoadboardRepository,
+  private val fsAuthRepository: FsAuthRepository,
   val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
@@ -34,6 +39,7 @@ class HomeProfileViewModel @Inject constructor(
 
 
   var accountDeleteLiveData = MutableLiveData<Boolean>(false)
+  var logoutResultLiveData = MutableLiveData<Boolean>()
 
 
   /* states */
@@ -86,7 +92,25 @@ class HomeProfileViewModel @Inject constructor(
   fun logout() {
     userPrefs.lastLoggedInUserId = userPrefs.userId()
     Log.i("LoggedInUser", userPrefs.lastLoggedInUserId)
-    userPrefs.clearPrefs()
+
+    viewModelScope.launch {
+      try {
+        when (val result = fsAuthRepository.logout()) {
+          is Resource.Success -> {
+            userPrefs.clearPrefs()
+            logoutResultLiveData.postValue(true)
+          }
+          is Resource.Failure -> {
+            Log.e("HomeProfileVM", "Logout API failed: code=${result.errorCode}")
+            logoutResultLiveData.postValue(false)
+          }
+          Resource.Loading -> { /* no-op */ }
+        }
+      } catch (e: Exception) {
+        Log.e("HomeProfileVM", "Logout API call failed", e)
+        logoutResultLiveData.postValue(false)
+      }
+    }
   }
 
   fun setUserState(){

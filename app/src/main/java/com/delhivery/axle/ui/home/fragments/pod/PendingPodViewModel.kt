@@ -98,60 +98,6 @@ class PendingPodViewModel @Inject constructor(
       request.tripStatus = EPodUploaded.statusKey + "," + TruckUnloaded.statusKey
       request.value = null
     }
-    compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            offset += _res.trips.size
-            hasMoreData = _res.hasNext
-            total = _res.total
-            
-            // Update pod counts
-            _res.podCounts?.let { podCountsLiveData.postValue(it) }
-
-            mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* remove progress item */
-              add(Pair(HomePodProgressItem(), Remove))
-
-              /* empty view, if fresh fetch n total == 0 */
-              if (!paginate && total == 0) {
-                add(Pair(HomePodWarningItem_NoLoads, AddUpdate))
-              }
-              /* post all transactions mapped to bids as add */
-              else {
-                for (trip in _res.trips) {
-                  when (status) {
-                    TruckUnloaded -> {
-                      if (!trip.hasPODTracking()) {
-                        empty = false
-                        add(Pair(HomePodTripItem(trip), Add))
-                      }
-                    }
-                    else -> {
-                        // HPOD: Show both EPOD (TruckUnloaded) and HPOD (EPodUploaded) items without POD tracking
-                        if (!trip.hasPODTracking() && 
-                            (trip.tripStatus == EPodUploaded.statusKey || trip.tripStatus == TruckUnloaded.statusKey)) {
-                          empty = false
-                          add(Pair(HomePodTripItem(trip), Add))
-                        }
-                    }
-                  }
-                }
-                if (empty)
-                  add(Pair(HomePodWarningItem_NoLoads, AddUpdate))
-              }
-            }
-                .let { userPodsData.postValue(it) }
-          } else {
-            mutableListOf<Pair<BaseHomePodRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              /* add api time out item */
-              add(Pair(HomePodWarningItem_TimeOut, AddUpdate))
-            }
-                .let { userPodsData.postValue(it) }
-          }
-
-          dataLoadingLiveData.postValue(false)
-        }
   }
 }
 

@@ -73,17 +73,6 @@ class SelectRouteViewModel @Inject constructor(
       newRoutes.forEach { addAll(it.toMapping()) }
       existingRoutes.forEach { addAll(it.toMapping()) }
     }
-    compositeDisposable += userRepository.updateUserRoutes(routeMappings)
-        .onBackground()
-        .progress()
-        .subscribe { _routes, error ->
-          if (!error) {
-            completedAction(true)
-          } else {
-            error.handle()
-            completedAction(false)
-          }
-        }
   }
 
   /**

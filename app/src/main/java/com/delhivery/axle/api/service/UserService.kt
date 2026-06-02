@@ -28,60 +28,6 @@ interface UserService {
     @Path("cityId") cityId: String
   ): Single<BaseResponse<List<CityModel>>>
 
-  /**
-   * Get user details
-   */
-  @GET("/users/supplypartners/{user_id}")
-  fun userDetails(
-    @Path("user_id") userId: String,
-    @Query("include_parent") includeParent: Boolean = true
-  ): Single<BaseResponse<UserModel>>
-
-  /**
-   * Update user route prefs
-   */
-  @PATCH("/users/supplypartners/{user_id}/")
-  fun updateUserRoutes(
-    @Path("user_id") userId: String,
-    @Body payload: JsonObject
-  ): Single<Any>
-
-  /**
-   * Update base city
-   */
-  @PATCH("/users/supplypartners/{user_id}/")
-  fun updateCity(
-    @Path("user_id") userId: String,
-    @Body payload: UpdateUserBaseCityRequest
-  ): Single<Any>
-
-  /**
-   * Update user app access
-   */
-  @PATCH("/users/supplypartners/{user_id}/")
-  fun updateUserAppAccess(
-    @Path("user_id") userId: String,
-    @Body payload: UpdateUserAccessRequest
-  ): Single<Any>
-
-  /**
-   * Update FCM token
-   */
-  @PATCH("/users/supplypartners/{user_id}")
-  fun updateFCMToken(
-    @Path("user_id") userId: String,
-    @Body payload: UpdateUserFCMTokenRequest
-  ): Single<BaseMessageResponse>
-
-  /**
-   * Delete Route
-   */
-  @PATCH("/users/supplypartners/{user_id}")
-  fun deleteUserRoute(
-      @Path("user_id") userId: String,
-      @Body payload: JsonObject
-  ): Single<BaseMessageResponse>
-
   @GET("/users/supplypartners")
   fun getOMCs(
     @Query("offset") offset: Int,

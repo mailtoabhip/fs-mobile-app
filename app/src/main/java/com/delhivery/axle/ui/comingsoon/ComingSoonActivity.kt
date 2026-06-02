@@ -73,30 +73,31 @@ class ComingSoonActivity : BaseActivity<ActivityComingSoonBinding, ComingSoonVie
         binding.ivBack.setOnClickListener { finish() }
 
         binding.btnPrimary.setOnClickListener {
-            if (isNotified) {
-                finish()
-            } else {
-                onNotifyMeClicked()
-            }
+            finish()
+//            if (isNotified) {
+//                finish()
+//            } else {
+//                onNotifyMeClicked()
+//            }
         }
 
-        binding.btnSecondary.setOnClickListener {
-            finish()
-        }
+//        binding.btnSecondary.setOnClickListener {
+//            finish()
+//        }
     }
 
     private fun showDefaultState() {
         isNotified = false
         binding.successBanner.visibility = View.GONE
-        binding.btnPrimary.text = getString(R.string.coming_soon_notify_me)
-        binding.btnSecondary.visibility = View.VISIBLE
-        binding.btnSecondary.text = getString(R.string.coming_soon_remind_later)
+        binding.btnPrimary.text = getString(R.string.coming_soon_go_to_homepage)
+//        binding.btnSecondary.visibility = View.VISIBLE
+//        binding.btnSecondary.text = getString(R.string.coming_soon_remind_later)
     }
 
     private fun onNotifyMeClicked() {
         isNotified = true
         binding.successBanner.visibility = View.VISIBLE
         binding.btnPrimary.text = getString(R.string.coming_soon_go_to_homepage)
-        binding.btnSecondary.visibility = View.GONE
+//        binding.btnSecondary.visibility = View.GONE
     }
 }

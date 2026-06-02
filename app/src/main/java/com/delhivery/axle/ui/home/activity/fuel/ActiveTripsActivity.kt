@@ -173,8 +173,6 @@ class ActiveTripsActivity : BaseActivity<ActivityActiveTripsBinding, ActiveTrips
    * Pagination interface
    */
   inner class PaginationInterface : PaginationScrollListener(10) {
-    override fun loadMore() = viewModel.fetchTrips(true)
-
     override fun hasMore() = viewModel.offset < viewModel.total
 
     override fun isLoading() = isLoadingData

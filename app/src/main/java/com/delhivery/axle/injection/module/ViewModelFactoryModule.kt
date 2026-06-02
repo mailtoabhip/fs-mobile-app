@@ -11,7 +11,6 @@ import com.delhivery.axle.ui.accountaction.AccountActionViewModel
 import com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel
 import com.delhivery.axle.ui.accountrole.AccountRoleViewModel
 import com.delhivery.axle.ui.auth.AuthenticationViewModel
-import com.delhivery.axle.ui.biddetails.BidDetailsViewModel
 import com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsViewModel
 import com.delhivery.axle.ui.bids.BidsViewModel
 import com.delhivery.axle.ui.bids.TripsViewModel
@@ -29,7 +28,6 @@ import com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel
 import com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel
 import com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel
 import com.delhivery.axle.ui.home.fragments.home.HomeFragmentViewModel
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.home.fragments.loads_truck.HomeLoadsTruckViewModel
 import com.delhivery.axle.ui.home.fragments.placements.HomePlacementsViewModel
 import com.delhivery.axle.ui.home.fragments.pod.HomePodViewModel
@@ -55,12 +53,15 @@ import com.delhivery.axle.ui.onboarding.OnboardingViewModel
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsViewModel
 import com.delhivery.axle.ui.payment.PaymentWebViewViewModel
 import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
-import com.delhivery.axle.ui.fastag.FastagTransactionDetailsViewModel
-import com.delhivery.axle.ui.fastag.FastagRechargeViewModel
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsViewModel
+import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
+import com.delhivery.axle.ui.fastag.trucks.FastagTrucksViewModel
+import com.delhivery.axle.ui.fastag.pending.PendingActionsViewModel
+import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
-import com.delhivery.axle.ui.fastag.FastagDisputeIssuesViewModel
-import com.delhivery.axle.ui.fastag.FastagTransactionSelectionViewModel
-import com.delhivery.axle.ui.fastag.FastagDynamicDisputeFormViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionViewModel
+import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -171,10 +172,6 @@ abstract class ViewModelFactoryModule {
   @ViewModelScope(HomePlacementsViewModel::class)
   abstract fun bindHomePlacementsViewModel(homePlacementsViewModel: HomePlacementsViewModel): ViewModel
 
-  @Binds
-  @IntoMap
-  @ViewModelScope(HomeLoadsViewModel::class)
-  abstract fun bindHomeLoadsViewModel(homeLoadsViewModel: HomeLoadsViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -215,11 +212,6 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(TripsViewModel::class)
   abstract fun bindTripsViewModel(tripsViewModel: TripsViewModel): ViewModel
-
-  @Binds
-  @IntoMap
-  @ViewModelScope(BidDetailsViewModel::class)
-  abstract fun bindBidDetailsViewModel(bidDetailsViewModel: BidDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -479,6 +471,21 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagRechargeViewModel::class)
   abstract fun bindFastagRechargeViewModel(viewModel: FastagRechargeViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagTrucksViewModel::class)
+  abstract fun bindFastagTrucksViewModel(viewModel: FastagTrucksViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(PendingActionsViewModel::class)
+  abstract fun bindPendingActionsViewModel(viewModel: PendingActionsViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(AssignVehicleViewModel::class)
+  abstract fun bindAssignVehicleViewModel(viewModel: AssignVehicleViewModel): ViewModel
 
   @Binds
   @IntoMap

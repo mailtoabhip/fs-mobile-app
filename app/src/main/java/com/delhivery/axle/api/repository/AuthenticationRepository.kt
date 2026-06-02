@@ -34,51 +34,6 @@ class AuthenticationRepository @Inject constructor(
   }
 
   /**
-   * Send otp to phone number and return if success and error message
-   */
-  fun sendOTP(phoneNo: String) =
-    loadBoardService.requestOTP(RequestOTP.getRequest(phoneNo))
-      .map {
-        Pair(true, it.successMsg)
-      }
-      .onErrorReturn {
-        /* handle error if needed */
-        Pair(false, it.errorResponseBody()?.errorBody?.errorMessage.toString())
-      }
-
-  /**
-   * Verify OTP
-   */
-  fun verifyOTP(
-    phoneNo: String,
-    otp: String
-  ) = loadBoardService.otpLogin(OTPLoginRequest.getRequest(phoneNo, otp))
-      .map {
-        it.responseData?.jwtToken?.let { it1 -> handleJWTToken(it1) }
-        Pair(true, "")
-      }
-      .onErrorReturn {
-        /* handle error if needed */
-        Pair(false, "Invalid OTP")
-      }
-
-  /**
-   * Verify Password Login
-   */
-  fun loginUsingPassword(
-    userName: String,
-    password: String
-  ) = umsService.requestPasswordVerification(PasswordLoginRequest.getRequest(userName, password))
-    .map {
-      handleJWTToken(it.jwtToken)
-      Pair(true, "")
-    }
-    .onErrorReturn {
-      /* handle error if needed */
-      Pair(false, "Invalid Password")
-    }
-
-  /**
    * Handle jwt token post success login
    */
   private fun handleJWTToken(jwtToken: String) {
@@ -120,17 +75,23 @@ class AuthenticationRepository @Inject constructor(
   /**
    * Get auth status if user authenticated or not
    */
-  fun authStatus() = when (userPrefs.jwtToken.isNotNullOrEmpty()) {
-    true -> JWT(userPrefs.jwtToken!!).expiresAt.let { expiresAt ->
-      when (expiresAt != null && expiresAt.after(Date())) {
-        true -> true
-        false -> {
-          /* expired: clear credentials and logout */
-          logout()
-          false
-        }
-      }
+  fun authStatus(): Boolean {
+    if (!userPrefs.jwtToken.isNotNullOrEmpty()) {
+      return false
     }
-    false -> false
+    return try {
+      val expiresAt = JWT(userPrefs.jwtToken!!).expiresAt
+      if (expiresAt != null && expiresAt.after(Date())) {
+        true
+      } else {
+        /* expired: clear credentials and logout */
+        logout()
+        false
+      }
+    } catch (e: Exception) {
+      /* malformed token: clear credentials and logout */
+      logout()
+      false
+    }
   }
 }

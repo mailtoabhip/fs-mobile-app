@@ -65,51 +65,6 @@ class ActiveTripsViewModel @Inject constructor(
     request.vendorId = userRepository.userId()
     // request.tripStatus = trip.status.joinToString(separator = ",") { it }
     request.updatedAfter = DateUtils.formatISODateToUTC(optinDate, "YYYY-MM-dd'T'HH:mm:ss")
-    compositeDisposable += loadCycleRepository.searchTrips(request.getRequest())
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error) {
-            offset += _res.trips.size
-            hasMoreData = _res.hasNext
-            total = _res.total
-
-            mutableListOf<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              add(Pair(ActiveTripProgressItem(), Remove))
-              if (total == 0) {
-                add(Pair(ActiveTripWarningItem_NoTrip, Add))
-              } else {
-                val trips = _res.trips
-                for (trip in trips) {
-                  try {
-                    val cardList = cards.filter { p ->
-                      p.tripId.safeEquals(trip.transactionId)
-                    }
-                    if (cardList.isNullOrEmpty()) {
-                      trip.fuelCard = FuelCardData("", "", "0", "", "")
-                    } else {
-                      trip.fuelCard = cardList[0]
-                    }
-                  } catch (e: Exception) {
-                    Log.d("No payment found for: ", trip.transactionId)
-                  }
-                  add(Pair(ActiveTripFuelDataItem(trip), Add))
-                }
-              }
-            }
-                .let {
-                  tripsLiveData.postValue(it)
-                }
-          } else {
-            mutableListOf<Pair<BaseActiveTripsRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
-              add(Pair(ActiveTripProgressItem(), Remove))
-              add(Pair(ActiveTripWarningItem_TimeOut, Add))
-            }
-                .let {
-                  tripsLiveData.postValue(it)
-                }
-          }
-          dataLoadingLiveData.postValue(false)
-        }
   }
 
   /**

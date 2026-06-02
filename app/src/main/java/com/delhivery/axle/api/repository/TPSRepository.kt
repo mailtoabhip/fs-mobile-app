@@ -1,7 +1,6 @@
 package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.UpdateVehicleDetailsRequest
-import com.delhivery.axle.api.service.BidService
 import com.delhivery.axle.api.service.TPSService
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse

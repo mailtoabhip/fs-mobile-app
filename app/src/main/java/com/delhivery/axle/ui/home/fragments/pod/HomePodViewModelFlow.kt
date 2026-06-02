@@ -79,7 +79,6 @@ class HomePodViewModelFlow @Inject constructor(
      */
     fun processIntent(intent: UserIntent) {
         when (intent) {
-            is UserIntent.Search -> searchTrips(intent.request)
             is UserIntent.Refresh -> refresh()
             is UserIntent.LoadMore -> loadMore()
             is UserIntent.Retry -> retry()
@@ -103,13 +102,6 @@ class HomePodViewModelFlow @Inject constructor(
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             _uiState.value = UiState.Loading(isRefreshing = false)
-
-            val paginatedRequest = buildRequest(request, 0)
-
-            loadCycleRepository.searchTripsFlow(paginatedRequest)
-                .collect { resource ->
-                    _uiState.value = mapResourceToUiState(resource, isInitialLoad = true)
-                }
         }
     }
 
@@ -128,50 +120,6 @@ class HomePodViewModelFlow @Inject constructor(
             _uiState.value = UiState.Loading(isRefreshing = true)
 
             val paginatedRequest = buildRequest(request, 0)
-
-            loadCycleRepository.searchTripsFlow(paginatedRequest)
-                .collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            // Keep refreshing state
-                        }
-                        is Resource.Success -> {
-                            val trips = resource.data?.trips ?: emptyList()
-                            
-                            // Update pod counts
-                            resource.data?.podCounts?.let { _podCounts.value = it }
-
-                            if (trips.isEmpty()) {
-                                _uiState.value = UiState.Empty("No trips found")
-                            } else {
-                                currentOffset = trips.size
-                                hasMore = resource.data?.hasNext ?: false
-                                _uiState.value = UiState.Success(
-                                    data = trips,
-                                    hasMore = hasMore
-                                )
-                            }
-                        }
-                        is Resource.Failure -> {
-                            // Preserve existing data if available, show error in snackbar
-                            val currentState = _uiState.value
-                            if (currentState is UiState.Success) {
-                                _events.emit(UiEvent.ShowSnackbar(
-                                    message = getErrorMessage(resource.apiError),
-                                    action = "Retry"
-                                ))
-                                // Reset refreshing state
-                                _uiState.value = currentState.copy(isLoadingMore = false)
-                            } else {
-                                _uiState.value = UiState.Error(
-                                    apiError = resource.apiError,
-                                    message = getErrorMessage(resource.apiError),
-                                    isNetworkError = resource.isNetworkError
-                                )
-                            }
-                        }
-                    }
-                }
         }
     }
 
@@ -190,40 +138,6 @@ class HomePodViewModelFlow @Inject constructor(
         viewModelScope.launch {
             // Set loading more flag
             _uiState.value = currentState.copy(isLoadingMore = true)
-
-            val paginatedRequest = buildRequest(request, currentOffset)
-
-            loadCycleRepository.searchTripsFlow(paginatedRequest)
-                .collect { resource ->
-                    when (resource) {
-                        is Resource.Loading -> {
-                            // Keep loading more state
-                        }
-                        is Resource.Success -> {
-                            val newTrips = resource.data?.trips ?: emptyList()
-                            val allTrips = currentState.data + newTrips
-                            currentOffset = allTrips.size
-                            hasMore = resource.data?.hasNext ?: false
-
-                            // Update pod counts
-                            resource.data?.podCounts?.let { _podCounts.value = it }
-
-                            _uiState.value = UiState.Success(
-                                data = allTrips,
-                                isLoadingMore = false,
-                                hasMore = hasMore
-                            )
-                        }
-                        is Resource.Failure -> {
-                            // Preserve existing data, show error
-                            _uiState.value = currentState.copy(isLoadingMore = false)
-                            _events.emit(UiEvent.ShowSnackbar(
-                                message = "Failed to load more: ${getErrorMessage(resource.apiError)}",
-                                action = "Retry"
-                            ))
-                        }
-                    }
-                }
         }
     }
 

@@ -7,9 +7,7 @@ enum class AuthenticationUIState {
   PhoneNo,
   OTP,
   LoginProgress,
-  LoadRequest,
+  HomePage,
   Disabled,
-  Password,
-  AccountDetails,
-  BasicDetails
+  AccountDetails
 }

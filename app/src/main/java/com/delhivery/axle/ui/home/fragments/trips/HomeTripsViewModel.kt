@@ -88,35 +88,7 @@ class HomeTripsViewModel @Inject constructor(
   var tripsCountLiveData = MutableLiveData<Int>()
 
   var request = SearchRequest()
-
-  /**
-   * Fetch trips summary
-   */
-  fun fetchTripsSummary() {
-    compositeDisposable += tripsRepository.userTripsSummary()
-        .onBackground()
-        .subscribe { _res, error ->
-          if (!error && _res != null) {
-
-            advancePendingCount = _res.advancePending.count()
-            advancePendingAmount = "₹ ${StringUtils.formatAmount(_res.advancePending.amount ?: 0.0)}"
-            balancePendingCount = _res.balancePending.count()
-            balancePendingAmount = "₹ ${StringUtils.formatAmount(_res.balancePending.amount ?: 0.0)}"
-            recoveryPendingCount = _res.recoveryPending.count()
-            recoveryPendingAmount = "₹ ${StringUtils.formatAmount(_res.recoveryPending.amount ?: 0.0)}"
-            awaitingArrivalCount = _res.awaitingArrival.count()
-            inTransitCount = _res.inTransit.count()
-            awaitingPodCount = _res.awaitingPod.count()
-            awaitingLoadingCount = _res.awaitingLoading.count()
-            awaitingUnloadingCount = _res.awaitingUnloading.count()
-            totalOngoingCount = (_res.awaitingArrival.count ?: 0) + (_res.inTransit.count ?: 0) + (_res.awaitingPod.count ?: 0) + (_res.awaitingLoading.count ?: 0) + (_res.awaitingUnloading.count ?: 0)
-
-            dataLoadingLiveData.postValue(true)
-          } else {
-            error.handle()
-          }
-        }
-  }
+    
 
   @SuppressLint("SimpleDateFormat")
   fun generateDateString(type: String, monthNumber: Int, year: String, recent: Boolean=false): String {

@@ -28,7 +28,7 @@
     <string name="msg_dialog_location_permission_disabled">Allow &lt;b>AXLE app&lt;/b> to access your location?&lt;br>&lt;br> Location will be used to determine the best loads for you.</string>
     <string name="msg_send_otp_auth">Please use the registered number if are already an AXLE partner</string>
     <string name="msg_contact_terms_auth">We need your phone number for verifying you before getting started. We will not share your number outside.</string>
-    <string name="msg_otp_sent_to_phone_no">A 4-digit OTP has been sent to your number ending in %1$s</string>
+    <string name="msg_otp_sent_to_phone_no">We’ve sent an OTP via SMS to:\n +91 %1$s</string>
     <string name="msg_loading_pro_tip">Pro tip:\n%s</string>
     <string name="msg_select_route_welcome_user">Welcome\n%s</string>
     <string name="msg_glad_to_onboard">Glad too see you onboarded with Axle</string>
@@ -209,7 +209,7 @@
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
     <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
-    <string name="label_otp">Enter OTP</string>
+    <string name="label_otp">OTP Verification</string>
     <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
     <string name="label_phone_number">Phone Number</string>
     <string name="label_isd_code">+91</string>
@@ -450,10 +450,10 @@
 
     <!--Label (label_)-->
     <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
-    <string name="sub_label_phone_number">We’ll send a 4-digit OTP to your phone number for verification</string>
+    <string name="sub_label_phone_number">We\'ll send you an OTP via SMS to confirm your phone number.</string>
     <string name="label_resend_otp_done">Resend OTP</string>
     <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
-    <string name="label_resend">Didn’t receive OTP?</string>
+    <string name="label_resend">Haven\'t received the OTP?</string>
     <string name="label_account_setup_primary">What do you want to do in this app?</string>
     <string name="label_account_setup_primary_select">You can always change your choice later</string>
     <string name="label_account_setup_primary_select_postloads">Post Loads</string>
@@ -555,19 +555,20 @@
     <string name="label_dialog_rate">Rate has been successfully submitted</string>
     <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
-    <!--Error (error_-->
-    <string name="error_no_internet">No Internet connection</string>
-    <string name="error_name_required">Please enter name</string>
-    <string name="error_dob_required">Please enter Date of birth</string>
-    <string name="error_location_permission_denied">Location Permission Denied</string>
-    <string name="error_search_missing_origin">Please select origin</string>
-    <string name="error_search_missing_reporting_center">Please select reporting center</string>
-    <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
-    <string name="error_upload">Oops! Something went wrong</string>
-    <string name="error_upload_document">Try uploading the document once again</string>
-    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
-    <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
-    <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
+  <!--Error (error_-->
+  <string name="error_no_internet">No Internet connection</string>
+  <string name="error_name_required">Please enter name</string>
+  <string name="error_dob_required">Please enter Date of birth</string>
+  <string name="error_location_permission_denied">Location Permission Denied</string>
+  <string name="error_search_missing_origin">Please select origin</string>
+  <string name="error_search_missing_reporting_center">Please select reporting center</string>
+  <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
+  <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
+  <string name="error_upload">Oops! Something went wrong</string>
+  <string name="error_upload_document">Try uploading the document once again</string>
+  <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+  <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
+  <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
 
 
     <string name="not_available">Not available</string>
@@ -1162,12 +1163,32 @@
     <string name="label_search_home">Search loads, trips, FASTags…</string>
     <string name="label_gps">GPS</string>
     <string name="label_fuel_card_home">Fuel Card</string>
+    <string name="label_fastag_pending_actions">FASTag pending actions (%1$d)</string>
     <string name="label_business_services">Business Services</string>
     <string name="label_my_trucks">My Trucks</string>
     <string name="label_my_trucks_subtitle">Access your fleet services</string>
     <string name="label_my_loads">My Loads</string>
     <string name="label_my_loads_subtitle">Manage fleet ops via Axle App</string>
     <string name="label_banner">Banner</string>
+    <string name="label_fastag_title">FASTag</string>
+    <string name="fastag_banner_title">Simplify your toll payments</string>
+    <string name="fastag_buy_cta">Buy FASTag</string>
+    <string name="fastag_your_fastags">Your FASTags</string>
+    <string name="fastag_no_fastags_heading">No purchases yet!</string>
+    <string name="fastag_no_fastags_description">You don’t have any FASTags linked to your account. Buy a new FASTag for seamless toll payments.</string>
+    <string name="pending_actions_title">Pending Actions</string>
+    <string name="pending_actions_empty_title">No Pending Actions</string>
+    <string name="pending_actions_empty_description">All your FASTag orders are up to date. No actions required at this time.</string>
+    <string name="assign_vehicle_title">Assign Vehicle</string>
+    <string name="activate_vehicle_title">Activate Vehicle</string>
+    <string name="handover_vehicle_title">Handover Vehicle</string>
+    <string name="kyc_vehicle_title">KYC Verification</string>
+    <string name="select_vehicle_title">Select vehicle</string>
+    <string name="fastag_balance_low">FASTag balance low</string>
+    <string name="fastag_recharge">Recharge</string>
+    <string name="fastag_refresh_balance">Refresh balance</string>
+    <string name="fastag_search_hint">Search vehicle number</string>
+    <string name="fastag_clear_search">Clear search</string>
     <string name="label_load_services">Load Services</string>
     <string name="label_financial_services">Financial Services</string>
     <string name="label_services_available">%d Services Available</string>
@@ -1185,4 +1206,12 @@
     <string name="coming_soon_gps_notified">You\'ll be notified when GPS goes live</string>
     <string name="coming_soon_fuel_card_notified">You\'ll be notified when fuel card goes live</string>
 
+
+    <string name="str_get_to_know_you">Let’s get to know you</string>
+    <string name="str_tell_us_your_name">Tell us your name to personalize your experience</string>
+    <string name="str_first_name">First Name</string>
+    <string name="str_last_name">Last Name</string>
+    <string name="str_enter_here">Enter Here</string>
+    <string name="str_communication_consent_note">I agree to receive app updates and communications via my contact details.</string>
+<!--    <string name=""></string>-->
 </resources>

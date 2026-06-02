@@ -20,9 +20,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.data.home.bids.HomeBidsRequestItemData
 import com.delhivery.axle.databinding.DialogBottomAcceptIntracityAdhocBidBinding
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment.Companion._instance
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsViewModel
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsFragment
 import com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel
 import com.delhivery.axle.utils.AnalyticsUtil
@@ -57,8 +54,6 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
     private val analyticsUtil: AnalyticsUtil,
     private var userPrefs: UserPrefs,
     private var viewModel: BaseViewModel,
-    private var homeFragInstance: HomeLoadsFragment?,
-    private val searchFragInstance: SearchResultsFragment?,
     private var uiUtils: UiUtils
 ) : AlertDialog(context) {
 
@@ -95,31 +90,10 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
         binding.btnSubmit.setOnClickListener{
             submit()
         }
-        val fragInstance = if(homeFragInstance!=null){
-            _instance
-        }else SearchResultsFragment._instance
+        val fragInstance =SearchResultsFragment._instance
 
         if(viewModel is SearchResultsViewModel){
             (viewModel as SearchResultsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
-                if(it!=null){
-                    disableClicks(true)
-                    enableSubmit()
-                    binding.progress.visibility = View.GONE
-                    binding.progressMsg.visibility = View.GONE
-                    dismiss()
-
-
-                }else{
-                    disableClicks(true)
-                    enableSubmit()
-                    binding.progress.visibility = View.GONE
-                    binding.progressMsg.visibility = View.GONE
-
-
-                }
-            })
-        }else{
-            (viewModel as HomeLoadsViewModel).acceptBidLiveData.observe(fragInstance, Observer {
                 if(it!=null){
                     disableClicks(true)
                     enableSubmit()
@@ -345,11 +319,6 @@ class AcceptAdhocIntracityBidBottomDialog @Inject constructor(
                 mutableListOf(binding.editTextVehicleNumber.text.toString()))
             analyticsUtil.moEngageTrackEvent(EVENT_LOAD_INTRACITY_SUBMIT, mutableListOf(PROPERTY_DRIVER_NAME, PROPERTY_DRIVER_NUMBER, PROPERTY_VEHICLE_NUMBER),
                 mutableListOf(binding.editTextDriverName.text.toString(),binding.editTextDriverNumber.text.toString(), binding.editTextVehicleNumber.text.toString()))
-            analyticsUtil.moEngageTrackEvent(
-                EVENT_INTRACITY_LOADS_VEHICLE_DETAILS_SUBMIT,
-                listOf(PROPERTY_ORDER_ID, PROPERTY_USER_ID, PROPERTY_PAGE_NAME, PROPERTY_SOURCE, PROPERTY_DEMAND_TYPE),
-                listOf(transaction.transactionId.toString(),userPrefs.userId(), VALUE_LOAD_PAGE_LOADS,homeFragInstance?.let { VALUE_LISTING } ?: VALUE_SEARCH, transaction.demandType.toString())
-            )
 
             dialogInterface.acceptBid(
                     position,

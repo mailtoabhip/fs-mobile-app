@@ -32,7 +32,6 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ViewProgressStepsBinding
 import com.delhivery.axle.ui.accountdetails.AccountDetailsActivity
 import com.delhivery.axle.ui.auth.AuthenticationUIState.AccountDetails
-import com.delhivery.axle.ui.home.fragments.loads.HomeLoadsFragment
 import com.delhivery.axle.ui.kyc.address.AddressActivity
 import com.delhivery.axle.ui.onboarding.BasicDetailsActivity
 import com.delhivery.axle.ui.paymentdetails.PaymentDetailsActivity
@@ -47,9 +46,9 @@ import java.lang.Exception
  */
 @ActivityScope
 class NavigationUtils @Inject constructor(
-        private val activity: DaggerAppCompatActivity,
-        private val authRepository: AuthenticationRepository,
-        private val uiUtils: UiUtils
+    private val activity: DaggerAppCompatActivity,
+    private val authRepository: AuthenticationRepository,
+    private val uiUtils: UiUtils
 ) {
 
   @Inject lateinit var userPrefs: UserPrefs
@@ -458,6 +457,12 @@ class NavigationUtils @Inject constructor(
 
     /* Auto redirect if user details are pending */
     fun navigateOnboardingDetails() {
+        if (userPrefs.userName.isEmpty()) {
+            userPrefs.hasLoggedIn = false
+            val intent = Intent(activity, AccountDetailsActivity::class.java)
+            this.navigate(intent, true, null)
+            return
+        }
         if (userPrefs.isLoadBoardClient && userPrefs.isLoadBoardSupplier) {
             if (!userPrefs.isUserVerfied) {
                 userPrefs.setPreviousScreen(activity.javaClass.name)

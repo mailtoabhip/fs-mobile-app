@@ -128,15 +128,6 @@
             android:name=".ui.onboarding.OnboardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.bids.BidsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.biddetails.BidDetailsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.biddetails.PlacementsBidDetailsActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.biddetails.MarketPlaceBidDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -306,12 +297,26 @@
             android:name=".ui.placementdetails.PlacementDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.FastagTransactionDetailsActivity"
+            android:name=".ui.fastag.fastag_details.FastagTransactionDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.FastagRechargeActivity"
+            android:name=".ui.fastag.recharge.FastagRechargeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.fastag.trucks.FastagTrucksActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.fastag.pending.PendingActionsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.fastag.pending.assign.AssignVehicleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.fastag.trucks.FastagSearchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".ui.loadwallet.LoadWalletActivity"
             android:screenOrientation="portrait" />
@@ -325,16 +330,16 @@
             android:name=".ui.profile.PlacementsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.FastagRaiseDisputeActivity"
+            android:name=".ui.fastag.qdr.FastagRaiseDisputeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.FastagDisputeIssuesActivity"
+            android:name=".ui.fastag.qdr.FastagDisputeIssuesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.FastagTransactionSelectionActivity"
+            android:name=".ui.fastag.qdr.FastagTransactionSelectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.FastagDynamicDisputeFormActivity"
+            android:name=".ui.fastag.qdr.FastagDynamicDisputeFormActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 

@@ -55,6 +55,14 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
     binding.loading = false
     binding.executePendingBindings()
 
+    viewModel.logoutResultLiveData.observe(this, Observer { success ->
+      if (success == true) {
+        navigationUtils.logout("Successfully logged out", "fromUser")
+      } else {
+        uiUtils.showSnackbar("Logout failed. Please try again.")
+      }
+    })
+
     viewModel.tripEarningLiveData.reobserve(this, Observer { t ->
       binding.loading = false
       if (t != null) {
@@ -183,7 +191,6 @@ class HomeProfileFragment : HomeBaseFragment<FragmentHomeProfileBinding, HomePro
                   mutableListOf(userPrefs.userId() , DateUtils.timeDiff(userPrefs.lastLoginTime))
           )
           viewModel.logout()
-          navigationUtils.logout("Successfully logged out","fromUser")
         }
     )
   }

@@ -121,18 +121,6 @@ class NetworkModule {
   )
 
   /**
-   * Bid service
-   */
-  @Provides
-  @Singleton
-  fun provideBidService(
-    gson: Gson,
-    okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.BidService).create(
-      BidService::class.java
-  )
-
-  /**
    * TPS service
    */
   @Provides
@@ -343,19 +331,6 @@ class NetworkModule {
           OMCService::class.java
   )
 
-
-  /**
-   * Provide [InventoryService]
-   */
-  @Provides
-  @Singleton
-  fun provideInventoryService(
-    gson: Gson,
-    okHttpClient: OkHttpClient
-  ) = getRetrofit(gson, okHttpClient, UrlConfig.InventoryService).create(
-    InventoryService::class.java
-  )
-
   /**
    * Provide [LoadboardService]
    */
@@ -411,6 +386,18 @@ class NetworkModule {
   )
 
   /**
+   * Provide [FastagService]
+   */
+  @Provides
+  @Singleton
+  fun provideFastagService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.FastagService).create(
+          FastagService::class.java
+  )
+
+  /**
    * Provide DocumentService for secure document upload/download
    */
   @Provides
@@ -442,4 +429,17 @@ class NetworkModule {
   fun provideDocumentUtils(
     documentService: DocumentService
   ): DocumentUtils = DocumentUtils(documentService)
+
+  /**
+   * Provide [FsAuthService] for FS Auth Service (signup, login, profile, token refresh).
+   * Uses the coroutines-based Retrofit instance — no RxJava adapter needed.
+   */
+  @Provides
+  @Singleton
+  fun provideFsAuthService(
+    gson: Gson,
+    okHttpClient: OkHttpClient
+  ): FsAuthService = getRetrofitForCoroutines(gson, okHttpClient, UrlConfig.FsAuthService).create(
+    FsAuthService::class.java
+  )
 }

@@ -2,224 +2,157 @@ package com.delhivery.axle.ui.auth
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.AuthenticationRepository
-import com.delhivery.axle.api.repository.NotificationRepository
-import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.ui.accountaction.AccountType
+import androidx.lifecycle.viewModelScope
+import com.delhivery.axle.api.repository.FsAuthRepository
+import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidOTP
 import com.delhivery.axle.ui.auth.AuthenticationUIError.InvalidPhoneNo
-import com.delhivery.axle.ui.auth.AuthenticationUIError.*
-import com.delhivery.axle.ui.auth.AuthenticationUIState.*
+import com.delhivery.axle.ui.auth.AuthenticationUIState.AccountDetails
+import com.delhivery.axle.ui.auth.AuthenticationUIState.HomePage
+import com.delhivery.axle.ui.auth.AuthenticationUIState.LoginProgress
+import com.delhivery.axle.ui.auth.AuthenticationUIState.OTP
+import com.delhivery.axle.ui.auth.AuthenticationUIState.PhoneNo
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
-import com.delhivery.axle.utils.extensions.not
-import com.delhivery.axle.utils.extensions.onBackground
-import com.delhivery.axle.utils.extensions.plusAssign
-import com.delhivery.axle.utils.prefs.DISABLED
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.Gson
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import retrofit2.HttpException
-import java.util.*
-import java.util.concurrent.TimeUnit.MILLISECONDS
+import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 /**
  * View model for [AuthenticationActivity]
  */
 class AuthenticationViewModel @Inject constructor(
-  private val authenticationRepository: AuthenticationRepository,
-  private val userRepository: UserRepository,
-  private val notificationRepository: NotificationRepository,
-  private val userPrefs: UserPrefs
-) :
-    BaseViewModel() {
+    private val fsAuthRepository: FsAuthRepository,
+    private val userPrefs: UserPrefs
+) : BaseViewModel() {
 
-  var otpStatusLiveData = MutableLiveData<Boolean>()
+    var otpStatusLiveData = MutableLiveData<Boolean>()
 
-  /* states */
-  var stateLiveData = MutableLiveData<AuthenticationUIState>()
-  var state: AuthenticationUIState = PhoneNo
-    set(value) {
-      stateLiveData.postValue(value)
+    /* states */
+    var stateLiveData = MutableLiveData<AuthenticationUIState>()
+    var state: AuthenticationUIState = PhoneNo
+        set(value) {
+            stateLiveData.postValue(value)
+        }
+
+    /* error live data */
+    var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
+
+    /* binding vars */
+    var phoneNo: String = ""
+    var otpSendCount: Int = 1
+
+    /** Session token from /auth/initiate — null for new users, required for existing users */
+    private var loginSession: String? = null
+
+    /**
+     * Initiate OTP flow (POST /api/v1/auth/initiate).
+     * Handles both new and existing users.
+     */
+    fun sendOTP() {
+        if (!isConnected) return
+
+        if (phoneNo.length < 10) {
+            errorLiveData.postValue(Pair(InvalidPhoneNo, null))
+            return
+        }
+
+        userPrefs.phoneNumber = phoneNo
+        otpStatusLiveData.postValue(true)
+        showProgress()
+
+        viewModelScope.launch {
+            when (val result = fsAuthRepository.initiate(phoneNo)) {
+                is Resource.Success -> {
+                    showProgress(false)
+                    val data = result.data
+                    if (data != null) {
+                        loginSession = data.session
+                        state = OTP
+                    } else {
+                        otpStatusLiveData.postValue(false)
+                        errorLiveData.postValue(Pair(InvalidOTP, "Failed to send OTP"))
+                        state = PhoneNo
+                    }
+                }
+                is Resource.Failure -> {
+                    showProgress(false)
+                    otpStatusLiveData.postValue(false)
+                    Log.e("AuthVM", "initiate failed: code=${result.errorCode}, error=${result.apiError}")
+                    errorLiveData.postValue(Pair(InvalidOTP, "Failed to send OTP. Please try again."))
+                    state = PhoneNo
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
     }
 
-  /* error live data */
-  var errorLiveData = MutableLiveData<Pair<AuthenticationUIError, String?>>()
+    /**
+     * Resends OTP (POST /api/v1/auth/resend).
+     * Keeps the user on the OTP screen on success.
+     */
+    fun resendOTP() {
+        if (!isConnected) return
 
-  /* binding vars */
-  var phoneNo: String = ""
-  var otpSendCount: Int = 1
+        if (phoneNo.length < 10) {
+            errorLiveData.postValue(Pair(InvalidPhoneNo, null))
+            return
+        }
 
-  /**
-   * Send OTP
-   */
-  fun sendOTP() {
-    if (!isConnected) return
+        otpStatusLiveData.postValue(true)
+        showProgress()
 
-    if (phoneNo.length < 10) {
-      errorLiveData.postValue(Pair(InvalidPhoneNo, null))
-      return
+        viewModelScope.launch {
+            when (val result = fsAuthRepository.resend(phoneNo)) {
+                is Resource.Success -> {
+                    showProgress(false)
+                    otpStatusLiveData.postValue(true)
+                }
+                is Resource.Failure -> {
+                    showProgress(false)
+                    otpStatusLiveData.postValue(false)
+                    Log.e("AuthVM", "resend failed: code=${result.errorCode}, error=${result.apiError}")
+                    errorLiveData.postValue(Pair(InvalidOTP, "Failed to resend OTP. Please try again."))
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
     }
 
-    userPrefs.phoneNumber = phoneNo
-    //make api call and move to otp state
-    otpStatusLiveData.postValue(true)
+    /**
+     * Verify OTP (POST /api/v1/auth/verify).
+     * Routes to [AccountDetails] for new users, [HomePage] for existing users.
+     */
+    fun verifyOTP(otp: CharArray) {
+        if (!isConnected) return
 
-    compositeDisposable += authenticationRepository.sendOTP(phoneNo)
-        .onBackground()
-        .progress()
-        .subscribe { _res, error ->
-          state = if (!error && _res.first) {
-            OTP
-          } else {
-            errorLiveData.postValue(Pair(InvalidOTP, _res.second))
-            PhoneNo
-          }
-        }
-  }
+        state = LoginProgress
+        val otpString = otp.joinToString("")
 
-  /**
-   * Verify OTP
-   */
-  fun verifyOTP(otp: CharArray) {
-    if (!isConnected) return
-
-    /* set state to login progress and verify otp */
-    state = LoginProgress
-    val _otp = otp.joinToString("")
-    compositeDisposable += Single.zip(
-        authenticationRepository.verifyOTP(phoneNo, _otp),
-        Single.timer(500, MILLISECONDS), //add delay for animation
-        BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
-        .flatMap { _Res ->
-          userRepository.getUser(false)
-              .map {
-                val msg = if (_Res.second.isNotNullOrEmpty()) {
-                  _Res.second
-                } else {
-                  "Error creating account"
+        viewModelScope.launch {
+            when (val result = fsAuthRepository.verify(phoneNo, otpString, loginSession)) {
+                is Resource.Success -> {
+                    val tokens = result.data
+                    if (tokens != null) {
+                        // Token is persisted and interceptor updated inside FsAuthRepository.verify()
+                        userPrefs.hasLoggedIn = true
+                        userPrefs.lastLoginTime = Date().time
+                        state = if (tokens.isNewUser == true) AccountDetails else HomePage
+                    } else {
+                        errorLiveData.postValue(Pair(InvalidOTP, ""))
+                    }
                 }
-                Triple(_Res.first, msg, it)
-              }
-        }
-        .onBackground()
-        .subscribe { _res, error ->
-          state = if (!error && _res.first) {
-            if(_res.third.supplierDetails?.isLoadBoardSupplier == false || _res.third.clientDetails?.isLoadBoardClient == false){
-              if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
-                userPrefs.hasLoggedIn = false
-                Disabled
-              } else{
-                userPrefs.hasLoggedIn = true
-                userPrefs.lastLoginTime = Date().time
-                LoadRequest
-              }
-            }else{
-              if (_res.third.supplierDetails?.isDeleted == true || _res.third.clientDetails?.isDeleted == true) {
-                userPrefs.hasLoggedIn = false
-                Disabled
-              }else if ((_res.third.userName.isNullOrEmpty() || _res.third.businessName.isNullOrEmpty() )) {
-                userPrefs.hasLoggedIn = false
-                AccountDetails
-              }  else {
-                userPrefs.hasLoggedIn = true
-                userPrefs.lastLoginTime = Date().time
-                // Check if basic details are filled
-                if (isBasicDetailsPending()) {
-                  BasicDetails
-                } else {
-                  LoadRequest
-                }
-              }
-            }
-          } else {
-            if (error is HttpException) {
-              userPrefs.hasLoggedIn = false
-           }
-          errorLiveData.postValue(Pair(InvalidOTP, ""))
-            OTP
-          }
-        }
-  }
-
-  /**
-   * Login password
-   */
-  fun loginUsingPassword(userName:String,password:String) {
-    /* set state to login progress and verify otp */
-    state = LoginProgress
-    compositeDisposable += Single.zip(
-      authenticationRepository.loginUsingPassword(userName, password),
-      Single.timer(1000, MILLISECONDS), //add delay for animation
-      BiFunction<Pair<Boolean, String>, Any, Pair<Boolean, String?>> { t1, _ -> t1 })
-      .flatMap { _otpRes ->
-        userRepository.getUser(false)
-          .map {
-            val msg = if (_otpRes.second.isNotNullOrEmpty()) {
-              _otpRes.second
-            } else {
-              "Error validating UserName/Password"
-            }
-            Triple(_otpRes.first, msg, it)
-          }
-      }
-      .onBackground()
-      .subscribe { _res, error ->
-        state = if (!error && _res.first) {
-          if (!_res.third.isSpEnabled && !_res.third.isClientEnabled) {
-            userPrefs.hasLoggedIn = false
-            Disabled
-          } else if (_res.third.supplierDetails?.isDeleted == true) {
-            userPrefs.hasLoggedIn = false
-            Disabled
-          } else {
-            userPrefs.hasLoggedIn = true
-            userPrefs.lastLoginTime = Date().time
-              val isAccountDetailsMissing = (userPrefs.userName.isEmpty() || userPrefs.companyName.isEmpty())
-              val isSupplier = _res.third.supplierDetails?.isLoadBoardSupplier == true
-              val isClient = _res.third.clientDetails?.isLoadBoardClient == true
-            // Check if basic details are filled
-            if ((isBasicDetailsPending() || isAccountDetailsMissing)   && isSupplier && isClient) {
-                if(isAccountDetailsMissing){
+                is Resource.Failure -> {
+                    Log.e("AuthVM", "verify failed: code=${result.errorCode}, error=${result.apiError}")
                     userPrefs.hasLoggedIn = false
-                    AccountDetails
-                }else
-                    BasicDetails
-            } else {
-              LoadRequest
+                    errorLiveData.postValue(Pair(InvalidOTP, ""))
+                }
+                Resource.Loading -> { /* no-op */ }
             }
-          }
-        } else {
-          errorLiveData.postValue(Pair(InvalidPassword, ""))
-          Password
         }
-      }
-  }
+    }
 
-  /**
-   * Mark notification as read
-   */
-  fun markNotificationRead(id: String) {
-    compositeDisposable += notificationRepository.markNotificationRead(id)
-        .onBackground()
-        .subscribe { _, _ ->
-
-        }
-  }
-
-  fun logout() {
-    userPrefs.clearPrefs()
-  }
-
-  /**
-   * Check if basic details (vendor type, route type, lanes) are pending
-   */
-  private fun isBasicDetailsPending(): Boolean {
-    return userPrefs.getLanesPreference().isNullOrEmpty() &&
-           userPrefs.truckTypes.isNullOrEmpty() &&
-           userPrefs.onboardingStatus == "details_pending" &&
-           (userPrefs.vendorType.isNullOrEmpty() || userPrefs.routeType.isNullOrEmpty())
-  }
+    fun logout() {
+        userPrefs.clearPrefs()
+    }
 }
