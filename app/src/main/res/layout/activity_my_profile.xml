@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    bind:srcCompat="@drawable/ic_delhivery_wallet" />
+                    bind:srcCompat="@drawable/ic_dlv_wallet" />
                 <TextView
                     android:layout_width="match_parent"
                     android:text="@string/label_delhivery_wallet"

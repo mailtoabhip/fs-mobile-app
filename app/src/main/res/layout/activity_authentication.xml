@@ -76,6 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/labelPhone"
+            android:gravity="center_vertical"
             android:layout_marginTop="@dimen/size_12dp"
             android:text="@string/sub_label_phone_number"
             android:textColor="@color/text_body_primary"
