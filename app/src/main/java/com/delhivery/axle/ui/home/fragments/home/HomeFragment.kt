@@ -18,6 +18,7 @@ import com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity
 import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
 import com.delhivery.axle.ui.common.UiEvent
 import com.delhivery.axle.ui.common.UiState
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
 import com.delhivery.axle.ui.home.activity.home.TitleProvider
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -56,6 +57,7 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         setupBannerCarousel()
 
         binding.fastagCard.setOnClickListener {
+            //startActivity(Intent(requireContext(), BuyFasTagActivity::class.java))
             startActivity(FastagTrucksActivity.newIntent(requireContext()))
         }
 

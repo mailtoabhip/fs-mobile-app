@@ -43,6 +43,7 @@ import com.delhivery.axle.databinding.FragmentHomeTrucksBinding
 import com.delhivery.axle.databinding.ViewFrequentTruckItemBinding
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.dialogs.FastagSuccessBottomSheetDialogFragment
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.ui.home.activity.home.OFF_SET_LIMIT
@@ -245,7 +246,9 @@ class HomeTrucksFragment : HomeBaseFragment<FragmentHomeTrucksBinding, HomeTruck
         binding.truckInventoryCardInner.btnBuyFastag.setOnClickListener {
             binding.editStickySearch.clearFocus()
             hideKeyboard(binding.editStickySearch)
-            showBuyFastagBottomSheet()
+            //showBuyFastagBottomSheet()
+            startActivity(Intent(requireContext(), BuyFasTagActivity::class.java))
+
         }
 
         // Setup filter icon click listener

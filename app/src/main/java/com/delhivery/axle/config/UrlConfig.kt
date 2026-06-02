@@ -163,6 +163,11 @@ enum class UrlConfig(
         "https://fs-auth-dev.delhivery.com/",
         "https://api.devfinserv.com"
     ),
+  SaleCodeService(
+      "https://financial-api.delhiveryfinserv.com",
+      "https://financial-fastag-dev.delhivery.com",
+      "https://financial-fastag-dev.delhivery.com"
+  ),
   AppID(
   "83", "371", "371"
   );

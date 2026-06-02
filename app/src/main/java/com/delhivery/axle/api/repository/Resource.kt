@@ -26,10 +26,12 @@ sealed class Resource<out T> {
      * @param isNetworkError True if the failure was due to network connectivity issues (IOException)
      * @param errorCode HTTP status code if available (null for network errors or non-HTTP exceptions)
      * @param apiError Categorized error type for consistent error handling in the UI
+     * @param errorMessage Server error message if available
      */
     data class Failure(
         val isNetworkError: Boolean,
         val errorCode: Int?,
-        val apiError: ApiError
+        val apiError: ApiError,
+        val errorMessage: String? = null
     ) : Resource<Nothing>()
 }

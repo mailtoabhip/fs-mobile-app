@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/slideTrack"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="@drawable/bg_slide_track">
+
+    <!-- Label -->
+    <TextView
+        android:id="@+id/slideLabel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Slide to continue"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_16sp" />
+
+    <!-- Thumb -->
+    <ImageView
+        android:id="@+id/slideThumb"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_slide_thumb"
+        android:padding="12dp"
+        android:src="@drawable/ic_chevron_right" />
+
+</FrameLayout>

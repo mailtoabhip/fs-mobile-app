@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="salesCode"
+            type="String" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/bgFastag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_16dp"
+            android:src="@drawable/img_buy_fastag"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/salesCodeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_16dp"
+            android:text="@string/sales_code_title"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bgFastag" />
+
+        <EditText
+            android:id="@+id/etSalesCode"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_48dp"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:background="@drawable/bg_edit_text_outline"
+            android:hint="Enter your agent sales code"
+            android:paddingHorizontal="@dimen/size_12dp"
+            android:singleLine="true"
+            android:text="@={salesCode}"
+            android:textColor="@color/heading_black"
+            android:textColorHint="@color/color_hint"
+            android:textSize="@dimen/text_14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/salesCodeTitle" />
+
+        <include
+            android:id="@+id/bottomButtons"
+            layout="@layout/layout_bottom_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

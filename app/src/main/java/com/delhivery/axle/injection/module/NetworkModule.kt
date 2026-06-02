@@ -426,6 +426,15 @@ class NetworkModule {
     InvoiceService::class.java
   )
 
+    @Provides
+    @Singleton
+    fun provideSalesCodeService(
+        gson: Gson,
+        okHttpClient: OkHttpClient
+    ) = getRetrofit(gson, okHttpClient, UrlConfig.SaleCodeService).create(
+        FasTAGIssuanceService::class.java
+    )
+
   /**
    * Provide DocumentUtils for secure document upload/download
    */

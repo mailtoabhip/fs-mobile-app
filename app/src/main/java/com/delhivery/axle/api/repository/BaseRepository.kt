@@ -65,10 +65,16 @@ abstract class BaseRepository(
         } catch (e: HttpException) {
             errorLogger.log(e)
             Log.e("BaseRepository", "HttpException in safeApiCall: code=${e.code()}, message=${e.message()}", e)
+            val errorMessage = try {
+                val errorBody = e.response()?.errorBody()?.string()
+                val parsed = com.google.gson.Gson().fromJson(errorBody, com.delhivery.axle.api.response.ErrorResponseBody::class.java)
+                parsed?.errorBody?.errorMessage
+            } catch (_: Exception) { null }
             Resource.Failure(
                 isNetworkError = false,
                 errorCode = e.code(),
-                apiError = mapHttpCodeToApiError(e.code())
+                apiError = mapHttpCodeToApiError(e.code()),
+                errorMessage = errorMessage
             )
         } catch (e: Exception) {
             errorLogger.log(e)
