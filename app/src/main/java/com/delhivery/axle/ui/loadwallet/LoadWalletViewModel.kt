@@ -193,6 +193,7 @@ class LoadWalletViewModel @Inject constructor(
         if (reset) transactionInitialLoadingLiveData.postValue(true)
 
         transactionDisposable = walletApiService.fetchTransactions(
+            userId = userPrefs.userId(),
             start = start,
             end = end,
             type = type,
@@ -271,6 +272,7 @@ class LoadWalletViewModel @Inject constructor(
         if (reset) rechargeInitialLoadingLiveData.postValue(true)
 
         rechargeDisposable = walletApiService.fetchRechargeHistory(
+            userId = userPrefs.userId(),
             start = start,
             end = end,
             limit = pageSize,
@@ -318,7 +320,9 @@ class LoadWalletViewModel @Inject constructor(
      * If 404 → notify walletExistsLiveData(false)
      */
     fun fetchWalletDetails() {
-        compositeDisposable += walletApiService.fetchWalletInfo()
+        compositeDisposable += walletApiService.fetchWalletInfo(
+            userId = userPrefs.userId()
+        )
             .convertResponse()
             .onBackground()
             .subscribe({ result ->
@@ -346,7 +350,10 @@ class LoadWalletViewModel @Inject constructor(
             addProperty("phone", userPrefs.phoneNumber ?: "")
             addProperty("email", email)
         }
-        compositeDisposable += walletApiService.createWallet(request)
+        compositeDisposable += walletApiService.createWallet(
+            userId = userPrefs.userId(),
+            request = request
+        )
             .convertResponse()
             .onBackground()
             .subscribe({ result ->
@@ -371,7 +378,11 @@ class LoadWalletViewModel @Inject constructor(
      * Refresh status of a single pending transaction via txn_id filter
      */
     fun refreshTransactionStatus(txnId: String, createdAt: String) {
-        compositeDisposable += walletApiService.fetchTransactions(txnId = txnId, limit = 1)
+        compositeDisposable += walletApiService.fetchTransactions(
+            userId = userPrefs.userId(),
+            txnId = txnId,
+            limit = 1
+        )
             .convertResponse()
             .onBackground()
             .subscribe({ result ->
@@ -393,7 +404,10 @@ class LoadWalletViewModel @Inject constructor(
         val request = JsonObject().apply {
             addProperty("recharge_id", rechargeId)
         }
-        compositeDisposable += walletApiService.fetchRechargeStatus(request)
+        compositeDisposable += walletApiService.fetchRechargeStatus(
+            userId = userPrefs.userId(),
+            request = request
+        )
             .convertResponse()
             .onBackground()
             .subscribe({ result ->

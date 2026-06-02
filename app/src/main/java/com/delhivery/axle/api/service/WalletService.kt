@@ -26,19 +26,25 @@ interface WalletService {
    * Activate Wallet
    */
   @PATCH("/api/v1/wallet/me")
-  fun activateWallet(@Body payload: WalletUpdateRequest): Single<BaseResponse<WalletDataResponse>>
+  fun activateWallet(
+    @Header("x-user-id") userId: String,
+    @Body payload: WalletUpdateRequest
+  ): Single<BaseResponse<WalletDataResponse>>
 
   /**
    * Get wallet data
    */
   @GET("/api/v1/wallet/me")
-  fun fetchWalletData(): Single<BaseResponse<WalletDataResponse>>
+  fun fetchWalletData(
+    @Header("x-user-id") userId: String
+  ): Single<BaseResponse<WalletDataResponse>>
 
   /**
    * Get wallet data
    */
   @GET("/api/v1/wallet/me/transactions/")
   fun fetchWalletTransactions(
+    @Header("x-user-id") userId: String,
     @Query("start_time") startTime: String = "2018-09-18T13:16:44",
     @Query("end_time") endTime: String = "2020-09-18T13:16:44"
   ): Single<BaseResponse<WalletTransactionsResponse>>
@@ -47,12 +53,18 @@ interface WalletService {
    * Tranfer amount from wallet to bank
    */
   @POST("/api/v1/wallet/me/transactions/")
-  fun transferToBank(@Body payload: BankTransferRequest): Single<BaseResponse<BankTransferResponse>>
+  fun transferToBank(
+    @Header("x-user-id") userId: String,
+    @Body payload: BankTransferRequest
+  ): Single<BaseResponse<BankTransferResponse>>
 
   /**
    * Fetch active fuel cards
    */
   @POST("/api/v1/wallet/me/transactions/")
-  fun createFuelCard(@Body payload: CreateFuelCardRequest): Single<BaseResponse<BankTransferResponse>>
+  fun createFuelCard(
+    @Header("x-user-id") userId: String,
+    @Body payload: CreateFuelCardRequest
+  ): Single<BaseResponse<BankTransferResponse>>
 
 }

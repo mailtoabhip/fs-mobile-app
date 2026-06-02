@@ -6,11 +6,13 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
 import javax.inject.Inject
 
 class RechargeDetailsViewModel @Inject constructor(
-    private val walletApiService: WalletApiService
+    private val walletApiService: WalletApiService,
+    private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
     /** Pair(rechargeId, newStatus) on success, null on error */
@@ -21,7 +23,10 @@ class RechargeDetailsViewModel @Inject constructor(
         val request = JsonObject().apply {
             addProperty("recharge_id", rechargeId)
         }
-        compositeDisposable += walletApiService.fetchRechargeStatus(request)
+        compositeDisposable += walletApiService.fetchRechargeStatus(
+            userId = userPrefs.userId(),
+            request = request
+        )
             .convertResponse()
             .onBackground()
             .subscribe({ result ->

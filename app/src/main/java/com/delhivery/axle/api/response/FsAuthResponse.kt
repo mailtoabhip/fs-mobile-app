@@ -10,8 +10,8 @@ import com.google.gson.annotations.SerializedName
  * User profile returned by GET /api/v1/auth/profile and PUT /api/v1/auth/profile.
  */
 data class FsUserProfile(
-    @SerializedName("id") val id: String,
-    @SerializedName("phone") val phone: String,
+    @SerializedName("id") val id: String?,
+    @SerializedName("phone") val phone: String?,
     @SerializedName("first_name") val firstName: String?,
     @SerializedName("last_name") val lastName: String?,
     @SerializedName("is_active") val isActive: Boolean?,

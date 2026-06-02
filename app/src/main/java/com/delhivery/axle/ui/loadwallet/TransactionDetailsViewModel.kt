@@ -6,10 +6,12 @@ import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
 class TransactionDetailsViewModel @Inject constructor(
-    private val walletApiService: WalletApiService
+    private val walletApiService: WalletApiService,
+    private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
     /** Pair(txnId, newStatus) on success, null on error */
@@ -17,7 +19,11 @@ class TransactionDetailsViewModel @Inject constructor(
     var refreshErrorLiveData = MutableLiveData<String?>()
 
     fun fetchTransactionStatus(txnId: String, createdAt: String) {
-        compositeDisposable += walletApiService.fetchTransactions(txnId = txnId, limit = 1)
+        compositeDisposable += walletApiService.fetchTransactions(
+            userId = userPrefs.userId(),
+            txnId = txnId,
+            limit = 1
+        )
             .convertResponse()
             .onBackground()
             .subscribe({ result ->

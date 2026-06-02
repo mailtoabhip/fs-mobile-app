@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import io.reactivex.Single
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -21,6 +22,7 @@ import retrofit2.http.Query
  * Base URL: LoadboardService (where /api/v1/wallet endpoints are hosted).
  *
  * Note: X-User-Id header is added globally via DelhiveryNetworkInterceptor.
+ * TODO Remove All the User_Id headers from the API.
  */
 interface WalletApiService {
 
@@ -39,6 +41,7 @@ interface WalletApiService {
      */
     @POST("/api/v1/wallet")
     fun createWallet(
+        @Header("x-user-id") userId: String,
         @Body request: JsonObject
     ): Single<BaseResponse<UserWalletResponse>>
 
@@ -56,6 +59,7 @@ interface WalletApiService {
      */
     @POST("/api/v1/wallet/recharge")
     fun rechargeWallet(
+        @Header("x-user-id") userId: String,
         @Body request: JsonObject
     ): Single<BaseResponse<WalletRechargeInitResponse>>
 
@@ -70,7 +74,9 @@ interface WalletApiService {
      * @return wallet info
      */
     @GET("/api/v1/wallet")
-    fun fetchWalletInfo(): Single<BaseResponse<UserWalletResponse>>
+    fun fetchWalletInfo(
+        @Header("x-user-id") userId: String
+    ): Single<BaseResponse<UserWalletResponse>>
 
     // ─────────────────────────────────────────────────────────────────────────
     // 4. Transactions History
@@ -95,6 +101,7 @@ interface WalletApiService {
      */
     @GET("/api/v1/wallet/transactions")
     fun fetchTransactions(
+        @Header("x-user-id") userId: String,
         @Query("start") start: String? = null,
         @Query("end") end: String? = null,
         @Query("txn_id") txnId: String? = null,
@@ -123,6 +130,7 @@ interface WalletApiService {
      */
     @GET("/api/v1/wallet/recharges")
     fun fetchRechargeHistory(
+        @Header("x-user-id") userId: String,
         @Query("start") start: String,
         @Query("end") end: String,
         @Query("recharge_id") rechargeId: String? = null,
@@ -142,8 +150,9 @@ interface WalletApiService {
      *
      * @return recharge details with current status
      */
-    @POST("/api/v1/wallet/recharge_status")
+    @POST("/api/v1/wallet/recharge-status")
     fun fetchRechargeStatus(
+        @Header("x-user-id") userId: String,
         @Body request: JsonObject
     ): Single<BaseResponse<RechargeStatusResponse>>
 }
