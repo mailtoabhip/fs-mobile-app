@@ -124,9 +124,9 @@ class AuthenticationViewModel @Inject constructor(
 
     /**
      * Verify OTP (POST /api/v1/auth/verify).
-     * On success, fetches user profile to decide navigation:
-     *  - Profile has first_name → existing user → [HomePage]
-     *  - Profile missing first_name → new user → [AccountDetails]
+     * On success, checks prefs (populated by verify response) to decide navigation:
+     *  - firstName & lastName present → existing user → [HomePage]
+     *  - Missing → new user → [AccountDetails]
      */
     fun verifyOTP(otp: CharArray) {
         if (!isConnected) return
@@ -144,29 +144,12 @@ class AuthenticationViewModel @Inject constructor(
                         userPrefs.hasLoggedIn = true
                         userPrefs.lastLoginTime = Date().time
 
-                        // Fetch profile to determine navigation
-                        when (val profileResult = fsAuthRepository.getProfile()) {
-                            is Resource.Success -> {
-                                val profile = profileResult.data
-                                if (profile != null && profile.firstName.isNotNullOrEmpty() && profile.lastName.isNotNullOrEmpty()) {
-                                    // Existing user with completed profile
-                                    userPrefs.userName = "${profile.firstName} ${profile.lastName.orEmpty()}".trim()
-                                    userPrefs.phoneNumber = profile.phone
-                                    userPrefs.firstName =  profile.firstName
-                                    userPrefs.lastName =  profile.lastName
-                                    state = HomePage
-                                } else {
-                                    // New user or incomplete profile
-                                    state = AccountDetails
-                                }
-                            }
-                            is Resource.Failure -> {
-                                // Profile fetch failed — show error and let user retry OTP
-                                Log.w("AuthVM", "Profile fetch failed: ${profileResult.apiError}")
-                                errorLiveData.postValue(Pair(InvalidOTP, "Something went wrong. Please try again."))
-                                state = OTP
-                            }
-                            Resource.Loading -> { /* no-op */ }
+                        // verify() already saves firstName/lastName to prefs — use them directly
+                        if (userPrefs.firstName.isNotNullOrEmpty() && userPrefs.lastName.isNotNullOrEmpty()) {
+                            userPrefs.userName = "${userPrefs.firstName} ${userPrefs.lastName.orEmpty()}".trim()
+                            state = HomePage
+                        } else {
+                            state = AccountDetails
                         }
                     } else {
                         errorLiveData.postValue(Pair(InvalidOTP, ""))
