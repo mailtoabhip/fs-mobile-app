@@ -147,6 +147,11 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             startActivity(loadWalletIntent(this))
         }
 
+        binding.helpLayout.setOnClickListener {
+            userPrefs.setPreviousScreen(this.javaClass.name)
+            navigationUtils.navigate(HelpSupportActivity::class.java)
+        }
+
     }
     private fun showAccountDeletionRequestDialog() {
         val dialog = Dialog(this)
