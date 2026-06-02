@@ -34,13 +34,15 @@ class AgentConfirmationFragment : Fragment() {
         binding.bottomButtons.btnSecondary.text = "Change"
 
         binding.bottomButtons.btnPrimary.setOnClickListener {
-            val intent = Intent(requireContext(), AddVehicleActivity::class.java)
+            val intent = Intent(requireContext(), AddVehicleActivity::class.java).apply {
+                putExtra(AddVehicleActivity.EXTRA_SALES_CODE, arguments?.getString(ARG_AGENT_CODE, "") ?: "")
+            }
             startActivity(intent)
         }
 
         binding.bottomButtons.btnSecondary.setOnClickListener {
             parentFragmentManager.setFragmentResult("change_sales_code", Bundle.EMPTY)
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStackImmediate()
         }
     }
 

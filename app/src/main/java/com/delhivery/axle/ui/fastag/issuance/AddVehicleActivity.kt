@@ -9,6 +9,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityAddVehicleBinding
@@ -53,12 +56,26 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
+    private var debounceJob: kotlinx.coroutines.Job? = null
+    private var lastCheckedVrn = ""
+
     private fun setupTextWatcher() {
         binding.etTruckNumber.addTextChangedListener { text ->
             isVehicleEligible = false
+            binding.btnContinue.isEnabled = false
+            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+
             val truckNumber = text?.toString()?.trim() ?: ""
-            if (isValidVehicleNumber(truckNumber)) {
-                viewModel.checkVehicle(truckNumber.uppercase().replace(" ", "").replace("-", ""))
+            val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
+
+            debounceJob?.cancel()
+
+            if (isValidVehicleNumber(truckNumber) && normalized != lastCheckedVrn) {
+                debounceJob = kotlinx.coroutines.MainScope().launch {
+                    kotlinx.coroutines.delay(500) // 500ms debounce
+                    lastCheckedVrn = normalized
+                    viewModel.checkVehicle(normalized)
+                }
             }
         }
     }
@@ -187,13 +204,28 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     // }
 
     private fun showVehicleBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
+        // Prevent duplicate bottom sheets
+        val existing = supportFragmentManager.findFragmentByTag(VehicleDetailsBottomSheet.TAG)
+        if (existing != null) return
+
         VehicleDetailsBottomSheet.fromResponse(
             response = data,
             issuerPhone = "",
             onAction = if (data.eligible) {
                 {
-                    // Call KYC onboard validate API on confirm
-                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                    // Navigate directly to PaymentBreakupActivity for testing wallet flow
+                    val items = arrayListOf(
+                        com.delhivery.axle.api.request.PaymentBreakupItem(
+                            vehicleClass = "VC5",
+                            quantity = 1
+                        )
+                    )
+                    val intent = Intent(this, PaymentBreakupActivity::class.java).apply {
+                        putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
+                        putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                        putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                    }
+                    startActivity(intent)
                 }
             } else null
         ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
@@ -201,5 +233,6 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val EXTRA_TRUCK_NUMBER = "extra_truck_number"
+        const val EXTRA_SALES_CODE = "extra_sales_code"
     }
 }
