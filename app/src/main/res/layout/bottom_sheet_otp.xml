@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_bottom_sheet_rounded_top"
-        android:paddingBottom="@dimen/size_16dp">
+        android:paddingBottom="@dimen/size_32dp">
 
         <!-- Header -->
         <com.google.android.material.textview.MaterialTextView
@@ -163,6 +163,22 @@
 
         </LinearLayout>
 
+        <!-- Error Text (shown on invalid OTP) -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvOtpError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_marginEnd="@dimen/size_16dp"
+            android:text="Incorrect OTP. Resend OTP"
+            android:textColor="#E53935"
+            android:textSize="@dimen/text_14sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/otpContainer" />
+
         <!-- Resend Timer -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvResendTimer"
@@ -174,7 +190,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/otpContainer" />
+            app:layout_constraintTop_toBottomOf="@id/tvOtpError" />
 
         <!-- Resend Button (shown after timer expires) -->
         <com.google.android.material.textview.MaterialTextView
@@ -197,7 +213,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/size_48dp"
             android:layout_marginStart="@dimen/size_16dp"
-            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_32dp"
             android:layout_marginEnd="@dimen/size_16dp"
             android:background="@{isOtpFilled ? @drawable/bg_all_round_corner_solid_black : @drawable/bg_all_round_corner_light_grey}"
             android:enabled="@{isOtpFilled}"

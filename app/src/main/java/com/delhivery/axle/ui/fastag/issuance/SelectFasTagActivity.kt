@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
+import com.delhivery.axle.api.request.CreateOrderRequest
 import com.delhivery.axle.api.response.VehicleClassData
 import com.delhivery.axle.databinding.ActivitySelectFastagBinding
 import com.delhivery.axle.utils.ViewModelFactory
@@ -22,6 +23,9 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
 
     private lateinit var binding: ActivitySelectFastagBinding
     private lateinit var viewModel: SelectFasTagViewModel
@@ -44,6 +48,7 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
         setupToolbar()
         setupClickListeners()
         observeViewModel()
+        observeCreateOrderAndKyc()
 
         viewModel.fetchVehicleClasses()
     }
@@ -59,10 +64,80 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
     private fun setupClickListeners() {
         binding.btnContinue.setOnClickListener {
             val selectedItem = adapter?.getSelectedItem() ?: return@setOnClickListener
-            val intent = Intent(this, FastagKycActivity::class.java).apply {
-                putExtra(EXTRA_VEHICLE_CLASS, selectedItem.classId)
+            val salesCode = intent.getStringExtra(AddVehicleActivity.EXTRA_SALES_CODE) ?: ""
+            val customerName = intent.getStringExtra(AddVehicleActivity.EXTRA_CUSTOMER_NAME) ?: ""
+            val vrn = intent.getStringExtra(EXTRA_VRN) ?: ""
+
+            val request = CreateOrderRequest(
+                salesCode = salesCode,
+                customerName = customerName,
+                customerMobile = "", // TODO: Pass from validate sales code API if available
+                vehicles = listOf(
+                    com.delhivery.axle.api.request.OrderVehicleItem(
+                        vrn = vrn,
+                        vehicleClass = selectedItem.classId,
+                        unitPrice = "100.00" // TODO: Get from API/config
+                    )
+                ),
+                totalAmount = "100.00", // TODO: Calculate
+                idempotencyKey = "ORD-${java.util.UUID.randomUUID()}"
+            )
+            viewModel.createOrder(request)
+        }
+    }
+
+    private fun observeCreateOrderAndKyc() {
+        viewModel.createOrderState.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    // TODO: Show loading
+                }
+                is Resource.Success -> {
+                    // Order created — now check KYC status
+                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                }
+                is Resource.Failure -> {
+                    val message = resource.errorMessage
+                        ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
+                    dialogUtils.showErrorDialog(message)
+                }
             }
-            startActivity(intent)
+        }
+
+        viewModel.kycValidateState.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    // TODO: Show loading
+                }
+                is Resource.Success -> {
+                    val data = resource.data ?: return@observe
+                    val salesCode = intent.getStringExtra(AddVehicleActivity.EXTRA_SALES_CODE) ?: ""
+                    if (data.fastagCustomerExists) {
+                        // Existing customer — skip KYC, go directly to payment
+                        val items = arrayListOf(
+                            com.delhivery.axle.api.request.PaymentBreakupItem(
+                                vehicleClass = adapter?.getSelectedItem()?.classId ?: "",
+                                quantity = 1
+                            )
+                        )
+                        val navIntent = Intent(this, PaymentBreakupActivity::class.java).apply {
+                            putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
+                            putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                            putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                        }
+                        startActivity(navIntent)
+                    } else {
+                        // New customer — needs KYC
+                        val navIntent = Intent(this, FastagKycActivity::class.java)
+                        startActivity(navIntent)
+                    }
+                }
+                is Resource.Failure -> {
+                    val message = resource.errorMessage
+                        ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
+                    dialogUtils.showErrorDialog(message)
+                }
+            }
         }
     }
 
@@ -86,7 +161,7 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
                     } else {
                         "Something went wrong. Please try again."
                     }
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -125,5 +200,6 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
+        const val EXTRA_VRN = "extra_vrn"
     }
 }

@@ -34,7 +34,14 @@ class AgentConfirmationFragment : Fragment() {
         binding.bottomButtons.btnSecondary.text = "Change"
 
         binding.bottomButtons.btnPrimary.setOnClickListener {
+<<<<<<< Updated upstream
             val intent = Intent(requireContext(), AddVehicleActivity::class.java)
+=======
+            val intent = Intent(requireContext(), AddVehicleActivity::class.java).apply {
+                putExtra(AddVehicleActivity.EXTRA_SALES_CODE, arguments?.getString(ARG_AGENT_CODE, "") ?: "")
+                putExtra(AddVehicleActivity.EXTRA_CUSTOMER_NAME, arguments?.getString(ARG_AGENT_NAME, "") ?: "")
+            }
+>>>>>>> Stashed changes
             startActivity(intent)
         }
 

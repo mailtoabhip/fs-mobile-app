@@ -24,4 +24,8 @@ class SalesCodeViewModel @Inject constructor(
             _validateState.value = result
         }
     }
+
+    fun resetValidateState() {
+        _validateState.value = null
+    }
 }

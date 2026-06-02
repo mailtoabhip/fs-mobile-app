@@ -24,6 +24,9 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
+
     private lateinit var binding: ActivityFastagCollectionBinding
     private lateinit var viewModel: FastagCollectionViewModel
 
@@ -47,7 +50,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
             confirmCollection()
         }
 
-        viewModel.fetchOrders()
+        viewModel.fetchOrders(intent.getStringExtra("extra_sales_code") ?: "")
     }
 
     private var currentOrderId: String = ""
@@ -92,7 +95,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
                     } else {
                         "Something went wrong. Please try again."
                     }
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -120,7 +123,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
                     } else {
                         "Something went wrong. Please try again."
                     }
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }

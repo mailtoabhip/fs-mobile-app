@@ -168,6 +168,11 @@ enum class UrlConfig(
       "https://financial-fastag-dev.delhivery.com",
       "https://financial-fastag-dev.delhivery.com"
   ),
+  KycService(
+      "https://financial-fastag-staging.delhivery.com",
+      "https://financial-fastag-staging.delhivery.com",
+      "https://financial-fastag-staging.delhivery.com"
+  ),
   AppID(
   "83", "371", "371"
   );

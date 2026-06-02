@@ -21,6 +21,9 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
+
     private lateinit var binding: ActivityAddVehicleBinding
     private lateinit var viewModel: AddVehicleViewModel
 
@@ -83,7 +86,19 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                             isVehicleEligible = true
                             binding.btnContinue.isEnabled = true
                             binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
-                            showVehicleBottomSheet(data)
+
+                            if (data.npciVehicleClass == null) {
+                                // Vehicle class unknown — navigate to SelectFasTagActivity to pick one
+                                val intent = Intent(this, SelectFasTagActivity::class.java).apply {
+                                    putExtra(SelectFasTagActivity.EXTRA_VRN, data.vrn)
+                                    putExtra(EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
+                                    putExtra(EXTRA_CUSTOMER_NAME, getIntent().getStringExtra(EXTRA_CUSTOMER_NAME) ?: "")
+                                }
+                                startActivity(intent)
+                            } else {
+                                // Vehicle class known — show bottom sheet
+                                showVehicleBottomSheet(data)
+                            }
                         }
                         "HOTLISTED", "ALREADY_ISSUED" -> {
                             isVehicleEligible = false
@@ -95,7 +110,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                             isVehicleEligible = false
                             binding.btnContinue.isEnabled = false
                             binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
-                            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
+                            dialogUtils.showErrorDialog(data.message)
                         }
                     }
                 }
@@ -106,7 +121,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                     binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -119,27 +134,37 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
+                    val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
                     if (data.fastagCustomerExists) {
                         // Existing customer — skip KYC, go directly to payment
-                        val intent = Intent(this, PaymentBreakupActivity::class.java)
-                        startActivity(intent)
+                        val items = arrayListOf(
+                            com.delhivery.axle.api.request.PaymentBreakupItem(
+                                vehicleClass = "VC5", // TODO: Use actual vehicle class
+                                quantity = 1
+                            )
+                        )
+                        val navIntent = Intent(this, PaymentBreakupActivity::class.java).apply {
+                            putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
+                            putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                            putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                        }
+                        startActivity(navIntent)
                     } else {
                         // New customer — needs KYC
-                        val intent = Intent(this, FastagKycActivity::class.java)
-                        startActivity(intent)
+                        val navIntent = Intent(this, FastagKycActivity::class.java)
+                        startActivity(navIntent)
                     }
                 }
 
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
 
-        // TODO: Uncomment when create order API is integrated
-        /*
+        // Create order observer — on success, call KYC validate to decide next screen
         viewModel.createOrderState.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -148,22 +173,17 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
-                    // Order created — navigate to PaymentBreakupActivity
-                    val intent = Intent(this, PaymentBreakupActivity::class.java).apply {
-                        putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, data.salesCode)
-                        putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
-                    }
-                    startActivity(intent)
+                    // Order created — now check KYC status
+                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
                 }
 
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
-        */
     }
 
     private fun isValidVehicleNumber(vehicleNumber: String): Boolean {
@@ -192,8 +212,29 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             issuerPhone = "",
             onAction = if (data.eligible) {
                 {
+<<<<<<< Updated upstream
                     // Call KYC onboard validate API on confirm
                     viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+=======
+                    // Create order on confirm
+                    val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
+                    val customerName = intent.getStringExtra(EXTRA_CUSTOMER_NAME) ?: ""
+                    val request = com.delhivery.axle.api.request.CreateOrderRequest(
+                        salesCode = salesCode,
+                        customerName = customerName,
+                        customerMobile = "", // TODO: Pass from validate sales code API if available
+                        vehicles = listOf(
+                            com.delhivery.axle.api.request.OrderVehicleItem(
+                                vrn = data.vrn,
+                                vehicleClass = data.vehicleClass?.vehicleClass ?: data.npciVehicleClass ?: "VC5",
+                                unitPrice = "100.00" // TODO: Get from API/config
+                            )
+                        ),
+                        totalAmount = "100.00", // TODO: Calculate
+                        idempotencyKey = "ORD-${java.util.UUID.randomUUID()}"
+                    )
+                    viewModel.createOrder(request)
+>>>>>>> Stashed changes
                 }
             } else null
         ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
@@ -201,5 +242,10 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val EXTRA_TRUCK_NUMBER = "extra_truck_number"
+<<<<<<< Updated upstream
+=======
+        const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_CUSTOMER_NAME = "extra_customer_name"
+>>>>>>> Stashed changes
     }
 }

@@ -2,18 +2,12 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.ConfirmCollectionRequest
 import com.delhivery.axle.api.request.CreateOrderRequest
-import com.delhivery.axle.api.request.KycInitiateRequest
-import com.delhivery.axle.api.request.KycVerifyRequest
 import com.delhivery.axle.api.request.PaymentBreakupRequest
 import com.delhivery.axle.api.request.ValidateSalesRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ConfirmCollectionResponse
 import com.delhivery.axle.api.response.CreateOrderResponse
 import com.delhivery.axle.api.response.FastagOrdersResponse
-import com.delhivery.axle.api.response.KycOnboardValidateResponse
-import com.delhivery.axle.api.response.KycInitiateResponse
-import com.delhivery.axle.api.response.KycTypesResponse
-import com.delhivery.axle.api.response.KycVerifyResponse
 import com.delhivery.axle.api.response.PaymentBreakupResponse
 import com.delhivery.axle.api.response.ValidateSalesCodeResponse
 import com.delhivery.axle.api.response.VehicleCheckResponse
@@ -40,6 +34,7 @@ interface FasTAGIssuanceService {
     @GET("/fastag/tag-issuance/v1/orders/by-vendor")
     suspend fun getOrdersByVendor(
         @Header("X-Vendor-Id") vendorId: String,
+        @Query("sales_code") salesCode: String,
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0
     ): BaseResponse<FastagOrdersResponse>
@@ -57,6 +52,7 @@ interface FasTAGIssuanceService {
         @Query("vrn") vrn: String
     ): BaseResponse<VehicleCheckResponse>
 
+<<<<<<< Updated upstream
     @GET("/fastag/tag-issuance/v1/kyc/onboard-validate")
     suspend fun kycOnboardValidate(
         @Header("X-Vendor-Id") vendorId: String,
@@ -81,6 +77,9 @@ interface FasTAGIssuanceService {
         @Body request: KycVerifyRequest
     ): BaseResponse<KycVerifyResponse>
 
+=======
+    @Headers("No-Request-Id: true")
+>>>>>>> Stashed changes
     @POST("/fastag/tag-issuance/v1/payment/breakup")
     suspend fun getPaymentBreakup(
         @Header("X-Vendor-Id") vendorId: String,
@@ -89,6 +88,7 @@ interface FasTAGIssuanceService {
 
     @POST("/fastag/tag-issuance/v1/order/create")
     suspend fun createOrder(
+        @Header("X-Vendor-Id") vendorId: String,
         @Body request: CreateOrderRequest
     ): BaseResponse<CreateOrderResponse>
 }
