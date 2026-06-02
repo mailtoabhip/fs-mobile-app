@@ -337,6 +337,18 @@ class NetworkModule {
   )
 
   /**
+   * Provide [WalletApiService] — new dedicated wallet API service
+   */
+  @Provides
+  @Singleton
+  fun provideWalletApiService(
+          gson: Gson,
+          okHttpClient: OkHttpClient
+  ) = getRetrofit(gson, okHttpClient, UrlConfig.LoadboardService).create(
+          WalletApiService::class.java
+  )
+
+  /**
    * Provide [LoadboardService]
    */
 

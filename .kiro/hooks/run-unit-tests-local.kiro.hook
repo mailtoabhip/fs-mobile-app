@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Run Unit Tests Locally",
+  "description": "Runs all unit tests locally using Gradle and displays a formatted test summary with pass/fail counts.",
+  "version": "2",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run the unit tests locally and display a formatted summary.\n\n## Step 1: Run Tests\nExecute the following command:\n```bash\n./gradlew testDevelopmentDebugUnitTest --no-daemon 2>&1\n```\n\n## Step 2: Parse Results\nAfter the test run completes, parse the output to extract:\n- Total tests run\n- Passed tests count\n- Failed tests count\n- Skipped tests count\n- Execution time\n- Any failure details\n\n## Step 3: Display Formatted Summary\nALWAYS display the results in this exact format:\n\n```\n╔══════════════════════════════════════════════════════════════╗\n║                    📊 TEST RUN SUMMARY                       ║\n╠══════════════════════════════════════════════════════════════╣\n║  ✅ Passed:  XX tests                                        ║\n║  ❌ Failed:  XX tests                                        ║\n║  ⏭️  Skipped: XX tests                                        ║\n║  📝 Total:   XX tests                                        ║\n╠══════════════════════════════════════════════════════════════╣\n║  ⏱️  Duration: X.XXs                                          ║\n║  📁 Report: app/build/reports/tests/testDevelopmentDebugUnitTest/index.html\n╚══════════════════════════════════════════════════════════════╝\n```\n\n## Step 4: If Tests Failed\nIf any tests failed, also display:\n```\n❌ FAILED TESTS:\n┌──────────────────────────────────────────────────────────────┐\n│ 1. ClassName > testName                                      │\n│    Error: [brief error message]                              │\n├──────────────────────────────────────────────────────────────┤\n│ 2. ClassName > testName                                      │\n│    Error: [brief error message]                              │\n└──────────────────────────────────────────────────────────────┘\n```\n\n## Step 5: Actionable Next Steps\nEnd with actionable suggestions:\n- If all passed: \"✅ All tests passing! Ready to commit.\"\n- If failures: \"🔧 Fix the failing tests above, then re-run.\"\n- Always mention: \"View full HTML report at: app/build/reports/tests/testDevelopmentDebugUnitTest/index.html\""
+  }
+}
