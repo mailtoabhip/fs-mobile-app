@@ -38,7 +38,7 @@ class ComingSoonActivity : BaseActivity<ActivityComingSoonBinding, ComingSoonVie
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLL)
         }
     }
 

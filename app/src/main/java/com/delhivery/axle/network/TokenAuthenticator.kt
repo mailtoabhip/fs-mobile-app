@@ -141,6 +141,7 @@ class TokenAuthenticator @Inject constructor(
                 .addHeader("X-Os-Version", deviceInfoProvider.osVersion)
                 .addHeader("X-Request-Id", requestId)
                 .addHeader("X-Client-Ip", deviceInfoProvider.awaitPublicIp())
+                .addHeader("Authorization", "Bearer ${userPrefs.jwtToken ?: ""}")
                 .build()
 
             val response = client.newCall(request).execute()
@@ -161,10 +162,14 @@ class TokenAuthenticator @Inject constructor(
 
                 val data = json.optJSONObject("data")
                 val accessToken = data?.optString("access_token")
+                val refreshToken = data?.optString("refresh_token")
 
                 if (!accessToken.isNullOrEmpty()) {
-                    // Store the new access token
+                    // Store the new tokens
                     userPrefs.jwtToken = accessToken
+                    if (!refreshToken.isNullOrEmpty()) {
+                        userPrefs.refreshToken = refreshToken
+                    }
                     networkInterceptor.updateJWT(accessToken)
                     Log.d(TAG, "Access token refreshed successfully (first 20 chars): ${accessToken.take(20)}...")
                     accessToken
