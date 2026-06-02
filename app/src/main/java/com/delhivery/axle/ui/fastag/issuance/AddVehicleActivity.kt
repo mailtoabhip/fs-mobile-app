@@ -192,8 +192,12 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             issuerPhone = "",
             onAction = if (data.eligible) {
                 {
-                    // Call KYC onboard validate API on confirm
-                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                    // Navigate directly to PaymentBreakupActivity for testing wallet flow
+                    val intent = Intent(this, PaymentBreakupActivity::class.java).apply {
+                        putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
+                        putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                    }
+                    startActivity(intent)
                 }
             } else null
         ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
@@ -201,5 +205,6 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val EXTRA_TRUCK_NUMBER = "extra_truck_number"
+        const val EXTRA_SALES_CODE = "extra_sales_code"
     }
 }
