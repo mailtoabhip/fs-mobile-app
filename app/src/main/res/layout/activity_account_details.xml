@@ -160,6 +160,7 @@
             android:checked="@={viewModel.commConsent}"
             android:layout_marginTop="@dimen/size_28dp"
             android:text="@string/str_communication_consent_note"
+            android:buttonTint="@color/black"
             android:layout_height="wrap_content"/>
 
           <androidx.appcompat.widget.AppCompatButton

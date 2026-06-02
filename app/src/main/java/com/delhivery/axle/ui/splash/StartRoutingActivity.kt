@@ -33,11 +33,15 @@ import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.SecurityPrefs
 import com.delhivery.axle.utils.prefs.UserPrefs
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -59,7 +63,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
   var currentCode :Int =0
   var type :String = ""
   lateinit var splashScreen: SplashScreen
-  lateinit var isAuthenticated :SplashPostState
   var ifUpdateFalse=false
   private var activitySetupTrace: Trace? = null
   private var isFirstResume = true
@@ -180,12 +183,6 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
 
     Log.w(TAG, "Security dialog dismissed by user. Threat: $threatType")
 
-    // TODO: Uncomment when analytics is ready
-    // analyticsUtil.moEngageTrackEvent(
-    //     "security_dialog_dismissed",
-    //     mutableListOf("threat_type", "action"),
-    //     mutableListOf(threatType, "exit")
-    // )
   }
   
   companion object {
@@ -194,9 +191,7 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-    /* start splash animation */
-  /*  userPrefs.previousNavigationTab = HomeLoadsFragment::class.java.name
-    userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name*/
+
     animate()
     if(!userPrefs.hasLoggedIn) {
       compositeDisposable += requestPermission(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
@@ -220,11 +215,9 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
           }
         }
     }
-    binding.btnGetStarted.visibility = View.GONE
+    //binding.btnGetStarted.visibility = View.GONE
     binding.btnGetStarted.setOnClickListener {
-      if(ifUpdateFalse) {
-        postAnimate(isAuthenticated)
-      }
+      postAnimate(SplashPostState.Auth)
     }
   }
 
@@ -237,88 +230,28 @@ class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel
     }
   /**
    * Splash animation chain
+   *
+   * Flow:
+   * - Token present + profile pending → API call → Home or AccountDetails
+   * - Token present + profile complete → Home directly
+   * - No token (fresh install / cleared data) → show Get Started button, navigate to Auth on click
    */
   private fun animate() {
-     isAuthenticated = viewModel.postState()
+      viewModel.determineState()
 
-      checkForUpdatedVersion { it ->
-        when (it) {
-          true -> {
-            splashScreen.setKeepOnScreenCondition { false}
-            checkForAppUpdate(true)
-          }
-          false -> {
-            ifUpdateFalse=true
-            if(ifUpdateFalse && userPrefs.hasLoggedIn){
-              binding.btnGetStarted.visibility = View.GONE
-              postAnimate(isAuthenticated)
-            }else{
-              splashScreen.setKeepOnScreenCondition { false }
-              binding.btnGetStarted.visibility = View.VISIBLE
-            }
-          }
+      if (!viewModel.isUserLoggedIn()) {
+        // No token — stay on routing screen with Get Started visible
+        splashScreen.setKeepOnScreenCondition { false }
+        binding.btnGetStarted.visibility = View.VISIBLE
+      } else {
+        // Logged in — wait for state (may need API call) and navigate directly
+        lifecycleScope.launch {
+          val resolvedState = viewModel.splashState.filterNotNull().first()
+          splashScreen.setKeepOnScreenCondition { false }
+          postAnimate(resolvedState)
         }
       }
-
   }
-
-  private fun checkForUpdatedVersion(completedAction: (success: Boolean) -> Unit) {
-    val configSettings = FirebaseRemoteConfigSettings.Builder()
-        .setMinimumFetchIntervalInSeconds(0)
-        .build()
-
-    val remoteConfig = FirebaseRemoteConfig.getInstance()
-    remoteConfig.setConfigSettingsAsync(configSettings)
-
-    FirebaseRemoteConfig.getInstance()
-        .fetchAndActivate()
-        .addOnCompleteListener(
-            this
-        ) {
-          if (it.isSuccessful) {
-            val currentVersionCode: Int
-            val playStoreVersionCode: Int = try {
-              remoteConfig.activate()
-              remoteConfig.getString("android_latest_version_code")
-                  .toInt()
-            } catch (e: Exception) {
-              0
-            }
-            val recommendedVersionCode: Int = try {
-              remoteConfig.getString("recommended_update_version_code")
-                .toInt()
-            } catch (e: Exception) {
-              0
-            }
-
-            val pInfo = this.packageManager.getPackageInfo(packageName, 0)
-            currentVersionCode = if (VERSION.SDK_INT >= VERSION_CODES.P) {
-              pInfo.longVersionCode.toInt()
-            } else {
-              pInfo.versionCode
-            }
-            currentCode = currentVersionCode
-            latestCode = playStoreVersionCode
-
-            val androidId = Secure.getString(
-              this.contentResolver,
-              Secure.ANDROID_ID
-            )
-            //get device and app level details
-            analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_ID,androidId)
-            analyticsUtil.moEngageUserAttribute(USER_PROPERTY_ANDROID_VERSION,pInfo.versionName+"("+currentCode.toString()+")")
-            viewModel.recommendedUpdate(
-              recommendedVersionCode>currentVersionCode
-            )
-            completedAction(playStoreVersionCode > currentVersionCode)
-          } else {
-            completedAction(false)
-          }
-        }
-        .addOnFailureListener { completedAction(false) }
-        .addOnCanceledListener { completedAction(false) }
-  }
-
   private fun postAnimate(state: SplashPostState) {
     userPrefs.setPreviousScreen(this.javaClass.name)
     when (state) {
