@@ -9,6 +9,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityAddVehicleBinding
@@ -53,12 +56,26 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
+    private var debounceJob: kotlinx.coroutines.Job? = null
+    private var lastCheckedVrn = ""
+
     private fun setupTextWatcher() {
         binding.etTruckNumber.addTextChangedListener { text ->
             isVehicleEligible = false
+            binding.btnContinue.isEnabled = false
+            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+
             val truckNumber = text?.toString()?.trim() ?: ""
-            if (isValidVehicleNumber(truckNumber)) {
-                viewModel.checkVehicle(truckNumber.uppercase().replace(" ", "").replace("-", ""))
+            val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
+
+            debounceJob?.cancel()
+
+            if (isValidVehicleNumber(truckNumber) && normalized != lastCheckedVrn) {
+                debounceJob = kotlinx.coroutines.MainScope().launch {
+                    kotlinx.coroutines.delay(500) // 500ms debounce
+                    lastCheckedVrn = normalized
+                    viewModel.checkVehicle(normalized)
+                }
             }
         }
     }
@@ -187,6 +204,10 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     // }
 
     private fun showVehicleBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
+        // Prevent duplicate bottom sheets
+        val existing = supportFragmentManager.findFragmentByTag(VehicleDetailsBottomSheet.TAG)
+        if (existing != null) return
+
         VehicleDetailsBottomSheet.fromResponse(
             response = data,
             issuerPhone = "",
@@ -195,7 +216,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                     // Navigate directly to PaymentBreakupActivity for testing wallet flow
                     val items = arrayListOf(
                         com.delhivery.axle.api.request.PaymentBreakupItem(
-                            vehicleClass = data.vehicleClass?.vehicleClass ?: "",
+                            vehicleClass = "VC5",
                             quantity = 1
                         )
                     )
