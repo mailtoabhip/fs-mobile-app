@@ -8,6 +8,7 @@ import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.injection.qualifier.ApplicationContext
 import com.delhivery.axle.network.ConnectionLiveData
 import com.delhivery.axle.network.DelhiveryNetworkInterceptor
+import com.delhivery.axle.network.TokenAuthenticator
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -60,13 +61,18 @@ class NetworkModule {
    */
   @Provides
   @Singleton
-  fun provideOkHttpClient(chuckerInterceptor: ChuckerInterceptor, authInterceptor: DelhiveryNetworkInterceptor): OkHttpClient = OkHttpClient.Builder()
+  fun provideOkHttpClient(
+    chuckerInterceptor: ChuckerInterceptor,
+    authInterceptor: DelhiveryNetworkInterceptor,
+    tokenAuthenticator: TokenAuthenticator
+  ): OkHttpClient = OkHttpClient.Builder()
       .connectTimeout(30, SECONDS)
       .readTimeout(30, SECONDS)
       .writeTimeout(15, SECONDS)
       .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
       .addInterceptor(chuckerInterceptor)
       .addInterceptor(authInterceptor)
+      .authenticator(tokenAuthenticator)
       .build()
 
   /**

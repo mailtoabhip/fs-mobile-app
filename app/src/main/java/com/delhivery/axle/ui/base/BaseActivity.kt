@@ -30,6 +30,7 @@ import com.delhivery.axle.BR
 import com.delhivery.axle.R
 import com.delhivery.axle.R.string
 import com.delhivery.axle.network.ConnectionLiveData
+import com.delhivery.axle.network.SessionManager
 import com.delhivery.axle.utils.AnalyticsUtil
 import com.delhivery.axle.utils.Config.AxleSupportEmail
 import com.delhivery.axle.utils.ContactUtils
@@ -85,6 +86,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
 
   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
   @Inject lateinit var connectionLiveData: ConnectionLiveData
+  @Inject lateinit var sessionManager: SessionManager
   @Inject lateinit var uiUtils: UiUtils
   @Inject lateinit var navigationUtils: NavigationUtils
   @Inject lateinit var errorUtils: ErrorUtils
@@ -186,6 +188,18 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
             internetDisconnected()
           }
         }
+      }
+    })
+
+    /* Observe session expired — force navigate to login */
+    sessionManager.sessionExpired.observe(this, Observer { expired ->
+      if (expired == true
+          && this !is com.delhivery.axle.ui.splash.StartRoutingActivity) {
+        sessionManager.resetSessionExpired()
+        val intent = Intent(this, com.delhivery.axle.ui.splash.StartRoutingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
       }
     })
 

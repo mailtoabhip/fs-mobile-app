@@ -112,10 +112,36 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
       // raisedFocus()
-      onLengthReached(10) {reached ->
+      onLengthReached(11) { reached ->
         binding.btnSendOtp.isEnabled = reached
-        binding.ivCheck.visibility = if (reached)View.VISIBLE else View.GONE
+        binding.ivCheck.visibility = if (reached) View.VISIBLE else View.GONE
       }
+
+      // Auto-insert space after 5 digits (format: XXXXX XXXXX)
+      addTextChangedListener(object : android.text.TextWatcher {
+        private var isFormatting = false
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: android.text.Editable?) {
+          if (isFormatting || s == null) return
+          isFormatting = true
+
+          val digits = s.toString().replace(" ", "")
+          val formatted = if (digits.length > 5) {
+            digits.substring(0, 5) + " " + digits.substring(5)
+          } else {
+            digits
+          }
+
+          if (s.toString() != formatted) {
+            s.replace(0, s.length, formatted)
+          }
+
+          isFormatting = false
+        }
+      })
     }
 
     binding.btnSendOtp.setOnClickListener {
@@ -170,6 +196,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               mutableListOf(viewModel.phoneNo)
       )
       viewModel.otpSendCount +=1
+      binding.otpView.clear()
+      binding.otpView.showError(false)
       binding.otpError.visibility = View.GONE
       viewModel.resendOTP()
     }
