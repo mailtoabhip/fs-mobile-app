@@ -260,7 +260,11 @@ dependencies {
   implementation 'com.google.android.play:app-update-ktx:2.1.0'
     implementation "androidx.fragment:fragment-ktx:1.8.9"
 
-  // Chucker
+    //Lottie
+    implementation("com.airbnb.android:lottie:6.7.1")
+
+
+    // Chucker
   debugImplementation ("com.github.chuckerteam.chucker:library:3.5.2") {
     exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel'
     exclude group: 'androidx.lifecycle', module:'lifecycle-viewmodel-ktx'

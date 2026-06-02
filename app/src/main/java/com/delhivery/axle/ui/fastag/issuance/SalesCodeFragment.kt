@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.FragmentSalesCodeBinding
@@ -44,6 +45,11 @@ class SalesCodeFragment : Fragment() {
             val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
             imm.showSoftInput(binding.etSalesCode, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
         }
+
+        Glide.with(this)
+            .asGif()
+            .load(R.raw.trial_gif)
+            .into(binding.bgFastag)
     }
 
     private fun setupClickListeners() {
