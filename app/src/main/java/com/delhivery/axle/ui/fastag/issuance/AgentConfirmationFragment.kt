@@ -43,7 +43,7 @@ class AgentConfirmationFragment : Fragment() {
 
         binding.bottomButtons.btnSecondary.setOnClickListener {
             parentFragmentManager.setFragmentResult("change_sales_code", Bundle.EMPTY)
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStackImmediate()
         }
     }
 

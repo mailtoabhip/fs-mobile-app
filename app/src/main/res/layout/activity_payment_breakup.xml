@@ -134,7 +134,7 @@
                                 android:id="@+id/ivWalletIcon"
                                 android:layout_width="@dimen/size_24dp"
                                 android:layout_height="@dimen/size_24dp"
-                                android:src="@drawable/ic_launcher_foreground"
+                                android:src="@drawable/ic_delhivery_wallet"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />

@@ -72,6 +72,8 @@ data class WalletRechargeItemV2(
     @SerializedName("status") val status: String = "",
     @SerializedName("payment_gateway") val paymentGateway: String = "",
     @SerializedName("pg_transaction_id") val pgTransactionId: String? = null,
+    @SerializedName("bank_reference_no") val bankReferenceNo: String? = null,
+    @SerializedName("payment_method") val paymentMethod: String? = null,
     @SerializedName("updated_wallet_balance") val updatedWalletBalance: String = "0.00",
     @SerializedName("created_by") val createdBy: String = "",
     @SerializedName("created_at") val createdAt: String = "",

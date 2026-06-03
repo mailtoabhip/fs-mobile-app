@@ -293,6 +293,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                     android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                   )
                 }
+                binding.textOtpSentToPhoneNo.setLineSpacing(resources.getDimension(R.dimen.size_8dp), 1f)
                 binding.textOtpSentToPhoneNo.text = spannable
               }
             }
