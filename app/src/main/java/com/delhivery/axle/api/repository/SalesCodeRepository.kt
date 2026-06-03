@@ -123,7 +123,7 @@ class SalesCodeRepository @Inject constructor(
     ): Resource<com.delhivery.axle.api.response.PaymentBreakupResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
+                val vendorID = "a1e38d7a-7001-7073-d3e4-320e007ddaad"
                 val response = salesCodeService.getPaymentBreakup(vendorID, request)
                 response.toResource()
             }

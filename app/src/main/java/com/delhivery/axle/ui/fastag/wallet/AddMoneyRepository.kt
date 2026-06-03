@@ -20,6 +20,15 @@ class AddMoneyRepository @Inject constructor(
             }
         )
 
+    fun createWallet() =
+        walletApiService.createWallet(
+            userId = userPrefs.userId(),
+            request = JsonObject().apply {
+                addProperty("phone", userPrefs.phoneNumber ?: "")
+                addProperty("email", "")
+            }
+        )
+
     fun checkRechargeStatus(rechargeId: String) =
         walletApiService.fetchRechargeStatus(
             userId = userPrefs.userId(),

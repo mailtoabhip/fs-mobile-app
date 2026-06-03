@@ -9,10 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityAddVehicleBinding
@@ -32,6 +28,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     private lateinit var viewModel: AddVehicleViewModel
 
     private var isVehicleEligible = false
+    private var hasNavigatedFromCheck = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,33 +57,29 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
-    private var debounceJob: Job? = null
-    private var lastCheckedVrn = ""
-
     private fun setupTextWatcher() {
         binding.etTruckNumber.addTextChangedListener { text ->
             isVehicleEligible = false
-            binding.btnContinue.isEnabled = false
-            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+            hasNavigatedFromCheck = false
 
             val truckNumber = text?.toString()?.trim() ?: ""
-            val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
-
-            debounceJob?.cancel()
-
-            if (isValidVehicleNumber(truckNumber) && normalized != lastCheckedVrn) {
-                debounceJob = MainScope().launch {
-                    delay(500) // 500ms debounce
-                    lastCheckedVrn = normalized
-                    viewModel.checkVehicle(normalized)
-                }
+            if (isValidVehicleNumber(truckNumber)) {
+                binding.btnContinue.isEnabled = true
+                binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
+            } else {
+                binding.btnContinue.isEnabled = false
+                binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
             }
         }
     }
 
     private fun setupClickListeners() {
         binding.btnContinue.setOnClickListener {
-            // Continue is no longer needed as navigation happens from the bottom sheet
+            val truckNumber = binding.etTruckNumber.text?.toString()?.trim() ?: ""
+            val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
+            if (isValidVehicleNumber(truckNumber)) {
+                viewModel.checkVehicle(normalized)
+            }
         }
     }
 
@@ -105,18 +98,20 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                             binding.btnContinue.isEnabled = true
                             binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
 
-                            if (data.npciVehicleClass == null) {
-                                // Vehicle class unknown — navigate to SelectFasTagActivity to pick one
-                                val intent = Intent(this, SelectFasTagActivity::class.java).apply {
-                                    putExtra(SelectFasTagActivity.EXTRA_VRN, data.vrn)
-                                    putExtra(EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
-                                    putExtra(EXTRA_CUSTOMER_NAME, getIntent().getStringExtra(EXTRA_CUSTOMER_NAME) ?: "")
+                            if (hasNavigatedFromCheck) return@observe
+
+                            // Always navigate to SelectFasTagActivity
+                            // If npciVehicleClass is known, pre-select it; otherwise user picks manually
+                            hasNavigatedFromCheck = true
+                            val intent = Intent(this, SelectFasTagActivity::class.java).apply {
+                                putExtra(SelectFasTagActivity.EXTRA_VRN, data.vrn)
+                                putExtra(EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
+                                putExtra(EXTRA_CUSTOMER_NAME, getIntent().getStringExtra(EXTRA_CUSTOMER_NAME) ?: "")
+                                if (data.npciVehicleClass != null) {
+                                    putExtra(SelectFasTagActivity.EXTRA_VEHICLE_CLASS, data.npciVehicleClass)
                                 }
-                                startActivity(intent)
-                            } else {
-                                // Vehicle class known — show bottom sheet
-                                showVehicleBottomSheet(data)
                             }
+                            startActivity(intent)
                         }
                         "HOTLISTED", "ALREADY_ISSUED" -> {
                             isVehicleEligible = false
@@ -213,7 +208,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             .replace("-", "")
 
         val regex = Regex(
-            "^(?:[A-Z]{2}\\d{1,2}[A-Z]{1,3}\\d{1,4}|\\d{2}BH\\d{4}[A-Z]{2})$"
+            "^(?:[A-Z]{2}\\d{1,2}[A-Z]{1,3}\\d{4}|\\d{2}BH\\d{4}[A-Z]{2})$"
         )
         return regex.matches(normalized)
     }

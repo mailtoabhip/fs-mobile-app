@@ -2,42 +2,31 @@ package com.delhivery.axle.ui.fastag.issuance
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.request.CreateOrderRequest
 import com.delhivery.axle.api.response.VehicleClassData
 import com.delhivery.axle.databinding.ActivitySelectFastagBinding
-import com.delhivery.axle.utils.ViewModelFactory
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
+import com.delhivery.axle.ui.base.BaseActivity
 
-class SelectFasTagActivity : DaggerAppCompatActivity() {
+class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFasTagViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    override fun getViewModelClass() = SelectFasTagViewModel::class.java
+    override fun layoutId() = R.layout.activity_select_fastag
+    override fun requireConnection() = true
 
-    @Inject
-    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
-
-    private lateinit var binding: ActivitySelectFastagBinding
-    private lateinit var viewModel: SelectFasTagViewModel
     private var adapter: VehicleClassAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_select_fastag)
-        binding.hasSelection = false
 
-        viewModel = ViewModelProvider(this, viewModelFactory)[SelectFasTagViewModel::class.java]
+        binding.lifecycleOwner = this
+        binding.hasSelection = false
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -71,15 +60,15 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
             val request = CreateOrderRequest(
                 salesCode = salesCode,
                 customerName = customerName,
-                customerMobile = "", // TODO: Pass from validate sales code API if available
+                customerMobile = "",
                 vehicles = listOf(
                     com.delhivery.axle.api.request.OrderVehicleItem(
                         vrn = vrn,
                         vehicleClass = selectedItem.classId,
-                        unitPrice = "100.00" // TODO: Get from API/config
+                        unitPrice = "100.00"
                     )
                 ),
-                totalAmount = "100.00", // TODO: Calculate
+                totalAmount = "100.00",
                 idempotencyKey = "ORD-${java.util.UUID.randomUUID()}"
             )
             viewModel.createOrder(request)
@@ -90,11 +79,10 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
         viewModel.createOrderState.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // TODO: Show loading
+                    // Loading handled by BaseActivity
                 }
                 is Resource.Success -> {
-                    // Order created — now check KYC status
-                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                    viewModel.kycOnboardValidate("IDFC")
                 }
                 is Resource.Failure -> {
                     val message = resource.errorMessage
@@ -107,13 +95,12 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
         viewModel.kycValidateState.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // TODO: Show loading
+                    // Loading handled by BaseActivity
                 }
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
                     val salesCode = intent.getStringExtra(AddVehicleActivity.EXTRA_SALES_CODE) ?: ""
                     if (data.fastagCustomerExists) {
-                        // Existing customer — skip KYC, go directly to payment
                         val items = arrayListOf(
                             com.delhivery.axle.api.request.PaymentBreakupItem(
                                 vehicleClass = adapter?.getSelectedItem()?.classId ?: "",
@@ -127,8 +114,9 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
                         }
                         startActivity(navIntent)
                     } else {
-                        // New customer — needs KYC
-                        val navIntent = Intent(this, FastagKycActivity::class.java)
+                        val navIntent = Intent(this, FastagKycActivity::class.java).apply {
+                            putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                        }
                         startActivity(navIntent)
                     }
                 }
@@ -145,7 +133,7 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
         viewModel.vehicleClassesState.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // TODO: Show shimmer/progress if needed
+                    // Loading handled by BaseActivity
                 }
 
                 is Resource.Success -> {
@@ -185,6 +173,13 @@ class SelectFasTagActivity : DaggerAppCompatActivity() {
         }
         binding.rvVehicleClasses.layoutManager = LinearLayoutManager(this)
         binding.rvVehicleClasses.adapter = adapter
+
+        // Pre-select vehicle class if passed from vehicle verify API
+        val preSelectedClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS)
+        if (!preSelectedClass.isNullOrEmpty()) {
+            adapter?.selectByClassId(preSelectedClass)
+            binding.hasSelection = true
+        }
     }
 
     private fun mapColorCode(colorCode: String): Int {
