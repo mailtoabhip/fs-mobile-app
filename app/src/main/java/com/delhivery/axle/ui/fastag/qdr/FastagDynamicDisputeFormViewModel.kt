@@ -3,7 +3,7 @@ package com.delhivery.axle.ui.fastag.qdr
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.repository.FastagRepository
 import com.delhivery.axle.api.response.FieldType
 import com.delhivery.axle.api.response.FormConfigResponse
 import com.delhivery.axle.data.dispute.SubmissionState
@@ -22,7 +22,7 @@ import java.io.File
 import javax.inject.Inject
 
 class FastagDynamicDisputeFormViewModel @Inject constructor(
-    private val loadboardRepository: LoadboardRepository,
+    private val fastagRepository: FastagRepository,
     private val fileUploadManager: FileUploadManager
 ) : BaseViewModel() {
 
@@ -45,7 +45,7 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
     fun loadFormConfig(disputeTypeCode: String) {
         progressData.value = true
 
-        compositeDisposable plusAssign loadboardRepository.getDisputeFormConfig(disputeTypeCode)
+        compositeDisposable plusAssign fastagRepository.getDisputeFormConfig(disputeTypeCode)
             .onBackground()
             .progress()
             .subscribe { response, error ->
@@ -276,16 +276,16 @@ class FastagDynamicDisputeFormViewModel @Inject constructor(
         // Fire the request
         submissionStateData.value = SubmissionState.Loading
 
-        compositeDisposable += loadboardRepository.submitDispute(
+        compositeDisposable += fastagRepository.submitDispute(
             txnId = MultipartBody.Part.createFormData("txn_id", transactionId?:""),
-            additionalTxnId = MultipartBody.Part.createFormData("additional_txn_id", additionalTxnId?:""),
             tollPlazaId = MultipartBody.Part.createFormData("toll_plaza_id", tollPlazaId),
             refundAmount = MultipartBody.Part.createFormData("refundRequestedAmount", Gson().toJson(refundRequestedAmount)),
             comment = MultipartBody.Part.createFormData("comment", comment),
             raisedAgainst = MultipartBody.Part.createFormData("raisedAgainst", disputeTypeCode),
-            doc1 = fileParts.getOrNull(0),
-            doc2 = fileParts.getOrNull(1),
-            doc3 = fileParts.getOrNull(2)
+            additionalTxnId = MultipartBody.Part.createFormData("additional_txn_id", additionalTxnId?:""),
+            uploadDoc1 = fileParts.getOrNull(0),
+            uploadDoc2 = fileParts.getOrNull(1),
+            uploadDoc3 = fileParts.getOrNull(2)
         )
             .onBackground()
             .subscribe { response, error ->

@@ -144,7 +144,6 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
             "open" -> R.drawable.open_body
             else -> R.drawable.trailer
         }
-        binding.ivTruckImage.setImageResource(truckImageRes)
 
         binding.ivBack.setOnClickListener { finish() }
 

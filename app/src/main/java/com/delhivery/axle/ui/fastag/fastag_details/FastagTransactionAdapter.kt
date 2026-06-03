@@ -14,12 +14,11 @@ import com.delhivery.axle.api.response.FastagTransaction
 import com.delhivery.axle.databinding.ItemFastagTransactionBinding
 import androidx.core.graphics.toColorInt
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.fastag.qdr.FastagRaiseDisputeActivity
 import com.delhivery.axle.utils.DateUtils
 
 class FastagTransactionAdapter(
-    private val vehicleData: HomeTrucksRequestItemData? = null
+    private val vehicleNumber: String = ""
 ) : ListAdapter<FastagTransaction, FastagTransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
@@ -28,7 +27,7 @@ class FastagTransactionAdapter(
             parent,
             false
         )
-        return TransactionViewHolder(binding, vehicleData)
+        return TransactionViewHolder(binding, vehicleNumber)
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
@@ -37,7 +36,7 @@ class FastagTransactionAdapter(
 
     class TransactionViewHolder(
         private val binding: ItemFastagTransactionBinding,
-        private val vehicleData: HomeTrucksRequestItemData?
+        private val vehicleNumber: String
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -102,11 +101,11 @@ class FastagTransactionAdapter(
                     putExtra(FastagRaiseDisputeActivity.EXTRA_AMOUNT, transaction.amount ?: 0.0)
                     putExtra(FastagRaiseDisputeActivity.EXTRA_TOLL_NAME, transaction.tollName)
                     putExtra(FastagRaiseDisputeActivity.EXTRA_TIMESTAMP, formatTimestamp(transaction.timestamp ?: ""))
-                    putExtra(FastagRaiseDisputeActivity.EXTRA_VEHICLE_NUMBER, vehicleData?.vehicleNumber ?: "")
-                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRUCK_TYPE, vehicleData?.truckType ?: "")
-                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRUCK_SIZE, vehicleData?.truckSize ?: "")
-                    putExtra(FastagRaiseDisputeActivity.EXTRA_CAPACITY, vehicleData?.capacity ?: 0.0)
-                    putExtra(FastagRaiseDisputeActivity.EXTRA_OWNERSHIP, vehicleData?.ownership() ?: "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_VEHICLE_NUMBER, vehicleNumber)
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRUCK_TYPE, "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_TRUCK_SIZE, "")
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_CAPACITY, 0.0)
+                    putExtra(FastagRaiseDisputeActivity.EXTRA_OWNERSHIP, "")
                     putExtra(FastagRaiseDisputeActivity.EXTRA_TRANSACTION_TYPE, transaction.transactionType)
                 }
                 context.startActivity(intent)

@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.fastag.qdr
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.repository.FastagRepository
 import com.delhivery.axle.api.response.FastagTransactionsByTollPlazaResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
@@ -10,7 +10,7 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import javax.inject.Inject
 
 class FastagTransactionSelectionViewModel @Inject constructor(
-    private val loadboardRepository: LoadboardRepository
+    private val fastagRepository: FastagRepository
 ) : BaseViewModel() {
 
     val transactionsByTollPlazaData = MutableLiveData<FastagTransactionsByTollPlazaResponse>()
@@ -26,7 +26,7 @@ class FastagTransactionSelectionViewModel @Inject constructor(
     ) {
         progressData.value = true
 
-        compositeDisposable plusAssign loadboardRepository.getFastagTransactionsByTollPlaza(
+        compositeDisposable plusAssign fastagRepository.getFastagTransactionsByTollPlaza(
             tollPlazaId = tollPlazaId,
             dateTime = dateTime,
             fastagId = fastagId,
