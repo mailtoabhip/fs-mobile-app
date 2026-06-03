@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -39,6 +40,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            android:background="#E6E6E6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            android:layout_marginTop="@dimen/size_16dp"/>
+
         <ImageView
             android:id="@+id/ivClose"
             android:layout_width="@dimen/size_24dp"
@@ -58,11 +68,12 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:layout_marginEnd="@dimen/size_16dp"
             android:text="@{`OTP is sent on the linked mobile number\ni.e. ` + maskedNumber}"
-            android:textColor="@color/background_dark_grey"
-            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/heading_black"
+            android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            app:layout_constraintTop_toBottomOf="@id/divider1"
+            tools:text="We’ve sent an OTP via SMS to: 9876543321"/>
 
         <!-- OTP Input Fields -->
         <LinearLayout
@@ -173,7 +184,7 @@
             android:layout_marginEnd="@dimen/size_16dp"
             android:text="Incorrect OTP. Resend OTP"
             android:textColor="#E53935"
-            android:textSize="@dimen/text_14sp"
+            android:textSize="@dimen/text_12sp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -189,6 +200,7 @@
             android:text="@{`Resend in ` + timerText}"
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_14sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvOtpError" />
 
@@ -207,13 +219,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/otpContainer" />
 
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            android:background="#E6E6E6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvResendTimer"
+            android:layout_marginTop="@dimen/size_32dp"/>
+
         <!-- Submit Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSubmit"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_48dp"
             android:layout_marginStart="@dimen/size_16dp"
-            android:layout_marginTop="@dimen/size_32dp"
+            android:layout_marginTop="@dimen/size_12dp"
             android:layout_marginEnd="@dimen/size_16dp"
             android:background="@{isOtpFilled ? @drawable/bg_all_round_corner_solid_black : @drawable/bg_all_round_corner_light_grey}"
             android:enabled="@{isOtpFilled}"
@@ -223,7 +244,7 @@
             android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvResendTimer" />
+            app:layout_constraintTop_toBottomOf="@id/divider2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

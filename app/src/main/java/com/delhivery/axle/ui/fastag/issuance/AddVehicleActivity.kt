@@ -169,7 +169,9 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                         startActivity(navIntent)
                     } else {
                         // New customer — needs KYC
-                        val navIntent = Intent(this, FastagKycActivity::class.java)
+                        val navIntent = Intent(this, FastagKycActivity::class.java).apply {
+                            putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                        }
                         startActivity(navIntent)
                     }
                 }

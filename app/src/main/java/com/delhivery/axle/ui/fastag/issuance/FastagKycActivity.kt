@@ -40,6 +40,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     private var bankCode = "IDFC" // Will be set from API response
     private var journeyId = ""
     private var selectedKycType = ""
+    private var salesCode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +59,9 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         setupSelection()
         setupClickListeners()
         observeViewModel()
+
+        // Read sales code from intent
+        salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
 
         // Fetch KYC types from API
         viewModel.fetchKycTypes(bankCode)
@@ -119,7 +123,9 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                             showOtpBottomSheet(masked)
                         }
                         "TagIssuance" -> {
-                            startActivity(Intent(this, PaymentBreakupActivity::class.java))
+                            startActivity(Intent(this, PaymentBreakupActivity::class.java).apply {
+                                putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
+                            })
                         }
                     }
                 }
@@ -264,5 +270,9 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     private fun showIdentityVerificationSuccessBottomSheet() {
         val bottomSheet = DocumentVerificationBottomSheet.newInstance()
         bottomSheet.show(supportFragmentManager, DocumentVerificationBottomSheet.TAG)
+    }
+
+    companion object {
+        const val EXTRA_SALES_CODE = "extra_sales_code"
     }
 }

@@ -61,8 +61,9 @@
             android:layout_marginTop="@dimen/size_4dp"
             android:layout_marginEnd="@dimen/size_16dp"
             android:text="@{`Verify inventory against Order ID #` + orderId + ` and mark received items.`}"
-            android:textColor="@color/background_dark_grey"
+            android:textColor="@color/head_black"
             android:textSize="@dimen/text_12sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
@@ -98,7 +99,7 @@
                     android:padding="@dimen/size_16dp"
                     android:text="Your FASTag Inventory"
                     android:textColor="@color/heading_black"
-                    android:textSize="@dimen/text_14sp"
+                    android:textSize="@dimen/text_12sp"
                     android:textStyle="bold" />
 
                 <!-- RecyclerView for inventory items -->
@@ -114,22 +115,6 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-        <!-- Tags count label -->
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvTagsCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_8dp"
-            android:paddingVertical="@dimen/size_16dp"
-            android:background="#ECF8F3"
-            android:paddingStart="12dp"
-            android:text="@{String.valueOf(totalTags) + ` FASTags to collect`}"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_12sp"
-            app:layout_constraintBottom_toTopOf="@id/slideToConfirm"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="13 FASTags to collect" />
 
         <!-- Slide to Confirm -->
         <com.delhivery.axle.ui.custom.SlideToConfirmView
