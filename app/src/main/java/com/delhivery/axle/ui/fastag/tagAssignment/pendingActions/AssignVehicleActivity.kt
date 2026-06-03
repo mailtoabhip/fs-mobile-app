@@ -16,7 +16,7 @@ import com.delhivery.axle.ui.fastag.issuance.FastagCollectionActivity
 import com.delhivery.axle.ui.fastag.issuance.FastagKycActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
-import com.delhivery.axle.ui.fastag.pending.PendingActionType
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignVehicleViewModel>() {
@@ -37,6 +37,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
         private const val EXTRA_BARCODE_ID = "extra_barcode_id"
         private const val EXTRA_SALES_CODE = "extra_sales_code"
         private const val EXTRA_ORDER_ID = "extra_order_id"
+        private const val EXTRA_JOURNEY_ID = "extra_journey_id"
 
         fun newIntent(
             context: Context,
@@ -47,7 +48,8 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             vrn: String? = null,
             barcodeId: String? = null,
             salesCode: String? = null,
-            orderId: String? = null
+            orderId: String? = null,
+            journeyId: String? = null
         ): Intent {
             return Intent(context, AssignVehicleActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_CLASS, vehicleClass)
@@ -58,6 +60,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                 putExtra(EXTRA_BARCODE_ID, barcodeId)
                 putExtra(EXTRA_SALES_CODE, salesCode)
                 putExtra(EXTRA_ORDER_ID, orderId)
+                putExtra(EXTRA_JOURNEY_ID, journeyId)
             }
         }
     }
@@ -71,7 +74,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
         val vrn = intent.getStringExtra(EXTRA_VRN)
         val barcodeId = intent.getStringExtra(EXTRA_BARCODE_ID)
         val actionType = try {
-            PendingActionType.valueOf(intent.getStringExtra(ACTION_TYPE) ?: "ASSIGNMENT")
+            PendingActionType.valueOf(intent.getStringExtra(EXTRA_ACTION_TYPE) ?: "ASSIGNMENT")
         } catch (e: Exception) {
             PendingActionType.ORDER_CREATED
         }
@@ -82,7 +85,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
         setupRecyclerView()
         setupObservers()
 
-        viewModel.fetchAvailableVehicles()
+        viewModel.fetchAvailableVehicles(vrn)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -111,7 +114,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     }
 
     private fun setupRecyclerView() {
-        val referenceId = intent.getStringExtra(REFERENCE_ID) ?: ""
+        val referenceId = intent.getStringExtra(EXTRA_REFERENCE_ID) ?: ""
         adapter = SelectVehicleAdapter { vehicle ->
             handleVehicleSelection(vehicle)
         }
@@ -182,7 +185,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             }
             PendingActionType.KYC_DONE -> {
                 val intent = Intent(this, FastagKycActivity::class.java).apply {
-                    putExtra(FastagKycActivity.EXTRA_BANK_PARTNER_CODE, "IDFC")
+                    putExtra(FastagKycActivity.EXTRA_SALES_CODE, "IDFC")
                 }
                 startActivity(intent)
             }
@@ -207,11 +210,17 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                 startActivity(intent)
             }
             PendingActionType.TAG_ASSIGNMENT -> {
-                // TODO: Open TAG Assignment Flow
+                val intent = VehicleDetailsActivity.newIntent(
+                    this,
+                    vehicle.vehicleNumber,
+                    "",
+                    orderId
+                )
+                startActivity(intent)
             }
             PendingActionType.KYV -> {
-                // TODO: Navigate to Add Vehicle flow
-                uiUtils.showSnackbar("Add Vehicle: ${vehicle.vehicleNumber}")
+                val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
+                startActivity(FastagImageUploadActivity.newIntent(this, vehicle.vehicleNumber, journeyId = journeyId))
             }
         }
     }

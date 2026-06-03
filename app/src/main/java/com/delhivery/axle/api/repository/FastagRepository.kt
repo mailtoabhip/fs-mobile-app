@@ -15,7 +15,7 @@ import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
-import com.delhivery.axle.ui.fastag.pending.PendingActionsResponse
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject

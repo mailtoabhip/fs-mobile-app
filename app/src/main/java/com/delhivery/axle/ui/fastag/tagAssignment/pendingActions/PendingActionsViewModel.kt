@@ -70,7 +70,8 @@ class PendingActionsViewModel @Inject constructor(
                         colorCode = item.colorCode,
                         barcodeId = item.barcodeId,
                         salesCode = order.salesCode,
-                        orderId = order.orderId
+                        orderId = order.orderId,
+                        journeyId = item.journeyId
                     )
                 },
                 isExpanded = true
@@ -119,7 +120,7 @@ class PendingActionsViewModel @Inject constructor(
                     PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW"),
                     PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK"),
                     PendingVehicle("Vehicle Class 4", null, "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", "348934587348578347534"),
-                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "Assignment", "ORANGE"),
+                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KVY", "ORANGE"),
                 ),
                 isExpanded = true
             )

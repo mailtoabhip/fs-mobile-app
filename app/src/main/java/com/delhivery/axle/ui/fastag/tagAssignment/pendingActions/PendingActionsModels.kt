@@ -27,7 +27,8 @@ data class PendingVehicle(
     val colorCode: String = "GREEN",
     val barcodeId: String? = null,
     val salesCode: String? = null,
-    val orderId: String? = null
+    val orderId: String? = null,
+    val journeyId: String? = null
 )
 
 /**
