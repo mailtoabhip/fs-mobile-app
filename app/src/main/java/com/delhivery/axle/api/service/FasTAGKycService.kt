@@ -17,25 +17,21 @@ interface FasTAGKycService {
 
     @GET("/fastag/tag-issuance/v1/kyc/onboard-validate")
     suspend fun kycOnboardValidate(
-        @Header("X-Vendor-Id") vendorId: String,
         @Query("bank_code") bankCode: String
     ): BaseResponse<KycOnboardValidateResponse>
 
     @GET("/fastag/tag-issuance/v1/kyc/types")
     suspend fun getKycTypes(
-        @Header("X-Vendor-Id") vendorId: String,
         @Query("bank_code") bankCode: String
     ): BaseResponse<KycTypesResponse>
 
     @POST("/fastag/tag-issuance/v1/kyc/initiate")
     suspend fun initiateKyc(
-        @Header("X-Vendor-Id") vendorId: String,
         @Body request: KycInitiateRequest
     ): BaseResponse<KycInitiateResponse>
 
     @POST("/fastag/tag-issuance/v1/kyc/verify-and-create")
     suspend fun verifyAndCreateKyc(
-        @Header("X-Vendor-Id") vendorId: String,
         @Body request: KycVerifyRequest
     ): BaseResponse<KycVerifyResponse>
 }
