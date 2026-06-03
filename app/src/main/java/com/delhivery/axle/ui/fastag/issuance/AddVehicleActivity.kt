@@ -9,6 +9,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityAddVehicleBinding
@@ -56,12 +60,26 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
+    private var debounceJob: Job? = null
+    private var lastCheckedVrn = ""
+
     private fun setupTextWatcher() {
         binding.etTruckNumber.addTextChangedListener { text ->
             isVehicleEligible = false
+            binding.btnContinue.isEnabled = false
+            binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+
             val truckNumber = text?.toString()?.trim() ?: ""
-            if (isValidVehicleNumber(truckNumber)) {
-                viewModel.checkVehicle(truckNumber.uppercase().replace(" ", "").replace("-", ""))
+            val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
+
+            debounceJob?.cancel()
+
+            if (isValidVehicleNumber(truckNumber) && normalized != lastCheckedVrn) {
+                debounceJob = MainScope().launch {
+                    delay(500) // 500ms debounce
+                    lastCheckedVrn = normalized
+                    viewModel.checkVehicle(normalized)
+                }
             }
         }
     }
@@ -207,15 +225,15 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     // }
 
     private fun showVehicleBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
+        // Prevent duplicate bottom sheets
+        val existing = supportFragmentManager.findFragmentByTag(VehicleDetailsBottomSheet.TAG)
+        if (existing != null) return
+
         VehicleDetailsBottomSheet.fromResponse(
             response = data,
             issuerPhone = "",
             onAction = if (data.eligible) {
                 {
-<<<<<<< Updated upstream
-                    // Call KYC onboard validate API on confirm
-                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
-=======
                     // Create order on confirm
                     val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
                     val customerName = intent.getStringExtra(EXTRA_CUSTOMER_NAME) ?: ""
@@ -234,7 +252,6 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                         idempotencyKey = "ORD-${java.util.UUID.randomUUID()}"
                     )
                     viewModel.createOrder(request)
->>>>>>> Stashed changes
                 }
             } else null
         ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
@@ -242,10 +259,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val EXTRA_TRUCK_NUMBER = "extra_truck_number"
-<<<<<<< Updated upstream
-=======
         const val EXTRA_SALES_CODE = "extra_sales_code"
         const val EXTRA_CUSTOMER_NAME = "extra_customer_name"
->>>>>>> Stashed changes
     }
 }
