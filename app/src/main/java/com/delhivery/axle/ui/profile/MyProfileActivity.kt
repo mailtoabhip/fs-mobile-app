@@ -102,7 +102,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
         if(userPrefs.companyName.isNotNullOrEmpty()) {
-            binding.profile.text = userPrefs.companyName[0].uppercaseChar().toString()
+            binding.profile.text = getUserInitials()
         }
         binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
 
@@ -188,6 +188,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
         title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationIcon(R.drawable.ic_close_black)
+        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     /**
@@ -422,7 +424,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                                         isFirstResource: Boolean
                                 ): Boolean {
                                     binding.card1.visibility = View.GONE
-                                    binding.profile.text = viewModel.userPrefs.companyName?.get(0).toString().uppercase()
+                                    binding.profile.text = getUserInitials()
                                     binding.profile.visibility = View.VISIBLE
                                     return false
                                 }
@@ -444,6 +446,19 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
                 return true
             }
         })
+    }
+
+    private fun getUserInitials(): String {
+        val name = userPrefs.userName
+        if (name.isNullOrBlank()) {
+            return userPrefs.companyName?.firstOrNull()?.uppercaseChar()?.toString() ?: ""
+        }
+        val parts = name.trim().split("\\s+".toRegex())
+        return when {
+            parts.size >= 2 -> "${parts[0][0]}${parts[1][0]}".uppercase()
+            parts.size == 1 && parts[0].isNotEmpty() -> parts[0][0].uppercaseChar().toString()
+            else -> ""
+        }
     }
 
 }

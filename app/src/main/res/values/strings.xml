@@ -523,7 +523,7 @@
     <string name="label_account">Account</string>
     <string name="label_kyc_details">KYC Details</string>
     <string name="label_profile">Profile Details</string>
-    <string name="label_delhivery_wallet">Delhivery Wallet</string>
+    <string name="label_delhivery_wallet">Wallet</string>
     <string name="label_routes">My Routes</string>
     <string name="label_earnings">My Earnings</string>
     <string name="label_team">My Team Members</string>
