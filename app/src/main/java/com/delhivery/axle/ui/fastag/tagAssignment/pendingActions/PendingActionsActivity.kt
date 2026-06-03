@@ -31,7 +31,10 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
         setupToolbar()
         setupRecyclerView()
         setupObservers()
+    }
 
+    override fun onResume() {
+        super.onResume()
         viewModel.fetchPendingOrders()
     }
 
@@ -54,7 +57,11 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
                     vehicleClass = vehicle.vehicleClass,
                     referenceId = vehicle.referenceId,
                     colorCode = vehicle.colorCode,
-                    actionType = vehicle.actionType
+                    actionType = vehicle.actionType,
+                    vrn = vehicle.vehicleNumber,
+                    barcodeId = vehicle.barcodeId,
+                    salesCode = vehicle.salesCode,
+                    orderId = vehicle.orderId
                 )
             )
         }

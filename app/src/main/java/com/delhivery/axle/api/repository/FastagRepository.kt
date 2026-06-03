@@ -12,14 +12,17 @@ import com.delhivery.axle.api.response.FastagImageUploadResponse
 import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.*
+import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
+import com.delhivery.axle.ui.fastag.pending.PendingActionsResponse
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withContext
+import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -30,6 +33,7 @@ import javax.inject.Inject
 class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
     errorLogger: ErrorLogger,
+    private val userPrefs: UserPrefs,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
 
@@ -205,4 +209,18 @@ class FastagRepository @Inject constructor(
             userId = userId,
             request = JsonObject().apply { addProperty("recharge_id", rechargeId) }
         ).convertResponse()
+
+    /**
+     * Get pending actions for FASTag tag issuance.
+     * GET /fastag/tag-issuance/v1/pending-actions
+     */
+    suspend fun getPendingActions(): Resource<PendingActionsResponse> = safeApiCall {
+
+        /*
+        * TODO : update with real vendor ID / pass header only after discussion with BE
+        *
+        * */
+        val vendorId = "a1e38d7a-7001-7073-d3e4-320e007ddaad" //userPrefs.userId()
+        fastagService.getPendingActions(vendorId).toResource()
+    }
 }

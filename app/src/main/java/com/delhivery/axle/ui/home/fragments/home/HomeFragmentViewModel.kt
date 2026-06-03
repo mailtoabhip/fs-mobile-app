@@ -2,6 +2,9 @@ package com.delhivery.axle.ui.home.fragments.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.delhivery.axle.api.repository.FastagRepository
+import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.response.ServiceGroup
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.ui.common.UiEvent
@@ -12,9 +15,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeFragmentViewModel @Inject constructor(
+    private val fastagRepository: FastagRepository
 ) : BaseViewModel() {
 
     // ────────────────────────── KYC (existing) ─────────────────────────
@@ -28,11 +33,20 @@ class HomeFragmentViewModel @Inject constructor(
     val fastagPendingCount: LiveData<Int> = _fastagPendingCount
 
     /**
-     * Set the FASTag pending actions count.
-     * Call this after fetching truck inventory data.
+     * Fetch FASTag pending actions count from API.
      */
-    fun setFastagPendingCount(count: Int) {
-        _fastagPendingCount.value = count
+    fun fetchFastagPendingCount() {
+        viewModelScope.launch {
+            when (val result = fastagRepository.getPendingActions()) {
+                is Resource.Success -> {
+                    _fastagPendingCount.value = result.data?.count ?: 0
+                }
+                is Resource.Failure -> {
+                    _fastagPendingCount.value = 0
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
     }
 
     // ────────────────────────── Service Groups (new) ───────────────────

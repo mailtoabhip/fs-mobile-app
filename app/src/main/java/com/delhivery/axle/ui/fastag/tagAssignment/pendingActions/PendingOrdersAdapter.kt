@@ -77,15 +77,15 @@ class PendingOrdersAdapter(
 
             tvVehicleClass.text = vehicle.vehicleClass
 
-            // Build reference text
+            // Build reference text: vrn | barcodeId (show what's available)
             val refParts = mutableListOf<String>()
-            vehicle.vehicleNumber?.let { refParts.add(it) }
-            vehicle.referenceId?.let { refParts.add(it) }
+            vehicle.vehicleNumber?.let { if (it.isNotEmpty()) refParts.add(it) }
+            vehicle.barcodeId?.let { if (it.isNotEmpty()) refParts.add(it) }
             tvVehicleRef.text = refParts.joinToString("  |  ")
             tvVehicleRef.visibility = if (refParts.isEmpty()) View.GONE else View.VISIBLE
 
             // Set action badge text
-            tvActionBadge.text = vehicle.actionType.displayName
+            tvActionBadge.text = vehicle.actionLabel
 
             // Set tag icon color based on vehicle class colorCode
             val tagColor = mapColor(view.context, vehicle.colorCode)
@@ -102,7 +102,7 @@ class PendingOrdersAdapter(
          */
         private fun mapColor(context: Context, colorCode: String): Int {
             return when (colorCode.uppercase()) {
-                "RED" -> context.getColor(R.color.class_red)
+                "ORANGE" -> context.getColor(R.color.vehicle_class_orange)
                 "YELLOW" -> context.getColor(R.color.class_yellow)
                 "GREEN" -> context.getColor(R.color.class_green)
                 "PINK" -> context.getColor(R.color.class_pink)

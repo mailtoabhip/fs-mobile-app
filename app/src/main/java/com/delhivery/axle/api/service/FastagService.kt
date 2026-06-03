@@ -188,4 +188,14 @@ interface FastagService {
     ): Single<BaseResponse<RechargeStatusResponse>>
 
 
+
+    /**
+     * Get pending actions for FASTag tag issuance.
+     * GET /fastag/tag-issuance/v1/pending-actions
+     * TODO : update the endpoints with correctly mapped BE url
+     */
+    @GET("https://financial-fastag-dev.delhivery.com/fastag/tag-issuance/v1/pending-actions")
+    suspend fun getPendingActions(
+        @Header("X-Vendor-Id") vendorId: String
+    ): BaseResponse<com.delhivery.axle.ui.fastag.pending.PendingActionsResponse>
 }

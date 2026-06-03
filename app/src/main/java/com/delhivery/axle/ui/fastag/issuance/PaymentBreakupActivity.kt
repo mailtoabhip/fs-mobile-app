@@ -59,6 +59,9 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         const val EXTRA_SALES_CODE = "extra_sales_code"
         const val EXTRA_PAYMENT_METHOD = "extra_payment_method"
         const val EXTRA_ITEMS = "extra_items"
+        const val EXTRA_BANK_PARTNER_CODE = "extra_bank_partner_code"
+        const val EXTRA_VEHICLE_CLASS_QTY = "extra_vehicle_class_qty"
+        const val EXTRA_ORDER_ID = "extra_order_id"
     }
 
     private fun observeViewModel() {

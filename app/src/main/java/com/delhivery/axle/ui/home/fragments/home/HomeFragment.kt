@@ -75,8 +75,8 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             }
         }
 
-        // TODO: Replace with real API data. For now, show mock pending count.
-        viewModel.setFastagPendingCount(8)
+        // Fetch FASTag pending count from API
+        viewModel.fetchFastagPendingCount()
 
         binding.gpsCard.setOnClickListener {
             startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_GPS))

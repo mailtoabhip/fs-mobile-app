@@ -21,6 +21,14 @@ import javax.inject.Inject
 
 class FastagCollectionActivity : DaggerAppCompatActivity() {
 
+    companion object {
+        const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_FASTAG_ID = "extra_fastag_id"
+        const val EXTRA_BARCODE = "extra_barcode"
+        const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
+        const val EXTRA_VRN = "extra_vrn"
+    }
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
@@ -171,7 +179,6 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
 
     private fun mapColorCode(colorCode: String): Int {
         return when (colorCode.uppercase()) {
-            "RED" -> getColor(R.color.class_red)
             "ORANGE" -> getColor(R.color.class_red)
             "YELLOW" -> getColor(R.color.class_yellow)
             "GREEN" -> getColor(R.color.class_green)
