@@ -113,10 +113,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                     journeyId = data.journeyId
                     when (data.nextStage) {
                         "OTPVerification", "MobileOTP" -> {
-                            val mobileNumber = data.stageData?.mobileNumber
-                                ?: data.mobileNumber
-                                ?: userPrefs.phoneNumber
-                                ?: ""
+                            val mobileNumber = userPrefs.phoneNumber ?: ""
                             val masked = if (mobileNumber.length >= 4) {
                                 "XXXXXX" + mobileNumber.takeLast(4)
                             } else "your registered number"
