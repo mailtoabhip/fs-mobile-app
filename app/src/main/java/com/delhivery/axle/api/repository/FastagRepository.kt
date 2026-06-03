@@ -11,11 +11,14 @@ import com.delhivery.axle.api.response.VehicleImageProcessStatusResponse
 import com.delhivery.axle.api.response.FastagImageUploadResponse
 import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -123,6 +126,8 @@ class FastagRepository @Inject constructor(
         additionalTxnId, uploadDoc1, uploadDoc2, uploadDoc3
     ).convertResponse()
 
+    // ---- Coroutine-based methods (Tag Issuance flow) ----
+
     suspend fun getOrderItems(orderId: String): Resource<OrderItemsResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
@@ -131,9 +136,6 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    /**
-     * Upload RC images for background processing.
-     */
     suspend fun uploadRcImages(
         rcFront: MultipartBody.Part,
         rcBack: MultipartBody.Part,
@@ -147,9 +149,6 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    /**
-     * Poll RC processing job status.
-     */
     suspend fun getRcProcessStatus(jobId: String): Resource<RcProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
@@ -158,9 +157,6 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    /**
-     * Upload vehicle images for background processing.
-     */
     suspend fun uploadVehicleImages(
         vehicleFront: MultipartBody.Part,
         vehicleSide: MultipartBody.Part,
@@ -174,9 +170,6 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    /**
-     * Poll vehicle images processing status.
-     */
     suspend fun getVehicleImageProcessStatus(jobId: String): Resource<VehicleImageProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
@@ -185,9 +178,6 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    /**
-     * Upload FASTag pasted image.
-     */
     suspend fun uploadFastagImage(
         fastagImage: MultipartBody.Part,
         journeyId: MultipartBody.Part
@@ -199,9 +189,6 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    /**
-     * Validate uploaded FASTag image.
-     */
     suspend fun validateFastagImage(journeyId: String): Resource<FastagImageValidateResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
@@ -210,4 +197,12 @@ class FastagRepository @Inject constructor(
                 response.toResource()
             }
         }
+
+    // ---- RxJava-based: Recharge status ----
+
+    fun fetchRechargeStatus(userId: String, rechargeId: String) =
+        fastagService.fetchRechargeStatus(
+            userId = userId,
+            request = JsonObject().apply { addProperty("recharge_id", rechargeId) }
+        ).convertResponse()
 }

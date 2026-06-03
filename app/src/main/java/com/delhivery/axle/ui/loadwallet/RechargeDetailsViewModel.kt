@@ -1,17 +1,15 @@
 package com.delhivery.axle.ui.loadwallet
 
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.service.WalletApiService
+import com.delhivery.axle.api.repository.FastagRepository
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
-import com.google.gson.JsonObject
 import javax.inject.Inject
 
 class RechargeDetailsViewModel @Inject constructor(
-    private val walletApiService: WalletApiService,
+    private val fastagRepository: FastagRepository,
     private val userPrefs: UserPrefs
 ) : BaseViewModel() {
 
@@ -20,14 +18,10 @@ class RechargeDetailsViewModel @Inject constructor(
     var refreshErrorLiveData = MutableLiveData<String?>()
 
     fun fetchRechargeStatus(rechargeId: String, createdAt: String) {
-        val request = JsonObject().apply {
-            addProperty("recharge_id", rechargeId)
-        }
-        compositeDisposable += walletApiService.fetchRechargeStatus(
+        compositeDisposable += fastagRepository.fetchRechargeStatus(
             userId = userPrefs.userId(),
-            request = request
+            rechargeId = rechargeId
         )
-            .convertResponse()
             .onBackground()
             .subscribe({ result ->
                 refreshStatusLiveData.postValue(Pair(result.rechargeId, result.status))
