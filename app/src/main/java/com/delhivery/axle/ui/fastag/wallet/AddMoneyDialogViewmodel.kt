@@ -7,6 +7,7 @@ import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.utils.extensions.convertResponse
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
+import retrofit2.HttpException
 import java.util.UUID
 import javax.inject.Inject
 
@@ -41,22 +42,46 @@ class AddMoneyDialogViewmodel @Inject constructor(
                 .progress()
                 .onBackground()
                 .subscribe({ response ->
-                    currentRechargeId = response.rechargeId
-                    rechargeStartDate = java.text.SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss.S",
-                        java.util.Locale.getDefault()
-                    ).format(java.util.Date())
-                    val link = response.paymentLinkUrl
-                    val rechargeId = response.rechargeId
-                    if (link.isNotEmpty() && rechargeId.isNotEmpty()) {
-                        rechargeInitLiveData.postValue(Pair(link, rechargeId))
+                    handleRechargeSuccess(response)
+                }, { error ->
+                    if ((error as? HttpException)?.code() == 404) {
+                        // Wallet doesn't exist — create it, then retry recharge
+                        createWalletAndRetryRecharge(amount, deeplink)
                     } else {
+                        error.handle()
                         rechargeInitLiveData.postValue(null)
                     }
-                }, {
-                    it.handle()
+                })
+    }
+
+    private fun createWalletAndRetryRecharge(amount: Float, deeplink: String) {
+        compositeDisposable +=
+            paymentRepository
+                .createWallet()
+                .convertResponse()
+                .onBackground()
+                .subscribe({ _ ->
+                    // Wallet created — retry recharge
+                    initiateRecharge(amount, deeplink)
+                }, { error ->
+                    error.handle()
                     rechargeInitLiveData.postValue(null)
                 })
+    }
+
+    private fun handleRechargeSuccess(response: com.delhivery.axle.api.response.WalletRechargeInitResponse) {
+        currentRechargeId = response.rechargeId
+        rechargeStartDate = java.text.SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss.S",
+            java.util.Locale.getDefault()
+        ).format(java.util.Date())
+        val link = response.paymentLinkUrl
+        val rechargeId = response.rechargeId
+        if (link.isNotEmpty() && rechargeId.isNotEmpty()) {
+            rechargeInitLiveData.postValue(Pair(link, rechargeId))
+        } else {
+            rechargeInitLiveData.postValue(null)
+        }
     }
 
     /**

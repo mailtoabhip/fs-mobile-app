@@ -16,6 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class SalesCodeRepository @Inject constructor(
     private val salesCodeService: FasTAGIssuanceService,
+    private val kycService: com.delhivery.axle.api.service.FasTAGKycService,
     errorLogger: ErrorLogger,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
@@ -23,9 +24,8 @@ class SalesCodeRepository @Inject constructor(
     suspend fun validateSalesCode(salesCode: String): Resource<ValidateSalesCodeResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorId = "vendor-123"
                 val request = ValidateSalesRequest(salesCode = salesCode)
-                val response = salesCodeService.validateSalesCode(vendorId, request)
+                val response = salesCodeService.validateSalesCode(request)
                 response.toResource()
             }
         }
@@ -33,17 +33,15 @@ class SalesCodeRepository @Inject constructor(
     suspend fun getVehicleClasses(): Resource<VehicleClassResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.getVehicleClasses(vendorID)
+                val response = salesCodeService.getVehicleClasses()
                 response.toResource()
             }
         }
 
-    suspend fun getOrdersByVendor(limit: Int = 20, offset: Int = 0): Resource<FastagOrdersResponse> =
+    suspend fun getOrdersByVendor(salesCode: String, limit: Int = 20, offset: Int = 0): Resource<FastagOrdersResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.getOrdersByVendor(vendorID, limit, offset)
+                val response = salesCodeService.getOrdersByVendor(salesCode, limit, offset)
                 response.toResource()
             }
         }
@@ -54,8 +52,7 @@ class SalesCodeRepository @Inject constructor(
     ): Resource<com.delhivery.axle.api.response.ConfirmCollectionResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.confirmCollection(vendorID, orderId, request)
+                val response = salesCodeService.confirmCollection(orderId, request)
                 response.toResource()
             }
         }
@@ -63,8 +60,7 @@ class SalesCodeRepository @Inject constructor(
     suspend fun checkVehicle(vehicleNumber: String): Resource<com.delhivery.axle.api.response.VehicleCheckResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.checkVehicle(vendorID, vehicleNumber)
+                val response = salesCodeService.checkVehicle(vehicleNumber)
                 response.toResource()
             }
         }
@@ -72,8 +68,7 @@ class SalesCodeRepository @Inject constructor(
     suspend fun kycOnboardValidate(bankCode: String): Resource<com.delhivery.axle.api.response.KycOnboardValidateResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.kycOnboardValidate(vendorID, bankCode)
+                val response = kycService.kycOnboardValidate(bankCode)
                 response.toResource()
             }
         }
@@ -81,8 +76,7 @@ class SalesCodeRepository @Inject constructor(
     suspend fun getKycTypes(bankCode: String): Resource<com.delhivery.axle.api.response.KycTypesResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.getKycTypes(vendorID, bankCode)
+                val response = kycService.getKycTypes(bankCode)
                 response.toResource()
             }
         }
@@ -90,9 +84,8 @@ class SalesCodeRepository @Inject constructor(
     suspend fun initiateKyc(bankCode: String, kycType: String): Resource<com.delhivery.axle.api.response.KycInitiateResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
                 val request = com.delhivery.axle.api.request.KycInitiateRequest(bankCode = bankCode, kycType = kycType)
-                val response = salesCodeService.initiateKyc(vendorID, request)
+                val response = kycService.initiateKyc(request)
                 response.toResource()
             }
         }
@@ -105,14 +98,13 @@ class SalesCodeRepository @Inject constructor(
     ): Resource<com.delhivery.axle.api.response.KycVerifyResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
                 val request = com.delhivery.axle.api.request.KycVerifyRequest(
                     journeyId = journeyId,
                     otp = otp,
                     bankCode = bankCode,
                     kycType = kycType
                 )
-                val response = salesCodeService.verifyAndCreateKyc(vendorID, request)
+                val response = kycService.verifyAndCreateKyc(request)
                 response.toResource()
             }
         }
@@ -122,8 +114,7 @@ class SalesCodeRepository @Inject constructor(
     ): Resource<com.delhivery.axle.api.response.PaymentBreakupResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val vendorID = "vendor-123"
-                val response = salesCodeService.getPaymentBreakup(vendorID, request)
+                val response = salesCodeService.getPaymentBreakup(request)
                 response.toResource()
             }
         }

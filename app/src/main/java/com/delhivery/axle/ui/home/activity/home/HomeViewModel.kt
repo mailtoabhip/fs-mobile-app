@@ -41,7 +41,6 @@ class HomeViewModel @Inject constructor(
   fun getUserDetails() {
     compositeDisposable += userRepository.getUser(false)
       .onBackground()
-      .progress()
       .subscribe { _user, error ->
         if (!error) {
           userUpdateLiveData.postValue(true)

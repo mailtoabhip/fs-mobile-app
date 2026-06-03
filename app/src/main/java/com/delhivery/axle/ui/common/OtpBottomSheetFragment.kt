@@ -9,9 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.delhivery.axle.databinding.BottomSheetOtpBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class OtpBottomSheetFragment : BottomSheetDialogFragment() {
+
+    override fun onStart() {
+        super.onStart()
+        val behavior = (dialog as? BottomSheetDialog)?.behavior ?: return
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.skipCollapsed = true
+    }
 
     private var _binding: BottomSheetOtpBinding? = null
     private val binding get() = _binding!!
@@ -54,6 +63,8 @@ class OtpBottomSheetFragment : BottomSheetDialogFragment() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
+                    // Hide error when user starts typing
+                    if (s?.isNotEmpty() == true) hideOtpError()
                     if (s?.length == 1 && index < otpFields.size - 1) {
                         otpFields[index + 1].requestFocus()
                     }
@@ -122,6 +133,18 @@ class OtpBottomSheetFragment : BottomSheetDialogFragment() {
         otpFields.forEach { it.text.clear() }
         otpFields.first().requestFocus()
         binding.isOtpFilled = false
+    }
+
+    fun showOtpError(message: String) {
+        binding.tvOtpError.text = message
+        binding.tvOtpError.visibility = View.VISIBLE
+        // Change OTP field borders to red
+        otpFields.forEach { it.setBackgroundResource(com.delhivery.axle.R.drawable.bg_edit_text_error) }
+    }
+
+    fun hideOtpError() {
+        binding.tvOtpError.visibility = View.GONE
+        otpFields.forEach { it.setBackgroundResource(com.delhivery.axle.R.drawable.bg_edit_text_outline) }
     }
 
     override fun onDestroyView() {

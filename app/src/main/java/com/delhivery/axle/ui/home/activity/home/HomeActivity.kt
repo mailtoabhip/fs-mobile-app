@@ -92,6 +92,13 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
+
+    /* setup viewpager immediately so content is visible */
+    binding.viewpager.apply {
+      offscreenPageLimit = OFF_SET_LIMIT
+      adapter = pagerAdapter
+    }
+
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it) {
         if (userPrefs.requestedDeletion) {
@@ -117,12 +124,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           }
 
           observeFragmentLiveData()
-
-          /* setup viewpager */
-          binding.viewpager.apply {
-            offscreenPageLimit = OFF_SET_LIMIT
-            adapter = pagerAdapter
-          }
 
           binding.profile.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)

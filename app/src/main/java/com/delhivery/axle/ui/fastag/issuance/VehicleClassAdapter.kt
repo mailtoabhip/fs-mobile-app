@@ -33,6 +33,16 @@ class VehicleClassAdapter(
 
     fun hasSelection(): Boolean = selectedPosition != -1
 
+    fun selectByClassId(classId: String) {
+        val index = items.indexOfFirst { it.classId == classId }
+        if (index != -1) {
+            selectedPosition = index
+            items[index].selected = true
+            notifyItemChanged(index)
+            onSelectionChanged()
+        }
+    }
+
     // Counter methods (kept for future use)
     // fun getTotalQuantity(): Int = items.sumOf { it.quantity }
     // fun getSelectedItems(): List<VehicleClassItem> = items.filter { it.quantity > 0 }

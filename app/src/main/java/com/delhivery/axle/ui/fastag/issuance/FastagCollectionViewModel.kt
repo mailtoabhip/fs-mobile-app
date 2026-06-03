@@ -22,10 +22,10 @@ class FastagCollectionViewModel @Inject constructor(
     private val _confirmState = MutableLiveData<Resource<ConfirmCollectionResponse>>()
     val confirmState: LiveData<Resource<ConfirmCollectionResponse>> = _confirmState
 
-    fun fetchOrders() {
+    fun fetchOrders(salesCode: String) {
         viewModelScope.launch {
             _ordersState.value = Resource.Loading
-            val result = salesCodeRepository.getOrdersByVendor()
+            val result = salesCodeRepository.getOrdersByVendor(salesCode)
             _ordersState.value = result
         }
     }

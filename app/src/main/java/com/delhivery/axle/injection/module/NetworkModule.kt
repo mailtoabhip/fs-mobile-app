@@ -447,6 +447,15 @@ class NetworkModule {
         FasTAGIssuanceService::class.java
     )
 
+    @Provides
+    @Singleton
+    fun provideKycService(
+        gson: Gson,
+        okHttpClient: OkHttpClient
+    ) = getRetrofit(gson, okHttpClient, UrlConfig.KycService).create(
+        FasTAGKycService::class.java
+    )
+
   /**
    * Provide DocumentUtils for secure document upload/download
    */

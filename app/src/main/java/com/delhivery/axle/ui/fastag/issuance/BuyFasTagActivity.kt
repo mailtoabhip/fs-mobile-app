@@ -20,6 +20,9 @@ class BuyFasTagActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
+
     private lateinit var binding: ActivityBuyFasTagBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
