@@ -28,6 +28,10 @@
         android:theme="@style/CustomSplashScreenTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
+            android:name=".ui.fastag.tagMapping.TagMappingActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ui.fastag.issuance.BuyFasTagActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
@@ -239,7 +243,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.kyc.pan.PanVerificationActivity"
             android:screenOrientation="portrait"

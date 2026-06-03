@@ -18,6 +18,7 @@ import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.fcm.ARGS_VEHICLE_NUMBER
 import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -131,6 +132,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
             )
               navigationUtils.navigate(MyProfileActivity::class.java, false)
           }
+            binding.axle.setOnClickListener {
+                val intent = Intent(this, TagMappingActivity::class.java).apply {
+                    putExtra(TagMappingActivity.EXTRA_ORDER_ID, "test_order_123")
+                    putExtra(TagMappingActivity.EXTRA_ORDER_ITEM_ID, 1)
+                    putExtra(TagMappingActivity.EXTRA_VEHICLE_CLASS, "VC4")
+                    putExtra(TagMappingActivity.EXTRA_JOURNEY_ID, "621608149459159808")
+                    putExtra(TagMappingActivity.EXTRA_VEHICLE_NUMBER, "MH01CA1234")
+                }
+                navigationUtils.navigate(intent, false)
+            }
         }
       }
     })

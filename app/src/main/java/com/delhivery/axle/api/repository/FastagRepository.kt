@@ -2,7 +2,9 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
+import com.delhivery.axle.api.response.BarcodeLookupResponse
 import com.delhivery.axle.api.response.FormConfigResponse
+import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
@@ -92,6 +94,50 @@ class FastagRepository @Inject constructor(
     fun getDisputeFormConfig(disputeTypeCode: String) =
         fastagService.getDisputeFormConfig(disputeTypeCode).convertResponse()
             .map { fields -> FormConfigResponse(fields) }
+
+    /**
+     * Lookup barcode from dispatch table.
+     */
+    suspend fun barcodeLookup(orderId: String, orderItemId: Int, vehicleClass: String): Resource<BarcodeLookupResponse> =
+        safeApiCall {
+            fastagService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
+        }
+
+    /**
+     * Search products and barcodes from IDFC.
+     */
+    suspend fun searchProductBarcode(journeyId: String, barcodeLast4: String): Resource<com.delhivery.axle.api.response.ProductBarcodeResponse> =
+        safeApiCall {
+            fastagService.searchProductBarcode(
+                com.delhivery.axle.api.request.ProductBarcodeRequest(journeyId, barcodeLast4)
+            ).toResource()
+        }
+
+    /**
+     * Generate consent OTP for tag mapping.
+     */
+    suspend fun generateOtp(journeyId: String, barcode: String, tagId: String): Resource<Any> =
+        safeApiCall {
+            fastagService.generateOtp(
+                com.delhivery.axle.api.request.GenerateOtpRequest(journeyId, barcode, tagId)
+            ).toResource()
+        }
+
+    /**
+     * Issue FASTag and process payment.
+     */
+    suspend fun issueTag(
+        journeyId: String,
+        orderId: String,
+        orderItemId: Int,
+        barcode: String,
+        otp: String
+    ): Resource<com.delhivery.axle.api.response.IssueTagResponse> =
+        safeApiCall {
+            fastagService.issueTag(
+                com.delhivery.axle.api.request.IssueTagRequest(journeyId, orderId, orderItemId, barcode, otp)
+            ).toResource()
+        }
 
     /**
      * Submit dispute with multipart form data.

@@ -553,20 +553,20 @@
     <string name="label_dialog_rate">Rate has been successfully submitted</string>
     <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
-  <!--Error (error_-->
-  <string name="error_no_internet">No Internet connection</string>
-  <string name="error_name_required">Please enter name</string>
-  <string name="error_dob_required">Please enter Date of birth</string>
-  <string name="error_location_permission_denied">Location Permission Denied</string>
-  <string name="error_search_missing_origin">Please select origin</string>
-  <string name="error_search_missing_reporting_center">Please select reporting center</string>
-  <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
-  <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
-  <string name="error_upload">Oops! Something went wrong</string>
-  <string name="error_upload_document">Try uploading the document once again</string>
-  <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
-  <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
-  <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
+    <!--Error (error_-->
+    <string name="error_no_internet">No Internet connection</string>
+    <string name="error_name_required">Please enter name</string>
+    <string name="error_dob_required">Please enter Date of birth</string>
+    <string name="error_location_permission_denied">Location Permission Denied</string>
+    <string name="error_search_missing_origin">Please select origin</string>
+    <string name="error_search_missing_reporting_center">Please select reporting center</string>
+    <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
+    <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
+    <string name="error_upload">Oops! Something went wrong</string>
+    <string name="error_upload_document">Try uploading the document once again</string>
+    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+    <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
+    <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
 
 
     <string name="not_available">Not available</string>
@@ -1222,13 +1222,11 @@
     <string name="request_sales_code_subtitle">Our team will connect with you shortly</string>
 
 
-
-
     <string name="str_get_to_know_you">Let’s get to know you</string>
     <string name="str_tell_us_your_name">Tell us your name to personalize your experience</string>
     <string name="str_first_name">First Name</string>
     <string name="str_last_name">Last Name</string>
     <string name="str_enter_here">Enter Here</string>
     <string name="str_communication_consent_note">I agree to receive app updates and communications via my contact details.</string>
-<!--    <string name=""></string>-->
+    <!--    <string name=""></string>-->
 </resources>

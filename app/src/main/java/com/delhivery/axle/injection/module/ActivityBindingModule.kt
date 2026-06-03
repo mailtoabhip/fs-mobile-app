@@ -31,6 +31,7 @@ import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagRaiseDisputeActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionActivity
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
+import com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity
 import com.delhivery.axle.ui.home.activity.bank.BankTransferActivity
 import com.delhivery.axle.ui.home.activity.docket.DocketUpdateActivity
@@ -489,6 +490,11 @@ abstract class ActivityBindingModule {
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagCollectionActivityModule::class])
   internal abstract fun bindFastagCollectionActivity(): FastagCollectionActivity
+
+  /* Tag Mapping activity */
+  @ActivityScope
+  @ContributesAndroidInjector
+  internal abstract fun bindTagMappingActivity(): TagMappingActivity
 }
 
 

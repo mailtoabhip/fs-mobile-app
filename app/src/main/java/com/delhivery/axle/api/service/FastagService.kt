@@ -115,6 +115,40 @@ interface FastagService {
     ): Single<BaseResponse<List<FormField>>>
 
     /**
+     * Lookup barcode from dispatch table.
+     */
+    @GET("finance/fastag/barcodeLookup")
+    suspend fun barcodeLookup(
+        @Query("order_id") orderId: String,
+        @Query("order_item_id") orderItemId: Int,
+        @Query("vehicle_class") vehicleClass: String
+    ): BaseResponse<BarcodeLookupResponse>
+
+    /**
+     * Search products and barcodes from IDFC.
+     */
+    @POST("finance/fastag/issuance/product-barcode")
+    suspend fun searchProductBarcode(
+        @Body request: com.delhivery.axle.api.request.ProductBarcodeRequest
+    ): BaseResponse<ProductBarcodeResponse>
+
+    /**
+     * Generate consent OTP for tag mapping.
+     */
+    @POST("finance/fastag/issuance/generate-otp")
+    suspend fun generateOtp(
+        @Body request: com.delhivery.axle.api.request.GenerateOtpRequest
+    ): BaseResponse<Any>
+
+    /**
+     * Issue FASTag and process payment.
+     */
+    @POST("finance/fastag/issuance/issue-tag")
+    suspend fun issueTag(
+        @Body request: com.delhivery.axle.api.request.IssueTagRequest
+    ): BaseResponse<IssueTagResponse>
+
+    /**
      * Submit dispute with multipart form data.
      */
     @Multipart
