@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.pending
+package com.delhivery.axle.ui.fastag.tagAssignment.pendingActions
 
 /**
  * Represents a pending order with its vehicles requiring action.

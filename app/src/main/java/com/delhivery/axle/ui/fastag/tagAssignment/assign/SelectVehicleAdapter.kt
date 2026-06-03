@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.pending.assign
+package com.delhivery.axle.ui.fastag.tagAssignment.assign
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AvailableVehicle
 
 class SelectVehicleAdapter(
     private val onVehicleClick: (AvailableVehicle) -> Unit

@@ -41,15 +41,6 @@
           android:textColor="@color/white"
           android:background="@drawable/hamburger_menu_icon" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/axle"
-            android:layout_width="@dimen/size_56dp"
-            android:layout_height="@dimen/size_18dp"
-            android:layout_marginStart="@dimen/size_8dp"
-            android:layout_marginEnd="@dimen/size_48dp"
-            app:srcCompat="@drawable/home_axle_logo"
-            />
-
     </androidx.appcompat.widget.Toolbar>
 
     <com.delhivery.axle.ui.custom.DelhiverViewPager

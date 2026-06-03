@@ -16,16 +16,20 @@ import com.delhivery.axle.ui.businessverification.BusinessVerificationActivity
 import com.delhivery.axle.ui.comingsoon.ComingSoonActivity
 import com.delhivery.axle.ui.contractDetails.ContractDetailsActivity
 import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
-import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
+import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.issuance.AddVehicleActivity
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
 import com.delhivery.axle.ui.fastag.issuance.FastagCollectionActivity
 import com.delhivery.axle.ui.fastag.issuance.FastagKycActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentMethodActivity
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
-import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
-import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
-import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagRaiseDisputeActivity
@@ -416,6 +420,26 @@ abstract class ActivityBindingModule {
   @ContributesAndroidInjector(modules = [AbsAssignVehicleActivityModule::class])
   internal abstract fun bindAssignVehicleActivity(): AssignVehicleActivity
 
+  /* FASTag Assignment activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagAssignmentActivityModule::class])
+  internal abstract fun bindFastagAssignmentActivity(): FastagAssignmentActivity
+
+  /* Vehicle Image Upload activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsVehicleImageUploadActivityModule::class])
+  internal abstract fun bindVehicleImageUploadActivity(): VehicleImageUploadActivity
+
+  /* FASTag Image Upload activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsFastagImageUploadActivityModule::class])
+  internal abstract fun bindFastagImageUploadActivity(): FastagImageUploadActivity
+
+  /* Vehicle Details activity */
+  @ActivityScope
+  @ContributesAndroidInjector(modules = [AbsVehicleDetailsActivityModule::class])
+  internal abstract fun bindVehicleDetailsActivity(): VehicleDetailsActivity
+
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsPlacementsActivityModule::class, PlacementsFragmentsBindingModule::class])
   internal abstract fun bindPlacementsActivity(): PlacementsActivity
@@ -693,6 +717,18 @@ internal abstract class AbsPendingActionsActivityModule : ActivityModule<Pending
 
 @Module
 internal abstract class AbsAssignVehicleActivityModule : ActivityModule<AssignVehicleActivity>()
+
+@Module
+internal abstract class AbsFastagAssignmentActivityModule : ActivityModule<FastagAssignmentActivity>()
+
+@Module
+internal abstract class AbsVehicleImageUploadActivityModule : ActivityModule<VehicleImageUploadActivity>()
+
+@Module
+internal abstract class AbsFastagImageUploadActivityModule : ActivityModule<FastagImageUploadActivity>()
+
+@Module
+internal abstract class AbsVehicleDetailsActivityModule : ActivityModule<VehicleDetailsActivity>()
 
 @Module
 internal abstract class AbsPlacementsActivityModule : ActivityModule<PlacementsActivity>()

@@ -1,6 +1,7 @@
-package com.delhivery.axle.ui.fastag.pending
+package com.delhivery.axle.ui.fastag.tagAssignment.pendingActions
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,10 +116,10 @@ class PendingOrdersAdapter(
          */
         private fun adjustAlpha(color: Int, factor: Float): Int {
             val alpha = (255 * factor).toInt()
-            val red = android.graphics.Color.red(color)
-            val green = android.graphics.Color.green(color)
-            val blue = android.graphics.Color.blue(color)
-            return android.graphics.Color.argb(alpha, red, green, blue)
+            val red = Color.red(color)
+            val green = Color.green(color)
+            val blue = Color.blue(color)
+            return Color.argb(alpha, red, green, blue)
         }
     }
 

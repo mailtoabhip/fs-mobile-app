@@ -13,7 +13,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
-import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsActivity
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
