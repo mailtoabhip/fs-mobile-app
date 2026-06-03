@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.pending.assign.VehicleImageUploadViewModel" />
+            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadViewModel" />
     </data>
 
     <LinearLayout

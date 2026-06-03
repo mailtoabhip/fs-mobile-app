@@ -9,12 +9,12 @@
     android:paddingTop="@dimen/size_32dp"
     android:paddingBottom="@dimen/size_24dp">
 
-    <!-- Check Icon -->
+    <!-- Success Animation -->
     <ImageView
+        android:id="@+id/ivSuccessAnimation"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:contentDescription="@string/vehicle_verified_title"
-        android:src="@drawable/ic_verified_circle" />
+        android:contentDescription="@string/vehicle_verified_title" />
 
     <!-- Title -->
     <TextView

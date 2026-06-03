@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.pending
+package com.delhivery.axle.ui.fastag.tagAssignment.pendingActions
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

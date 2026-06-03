@@ -128,8 +128,8 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:contentDescription="@string/upload_status_uploaded"
-            android:src="@drawable/ic_check_circle_green"
-            app:tint="@color/progress_green" />
+            android:src="@drawable/icon_upload_success_check"
+            />
 
         <TextView
             android:id="@+id/tvStatus"

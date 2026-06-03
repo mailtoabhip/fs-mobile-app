@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.pending
+package com.delhivery.axle.ui.fastag.tagAssignment.pendingActions
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityPendingActionsBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, PendingActionsViewModel>() {

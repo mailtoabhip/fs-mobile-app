@@ -1268,5 +1268,8 @@
     <string name="exempted_vehicle_status_label">Exempted vehicle status</string>
     <string name="vehicle_class_label">Vehicle class</string>
     <string name="continue_to_assign_fastag">Continue to Assign FASTag</string>
+    <string name="rc_processing_message">Processing your RC documents.\nPlease wait…</string>
+    <string name="vehicle_image_processing_message">Processing your vehicle images.\nPlease wait…</string>
+    <string name="image_preview_title">Image preview</string>
 
 </resources>

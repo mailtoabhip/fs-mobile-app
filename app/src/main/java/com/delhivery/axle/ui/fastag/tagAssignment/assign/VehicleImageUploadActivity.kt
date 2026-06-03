@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.pending.assign
+package com.delhivery.axle.ui.fastag.tagAssignment.assign
 
 import android.Manifest
 import android.content.Context
@@ -17,6 +17,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVehicleImageUploadBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.SampleImageBottomSheetDialogFragment
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -39,6 +40,8 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
 
     private var vehicleFrontUploaded = false
     private var vehicleSideUploaded = false
+    private var vehicleFrontFile: File? = null
+    private var vehicleSideFile: File? = null
 
     private var currentUploadTarget: UploadTarget = UploadTarget.VEHICLE_FRONT
     private var mPhotoFile: File? = null
@@ -49,10 +52,19 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
 
     companion object {
         private const val EXTRA_VEHICLE_NUMBER = "extra_vehicle_number"
+        private const val EXTRA_ORDER_ID = "extra_order_id"
+        private const val EXTRA_ORDER_ITEM_ID = "extra_order_item_id"
 
-        fun newIntent(context: Context, vehicleNumber: String): Intent {
+        fun newIntent(
+            context: Context,
+            vehicleNumber: String,
+            orderId: String = "",
+            orderItemId: Int = 0
+        ): Intent {
             return Intent(context, VehicleImageUploadActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_NUMBER, vehicleNumber)
+                putExtra(EXTRA_ORDER_ID, orderId)
+                putExtra(EXTRA_ORDER_ITEM_ID, orderItemId)
             }
         }
     }
@@ -144,8 +156,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         // Continue button
         binding.btnContinue.setOnClickListener {
             if (vehicleFrontUploaded && vehicleSideUploaded) {
-                val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
-                startActivity(FastagImageUploadActivity.newIntent(this, vehicleNumber))
+                uploadVehicleImagesToServer()
             }
         }
     }
@@ -269,10 +280,12 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         when (currentUploadTarget) {
             UploadTarget.VEHICLE_FRONT -> {
                 binding.uploadVehicleFront.setUploadedFile(file, "Vehicle_Front.jpg")
+                vehicleFrontFile = file
                 vehicleFrontUploaded = true
             }
             UploadTarget.VEHICLE_SIDE -> {
                 binding.uploadVehicleSide.setUploadedFile(file, "Vehicle_Side.jpg")
+                vehicleSideFile = file
                 vehicleSideUploaded = true
             }
         }
@@ -283,5 +296,85 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         val enabled = vehicleFrontUploaded && vehicleSideUploaded
         binding.btnContinue.isEnabled = enabled
         binding.btnContinue.alpha = if (enabled) 1.0f else 0.5f
+    }
+
+    // ---- Vehicle Image Upload API ----
+
+    private fun uploadVehicleImagesToServer() {
+        val frontFile = vehicleFrontFile ?: return
+        val sideFile = vehicleSideFile ?: return
+        val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+
+        val mediaType = okhttp3.MediaType.parse("image/jpeg")
+        val frontPart = okhttp3.MultipartBody.Part.createFormData(
+            "vehicle_front",
+            frontFile.name,
+            okhttp3.RequestBody.create(mediaType, frontFile)
+        )
+        val sidePart = okhttp3.MultipartBody.Part.createFormData(
+            "vehicle_side",
+            sideFile.name,
+            okhttp3.RequestBody.create(mediaType, sideFile)
+        )
+
+        viewModel.uploadVehicleImages(frontPart, sidePart, orderId, orderItemId)
+        observeUpload()
+    }
+
+    private fun observeUpload() {
+        viewModel.uploadState.observe(this, androidx.lifecycle.Observer { resource ->
+            when (resource) {
+                is com.delhivery.axle.api.repository.Resource.Loading -> {
+                    uiUtils.showProgress()
+                }
+                is com.delhivery.axle.api.repository.Resource.Success -> {
+                    val jobId = resource.data?.jobId
+                    if (!jobId.isNullOrEmpty()) {
+                        // Start polling — keep progress showing
+                        viewModel.startPolling(jobId)
+                        observeProcessStatus()
+                    } else {
+                        uiUtils.hideProgress()
+                        navigateToFastagImageUpload()
+                    }
+                }
+                is com.delhivery.axle.api.repository.Resource.Failure -> {
+                    uiUtils.hideProgress()
+                    if (resource.isNetworkError) {
+                        uiUtils.showSnackbar("Network error. Please check your connection.")
+                    } else {
+                        uiUtils.showSnackbar(resource.errorMessage ?: "Upload failed. Please try again.")
+                    }
+                }
+            }
+        })
+    }
+
+    private fun observeProcessStatus() {
+        viewModel.processStatus.observe(this, androidx.lifecycle.Observer { resource ->
+            when (resource) {
+                is com.delhivery.axle.api.repository.Resource.Success -> {
+                    uiUtils.hideProgress()
+                    val status = resource.data?.status?.uppercase()
+                    when (status) {
+                        "COMPLETED", "TIMEOUT" -> navigateToFastagImageUpload()
+                        "FAILED", "NOT_FOUND" -> {
+                            uiUtils.showSnackbar("Vehicle image processing failed. Please try again.")
+                        }
+                    }
+                }
+                is com.delhivery.axle.api.repository.Resource.Failure -> {
+                    uiUtils.hideProgress()
+                    uiUtils.showSnackbar("Processing check failed. Please try again.")
+                }
+                is com.delhivery.axle.api.repository.Resource.Loading -> { /* no-op */ }
+            }
+        })
+    }
+
+    private fun navigateToFastagImageUpload() {
+        val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
+        startActivity(FastagImageUploadActivity.newIntent(this, vehicleNumber))
     }
 }

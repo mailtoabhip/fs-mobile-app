@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogBottomVehicleVerifiedBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -85,6 +86,11 @@ class VehicleVerifiedBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private fun setupViews() {
         binding.tvSubtitle.text = getString(R.string.vehicle_verified_subtitle, vehicleNumber)
+
+        Glide.with(this)
+            .asGif()
+            .load(R.raw.success)
+            .into(binding.ivSuccessAnimation)
     }
 
     private fun setupClickListeners() {

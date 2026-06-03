@@ -130,4 +130,68 @@ interface FastagService {
         @Part uploadDoc2: MultipartBody.Part? = null,
         @Part uploadDoc3: MultipartBody.Part? = null
     ): Single<BaseResponse<DisputeSubmissionResponse>>
+
+
+    @GET("/fastag/tag-issuance/v1/order/{order_id}/items")
+    suspend fun getOrderItems(
+        @Path("order_id") orderId: String
+    ): BaseResponse<OrderItemsResponse>
+
+    /**
+     * Submit RC images for background processing.
+     */
+    @Multipart
+    @POST("/issuance/rc-process")
+    suspend fun uploadRcImages(
+        @Part rcFront: MultipartBody.Part,
+        @Part rcBack: MultipartBody.Part,
+        @Part orderId: MultipartBody.Part,
+        @Part orderItemId: MultipartBody.Part
+    ): BaseResponse<RcProcessResponse>
+
+    /**
+     * Poll RC processing job status.
+     */
+    @GET("/issuance/rc-process/{job_id}/status")
+    suspend fun getRcProcessStatus(
+        @Path("job_id") jobId: String
+    ): BaseResponse<RcProcessStatusResponse>
+
+    /**
+     * Submit vehicle images for background processing.
+     */
+    @Multipart
+    @POST("/issuance/vehicle-images-process")
+    suspend fun uploadVehicleImages(
+        @Part vehicleFront: MultipartBody.Part,
+        @Part vehicleSide: MultipartBody.Part,
+        @Part orderId: MultipartBody.Part,
+        @Part orderItemId: MultipartBody.Part
+    ): BaseResponse<VehicleImageProcessResponse>
+
+    /**
+     * Poll vehicle images processing status.
+     */
+    @GET("/issuance/vehicle-images-process/{job_id}/status")
+    suspend fun getVehicleImageProcessStatus(
+        @Path("job_id") jobId: String
+    ): BaseResponse<VehicleImageProcessStatusResponse>
+
+    /**
+     * Upload FASTag pasted image.
+     */
+    @Multipart
+    @POST("/issuance/fastag-image")
+    suspend fun uploadFastagImage(
+        @Part fastagImage: MultipartBody.Part,
+        @Part journeyId: MultipartBody.Part
+    ): BaseResponse<FastagImageUploadResponse>
+
+    /**
+     * Validate uploaded FASTag image.
+     */
+    @POST("/issuance/fastag-image/validate")
+    suspend fun validateFastagImage(
+        @Body request: com.delhivery.axle.api.request.FastagImageValidateRequest
+    ): BaseResponse<FastagImageValidateResponse>
 }

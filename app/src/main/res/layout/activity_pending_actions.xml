@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.pending.PendingActionsViewModel" />
+            type="com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsViewModel" />
     </data>
 
     <LinearLayout

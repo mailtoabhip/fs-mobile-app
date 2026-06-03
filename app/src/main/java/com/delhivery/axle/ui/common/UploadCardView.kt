@@ -55,6 +55,7 @@ class UploadCardView @JvmOverloads constructor(
     private var onReuploadClick: (() -> Unit)? = null
     private var onRemoveClick: (() -> Unit)? = null
     private var onSampleImageClick: (() -> Unit)? = null
+    private var uploadedFilePath: String? = null
 
     private var isUploaded = false
 
@@ -90,6 +91,12 @@ class UploadCardView @JvmOverloads constructor(
 
         tvSampleImage.setOnClickListener {
             onSampleImageClick?.invoke()
+        }
+
+        ivThumbnail.setOnClickListener {
+            uploadedFilePath?.let { path ->
+                context.startActivity(ImagePreviewActivity.newIntent(context, filePath = path))
+            }
         }
 
         // Read custom attributes
@@ -140,6 +147,7 @@ class UploadCardView @JvmOverloads constructor(
      */
     fun setUploadedFile(file: File, displayName: String? = null) {
         isUploaded = true
+        uploadedFilePath = file.absolutePath
 
         // Hide default state
         ivUploadIcon.visibility = View.GONE
@@ -224,6 +232,7 @@ class UploadCardView @JvmOverloads constructor(
      */
     fun resetUploadState() {
         isUploaded = false
+        uploadedFilePath = null
 
         // Show default state
         ivUploadIcon.visibility = View.VISIBLE

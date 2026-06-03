@@ -334,22 +334,26 @@
             android:name=".ui.fastag.trucks.FastagTrucksActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.pending.PendingActionsActivity"
+            android:name=".ui.fastag.tagAssignment.pendingActions.PendingActionsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.pending.assign.AssignVehicleActivity"
+            android:name=".ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.pending.assign.FastagAssignmentActivity"
+            android:name=".ui.fastag.tagAssignment.assign.FastagAssignmentActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.pending.assign.VehicleDetailsActivity"
+            android:name=".ui.fastag.tagAssignment.assign.VehicleDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.pending.assign.VehicleImageUploadActivity"
+            android:name=".ui.common.ImagePreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.fastag.tagAssignment.assign.VehicleImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.pending.assign.FastagImageUploadActivity"
+            android:name=".ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fastag.trucks.FastagSearchActivity"

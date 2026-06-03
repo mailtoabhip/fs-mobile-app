@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.pending.assign
+package com.delhivery.axle.ui.fastag.tagAssignment.pendingActions
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityAssignVehicleBinding
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.fastag.pending.PendingActionType
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.SelectVehicleAdapter
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignVehicleViewModel>() {
@@ -21,10 +22,10 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     private lateinit var adapter: SelectVehicleAdapter
 
     companion object {
-        private const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
-        private const val EXTRA_REFERENCE_ID = "extra_reference_id"
-        private const val EXTRA_COLOR_CODE = "extra_color_code"
-        private const val EXTRA_ACTION_TYPE = "extra_action_type"
+        private const val VEHICLE_CLASS = "vehicle_class"
+        private const val REFERENCE_ID = "reference_id"
+        private const val COLOR_CODE = "color_code"
+        private const val ACTION_TYPE = "action_type"
 
         fun newIntent(
             context: Context,
@@ -34,10 +35,10 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             actionType: PendingActionType
         ): Intent {
             return Intent(context, AssignVehicleActivity::class.java).apply {
-                putExtra(EXTRA_VEHICLE_CLASS, vehicleClass)
-                putExtra(EXTRA_REFERENCE_ID, referenceId)
-                putExtra(EXTRA_COLOR_CODE, colorCode)
-                putExtra(EXTRA_ACTION_TYPE, actionType.name)
+                putExtra(VEHICLE_CLASS, vehicleClass)
+                putExtra(REFERENCE_ID, referenceId)
+                putExtra(COLOR_CODE, colorCode)
+                putExtra(ACTION_TYPE, actionType.name)
             }
         }
     }
@@ -45,11 +46,11 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
-        val referenceId = intent.getStringExtra(EXTRA_REFERENCE_ID)
-        val colorCode = intent.getStringExtra(EXTRA_COLOR_CODE) ?: "GREEN"
+        val vehicleClass = intent.getStringExtra(VEHICLE_CLASS) ?: ""
+        val referenceId = intent.getStringExtra(REFERENCE_ID)
+        val colorCode = intent.getStringExtra(COLOR_CODE) ?: "GREEN"
         val actionType = try {
-            PendingActionType.valueOf(intent.getStringExtra(EXTRA_ACTION_TYPE) ?: "ASSIGNMENT")
+            PendingActionType.valueOf(intent.getStringExtra(ACTION_TYPE) ?: "ASSIGNMENT")
         } catch (e: Exception) {
             PendingActionType.ASSIGNMENT
         }
@@ -88,12 +89,14 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     }
 
     private fun setupRecyclerView() {
+        val referenceId = intent.getStringExtra(REFERENCE_ID) ?: ""
         adapter = SelectVehicleAdapter { vehicle ->
             startActivity(
-                VehicleDetailsActivity.newIntent(
+                VehicleDetailsActivity.Companion.newIntent(
                     context = this,
                     vehicleNumber = vehicle.vehicleNumber,
-                    chassisNumber = vehicle.chassisNumber
+                    chassisNumber = vehicle.chassisNumber,
+                    orderId = referenceId
                 )
             )
         }
