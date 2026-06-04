@@ -166,14 +166,24 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
     }
 
     private fun setupSelection() {
+        // Full KYC is disabled
         binding.cardFullKyc.isClickable = false
         binding.cardFullKyc.isFocusable = false
 
+        // eKYC is disabled
+        binding.rbEkyc.isEnabled = false
+        binding.ekycContent.isClickable = false
+        binding.ekycContent.alpha = 0.5f
+
+        // Expand the dropdown by default
+        isOtherKycExpanded = true
+        binding.expandedKycContent.visibility = View.VISIBLE
+        binding.ivDropdown.rotation = 180f
+
+        // Other KYC options dropdown toggle
         binding.otherKycHeader.setOnClickListener { toggleOtherKycOptions() }
 
-        binding.rbEkyc.setOnClickListener { selectEkyc() }
-        binding.ekycContent.setOnClickListener { selectEkyc() }
-
+        // Express KYC selection
         binding.rbExpressKyc.setOnClickListener { selectExpressKyc() }
         binding.expressKycContent.setOnClickListener { selectExpressKyc() }
     }

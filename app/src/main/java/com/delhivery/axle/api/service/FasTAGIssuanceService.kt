@@ -35,13 +35,11 @@ interface FasTAGIssuanceService {
     @GET("/fastag/tag-issuance/v1/orders/by-vendor")
     suspend fun getOrdersByVendor(
         @Query("sales_code") salesCode: String,
-        @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
+        @Query("order_id") orderId: String
     ): BaseResponse<FastagOrdersResponse>
 
-    @POST("/fastag/tag-issuance/v1/order/{order_id}/confirm-collection")
+    @POST("/fastag/tag-issuance/v1/order/confirm-collection")
     suspend fun confirmCollection(
-        @Path("order_id") orderId: String,
         @Body request: ConfirmCollectionRequest
     ): BaseResponse<ConfirmCollectionResponse>
 

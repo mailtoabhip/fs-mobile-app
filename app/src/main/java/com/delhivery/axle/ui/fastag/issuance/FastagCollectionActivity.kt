@@ -2,28 +2,24 @@ package com.delhivery.axle.ui.fastag.issuance
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
-import com.delhivery.axle.api.response.FastagOrder
+import com.delhivery.axle.api.response.FastagOrdersResponse
 import com.delhivery.axle.api.response.FastagInventoryItem
 import com.delhivery.axle.databinding.ActivityFastagCollectionBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.utils.ViewModelFactory
 import javax.inject.Inject
 
 class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, FastagCollectionViewModel>() {
     companion object {
         const val EXTRA_SALES_CODE = "extra_sales_code"
-        const val EXTRA_FASTAG_ID = "extra_fastag_id"
-        const val EXTRA_BARCODE = "extra_barcode"
-        const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
-        const val EXTRA_VRN = "extra_vrn"
+        const val EXTRA_ORDER_ID = "extra_order_id"
     }
 
     override fun getViewModelClass() = FastagCollectionViewModel::class.java
@@ -50,7 +46,7 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
             confirmCollection()
         }
 
-        viewModel.fetchOrders(intent.getStringExtra("extra_sales_code") ?: "")
+        viewModel.fetchOrders(intent.getStringExtra("extra_sales_code") ?: "", intent.getStringExtra("extra_order_id") ?: "")
     }
 
     private var currentOrderId: String = ""
@@ -59,11 +55,9 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
     private fun confirmCollection() {
         val request = com.delhivery.axle.api.request.ConfirmCollectionRequest(
             orderId = currentOrderId,
-            salesCode = currentSalesCode,
-            deviceId = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ANDROID_ID),
-            products = emptyList() // TODO: Populate with actual collected product data
+            salesCode = currentSalesCode
         )
-        viewModel.confirmCollection(currentOrderId, request)
+        viewModel.confirmCollection(request)
     }
 
     private fun setupToolbar() {
@@ -88,8 +82,8 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
 
                 is Resource.Success -> {
                     val data = resource.data
-                    if (data != null && data.orders.isNotEmpty()) {
-                        loadCollectionData(data.orders.first())
+                    if (data != null) {
+                        loadCollectionData(data)
                     }
                 }
 
@@ -114,18 +108,13 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
                         showCollectionSuccessBottomSheet()
                     } else {
                         binding.slideToConfirm.reset()
-                        Toast.makeText(this, data?.message ?: "Collection failed", Toast.LENGTH_SHORT).show()
+                        showCollectionFailedBottomSheet()
                     }
                 }
 
                 is Resource.Failure -> {
                     binding.slideToConfirm.reset()
-                    val message = if (resource.isNetworkError) {
-                        "No internet connection. Please try again."
-                    } else {
-                        "Something went wrong. Please try again."
-                    }
-                    dialogUtils.showErrorDialog(message)
+                    showCollectionFailedBottomSheet()
                 }
             }
         }
@@ -133,15 +122,25 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
 
     private fun showCollectionSuccessBottomSheet() {
         CollectionSuccessBottomSheet.newInstance {
-            val intent = Intent(this, HomeActivity::class.java).apply {
+            // Assign FASTags — navigate to vehicle details
+            val intent = Intent(this, VehicleDetailsActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("order_id", currentOrderId)
             }
             startActivity(intent)
             finish()
         }.show(supportFragmentManager, CollectionSuccessBottomSheet.TAG)
     }
 
-    private fun loadCollectionData(order: FastagOrder) {
+    private fun showCollectionFailedBottomSheet() {
+        CollectionSuccessBottomSheet.newFailedInstance {
+            // Try again — reset slide and retry
+            binding.slideToConfirm.reset()
+            confirmCollection()
+        }.show(supportFragmentManager, CollectionSuccessBottomSheet.TAG)
+    }
+
+    private fun loadCollectionData(order: FastagOrdersResponse) {
         currentOrderId = order.orderId
         currentSalesCode = order.salesCode
         binding.orderId = order.orderId
@@ -149,18 +148,31 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
         val totalTags = order.items.size
         binding.totalTags = totalTags
 
-        val inventoryItems = order.items
-            .groupBy { it.vehicleClass }
-            .map { (_, items) ->
-                val first = items.first()
+        // Use vehicle_class_summary if available, otherwise group from items
+        val inventoryItems = if (!order.vehicleClassSummary.isNullOrEmpty()) {
+            order.vehicleClassSummary.map { summary ->
                 FastagInventoryItem(
-                    vehicleClass = first.vehicleClass,
-                    displayName = first.displayName,
-                    vehicleTypes = first.vehicleTypes,
-                    units = items.size,
-                    colorCode = first.colorCode
+                    vehicleClass = summary.vehicleClass,
+                    displayName = summary.displayName,
+                    vehicleTypes = summary.vehicleTypes,
+                    units = summary.count,
+                    colorCode = summary.colorCode
                 )
             }
+        } else {
+            order.items
+                .groupBy { it.vehicleClass }
+                .map { (_, items) ->
+                    val first = items.first()
+                    FastagInventoryItem(
+                        vehicleClass = first.vehicleClass,
+                        displayName = first.displayName,
+                        vehicleTypes = first.vehicleTypes,
+                        units = items.size,
+                        colorCode = first.colorCode
+                    )
+                }
+        }
 
         val adapter = FastagInventoryAdapter(inventoryItems) { colorCode ->
             mapColorCode(colorCode)

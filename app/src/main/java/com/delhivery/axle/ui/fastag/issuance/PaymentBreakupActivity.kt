@@ -137,6 +137,7 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         PaymentSuccessBottomSheet.newInstance {
             val intent = Intent(this, FastagCollectionActivity::class.java).apply {
                 putExtra("extra_sales_code", salesCode)
+                putExtra("extra_order_id", orderId)
             }
             startActivity(intent)
             finish()

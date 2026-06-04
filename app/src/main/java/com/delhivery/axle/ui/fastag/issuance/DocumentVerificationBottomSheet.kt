@@ -27,10 +27,6 @@ class DocumentVerificationBottomSheet : BottomSheetDialogFragment() {
         salesCode = arguments?.getString(ARG_SALES_CODE) ?: ""
         orderId = arguments?.getString(ARG_ORDER_ID) ?: ""
 
-        view.findViewById<View>(R.id.ivClose).setOnClickListener {
-            dismiss()
-        }
-
         view.findViewById<View>(R.id.btnContinueToPay).setOnClickListener {
             dismiss()
             val intent = Intent(requireContext(), PaymentBreakupActivity::class.java).apply {
@@ -38,6 +34,15 @@ class DocumentVerificationBottomSheet : BottomSheetDialogFragment() {
                 putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, orderId)
             }
             startActivity(intent)
+        }
+
+        view.findViewById<View>(R.id.btnPayLater).setOnClickListener {
+            dismiss()
+            val intent = Intent(requireContext(), com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(intent)
+            requireActivity().finish()
         }
     }
 

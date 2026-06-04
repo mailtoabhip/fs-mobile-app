@@ -54,10 +54,19 @@ class AddVehicleActivity : BaseActivity<ActivityAddVehicleBinding, AddVehicleVie
             hasNavigatedFromCheck = false
 
             val truckNumber = text?.toString()?.trim() ?: ""
-            if (isValidVehicleNumber(truckNumber)) {
+            if (truckNumber.isEmpty()) {
+                binding.tvError.visibility = android.view.View.GONE
+                binding.etTruckNumber.setBackgroundResource(R.drawable.bg_edit_text_outline)
+                binding.btnContinue.isEnabled = false
+                binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+            } else if (isValidVehicleNumber(truckNumber)) {
+                binding.tvError.visibility = android.view.View.GONE
+                binding.etTruckNumber.setBackgroundResource(R.drawable.bg_edit_text_outline)
                 binding.btnContinue.isEnabled = true
                 binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
             } else {
+                binding.tvError.visibility = android.view.View.VISIBLE
+                binding.etTruckNumber.setBackgroundResource(R.drawable.bg_edit_text_error)
                 binding.btnContinue.isEnabled = false
                 binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
             }
