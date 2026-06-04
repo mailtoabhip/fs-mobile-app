@@ -344,7 +344,7 @@
             android:name=".ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.tagAssignment.assign.FastagAssignmentActivity"
+            android:name=".ui.fastag.tagAssignment.assign.RCUploadActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fastag.tagAssignment.assign.VehicleDetailsActivity"

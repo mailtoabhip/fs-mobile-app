@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_rounded_top"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/size_24dp">
+
+    <!-- Close button (top right) -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivClose"
+        android:layout_width="@dimen/size_20dp"
+        android:layout_height="@dimen/size_20dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:contentDescription="@string/action_close"
+        android:src="@drawable/ic_close" />
+
+    <!-- Error Icon -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:contentDescription="@string/rc_upload_failed_title"
+        android:src="@drawable/ic_error_circle_red" />
+
+    <!-- Title -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:text="@string/rc_upload_failed_title"
+        android:textColor="@color/neutral_black_200"
+        android:textSize="@dimen/text_18sp"
+        android:textStyle="bold" />
+
+    <!-- Subtitle -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size_32dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:gravity="center"
+        android:text="@string/rc_upload_failed_subtitle"
+        android:textColor="@color/text_body_secondary"
+        android:textSize="@dimen/text_14sp" />
+
+    <!-- Try Again Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnTryAgain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_24dp"
+        android:background="@drawable/bg_all_round_corner_solid_black"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:paddingVertical="@dimen/size_14dp"
+        android:stateListAnimator="@null"
+        android:text="@string/rc_upload_try_again"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_16sp"
+        android:textStyle="bold" />
+
+    <!-- Maybe Later -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvMaybeLater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/size_12dp"
+        android:padding="@dimen/size_8dp"
+        android:text="@string/rc_upload_maybe_later"
+        android:textColor="@color/neutral_black_200"
+        android:textSize="@dimen/text_14sp" />
+
+</LinearLayout>

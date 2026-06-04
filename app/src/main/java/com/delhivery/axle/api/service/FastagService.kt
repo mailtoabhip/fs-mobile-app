@@ -4,6 +4,7 @@ import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.*
+import com.google.gson.JsonObject
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -169,50 +170,50 @@ interface FastagService {
 
     // ---- Coroutine-based endpoints (Tag Issuance flow) ----
 
-    @GET("/fastag/tag-issuance/v1/order/{order_id}/items")
-    suspend fun getOrderItems(
-        @Path("order_id") orderId: String
-    ): BaseResponse<OrderItemsResponse>
-
-    @Multipart
-    @POST("/issuance/rc-process")
-    suspend fun uploadRcImages(
-        @Part rcFront: MultipartBody.Part,
-        @Part rcBack: MultipartBody.Part,
-        @Part orderId: MultipartBody.Part,
-        @Part orderItemId: MultipartBody.Part
-    ): BaseResponse<RcProcessResponse>
-
-    @GET("/issuance/rc-process/{job_id}/status")
-    suspend fun getRcProcessStatus(
-        @Path("job_id") jobId: String
-    ): BaseResponse<RcProcessStatusResponse>
-
-    @Multipart
-    @POST("/issuance/vehicle-images-process")
-    suspend fun uploadVehicleImages(
-        @Part vehicleFront: MultipartBody.Part,
-        @Part vehicleSide: MultipartBody.Part,
-        @Part orderId: MultipartBody.Part,
-        @Part orderItemId: MultipartBody.Part
-    ): BaseResponse<VehicleImageProcessResponse>
-
-    @GET("/issuance/vehicle-images-process/{job_id}/status")
-    suspend fun getVehicleImageProcessStatus(
-        @Path("job_id") jobId: String
-    ): BaseResponse<VehicleImageProcessStatusResponse>
-
-    @Multipart
-    @POST("/issuance/fastag-image")
-    suspend fun uploadFastagImage(
-        @Part fastagImage: MultipartBody.Part,
-        @Part journeyId: MultipartBody.Part
-    ): BaseResponse<FastagImageUploadResponse>
-
-    @POST("/issuance/fastag-image/validate")
-    suspend fun validateFastagImage(
-        @Body request: com.delhivery.axle.api.request.FastagImageValidateRequest
-    ): BaseResponse<FastagImageValidateResponse>
+//    @GET("/fastag/tag-issuance/v1/order/{order_id}/items")
+//    suspend fun getOrderItems(
+//        @Path("order_id") orderId: String
+//    ): BaseResponse<List<OrderItem>>
+//
+//    @Multipart
+//    @POST("/fastag/tag-issuance/v1/issuance/rc-process")
+//    suspend fun uploadRcImages(
+//        @Part rcFront: MultipartBody.Part,
+//        @Part rcBack: MultipartBody.Part,
+//        @Part orderId: MultipartBody.Part,
+//        @Part orderItemId: MultipartBody.Part
+//    ): BaseResponse<RcProcessResponse>
+//
+//    @GET("/fastag/tag-issuance/v1/issuance/rc-process/{job_id}/status")
+//    suspend fun getRcProcessStatus(
+//        @Path("job_id") jobId: String
+//    ): BaseResponse<RcProcessStatusResponse>
+//
+//    @Multipart
+//    @POST("/issuance/vehicle-images-process")
+//    suspend fun uploadVehicleImages(
+//        @Part vehicleFront: MultipartBody.Part,
+//        @Part vehicleSide: MultipartBody.Part,
+//        @Part orderId: MultipartBody.Part,
+//        @Part orderItemId: MultipartBody.Part
+//    ): BaseResponse<VehicleImageProcessResponse>
+//
+//    @GET("/issuance/vehicle-images-process/{job_id}/status")
+//    suspend fun getVehicleImageProcessStatus(
+//        @Path("job_id") jobId: String
+//    ): BaseResponse<VehicleImageProcessStatusResponse>
+//
+//    @Multipart
+//    @POST("/issuance/fastag-image")
+//    suspend fun uploadFastagImage(
+//        @Part fastagImage: MultipartBody.Part,
+//        @Part journeyId: MultipartBody.Part
+//    ): BaseResponse<FastagImageUploadResponse>
+//
+//    @POST("/issuance/fastag-image/validate")
+//    suspend fun validateFastagImage(
+//        @Body request: com.delhivery.axle.api.request.FastagImageValidateRequest
+//    ): BaseResponse<FastagImageValidateResponse>
 
     /**
      * Fetch recharge status.
@@ -220,7 +221,7 @@ interface FastagService {
     @POST("/api/v1/wallet/recharge-status")
     fun fetchRechargeStatus(
         @Header("x-user-id") userId: String,
-        @Body request: com.google.gson.JsonObject
+        @Body request: JsonObject
     ): Single<BaseResponse<RechargeStatusResponse>>
 
 

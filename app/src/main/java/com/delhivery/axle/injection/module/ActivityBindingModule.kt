@@ -26,7 +26,7 @@ import com.delhivery.axle.ui.fastag.issuance.PaymentMethodActivity
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.RCUploadActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadActivity
@@ -424,7 +424,7 @@ abstract class ActivityBindingModule {
   /* FASTag Assignment activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagAssignmentActivityModule::class])
-  internal abstract fun bindFastagAssignmentActivity(): FastagAssignmentActivity
+  internal abstract fun bindFastagAssignmentActivity(): RCUploadActivity
 
   /* Vehicle Image Upload activity */
   @ActivityScope
@@ -725,7 +725,7 @@ internal abstract class AbsPendingActionsActivityModule : ActivityModule<Pending
 internal abstract class AbsAssignVehicleActivityModule : ActivityModule<AssignVehicleActivity>()
 
 @Module
-internal abstract class AbsFastagAssignmentActivityModule : ActivityModule<FastagAssignmentActivity>()
+internal abstract class AbsFastagAssignmentActivityModule : ActivityModule<RCUploadActivity>()
 
 @Module
 internal abstract class AbsVehicleImageUploadActivityModule : ActivityModule<VehicleImageUploadActivity>()

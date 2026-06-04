@@ -64,7 +64,7 @@ import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AssignVehicleViewModel
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.RCUploadViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsViewModel
@@ -500,8 +500,8 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(FastagAssignmentViewModel::class)
-  abstract fun bindFastagAssignmentViewModel(viewModel: FastagAssignmentViewModel): ViewModel
+  @ViewModelScope(RCUploadViewModel::class)
+  abstract fun bindFastagAssignmentViewModel(viewModel: RCUploadViewModel): ViewModel
 
   @Binds
   @IntoMap

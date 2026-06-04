@@ -5,6 +5,7 @@ import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.BarcodeLookupResponse
 import com.delhivery.axle.api.response.FormConfigResponse
+import com.delhivery.axle.api.response.OrderItem
 import com.delhivery.axle.api.response.OrderItemsResponse
 import com.delhivery.axle.api.response.RcProcessResponse
 import com.delhivery.axle.api.response.RcProcessStatusResponse
@@ -13,6 +14,7 @@ import com.delhivery.axle.api.response.VehicleImageProcessStatusResponse
 import com.delhivery.axle.api.response.FastagImageUploadResponse
 import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.service.FasTAGKycService
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.toResource
@@ -37,6 +39,7 @@ import javax.inject.Inject
  */
 class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
+    private val kycService: FasTAGKycService,  //TODO:remove
     errorLogger: ErrorLogger,
     private val userPrefs: UserPrefs,
     private val fasTAGKycService : FasTAGKycService,
@@ -183,10 +186,10 @@ class FastagRepository @Inject constructor(
 
     // ---- Coroutine-based methods (Tag Issuance flow) ----
 
-    suspend fun getOrderItems(orderId: String): Resource<OrderItemsResponse> =
+    suspend fun getOrderItems(orderId: String): Resource<List<OrderItem>> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.getOrderItems(orderId)
+                val response = kycService.getOrderItems(orderId) //TODO:change to fastag
                 response.toResource()
             }
         }
@@ -199,7 +202,7 @@ class FastagRepository @Inject constructor(
     ): Resource<RcProcessResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.uploadRcImages(rcFront, rcBack, orderId, orderItemId)
+                val response = kycService.uploadRcImages(rcFront, rcBack, orderId, orderItemId) //TODO:change to fastag
                 response.toResource()
             }
         }
@@ -207,7 +210,7 @@ class FastagRepository @Inject constructor(
     suspend fun getRcProcessStatus(jobId: String): Resource<RcProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.getRcProcessStatus(jobId)
+                val response = kycService.getRcProcessStatus(jobId) //TODO:change to fastag
                 response.toResource()
             }
         }
@@ -220,7 +223,7 @@ class FastagRepository @Inject constructor(
     ): Resource<VehicleImageProcessResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId)
+                val response = kycService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId)//TODO:change to fastag
                 response.toResource()
             }
         }
@@ -228,7 +231,7 @@ class FastagRepository @Inject constructor(
     suspend fun getVehicleImageProcessStatus(jobId: String): Resource<VehicleImageProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.getVehicleImageProcessStatus(jobId)
+                val response = kycService.getVehicleImageProcessStatus(jobId)//TODO:change to fastag
                 response.toResource()
             }
         }
@@ -239,7 +242,7 @@ class FastagRepository @Inject constructor(
     ): Resource<FastagImageUploadResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.uploadFastagImage(fastagImage, journeyId)
+                val response = kycService.uploadFastagImage(fastagImage, journeyId)
                 response.toResource()
             }
         }
@@ -248,7 +251,7 @@ class FastagRepository @Inject constructor(
         withContext(ioDispatcher) {
             safeApiCall {
                 val request = com.delhivery.axle.api.request.FastagImageValidateRequest(journeyId = journeyId)
-                val response = fastagService.validateFastagImage(request)
+                val response = kycService.validateFastagImage(request)
                 response.toResource()
             }
         }

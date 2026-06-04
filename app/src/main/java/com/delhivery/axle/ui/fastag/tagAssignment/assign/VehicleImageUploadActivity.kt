@@ -341,11 +341,10 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
                 }
                 is com.delhivery.axle.api.repository.Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
-                    } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "Upload failed. Please try again.")
-                    }
+                    dialogUtils.showErrorDialog(
+                        if (resource.isNetworkError) "Network error. Please check your connection."
+                        else resource.errorMessage ?: "Upload failed. Please try again.", 3L
+                    )
                 }
             }
         })
@@ -359,18 +358,46 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
                     val status = resource.data?.status?.uppercase()
                     when (status) {
                         "COMPLETED", "TIMEOUT" -> navigateToFastagImageUpload()
-                        "FAILED", "NOT_FOUND" -> {
-                            uiUtils.showSnackbar("Vehicle image processing failed. Please try again.")
+                        "FAILED" -> {
+                            showVehicleUploadFailedBottomSheet()
+                        }
+                        "NOT_FOUND" -> {
+                            dialogUtils.showErrorDialog("Vehicle image processing not found. Please try again.", 3L)
                         }
                     }
                 }
                 is com.delhivery.axle.api.repository.Resource.Failure -> {
                     uiUtils.hideProgress()
-                    uiUtils.showSnackbar("Processing check failed. Please try again.")
+                    dialogUtils.showErrorDialog("Processing check failed. Please try again.", 3L)
                 }
                 is com.delhivery.axle.api.repository.Resource.Loading -> { /* no-op */ }
             }
         })
+    }
+
+    private fun showVehicleUploadFailedBottomSheet() {
+        val bottomSheet = com.delhivery.axle.ui.dialogs.RcUploadFailedBottomSheetDialogFragment.newInstance(
+            title = getString(R.string.vehicle_upload_failed_title),
+            subtitle = getString(R.string.vehicle_upload_failed_subtitle),
+            onTryAgain = {
+                binding.uploadVehicleFront.resetUploadState()
+                binding.uploadVehicleFront.setButtonText(getString(R.string.take_photo_action))
+                binding.uploadVehicleSide.resetUploadState()
+                binding.uploadVehicleSide.setButtonText(getString(R.string.take_photo_action))
+                vehicleFrontUploaded = false
+                vehicleSideUploaded = false
+                vehicleFrontFile = null
+                vehicleSideFile = null
+                updateContinueButton()
+            },
+            onMaybeLater = {
+                val intent = android.content.Intent(this, com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java)
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
+            }
+        )
+        bottomSheet.show(supportFragmentManager, "vehicle_upload_failed")
     }
 
     private fun navigateToFastagImageUpload() {
