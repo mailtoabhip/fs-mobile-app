@@ -2,9 +2,11 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.ConfirmCollectionRequest
 import com.delhivery.axle.api.request.CreateOrderRequest
+import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.request.PaymentBreakupRequest
 import com.delhivery.axle.api.request.PaymentCheckoutRequest
 import com.delhivery.axle.api.request.ValidateSalesRequest
+import com.delhivery.axle.api.response.IssueTagResponse
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ConfirmCollectionResponse
 import com.delhivery.axle.api.response.CreateOrderResponse
@@ -64,4 +66,12 @@ interface FasTAGIssuanceService {
     suspend fun paymentCheckout(
         @Body request: PaymentCheckoutRequest
     ): BaseResponse<PaymentCheckoutResponse>
+
+    /**
+     * Issue FASTag and process payment.
+     */
+    @POST("/fastag/tag-issuance/v1/issuance/issue-tag")
+    suspend fun issueTag(
+        @Body request: IssueTagRequest
+    ): BaseResponse<IssueTagResponse>
 }

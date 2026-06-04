@@ -1,7 +1,7 @@
 package com.delhivery.axle.ui.fastag.tagMapping
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.delhivery.axle.ui.base.BaseViewModel
 import androidx.lifecycle.viewModelScope
 import com.delhivery.axle.api.repository.FastagRepository
 import com.delhivery.axle.api.repository.Resource
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class TagMappingViewModel @Inject constructor(
     private val fastagRepository: FastagRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     val barcodeLookupData = MutableLiveData<Resource<BarcodeLookupResponse>>()
     val productBarcodeData = MutableLiveData<Resource<ProductBarcodeResponse>>()

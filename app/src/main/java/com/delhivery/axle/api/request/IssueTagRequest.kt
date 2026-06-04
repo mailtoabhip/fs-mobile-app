@@ -15,6 +15,6 @@ data class IssueTagRequest(
     @SerializedName("barcode")
     val barcode: String,
 
-    @SerializedName("Otp")
+    @SerializedName("otp")
     val otp: String
 )

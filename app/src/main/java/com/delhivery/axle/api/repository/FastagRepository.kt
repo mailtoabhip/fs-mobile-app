@@ -16,6 +16,7 @@ import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.service.FasTAGIssuanceService
 import com.delhivery.axle.api.service.FasTAGKycService
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
@@ -39,6 +40,7 @@ class FastagRepository @Inject constructor(
     errorLogger: ErrorLogger,
     private val userPrefs: UserPrefs,
     private val fasTAGKycService : FasTAGKycService,
+    private val fasTAGIssuanceService: FasTAGIssuanceService,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
 
@@ -156,7 +158,7 @@ class FastagRepository @Inject constructor(
         otp: String
     ): Resource<com.delhivery.axle.api.response.IssueTagResponse> =
         safeApiCall {
-            fastagService.issueTag(
+            fasTAGIssuanceService.issueTag(
                 IssueTagRequest(journeyId, orderId, orderItemId, barcode, otp)
             ).toResource()
         }

@@ -517,7 +517,7 @@ abstract class ActivityBindingModule {
 
   /* Tag Mapping activity */
   @ActivityScope
-  @ContributesAndroidInjector
+  @ContributesAndroidInjector(modules = [AbsTagMappingActivityModule::class])
   internal abstract fun bindTagMappingActivity(): TagMappingActivity
 }
 
@@ -780,6 +780,9 @@ internal abstract class AbsPaymentBreakupActivityModule : ActivityModule<Payment
 
 @Module
 internal abstract class AbsFastagCollectionActivityModule : ActivityModule<FastagCollectionActivity>()
+
+@Module
+internal abstract class AbsTagMappingActivityModule : ActivityModule<TagMappingActivity>()
 
 /**
  * Activity Binds Module
