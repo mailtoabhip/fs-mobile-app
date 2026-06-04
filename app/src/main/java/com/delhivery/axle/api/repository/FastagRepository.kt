@@ -180,7 +180,7 @@ class FastagRepository @Inject constructor(
     suspend fun getOrderItems(orderId: String): Resource<List<OrderItem>> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = kycService.getOrderItems(orderId) //TODO:change to fastag
+                val response = kycService.getOrderItems(orderId)
                 response.toResource()
             }
         }
@@ -193,7 +193,7 @@ class FastagRepository @Inject constructor(
     ): Resource<RcProcessResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = kycService.uploadRcImages(rcFront, rcBack, orderId, orderItemId) //TODO:change to fastag
+                val response = kycService.uploadRcImages(rcFront, rcBack, orderId, orderItemId)
                 response.toResource()
             }
         }
@@ -201,7 +201,7 @@ class FastagRepository @Inject constructor(
     suspend fun getRcProcessStatus(jobId: String): Resource<RcProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = kycService.getRcProcessStatus(jobId) //TODO:change to fastag
+                val response = kycService.getRcProcessStatus(jobId)
                 response.toResource()
             }
         }

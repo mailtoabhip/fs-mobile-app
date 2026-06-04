@@ -398,7 +398,6 @@ class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadV
                         "NOT_FOUND" -> {
                             dialogUtils.showErrorDialog("RC processing not found. Please try again.", 3L)
                         }
-                        // PENDING, PROCESSING — do nothing, polling handles it
                     }
                 }
                 is Resource.Failure -> {
