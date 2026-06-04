@@ -523,7 +523,7 @@
     <string name="label_account">Account</string>
     <string name="label_kyc_details">KYC Details</string>
     <string name="label_profile">Profile Details</string>
-    <string name="label_delhivery_wallet">Delhivery Wallet</string>
+    <string name="label_delhivery_wallet">Wallet</string>
     <string name="label_routes">My Routes</string>
     <string name="label_earnings">My Earnings</string>
     <string name="label_team">My Team Members</string>
@@ -532,6 +532,7 @@
     <string name="label_pod">POD Address</string>
     <string name="label_help">Help &amp; Support</string>
     <string name="label_logout">Log Out</string>
+    <string name="label_about_app">App Version</string>
     <string name="label_delete">Delete Account</string>
     <string name="label_ratings">Business Ratings</string>
     <string name="label_kyc_pending">KYC verification pending!</string>

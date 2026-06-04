@@ -17,7 +17,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_bg"
+        android:background="@color/white"
         android:orientation="vertical"
         android:fitsSystemWindows="true">
 
@@ -31,11 +31,12 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:background="@color/white"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -84,7 +85,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:id="@+id/company_name"
-                android:textSize="@dimen/text_18sp"
+                android:textSize="@dimen/text_16sp"
                 android:textStyle="bold"
                 android:text="@{viewModel.userName}"
                 bind:layout_constraintHorizontal_chainStyle="packed"
@@ -109,37 +110,25 @@
                 android:layout_marginBottom="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="@dimen/size_8dp"
-                android:textSize="@dimen/text_14sp"
+                android:textSize="@dimen/text_12sp"
                 android:layout_height="wrap_content"
                 tools:text="9634447939"/>
 
 
             <View
                 android:layout_width="match_parent"
-                 android:background="@color/grey_bg"
+                 android:background="#E6E6E6"
                 android:id="@+id/div2"
                 android:layout_marginTop="@dimen/size_24dp"
                 bind:layout_constraintTop_toBottomOf="@+id/picLayout"
-                android:layout_height="@dimen/size_6dp"/>
+                android:layout_height="@dimen/size_1dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:text="@string/label_account"
-                android:id="@+id/label_account"
-                android:layout_marginStart="@dimen/size_16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/div2"
-               android:textColor="@color/heading_black"
-                android:layout_marginBottom="@dimen/size_16dp"
-                android:layout_marginTop="@dimen/size_16dp"
-                android:layout_marginEnd="@dimen/size_8dp"
-                android:textSize="@dimen/text_12sp"
-                android:layout_height="wrap_content"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/delhiveryWallet"
                 android:padding="@dimen/size_16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/label_account"
+                bind:layout_constraintTop_toBottomOf="@+id/div2"
                 android:layout_height="wrap_content"
                 android:visibility="visible">
 
@@ -149,7 +138,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    bind:srcCompat="@drawable/ic_dlv_wallet" />
+                    bind:srcCompat="@drawable/ic_account_balance_wallet" />
                 <TextView
                     android:layout_width="match_parent"
                     android:text="@string/label_delhivery_wallet"
@@ -158,6 +147,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/size_12dp"
                     android:textColor="@color/heading_black"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"
                     android:layout_height="wrap_content"/>
@@ -167,59 +157,65 @@
                     android:id="@+id/arrow"
                     android:layout_marginEnd="@dimen/size_4dp"
                     android:layout_centerVertical="true"
-                    bind:srcCompat="@drawable/ic_vector_arrow"
+                    bind:srcCompat="@drawable/ic_arrow_right"
                     android:layout_height="wrap_content"/>
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:id="@+id/helpLayout"
+                android:id="@+id/aboutApp"
                 android:padding="@dimen/size_16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/delhiveryWallet"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintBottom_toTopOf="@id/div3"
                 android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
-                    android:id="@+id/imghelp"
-                    bind:srcCompat="@drawable/ic_help"
+                    android:id="@+id/aboutAppImg"
+                    bind:srcCompat="@drawable/ic_info_black"
                     android:layout_height="wrap_content"/>
                 <TextView
-                    android:layout_width="match_parent"
-                    android:text="@string/label_help"
-                    android:layout_toStartOf="@+id/arrow8"
-                    android:layout_toEndOf="@+id/imghelp"
+                    android:id="@+id/label_about_app"
+                    android:layout_width="wrap_content"
+                    android:text="@string/label_about_app"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/size_12dp"
-                    android:textColor="@color/heading_black"
+                    android:layout_toEndOf="@+id/aboutAppImg"
+                    android:layout_marginStart="@dimen/size_16dp"
+                    android:textColor="@color/black"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"
                     android:layout_height="wrap_content"/>
-                <ImageView
+                <TextView
+                    android:id="@+id/appversion"
                     android:layout_width="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:id="@+id/arrow8"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/label_about_app"
                     android:layout_marginEnd="@dimen/size_4dp"
-                   android:layout_centerVertical="true"
-                    bind:srcCompat="@drawable/ic_vector_arrow"
-                    android:layout_height="wrap_content"/>
-
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="--v2.133.14" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
-                bind:layout_constraintTop_toBottomOf="@+id/helpLayout"
-                android:background="@color/grey_bg"
+                android:background="#E6E6E6"
                 android:id="@+id/div3"
-                android:layout_height="@dimen/size_12dp"/>
+                android:layout_marginTop="@dimen/size_24dp"
+                bind:layout_constraintBottom_toTopOf="@+id/logoutLayout"
+                android:layout_height="@dimen/size_1dp"/>
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/logoutLayout"
                 android:padding="@dimen/size_16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/div3"
+                bind:layout_constraintStart_toStartOf="parent"
+                bind:layout_constraintBottom_toBottomOf="parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
@@ -235,39 +231,12 @@
                    android:layout_toEndOf="@+id/imglogout"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/size_16dp"
-                    android:textColor="@color/error_red"
+                    android:textColor="@color/black"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"
                     android:layout_height="wrap_content"/>
             </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:background="@color/grey_bg"
-                android:gravity="bottom"
-                android:paddingBottom="@dimen/size_32dp"
-                bind:layout_constraintVertical_weight="1"
-                bind:layout_constraintTop_toBottomOf="@id/logoutLayout"
-                android:layout_height="0dp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_marginTop="29dp"
-                    bind:srcCompat="@drawable/ic_logo_delhivery"
-                   android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:id="@+id/appversion"
-                    android:layout_marginTop="@dimen/size_6dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/heading_black"
-                    android:textSize="@dimen/text_10sp"
-                    android:layout_height="wrap_content"
-                    tools:text="v.12.1234"/>
-
-            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
