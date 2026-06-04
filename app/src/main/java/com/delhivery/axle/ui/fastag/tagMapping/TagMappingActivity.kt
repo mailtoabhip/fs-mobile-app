@@ -87,10 +87,18 @@ class TagMappingActivity : DaggerAppCompatActivity() {
         )
         popup.width = binding.layoutDropdown.width
         popup.isModal = true
+
+        // Arrow up when open
+        binding.ivDropdownArrow.setImageResource(R.drawable.drop_down_arrow_up_iv)
+
         popup.setOnItemClickListener { _, _, position, _ ->
             selectedBarcode = barcodeList[position]
             onBarcodeSelected(barcodeList[position])
             popup.dismiss()
+        }
+        popup.setOnDismissListener {
+            // Arrow down when closed
+            binding.ivDropdownArrow.setImageResource(R.drawable.drop_dwn_arrow_down_iv)
         }
         popup.show()
     }

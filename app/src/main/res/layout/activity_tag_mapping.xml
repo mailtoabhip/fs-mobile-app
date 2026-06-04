@@ -253,9 +253,8 @@
                         android:id="@+id/tvDropdownValue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:drawableEnd="@drawable/ic_arrow_drop_down_black"
-                        android:drawablePadding="@dimen/size_8dp"
+                        android:layout_gravity="center_vertical|start"
+                        android:layout_marginEnd="@dimen/size_32dp"
                         android:ellipsize="end"
                         android:fontFamily="sans-serif-medium"
                         android:hint="e.g. 5274 9183 6402 1758 29"
@@ -263,6 +262,14 @@
                         android:textColor="@color/text_body_primary"
                         android:textColorHint="@color/text_body_primary"
                         android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/ivDropdownArrow"
+                        android:layout_width="@dimen/size_24dp"
+                        android:layout_height="@dimen/size_24dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:contentDescription="Dropdown arrow"
+                        android:src="@drawable/drop_dwn_arrow_down_iv" />
 
                 </FrameLayout>
 

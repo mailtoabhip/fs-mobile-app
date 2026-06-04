@@ -20,14 +20,13 @@
 
     <!-- Info icon -->
     <ImageView
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/size_16dp"
-        android:background="@drawable/bg_circle_blue"
         android:contentDescription="Info"
         android:padding="@dimen/size_14dp"
-        android:src="@drawable/ic_info_white" />
+        android:src="@drawable/minimum_balance_iv" />
 
     <!-- Title -->
     <TextView

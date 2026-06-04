@@ -2,6 +2,7 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
+import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -145,7 +146,7 @@ interface FastagService {
      */
     @POST("finance/fastag/issuance/issue-tag")
     suspend fun issueTag(
-        @Body request: com.delhivery.axle.api.request.IssueTagRequest
+        @Body request: IssueTagRequest
     ): BaseResponse<IssueTagResponse>
 
     /**

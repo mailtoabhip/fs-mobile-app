@@ -2,6 +2,7 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
+import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.BarcodeLookupResponse
 import com.delhivery.axle.api.response.FormConfigResponse
 import com.delhivery.axle.api.response.toResource
@@ -135,7 +136,7 @@ class FastagRepository @Inject constructor(
     ): Resource<com.delhivery.axle.api.response.IssueTagResponse> =
         safeApiCall {
             fastagService.issueTag(
-                com.delhivery.axle.api.request.IssueTagRequest(journeyId, orderId, orderItemId, barcode, otp)
+                IssueTagRequest(journeyId, orderId, orderItemId, barcode, otp)
             ).toResource()
         }
 

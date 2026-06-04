@@ -134,8 +134,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           }
             binding.axle.setOnClickListener {
                 val intent = Intent(this, TagMappingActivity::class.java).apply {
-                    putExtra(TagMappingActivity.EXTRA_ORDER_ID, "test_order_123")
-                    putExtra(TagMappingActivity.EXTRA_ORDER_ITEM_ID, 1)
+                    putExtra(TagMappingActivity.EXTRA_ORDER_ID, "DLV11111")
+                    putExtra(TagMappingActivity.EXTRA_ORDER_ITEM_ID, 32)
                     putExtra(TagMappingActivity.EXTRA_VEHICLE_CLASS, "VC4")
                     putExtra(TagMappingActivity.EXTRA_JOURNEY_ID, "621608149459159808")
                     putExtra(TagMappingActivity.EXTRA_VEHICLE_NUMBER, "MH01CA1234")
