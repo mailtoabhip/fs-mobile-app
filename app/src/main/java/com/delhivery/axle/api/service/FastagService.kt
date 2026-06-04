@@ -184,8 +184,6 @@ interface FastagService {
      * GET /fastag/tag-issuance/v1/pending-actions
      * TODO : update the endpoints with correctly mapped BE url
      */
-    @GET("/fastag/tag-issuance/v1/pending-actions")
-    suspend fun getPendingActions(
-        @Header("X-Vendor-Id") vendorId: String
-    ): BaseResponse<PendingActionsResponse>
+    @GET("https://financial-fastag-dev.delhivery.com/fastag/tag-issuance/v1/pending-actions")
+    suspend fun getPendingActions(): BaseResponse<PendingActionsResponse>
 }

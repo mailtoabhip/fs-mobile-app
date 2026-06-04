@@ -41,8 +41,6 @@ class PendingActionsViewModel @Inject constructor(
                 is Resource.Failure -> {
                     _isLoading.value = false
                     _error.value = "Unable to fetch pending actions"
-                    // Fallback to mock data for development
-                    _pendingOrders.value = getMockPendingOrders()
                 }
                 Resource.Loading -> { /* no-op */ }
             }

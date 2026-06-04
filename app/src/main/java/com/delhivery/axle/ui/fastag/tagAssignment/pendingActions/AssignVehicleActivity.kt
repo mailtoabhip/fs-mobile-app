@@ -190,6 +190,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             PendingActionType.ORDER_CREATED -> {
                 val intent = Intent(this, SelectFasTagActivity::class.java).apply {
                     putExtra(SelectFasTagActivity.EXTRA_SALES_CODE, salesCode)
+                    putExtra(SelectFasTagActivity.EXTRA_VRN, vehicleNumber)
                 }
                 startActivity(intent)
             }
