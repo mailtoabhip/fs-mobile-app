@@ -103,7 +103,7 @@ class DialogUtils @Inject constructor(
     val titleStr = activity.getString(title)
     val messageStr = message?.let { activity.getString(it) }
     val actionBtnColor = ResourcesCompat.getColor(
-        activity.resources, R.color.colorAccent,
+        activity.resources, R.color.neutral_black_200,
         null
     )
     showConfirmDialog(

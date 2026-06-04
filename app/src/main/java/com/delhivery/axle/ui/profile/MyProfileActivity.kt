@@ -101,7 +101,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
         binding.profile.text = getUserInitials()
-        binding.appversion.text = "--v${BuildConfig.VERSION_NAME}"
+        binding.appversion.text = "v${BuildConfig.VERSION_NAME}"
 
         binding.logoutLayout.setOnClickListener {
             WorkManager.getInstance(applicationContext).cancelAllWorkByTag(TAG_SYNC_DATA)

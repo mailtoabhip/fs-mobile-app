@@ -90,7 +90,7 @@
                 android:text="@{viewModel.userName}"
                 bind:layout_constraintHorizontal_chainStyle="packed"
                 bind:layout_constraintStart_toEndOf="@+id/picLayout"
-                android:textColor="@color/heading_black"
+                android:textColor="@color/neutral_black_200"
                 android:fontFamily="sans-serif"
                 android:layout_marginTop="@dimen/size_24dp"
                 bind:layout_constraintTop_toTopOf="parent"
@@ -98,11 +98,10 @@
                 tools:text="Nikhil Ranka"/>
 
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:id="@+id/mobile"
                 android:text="@{viewModel.mobile}"
-                android:layout_marginStart="@dimen/size_4dp"
                 bind:layout_constraintTop_toBottomOf="@+id/company_name"
                 bind:layout_constraintHorizontal_chainStyle="packed"
                 bind:layout_constraintStart_toEndOf="@+id/picLayout"
@@ -127,7 +126,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/delhiveryWallet"
-                android:padding="@dimen/size_16dp"
+                android:paddingHorizontal="@dimen/size_16dp"
+                android:paddingVertical="@dimen/size_12dp"
                 bind:layout_constraintTop_toBottomOf="@+id/div2"
                 android:layout_height="wrap_content"
                 android:visibility="visible">
@@ -146,7 +146,7 @@
                     android:layout_toEndOf="@+id/ic_wallet"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/size_12dp"
-                    android:textColor="@color/heading_black"
+                    android:textColor="@color/neutral_black_200"
                     style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"
@@ -162,43 +162,54 @@
 
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:background="#E6E6E6"
+                bind:layout_constraintTop_toBottomOf="@+id/delhiveryWallet"
+                android:layout_height="@dimen/size_1dp"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/aboutApp"
-                android:padding="@dimen/size_16dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="@dimen/size_12dp"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintBottom_toTopOf="@id/div3"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
                     android:id="@+id/aboutAppImg"
                     bind:srcCompat="@drawable/ic_info_black"
                     android:layout_height="wrap_content"/>
-                <TextView
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/label_about_app"
                     android:layout_width="wrap_content"
                     android:text="@string/label_about_app"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@+id/aboutAppImg"
                     android:layout_marginStart="@dimen/size_16dp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/neutral_black_200"
                     style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"
                     android:layout_height="wrap_content"/>
-                <TextView
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/appversion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/label_about_app"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginEnd="@dimen/size_4dp"
-                    android:textColor="@color/black"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="@color/neutral_black_200"
                     android:textSize="@dimen/text_12sp"
-                    tools:text="--v2.133.14" />
+                    tools:text="v2.133.14"
+                    tools:ignore="RelativeOverlap" />
             </RelativeLayout>
 
             <View
@@ -213,7 +224,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:id="@+id/logoutLayout"
-                android:padding="@dimen/size_16dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="@dimen/size_12dp"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintBottom_toBottomOf="parent"
                 android:layout_height="wrap_content">
@@ -231,7 +243,7 @@
                    android:layout_toEndOf="@+id/imglogout"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/size_16dp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/neutral_black_200"
                     style="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"

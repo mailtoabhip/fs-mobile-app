@@ -260,4 +260,35 @@
     <item name="android:background">@android:color/transparent</item>
   </style>
 
+<!--  Font specific styles -->
+
+  <!-- Base text appearance for app -->
+  <style name="TextAppearance.Delfin" parent="TextAppearance.AppCompat">
+    <item name="android:fontFamily">@font/noto_sans_regular</item>
+  </style>
+
+  <!-- Screen Title - Bold 20sp -->
+  <style name="TextAppearance.Delfin.ScreenTitle">
+    <item name="android:fontFamily">@font/noto_sans_bold</item>
+    <item name="android:textSize">20sp</item>
+  </style>
+
+  <!-- Section Title - Normal 16sp -->
+  <style name="TextAppearance.Delfin.SectionTitle">
+    <item name="android:fontFamily">@font/noto_sans_bold</item>
+    <item name="android:textSize">16sp</item>
+  </style>
+
+  <!-- Body - Regular 16sp -->
+  <style name="TextAppearance.Delfin.Body">
+    <item name="android:fontFamily">@font/noto_sans_medium</item>
+    <item name="android:textSize">14sp</item>
+  </style>
+
+  <!-- Caption - Regular 12sp -->
+  <style name="TextAppearance.Delfin.Caption">
+    <item name="android:fontFamily">@font/noto_sans_medium</item>
+    <item name="android:textSize">12sp</item>
+  </style>
+
 </resources>

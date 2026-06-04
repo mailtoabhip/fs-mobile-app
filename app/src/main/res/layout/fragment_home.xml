@@ -61,8 +61,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_fastag_no_space"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp" />
+                        android:textColor="@color/black_title"
+                        style="@style/TextAppearance.Delfin.Caption"/>
                 </LinearLayout>
 
                 <!-- GPS -->
@@ -92,8 +92,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_gps"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp" />
+                        android:textColor="@color/black_title"
+                        style="@style/TextAppearance.Delfin.Caption"/>
                 </LinearLayout>
 
                 <!-- Fuel Card -->
@@ -123,8 +123,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_fuel_card_home"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp" />
+                        android:textColor="@color/black_title"
+                        style="@style/TextAppearance.Delfin.Caption"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -180,22 +180,9 @@
                 android:layout_marginTop="@dimen/size_32dp"
                 android:layout_marginBottom="@dimen/size_16dp"
                 android:text="@string/label_business_services"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_18sp"
-                android:textStyle="bold" />
-
-<!--            &lt;!&ndash; Service Groups Loading Shimmer &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:id="@+id/serviceGroupsShimmer"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:visibility="gone">-->
-
-<!--                <include layout="@layout/shimmer_service_group_item" />-->
-
-<!--                <include layout="@layout/shimmer_service_group_item" />-->
-<!--            </LinearLayout>-->
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/black_title"
+                style="@style/TextAppearance.Delfin.SectionTitle"/>
 
             <!-- Business Service Cards (My Trucks & My Loads) -->
             <LinearLayout
@@ -212,7 +199,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginEnd="@dimen/size_6dp"
-                    android:background="@drawable/bg_quick_action_card"
+                    android:background="@drawable/bg_quick_action_card_with_gradient"
                     android:clickable="true"
                     android:focusable="true"
                     android:orientation="vertical"
@@ -270,7 +257,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/size_6dp"
-                    android:background="@drawable/bg_quick_action_card"
+                    android:background="@drawable/bg_quick_action_card_with_gradient"
                     android:clickable="true"
                     android:focusable="true"
                     android:orientation="vertical"
