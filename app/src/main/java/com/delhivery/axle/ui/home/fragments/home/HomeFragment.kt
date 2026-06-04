@@ -80,9 +80,6 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             }
         }
 
-        // Fetch FASTag pending count from API
-        viewModel.fetchFastagPendingCount()
-
         binding.gpsCard.setOnClickListener {
             startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_GPS))
         }
@@ -130,6 +127,8 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             fragmentSetupTrace?.stop()
             isFirstResume = false
         }
+        // Fetch FASTag pending count from API
+        viewModel.fetchFastagPendingCount()
     }
 
     private fun setupViews() {
