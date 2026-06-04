@@ -34,10 +34,10 @@ class TagMappingViewModel @Inject constructor(
     /**
      * Search products and barcodes from IDFC.
      */
-    fun searchProductBarcode(journeyId: String, barcodeLast4: String) {
+    fun searchProductBarcode(journeyId: String, barcode: String) {
         productBarcodeData.value = Resource.Loading
         viewModelScope.launch {
-            val result = fastagRepository.searchProductBarcode(journeyId, barcodeLast4)
+            val result = fastagRepository.searchProductBarcode(journeyId, barcode)
             productBarcodeData.postValue(result)
         }
     }

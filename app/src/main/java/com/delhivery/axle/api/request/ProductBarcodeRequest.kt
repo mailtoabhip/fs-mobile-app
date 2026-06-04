@@ -6,6 +6,6 @@ data class ProductBarcodeRequest(
     @SerializedName("journey_id")
     val journeyId: String,
 
-    @SerializedName("barcode_last4")
-    val barcodeLast4: String
+    @SerializedName("barcode")
+    val barcode: String
 )

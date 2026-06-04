@@ -21,7 +21,6 @@ class AddMoneyRepository @Inject constructor(
 
     fun createWallet() =
         walletApiService.createWallet(
-            userId = userPrefs.userId(),
             request = JsonObject().apply {
                 addProperty("phone", userPrefs.phoneNumber ?: "")
                 addProperty("email", "")

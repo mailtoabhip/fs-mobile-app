@@ -119,7 +119,7 @@ interface FastagService {
     /**
      * Lookup barcode from dispatch table.
      */
-    @GET("finance/fastag/barcodeLookup")
+    @GET("v1/barcode")
     suspend fun barcodeLookup(
         @Query("order_id") orderId: String,
         @Query("order_item_id") orderItemId: Int,
@@ -230,7 +230,7 @@ interface FastagService {
      * GET /fastag/tag-issuance/v1/pending-actions
      * TODO : update the endpoints with correctly mapped BE url
      */
-    @GET("https://financial-fastag-dev.delhivery.com/fastag/tag-issuance/v1/pending-actions")
+    @GET("/fastag/tag-issuance/v1/pending-actions")
     suspend fun getPendingActions(
         @Header("X-Vendor-Id") vendorId: String
     ): BaseResponse<PendingActionsResponse>

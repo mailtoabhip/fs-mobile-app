@@ -119,18 +119,26 @@ class TagMappingActivity : DaggerAppCompatActivity() {
         binding.btnContinue.setOnClickListener {
             val barcode = selectedBarcode ?: return@setOnClickListener
             val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
-            val last4 = barcode.replace(" ", "").takeLast(4)
-            viewModel.searchProductBarcode(journeyId, last4)
+            viewModel.searchProductBarcode(journeyId, barcode.replace(" ", ""))
         }
+    }
+
+    private fun showProgressBar() {
+        binding.progressOverlay.visibility = android.view.View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        binding.progressOverlay.visibility = android.view.View.GONE
     }
 
     private fun observeViewModel() {
         viewModel.barcodeLookupData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // TODO: Show progress indicator if needed
+                    showProgressBar()
                 }
                 is Resource.Success -> {
+                    hideProgressBar()
                     resource.data?.let { response ->
                         val barcode = response.barcode
                         if (!barcode.isNullOrEmpty()) {
@@ -139,6 +147,7 @@ class TagMappingActivity : DaggerAppCompatActivity() {
                     }
                 }
                 is Resource.Failure -> {
+                    hideProgressBar()
                     Toast.makeText(this, resource.errorMessage ?: "Failed to fetch barcode data", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -147,10 +156,12 @@ class TagMappingActivity : DaggerAppCompatActivity() {
         viewModel.productBarcodeData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
+                    showProgressBar()
                     binding.btnContinue.isEnabled = false
                     binding.btnContinue.text = "Loading..."
                 }
                 is Resource.Success -> {
+                    hideProgressBar()
                     binding.btnContinue.isEnabled = true
                     binding.btnContinue.text = "Continue"
                     resource.data?.let { response ->
@@ -160,6 +171,7 @@ class TagMappingActivity : DaggerAppCompatActivity() {
                     }
                 }
                 is Resource.Failure -> {
+                    hideProgressBar()
                     binding.btnContinue.isEnabled = true
                     binding.btnContinue.text = "Continue"
                     Toast.makeText(this, resource.errorMessage ?: "Failed to search product barcode", Toast.LENGTH_SHORT).show()
@@ -170,15 +182,17 @@ class TagMappingActivity : DaggerAppCompatActivity() {
         viewModel.generateOtpData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // OTP generation in progress
+                    showProgressBar()
                 }
                 is Resource.Success -> {
+                    hideProgressBar()
                     // Show OTP bottom sheet with masked number
                     // TODO: Replace with actual masked number from API or intent
                     val maskedNumber = "XXXXXX1234"
                     showOtpBottomSheet(maskedNumber)
                 }
                 is Resource.Failure -> {
+                    hideProgressBar()
                     Toast.makeText(this, resource.errorMessage ?: "Failed to generate OTP", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -187,9 +201,10 @@ class TagMappingActivity : DaggerAppCompatActivity() {
         viewModel.issueTagData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    // Tag issuance in progress
+                    showProgressBar()
                 }
                 is Resource.Success -> {
+                    hideProgressBar()
                     // Dismiss OTP bottom sheet and show success
                     supportFragmentManager.findFragmentByTag(com.delhivery.axle.ui.common.OtpBottomSheetFragment.TAG)
                         ?.let { (it as? com.delhivery.axle.ui.common.OtpBottomSheetFragment)?.dismiss() }
@@ -198,6 +213,7 @@ class TagMappingActivity : DaggerAppCompatActivity() {
                     }
                 }
                 is Resource.Failure -> {
+                    hideProgressBar()
                     Toast.makeText(this, resource.errorMessage ?: "Failed to issue FASTag", Toast.LENGTH_SHORT).show()
                 }
             }

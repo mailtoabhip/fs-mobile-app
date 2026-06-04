@@ -16,6 +16,7 @@ import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.service.FasTAGKycService
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
@@ -37,6 +38,7 @@ class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
     errorLogger: ErrorLogger,
     private val userPrefs: UserPrefs,
+    private val fasTAGKycService : FasTAGKycService,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
 
@@ -120,16 +122,16 @@ class FastagRepository @Inject constructor(
      */
     suspend fun barcodeLookup(orderId: String, orderItemId: Int, vehicleClass: String): Resource<BarcodeLookupResponse> =
         safeApiCall {
-            fastagService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
+            fasTAGKycService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
         }
 
     /**
      * Search products and barcodes from IDFC.
      */
-    suspend fun searchProductBarcode(journeyId: String, barcodeLast4: String): Resource<com.delhivery.axle.api.response.ProductBarcodeResponse> =
+    suspend fun searchProductBarcode(journeyId: String, barcode: String): Resource<com.delhivery.axle.api.response.ProductBarcodeResponse> =
         safeApiCall {
-            fastagService.searchProductBarcode(
-                com.delhivery.axle.api.request.ProductBarcodeRequest(journeyId, barcodeLast4)
+            fasTAGKycService.searchProductBarcode(
+                com.delhivery.axle.api.request.ProductBarcodeRequest(journeyId, barcode)
             ).toResource()
         }
 
@@ -138,7 +140,7 @@ class FastagRepository @Inject constructor(
      */
     suspend fun generateOtp(journeyId: String, barcode: String, tagId: String): Resource<Any> =
         safeApiCall {
-            fastagService.generateOtp(
+            fasTAGKycService.generateOtp(
                 com.delhivery.axle.api.request.GenerateOtpRequest(journeyId, barcode, tagId)
             ).toResource()
         }

@@ -100,6 +100,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
       adapter = pagerAdapter
     }
 
+    /* Setup profile click listener immediately - don't gate on API success */
+    binding.profile.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_NAVIGATION_MY_PROFILE
+      )
+      navigationUtils.navigate(MyProfileActivity::class.java, false)
+    }
+
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it) {
         if (userPrefs.requestedDeletion) {
@@ -133,16 +142,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
             )
               navigationUtils.navigate(MyProfileActivity::class.java, false)
           }
-            binding.axle.setOnClickListener {
-                val intent = Intent(this, TagMappingActivity::class.java).apply {
-                    putExtra(TagMappingActivity.EXTRA_ORDER_ID, "DLV11111")
-                    putExtra(TagMappingActivity.EXTRA_ORDER_ITEM_ID, 32)
-                    putExtra(TagMappingActivity.EXTRA_VEHICLE_CLASS, "VC4")
-                    putExtra(TagMappingActivity.EXTRA_JOURNEY_ID, "621608149459159808")
-                    putExtra(TagMappingActivity.EXTRA_VEHICLE_NUMBER, "MH01CA1234")
-                }
-                navigationUtils.navigate(intent, false)
-            }
         }
       }
     })
