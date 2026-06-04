@@ -4,21 +4,21 @@ import com.delhivery.axle.api.request.KycInitiateRequest
 import com.delhivery.axle.api.request.KycVerifyRequest
 import com.delhivery.axle.api.response.BarcodeLookupResponse
 import com.delhivery.axle.api.response.BaseResponse
+import com.delhivery.axle.api.response.FastagImageUploadResponse
+import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.KycInitiateResponse
 import com.delhivery.axle.api.response.KycOnboardValidateResponse
 import com.delhivery.axle.api.response.KycTypesResponse
 import com.delhivery.axle.api.response.KycVerifyResponse
 import com.delhivery.axle.api.response.OrderItem
-import com.delhivery.axle.api.response.OrderItemsResponse
+import com.delhivery.axle.api.response.ProductBarcodeResponse
 import com.delhivery.axle.api.response.RcProcessResponse
 import com.delhivery.axle.api.response.RcProcessStatusResponse
 import com.delhivery.axle.api.response.VehicleImageProcessResponse
 import com.delhivery.axle.api.response.VehicleImageProcessStatusResponse
 import okhttp3.MultipartBody
-import com.delhivery.axle.api.response.ProductBarcodeResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -72,7 +72,8 @@ interface FasTAGKycService {
         @Part vehicleFront: MultipartBody.Part,
         @Part vehicleSide: MultipartBody.Part,
         @Part orderId: MultipartBody.Part,
-        @Part orderItemId: MultipartBody.Part
+        @Part orderItemId: MultipartBody.Part,
+        @Part journeyId: MultipartBody.Part
     ): BaseResponse<VehicleImageProcessResponse>
 
     @GET("/fastag/tag-issuance/v1/issuance/vehicle-images-process/{job_id}/status")
@@ -84,7 +85,9 @@ interface FasTAGKycService {
     @POST("/fastag/tag-issuance/v1/issuance/fastag-image")
     suspend fun uploadFastagImage(
         @Part fastagImage: MultipartBody.Part,
-        @Part journeyId: MultipartBody.Part
+        @Part journeyId: MultipartBody.Part,
+        @Part orderId: MultipartBody.Part,
+        @Part orderItemId: MultipartBody.Part
     ): BaseResponse<FastagImageUploadResponse>
 
     @POST("/fastag/tag-issuance/v1/issuance/fastag-image/validate")

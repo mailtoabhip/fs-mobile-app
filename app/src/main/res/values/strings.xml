@@ -1269,11 +1269,14 @@
     <string name="continue_to_assign_fastag">Continue to Assign FASTag</string>
     <string name="rc_processing_message">Processing your RC documents.\nPlease wait…</string>
     <string name="rc_upload_failed_title">RC upload failed</string>
-    <string name="rc_upload_failed_subtitle">We couldn\'t upload your RC document due to some technical issues.\nPlease re-upload RC and try again.</string>
+    <string name="rc_upload_failed_subtitle">We couldn\'t process your RC document. Please upload a different, clearer photo of your RC and try again.</string>
     <string name="rc_upload_try_again">Try again</string>
     <string name="rc_upload_maybe_later">Maybe later</string>
+    <string name="rc_processing_timeout_title">Processing taking too long</string>
+    <string name="rc_processing_timeout_subtitle">It\'s taking us a bit too much time to process your document. You can try again to process the uploaded RC, and we will attempt to process it again.</string>
+    <string name="vehicle_processing_timeout_subtitle">It\'s taking us a bit too much time to process your document. You can try again to process the uploaded vehicle images, and we will attempt to process them again.</string>
     <string name="vehicle_upload_failed_title">Vehicle upload failed</string>
-    <string name="vehicle_upload_failed_subtitle">We couldn\'t upload your vehicle images due to some technical issues.\nPlease re-upload vehicle images and try again.</string>
+    <string name="vehicle_upload_failed_subtitle">We couldn\'t process your vehicle images. Please upload different, clearer photos of your vehicle and try again.</string>
     <string name="vehicle_image_processing_message">Processing your vehicle images.\nPlease wait…</string>
     <string name="image_preview_title">Image preview</string>
 

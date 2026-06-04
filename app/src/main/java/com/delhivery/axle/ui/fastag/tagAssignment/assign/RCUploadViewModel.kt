@@ -69,7 +69,7 @@ class RCUploadViewModel @Inject constructor(
 
             // Timeout — polling exhausted while still pending
             _rcProcessStatus.postValue(
-                Resource.Success(RcProcessStatusResponse(status = "TIMEOUT", currentStep = null, completedSteps = null, data = null))
+                Resource.Success(RcProcessStatusResponse(status = "TIMEOUT", currentStep = null, completedSteps = null, journeyId = null, skipVehicleImageUpload = null))
             )
         }
     }

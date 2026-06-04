@@ -357,7 +357,7 @@
             android:name=".ui.fastag.tagAssignment.assign.VehicleImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity"
+            android:name=".ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fastag.trucks.FastagSearchActivity"

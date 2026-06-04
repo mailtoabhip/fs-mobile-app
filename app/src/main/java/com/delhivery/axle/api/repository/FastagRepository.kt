@@ -4,19 +4,14 @@ import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.BarcodeLookupResponse
+import com.delhivery.axle.api.response.FastagImageUploadResponse
+import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.FormConfigResponse
 import com.delhivery.axle.api.response.OrderItem
-import com.delhivery.axle.api.response.OrderItemsResponse
 import com.delhivery.axle.api.response.RcProcessResponse
 import com.delhivery.axle.api.response.RcProcessStatusResponse
 import com.delhivery.axle.api.response.VehicleImageProcessResponse
 import com.delhivery.axle.api.response.VehicleImageProcessStatusResponse
-import com.delhivery.axle.api.response.FastagImageUploadResponse
-import com.delhivery.axle.api.response.FastagImageValidateResponse
-import com.delhivery.axle.api.response.toResource
-import com.delhivery.axle.api.service.FasTAGKycService
-import com.delhivery.axle.api.response.*
-import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.FasTAGIssuanceService
 import com.delhivery.axle.api.service.FasTAGKycService
@@ -28,8 +23,6 @@ import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withContext
-import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -39,10 +32,8 @@ import javax.inject.Inject
  */
 class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
-    private val kycService: FasTAGKycService,  //TODO:remove
+    private val kycService: FasTAGKycService,
     errorLogger: ErrorLogger,
-    private val userPrefs: UserPrefs,
-    private val fasTAGKycService : FasTAGKycService,
     private val fasTAGIssuanceService: FasTAGIssuanceService,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
@@ -127,7 +118,7 @@ class FastagRepository @Inject constructor(
      */
     suspend fun barcodeLookup(orderId: String, orderItemId: Int, vehicleClass: String): Resource<BarcodeLookupResponse> =
         safeApiCall {
-            fasTAGKycService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
+            kycService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
         }
 
     /**
@@ -135,7 +126,7 @@ class FastagRepository @Inject constructor(
      */
     suspend fun searchProductBarcode(journeyId: String, barcode: String): Resource<com.delhivery.axle.api.response.ProductBarcodeResponse> =
         safeApiCall {
-            fasTAGKycService.searchProductBarcode(
+            kycService.searchProductBarcode(
                 com.delhivery.axle.api.request.ProductBarcodeRequest(journeyId, barcode)
             ).toResource()
         }
@@ -145,7 +136,7 @@ class FastagRepository @Inject constructor(
      */
     suspend fun generateOtp(journeyId: String, barcode: String, tagId: String): Resource<Any> =
         safeApiCall {
-            fasTAGKycService.generateOtp(
+            kycService.generateOtp(
                 com.delhivery.axle.api.request.GenerateOtpRequest(journeyId, barcode, tagId)
             ).toResource()
         }
@@ -219,11 +210,12 @@ class FastagRepository @Inject constructor(
         vehicleFront: MultipartBody.Part,
         vehicleSide: MultipartBody.Part,
         orderId: MultipartBody.Part,
-        orderItemId: MultipartBody.Part
+        orderItemId: MultipartBody.Part,
+        journeyId: MultipartBody.Part
     ): Resource<VehicleImageProcessResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = kycService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId)//TODO:change to fastag
+                val response = kycService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId, journeyId)
                 response.toResource()
             }
         }
@@ -231,18 +223,20 @@ class FastagRepository @Inject constructor(
     suspend fun getVehicleImageProcessStatus(jobId: String): Resource<VehicleImageProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = kycService.getVehicleImageProcessStatus(jobId)//TODO:change to fastag
+                val response = kycService.getVehicleImageProcessStatus(jobId)
                 response.toResource()
             }
         }
 
     suspend fun uploadFastagImage(
         fastagImage: MultipartBody.Part,
-        journeyId: MultipartBody.Part
+        journeyId: MultipartBody.Part,
+        orderId: MultipartBody.Part,
+        orderItemId: MultipartBody.Part
     ): Resource<FastagImageUploadResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = kycService.uploadFastagImage(fastagImage, journeyId)
+                val response = kycService.uploadFastagImage(fastagImage, journeyId, orderId, orderItemId)
                 response.toResource()
             }
         }

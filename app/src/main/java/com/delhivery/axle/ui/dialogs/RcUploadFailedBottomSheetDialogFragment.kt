@@ -1,12 +1,10 @@
 package com.delhivery.axle.ui.dialogs
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.DialogBottomRcUploadFailedBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -21,17 +19,24 @@ class RcUploadFailedBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private var onMaybeLater: (() -> Unit)? = null
     private var title: String = ""
     private var subtitle: String = ""
+    @DrawableRes
+    private var iconRes: Int = R.drawable.ic_error_circle_red
+    private var showButtons: Boolean = true
 
     companion object {
         fun newInstance(
             title: String,
             subtitle: String,
-            onTryAgain: () -> Unit,
-            onMaybeLater: () -> Unit
+            @DrawableRes iconRes: Int = R.drawable.ic_error_circle_red,
+            showButtons: Boolean = true,
+            onTryAgain: () -> Unit = {},
+            onMaybeLater: () -> Unit = {}
         ): RcUploadFailedBottomSheetDialogFragment {
             val fragment = RcUploadFailedBottomSheetDialogFragment()
             fragment.title = title
             fragment.subtitle = subtitle
+            fragment.iconRes = iconRes
+            fragment.showButtons = showButtons
             fragment.onTryAgain = onTryAgain
             fragment.onMaybeLater = onMaybeLater
             return fragment
@@ -51,6 +56,16 @@ class RcUploadFailedBottomSheetDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.tvTitle.text = title
         binding.tvSubtitle.text = subtitle
+        binding.ivErrorIcon.setImageResource(iconRes)
+
+        if (showButtons) {
+            binding.btnTryAgain.visibility = View.VISIBLE
+            binding.tvMaybeLater.visibility = View.VISIBLE
+        } else {
+            binding.btnTryAgain.visibility = View.GONE
+            binding.tvMaybeLater.visibility = View.GONE
+        }
+
         setupClickListeners()
     }
 

@@ -19,6 +19,7 @@
 
     <!-- Error Icon -->
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivErrorIcon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"

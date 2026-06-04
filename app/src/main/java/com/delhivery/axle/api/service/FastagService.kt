@@ -67,7 +67,7 @@ interface FastagService {
     /**
      * Recharge FASTag from wallet.
      */
-    @POST("/finance/users/wallet/fastag/recharge")
+    @POST("/fastag/v1/recharge")
     fun rechargeFastag(
         @Body request: FastagRechargeRequest
     ): Single<BaseResponse<FastagRechargeResponse>>

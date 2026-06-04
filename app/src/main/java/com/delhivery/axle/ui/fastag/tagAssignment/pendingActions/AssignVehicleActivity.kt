@@ -16,7 +16,7 @@ import com.delhivery.axle.ui.fastag.issuance.FastagCollectionActivity
 import com.delhivery.axle.ui.fastag.issuance.FastagKycActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignVehicleViewModel>() {
@@ -37,6 +37,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
         private const val EXTRA_BARCODE_ID = "extra_barcode_id"
         private const val EXTRA_SALES_CODE = "extra_sales_code"
         private const val EXTRA_ORDER_ID = "extra_order_id"
+        private const val EXTRA_ITEM_ID = "extra_item_id"
         private const val EXTRA_JOURNEY_ID = "extra_journey_id"
 
         fun newIntent(
@@ -49,6 +50,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             barcodeId: String? = null,
             salesCode: String? = null,
             orderId: String? = null,
+            itemId: String? = null,
             journeyId: String? = null
         ): Intent {
             return Intent(context, AssignVehicleActivity::class.java).apply {
@@ -60,6 +62,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                 putExtra(EXTRA_BARCODE_ID, barcodeId)
                 putExtra(EXTRA_SALES_CODE, salesCode)
                 putExtra(EXTRA_ORDER_ID, orderId)
+                putExtra(EXTRA_ITEM_ID, itemId)
                 putExtra(EXTRA_JOURNEY_ID, journeyId)
             }
         }
@@ -165,6 +168,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     private fun handleVehicleSelection(vehicle: AvailableVehicle) {
         val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
         val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        val itemId = intent.getStringExtra(EXTRA_ITEM_ID) ?: ""
         val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
         val referenceId = intent.getStringExtra(EXTRA_REFERENCE_ID)
         val barcodeId = intent.getStringExtra(EXTRA_BARCODE_ID)
@@ -217,7 +221,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             }
             PendingActionType.KYV -> {
                 val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
-                startActivity(FastagImageUploadActivity.newIntent(this, vehicle.vehicleNumber, journeyId = journeyId))
+                startActivity(KYVFastagImageUploadActivity.newIntent(this, vehicle.vehicleNumber, journeyId = journeyId, orderId=orderId, itemId = itemId))
             }
         }
     }

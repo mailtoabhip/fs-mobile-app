@@ -45,9 +45,6 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
 
     private fun setupHeader() {
         binding.ivBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-        binding.ivHelp.setOnClickListener {
-            // TODO: Handle help icon click
-        }
     }
 
     private fun setupDropdown() {
@@ -207,7 +204,14 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
 
     private fun showTagMappingSuccessBottomSheet() {
         val bottomSheet = TagMappingSuccessBottomSheetFragment.newInstance {
-            // TODO: Navigate to KYV screen
+            val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
+            val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
+            val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+            val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+            val navIntent = com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity.newIntent(
+                this, vehicleNumber, journeyId, orderId, orderItemId.toString()
+            )
+            startActivity(navIntent)
             finish()
         }
         bottomSheet.show(supportFragmentManager, "TagMappingSuccessBottomSheet")
@@ -248,5 +252,7 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
         const val EXTRA_JOURNEY_ID = "journey_id"
         const val EXTRA_VEHICLE_NUMBER = "vehicle_number"
         const val EXTRA_MASKED_PHONE = "masked_phone"
+        const val EXTRA_TAG_COLOR = "tag_color"
+        const val EXTRA_BANK = "bank"
     }
 }

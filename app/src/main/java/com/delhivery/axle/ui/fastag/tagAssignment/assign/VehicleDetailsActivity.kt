@@ -22,11 +22,14 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
     private var chassisNumber: String = ""
     private var orderId: String = ""
     private var orderItemId: Int = 0
+    private var tagColor: String = ""
+    private var bank: String = ""
+    private var vehicleClass: String = ""
 
     companion object {
-        private const val VEHICLE_NUMBER = "vehicle_number"
-        private const val CHASSIS_NUMBER = "chassis_number"
-        private const val ORDER_ID = "order_id"
+        private const val VEHICLE_NUMBER = "extra_vehicle_class"
+        private const val CHASSIS_NUMBER = "extra_chassis_number"
+        private const val ORDER_ID = "extra_order_id"
 
         fun newIntent(
             context: Context,
@@ -84,7 +87,10 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
                     context = this,
                     vehicleNumber = fastagVehicleNumber,
                     orderId = orderId,
-                    orderItemId = orderItemId
+                    orderItemId = orderItemId,
+                    tagColor = tagColor,
+                    bank = bank,
+                    vehicleClass = vehicleClass
                 )
             )
         }
@@ -126,6 +132,9 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
         fastagVehicleNumber = item.vrn ?: fastagVehicleNumber
         orderId = item.orderId ?: intent.getStringExtra(ORDER_ID) ?: ""
         orderItemId = item.orderItemId ?: 0
+        tagColor = item.tagColor ?: ""
+        bank = item.bank ?: ""
+        vehicleClass = item.vehicleClass ?: ""
 
         val commercialVehicle = when (item.isCommercial) {
             true -> "True"
