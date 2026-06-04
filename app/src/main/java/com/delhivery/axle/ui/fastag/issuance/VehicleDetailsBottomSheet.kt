@@ -103,7 +103,6 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
 
     private fun mapColor(colorCode: String): Int {
         return when (colorCode.uppercase()) {
-            "RED" -> requireContext().getColor(R.color.class_red)
             "ORANGE" -> requireContext().getColor(R.color.class_red)
             "YELLOW" -> requireContext().getColor(R.color.class_yellow)
             "GREEN" -> requireContext().getColor(R.color.class_green)

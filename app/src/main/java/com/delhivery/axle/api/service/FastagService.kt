@@ -3,6 +3,7 @@ package com.delhivery.axle.api.service
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.response.*
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -188,4 +189,14 @@ interface FastagService {
     ): Single<BaseResponse<RechargeStatusResponse>>
 
 
+
+    /**
+     * Get pending actions for FASTag tag issuance.
+     * GET /fastag/tag-issuance/v1/pending-actions
+     * TODO : update the endpoints with correctly mapped BE url
+     */
+    @GET("https://financial-fastag-dev.delhivery.com/fastag/tag-issuance/v1/pending-actions")
+    suspend fun getPendingActions(
+        @Header("X-Vendor-Id") vendorId: String
+    ): BaseResponse<PendingActionsResponse>
 }

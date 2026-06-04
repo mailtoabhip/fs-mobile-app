@@ -37,7 +37,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     private var hasExpressKyc = false
     private var hasEkyc = false
 
-    private var bankCode = "IDFC" // Will be set from API response
+    private var bankCode = "IDFC" // Will be set from intent or API response
     private var journeyId = ""
     private var selectedKycType = ""
     private var salesCode = ""

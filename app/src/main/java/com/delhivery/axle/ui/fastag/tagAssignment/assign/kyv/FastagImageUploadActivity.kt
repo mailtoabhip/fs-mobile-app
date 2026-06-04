@@ -99,7 +99,7 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLl)
             WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnSubmit)
         }
     }

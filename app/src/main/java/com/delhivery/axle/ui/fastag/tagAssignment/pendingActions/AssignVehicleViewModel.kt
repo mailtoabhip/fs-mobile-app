@@ -16,21 +16,17 @@ class AssignVehicleViewModel @Inject constructor() : BaseViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    fun fetchAvailableVehicles() {
+    fun fetchAvailableVehicles(vrn: String? = null) {
         _isLoading.value = true
         _error.value = null
 
-        // TODO: Replace with real API call
         _isLoading.value = false
-        _availableVehicles.value = getMockVehicles()
-    }
-
-    private fun getMockVehicles(): List<AvailableVehicle> {
-        return listOf(
-            AvailableVehicle("MH01CA1234", "MEXKRCPA5PG019"),
-            AvailableVehicle("DL01CA5678", "MEXKRCPA5PG020"),
-            AvailableVehicle("KA01AB9012", "MEXKRCPA5PG021")
-        )
+        if (!vrn.isNullOrEmpty()) {
+            // Show only the VRN passed from pending actions
+            _availableVehicles.value = listOf(AvailableVehicle(vehicleNumber = vrn, chassisNumber = ""))
+        } else {
+            _availableVehicles.value = emptyList()
+        }
     }
 }
 

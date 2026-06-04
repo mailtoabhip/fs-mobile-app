@@ -184,7 +184,7 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
 
     private fun mapColorCode(colorCode: String): Int {
         return when (colorCode.uppercase()) {
-            "RED" -> getColor(R.color.class_red)
+            "ORANGE" -> getColor(R.color.class_red)
             "YELLOW" -> getColor(R.color.class_yellow)
             "GREEN" -> getColor(R.color.class_green)
             "PINK" -> getColor(R.color.class_pink)
@@ -196,5 +196,6 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
     companion object {
         const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
         const val EXTRA_VRN = "extra_vrn"
+        const val EXTRA_SALES_CODE = "extra_sales_code"
     }
 }

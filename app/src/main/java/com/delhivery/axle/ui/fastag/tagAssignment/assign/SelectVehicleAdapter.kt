@@ -26,11 +26,11 @@ class SelectVehicleAdapter(
 
     inner class VehicleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvVehicleNumber: TextView = itemView.findViewById(R.id.tvVehicleNumber)
-        private val tvChassisNumber: TextView = itemView.findViewById(R.id.tvChassisNumber)
+        //private val tvChassisNumber: TextView = itemView.findViewById(R.id.tvChassisNumber)
 
         fun bind(vehicle: AvailableVehicle) {
             tvVehicleNumber.text = vehicle.vehicleNumber
-            tvChassisNumber.text = vehicle.chassisNumber
+            //tvChassisNumber.text = vehicle.chassisNumber
 
             itemView.setOnClickListener {
                 onVehicleClick(vehicle)

@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
+    android:layout_marginHorizontal="@dimen/size_16dp"
     android:foreground="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
@@ -42,6 +43,7 @@
             android:layout_marginTop="@dimen/size_2dp"
             android:textColor="@color/text_body_secondary"
             android:textSize="@dimen/text_12sp"
+            android:visibility="gone"
             tools:text="MEXKRCPA5PG019" />
 
     </LinearLayout>

@@ -58,7 +58,7 @@ android {
   productFlavors {
     development {
       dimension "vanilla"
-      resValue "string", "app_name", "Dev Axle"
+      resValue "string", "app_name", "Dev Delfin"
       resValue("bool", "FIREBASE_ACTIVATED", "false")
       resValue("bool", "FIREBASE_PERFORMANCE_LOG", "true")
 
@@ -66,7 +66,7 @@ android {
     }
     uat {
       dimension "vanilla"
-      resValue "string", "app_name", "Stage Axle"
+      resValue "string", "app_name", "Stage Delfin"
       resValue("bool", "FIREBASE_ACTIVATED", "false")
       resValue("bool", "FIREBASE_PERFORMANCE_LOG", "true")
 
@@ -74,7 +74,7 @@ android {
     }
     production {
       dimension "vanilla"
-      resValue "string", "app_name", "Axle"
+      resValue "string", "app_name", "Delfin"
       resValue("bool", "FIREBASE_ACTIVATED", "true")
       resValue("bool", "FIREBASE_PERFORMANCE_LOG", "false")
       signingConfig signingConfigs.release
