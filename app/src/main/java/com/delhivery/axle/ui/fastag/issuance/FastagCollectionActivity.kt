@@ -6,35 +6,26 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.response.FastagOrder
 import com.delhivery.axle.api.response.FastagInventoryItem
 import com.delhivery.axle.databinding.ActivityFastagCollectionBinding
+import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import com.delhivery.axle.utils.ViewModelFactory
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
 
-class FastagCollectionActivity : DaggerAppCompatActivity() {
+class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, FastagCollectionViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
-
-    private lateinit var binding: ActivityFastagCollectionBinding
-    private lateinit var viewModel: FastagCollectionViewModel
+    override fun getViewModelClass() = FastagCollectionViewModel::class.java
+    override fun layoutId() = R.layout.activity_fastag_collection
+    override fun requireConnection() = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_fastag_collection)
-        viewModel = ViewModelProvider(this, viewModelFactory)[FastagCollectionViewModel::class.java]
+
+        binding.lifecycleOwner = this
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -57,7 +48,6 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
     private var currentSalesCode: String = ""
 
     private fun confirmCollection() {
-        // TODO: Build actual products list from scanned/collected data
         val request = com.delhivery.axle.api.request.ConfirmCollectionRequest(
             orderId = currentOrderId,
             salesCode = currentSalesCode,
@@ -72,15 +62,20 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = "FASTag Collection"
-        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.setNavigationIcon(R.drawable.ic_close)
+        binding.toolbar.setNavigationOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun observeViewModel() {
         viewModel.ordersState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading state
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data
@@ -102,9 +97,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
 
         viewModel.confirmState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading on slide button
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data
@@ -131,7 +124,6 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
 
     private fun showCollectionSuccessBottomSheet() {
         CollectionSuccessBottomSheet.newInstance {
-            // TODO: Navigate to Vehicle Verification screen
             val intent = Intent(this, HomeActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
@@ -148,7 +140,6 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
         val totalTags = order.items.size
         binding.totalTags = totalTags
 
-        // Group flat items by vehicle class and count them
         val inventoryItems = order.items
             .groupBy { it.vehicleClass }
             .map { (_, items) ->

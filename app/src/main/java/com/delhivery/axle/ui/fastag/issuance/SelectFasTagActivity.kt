@@ -20,6 +20,7 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
     override fun requireConnection() = true
 
     private var adapter: VehicleClassAdapter? = null
+    private var currentOrderId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +83,8 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
                     // Loading handled by BaseActivity
                 }
                 is Resource.Success -> {
+                    val orderData = resource.data
+                    currentOrderId = orderData?.orderId ?: ""
                     viewModel.kycOnboardValidate("IDFC")
                 }
                 is Resource.Failure -> {
@@ -111,11 +114,13 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
                             putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
                             putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
                             putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                            putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, currentOrderId)
                         }
                         startActivity(navIntent)
                     } else {
                         val navIntent = Intent(this, FastagKycActivity::class.java).apply {
                             putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                            putExtra(FastagKycActivity.EXTRA_ORDER_ID, currentOrderId)
                         }
                         startActivity(navIntent)
                     }

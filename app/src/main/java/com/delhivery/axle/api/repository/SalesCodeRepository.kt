@@ -128,4 +128,14 @@ class SalesCodeRepository @Inject constructor(
                 response.toResource()
             }
         }
+
+    suspend fun paymentCheckout(
+        request: com.delhivery.axle.api.request.PaymentCheckoutRequest
+    ): Resource<com.delhivery.axle.api.response.PaymentCheckoutResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = salesCodeService.paymentCheckout(request)
+                response.toResource()
+            }
+        }
 }

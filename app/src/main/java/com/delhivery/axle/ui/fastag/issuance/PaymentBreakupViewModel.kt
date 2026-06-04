@@ -7,7 +7,9 @@ import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.repository.SalesCodeRepository
 import com.delhivery.axle.api.request.PaymentBreakupItem
 import com.delhivery.axle.api.request.PaymentBreakupRequest
+import com.delhivery.axle.api.request.PaymentCheckoutRequest
 import com.delhivery.axle.api.response.PaymentBreakupResponse
+import com.delhivery.axle.api.response.PaymentCheckoutResponse
 import com.delhivery.axle.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,8 +37,12 @@ class PaymentBreakupViewModel @Inject constructor(
     private val _warningMessage = MutableLiveData<String?>()
     val warningMessage: LiveData<String?> = _warningMessage
 
+    private val _checkoutState = MutableLiveData<Resource<PaymentCheckoutResponse>>()
+    val checkoutState: LiveData<Resource<PaymentCheckoutResponse>> = _checkoutState
+
     fun fetchPaymentBreakup(salesCode: String, paymentMethod: String, items: List<PaymentBreakupItem>) {
         viewModelScope.launch {
+            showProgress()
             _breakupState.value = Resource.Loading
             val request = PaymentBreakupRequest(
                 salesCode = salesCode,
@@ -45,6 +51,7 @@ class PaymentBreakupViewModel @Inject constructor(
             )
             val result = salesCodeRepository.getPaymentBreakup(request)
             _breakupState.value = result
+            showProgress(false)
 
             if (result is Resource.Success) {
                 result.data?.let { data ->
@@ -55,6 +62,21 @@ class PaymentBreakupViewModel @Inject constructor(
                     _isDataLoaded.value = true
                 }
             }
+        }
+    }
+
+    fun paymentCheckout(orderId: String, totalAmount: String) {
+        viewModelScope.launch {
+            showProgress()
+            _checkoutState.value = Resource.Loading
+            val request = PaymentCheckoutRequest(
+                orderId = orderId,
+                totalAmount = totalAmount,
+                idempotencyKey = "CHK-${java.util.UUID.randomUUID()}"
+            )
+            val result = salesCodeRepository.paymentCheckout(request)
+            _checkoutState.value = result
+            showProgress(false)
         }
     }
 }
