@@ -27,8 +27,6 @@ class PendingActionsViewModel @Inject constructor(
     fun fetchPendingOrders() {
         _isLoading.value = true
         _error.value = null
-        _pendingOrders.value = getMockPendingOrders()
-        return
         viewModelScope.launch {
             when (val result = fastagRepository.getPendingActions()) {
                 is Resource.Success -> {
@@ -111,17 +109,17 @@ class PendingActionsViewModel @Inject constructor(
     private fun getMockPendingOrders(): List<PendingOrder> {
         return listOf(
             PendingOrder(
-                orderId = "DLV22222",
+                orderId = "DLV4dbeb855",
                 date = "03 Jun 2026",
-                pendingCount = 8,
+                pendingCount = 7,
                 vehicles = listOf(
-                    PendingVehicle("Vehicle Class 4", null, "UP16CP4301", PendingActionType.ADD_VEHICLE, "Add Vehicle", "BLUE"),
-                    PendingVehicle("Vehicle Class 5", null, "DL01CA1269", PendingActionType.ORDER_CREATED, "Order Created", "ORANGE"),
-                    PendingVehicle("Vehicle Class 7", null, "MH02XY9876", PendingActionType.KYC_DONE, "KYC", "GREEN"),
-                    PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW"),
-                    PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK"),
-                    PendingVehicle("Vehicle Class 4", null, "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", "348934587348578347534"),
-                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KVY", "ORANGE"),
+                    PendingVehicle("Vehicle Class 4", null, "UP16CP4301", PendingActionType.ADD_VEHICLE, "Add Vehicle", "BLUE", salesCode = "TP7472", orderId = "DLV4dbeb855"),
+                    PendingVehicle("Vehicle Class 5", null, "DL01CA1269", PendingActionType.ORDER_CREATED, "Order Created", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855"),
+                    PendingVehicle("Vehicle Class 7", null, "MH02XY9876", PendingActionType.KYC_DONE, "KYC", "GREEN", salesCode = "TP7472", orderId = "DLV4dbeb855"),
+                    PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW", salesCode = "TP7472", orderId = "DLV4dbeb855"),
+                    PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK", salesCode = "TP7472", orderId = "DLV4dbeb855"),
+                    PendingVehicle("Vehicle Class 4", "TAG123456", "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", barcodeId = "348934587348578347534", salesCode = "TP7472", orderId = "DLV4dbeb855"),
+                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KYV", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855", journeyId = "JRN001"),
                 ),
                 isExpanded = true
             )

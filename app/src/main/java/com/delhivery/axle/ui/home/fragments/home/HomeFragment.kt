@@ -65,6 +65,11 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             startActivity(PendingActionsActivity.newIntent(requireContext()))
         }
 
+        // FASTag Pending Actions - shimmer loading state
+        viewModel.fastagPendingLoading.observe(viewLifecycleOwner) { loading ->
+            binding.fastagPendingShimmer.visibility = if (loading) View.VISIBLE else View.GONE
+        }
+
         viewModel.fastagPendingCount.observe(viewLifecycleOwner) { count ->
             if (count > 0) {
                 binding.fastagPendingCard.visibility = View.VISIBLE

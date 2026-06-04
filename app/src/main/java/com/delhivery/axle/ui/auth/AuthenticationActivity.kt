@@ -273,15 +273,20 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             binding.icBack.visibility = View.INVISIBLE
             Handler(Looper.getMainLooper()).postDelayed({
               binding.editPhoneNo.requestFocus()
-              uiUtils.toggleKeyboard(false)
-            }, 600)
+              val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+              imm.showSoftInput(binding.editPhoneNo, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+            }, 300)
           }
           OTP -> {
             binding.icBack.visibility = View.VISIBLE
             uiUtils.hideDelhiveryProgress()
-            uiUtils.toggleKeyboard(false)
             resetVerifyButton()
             binding.otpView.text?.clear()
+            Handler(Looper.getMainLooper()).postDelayed({
+              binding.otpView.requestFocus()
+              val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+              imm.showSoftInput(binding.otpView, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+            }, 300)
             /* show masked phone no */
             viewModel.phoneNo.let {
               if (it.length > 2) {
