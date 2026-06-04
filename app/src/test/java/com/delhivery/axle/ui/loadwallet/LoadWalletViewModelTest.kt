@@ -69,6 +69,7 @@ class LoadWalletViewModelTest : FunSpec({
         walletRepository = relaxedMock()
         userPrefs = relaxedMock()
         every { userPrefs.phoneNumber } returns "9876543210"
+        every { userPrefs.userId() } returns "USER123"
         every { userPrefs.walletId = any() } returns Unit
         viewModel = LoadWalletViewModel(walletApiService, walletRepository, userPrefs)
     }
@@ -83,7 +84,7 @@ class LoadWalletViewModelTest : FunSpec({
                     currentBalance = "5000.00",
                     walletId = "W123"
                 )
-                every { walletApiService.fetchWalletInfo() } returns Single.just(
+                every { walletApiService.fetchWalletInfo("USER123") } returns Single.just(
                     com.delhivery.axle.api.response.BaseResponse(
                         responseData = walletResponse,
                         isSuccess = true,
@@ -103,7 +104,7 @@ class LoadWalletViewModelTest : FunSpec({
                 val walletResponse = WalletTestDataFactory.createUserWalletResponse(
                     currentBalance = "0.00"
                 )
-                every { walletApiService.fetchWalletInfo() } returns Single.just(
+                every { walletApiService.fetchWalletInfo("USER123") } returns Single.just(
                     com.delhivery.axle.api.response.BaseResponse(
                         responseData = walletResponse,
                         isSuccess = true,
@@ -124,7 +125,7 @@ class LoadWalletViewModelTest : FunSpec({
                     """{"success":false,"error":{"message":"Not found","code":404},"data":{"success":false}}"""
                 )
                 val httpException = HttpException(Response.error<Any>(404, errorBody))
-                every { walletApiService.fetchWalletInfo() } returns Single.error(httpException)
+                every { walletApiService.fetchWalletInfo("USER123") } returns Single.error(httpException)
 
                 viewModel.fetchWalletDetails()
 
@@ -135,7 +136,7 @@ class LoadWalletViewModelTest : FunSpec({
         context("error handling") {
             test("non-404 error sets walletErrorLiveData") {
                 val error = RuntimeException("Network error")
-                every { walletApiService.fetchWalletInfo() } returns Single.error(error)
+                every { walletApiService.fetchWalletInfo("USER123") } returns Single.error(error)
 
                 viewModel.fetchWalletDetails()
 
@@ -154,7 +155,7 @@ class LoadWalletViewModelTest : FunSpec({
                     walletId = "NEW_WALLET"
                 )
                 val requestSlot = slot<JsonObject>()
-                every { walletApiService.createWallet(capture(requestSlot)) } returns Single.just(
+                every { walletApiService.createWallet("USER123", capture(requestSlot)) } returns Single.just(
                     com.delhivery.axle.api.response.BaseResponse(
                         responseData = walletResponse,
                         isSuccess = true,
@@ -172,7 +173,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("sends correct request payload") {
                 val walletResponse = WalletTestDataFactory.createUserWalletResponse()
                 val requestSlot = slot<JsonObject>()
-                every { walletApiService.createWallet(capture(requestSlot)) } returns Single.just(
+                every { walletApiService.createWallet("USER123", capture(requestSlot)) } returns Single.just(
                     com.delhivery.axle.api.response.BaseResponse(
                         responseData = walletResponse,
                         isSuccess = true,
@@ -189,7 +190,7 @@ class LoadWalletViewModelTest : FunSpec({
 
         context("error handling") {
             test("error sets walletErrorLiveData") {
-                every { walletApiService.createWallet(any()) } returns
+                every { walletApiService.createWallet("USER123", any()) } returns
                     Single.error(RuntimeException("Server error"))
 
                 viewModel.createWallet()
@@ -202,7 +203,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("provided email is included in request payload") {
                 val walletResponse = WalletTestDataFactory.createUserWalletResponse()
                 val requestSlot = slot<JsonObject>()
-                every { walletApiService.createWallet(capture(requestSlot)) } returns Single.just(
+                every { walletApiService.createWallet("USER123", capture(requestSlot)) } returns Single.just(
                     com.delhivery.axle.api.response.BaseResponse(
                         responseData = walletResponse,
                         isSuccess = true,
@@ -218,7 +219,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("empty email is sent when not provided") {
                 val walletResponse = WalletTestDataFactory.createUserWalletResponse()
                 val requestSlot = slot<JsonObject>()
-                every { walletApiService.createWallet(capture(requestSlot)) } returns Single.just(
+                every { walletApiService.createWallet("USER123", capture(requestSlot)) } returns Single.just(
                     com.delhivery.axle.api.response.BaseResponse(
                         responseData = walletResponse,
                         isSuccess = true,
@@ -241,7 +242,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("fetches first page of transactions") {
                 val response = WalletTestDataFactory.createTransactionHistoryResponse()
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(),
                         end = any(),
                         txnId = null,
@@ -267,7 +268,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("empty transactions returns empty list") {
                 val response = WalletTestDataFactory.createEmptyTransactionResponse()
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -297,7 +298,7 @@ class LoadWalletViewModelTest : FunSpec({
                 )
 
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -305,7 +306,7 @@ class LoadWalletViewModelTest : FunSpec({
                     com.delhivery.axle.api.response.BaseResponse(responseData = page1, isSuccess = true, errorBody = null)
                 )
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = "cursor_1"
                     )
@@ -322,7 +323,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("does not load next page when hasNext is false") {
                 val response = WalletTestDataFactory.createTransactionHistoryResponse(hasNext = false)
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -335,7 +336,7 @@ class LoadWalletViewModelTest : FunSpec({
 
                 // Should only have called API once (no second page fetch)
                 verify(exactly = 1) {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = any(),
                         type = any(), status = any(), limit = any(), cursor = any()
                     )
@@ -347,7 +348,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("credit filter passes type=credit to API") {
                 val response = WalletTestDataFactory.createTransactionHistoryResponse()
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = "credit", status = null, limit = 10, cursor = null
                     )
@@ -359,7 +360,7 @@ class LoadWalletViewModelTest : FunSpec({
                 viewModel.fetchWalletData(filter)
 
                 verify {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = "credit", status = null, limit = 10, cursor = null
                     )
@@ -369,7 +370,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("debit filter passes type=debit to API") {
                 val response = WalletTestDataFactory.createTransactionHistoryResponse()
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = "debit", status = null, limit = 10, cursor = null
                     )
@@ -381,7 +382,7 @@ class LoadWalletViewModelTest : FunSpec({
                 viewModel.fetchWalletData(filter)
 
                 verify {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = "debit", status = null, limit = 10, cursor = null
                     )
@@ -391,7 +392,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("no type filter passes null to API") {
                 val response = WalletTestDataFactory.createTransactionHistoryResponse()
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -402,7 +403,7 @@ class LoadWalletViewModelTest : FunSpec({
                 viewModel.fetchWalletData(WalletFilter())
 
                 verify {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -414,7 +415,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("emits loading true then false on success") {
                 val response = WalletTestDataFactory.createTransactionHistoryResponse()
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -435,7 +436,7 @@ class LoadWalletViewModelTest : FunSpec({
         context("error handling") {
             test("error on first page sets errorLiveData") {
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -457,7 +458,7 @@ class LoadWalletViewModelTest : FunSpec({
                 )
 
                 every {
-                    walletApiService.fetchTransactions(
+                    walletApiService.fetchTransactions("USER123",
                         start = any(), end = any(), txnId = null,
                         type = null, status = null, limit = 10, cursor = null
                     )
@@ -482,7 +483,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("fetches first page of recharges") {
                 val response = WalletTestDataFactory.createRechargeHistoryResponse()
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = null
                     )
@@ -499,7 +500,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("empty recharges returns empty list") {
                 val response = WalletTestDataFactory.createEmptyRechargeResponse()
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = null
                     )
@@ -524,7 +525,7 @@ class LoadWalletViewModelTest : FunSpec({
                 )
 
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = null
                     )
@@ -532,7 +533,7 @@ class LoadWalletViewModelTest : FunSpec({
                     com.delhivery.axle.api.response.BaseResponse(responseData = page1, isSuccess = true, errorBody = null)
                 )
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = "rch_cursor_1"
                     )
@@ -549,7 +550,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("does not load next recharge page when hasNext is false") {
                 val response = WalletTestDataFactory.createRechargeHistoryResponse(hasNext = false)
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = null
                     )
@@ -561,7 +562,7 @@ class LoadWalletViewModelTest : FunSpec({
                 viewModel.loadNextRechargePage()
 
                 verify(exactly = 1) {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = any(), limit = any(), cursor = any()
                     )
@@ -573,7 +574,7 @@ class LoadWalletViewModelTest : FunSpec({
             test("emits loading true then false on success") {
                 val response = WalletTestDataFactory.createRechargeHistoryResponse()
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = null
                     )
@@ -594,7 +595,7 @@ class LoadWalletViewModelTest : FunSpec({
         context("error handling") {
             test("error on first page sets errorLiveData") {
                 every {
-                    walletApiService.fetchRechargeHistory(
+                    walletApiService.fetchRechargeHistory("USER123",
                         start = any(), end = any(),
                         rechargeId = null, limit = 10, cursor = null
                     )
@@ -616,7 +617,7 @@ class LoadWalletViewModelTest : FunSpec({
         fun stubTransactions(startSlot: CapturingSlot<String>, endSlot: CapturingSlot<String>) {
             val response = WalletTestDataFactory.createTransactionHistoryResponse()
             every {
-                walletApiService.fetchTransactions(
+                walletApiService.fetchTransactions("USER123",
                     start = capture(startSlot),
                     end = capture(endSlot),
                     txnId = null, type = null, status = null, limit = 10, cursor = null
@@ -751,7 +752,7 @@ class LoadWalletViewModelTest : FunSpec({
                 transactions = listOf(txn)
             )
             every {
-                walletApiService.fetchTransactions(
+                walletApiService.fetchTransactions("USER123",
                     start = null, end = null, txnId = "TXN_REFRESH",
                     type = null, status = null, limit = 1, cursor = null
                 )
@@ -767,7 +768,7 @@ class LoadWalletViewModelTest : FunSpec({
         test("empty transactions list sets error") {
             val response = WalletTestDataFactory.createEmptyTransactionResponse()
             every {
-                walletApiService.fetchTransactions(
+                walletApiService.fetchTransactions("USER123",
                     start = null, end = null, txnId = "TXN_MISSING",
                     type = null, status = null, limit = 1, cursor = null
                 )
@@ -782,7 +783,7 @@ class LoadWalletViewModelTest : FunSpec({
 
         test("network error sets refreshStatusErrorLiveData") {
             every {
-                walletApiService.fetchTransactions(
+                walletApiService.fetchTransactions("USER123",
                     start = null, end = null, txnId = "TXN_ERR",
                     type = null, status = null, limit = 1, cursor = null
                 )
@@ -804,7 +805,7 @@ class LoadWalletViewModelTest : FunSpec({
                 status = "success"
             )
             every {
-                walletApiService.fetchRechargeStatus(any())
+                walletApiService.fetchRechargeStatus("USER123", any())
             } returns Single.just(
                 com.delhivery.axle.api.response.BaseResponse(responseData = response, isSuccess = true, errorBody = null)
             )
@@ -818,7 +819,7 @@ class LoadWalletViewModelTest : FunSpec({
             val response = WalletTestDataFactory.createRechargeStatusResponse()
             val requestSlot = slot<JsonObject>()
             every {
-                walletApiService.fetchRechargeStatus(capture(requestSlot))
+                walletApiService.fetchRechargeStatus("USER123", capture(requestSlot))
             } returns Single.just(
                 com.delhivery.axle.api.response.BaseResponse(responseData = response, isSuccess = true, errorBody = null)
             )
@@ -830,7 +831,7 @@ class LoadWalletViewModelTest : FunSpec({
 
         test("error sets refreshRechargeStatusErrorLiveData") {
             every {
-                walletApiService.fetchRechargeStatus(any())
+                walletApiService.fetchRechargeStatus("USER123", any())
             } returns Single.error(RuntimeException("Server error"))
 
             viewModel.refreshRechargeStatus("RCH_ERR", "2024-01-15T14:30:00")
