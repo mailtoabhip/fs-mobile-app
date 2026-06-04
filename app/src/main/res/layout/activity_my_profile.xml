@@ -17,7 +17,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_bg"
+        android:background="@color/white"
         android:orientation="vertical"
         android:fitsSystemWindows="true">
 
@@ -178,8 +178,9 @@
                     bind:srcCompat="@drawable/ic_info_black"
                     android:layout_height="wrap_content"/>
                 <TextView
-                    android:layout_width="match_parent"
-                    android:text="@string/label_logout"
+                    android:id="@+id/label_about_app"
+                    android:layout_width="wrap_content"
+                    android:text="@string/label_about_app"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@+id/aboutAppImg"
                     android:layout_marginStart="@dimen/size_16dp"
@@ -188,6 +189,16 @@
                     android:layout_marginEnd="@dimen/size_12dp"
                     android:textSize="@dimen/text_14sp"
                     android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/appversion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/label_about_app"
+                    android:layout_marginEnd="@dimen/size_4dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_12sp"
+                    tools:text="--v2.133.14" />
             </RelativeLayout>
 
             <View

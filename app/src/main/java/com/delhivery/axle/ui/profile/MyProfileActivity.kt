@@ -1,10 +1,8 @@
 package com.delhivery.axle.ui.profile
 
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -29,15 +27,17 @@ import com.delhivery.axle.databinding.ActivityMyProfileBinding
 import com.delhivery.axle.databinding.DialogAccountDeletionSubmittedBinding
 import com.delhivery.axle.injection.module.GlideApp
 import com.delhivery.axle.ui.base.BaseActivity
-import com.delhivery.axle.ui.kyc.dashboard.KycDashboardActivity
-import com.delhivery.axle.ui.ledger.consolidatedPageIntent
 import com.delhivery.axle.ui.loadwallet.loadWalletIntent
-import com.delhivery.axle.ui.profile.kycdetails.ProfileKYCDetailsActivity
-import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsActivity
-import com.delhivery.axle.ui.profile.raterewards.ShareRateGetRewardsActivity
-import com.delhivery.axle.ui.team.teamMembersIntent
-import com.delhivery.axle.ui.userroutes.userRoutesIntent
-import com.delhivery.axle.utils.*
+import com.delhivery.axle.utils.BitmapUtils
+import com.delhivery.axle.utils.DateUtils
+import com.delhivery.axle.utils.DocumentUtils
+import com.delhivery.axle.utils.EVENT_USER_DELETE_ACCOUNT
+import com.delhivery.axle.utils.EVENT_USER_LOGOUT
+import com.delhivery.axle.utils.EVENT_VIEW_MY_PROFILE
+import com.delhivery.axle.utils.PROPERTY_PHONE_NO
+import com.delhivery.axle.utils.PROPERTY_TIME_SINCE_LAST_LOGIN
+import com.delhivery.axle.utils.PROPERTY_USER_ID
+import com.delhivery.axle.utils.WindowInsetsUtils
 import com.delhivery.axle.utils.extensions.isNotNullOrEmpty
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
@@ -49,7 +49,6 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.File
 import javax.inject.Inject
-import androidx.core.net.toUri
 
 
 class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileViewModel>(), DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface  {
@@ -84,12 +83,12 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
         isFirstResume = true
         /* setup toolbar */
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
       WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
-        title = "My Profile"
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 userPrefs.setPreviousScreen(this.javaClass.name)
@@ -101,10 +100,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO),
             mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:""))
 
-        if(userPrefs.companyName.isNotNullOrEmpty()) {
-            binding.profile.text = getUserInitials()
-        }
-        binding.appversion.text = "App version ${BuildConfig.VERSION_NAME}"
+        binding.profile.text = getUserInitials()
+        binding.appversion.text = "--v${BuildConfig.VERSION_NAME}"
 
         binding.logoutLayout.setOnClickListener {
             WorkManager.getInstance(applicationContext).cancelAllWorkByTag(TAG_SYNC_DATA)
@@ -155,12 +152,6 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
             startActivity(loadWalletIntent(this))
         }
 
-        binding.helpLayout.setOnClickListener {
-            userPrefs.setPreviousScreen(this.javaClass.name)
-          //  navigationUtils.navigate(HelpSupportActivity::class.java)
-         callHelpline()
-        }
-
     }
     private fun showAccountDeletionRequestDialog() {
         val dialog = Dialog(this)
@@ -181,14 +172,14 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
     
     /* Handle window insets for edge-to-edge display (API 35+) */
     if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
       WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
     }
-        title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationIcon(R.drawable.ic_close_black)
+        binding.toolbar.setNavigationIcon(R.drawable.ic_close)
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
@@ -299,6 +290,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     override fun onResume() {
         super.onResume()
         viewModel.getUser()
+        binding.profile.text = getUserInitials()
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
             downloadLogo()
         }
@@ -449,10 +441,8 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
     }
 
     private fun getUserInitials(): String {
-        val name = userPrefs.userName
-        if (name.isNullOrBlank()) {
-            return userPrefs.companyName?.firstOrNull()?.uppercaseChar()?.toString() ?: ""
-        }
+        val name = if (userPrefs.userName.isNotNullOrEmpty()) userPrefs.userName else userPrefs.companyName
+        if (name.isNullOrBlank()) return ""
         val parts = name.trim().split("\\s+".toRegex())
         return when {
             parts.size >= 2 -> "${parts[0][0]}${parts[1][0]}".uppercase()
