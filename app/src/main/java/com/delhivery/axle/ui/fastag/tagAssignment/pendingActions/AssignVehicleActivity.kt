@@ -202,10 +202,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             PendingActionType.HOTO_DONE -> {
                 val intent = Intent(this, FastagCollectionActivity::class.java).apply {
                     putExtra(FastagCollectionActivity.EXTRA_SALES_CODE, salesCode)
-                    putExtra(FastagCollectionActivity.EXTRA_FASTAG_ID, referenceId ?: "")
-                    putExtra(FastagCollectionActivity.EXTRA_BARCODE, barcodeId ?: "")
-                    putExtra(FastagCollectionActivity.EXTRA_VEHICLE_CLASS, vehicleClass)
-                    putExtra(FastagCollectionActivity.EXTRA_VRN, vehicle.vehicleNumber)
+                    putExtra(FastagCollectionActivity.EXTRA_ORDER_ID, orderId)
                 }
                 startActivity(intent)
             }

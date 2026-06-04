@@ -38,21 +38,20 @@ class SalesCodeRepository @Inject constructor(
             }
         }
 
-    suspend fun getOrdersByVendor(salesCode: String, limit: Int = 20, offset: Int = 0): Resource<FastagOrdersResponse> =
+    suspend fun getOrdersByVendor(salesCode: String, orderId: String): Resource<FastagOrdersResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = salesCodeService.getOrdersByVendor(salesCode, limit, offset)
+                val response = salesCodeService.getOrdersByVendor(salesCode, orderId)
                 response.toResource()
             }
         }
 
     suspend fun confirmCollection(
-        orderId: String,
         request: com.delhivery.axle.api.request.ConfirmCollectionRequest
     ): Resource<com.delhivery.axle.api.response.ConfirmCollectionResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = salesCodeService.confirmCollection(orderId, request)
+                val response = salesCodeService.confirmCollection(request)
                 response.toResource()
             }
         }
@@ -125,6 +124,16 @@ class SalesCodeRepository @Inject constructor(
         withContext(ioDispatcher) {
             safeApiCall {
                 val response = salesCodeService.createOrder(request)
+                response.toResource()
+            }
+        }
+
+    suspend fun paymentCheckout(
+        request: com.delhivery.axle.api.request.PaymentCheckoutRequest
+    ): Resource<com.delhivery.axle.api.response.PaymentCheckoutResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = salesCodeService.paymentCheckout(request)
                 response.toResource()
             }
         }

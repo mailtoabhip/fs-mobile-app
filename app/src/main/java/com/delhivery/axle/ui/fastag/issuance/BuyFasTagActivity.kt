@@ -6,29 +6,21 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityBuyFasTagBinding
-import com.delhivery.axle.ui.loadwallet.LoadWalletActivity
-import com.delhivery.axle.utils.ViewModelFactory
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
+import com.delhivery.axle.ui.base.BaseActivity
 
-class BuyFasTagActivity : DaggerAppCompatActivity() {
+class BuyFasTagActivity : BaseActivity<ActivityBuyFasTagBinding, SalesCodeViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
-
-    private lateinit var binding: ActivityBuyFasTagBinding
+    override fun getViewModelClass() = SalesCodeViewModel::class.java
+    override fun layoutId() = R.layout.activity_buy_fas_tag
+    override fun requireConnection() = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_buy_fas_tag)
+
+        binding.lifecycleOwner = this
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
