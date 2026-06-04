@@ -1,7 +1,9 @@
 package com.delhivery.axle.ui.common
 
+import android.app.Dialog
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.WindowManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -15,10 +17,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class OtpBottomSheetFragment : BottomSheetDialogFragment() {
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).also { dialog ->
+            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         val behavior = (dialog as? BottomSheetDialog)?.behavior ?: return
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        behavior.isFitToContents = true
         behavior.skipCollapsed = true
     }
 

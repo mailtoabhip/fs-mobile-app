@@ -9,6 +9,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityTagMappingBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.common.OtpBottomSheetFragment
 
 class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingViewModel>() {
 
@@ -152,8 +153,15 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
                     // OTP generation in progress
                 }
                 is Resource.Success -> {
-                    val maskedNumber = intent.getStringExtra(EXTRA_MASKED_PHONE).orEmpty()
-                    showOtpBottomSheet(maskedNumber)
+                    val existingSheet = supportFragmentManager
+                        .findFragmentByTag(OtpBottomSheetFragment.TAG)
+                        as? OtpBottomSheetFragment
+                    if (existingSheet != null && existingSheet.isAdded) {
+                        existingSheet.clearOtp()
+                    } else {
+                        val maskedNumber = intent.getStringExtra(EXTRA_MASKED_PHONE).orEmpty()
+                        showOtpBottomSheet(maskedNumber)
+                    }
                 }
                 is Resource.Failure -> {
                     Toast.makeText(this, resource.errorMessage ?: "Failed to generate OTP", Toast.LENGTH_SHORT).show()
@@ -168,8 +176,8 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
                 }
                 is Resource.Success -> {
                     // Dismiss OTP bottom sheet and show success
-                    supportFragmentManager.findFragmentByTag(com.delhivery.axle.ui.common.OtpBottomSheetFragment.TAG)
-                        ?.let { (it as? com.delhivery.axle.ui.common.OtpBottomSheetFragment)?.dismiss() }
+                    supportFragmentManager.findFragmentByTag(OtpBottomSheetFragment.TAG)
+                        ?.let { (it as? OtpBottomSheetFragment)?.dismiss() }
                     showTagMappingSuccessBottomSheet()
                 }
                 is Resource.Failure -> {
