@@ -3,12 +3,14 @@ package com.delhivery.axle.api.service
 import com.delhivery.axle.api.request.ConfirmCollectionRequest
 import com.delhivery.axle.api.request.CreateOrderRequest
 import com.delhivery.axle.api.request.PaymentBreakupRequest
+import com.delhivery.axle.api.request.PaymentCheckoutRequest
 import com.delhivery.axle.api.request.ValidateSalesRequest
 import com.delhivery.axle.api.response.BaseResponse
 import com.delhivery.axle.api.response.ConfirmCollectionResponse
 import com.delhivery.axle.api.response.CreateOrderResponse
 import com.delhivery.axle.api.response.FastagOrdersResponse
 import com.delhivery.axle.api.response.PaymentBreakupResponse
+import com.delhivery.axle.api.response.PaymentCheckoutResponse
 import com.delhivery.axle.api.response.ValidateSalesCodeResponse
 import com.delhivery.axle.api.response.VehicleCheckResponse
 import com.delhivery.axle.api.response.VehicleClassResponse
@@ -33,13 +35,11 @@ interface FasTAGIssuanceService {
     @GET("/fastag/tag-issuance/v1/orders/by-vendor")
     suspend fun getOrdersByVendor(
         @Query("sales_code") salesCode: String,
-        @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
+        @Query("order_id") orderId: String
     ): BaseResponse<FastagOrdersResponse>
 
-    @POST("/fastag/tag-issuance/v1/order/{order_id}/confirm-collection")
+    @POST("/fastag/tag-issuance/v1/order/confirm-collection")
     suspend fun confirmCollection(
-        @Path("order_id") orderId: String,
         @Body request: ConfirmCollectionRequest
     ): BaseResponse<ConfirmCollectionResponse>
 
@@ -58,4 +58,10 @@ interface FasTAGIssuanceService {
     suspend fun createOrder(
         @Body request: CreateOrderRequest
     ): BaseResponse<CreateOrderResponse>
+
+    @Headers("No-Request-Id: true")
+    @POST("/fastag/tag-issuance/v1/payment/checkout")
+    suspend fun paymentCheckout(
+        @Body request: PaymentCheckoutRequest
+    ): BaseResponse<PaymentCheckoutResponse>
 }

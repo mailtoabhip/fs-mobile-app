@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.issuance.FastagKycViewModel" />
+
+        <variable
             name="hasSelection"
             type="Boolean" />
 

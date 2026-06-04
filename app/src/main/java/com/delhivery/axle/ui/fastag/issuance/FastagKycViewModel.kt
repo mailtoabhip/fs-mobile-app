@@ -2,19 +2,19 @@ package com.delhivery.axle.ui.fastag.issuance
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.repository.SalesCodeRepository
 import com.delhivery.axle.api.response.KycInitiateResponse
 import com.delhivery.axle.api.response.KycTypesResponse
 import com.delhivery.axle.api.response.KycVerifyResponse
+import com.delhivery.axle.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FastagKycViewModel @Inject constructor(
     private val salesCodeRepository: SalesCodeRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _kycTypesState = MutableLiveData<Resource<KycTypesResponse>>()
     val kycTypesState: LiveData<Resource<KycTypesResponse>> = _kycTypesState
@@ -27,25 +27,31 @@ class FastagKycViewModel @Inject constructor(
 
     fun fetchKycTypes(bankCode: String) {
         viewModelScope.launch {
+            showProgress()
             _kycTypesState.value = Resource.Loading
             val result = salesCodeRepository.getKycTypes(bankCode)
             _kycTypesState.value = result
+            showProgress(false)
         }
     }
 
     fun initiateKyc(bankCode: String, kycType: String) {
         viewModelScope.launch {
+            showProgress()
             _kycInitiateState.value = Resource.Loading
             val result = salesCodeRepository.initiateKyc(bankCode, kycType)
             _kycInitiateState.value = result
+            showProgress(false)
         }
     }
 
     fun verifyAndCreateKyc(journeyId: String, otp: String, bankCode: String, kycType: String) {
         viewModelScope.launch {
+            showProgress()
             _kycVerifyState.value = Resource.Loading
             val result = salesCodeRepository.verifyAndCreateKyc(journeyId, otp, bankCode, kycType)
             _kycVerifyState.value = result
+            showProgress(false)
         }
     }
 }

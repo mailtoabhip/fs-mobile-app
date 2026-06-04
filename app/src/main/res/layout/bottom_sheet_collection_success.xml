@@ -12,7 +12,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="@dimen/size_48dp"
-        android:src="@drawable/ic_check_circle_grey"
+        android:src="@drawable/ic_check_circle_green"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,29 +26,62 @@
         android:layout_marginTop="@dimen/size_24dp"
         android:layout_marginEnd="@dimen/size_32dp"
         android:gravity="center"
-        android:text="FASTags have been successfully handed over"
+        android:text="Collected FASTags successfully"
         android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_18sp"
+        android:textSize="@dimen/text_20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivSuccessIcon" />
 
-    <!-- Continue Button -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnContinueToVerification"
+    <!-- Subtitle -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvSubtitle"
         android:layout_width="0dp"
-        android:layout_height="@dimen/size_48dp"
-        android:layout_marginStart="@dimen/size_16dp"
-        android:layout_marginTop="@dimen/size_48dp"
-        android:layout_marginEnd="@dimen/size_16dp"
-        android:background="@drawable/bg_all_round_corner_solid_black"
-        android:text="Continue to Vehicle Verification"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_16sp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_32dp"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_32dp"
+        android:gravity="center"
+        android:text="You can now continue to assign FASTags\nto your vehicles"
+        android:textColor="@color/background_dark_grey"
+        android:textSize="@dimen/text_14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <!-- Assign FASTags Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnAssignFastags"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_48dp"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_32dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:background="@drawable/bg_all_round_corner_solid_black"
+        android:text="Assign FASTags"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
+
+    <!-- Maybe Later Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnMaybeLater"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_48dp"
+        android:layout_marginStart="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_12dp"
+        android:layout_marginEnd="@dimen/size_16dp"
+        android:background="@android:color/transparent"
+        android:text="Maybe Later"
+        android:textAllCaps="false"
+        android:textColor="@color/heading_black"
+        android:textSize="@dimen/text_14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnAssignFastags" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

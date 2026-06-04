@@ -28,17 +28,24 @@ class SelectFasTagViewModel @Inject constructor(
 
     fun fetchVehicleClasses() {
         viewModelScope.launch {
+            showProgress()
             _vehicleClassesState.value = Resource.Loading
             val result = salesCodeRepository.getVehicleClasses()
             _vehicleClassesState.value = result
+            showProgress(false)
         }
     }
 
     fun createOrder(request: CreateOrderRequest) {
         viewModelScope.launch {
+            showProgress()
             _createOrderState.value = Resource.Loading
             val result = salesCodeRepository.createOrder(request)
             _createOrderState.value = result
+            // Don't hide progress on success — kycOnboardValidate follows
+            if (result is Resource.Failure) {
+                showProgress(false)
+            }
         }
     }
 
@@ -47,6 +54,7 @@ class SelectFasTagViewModel @Inject constructor(
             _kycValidateState.value = Resource.Loading
             val result = salesCodeRepository.kycOnboardValidate(bankCode)
             _kycValidateState.value = result
+            showProgress(false)
         }
     }
 }
