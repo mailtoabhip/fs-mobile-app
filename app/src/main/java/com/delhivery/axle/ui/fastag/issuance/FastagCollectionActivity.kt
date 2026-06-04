@@ -16,6 +16,16 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
 
 class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, FastagCollectionViewModel>() {
+    companion object {
+        const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_FASTAG_ID = "extra_fastag_id"
+        const val EXTRA_BARCODE = "extra_barcode"
+        const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
+        const val EXTRA_VRN = "extra_vrn"
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     override fun getViewModelClass() = FastagCollectionViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_collection
@@ -162,7 +172,6 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
 
     private fun mapColorCode(colorCode: String): Int {
         return when (colorCode.uppercase()) {
-            "RED" -> getColor(R.color.class_red)
             "ORANGE" -> getColor(R.color.class_red)
             "YELLOW" -> getColor(R.color.class_yellow)
             "GREEN" -> getColor(R.color.class_green)

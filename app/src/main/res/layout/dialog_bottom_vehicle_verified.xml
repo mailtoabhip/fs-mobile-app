@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_rounded_top"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/size_16dp"
+    android:paddingTop="@dimen/size_32dp"
+    android:paddingBottom="@dimen/size_24dp">
+
+    <!-- Success Animation -->
+    <ImageView
+        android:id="@+id/ivSuccessAnimation"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:contentDescription="@string/vehicle_verified_title" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_24dp"
+        android:text="@string/vehicle_verified_title"
+        android:textColor="@color/neutral_black_200"
+        android:textSize="@dimen/text_18sp"
+        android:textStyle="bold" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_8dp"
+        android:gravity="center"
+        android:textColor="@color/text_body_secondary"
+        android:textSize="@dimen/text_14sp" />
+
+    <!-- Go to Homepage Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnGoToHomepage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_32dp"
+        android:background="@drawable/bg_all_round_corner_solid_black"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:paddingVertical="@dimen/size_16dp"
+        android:stateListAnimator="@null"
+        android:text="@string/go_to_homepage"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_16sp"
+         />
+
+</LinearLayout>

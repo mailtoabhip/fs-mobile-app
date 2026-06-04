@@ -237,11 +237,9 @@
             android:layout_marginTop="@dimen/size_8dp"
             android:inputType="number"
             android:maxLength="8"
-            bind:autoSizeTextType="uniform"
             android:fontFamily="sans-serif"
             android:hint="Enter OTP"
             android:textSize="@dimen/text_16sp"
-            android:letterSpacing="0.3"
             android:padding="@dimen/size_12dp"
             android:background="@drawable/bg_edit_text_outlined"
             />

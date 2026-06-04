@@ -81,6 +81,8 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         const val ISSUED_BY = "issued_by"
         const val AWB = "awb"
         const val VEHICLE_DATA = "vehicle_data"
+        const val EXTRA_TAG_ID = "extra_tag_id"
+        const val EXTRA_VEHICLE_NUMBER = "extra_vehicle_number"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,14 +143,19 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
     private fun setupUI() {
         val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
-        val vehicleNumber = vehicleData?.vehicleNumber ?: intent.getStringExtra(VEHICLE_NUMBER) ?: ""
+        val vehicleNumber = vehicleData?.vehicleNumber
+            ?: intent.getStringExtra(EXTRA_VEHICLE_NUMBER)
+            ?: intent.getStringExtra(VEHICLE_NUMBER)
+            ?: ""
         val truckSize = vehicleData?.truckSize ?: intent.getStringExtra(TRUCK_SIZE) ?: ""
         val capacity = vehicleData?.capacity ?: intent.getDoubleExtra(CAPACITY, 0.0)
         val ownership = vehicleData?.ownership ?: intent.getStringExtra(OWNERSHIP) ?: ""
         val status = vehicleData?.latestStatus ?: intent.getStringExtra(STATUS) ?: ""
         val balance = vehicleData?.fastagBalance ?: intent.getStringExtra(BALANCE) ?: "0"
         val issuedBy = vehicleData?.fastagIssuedBy ?: intent.getStringExtra(ISSUED_BY) ?: ""
-        val awb = vehicleData?.fastagTagId ?: intent.getStringExtra(AWB)
+        val awb = vehicleData?.fastagTagId
+            ?: intent.getStringExtra(EXTRA_TAG_ID)
+            ?: intent.getStringExtra(AWB)
 
         // Set vehicle info
         binding.tvVehicleNumber.text = vehicleNumber
@@ -213,10 +220,15 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
         }
 
         binding.btnRecharge.setOnClickListener {
+            val tagId = vehicleData?.fastagTagId
+                ?: intent.getStringExtra(EXTRA_TAG_ID)
+                ?: intent.getStringExtra(AWB)
+            val vehNum = vehicleNumber
+            val bal = balance
             val intent = Intent(this, FastagRechargeActivity::class.java).apply {
-                putExtra(FastagRechargeActivity.Companion.TAG_ID, vehicleData?.fastagTagId)
-                putExtra(FastagRechargeActivity.Companion.VEHICLE_NUMBER, vehicleData?.vehicleNumber)
-                putExtra(FastagRechargeActivity.Companion.FASTAG_BALANCE, vehicleData?.fastagBalance)
+                putExtra(FastagRechargeActivity.Companion.TAG_ID, tagId)
+                putExtra(FastagRechargeActivity.Companion.VEHICLE_NUMBER, vehNum)
+                putExtra(FastagRechargeActivity.Companion.FASTAG_BALANCE, bal)
             }
             startActivity(intent)
         }
@@ -236,7 +248,11 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
     private fun setupRecyclerView() {
         val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
-        adapter = FastagTransactionAdapter(vehicleData)
+        val vehNum = vehicleData?.vehicleNumber
+            ?: intent.getStringExtra(EXTRA_VEHICLE_NUMBER)
+            ?: intent.getStringExtra(VEHICLE_NUMBER)
+            ?: ""
+        adapter = FastagTransactionAdapter(vehNum)
         binding.rvTransactions.layoutManager = LinearLayoutManager(this)
         binding.rvTransactions.adapter = adapter
 
@@ -309,7 +325,10 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
     private fun loadData() {
         val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
-        val tagId = vehicleData?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return
+        val tagId = vehicleData?.fastagTagId
+            ?: intent.getStringExtra(EXTRA_TAG_ID)
+            ?: intent.getStringExtra(TAG_ID)
+            ?: return
         viewModel.loadTransactions(tagId)
     }
 
@@ -395,7 +414,10 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
 
         bindingDialog.btnDownloadStatement.setOnClickListener {
             val vehicleData = intent.getSerializable(VEHICLE_DATA, HomeTrucksRequestItemData::class.java)
-            val tagId = vehicleData?.fastagTagId ?: intent.getStringExtra(TAG_ID) ?: return@setOnClickListener
+            val tagId = vehicleData?.fastagTagId
+                ?: intent.getStringExtra(EXTRA_TAG_ID)
+                ?: intent.getStringExtra(TAG_ID)
+                ?: return@setOnClickListener
 
             dialog.dismiss()
 

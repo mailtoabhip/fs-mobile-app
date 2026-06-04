@@ -61,7 +61,9 @@ data class FsVerifyData(
  * `data` payload inside the resend-OTP response.
  */
 data class FsResendData(
-    @SerializedName("message") val message: String
+    @SerializedName("message") val message: String,
+    @SerializedName("phone") val phone: String,
+    @SerializedName("session") val session: String?,
 )
 
 // ---------------------------------------------------------------------------

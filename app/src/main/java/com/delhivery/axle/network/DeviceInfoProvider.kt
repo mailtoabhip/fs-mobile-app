@@ -10,7 +10,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
+
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -80,18 +80,16 @@ class DeviceInfoProvider @Inject constructor(
     }
 
     /**
-     * Returns the public IP, blocking up to [timeoutMs] for the fetch to complete.
+     * Returns the public IP, blocking until the fetch completes.
      * Safe to call from OkHttp interceptor threads (IO).
-     * Returns empty string if the fetch hasn't completed within the timeout.
+     * This is a mandatory field for each API call so it waits indefinitely.
      */
-    fun awaitPublicIp(timeoutMs: Long = 5000L): String {
+    fun awaitPublicIp(): String {
         if (publicIp.isNotEmpty()) return publicIp
         return try {
-            runBlocking {
-                withTimeoutOrNull(timeoutMs) { ipDeferred.await() } ?: ""
-            }
+            runBlocking { ipDeferred.await() }
         } catch (e: Exception) {
-            Log.w(TAG, "Timeout waiting for public IP: ${e.message}")
+            Log.w(TAG, "Error waiting for public IP: ${e.message}")
             ""
         }
     }

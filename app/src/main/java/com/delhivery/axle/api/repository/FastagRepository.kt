@@ -3,9 +3,26 @@ package com.delhivery.axle.api.repository
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.response.FormConfigResponse
+import com.delhivery.axle.api.response.OrderItemsResponse
+import com.delhivery.axle.api.response.RcProcessResponse
+import com.delhivery.axle.api.response.RcProcessStatusResponse
+import com.delhivery.axle.api.response.VehicleImageProcessResponse
+import com.delhivery.axle.api.response.VehicleImageProcessStatusResponse
+import com.delhivery.axle.api.response.FastagImageUploadResponse
+import com.delhivery.axle.api.response.FastagImageValidateResponse
+import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.response.*
+import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.service.FastagService
+import com.delhivery.axle.injection.qualifier.IoDispatcher
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertResponse
+import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withContext
+import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -15,7 +32,9 @@ import javax.inject.Inject
  */
 class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
-    errorLogger: ErrorLogger
+    errorLogger: ErrorLogger,
+    private val userPrefs: UserPrefs,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
 
     /**
@@ -110,4 +129,98 @@ class FastagRepository @Inject constructor(
         txnId, tollPlazaId, refundAmount, comment, raisedAgainst,
         additionalTxnId, uploadDoc1, uploadDoc2, uploadDoc3
     ).convertResponse()
+
+    // ---- Coroutine-based methods (Tag Issuance flow) ----
+
+    suspend fun getOrderItems(orderId: String): Resource<OrderItemsResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = fastagService.getOrderItems(orderId)
+                response.toResource()
+            }
+        }
+
+    suspend fun uploadRcImages(
+        rcFront: MultipartBody.Part,
+        rcBack: MultipartBody.Part,
+        orderId: MultipartBody.Part,
+        orderItemId: MultipartBody.Part
+    ): Resource<RcProcessResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = fastagService.uploadRcImages(rcFront, rcBack, orderId, orderItemId)
+                response.toResource()
+            }
+        }
+
+    suspend fun getRcProcessStatus(jobId: String): Resource<RcProcessStatusResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = fastagService.getRcProcessStatus(jobId)
+                response.toResource()
+            }
+        }
+
+    suspend fun uploadVehicleImages(
+        vehicleFront: MultipartBody.Part,
+        vehicleSide: MultipartBody.Part,
+        orderId: MultipartBody.Part,
+        orderItemId: MultipartBody.Part
+    ): Resource<VehicleImageProcessResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = fastagService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId)
+                response.toResource()
+            }
+        }
+
+    suspend fun getVehicleImageProcessStatus(jobId: String): Resource<VehicleImageProcessStatusResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = fastagService.getVehicleImageProcessStatus(jobId)
+                response.toResource()
+            }
+        }
+
+    suspend fun uploadFastagImage(
+        fastagImage: MultipartBody.Part,
+        journeyId: MultipartBody.Part
+    ): Resource<FastagImageUploadResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val response = fastagService.uploadFastagImage(fastagImage, journeyId)
+                response.toResource()
+            }
+        }
+
+    suspend fun validateFastagImage(journeyId: String): Resource<FastagImageValidateResponse> =
+        withContext(ioDispatcher) {
+            safeApiCall {
+                val request = com.delhivery.axle.api.request.FastagImageValidateRequest(journeyId = journeyId)
+                val response = fastagService.validateFastagImage(request)
+                response.toResource()
+            }
+        }
+
+    // ---- RxJava-based: Recharge status ----
+
+    fun fetchRechargeStatus(userId: String, rechargeId: String) =
+        fastagService.fetchRechargeStatus(
+            userId = userId,
+            request = JsonObject().apply { addProperty("recharge_id", rechargeId) }
+        ).convertResponse()
+
+    /**
+     * Get pending actions for FASTag tag issuance.
+     * GET /fastag/tag-issuance/v1/pending-actions
+     */
+    suspend fun getPendingActions(): Resource<PendingActionsResponse> = safeApiCall {
+
+        /*
+        * TODO : update with real vendor ID / pass header only after discussion with BE
+        *
+        * */
+        val vendorId = "a1e38d7a-7001-7073-d3e4-320e007ddaad" //userPrefs.userId()
+        fastagService.getPendingActions(vendorId).toResource()
+    }
 }

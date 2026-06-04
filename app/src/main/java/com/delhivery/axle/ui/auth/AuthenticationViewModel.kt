@@ -108,6 +108,7 @@ class AuthenticationViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = fsAuthRepository.resend(rawPhone)) {
                 is Resource.Success -> {
+                    loginSession = result.data?.session
                     showProgress(false)
                     otpStatusLiveData.postValue(true)
                 }

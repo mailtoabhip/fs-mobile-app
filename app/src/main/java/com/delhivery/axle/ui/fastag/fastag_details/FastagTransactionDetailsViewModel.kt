@@ -2,7 +2,7 @@ package com.delhivery.axle.ui.fastag.fastag_details
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.delhivery.axle.api.repository.LoadboardRepository
+import com.delhivery.axle.api.repository.FastagRepository
 import com.delhivery.axle.api.response.FastagTransaction
 import com.delhivery.axle.api.response.FastagTransactionResponse
 import com.delhivery.axle.api.response.TransactionDisputeResponse
@@ -15,7 +15,7 @@ import okhttp3.ResponseBody
 import javax.inject.Inject
 
 class FastagTransactionDetailsViewModel @Inject constructor(
-    private val loadboardRepository: LoadboardRepository
+    private val fastagRepository: FastagRepository
 ) : BaseViewModel() {
 
     val transactionsData = MutableLiveData<FastagTransactionResponse>()
@@ -55,7 +55,7 @@ class FastagTransactionDetailsViewModel @Inject constructor(
         progressData.value = true
         
 
-        compositeDisposable += loadboardRepository.getFastagTransactions(tagId, pageSize, offset)
+        compositeDisposable += fastagRepository.getFastagTransactions(tagId, pageSize, offset)
             .onBackground()
             .progress()
             .subscribe{ _res, error ->
@@ -82,7 +82,7 @@ class FastagTransactionDetailsViewModel @Inject constructor(
     fun downloadTransactions(tagId: String, fromDate: String, toDate: String) {
         progressData.value = true
 
-        compositeDisposable += loadboardRepository.downloadFastagTransactions(
+        compositeDisposable += fastagRepository.downloadFastagTransactions(
             tagId, fromDate, toDate
         )
             .onBackground()
@@ -108,7 +108,7 @@ class FastagTransactionDetailsViewModel @Inject constructor(
     fun getTransactionDispute(txnId: String) {
         progressData.value = true
 
-        compositeDisposable += loadboardRepository.getDisputeIssues(txnId)
+        compositeDisposable += fastagRepository.getDisputeIssues(txnId)
             .onBackground()
             .progress()
             .subscribe { _res, error ->

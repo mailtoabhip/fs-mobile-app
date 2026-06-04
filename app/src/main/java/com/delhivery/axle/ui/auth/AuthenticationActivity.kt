@@ -191,13 +191,15 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       }
     }
 
-    /* Enable verify button when OTP length is valid */
+    /* Enable verify button when OTP length is valid + toggle letter spacing */
     binding.otpView.addTextChangedListener(object : android.text.TextWatcher {
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
       override fun afterTextChanged(s: android.text.Editable?) {
         val len = s?.length ?: 0
         binding.btnVerifyOtp.isEnabled = (len == 6 || len == 8)
+        // Spacing only for entered text, not hint
+        binding.otpView.letterSpacing = if (len > 0) 0.3f else 0f
       }
     })
 
