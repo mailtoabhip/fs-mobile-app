@@ -14,6 +14,8 @@ import com.delhivery.axle.api.response.FastagInventoryItem
 import com.delhivery.axle.databinding.ActivityFastagCollectionBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.home.activity.home.HomeActivity
+import com.delhivery.axle.utils.ViewModelFactory
+import javax.inject.Inject
 
 class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, FastagCollectionViewModel>() {
     companion object {
@@ -23,9 +25,6 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
         const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
         const val EXTRA_VRN = "extra_vrn"
     }
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
 
     override fun getViewModelClass() = FastagCollectionViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_collection
