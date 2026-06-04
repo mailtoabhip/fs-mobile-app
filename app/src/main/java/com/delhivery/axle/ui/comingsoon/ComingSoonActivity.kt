@@ -31,8 +31,7 @@ class ComingSoonActivity : BaseActivity<ActivityComingSoonBinding, ComingSoonVie
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val featureType = intent.getStringExtra(EXTRA_FEATURE_TYPE) ?: TYPE_GPS
-        setupUI(featureType)
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -40,12 +39,18 @@ class ComingSoonActivity : BaseActivity<ActivityComingSoonBinding, ComingSoonVie
         if (com.delhivery.axle.utils.WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             com.delhivery.axle.utils.WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLL)
         }
+        val featureType = intent.getStringExtra(EXTRA_FEATURE_TYPE) ?: TYPE_GPS
+        setupUI(featureType)
     }
 
     private fun setupUI(featureType: String) {
         val isGps = featureType == TYPE_GPS
 
-        binding.tvTitle.text = if (isGps) getString(R.string.label_gps) else getString(R.string.label_fuel_card_home)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.title = if (isGps) getString(R.string.label_gps) else getString(R.string.label_fuel_card_home)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.ivFeatureIcon.setImageResource(
             if (isGps) R.drawable.ic_gps_icon else R.drawable.card
@@ -69,8 +74,6 @@ class ComingSoonActivity : BaseActivity<ActivityComingSoonBinding, ComingSoonVie
         }
 
         showDefaultState()
-
-        binding.ivBack.setOnClickListener { finish() }
 
         binding.btnPrimary.setOnClickListener {
             finish()

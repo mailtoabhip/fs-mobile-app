@@ -39,6 +39,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
         private const val EXTRA_ORDER_ID = "extra_order_id"
         private const val EXTRA_ITEM_ID = "extra_item_id"
         private const val EXTRA_JOURNEY_ID = "extra_journey_id"
+        private const val EXTRA_ITEMS = "extra_items"
 
         fun newIntent(
             context: Context,
@@ -51,7 +52,8 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             salesCode: String? = null,
             orderId: String? = null,
             itemId: String? = null,
-            journeyId: String? = null
+            journeyId: String? = null,
+            items: ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>? = null
         ): Intent {
             return Intent(context, AssignVehicleActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_CLASS, vehicleClass)
@@ -64,6 +66,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                 putExtra(EXTRA_ORDER_ID, orderId)
                 putExtra(EXTRA_ITEM_ID, itemId)
                 putExtra(EXTRA_JOURNEY_ID, journeyId)
+                putExtra(EXTRA_ITEMS, items)
             }
         }
     }
@@ -99,7 +102,10 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
     }
 
     private fun setupToolbar(actionType: PendingActionType) {
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupVehicleHeader(vehicleClass: String, referenceId: String?, colorCode: String) {
@@ -194,12 +200,15 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                 startActivity(intent)
             }
             PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT -> {
+                @Suppress("DEPRECATION")
+                val items = intent.getSerializableExtra(EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>
                 val paymentIntent = Intent(this, PaymentBreakupActivity::class.java).apply {
                     putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
                     putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
                     putExtra(PaymentBreakupActivity.EXTRA_BANK_PARTNER_CODE, "IDFC")
                     putExtra(PaymentBreakupActivity.EXTRA_VEHICLE_CLASS_QTY, "1")
                     putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, orderId)
+                    putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
                 }
                 startActivity(paymentIntent)
             }

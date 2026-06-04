@@ -29,7 +29,8 @@ data class PendingVehicle(
     val salesCode: String? = null,
     val orderId: String? = null,
     val itemId: String? = null,
-    val journeyId: String? = null
+    val journeyId: String? = null,
+    val items: ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>? = null
 )
 
 /**

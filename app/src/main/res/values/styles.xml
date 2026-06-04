@@ -210,7 +210,9 @@
   </style>
 
   <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-    <item name="android:textSize">@dimen/text_14sp</item>
+    <item name="android:textSize">@dimen/text_16sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@android:color/black</item>
   </style>
 
   <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">

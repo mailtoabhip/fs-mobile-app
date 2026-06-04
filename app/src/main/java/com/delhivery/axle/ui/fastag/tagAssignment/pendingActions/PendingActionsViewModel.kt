@@ -54,6 +54,12 @@ class PendingActionsViewModel @Inject constructor(
      */
     private fun mapResponseToOrders(orders: List<PendingActionOrder>): List<PendingOrder> {
         return orders.map { order ->
+            val breakupItems = order.vehicleClassSummary?.map { summary ->
+                com.delhivery.axle.api.request.PaymentBreakupItem(
+                    vehicleClass = summary.vehicleClass,
+                    quantity = summary.count
+                )
+            }?.let { ArrayList(it) }
             PendingOrder(
                 orderId = order.orderId,
                 date = formatDate(order.orderDate),
@@ -70,7 +76,8 @@ class PendingActionsViewModel @Inject constructor(
                         salesCode = order.salesCode,
                         orderId = order.orderId,
                         journeyId = item.journeyId,
-                        itemId = item.itemId
+                        itemId = item.itemId,
+                        items = breakupItems
                     )
                 },
                 isExpanded = true
@@ -107,19 +114,23 @@ class PendingActionsViewModel @Inject constructor(
 
 
     private fun getMockPendingOrders(): List<PendingOrder> {
+        val orderItems = arrayListOf(
+            com.delhivery.axle.api.request.PaymentBreakupItem("VC4", 2),
+            com.delhivery.axle.api.request.PaymentBreakupItem("VC5", 1)
+        )
         return listOf(
             PendingOrder(
                 orderId = "DLV4dbeb855",
                 date = "03 Jun 2026",
                 pendingCount = 7,
                 vehicles = listOf(
-                    PendingVehicle("Vehicle Class 4", null, "UP16CP4301", PendingActionType.ADD_VEHICLE, "Add Vehicle", "BLUE", salesCode = "TP7472", orderId = "DLV4dbeb855"),
-                    PendingVehicle("Vehicle Class 5", null, "DL01CA1269", PendingActionType.ORDER_CREATED, "Order Created", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855"),
-                    PendingVehicle("Vehicle Class 7", null, "MH02XY9876", PendingActionType.KYC_DONE, "KYC", "GREEN", salesCode = "TP7472", orderId = "DLV4dbeb855"),
-                    PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW", salesCode = "TP7472", orderId = "DLV4dbeb855"),
-                    PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK", salesCode = "TP7472", orderId = "DLV4dbeb855"),
-                    PendingVehicle("Vehicle Class 4", "TAG123456", "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", barcodeId = "348934587348578347534", salesCode = "TP7472", orderId = "DLV4dbeb855"),
-                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KYV", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855", journeyId = "JRN001"),
+                    PendingVehicle("Vehicle Class 4", null, "UP16CP4301", PendingActionType.ADD_VEHICLE, "Add Vehicle", "BLUE", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 5", null, "DL01CA1269", PendingActionType.ORDER_CREATED, "Order Created", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 7", null, "MH02XY9876", PendingActionType.KYC_DONE, "KYC", "GREEN", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 4", "TAG123456", "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", barcodeId = "348934587348578347534", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KYV", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855", journeyId = "JRN001", items = orderItems),
                 ),
                 isExpanded = true
             )

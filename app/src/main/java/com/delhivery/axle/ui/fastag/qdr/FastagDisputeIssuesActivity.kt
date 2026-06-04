@@ -47,7 +47,7 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
 
         /* Handle window insets for edge-to-edge display (API 35+) */
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
     }
 
@@ -57,10 +57,10 @@ class FastagDisputeIssuesActivity : BaseActivity<ActivityFastagDisputeIssuesBind
         tollPlazaId = intent.getStringExtra(TOLL_PLAZA_ID) ?: ""
         txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: ""
 
-        binding.tvTitle.text = "Fastag related issues"
-        binding.ivBack.setOnClickListener {
-            finish()
-        }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         adapter = DisputeIssuesAdapter { disputeType ->
             onDisputeTypeSelected(disputeType)

@@ -75,8 +75,11 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
     }
 
     private fun setupToolbar() {
-        binding.tvToolbarTitle.text = fastagVehicleNumber
-        binding.ivBack.setOnClickListener { finish() }
+        binding.toolbar.title = fastagVehicleNumber
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupButton() {
@@ -144,7 +147,7 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
         val exemptedState = item.exemptedState ?: "NA"
         val vehicleClass = item.vehicleClass ?: ""
 
-        binding.tvToolbarTitle.text = fastagVehicleNumber
+        binding.toolbar.title = fastagVehicleNumber
         binding.tvVehicleNumber.text = fastagVehicleNumber
         binding.tvCommercialVehicle.text = commercialVehicle
         binding.tvExemptedStatus.text = exemptedState
