@@ -2,6 +2,8 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
+import com.delhivery.axle.api.request.IssueTagRequest
+import com.delhivery.axle.api.response.BarcodeLookupResponse
 import com.delhivery.axle.api.response.FormConfigResponse
 import com.delhivery.axle.api.response.OrderItemsResponse
 import com.delhivery.axle.api.response.RcProcessResponse
@@ -13,6 +15,9 @@ import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.toResource
 import com.delhivery.axle.api.response.*
 import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.service.FasTAGIssuanceService
+import com.delhivery.axle.api.service.FasTAGKycService
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
@@ -34,6 +39,8 @@ class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
     errorLogger: ErrorLogger,
     private val userPrefs: UserPrefs,
+    private val fasTAGKycService : FasTAGKycService,
+    private val fasTAGIssuanceService: FasTAGIssuanceService,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
 
@@ -111,6 +118,50 @@ class FastagRepository @Inject constructor(
     fun getDisputeFormConfig(disputeTypeCode: String) =
         fastagService.getDisputeFormConfig(disputeTypeCode).convertResponse()
             .map { fields -> FormConfigResponse(fields) }
+
+    /**
+     * Lookup barcode from dispatch table.
+     */
+    suspend fun barcodeLookup(orderId: String, orderItemId: Int, vehicleClass: String): Resource<BarcodeLookupResponse> =
+        safeApiCall {
+            fasTAGKycService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
+        }
+
+    /**
+     * Search products and barcodes from IDFC.
+     */
+    suspend fun searchProductBarcode(journeyId: String, barcode: String): Resource<com.delhivery.axle.api.response.ProductBarcodeResponse> =
+        safeApiCall {
+            fasTAGKycService.searchProductBarcode(
+                com.delhivery.axle.api.request.ProductBarcodeRequest(journeyId, barcode)
+            ).toResource()
+        }
+
+    /**
+     * Generate consent OTP for tag mapping.
+     */
+    suspend fun generateOtp(journeyId: String, barcode: String, tagId: String): Resource<Any> =
+        safeApiCall {
+            fasTAGKycService.generateOtp(
+                com.delhivery.axle.api.request.GenerateOtpRequest(journeyId, barcode, tagId)
+            ).toResource()
+        }
+
+    /**
+     * Issue FASTag and process payment.
+     */
+    suspend fun issueTag(
+        journeyId: String,
+        orderId: String,
+        orderItemId: Int,
+        barcode: String,
+        otp: String
+    ): Resource<com.delhivery.axle.api.response.IssueTagResponse> =
+        safeApiCall {
+            fasTAGIssuanceService.issueTag(
+                IssueTagRequest(journeyId, orderId, orderItemId, barcode, otp)
+            ).toResource()
+        }
 
     /**
      * Submit dispute with multipart form data.

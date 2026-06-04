@@ -39,7 +39,9 @@
           android:gravity="center"
           android:layout_marginStart="@dimen/size_16dp"
           android:textColor="@color/white"
-          android:background="@drawable/hamburger_menu_icon" />
+          android:background="@drawable/hamburger_menu_icon"
+          android:clickable="true"
+          android:focusable="true" />
 
     </androidx.appcompat.widget.Toolbar>
 

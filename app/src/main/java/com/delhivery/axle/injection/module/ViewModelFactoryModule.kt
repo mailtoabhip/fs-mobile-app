@@ -72,6 +72,7 @@ import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionViewModel
 import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormViewModel
+import com.delhivery.axle.ui.fastag.tagMapping.TagMappingViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -606,4 +607,9 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagKycViewModel::class)
   abstract fun bindFastagKycViewModel(viewModel: FastagKycViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TagMappingViewModel::class)
+  abstract fun bindTagMappingViewModel(viewModel: TagMappingViewModel): ViewModel
 }

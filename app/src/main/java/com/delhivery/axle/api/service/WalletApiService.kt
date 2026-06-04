@@ -41,7 +41,6 @@ interface WalletApiService {
      */
     @POST("/api/v1/wallet")
     fun createWallet(
-        @Header("x-user-id") userId: String,
         @Body request: JsonObject
     ): Single<BaseResponse<UserWalletResponse>>
 
@@ -59,7 +58,6 @@ interface WalletApiService {
      */
     @POST("/api/v1/wallet/recharge")
     fun rechargeWallet(
-        @Header("x-user-id") userId: String,
         @Body request: JsonObject
     ): Single<BaseResponse<WalletRechargeInitResponse>>
 
@@ -75,7 +73,6 @@ interface WalletApiService {
      */
     @GET("/api/v1/wallet")
     fun fetchWalletInfo(
-        @Header("x-user-id") userId: String
     ): Single<BaseResponse<UserWalletResponse>>
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -101,7 +98,6 @@ interface WalletApiService {
      */
     @GET("/api/v1/wallet/transactions")
     fun fetchTransactions(
-        @Header("x-user-id") userId: String,
         @Query("start") start: String? = null,
         @Query("end") end: String? = null,
         @Query("txn_id") txnId: String? = null,
@@ -130,7 +126,6 @@ interface WalletApiService {
      */
     @GET("/api/v1/wallet/recharges")
     fun fetchRechargeHistory(
-        @Header("x-user-id") userId: String,
         @Query("start") start: String,
         @Query("end") end: String,
         @Query("recharge_id") rechargeId: String? = null,
@@ -152,7 +147,6 @@ interface WalletApiService {
      */
     @POST("/api/v1/wallet/recharge-status")
     fun fetchRechargeStatus(
-        @Header("x-user-id") userId: String,
         @Body request: JsonObject
     ): Single<BaseResponse<RechargeStatusResponse>>
 }

@@ -18,6 +18,7 @@ import com.delhivery.axle.fcm.ARGS_TRANSACTION_IDS
 import com.delhivery.axle.fcm.ARGS_VEHICLE_NUMBER
 import com.delhivery.axle.ui.auth.AccountDeletionActivity
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity
 import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 import com.delhivery.axle.ui.home.fragments.HomeFragmentsAdapter
 import com.delhivery.axle.ui.home.fragments.HomeFragmentType
@@ -97,6 +98,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
     binding.viewpager.apply {
       offscreenPageLimit = OFF_SET_LIMIT
       adapter = pagerAdapter
+    }
+
+    /* Setup profile click listener immediately - don't gate on API success */
+    binding.profile.setOnClickListener {
+      userPrefs.setPreviousScreen(this.javaClass.name)
+      analyticsUtil.moEngageTrackEvent(
+        EVENT_NAVIGATION_MY_PROFILE
+      )
+      navigationUtils.navigate(MyProfileActivity::class.java, false)
     }
 
     viewModel.userUpdateLiveData.observe(this, Observer {
