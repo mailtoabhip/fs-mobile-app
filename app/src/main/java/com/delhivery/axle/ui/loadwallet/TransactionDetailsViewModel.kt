@@ -20,7 +20,6 @@ class TransactionDetailsViewModel @Inject constructor(
 
     fun fetchTransactionStatus(txnId: String, createdAt: String) {
         compositeDisposable += walletApiService.fetchTransactions(
-            userId = userPrefs.userId(),
             txnId = txnId,
             limit = 1
         )

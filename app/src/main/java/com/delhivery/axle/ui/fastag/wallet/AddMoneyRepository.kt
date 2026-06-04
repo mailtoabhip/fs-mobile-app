@@ -12,7 +12,6 @@ class AddMoneyRepository @Inject constructor(
 
     fun initiateRecharge(amount: Float, redirectUrl: String, clRequestId: String) =
         walletApiService.rechargeWallet(
-            userId = userPrefs.userId(),
             request = JsonObject().apply {
                 addProperty("amount", amount)
                 addProperty("redirect_url", redirectUrl)
@@ -22,7 +21,6 @@ class AddMoneyRepository @Inject constructor(
 
     fun checkRechargeStatus(rechargeId: String) =
         walletApiService.fetchRechargeStatus(
-            userId = userPrefs.userId(),
             request = JsonObject().apply {
                 addProperty("recharge_id", rechargeId)
             }

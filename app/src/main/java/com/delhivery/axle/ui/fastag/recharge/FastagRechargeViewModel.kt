@@ -27,9 +27,7 @@ class FastagRechargeViewModel @Inject constructor(
 
     fun fetchWalletDetails() {
         showProgress()
-        compositeDisposable += walletApiService.fetchWalletInfo(
-            userId = userPrefs.userId()
-        )
+        compositeDisposable += walletApiService.fetchWalletInfo()
             .convertResponse()
             .onBackground()
             .subscribe({ response ->

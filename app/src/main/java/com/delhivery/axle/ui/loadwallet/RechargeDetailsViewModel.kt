@@ -24,7 +24,6 @@ class RechargeDetailsViewModel @Inject constructor(
             addProperty("recharge_id", rechargeId)
         }
         compositeDisposable += walletApiService.fetchRechargeStatus(
-            userId = userPrefs.userId(),
             request = request
         )
             .convertResponse()
