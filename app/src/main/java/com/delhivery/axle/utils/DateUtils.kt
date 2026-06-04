@@ -132,7 +132,19 @@ object DateUtils {
   ): String {
     return try {
       val dateFormatter = SimpleDateFormat(format, Locale.getDefault())
-      dateFormatter.format(ISO8601Utils.parse(date, ParsePosition(0)))
+      val parsed = try {
+        ISO8601Utils.parse(date, ParsePosition(0))
+      } catch (e: Exception) {
+        val fallbackFormats = listOf(
+          "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+          "yyyy-MM-dd'T'HH:mm:ss.SSS",
+          "yyyy-MM-dd'T'HH:mm:ss"
+        )
+        fallbackFormats.firstNotNullOfOrNull { pattern ->
+          try { SimpleDateFormat(pattern, Locale.getDefault()).parse(date) } catch (ex: Exception) { null }
+        } ?: throw e
+      }
+      dateFormatter.format(parsed)
     } catch (e: Exception) {
       e.printStackTrace()
       ""

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.FragmentSalesCodeBinding
@@ -39,8 +40,10 @@ class SalesCodeFragment : Fragment() {
 
         // Listen for "Change" from AgentConfirmationFragment
         parentFragmentManager.setFragmentResultListener("change_sales_code", viewLifecycleOwner) { _, _ ->
+            hasNavigatedToAgent = false
+            viewModel.resetValidateState()
+            binding.salesCode = ""
             binding.etSalesCode.requestFocus()
-            binding.etSalesCode.setSelection(binding.etSalesCode.text?.length ?: 0)
             val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
             imm.showSoftInput(binding.etSalesCode, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
         }
@@ -73,31 +76,34 @@ class SalesCodeFragment : Fragment() {
         }
     }
 
+    private var hasNavigatedToAgent = false
+
     private fun observeViewModel() {
         viewModel.validateState.observe(viewLifecycleOwner) { resource ->
+            if (resource == null) return@observe
             when (resource) {
                 is Resource.Loading -> {}
 
                 is Resource.Success -> {
+                    if (hasNavigatedToAgent) return@observe
                     val data = resource.data
                     if (data != null && data.isValid) {
+                        hasNavigatedToAgent = true
                         navigateToAgentConfirmation(
                             agentName = data.agentName ?: "",
                             agentCode = data.agentCode ?: data.salesCode,
                         )
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            data?.message ?: "Invalid sales code",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        (requireActivity() as BuyFasTagActivity).dialogUtils.showErrorDialog(
+                            data?.message ?: "Invalid sales code"
+                        )
                     }
                 }
 
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    (requireActivity() as BuyFasTagActivity).dialogUtils.showErrorDialog(message)
                 }
             }
         }

@@ -13,7 +13,7 @@ import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.BuyFastagBottomSheetDialogFragment
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
-import com.delhivery.axle.ui.fastag.pending.PendingActionsActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsActivity
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
@@ -32,11 +32,13 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
             val selectedVehicle = result.data?.getStringExtra(FastagSearchActivity.RESULT_VEHICLE_NUMBER)
             selectedVehicle?.let { vehicleNumber ->
                 val truck = adapter.currentList.firstOrNull {
-                    it.vehicleNumber.equals(vehicleNumber, ignoreCase = true)
+                    it.fastagVrn.equals(vehicleNumber, ignoreCase = true)
                 }
                 truck?.let {
                     val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
-                        putExtra(FastagTransactionDetailsActivity.VEHICLE_DATA, it)
+                        putExtra(FastagTransactionDetailsActivity.EXTRA_TAG_ID, it.fastagId)
+                        putExtra(FastagTransactionDetailsActivity.EXTRA_VEHICLE_NUMBER, it.fastagVrn)
+                        putExtra(FastagTransactionDetailsActivity.BALANCE, it.fastagBalance ?: "0")
                     }
                     startActivity(intent)
                 }
@@ -64,7 +66,7 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLl)
         }
     }
 
@@ -76,7 +78,7 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
         binding.ivBack.setOnClickListener { finish() }
         binding.ivSearch.setOnClickListener {
             val vehicleNumbers = ArrayList(
-                adapter.currentList.map { it.vehicleNumber }
+                adapter.currentList.mapNotNull { it.fastagVrn }
             )
             searchLauncher.launch(FastagSearchActivity.newIntent(this, vehicleNumbers))
         }
@@ -86,20 +88,23 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
         adapter = FastagTruckAdapter(
             onRechargeClick = { truck ->
                 val intent = Intent(this, FastagRechargeActivity::class.java).apply {
-                    putExtra(FastagRechargeActivity.TAG_ID, truck.fastagTagId)
-                    putExtra(FastagRechargeActivity.VEHICLE_NUMBER, truck.vehicleNumber)
+                    putExtra(FastagRechargeActivity.TAG_ID, truck.fastagId)
+                    putExtra(FastagRechargeActivity.VEHICLE_NUMBER, truck.fastagVrn)
                     putExtra(FastagRechargeActivity.FASTAG_BALANCE, truck.fastagBalance ?: "0")
                 }
                 startActivity(intent)
             },
             onRefreshClick = { truck ->
-                truck.fastagTagId?.let { tagId ->
+                truck.fastagId?.let { tagId ->
+                    uiUtils.showProgress()
                     viewModel.refreshBalance(tagId)
                 }
             },
             onItemClick = { truck ->
                 val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
-                    putExtra(FastagTransactionDetailsActivity.VEHICLE_DATA, truck)
+                    putExtra(FastagTransactionDetailsActivity.EXTRA_TAG_ID, truck.fastagId)
+                    putExtra(FastagTransactionDetailsActivity.EXTRA_VEHICLE_NUMBER, truck.fastagVrn)
+                    putExtra(FastagTransactionDetailsActivity.BALANCE, truck.fastagBalance ?: "0")
                 }
                 startActivity(intent)
             }
@@ -172,17 +177,19 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
         })
 
         viewModel.balanceRefreshed.observe(this, Observer { (tagId, newBalance) ->
+            uiUtils.hideProgress()
             // Update the item in the list
             val currentList = adapter.currentList.toMutableList()
-            val index = currentList.indexOfFirst { it.fastagTagId == tagId }
+            val index = currentList.indexOfFirst { it.fastagId == tagId }
             if (index != -1) {
-                currentList[index].fastagBalance = newBalance
+                val updatedItem = currentList[index].copy(fastagBalance = newBalance)
+                currentList[index] = updatedItem
                 adapter.submitList(currentList)
-                adapter.notifyItemChanged(index)
             }
         })
 
         viewModel.error.observe(this, Observer { errorMsg ->
+            uiUtils.hideProgress()
             errorMsg?.let {
                 uiUtils.showSnackbar(it)
             }

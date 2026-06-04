@@ -209,7 +209,7 @@
                 <LinearLayout
                     android:id="@+id/myTrucksCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginEnd="@dimen/size_6dp"
                     android:background="@drawable/bg_quick_action_card"
@@ -267,7 +267,7 @@
                 <LinearLayout
                     android:id="@+id/myLoadsCard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/size_6dp"
                     android:background="@drawable/bg_quick_action_card"

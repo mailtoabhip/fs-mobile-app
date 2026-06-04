@@ -29,6 +29,9 @@ class PaymentBreakupViewModel @Inject constructor(
     private val _isWalletSufficient = MutableLiveData(false)
     val isWalletSufficient: LiveData<Boolean> = _isWalletSufficient
 
+    private val _isDataLoaded = MutableLiveData(false)
+    val isDataLoaded: LiveData<Boolean> = _isDataLoaded
+
     private val _warningMessage = MutableLiveData<String?>()
     val warningMessage: LiveData<String?> = _warningMessage
 
@@ -49,6 +52,7 @@ class PaymentBreakupViewModel @Inject constructor(
                     _walletBalance.value = data.wallet.currentBalance
                     _isWalletSufficient.value = data.wallet.sufficient
                     _warningMessage.value = if (!data.wallet.sufficient) data.message else null
+                    _isDataLoaded.value = true
                 }
             }
         }

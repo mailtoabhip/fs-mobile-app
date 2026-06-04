@@ -39,7 +39,7 @@ data class FastagOrder(
     @SerializedName("total_amount")
     val totalAmount: Double,
     @SerializedName("paid_amount")
-    val paidAmount: Double,
+    val paidAmount: Double?,
     @SerializedName("items")
     val items: List<FastagOrderItem>,
     @SerializedName("created_at")
@@ -57,12 +57,10 @@ data class FastagOrderItem(
     val vehicleTypes: List<String>,
     @SerializedName("color_code")
     val colorCode: String,
-    @SerializedName("requested_quantity")
-    val requestedQuantity: Int,
-    @SerializedName("dispatched_quantity")
-    val dispatchedQuantity: Int,
-    @SerializedName("sold_quantity")
-    val soldQuantity: Int,
+    @SerializedName("vrn")
+    val vrn: String,
+    @SerializedName("status")
+    val status: String,
     @SerializedName("unit_price")
     val unitPrice: Double
 )

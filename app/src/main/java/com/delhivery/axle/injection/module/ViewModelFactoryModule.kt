@@ -62,8 +62,12 @@ import com.delhivery.axle.ui.placementdetails.PlacementDetailsViewModel
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsViewModel
 import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksViewModel
-import com.delhivery.axle.ui.fastag.pending.PendingActionsViewModel
-import com.delhivery.axle.ui.fastag.pending.assign.AssignVehicleViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AssignVehicleViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionViewModel
@@ -493,6 +497,26 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(AssignVehicleViewModel::class)
   abstract fun bindAssignVehicleViewModel(viewModel: AssignVehicleViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagAssignmentViewModel::class)
+  abstract fun bindFastagAssignmentViewModel(viewModel: FastagAssignmentViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(VehicleImageUploadViewModel::class)
+  abstract fun bindVehicleImageUploadViewModel(viewModel: VehicleImageUploadViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(FastagImageUploadViewModel::class)
+  abstract fun bindFastagImageUploadViewModel(viewModel: FastagImageUploadViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(VehicleDetailsViewModel::class)
+  abstract fun bindVehicleDetailsViewModel(viewModel: VehicleDetailsViewModel): ViewModel
 
   @Binds
   @IntoMap

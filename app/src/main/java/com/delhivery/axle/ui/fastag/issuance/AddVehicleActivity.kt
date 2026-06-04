@@ -21,10 +21,14 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
+
     private lateinit var binding: ActivityAddVehicleBinding
     private lateinit var viewModel: AddVehicleViewModel
 
     private var isVehicleEligible = false
+    private var hasNavigatedFromCheck = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,16 +60,26 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     private fun setupTextWatcher() {
         binding.etTruckNumber.addTextChangedListener { text ->
             isVehicleEligible = false
+            hasNavigatedFromCheck = false
+
             val truckNumber = text?.toString()?.trim() ?: ""
             if (isValidVehicleNumber(truckNumber)) {
-                viewModel.checkVehicle(truckNumber.uppercase().replace(" ", "").replace("-", ""))
+                binding.btnContinue.isEnabled = true
+                binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
+            } else {
+                binding.btnContinue.isEnabled = false
+                binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
             }
         }
     }
 
     private fun setupClickListeners() {
         binding.btnContinue.setOnClickListener {
-            // Continue is no longer needed as navigation happens from the bottom sheet
+            val truckNumber = binding.etTruckNumber.text?.toString()?.trim() ?: ""
+            val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
+            if (isValidVehicleNumber(truckNumber)) {
+                viewModel.checkVehicle(normalized)
+            }
         }
     }
 
@@ -83,7 +97,21 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                             isVehicleEligible = true
                             binding.btnContinue.isEnabled = true
                             binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
-                            showVehicleBottomSheet(data)
+
+                            if (hasNavigatedFromCheck) return@observe
+
+                            // Always navigate to SelectFasTagActivity
+                            // If npciVehicleClass is known, pre-select it; otherwise user picks manually
+                            hasNavigatedFromCheck = true
+                            val intent = Intent(this, SelectFasTagActivity::class.java).apply {
+                                putExtra(SelectFasTagActivity.EXTRA_VRN, data.vrn)
+                                putExtra(EXTRA_SALES_CODE, getIntent().getStringExtra(EXTRA_SALES_CODE) ?: "")
+                                putExtra(EXTRA_CUSTOMER_NAME, getIntent().getStringExtra(EXTRA_CUSTOMER_NAME) ?: "")
+                                if (data.npciVehicleClass != null) {
+                                    putExtra(SelectFasTagActivity.EXTRA_VEHICLE_CLASS, data.npciVehicleClass)
+                                }
+                            }
+                            startActivity(intent)
                         }
                         "HOTLISTED", "ALREADY_ISSUED" -> {
                             isVehicleEligible = false
@@ -95,7 +123,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                             isVehicleEligible = false
                             binding.btnContinue.isEnabled = false
                             binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
-                            Toast.makeText(this, data.message, Toast.LENGTH_SHORT).show()
+                            dialogUtils.showErrorDialog(data.message)
                         }
                     }
                 }
@@ -106,7 +134,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                     binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -119,27 +147,39 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
+                    val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
                     if (data.fastagCustomerExists) {
                         // Existing customer — skip KYC, go directly to payment
-                        val intent = Intent(this, PaymentBreakupActivity::class.java)
-                        startActivity(intent)
+                        val items = arrayListOf(
+                            com.delhivery.axle.api.request.PaymentBreakupItem(
+                                vehicleClass = "VC5", // TODO: Use actual vehicle class
+                                quantity = 1
+                            )
+                        )
+                        val navIntent = Intent(this, PaymentBreakupActivity::class.java).apply {
+                            putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
+                            putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
+                            putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                        }
+                        startActivity(navIntent)
                     } else {
                         // New customer — needs KYC
-                        val intent = Intent(this, FastagKycActivity::class.java)
-                        startActivity(intent)
+                        val navIntent = Intent(this, FastagKycActivity::class.java).apply {
+                            putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                        }
+                        startActivity(navIntent)
                     }
                 }
 
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
 
-        // TODO: Uncomment when create order API is integrated
-        /*
+        // Create order observer — on success, call KYC validate to decide next screen
         viewModel.createOrderState.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -148,22 +188,17 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
-                    // Order created — navigate to PaymentBreakupActivity
-                    val intent = Intent(this, PaymentBreakupActivity::class.java).apply {
-                        putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, data.salesCode)
-                        putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
-                    }
-                    startActivity(intent)
+                    // Order created — now check KYC status
+                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
                 }
 
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
-        */
     }
 
     private fun isValidVehicleNumber(vehicleNumber: String): Boolean {
@@ -173,7 +208,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             .replace("-", "")
 
         val regex = Regex(
-            "^(?:[A-Z]{2}\\d{1,2}[A-Z]{1,3}\\d{1,4}|\\d{2}BH\\d{4}[A-Z]{2})$"
+            "^(?:[A-Z]{2}\\d{1,2}[A-Z]{1,3}\\d{4}|\\d{2}BH\\d{4}[A-Z]{2})$"
         )
         return regex.matches(normalized)
     }
@@ -187,13 +222,33 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     // }
 
     private fun showVehicleBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
+        // Prevent duplicate bottom sheets
+        val existing = supportFragmentManager.findFragmentByTag(VehicleDetailsBottomSheet.TAG)
+        if (existing != null) return
+
         VehicleDetailsBottomSheet.fromResponse(
             response = data,
             issuerPhone = "",
             onAction = if (data.eligible) {
                 {
-                    // Call KYC onboard validate API on confirm
-                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                    // Create order on confirm
+                    val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
+                    val customerName = intent.getStringExtra(EXTRA_CUSTOMER_NAME) ?: ""
+                    val request = com.delhivery.axle.api.request.CreateOrderRequest(
+                        salesCode = salesCode,
+                        customerName = customerName,
+                        customerMobile = "", // TODO: Pass from validate sales code API if available
+                        vehicles = listOf(
+                            com.delhivery.axle.api.request.OrderVehicleItem(
+                                vrn = data.vrn,
+                                vehicleClass = data.vehicleClass?.vehicleClass ?: data.npciVehicleClass ?: "VC5",
+                                unitPrice = "100.00" // TODO: Get from API/config
+                            )
+                        ),
+                        totalAmount = "100.00", // TODO: Calculate
+                        idempotencyKey = "ORD-${java.util.UUID.randomUUID()}"
+                    )
+                    viewModel.createOrder(request)
                 }
             } else null
         ).show(supportFragmentManager, VehicleDetailsBottomSheet.TAG)
@@ -201,5 +256,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
     companion object {
         const val EXTRA_TRUCK_NUMBER = "extra_truck_number"
+        const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_CUSTOMER_NAME = "extra_customer_name"
     }
 }

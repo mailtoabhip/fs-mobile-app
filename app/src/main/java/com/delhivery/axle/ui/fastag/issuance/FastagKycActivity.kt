@@ -22,6 +22,12 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
+
+    @Inject
+    lateinit var userPrefs: com.delhivery.axle.utils.prefs.UserPrefs
+
     private lateinit var binding: ActivityFastagKycBinding
     private lateinit var viewModel: FastagKycViewModel
     private var isOtherKycExpanded = false
@@ -31,9 +37,10 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     private var hasExpressKyc = false
     private var hasEkyc = false
 
-    private var bankCode = "IDFC" // Will be set from API response
+    private var bankCode = "IDFC" // Will be set from intent or API response
     private var journeyId = ""
     private var selectedKycType = ""
+    private var salesCode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +59,9 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         setupSelection()
         setupClickListeners()
         observeViewModel()
+
+        // Read sales code from intent
+        salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
 
         // Fetch KYC types from API
         viewModel.fetchKycTypes(bankCode)
@@ -78,7 +88,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                     val types = data.kycTypes.map { it.kycType }
 
                     hasFullKyc = types.contains("FULL_KYC")
-                    hasExpressKyc = types.contains("EXPRESS_KYC")
+                    hasExpressKyc = types.contains("MTS")
                     hasEkyc = types.contains("EKYC")
 
                     updateKycOptionsVisibility()
@@ -87,7 +97,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -102,15 +112,17 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                     val data = resource.data ?: return@observe
                     journeyId = data.journeyId
                     when (data.nextStage) {
-                        "OTPVerification" -> {
-                            val mobileNumber = data.stageData?.mobileNumber ?: ""
+                        "OTPVerification", "MobileOTP" -> {
+                            val mobileNumber = userPrefs.phoneNumber ?: ""
                             val masked = if (mobileNumber.length >= 4) {
                                 "XXXXXX" + mobileNumber.takeLast(4)
-                            } else mobileNumber
+                            } else "your registered number"
                             showOtpBottomSheet(masked)
                         }
                         "TagIssuance" -> {
-                            startActivity(Intent(this, PaymentBreakupActivity::class.java))
+                            startActivity(Intent(this, PaymentBreakupActivity::class.java).apply {
+                                putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
+                            })
                         }
                     }
                 }
@@ -118,7 +130,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                 is Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -131,6 +143,10 @@ class FastagKycActivity : DaggerAppCompatActivity() {
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
+                    // Dismiss OTP bottom sheet on success
+                    val otpSheet = supportFragmentManager.findFragmentByTag(com.delhivery.axle.ui.common.OtpBottomSheetFragment.TAG)
+                    (otpSheet as? com.delhivery.axle.ui.common.OtpBottomSheetFragment)?.dismiss()
+
                     when (data.nextStage) {
                         "TagIssuance" -> {
                             showIdentityVerificationSuccessBottomSheet()
@@ -139,9 +155,20 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                 }
 
                 is Resource.Failure -> {
-                    val message = resource.errorMessage
-                        ?: if (resource.isNetworkError) "No internet connection" else "Invalid OTP"
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    val otpSheet = supportFragmentManager.findFragmentByTag(com.delhivery.axle.ui.common.OtpBottomSheetFragment.TAG)
+                        as? com.delhivery.axle.ui.common.OtpBottomSheetFragment
+
+                    if (resource.errorCode == 400) {
+                        // Invalid OTP — show inline error on the bottom sheet
+                        val errorMsg = resource.errorMessage ?: "Incorrect OTP"
+                        otpSheet?.showOtpError(errorMsg)
+                    } else {
+                        // Server error — dismiss sheet and show error dialog
+                        otpSheet?.dismiss()
+                        val message = resource.errorMessage
+                            ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
+                        dialogUtils.showErrorDialog(message)
+                    }
                 }
             }
         }
@@ -188,24 +215,33 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         binding.rbEkyc.isChecked = true
         binding.rbExpressKyc.isChecked = false
         binding.hasSelection = true
+        binding.bottomButtons.btnPrimary.isEnabled = true
+        binding.bottomButtons.btnPrimary.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
     }
 
     private fun selectExpressKyc() {
         binding.rbExpressKyc.isChecked = true
         binding.rbEkyc.isChecked = false
         binding.hasSelection = true
+        binding.bottomButtons.btnPrimary.isEnabled = true
+        binding.bottomButtons.btnPrimary.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
     }
 
     private fun setupClickListeners() {
         binding.bottomButtons.btnPrimary.text = "Proceed"
         binding.bottomButtons.btnSecondary.text = "Cancel"
 
+        // Disable Proceed until a KYC type is selected
+        binding.bottomButtons.btnPrimary.isEnabled = false
+        binding.bottomButtons.btnPrimary.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+
         binding.bottomButtons.btnPrimary.setOnClickListener {
             selectedKycType = when {
-                binding.rbExpressKyc.isChecked -> "EXPRESS_KYC"
+                binding.rbExpressKyc.isChecked -> "MTS"
                 binding.rbEkyc.isChecked -> "EKYC"
                 else -> return@setOnClickListener
             }
+            android.util.Log.d("FastagKyc", "Initiating KYC: bankCode=$bankCode, kycType=$selectedKycType")
             viewModel.initiateKyc(bankCode, selectedKycType)
         }
 
@@ -231,5 +267,9 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     private fun showIdentityVerificationSuccessBottomSheet() {
         val bottomSheet = DocumentVerificationBottomSheet.newInstance()
         bottomSheet.show(supportFragmentManager, DocumentVerificationBottomSheet.TAG)
+    }
+
+    companion object {
+        const val EXTRA_SALES_CODE = "extra_sales_code"
     }
 }

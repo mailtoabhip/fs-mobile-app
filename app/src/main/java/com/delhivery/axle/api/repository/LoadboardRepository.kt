@@ -1,24 +1,30 @@
 package com.delhivery.axle.api.repository
 
-import com.delhivery.axle.api.request.*
+import com.delhivery.axle.api.request.AddAddressModel
+import com.delhivery.axle.api.request.BankValidationRequest
+import com.delhivery.axle.api.request.FastagLeadRequest
+import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.request.GstDetailRequest
 import com.delhivery.axle.api.request.GstNumberRequest
+import com.delhivery.axle.api.request.GstOrAadhaarDocRequest
+import com.delhivery.axle.api.request.GstOrAadhaarOtpGetRequest
+import com.delhivery.axle.api.request.GstOrAadhaarOtpVerifyRequest
 import com.delhivery.axle.api.request.PanVerificationRequest
+import com.delhivery.axle.api.request.RcVerificationRequest
+import com.delhivery.axle.api.request.ResetKycDataRequest
+import com.delhivery.axle.api.request.UpdateAddressVerificationRequest
+import com.delhivery.axle.api.request.UpdateRouteRequest
 import com.delhivery.axle.api.request.UpdateUserRequest
-import com.delhivery.axle.api.response.DisputeIssuesResponse
+import com.delhivery.axle.api.request.VerificationDocUploadRequest
 import com.delhivery.axle.api.response.DisputeSubmissionResponse
-import com.delhivery.axle.api.response.DisputeType
-import com.delhivery.axle.api.response.FastagTransactionByTollPlaza
-import com.delhivery.axle.api.response.FastagTransactionsByTollPlazaResponse
+import com.delhivery.axle.api.response.DocumentActions
+import com.delhivery.axle.api.response.DocumentRequirement
+import com.delhivery.axle.api.response.DocumentSection
 import com.delhivery.axle.api.response.FormConfigResponse
-import com.delhivery.axle.api.response.FormField
+import com.delhivery.axle.api.response.OnboardingProgress
 import com.delhivery.axle.api.response.ServiceGroup
 import com.delhivery.axle.api.response.ServiceGroupsResponse
 import com.delhivery.axle.api.response.ServiceRequirementsResponse
-import com.delhivery.axle.api.response.OnboardingProgress
-import com.delhivery.axle.api.response.DocumentSection
-import com.delhivery.axle.api.response.DocumentRequirement
-import com.delhivery.axle.api.response.DocumentActions
 import com.delhivery.axle.api.service.LoadBoardService
 import com.delhivery.axle.utils.ErrorLogger
 import com.delhivery.axle.utils.extensions.convertMessageResponse
@@ -28,8 +34,8 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 import okhttp3.MultipartBody
+import javax.inject.Inject
 
 class LoadboardRepository @Inject constructor(
     private val loadboardService: LoadBoardService,
@@ -187,8 +193,6 @@ class LoadboardRepository @Inject constructor(
 
 
     fun downloadFastagTransactions(tagId: String, from_date: String?,to_date: String?) = loadboardService.downloadFastagTransactions(tagId, from_date, to_date)
-
-    fun getFastagTransactions(tagId: String, limit: Int, offset: Int) = loadboardService.getFastagTransactions(tagId, offset, limit).convertResponse()
 
     /**
      * Submit FASTag lead request

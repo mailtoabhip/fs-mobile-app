@@ -10,17 +10,14 @@ import com.delhivery.axle.api.repository.TransactionsRepository
 import com.delhivery.axle.api.repository.UserRepository
 import com.delhivery.axle.api.request.UpdateUserRequest
 // Removed DelegationToken import - no longer needed
-import com.delhivery.axle.api.response.KYCDetailResponse
 import com.delhivery.axle.api.response.MonthlyEarning
 // Removed AWSConfig import - no longer needed
-import com.delhivery.axle.data.UserModel
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.extensions.not
 import com.delhivery.axle.utils.extensions.onBackground
 import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 class HomeProfileViewModel @Inject constructor(
@@ -50,10 +47,7 @@ class HomeProfileViewModel @Inject constructor(
     }
 
   var userName = userPrefs.userName
-  var businessName = userPrefs.companyName
-  var mobile = "\u2022 "+ userPrefs.phoneNumber?.replace("+91","")
-  var bName = userPrefs.bankName
-  var aNum = userPrefs.accNumber
+  var mobile = userPrefs.phoneNumber?.replace("+91","")
   var ifsc = userPrefs.ifscCode
 
   var imagePath = ""

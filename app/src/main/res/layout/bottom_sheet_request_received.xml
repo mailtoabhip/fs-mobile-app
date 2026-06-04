@@ -9,10 +9,9 @@
     <!-- Check Icon -->
     <ImageView
         android:id="@+id/ivCheckIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginTop="@dimen/size_48dp"
-        android:src="@drawable/ic_check_circle_grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

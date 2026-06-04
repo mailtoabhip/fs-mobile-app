@@ -288,10 +288,12 @@ class LoadWalletViewModel @Inject constructor(
                         WalletHistoryItemData(
                             title = "Recharge",
                             amount = recharge.amount.toDoubleOrNull() ?: 0.0,
-                            dateTime = recharge.createdAt,
+                            dateTime = recharge.rechargeDate ?: recharge.createdAt,
                             status = recharge.status,
                             txnNumber = recharge.rechargeId,
-                            type = "credit"
+                            type = "credit",
+                            bankReferenceNo = recharge.bankReferenceNo,
+                            addedVia = recharge.paymentMethod
                         )
                     }
 
@@ -343,9 +345,9 @@ class LoadWalletViewModel @Inject constructor(
      */
     fun createWallet(email: String = "") {
         val request = JsonObject().apply {
-            addProperty("user_type", "SUPPLIER")
-            addProperty("phone", userPrefs.phoneNumber ?: "")
-            addProperty("email", email)
+           // addProperty("user_type", "SUPPLIER")
+            addProperty("phone", userPrefs.phoneNumber?.replace("+91","") ?: "")
+           // addProperty("email", email)
         }
         compositeDisposable += walletApiService.createWallet(
             request = request

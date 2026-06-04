@@ -1,8 +1,8 @@
 package com.delhivery.axle.ui.fastag.recharge
 
 import androidx.lifecycle.MutableLiveData
+import com.delhivery.axle.api.repository.FastagRepository
 import com.delhivery.axle.api.repository.LoadboardRepository
-import com.delhivery.axle.api.repository.WalletRepository
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.response.FastagRechargeResponse
 import com.delhivery.axle.api.response.FastagStatusResponse
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class FastagRechargeViewModel @Inject constructor(
     private val loadboardRepository: LoadboardRepository,
-    private val walletRepository: WalletRepository,
+    private val fastagRepository: FastagRepository,
     private val walletApiService: WalletApiService,
     private val userPrefs: UserPrefs
 ) : BaseViewModel() {
@@ -63,7 +63,7 @@ class FastagRechargeViewModel @Inject constructor(
     }
 
     fun fetchFastagStatus(tagId: String) {
-        compositeDisposable += loadboardRepository.fetchFastagStatus(tagId)
+        compositeDisposable += fastagRepository.fetchFastagStatus(tagId)
             .onBackground()
             .subscribe({ response ->
                 fastagStatusData.postValue(response)

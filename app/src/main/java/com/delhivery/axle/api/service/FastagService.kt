@@ -4,6 +4,7 @@ import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.*
+import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -19,7 +20,7 @@ interface FastagService {
      * Get FASTag vehicle listing (v2).
      * Returns paginated list of vehicles with FASTag linked.
      */
-    @GET("v2/fastag/listing")
+    @GET("fastag/v1/listing")
     fun getFastagListing(
         @Query("limit") limit: Int?,
         @Query("offset") offset: Int?
@@ -28,7 +29,7 @@ interface FastagService {
     /**
      * Get FASTag balance for a specific tag.
      */
-    @GET("finance/fastag/balance-check")
+    @GET("/fastag/v1/balance-check")
     fun getFastagBalance(
         @Query("fastag_id") tagId: String
     ): Single<BaseResponse<FastagBalanceResponse>>
@@ -36,7 +37,7 @@ interface FastagService {
     /**
      * Get FASTag transactions listing.
      */
-    @GET("/finance/fastag/transactions/listing")
+    @GET("/fastag/v1/transactions/listing")
     fun getFastagTransactions(
         @Query("fastag_id") tagId: String,
         @Query("offset") offset: Int,
@@ -46,7 +47,7 @@ interface FastagService {
     /**
      * Download FASTag transactions as file.
      */
-    @GET("/finance/fastag/transactions/download")
+    @GET("/fastag/v1/transactions/download")
     @Streaming
     fun downloadFastagTransactions(
         @Query("fastag_id") tagId: String,
@@ -57,7 +58,7 @@ interface FastagService {
     /**
      * Submit FASTag lead request (buy FASTag).
      */
-    @POST("/finance/fastag/lead")
+    @POST("/fastag/v1/lead")
     fun submitFastagLead(
         @Body request: FastagLeadRequest
     ): Single<BaseResponse<FastagLeadResponse>>
@@ -73,7 +74,7 @@ interface FastagService {
     /**
      * Get FASTag status for a specific tag.
      */
-    @GET("/finance/fastag/status")
+    @GET("/fastag/v1/status")
     fun fetchFastagStatus(
         @Query("tag_id") tagId: String
     ): Single<BaseResponse<FastagStatusResponse>>
@@ -81,7 +82,7 @@ interface FastagService {
     /**
      * Get FASTag transactions by toll plaza.
      */
-    @GET("finance/fastag/transactions/search/toll-plaza")
+    @GET("/fastag/v1/transactions/search/toll-plaza")
     fun getFastagTransactionsByTollPlaza(
         @Query("toll_plaza_id") tollPlazaId: String,
         @Query("dateTime") dateTime: String?,
@@ -94,7 +95,7 @@ interface FastagService {
     /**
      * Get transaction dispute details.
      */
-    @GET("/finance/fastag/transaction-dispute")
+    @GET("/fastag/v1/transaction-dispute")
     fun getTransactionDispute(
         @Query("txn_id") txnId: String?
     ): Single<BaseResponse<TransactionDisputeResponse>>
@@ -102,7 +103,7 @@ interface FastagService {
     /**
      * Get dispute issues list.
      */
-    @GET("finance/fastag/transactions/dispute/categories")
+    @GET("/fastag/v1/transactions/dispute/categories")
     fun getDisputeIssuesList(
         @Query("partner") partner: String
     ): Single<BaseResponse<DisputeIssuesResponse>>
@@ -110,7 +111,7 @@ interface FastagService {
     /**
      * Get dispute form configuration.
      */
-    @GET("finance/fastag/transaction/dispute/form-config")
+    @GET("/fastag/v1/transaction/dispute/form-config")
     fun getDisputeFormConfig(
         @Query("disputeTypeCode") disputeTypeCode: String
     ): Single<BaseResponse<List<FormField>>>
@@ -153,7 +154,7 @@ interface FastagService {
      * Submit dispute with multipart form data.
      */
     @Multipart
-    @POST("finance/fastag/transactions/dispute")
+    @POST("/fastag/v1/transactions/dispute")
     fun submitDispute(
         @Part txnId: MultipartBody.Part? = null,
         @Part tollPlazaId: MultipartBody.Part? = null,
@@ -165,4 +166,72 @@ interface FastagService {
         @Part uploadDoc2: MultipartBody.Part? = null,
         @Part uploadDoc3: MultipartBody.Part? = null
     ): Single<BaseResponse<DisputeSubmissionResponse>>
+
+    // ---- Coroutine-based endpoints (Tag Issuance flow) ----
+
+    @GET("/fastag/tag-issuance/v1/order/{order_id}/items")
+    suspend fun getOrderItems(
+        @Path("order_id") orderId: String
+    ): BaseResponse<OrderItemsResponse>
+
+    @Multipart
+    @POST("/issuance/rc-process")
+    suspend fun uploadRcImages(
+        @Part rcFront: MultipartBody.Part,
+        @Part rcBack: MultipartBody.Part,
+        @Part orderId: MultipartBody.Part,
+        @Part orderItemId: MultipartBody.Part
+    ): BaseResponse<RcProcessResponse>
+
+    @GET("/issuance/rc-process/{job_id}/status")
+    suspend fun getRcProcessStatus(
+        @Path("job_id") jobId: String
+    ): BaseResponse<RcProcessStatusResponse>
+
+    @Multipart
+    @POST("/issuance/vehicle-images-process")
+    suspend fun uploadVehicleImages(
+        @Part vehicleFront: MultipartBody.Part,
+        @Part vehicleSide: MultipartBody.Part,
+        @Part orderId: MultipartBody.Part,
+        @Part orderItemId: MultipartBody.Part
+    ): BaseResponse<VehicleImageProcessResponse>
+
+    @GET("/issuance/vehicle-images-process/{job_id}/status")
+    suspend fun getVehicleImageProcessStatus(
+        @Path("job_id") jobId: String
+    ): BaseResponse<VehicleImageProcessStatusResponse>
+
+    @Multipart
+    @POST("/issuance/fastag-image")
+    suspend fun uploadFastagImage(
+        @Part fastagImage: MultipartBody.Part,
+        @Part journeyId: MultipartBody.Part
+    ): BaseResponse<FastagImageUploadResponse>
+
+    @POST("/issuance/fastag-image/validate")
+    suspend fun validateFastagImage(
+        @Body request: com.delhivery.axle.api.request.FastagImageValidateRequest
+    ): BaseResponse<FastagImageValidateResponse>
+
+    /**
+     * Fetch recharge status.
+     */
+    @POST("/api/v1/wallet/recharge-status")
+    fun fetchRechargeStatus(
+        @Header("x-user-id") userId: String,
+        @Body request: com.google.gson.JsonObject
+    ): Single<BaseResponse<RechargeStatusResponse>>
+
+
+
+    /**
+     * Get pending actions for FASTag tag issuance.
+     * GET /fastag/tag-issuance/v1/pending-actions
+     * TODO : update the endpoints with correctly mapped BE url
+     */
+    @GET("https://financial-fastag-dev.delhivery.com/fastag/tag-issuance/v1/pending-actions")
+    suspend fun getPendingActions(
+        @Header("X-Vendor-Id") vendorId: String
+    ): BaseResponse<PendingActionsResponse>
 }

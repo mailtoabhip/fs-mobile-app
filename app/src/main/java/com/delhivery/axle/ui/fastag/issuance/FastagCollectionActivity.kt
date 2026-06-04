@@ -21,8 +21,19 @@ import javax.inject.Inject
 
 class FastagCollectionActivity : DaggerAppCompatActivity() {
 
+    companion object {
+        const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_FASTAG_ID = "extra_fastag_id"
+        const val EXTRA_BARCODE = "extra_barcode"
+        const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
+        const val EXTRA_VRN = "extra_vrn"
+    }
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
 
     private lateinit var binding: ActivityFastagCollectionBinding
     private lateinit var viewModel: FastagCollectionViewModel
@@ -47,7 +58,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
             confirmCollection()
         }
 
-        viewModel.fetchOrders()
+        viewModel.fetchOrders(intent.getStringExtra("extra_sales_code") ?: "")
     }
 
     private var currentOrderId: String = ""
@@ -92,7 +103,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
                     } else {
                         "Something went wrong. Please try again."
                     }
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -120,7 +131,7 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
                     } else {
                         "Something went wrong. Please try again."
                     }
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
                 }
             }
         }
@@ -142,18 +153,22 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
         currentSalesCode = order.salesCode
         binding.orderId = order.orderId
 
-        val totalTags = order.items.sumOf { it.dispatchedQuantity }
+        val totalTags = order.items.size
         binding.totalTags = totalTags
 
-        val inventoryItems = order.items.map { item ->
-            FastagInventoryItem(
-                vehicleClass = item.vehicleClass,
-                displayName = item.displayName,
-                vehicleTypes = item.vehicleTypes,
-                units = item.dispatchedQuantity,
-                colorCode = item.colorCode
-            )
-        }
+        // Group flat items by vehicle class and count them
+        val inventoryItems = order.items
+            .groupBy { it.vehicleClass }
+            .map { (_, items) ->
+                val first = items.first()
+                FastagInventoryItem(
+                    vehicleClass = first.vehicleClass,
+                    displayName = first.displayName,
+                    vehicleTypes = first.vehicleTypes,
+                    units = items.size,
+                    colorCode = first.colorCode
+                )
+            }
 
         val adapter = FastagInventoryAdapter(inventoryItems) { colorCode ->
             mapColorCode(colorCode)
@@ -164,7 +179,6 @@ class FastagCollectionActivity : DaggerAppCompatActivity() {
 
     private fun mapColorCode(colorCode: String): Int {
         return when (colorCode.uppercase()) {
-            "RED" -> getColor(R.color.class_red)
             "ORANGE" -> getColor(R.color.class_red)
             "YELLOW" -> getColor(R.color.class_yellow)
             "GREEN" -> getColor(R.color.class_green)

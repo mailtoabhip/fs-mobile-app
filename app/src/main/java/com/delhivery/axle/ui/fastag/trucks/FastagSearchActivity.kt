@@ -40,7 +40,7 @@ class FastagSearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLl)
         }
 
         vehicleNumbers = intent.getStringArrayListExtra(EXTRA_VEHICLE_NUMBERS) ?: emptyList()

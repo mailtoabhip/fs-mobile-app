@@ -10,17 +10,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
+import com.delhivery.axle.api.response.FastagVehicle
 
 /**
  * Adapter for FASTag trucks list on the FastagTrucksActivity.
- * Shows truck vehicle number, make, FASTag balance, low balance warning, and recharge button.
+ * Uses FastagVehicle directly from the listing API response.
  */
 class FastagTruckAdapter(
-    private val onRechargeClick: (HomeTrucksRequestItemData) -> Unit,
-    private val onRefreshClick: (HomeTrucksRequestItemData) -> Unit,
-    private val onItemClick: (HomeTrucksRequestItemData) -> Unit
-) : ListAdapter<HomeTrucksRequestItemData, FastagTruckAdapter.FastagTruckViewHolder>(DiffCallback()) {
+    private val onRechargeClick: (FastagVehicle) -> Unit,
+    private val onRefreshClick: (FastagVehicle) -> Unit,
+    private val onItemClick: (FastagVehicle) -> Unit
+) : ListAdapter<FastagVehicle, FastagTruckAdapter.FastagTruckViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FastagTruckViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -40,9 +40,9 @@ class FastagTruckAdapter(
         private val lowBalanceWarning: LinearLayout = itemView.findViewById(R.id.lowBalanceWarning)
         private val btnRecharge: TextView = itemView.findViewById(R.id.btnRecharge)
 
-        fun bind(item: HomeTrucksRequestItemData) {
-            tvVehicleNumber.text = item.vehicleNumber
-            tvTruckMake.text = item.fastagIssuedBy ?: item.truckName()
+        fun bind(item: FastagVehicle) {
+            tvVehicleNumber.text = item.fastagVrn ?: ""
+            tvTruckMake.text = item.vehicleMake ?: ""
             tvBalance.text = "₹${item.fastagBalance ?: "0"}"
 
             // Show low balance warning if balance < 100
@@ -55,15 +55,15 @@ class FastagTruckAdapter(
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<HomeTrucksRequestItemData>() {
+    class DiffCallback : DiffUtil.ItemCallback<FastagVehicle>() {
         override fun areItemsTheSame(
-            oldItem: HomeTrucksRequestItemData,
-            newItem: HomeTrucksRequestItemData
-        ): Boolean = oldItem.fastagTagId == newItem.fastagTagId
+            oldItem: FastagVehicle,
+            newItem: FastagVehicle
+        ): Boolean = oldItem.fastagId == newItem.fastagId
 
         override fun areContentsTheSame(
-            oldItem: HomeTrucksRequestItemData,
-            newItem: HomeTrucksRequestItemData
+            oldItem: FastagVehicle,
+            newItem: FastagVehicle
         ): Boolean = oldItem == newItem
     }
 }

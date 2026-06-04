@@ -31,6 +31,7 @@ class DelhiveryNetworkInterceptorTest : FunSpec({
 
     lateinit var userPrefs: UserPrefs
     lateinit var connectionLiveData: ConnectionLiveData
+    lateinit var deviceInfoProvider: DeviceInfoProvider
     lateinit var interceptor: DelhiveryNetworkInterceptor
 
     beforeSpec {
@@ -45,10 +46,11 @@ class DelhiveryNetworkInterceptorTest : FunSpec({
     beforeEach {
         userPrefs = relaxedMock()
         connectionLiveData = relaxedMock()
+        deviceInfoProvider = relaxedMock()
         every { connectionLiveData.isConnected() } returns true
         every { userPrefs.jwtToken } returns "test_jwt_token"
         every { userPrefs.userId() } returns "USER123"
-        interceptor = DelhiveryNetworkInterceptor(userPrefs, connectionLiveData)
+        interceptor = DelhiveryNetworkInterceptor(userPrefs, connectionLiveData, deviceInfoProvider)
     }
 
     /**
@@ -95,7 +97,7 @@ class DelhiveryNetworkInterceptorTest : FunSpec({
 
         test("does not add authorization header when jwt is empty") {
             every { userPrefs.jwtToken } returns ""
-            val freshInterceptor = DelhiveryNetworkInterceptor(userPrefs, connectionLiveData)
+            val freshInterceptor = DelhiveryNetworkInterceptor(userPrefs, connectionLiveData, deviceInfoProvider)
             freshInterceptor.updateJWT("")
             val (chain, getRequest) = createMockChain()
 

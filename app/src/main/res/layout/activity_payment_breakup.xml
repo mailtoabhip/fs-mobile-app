@@ -113,6 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_24dp"
+                    android:visibility="@{viewModel.isDataLoaded ? View.VISIBLE : View.GONE}"
                     app:cardBackgroundColor="@android:color/white"
                     app:cardCornerRadius="@dimen/size_8dp"
                     app:cardElevation="0dp"
@@ -134,7 +135,7 @@
                                 android:id="@+id/ivWalletIcon"
                                 android:layout_width="@dimen/size_24dp"
                                 android:layout_height="@dimen/size_24dp"
-                                android:src="@drawable/ic_launcher_foreground"
+                                android:src="@drawable/ic_delhivery_wallet"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -191,7 +192,7 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:padding="@dimen/size_8dp"
-                            android:visibility="@{viewModel.isWalletSufficient ? View.GONE : View.VISIBLE}">
+                            android:visibility="@{(viewModel.isDataLoaded &amp;&amp; !viewModel.isWalletSufficient) ? View.VISIBLE : View.GONE}">
 
                             <ImageView
                                 android:layout_width="@dimen/size_16dp"
@@ -231,7 +232,7 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_16sp"
-            android:visibility="@{viewModel.isWalletSufficient ? View.GONE : View.VISIBLE}"
+            android:visibility="@{(viewModel.isDataLoaded &amp;&amp; !viewModel.isWalletSufficient) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -243,7 +244,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/size_16dp"
             android:layout_marginBottom="@dimen/size_16dp"
-            android:visibility="@{viewModel.isWalletSufficient ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(viewModel.isDataLoaded &amp;&amp; viewModel.isWalletSufficient) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_upload_card"
+    android:padding="@dimen/size_12dp">
+
+    <!-- ===== DEFAULT STATE ===== -->
+
+    <!-- Camera Icon (default state) -->
+    <ImageView
+        android:id="@+id/ivUploadIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/upload_document"
+        android:padding="@dimen/size_8dp"
+        android:src="@drawable/ic_camera_upload"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title (default state) -->
+    <TextView
+        android:id="@+id/tvUploadTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:textColor="@color/neutral_black_200"
+        android:textSize="@dimen/text_14sp"
+        app:layout_constraintEnd_toStartOf="@id/tvSampleImage"
+        app:layout_constraintStart_toEndOf="@id/ivUploadIcon"
+        app:layout_constraintTop_toTopOf="@id/ivUploadIcon"
+        tools:text="Upload RC Front" />
+
+    <!-- Sample Image link (optional, hidden by default) -->
+    <TextView
+        android:id="@+id/tvSampleImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_image_link"
+        android:textColor="#2396FB"
+        android:textSize="@dimen/text_10sp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvUploadTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="gone" />
+
+    <!-- Subtitle (default state) -->
+    <TextView
+        android:id="@+id/tvUploadSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginTop="@dimen/size_4dp"
+        android:textColor="@color/text_body_secondary"
+        android:textSize="@dimen/text_12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivUploadIcon"
+        app:layout_constraintTop_toBottomOf="@id/tvUploadTitle"
+        tools:text="JPEG • 10MB • PDF/Photo • 5MB" />
+
+    <!-- Upload Button (default state) -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_12dp"
+        android:background="@drawable/bg_upload_button"
+        android:elevation="0dp"
+        android:gravity="center"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:paddingHorizontal="@dimen/size_12dp"
+        android:paddingVertical="@dimen/size_12dp"
+        android:stateListAnimator="@null"
+        android:text="@string/upload_action"
+        android:textAllCaps="false"
+        android:textColor="@color/neutral_black_200"
+        android:textSize="@dimen/text_14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvUploadSubtitle" />
+
+    <!-- ===== UPLOADED STATE ===== -->
+
+    <!-- Thumbnail (uploaded state) -->
+    <ImageView
+        android:id="@+id/ivThumbnail"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/upload_document"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <!-- File name (uploaded state) -->
+    <TextView
+        android:id="@+id/tvFileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8dp"
+        android:layout_marginEnd="@dimen/size_8dp"
+        android:textColor="@color/neutral_black_200"
+        android:textSize="@dimen/text_14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/layoutStatus"
+        app:layout_constraintStart_toEndOf="@id/ivThumbnail"
+        app:layout_constraintTop_toTopOf="@id/ivThumbnail"
+        tools:text="RC Front.jpg"
+        tools:visibility="gone" />
+
+    <!-- Status indicator (uploaded state) -->
+    <LinearLayout
+        android:id="@+id/layoutStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginEnd="@dimen/size_4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ivThumbnail"
+        tools:visibility="gone">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:contentDescription="@string/upload_status_uploaded"
+            android:src="@drawable/icon_upload_success_check"
+            />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_4dp"
+            android:text="@string/upload_status_uploaded"
+            android:textColor="@color/neutral_black_200"
+            android:textSize="@dimen/text_12sp" />
+
+    </LinearLayout>
+
+    <!-- Buttons row (uploaded state) -->
+    <LinearLayout
+        android:id="@+id/layoutUploadedActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_24dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvFileName"
+        tools:visibility="gone">
+
+        <!-- Re-upload Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReupload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_upload_button"
+            android:elevation="0dp"
+            android:gravity="center"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="@dimen/size_12dp"
+            android:paddingVertical="@dimen/size_12dp"
+            android:stateListAnimator="@null"
+            android:text="@string/upload_reupload_action"
+            android:textAllCaps="false"
+            android:textColor="@color/neutral_black_200"
+            android:textSize="@dimen/text_14sp" />
+
+        <!-- Remove Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnRemove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:background="@drawable/bg_remove_button"
+            android:elevation="0dp"
+            android:gravity="center"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="@dimen/size_12dp"
+            android:paddingVertical="@dimen/size_12dp"
+            android:stateListAnimator="@null"
+            android:text="@string/upload_remove_action"
+            android:textAllCaps="false"
+            android:textColor="@color/progress_red"
+            android:textSize="@dimen/text_14sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

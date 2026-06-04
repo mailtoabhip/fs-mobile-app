@@ -523,7 +523,7 @@
     <string name="label_account">Account</string>
     <string name="label_kyc_details">KYC Details</string>
     <string name="label_profile">Profile Details</string>
-    <string name="label_delhivery_wallet">Delhivery Wallet</string>
+    <string name="label_delhivery_wallet">Wallet</string>
     <string name="label_routes">My Routes</string>
     <string name="label_earnings">My Earnings</string>
     <string name="label_team">My Team Members</string>
@@ -532,6 +532,7 @@
     <string name="label_pod">POD Address</string>
     <string name="label_help">Help &amp; Support</string>
     <string name="label_logout">Log Out</string>
+    <string name="label_about_app">App Version</string>
     <string name="label_delete">Delete Account</string>
     <string name="label_ratings">Business Ratings</string>
     <string name="label_kyc_pending">KYC verification pending!</string>
@@ -553,20 +554,20 @@
     <string name="label_dialog_rate">Rate has been successfully submitted</string>
     <string name="label_dialog_rate2">We will send you the reward as soon as proof is verified.</string>
 
-    <!--Error (error_-->
-    <string name="error_no_internet">No Internet connection</string>
-    <string name="error_name_required">Please enter name</string>
-    <string name="error_dob_required">Please enter Date of birth</string>
-    <string name="error_location_permission_denied">Location Permission Denied</string>
-    <string name="error_search_missing_origin">Please select origin</string>
-    <string name="error_search_missing_reporting_center">Please select reporting center</string>
-    <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
-    <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
-    <string name="error_upload">Oops! Something went wrong</string>
-    <string name="error_upload_document">Try uploading the document once again</string>
-    <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
-    <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
-    <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
+  <!--Error (error_-->
+  <string name="error_no_internet">No Internet connection</string>
+  <string name="error_name_required">Please enter name</string>
+  <string name="error_dob_required">Please enter Date of birth</string>
+  <string name="error_location_permission_denied">Location Permission Denied</string>
+  <string name="error_search_missing_origin">Please select origin</string>
+  <string name="error_search_missing_reporting_center">Please select reporting center</string>
+  <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
+  <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
+  <string name="error_upload">Oops! Something went wrong</string>
+  <string name="error_upload_document">Try uploading the document once again</string>
+  <string name="error_upload_rc_document">Try uploading the RC document for verification</string>
+  <string name="error_duplicate_pan">This PAN belongs to an existing user. Please try another PAN or contact 01246719699</string>
+  <string name="pan_not_linked_to_aadhaar">PAN and Aadhaar are not linked. Contact us at 01246719699 or write to vendorhelpdesk@delhivery.com</string>
 
 
     <string name="not_available">Not available</string>
@@ -1182,6 +1183,14 @@
     <string name="handover_vehicle_title">Handover Vehicle</string>
     <string name="kyc_vehicle_title">KYC Verification</string>
     <string name="select_vehicle_title">Select vehicle</string>
+    <string name="fastag_assignment_title">Vehicle Assignment</string>
+    <string name="upload_rc_image_title">Upload your RC image</string>
+    <string name="upload_rc_front">Upload RC Front</string>
+    <string name="upload_rc_back">Upload RC Back</string>
+    <string name="upload_file_format_info">JPEG • 10MB • PDF/Photo • 5MB</string>
+    <string name="upload_rc_disclaimer">Please ensure all details match the Registration Certificate (RC) to avoid rejection during FASTag activation.</string>
+    <string name="upload_action">Upload</string>
+    <string name="upload_reupload_action">Re-upload</string>
     <string name="fastag_balance_low">FASTag balance low</string>
     <string name="fastag_recharge">Recharge</string>
     <string name="fastag_refresh_balance">Refresh balance</string>
@@ -1228,5 +1237,38 @@
     <string name="str_last_name">Last Name</string>
     <string name="str_enter_here">Enter Here</string>
     <string name="str_communication_consent_note">I agree to receive app updates and communications via my contact details.</string>
-    <!--    <string name=""></string>-->
+    <!-- Upload Bottom Sheet -->
+    <string name="action_close">Close</string>
+    <string name="upload_file_option">Upload file</string>
+    <string name="take_photo_option">Take photo</string>
+    <string name="upload_status_uploaded">Uploaded</string>
+    <string name="upload_remove_action">Remove</string>
+    <string name="sample_image_link">Sample Image</string>
+    <string name="upload_vehicle_images_title">Upload your vehicle images</string>
+    <string name="upload_vehicle_disclaimer">Please ensure you upload clear photos of your vehicle for verification.</string>
+    <string name="upload_vehicle_front">Upload Vehicle Front</string>
+    <string name="upload_vehicle_side">Upload Vehicle Side</string>
+    <string name="take_photo_action">Take Photo</string>
+    <string name="vehicle_assignment_title">Vehicle Assignment</string>
+    <string name="vehicle_front_image_title">Vehicle Front Image</string>
+    <string name="vehicle_side_image_title">Vehicle Side Image</string>
+    <string name="vehicle_front_guidelines">\u2022 Ensure the size of image is less than 2500 KB or 2.5 MB\n\u2022 Ensure the complete front view of the vehicle is visible along with VRN\n\u2022 Ensure VRN Input should match with VRN on fixed number plate of Front Image.\n\u2022 Ensure VRN is clearly visible in the image</string>
+    <string name="vehicle_side_guidelines">\u2022 Ensure the complete side image of the vehicle is captured and number of axles are clearly of visible.\n\u2022 Ensure MVC is as per Vehicle Image.\n\u2022 Ensure the side image is of the same vehicle for which onboarding is being done.\n\u2022 Ensure the Number of axles match with number of axles tag is issued on.</string>
+    <string name="know_your_vehicle_title">Know Your Vehicle</string>
+    <string name="upload_fastag_image_title">Upload your FASTag image</string>
+    <string name="upload_fastag_image_label">Upload FASTag Image</string>
+    <string name="submit_for_verification">Submit for Verification</string>
+    <string name="vehicle_verified_title">Vehicle verified</string>
+    <string name="vehicle_verified_subtitle">Vehicle number: %1$s has been successfully authenticated</string>
+    <string name="go_to_homepage">Go to Homepage</string>
+    <string name="vehicle_details_title">Vehicle details</string>
+    <string name="vehicle_number_label">Vehicle number</string>
+    <string name="commercial_vehicle_label">Commerical vehicle</string>
+    <string name="exempted_vehicle_status_label">Exempted vehicle status</string>
+    <string name="vehicle_class_label">Vehicle class</string>
+    <string name="continue_to_assign_fastag">Continue to Assign FASTag</string>
+    <string name="rc_processing_message">Processing your RC documents.\nPlease wait…</string>
+    <string name="vehicle_image_processing_message">Processing your vehicle images.\nPlease wait…</string>
+    <string name="image_preview_title">Image preview</string>
+
 </resources>

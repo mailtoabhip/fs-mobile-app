@@ -45,11 +45,19 @@ class DelhiveryNetworkInterceptor @Inject constructor(
       builder.header("X-App-Version", deviceInfoProvider.appVersion)
       builder.header("X-Platform", deviceInfoProvider.platform)
       builder.header("X-OS-Version", deviceInfoProvider.osVersion)
-      builder.header("X-Request-Id", requestId)
       builder.header("X-Client-Ip", deviceInfoProvider.awaitPublicIp())
 
-      /* Attach Bearer token for all authenticated endpoints */
+      /* Skip X-Request-Id if "No-Request-Id" marker header is present or for specific paths */
       val path = chain.request().url().encodedPath()
+      val skipRequestId = chain.request().header("No-Request-Id") != null
+          || path.contains("/payment/breakup")
+      if (skipRequestId) {
+        builder.removeHeader("No-Request-Id")
+      } else {
+        builder.header("X-Request-Id", requestId)
+      }
+
+      /* Attach Bearer token for all authenticated endpoints */
       val isUnauthenticated = path == "/api/v1/auth/initiate"
           || path == "/api/v1/auth/verify"
           || path == "/api/v1/auth/resend"
@@ -63,12 +71,12 @@ class DelhiveryNetworkInterceptor @Inject constructor(
       }
 
       if (BuildConfig.DEBUG) {
-        Log.d("DelhiveryInterceptor", "Headers → X-Device-Id=${deviceInfoProvider.deviceId}, " +
+        Log.d("DelhiveryInterceptor", "[$path] Headers → X-Device-Id=${deviceInfoProvider.deviceId}, " +
             "X-Device-Model=${deviceInfoProvider.deviceModel}, " +
             "X-App-Version=${deviceInfoProvider.appVersion}, " +
             "X-Platform=${deviceInfoProvider.platform}, " +
             "X-OS-Version=${deviceInfoProvider.osVersion}, " +
-            "X-Request-Id=$requestId, " +
+            (if (!skipRequestId) "X-Request-Id=$requestId, " else "") +
             "X-Client-Ip=${deviceInfoProvider.awaitPublicIp()}")
       }
 

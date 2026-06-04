@@ -114,8 +114,8 @@
                                 android:layout_marginStart="8dp"
                                 app:layout_constraintStart_toEndOf="@id/tvVehicleNumber"
                                 app:layout_constraintTop_toTopOf="@id/tvVehicleNumber"
-                                tools:visibility="visible"
                                 tools:text="Available"
+                                android:visibility="gone"
                                 app:layout_constraintBottom_toBottomOf="@id/tvVehicleNumber"/>
 
                             <TextView
@@ -125,6 +125,7 @@
                                 android:layout_marginTop="4dp"
                                 android:textColor="#505361"
                                 android:textSize="14sp"
+                                android:visibility="gone"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toStartOf="parent"

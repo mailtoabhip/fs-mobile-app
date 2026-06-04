@@ -3,24 +3,18 @@ package com.delhivery.axle.ui.fastag.trucks
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.api.repository.FastagRepository
-import com.delhivery.axle.api.repository.UserRepository
-import com.delhivery.axle.api.response.FastagListingResponse
 import com.delhivery.axle.api.response.FastagVehicle
-import com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData
 import com.delhivery.axle.ui.base.BaseViewModel
-import com.delhivery.axle.utils.prefs.UserPrefs
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class FastagTrucksViewModel @Inject constructor(
-    private val fastagRepository: FastagRepository,
-    private val userRepository: UserRepository,
-    private val userPrefs: UserPrefs
+    private val fastagRepository: FastagRepository
 ) : BaseViewModel() {
 
-    private val _fastagTrucks = MutableLiveData<List<HomeTrucksRequestItemData>>()
-    val fastagTrucks: LiveData<List<HomeTrucksRequestItemData>> = _fastagTrucks
+    private val _fastagTrucks = MutableLiveData<List<FastagVehicle>>()
+    val fastagTrucks: LiveData<List<FastagVehicle>> = _fastagTrucks
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -44,8 +38,7 @@ class FastagTrucksViewModel @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     _isLoading.value = false
-                    val trucks = response.result?.map { it.toTruckItemData() } ?: emptyList()
-                    _fastagTrucks.value = trucks
+                    _fastagTrucks.value = response.result ?: emptyList()
                 }, { throwable ->
                     _isLoading.value = false
                     _error.value = throwable.message ?: "Failed to load FASTag trucks"
@@ -69,30 +62,4 @@ class FastagTrucksViewModel @Inject constructor(
                 })
         )
     }
-
-    /**
-     * Maps FastagVehicle from listing API to HomeTrucksRequestItemData used by the UI adapter.
-     */
-    private fun FastagVehicle.toTruckItemData() = HomeTrucksRequestItemData(
-        inventoryId = fastagId,
-        vehicleNumber = fastagVrn ?: "",
-        truckType = "closed",
-        truckSize = "",
-        truckUuid = "",
-        capacity = 0.0,
-        currentCityName = "",
-        currentCityCode = "",
-        unloadingDestination = "",
-        unloadingDestinationCode = "",
-        latestStatus = fastagTagStatus ?: "",
-        latestUUID = "",
-        originClusterId = "",
-        destinationClusterId = "",
-        sourcedAs = "",
-        fastagTagId = fastagId,
-        fastagVrn = fastagVrn,
-        fastagBalance = fastagBalance,
-        fastagIssuedBy = vehicleMake,
-        fastagTagStatus = fastagTagStatus
-    )
 }

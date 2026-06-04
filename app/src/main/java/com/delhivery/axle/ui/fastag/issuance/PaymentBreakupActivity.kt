@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityPaymentBreakupBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 
 class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, PaymentBreakupViewModel>() {
@@ -43,12 +44,24 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
 
         observeViewModel()
         viewModel.fetchPaymentBreakup(salesCode, paymentMethod, items)
+
+        // Listen for wallet recharge success from PaymentStatusDialogFragment
+        supportFragmentManager.setFragmentResultListener("PaymentStatusResult", this) { _, bundle ->
+            val status = bundle.getString("STATUS")
+            if (status == PaymentStatus.SUCCESS.name) {
+                // Re-fetch breakup to update wallet balance and toggle slide-to-confirm
+                viewModel.fetchPaymentBreakup(salesCode, paymentMethod, items)
+            }
+        }
     }
 
     companion object {
         const val EXTRA_SALES_CODE = "extra_sales_code"
         const val EXTRA_PAYMENT_METHOD = "extra_payment_method"
         const val EXTRA_ITEMS = "extra_items"
+        const val EXTRA_BANK_PARTNER_CODE = "extra_bank_partner_code"
+        const val EXTRA_VEHICLE_CLASS_QTY = "extra_vehicle_class_qty"
+        const val EXTRA_ORDER_ID = "extra_order_id"
     }
 
     private fun observeViewModel() {
@@ -97,8 +110,11 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
 
     private fun showPaymentSuccessBottomSheet() {
         PaymentSuccessBottomSheet.newInstance {
-            val intent = Intent(this, FastagCollectionActivity::class.java)
+            val intent = Intent(this, FastagCollectionActivity::class.java).apply {
+                putExtra("extra_sales_code", salesCode)
+            }
             startActivity(intent)
+            finish()
         }.show(supportFragmentManager, PaymentSuccessBottomSheet.TAG)
     }
 
@@ -106,10 +122,7 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         AddMoneyDialogFragment.newInstance(
             redirectUrl = "https://www.delhivery.com/",
             onPaymentResult = { success ->
-                if (success) {
-                    // Refresh wallet balance after successful payment
-                    viewModel.fetchPaymentBreakup(salesCode, paymentMethod, items)
-                }
+                // Note: Actual refresh is handled by PaymentStatusResult fragment result listener
             }
         ).show(supportFragmentManager, "AddMoneyDialog")
     }

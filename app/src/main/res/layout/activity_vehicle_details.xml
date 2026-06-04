@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/parentLl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/size_16dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/size_16dp"
+                android:layout_height="@dimen/size_16dp"
+                android:contentDescription="@string/action_continue"
+                android:src="@drawable/icon_back_button" />
+
+            <TextView
+                android:id="@+id/tvToolbarTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_weight="1"
+                android:textColor="@color/black_title"
+                android:textSize="@dimen/text_14sp"
+                tools:text="MH01CA1234" />
+
+        </LinearLayout>
+
+        <!-- Content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/size_16dp">
+
+                <!-- Section Title -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vehicle_details_title"
+                    android:textColor="@color/neutral_black_200"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold" />
+
+                <!-- Vehicle Number -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/vehicle_number_label"
+                                android:textColor="@color/neutral_black_200"
+                                android:textSize="@dimen/text_14sp" />
+
+                            <TextView
+                                android:id="@+id/tvVehicleNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/size_4dp"
+                                android:textColor="@color/text_body_secondary"
+                                android:textSize="@dimen/text_12sp"
+                                tools:text="MH01CA1234" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/ivEditVehicle"
+                            android:layout_width="@dimen/size_20dp"
+                            android:layout_height="@dimen/size_20dp"
+                            android:contentDescription="@string/action_edit_truck"
+                            android:src="@drawable/ic_fs_edit_pencil" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:background="@color/divider_color" />
+
+                </LinearLayout>
+
+                <!-- Commercial Vehicle -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/commercial_vehicle_label"
+                        android:textColor="@color/neutral_black_200"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <TextView
+                        android:id="@+id/tvCommercialVehicle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:textColor="@color/text_body_secondary"
+                        android:textSize="@dimen/text_12sp"
+                        tools:text="True" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:background="@color/divider_color" />
+
+                </LinearLayout>
+
+                <!-- Exempted Vehicle Status -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/exempted_vehicle_status_label"
+                        android:textColor="@color/neutral_black_200"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <TextView
+                        android:id="@+id/tvExemptedStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:textColor="@color/text_body_secondary"
+                        android:textSize="@dimen/text_12sp"
+                        tools:text="Exempted" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/size_16dp"
+                        android:background="@color/divider_color" />
+
+                </LinearLayout>
+
+                <!-- Vehicle Class -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/vehicle_class_label"
+                        android:textColor="@color/neutral_black_200"
+                        android:textSize="@dimen/text_14sp" />
+
+                    <TextView
+                        android:id="@+id/tvVehicleClass"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size_4dp"
+                        android:textColor="@color/text_body_secondary"
+                        android:textSize="@dimen/text_12sp"
+                        tools:text="VC4" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Continue to Assign FASTag Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:background="@drawable/bg_all_round_corner_solid_black"
+            android:elevation="0dp"
+            android:gravity="center"
+            android:paddingVertical="@dimen/size_16dp"
+            android:stateListAnimator="@null"
+            android:text="@string/continue_to_assign_fastag"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp"
+            />
+
+    </LinearLayout>
+</layout>

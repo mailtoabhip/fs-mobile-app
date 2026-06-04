@@ -48,4 +48,9 @@
     <attr format="string" name="hint" />
     <attr  format="string" name="editValue" />
   </declare-styleable>
+
+  <declare-styleable name="UploadCardView">
+    <attr name="uploadTitle" format="string" />
+    <attr name="uploadSubtitle" format="string" />
+  </declare-styleable>
 </resources>
