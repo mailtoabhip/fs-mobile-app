@@ -143,7 +143,8 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/size_16dp"
                 android:paddingVertical="@dimen/size_14dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:layout_width="@dimen/size_20dp"
@@ -158,9 +159,8 @@
                     android:layout_marginStart="@dimen/size_10dp"
                     android:layout_weight="1"
                     android:textColor="#7B6414"
-                    android:textSize="@dimen/text_14sp"
-                    android:textStyle="bold"
-                    tools:text="FASTag pending actions (8)" />
+                    tools:text="FASTag pending actions (8)"
+                    style="@style/TextAppearance.Delfin.SB12"/>
 
                 <ImageView
                     android:layout_width="@dimen/size_20dp"
@@ -245,7 +245,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
                         android:text="@string/label_my_trucks_subtitle"
-                        android:textColor="@color/black_title"
+                        android:textColor="@color/text_body_primary"
                         style="@style/TextAppearance.Delfin.R14"/>
                 </LinearLayout>
 
@@ -303,7 +303,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
                         android:text="@string/label_my_loads_subtitle"
-                        android:textColor="@color/black_title"
+                        android:textColor="@color/text_body_primary"
                         style="@style/TextAppearance.Delfin.R14"/>
                 </LinearLayout>
             </LinearLayout>

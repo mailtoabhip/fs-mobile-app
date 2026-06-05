@@ -210,6 +210,7 @@
   </style>
 
   <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="android:fontFamily">@font/noto_sans_semibold</item>
     <item name="android:textSize">@dimen/text_14sp</item>
   </style>
 
@@ -283,6 +284,12 @@
   <style name="TextAppearance.Delfin.SB14">
     <item name="android:fontFamily">@font/noto_sans_semibold</item>
     <item name="android:textSize">14sp</item>
+  </style>
+
+  <!-- Semi Bold 12sp -->
+  <style name="TextAppearance.Delfin.SB12">
+    <item name="android:fontFamily">@font/noto_sans_semibold</item>
+    <item name="android:textSize">12sp</item>
   </style>
 
   <!-- Medium 14sp -->
