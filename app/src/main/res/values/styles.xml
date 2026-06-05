@@ -210,9 +210,9 @@
   </style>
 
   <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="android:fontFamily">@font/noto_sans_semibold</item>
     <item name="android:textSize">@dimen/text_16sp</item>
-    <item name="android:textStyle">bold</item>
-    <item name="android:textColor">@android:color/black</item>
+    <item name="android:textColor">@color/black_title</item>
   </style>
 
   <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
@@ -269,28 +269,46 @@
     <item name="android:fontFamily">@font/noto_sans_regular</item>
   </style>
 
-  <!-- Screen Title - Bold 20sp -->
-  <style name="TextAppearance.Delfin.ScreenTitle">
+  <!-- Bold 20sp -->
+  <style name="TextAppearance.Delfin.B20">
     <item name="android:fontFamily">@font/noto_sans_bold</item>
     <item name="android:textSize">20sp</item>
   </style>
 
-  <!-- Section Title - Normal 16sp -->
-  <style name="TextAppearance.Delfin.SectionTitle">
+  <!-- Bold 16sp -->
+  <style name="TextAppearance.Delfin.B16">
     <item name="android:fontFamily">@font/noto_sans_bold</item>
     <item name="android:textSize">16sp</item>
   </style>
 
-  <!-- Body - Regular 16sp -->
-  <style name="TextAppearance.Delfin.Body">
+  <!-- Semi Bold 14sp -->
+  <style name="TextAppearance.Delfin.SB14">
+    <item name="android:fontFamily">@font/noto_sans_semibold</item>
+    <item name="android:textSize">14sp</item>
+  </style>
+
+  <!-- Semi Bold 12sp -->
+  <style name="TextAppearance.Delfin.SB12">
+    <item name="android:fontFamily">@font/noto_sans_semibold</item>
+    <item name="android:textSize">12sp</item>
+  </style>
+
+  <!-- Medium 14sp -->
+  <style name="TextAppearance.Delfin.M14">
     <item name="android:fontFamily">@font/noto_sans_medium</item>
     <item name="android:textSize">14sp</item>
   </style>
 
-  <!-- Caption - Regular 12sp -->
-  <style name="TextAppearance.Delfin.Caption">
+  <!-- Medium 12sp -->
+  <style name="TextAppearance.Delfin.M12">
     <item name="android:fontFamily">@font/noto_sans_medium</item>
     <item name="android:textSize">12sp</item>
+  </style>
+
+  <!-- Regular 20sp -->
+  <style name="TextAppearance.Delfin.R14">
+    <item name="android:fontFamily">@font/noto_sans_regular</item>
+    <item name="android:textSize">14sp</item>
   </style>
 
 </resources>

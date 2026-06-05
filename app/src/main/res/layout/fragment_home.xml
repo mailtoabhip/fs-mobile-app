@@ -62,7 +62,7 @@
                         android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_fastag_no_space"
                         android:textColor="@color/black_title"
-                        style="@style/TextAppearance.Delfin.Caption"/>
+                        style="@style/TextAppearance.Delfin.M12"/>
                 </LinearLayout>
 
                 <!-- GPS -->
@@ -93,7 +93,7 @@
                         android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_gps"
                         android:textColor="@color/black_title"
-                        style="@style/TextAppearance.Delfin.Caption"/>
+                        style="@style/TextAppearance.Delfin.M12"/>
                 </LinearLayout>
 
                 <!-- Fuel Card -->
@@ -124,7 +124,7 @@
                         android:layout_marginTop="@dimen/size_10dp"
                         android:text="@string/label_fuel_card_home"
                         android:textColor="@color/black_title"
-                        style="@style/TextAppearance.Delfin.Caption"/>
+                        style="@style/TextAppearance.Delfin.M12"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -183,7 +183,8 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="@dimen/size_16dp"
                 android:paddingVertical="@dimen/size_14dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:layout_width="@dimen/size_20dp"
@@ -198,9 +199,8 @@
                     android:layout_marginStart="@dimen/size_10dp"
                     android:layout_weight="1"
                     android:textColor="#7B6414"
-                    android:textSize="@dimen/text_14sp"
-                    android:textStyle="bold"
-                    tools:text="FASTag pending actions (8)" />
+                    tools:text="FASTag pending actions (8)"
+                    style="@style/TextAppearance.Delfin.SB12"/>
 
                 <ImageView
                     android:layout_width="@dimen/size_20dp"
@@ -222,7 +222,7 @@
                 android:text="@string/label_business_services"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/black_title"
-                style="@style/TextAppearance.Delfin.SectionTitle"/>
+                style="@style/TextAppearance.Delfin.B16"/>
 
             <!-- Business Service Cards (My Trucks & My Loads) -->
             <LinearLayout
@@ -276,9 +276,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
                         android:text="@string/label_my_trucks"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/black_title"
+                        style="@style/TextAppearance.Delfin.SB14"/>
 
                     <!-- Subtitle -->
                     <TextView
@@ -286,8 +285,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
                         android:text="@string/label_my_trucks_subtitle"
-                        android:textColor="#2B2B2B"
-                        android:textSize="@dimen/text_12sp" />
+                        android:textColor="@color/text_body_primary"
+                        style="@style/TextAppearance.Delfin.R14"/>
                 </LinearLayout>
 
                 <!-- My Loads Card -->
@@ -335,9 +334,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_12dp"
                         android:text="@string/label_my_loads"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/text_16sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/black_title"
+                        style="@style/TextAppearance.Delfin.SB14"/>
 
                     <!-- Subtitle -->
                     <TextView
@@ -345,8 +343,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
                         android:text="@string/label_my_loads_subtitle"
-                        android:textColor="#2B2B2B"
-                        android:textSize="@dimen/text_12sp" />
+                        android:textColor="@color/text_body_primary"
+                        style="@style/TextAppearance.Delfin.R14"/>
                 </LinearLayout>
             </LinearLayout>
 
