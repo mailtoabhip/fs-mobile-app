@@ -70,7 +70,7 @@ class PendingActionsViewModel @Inject constructor(
                         actionType = mapActionType(item.nextAction.key),
                         actionLabel = item.nextAction.label,
                         colorCode = item.colorCode,
-                        barcodeId = item.barcodeId,
+                        barcodeId = item.barcode,
                         salesCode = order.salesCode,
                         orderId = order.orderId,
                         journeyId = item.journeyId,
@@ -105,7 +105,7 @@ class PendingActionsViewModel @Inject constructor(
             "FULL_PAYMENT/PARTIAL_PAYMENT" -> PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT
             "HOTO_DONE" -> PendingActionType.HOTO_DONE
             "TAG_ASSIGNMENT" -> PendingActionType.TAG_ASSIGNMENT
-            "KYV" -> PendingActionType.KYV
+            "KYV_DONE" -> PendingActionType.KYV
             else -> PendingActionType.ADD_VEHICLE
         }
     }
