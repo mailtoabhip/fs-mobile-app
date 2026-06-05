@@ -51,6 +51,7 @@ class SelectFasTagViewModel @Inject constructor(
 
     fun kycOnboardValidate(bankCode: String) {
         viewModelScope.launch {
+            showProgress()
             _kycValidateState.value = Resource.Loading
             val result = salesCodeRepository.kycOnboardValidate(bankCode)
             _kycValidateState.value = result
