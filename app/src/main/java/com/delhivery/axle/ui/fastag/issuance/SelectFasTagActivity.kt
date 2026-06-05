@@ -12,6 +12,7 @@ import com.delhivery.axle.api.request.CreateOrderRequest
 import com.delhivery.axle.api.response.VehicleClassData
 import com.delhivery.axle.databinding.ActivitySelectFastagBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity.Companion.EXTRA_ITEMS
 
 class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFasTagViewModel>() {
 
@@ -118,9 +119,16 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
                         }
                         startActivity(navIntent)
                     } else {
+                        val items = arrayListOf(
+                            com.delhivery.axle.api.request.PaymentBreakupItem(
+                                vehicleClass = adapter?.getSelectedItem()?.classId ?: "",
+                                quantity = 1
+                            )
+                        )
                         val navIntent = Intent(this, FastagKycActivity::class.java).apply {
                             putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
                             putExtra(FastagKycActivity.EXTRA_ORDER_ID, currentOrderId)
+                            putExtra(EXTRA_ITEMS, items)
                         }
                         startActivity(navIntent)
                     }

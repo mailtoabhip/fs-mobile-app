@@ -168,7 +168,7 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
         /* Handle window insets for edge-to-edge display (API 35+) */
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
     }
 
@@ -184,10 +184,11 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
         transactionTimestamp = intent.getStringExtra(EXTRA_TRANSACTION_TIMESTAMP)
         transactionAmount = intent.getDoubleExtra(EXTRA_TRANSACTION_AMOUNT, 0.0)
 
-        // Setup header
-        binding.ivBack.setOnClickListener {
-            onBackPressed()
-        }
+        // Setup toolbar
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         // Setup selected transaction card
         setupSelectedTransaction()

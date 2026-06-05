@@ -34,6 +34,7 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
     private var selectedKycType = ""
     private var salesCode = ""
     private var orderId = ""
+    private var items: ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +56,9 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
 
         salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
         orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        @Suppress("DEPRECATION", "UNCHECKED_CAST")
+        items = intent.getSerializableExtra(PaymentBreakupActivity.EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>
+            ?: arrayListOf()
 
         viewModel.fetchKycTypes(bankCode)
     }
@@ -111,6 +115,7 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
                             startActivity(Intent(this, PaymentBreakupActivity::class.java).apply {
                                 putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
                                 putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, orderId)
+                                putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
                             })
                         }
                     }

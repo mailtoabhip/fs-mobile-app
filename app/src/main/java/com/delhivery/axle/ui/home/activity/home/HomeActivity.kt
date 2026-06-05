@@ -68,11 +68,25 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
     HomeFragmentsAdapter(supportFragmentManager)
   }
 
+  private var backPressedOnce = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
-        finish()
+        if (backPressedOnce) {
+          finish()
+          return
+        }
+        backPressedOnce = true
+        com.google.android.material.snackbar.Snackbar.make(
+          binding.root,
+          "Press back again to exit",
+          com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
+        ).show()
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+          backPressedOnce = false
+        }, 2000)
       }
     })
     val transactions = intent?.extras?.getString(ARGS_TRANSACTION_IDS) ?: ""

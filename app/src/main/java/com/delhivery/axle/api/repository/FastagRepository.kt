@@ -263,12 +263,6 @@ class FastagRepository @Inject constructor(
      * GET /fastag/tag-issuance/v1/pending-actions
      */
     suspend fun getPendingActions(): Resource<PendingActionsResponse> = safeApiCall {
-
-        /*
-        * TODO : update with real vendor ID / pass header only after discussion with BE
-        *
-        * */
-        val vendorId = "a1e38d7a-7001-7073-d3e4-320e007ddaad" //userPrefs.userId()
-        fastagService.getPendingActions(vendorId).toResource()
+        fastagService.getPendingActions().toResource()
     }
 }

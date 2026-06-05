@@ -49,7 +49,7 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         super.onCreate(savedInstanceState)
 
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
 
         setupUI()
@@ -89,7 +89,10 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         binding.tvFastagBalance.text = "FASTag Balance: ₹$fastagBalance"
         fastagBalanceValue = fastagBalance
 
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.tvAddMoney.setOnClickListener {
             AddMoneyDialogFragment.Companion.newInstance(

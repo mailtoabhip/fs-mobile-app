@@ -10,6 +10,8 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 
 import java.net.URL
 import javax.inject.Inject
@@ -67,29 +69,54 @@ class DeviceInfoProvider @Inject constructor(
      */
     suspend fun fetchPublicIp() {
         try {
-            val ip = withContext(Dispatchers.IO) {
-                URL("https://api.ipify.org").readText().trim()
+            val ip = withTimeout(10000) {
+                withContext(Dispatchers.IO) {
+                    URL("https://api.ipify.org").readText().trim()
+                }
             }
             publicIp = ip
             ipDeferred.complete(ip)
             Log.d(TAG, "Public IP fetched successfully: $publicIp")
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to fetch public IP: ${e.message}")
             ipDeferred.complete("")
+            Log.w(TAG, "Failed to fetch public IP: ${e.message}")
+        }
+    }
+
+    /**
+     * Re-fetches the public IP when network changes (e.g., WiFi → mobile data).
+     * Safe to call multiple times — updates the cached [publicIp] in place.
+     */
+    suspend fun refreshPublicIp() {
+        try {
+            val ip = withTimeout(10000) {
+                withContext(Dispatchers.IO) {
+                    URL("https://api.ipify.org").readText().trim()
+                }
+            }
+            if (ip.isNotEmpty()) {
+                publicIp = ip
+                Log.d(TAG, "Public IP refreshed: $publicIp")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to refresh public IP: ${e.message}")
         }
     }
 
     /**
      * Returns the public IP, blocking until the fetch completes.
      * Safe to call from OkHttp interceptor threads (IO).
-     * This is a mandatory field for each API call so it waits indefinitely.
+     * Returns empty string if the fetch hasn't completed within the timeout.
      */
     fun awaitPublicIp(): String {
+        val timeoutMs = 10000L
         if (publicIp.isNotEmpty()) return publicIp
         return try {
-            runBlocking { ipDeferred.await() }
+            runBlocking {
+                withTimeoutOrNull(timeoutMs) { ipDeferred.await() } ?: ""
+            }
         } catch (e: Exception) {
-            Log.w(TAG, "Error waiting for public IP: ${e.message}")
+            Log.w(TAG, "Timeout waiting for public IP: ${e.message}")
             ""
         }
     }

@@ -65,6 +65,11 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             startActivity(PendingActionsActivity.newIntent(requireContext()))
         }
 
+        // FASTag Pending Actions - shimmer loading state
+        viewModel.fastagPendingLoading.observe(viewLifecycleOwner) { loading ->
+            binding.fastagPendingShimmer.visibility = if (loading) View.VISIBLE else View.GONE
+        }
+
         viewModel.fastagPendingCount.observe(viewLifecycleOwner) { count ->
             if (count > 0) {
                 binding.fastagPendingCard.visibility = View.VISIBLE
@@ -74,9 +79,6 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
                 binding.fastagPendingCard.visibility = View.GONE
             }
         }
-
-        // Fetch FASTag pending count from API
-        viewModel.fetchFastagPendingCount()
 
         binding.gpsCard.setOnClickListener {
             startActivity(ComingSoonActivity.newIntent(requireContext(), ComingSoonActivity.TYPE_GPS))
@@ -125,6 +127,8 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
             fragmentSetupTrace?.stop()
             isFirstResume = false
         }
+        // Fetch FASTag pending count from API
+        viewModel.fetchFastagPendingCount()
     }
 
     private fun setupViews() {

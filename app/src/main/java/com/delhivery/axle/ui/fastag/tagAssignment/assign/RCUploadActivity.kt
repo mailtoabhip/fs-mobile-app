@@ -117,7 +117,7 @@ class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadV
         val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
         val chassisNumber = intent.getStringExtra(EXTRA_CHASSIS_NUMBER) ?: ""
 
-        setupToolbar()
+
         setupVehicleInfo(vehicleNumber)
         setupUploadCards()
         updateContinueButton()
@@ -127,13 +127,17 @@ class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadV
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
             WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
         }
+        setupToolbar()
     }
 
     private fun setupToolbar() {
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupVehicleInfo(vehicleNumber: String) {
