@@ -178,6 +178,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
         val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
         val referenceId = intent.getStringExtra(EXTRA_REFERENCE_ID)
         val barcodeId = intent.getStringExtra(EXTRA_BARCODE_ID)
+        val vrn = intent.getStringExtra(EXTRA_VRN)
 
         when (actionType) {
             PendingActionType.ADD_VEHICLE -> {
@@ -190,7 +191,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
             PendingActionType.ORDER_CREATED -> {
                 val intent = Intent(this, SelectFasTagActivity::class.java).apply {
                     putExtra(SelectFasTagActivity.EXTRA_SALES_CODE, salesCode)
-                    putExtra(SelectFasTagActivity.EXTRA_VRN, vehicleNumber)
+                    putExtra(SelectFasTagActivity.EXTRA_VRN, vrn)
                 }
                 startActivity(intent)
             }
