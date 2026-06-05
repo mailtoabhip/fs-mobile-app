@@ -44,7 +44,7 @@
     <string name="msg_confirmed_bid_details_banner">Our AXLE executive will be calling you to finalise the truck details. Keep the details ready</string>
     <string name="msg_no_trips_bid_smartly">Bid smartly and win to get your trucks on the trips…</string>
     <string name="msg_dialog_delete_route">The load requests belonging to this route will not be shown on the dashboard post deletion.</string>
-    <string name="msg_dialog_logout">You are signing out of AXLE app.</string>
+    <string name="msg_dialog_logout">You are signing out of Delfin app.</string>
     <string name="msg_dialog_support"> Please reach out to our support team </string>
     <string name="msg_delete_account"> Are you sure you want to delete your account? \n </string>
     <string name="msg_dialog_delete">Are you sure you want to delete this user ?</string>
