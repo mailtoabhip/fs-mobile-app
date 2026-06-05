@@ -412,6 +412,19 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   }
 
   /**
+   * Registers a back press callback that navigates to HomeActivity (clearing the back stack)
+   * instead of the default back behavior. Call in onCreate of activities that should
+   * go directly home on back press (e.g., screens deep in a flow).
+   */
+  protected fun setupBackPressToHome() {
+    onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        navigationUtils.navigateToHome()
+      }
+    })
+  }
+
+  /**
    * Check permission granted
    *
    * @param permissions [Manifest.permission] as array of String

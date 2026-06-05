@@ -479,6 +479,20 @@ class NavigationUtils @Inject constructor(
             }
         }
     }
+
+  /**
+   * Navigate to HomeActivity clearing the entire back stack.
+   * If HomeActivity already exists in the back stack, it will be brought to front
+   * and all activities above it will be cleared.
+   */
+  fun navigateToHome() {
+    val intent = Intent(activity, com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java).apply {
+      flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+    }
+    userPrefs.setPreviousScreen(activity.javaClass.name)
+    activity.startActivity(intent)
+    activity.finish()
+  }
 }
 
 

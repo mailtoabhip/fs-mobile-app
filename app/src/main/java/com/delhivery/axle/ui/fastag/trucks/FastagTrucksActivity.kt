@@ -59,8 +59,10 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
         setupRecyclerView()
         setupBanner()
         setupObservers()
+        setupPendingActionsObservers()
 
         viewModel.fetchFastagTrucks()
+        viewModel.fetchFastagPendingCount()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -154,7 +156,6 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
                 binding.ivSearch.visibility = View.GONE
                 binding.tvSectionTitle.visibility = View.GONE
                 binding.bannerCard.visibility = View.GONE
-                binding.fastagPendingCard.visibility = View.GONE
             } else {
                 binding.ivSearch.visibility = View.VISIBLE
                 binding.bannerCard.visibility = View.VISIBLE
@@ -163,19 +164,6 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
                 binding.tvSectionTitle.visibility = View.VISIBLE
                 binding.bannerCard.visibility = View.VISIBLE
                 adapter.submitList(trucks)
-
-                // Show pending card with count of trucks needing action (low balance)
-                val pendingCount = trucks.count { truck ->
-                    val balance = truck.fastagBalance?.toDoubleOrNull() ?: 0.0
-                    balance < 100
-                }
-                if (pendingCount > 0) {
-                    binding.fastagPendingCard.visibility = View.VISIBLE
-                    binding.tvFastagPendingText.text =
-                        getString(R.string.label_fastag_pending_actions, pendingCount)
-                } else {
-                    binding.fastagPendingCard.visibility = View.GONE
-                }
             }
         })
 
@@ -200,6 +188,37 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
 
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.fetchFastagTrucks()
+            viewModel.fetchFastagPendingCount()
+        }
+    }
+
+    private fun setupPendingActionsObservers() {
+        // Shimmer loading state
+        viewModel.fastagPendingLoading.observe(this) { loading ->
+            if (loading) {
+                binding.fastagPendingShimmer.alpha = 0f
+                binding.fastagPendingShimmer.visibility = View.VISIBLE
+                binding.fastagPendingShimmer.animate().alpha(1f).setDuration(200).start()
+            } else {
+                binding.fastagPendingShimmer.animate().alpha(0f).setDuration(200).withEndAction {
+                    binding.fastagPendingShimmer.visibility = View.GONE
+                }.start()
+            }
+        }
+
+        // Pending count → show/hide card with animation
+        viewModel.fastagPendingCount.observe(this) { count ->
+            if (count > 0) {
+                binding.fastagPendingCard.alpha = 0f
+                binding.fastagPendingCard.visibility = View.VISIBLE
+                binding.fastagPendingCard.animate().alpha(1f).setDuration(300).start()
+                binding.tvFastagPendingText.text =
+                    getString(R.string.label_fastag_pending_actions, count)
+            } else {
+                binding.fastagPendingCard.animate().alpha(0f).setDuration(200).withEndAction {
+                    binding.fastagPendingCard.visibility = View.GONE
+                }.start()
+            }
         }
     }
 }

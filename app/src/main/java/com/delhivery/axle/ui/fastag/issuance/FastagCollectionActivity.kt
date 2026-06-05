@@ -29,7 +29,7 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        setupBackPressToHome()
         binding.lifecycleOwner = this
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -67,11 +67,7 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
         supportActionBar?.title = "FASTag Collection"
         binding.toolbar.setNavigationIcon(R.drawable.ic_close)
         binding.toolbar.setNavigationOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-            finish()
+            navigationUtils.navigateToHome()
         }
     }
 

@@ -26,7 +26,7 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        setupBackPressToHome()
         binding.lifecycleOwner = this
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -115,7 +115,7 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = "Payment Breakup"
-        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { navigationUtils.navigateToHome() }
     }
 
     private fun setupClickListeners() {
