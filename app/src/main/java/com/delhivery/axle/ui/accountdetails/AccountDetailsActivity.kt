@@ -117,14 +117,10 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
                 when (state) {
                     AuthenticationUIState.PhoneNo -> { }
                     AuthenticationUIState.OTP -> {
-                        uiUtils.hideDelhiveryProgress()
                         uiUtils.showSnackbar(viewModel.errorAccountCreate?:"Something went wrong, Please try again")
                     }
                     AuthenticationUIState.LoginProgress -> {
-                        uiUtils.showDelhiveryProgress(
-                                "Getting details", "This usually takes few seconds to load. please be patient.",
-                                "This usually takes few seconds to load. please be patient."
-                        )
+                        // Loading UI removed - API calls continue normally
                     }
 
                     AuthenticationUIState.HomePage -> {
@@ -141,7 +137,6 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
                        // navigationUtils.navigate(AccountDetailsActivity::class.java, false)
                     }
                     AuthenticationUIState.Disabled -> {
-                        uiUtils.hideDelhiveryProgress()
                         dialogUtils.showBasicConfirmDialog(R.string.title_dialog_supplier_disabled,
                                 R.string.msg_dialog_supplier_disabled,
                                 getString(R.string.label_call_us), getString(R.string.label_mail_us),

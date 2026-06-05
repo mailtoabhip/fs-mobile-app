@@ -112,6 +112,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
     binding.viewpager.apply {
       offscreenPageLimit = OFF_SET_LIMIT
       adapter = pagerAdapter
+      disableScroll(true)  // Disable swipe since only HomeFragment is available
     }
 
     /* Setup profile click listener immediately - don't gate on API success */

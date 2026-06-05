@@ -289,7 +289,7 @@ class MyProfileActivity  : BaseActivity<ActivityMyProfileBinding, HomeProfileVie
 
     override fun onResume() {
         super.onResume()
-        viewModel.getUser()
+        // viewModel.getUser()  // API call removed - no longer fetches user data on profile open
         binding.profile.text = getUserInitials()
         if(viewModel.userPrefs.profileImageUrl.isNotNullOrEmpty()){
             downloadLogo()

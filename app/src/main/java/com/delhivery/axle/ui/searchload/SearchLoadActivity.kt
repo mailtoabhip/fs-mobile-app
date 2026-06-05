@@ -117,15 +117,9 @@ class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadVie
    */
   fun fragmentAction(action: BaseSearchLoadFragmentAction) {
     when (action.type) {
-      /* shoe/hide progress */
+      /* Progress action - loading UI removed */
       Progress -> {
-        (action as ProgressSearchLoadAction).apply {
-          if (show) {
-            uiUtils.showDelhiveryProgress(action.title, action.message, action.protip)
-          } else {
-            uiUtils.hideDelhiveryProgress()
-          }
-        }
+        // Blue progress bar removed - API calls continue normally
       }
       Search -> {
         (action as SearchLoadAction).apply {
