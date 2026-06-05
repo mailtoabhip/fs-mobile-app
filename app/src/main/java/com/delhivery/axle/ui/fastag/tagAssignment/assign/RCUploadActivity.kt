@@ -127,8 +127,7 @@ class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadV
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
-            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.llParent)
         }
         setupToolbar()
     }

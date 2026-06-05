@@ -105,7 +105,6 @@ class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBindi
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLl)
-            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnSubmit)
         }
     }
 
