@@ -195,14 +195,19 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                 startActivity(intent)
             }
             PendingActionType.KYC_DONE -> {
+                @Suppress("DEPRECATION", "UNCHECKED_CAST")
+                val items = intent.getSerializableExtra(EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>
                 val intent = Intent(this, FastagKycActivity::class.java).apply {
-                    putExtra(FastagKycActivity.EXTRA_SALES_CODE, "IDFC")
+                    putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                    putExtra(FastagKycActivity.EXTRA_ORDER_ID, orderId)
+                    putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
                 }
                 startActivity(intent)
             }
             PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT -> {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION", "UNCHECKED_CAST")
                 val items = intent.getSerializableExtra(EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>
+                    ?: arrayListOf()
                 val paymentIntent = Intent(this, PaymentBreakupActivity::class.java).apply {
                     putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
                     putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
@@ -211,6 +216,7 @@ class AssignVehicleActivity : BaseActivity<ActivityAssignVehicleBinding, AssignV
                     putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, orderId)
                     putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
                 }
+                android.util.Log.d("AssignVehicle", "Payment items passed: ${items.size} → $items")
                 startActivity(paymentIntent)
             }
             PendingActionType.HOTO_DONE -> {
