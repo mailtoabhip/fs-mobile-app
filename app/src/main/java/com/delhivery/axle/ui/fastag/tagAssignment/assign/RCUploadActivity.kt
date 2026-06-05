@@ -386,7 +386,7 @@ class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadV
                         "COMPLETED" -> {
                             val journeyId = resource.data.journeyId ?: ""
                             val skipVehicleUpload = resource.data.skipVehicleImageUpload == true
-                            android.widget.Toast.makeText(this, "RC uploaded successfully", android.widget.Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "RC uploaded successfully", Toast.LENGTH_SHORT).show()
                             if (skipVehicleUpload) {
                                 navigateToTagMapping(journeyId)
                             } else {

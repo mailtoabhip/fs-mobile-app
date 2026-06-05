@@ -24,7 +24,7 @@
             android:background="@android:color/white"
             android:elevation="2dp"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
-            app:navigationIcon="@drawable/ic_back_arrow"
+            app:navigationIcon="@drawable/ic_close"
             app:title="@string/know_your_vehicle_title"
             app:titleTextColor="@android:color/black"
             app:titleTextAppearance="@style/Toolbar.TitleText" />

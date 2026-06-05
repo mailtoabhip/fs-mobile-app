@@ -61,6 +61,7 @@
             android:paddingHorizontal="@dimen/size_12dp"
             android:singleLine="true"
             android:text="@={salesCode}"
+            android:textAllCaps="true"
             android:textColor="@color/heading_black"
             android:textColorHint="@color/color_hint"
             android:textSize="@dimen/text_14sp"

@@ -151,10 +151,13 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
             if (trucks.isNullOrEmpty()) {
                 binding.rvFastagTrucks.visibility = View.GONE
                 binding.emptyState.visibility = View.VISIBLE
+                binding.ivSearch.visibility = View.GONE
                 binding.tvSectionTitle.visibility = View.GONE
                 binding.bannerCard.visibility = View.GONE
                 binding.fastagPendingCard.visibility = View.GONE
             } else {
+                binding.ivSearch.visibility = View.VISIBLE
+                binding.bannerCard.visibility = View.VISIBLE
                 binding.rvFastagTrucks.visibility = View.VISIBLE
                 binding.emptyState.visibility = View.GONE
                 binding.tvSectionTitle.visibility = View.VISIBLE

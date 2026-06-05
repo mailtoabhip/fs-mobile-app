@@ -192,7 +192,7 @@
                     android:textColor="@android:color/white"
                     android:backgroundTint="@android:color/black"
                     android:layout_marginHorizontal="16dp"
-                    android:visibility="gone"/>
+                    />
 
                 <!-- Download Statement -->
                 <Button

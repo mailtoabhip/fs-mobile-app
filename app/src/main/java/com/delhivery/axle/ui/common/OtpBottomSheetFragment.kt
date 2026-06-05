@@ -49,6 +49,7 @@ class OtpBottomSheetFragment : BottomSheetDialogFragment() {
         _binding = BottomSheetOtpBinding.inflate(inflater, container, false)
         binding.maskedNumber = maskedNumber
         binding.isOtpFilled = false
+        binding.isLoading = false
         binding.timerText = "00:30"
         return binding.root
     }
@@ -142,6 +143,15 @@ class OtpBottomSheetFragment : BottomSheetDialogFragment() {
         otpFields.forEach { it.text.clear() }
         otpFields.first().requestFocus()
         binding.isOtpFilled = false
+        binding.isLoading = false
+    }
+
+    fun showLoading() {
+        binding.isLoading = true
+    }
+
+    fun hideLoading() {
+        binding.isLoading = false
     }
 
     fun showOtpError(message: String) {

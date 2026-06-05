@@ -50,7 +50,9 @@
                 android:layout_height="@dimen/size_24dp"
                 android:layout_marginEnd="@dimen/size_16dp"
                 android:contentDescription="@string/label_search_home"
-                android:src="@drawable/ic_search_black" />
+                android:src="@drawable/ic_search_black"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
         </LinearLayout>
 
@@ -80,7 +82,9 @@
                         android:layout_marginHorizontal="@dimen/size_16dp"
                         android:layout_marginTop="@dimen/size_16dp"
                         app:cardCornerRadius="@dimen/size_16dp"
-                        app:cardElevation="0dp">
+                        app:cardElevation="0dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -144,7 +148,8 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="@dimen/size_16dp"
                         android:paddingVertical="@dimen/size_14dp"
-                        >
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <ImageView
                             android:layout_width="@dimen/size_20dp"
@@ -183,7 +188,9 @@
                         android:text="@string/fastag_your_fastags"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/text_18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
 
                     <!-- Loading Shimmer -->
                     <LinearLayout
@@ -208,7 +215,9 @@
                         android:nestedScrollingEnabled="false"
                         android:overScrollMode="never"
                         tools:itemCount="3"
-                        tools:listitem="@layout/item_fastag_truck" />
+                        tools:listitem="@layout/item_fastag_truck"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
 
                     <!-- Empty State -->
                     <LinearLayout
