@@ -3,21 +3,6 @@ package com.delhivery.axle.api.response
 import com.google.gson.annotations.SerializedName
 
 data class FastagOrdersResponse(
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("total")
-    val total: Int,
-    @SerializedName("limit")
-    val limit: Int,
-    @SerializedName("offset")
-    val offset: Int,
-    @SerializedName("has_more")
-    val hasMore: Boolean,
-    @SerializedName("orders")
-    val orders: List<FastagOrder>
-)
-
-data class FastagOrder(
     @SerializedName("order_id")
     val orderId: String,
     @SerializedName("sales_code")
@@ -29,19 +14,21 @@ data class FastagOrder(
     @SerializedName("customer_name")
     val customerName: String,
     @SerializedName("customer_mobile")
-    val customerMobile: String,
+    val customerMobile: String?,
     @SerializedName("status")
     val status: String,
     @SerializedName("payment_status")
     val paymentStatus: String,
     @SerializedName("payment_txn_id")
-    val paymentTxnId: String,
+    val paymentTxnId: String?,
     @SerializedName("total_amount")
     val totalAmount: Double,
     @SerializedName("paid_amount")
     val paidAmount: Double?,
     @SerializedName("items")
     val items: List<FastagOrderItem>,
+    @SerializedName("vehicle_class_summary")
+    val vehicleClassSummary: List<VehicleClassSummary>? = null,
     @SerializedName("created_at")
     val createdAt: String,
     @SerializedName("updated_at")
@@ -62,5 +49,22 @@ data class FastagOrderItem(
     @SerializedName("status")
     val status: String,
     @SerializedName("unit_price")
-    val unitPrice: Double
+    val unitPrice: Double,
+    @SerializedName("barcode")
+    val barcode: String? = null,
+    @SerializedName("barcode_id")
+    val barcodeId: String? = null
+)
+
+data class VehicleClassSummary(
+    @SerializedName("vehicle_class")
+    val vehicleClass: String,
+    @SerializedName("display_name")
+    val displayName: String,
+    @SerializedName("color_code")
+    val colorCode: String,
+    @SerializedName("vehicle_types")
+    val vehicleTypes: List<String>,
+    @SerializedName("count")
+    val count: Int
 )

@@ -2,17 +2,19 @@ package com.delhivery.axle.api.repository
 
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
+import com.delhivery.axle.api.request.IssueTagRequest
+import com.delhivery.axle.api.response.BarcodeLookupResponse
+import com.delhivery.axle.api.response.FastagImageUploadResponse
+import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.FormConfigResponse
-import com.delhivery.axle.api.response.OrderItemsResponse
+import com.delhivery.axle.api.response.OrderItem
 import com.delhivery.axle.api.response.RcProcessResponse
 import com.delhivery.axle.api.response.RcProcessStatusResponse
 import com.delhivery.axle.api.response.VehicleImageProcessResponse
 import com.delhivery.axle.api.response.VehicleImageProcessStatusResponse
-import com.delhivery.axle.api.response.FastagImageUploadResponse
-import com.delhivery.axle.api.response.FastagImageValidateResponse
 import com.delhivery.axle.api.response.toResource
-import com.delhivery.axle.api.response.*
-import com.delhivery.axle.api.response.toResource
+import com.delhivery.axle.api.service.FasTAGIssuanceService
+import com.delhivery.axle.api.service.FasTAGKycService
 import com.delhivery.axle.api.service.FastagService
 import com.delhivery.axle.injection.qualifier.IoDispatcher
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
@@ -21,8 +23,6 @@ import com.delhivery.axle.utils.extensions.convertResponse
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withContext
-import com.delhivery.axle.utils.prefs.UserPrefs
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -32,8 +32,9 @@ import javax.inject.Inject
  */
 class FastagRepository @Inject constructor(
     private val fastagService: FastagService,
+    private val kycService: FasTAGKycService,
     errorLogger: ErrorLogger,
-    private val userPrefs: UserPrefs,
+    private val fasTAGIssuanceService: FasTAGIssuanceService,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseRepository(errorLogger) {
 
@@ -113,6 +114,50 @@ class FastagRepository @Inject constructor(
             .map { fields -> FormConfigResponse(fields) }
 
     /**
+     * Lookup barcode from dispatch table.
+     */
+    suspend fun barcodeLookup(orderId: String, orderItemId: Int, vehicleClass: String): Resource<BarcodeLookupResponse> =
+        safeApiCall {
+            kycService.barcodeLookup(orderId, orderItemId, vehicleClass).toResource()
+        }
+
+    /**
+     * Search products and barcodes from IDFC.
+     */
+    suspend fun searchProductBarcode(journeyId: String, barcode: String): Resource<com.delhivery.axle.api.response.ProductBarcodeResponse> =
+        safeApiCall {
+            kycService.searchProductBarcode(
+                com.delhivery.axle.api.request.ProductBarcodeRequest(journeyId, barcode)
+            ).toResource()
+        }
+
+    /**
+     * Generate consent OTP for tag mapping.
+     */
+    suspend fun generateOtp(journeyId: String, barcode: String, tagId: String): Resource<Any> =
+        safeApiCall {
+            kycService.generateOtp(
+                com.delhivery.axle.api.request.GenerateOtpRequest(journeyId, barcode, tagId)
+            ).toResource()
+        }
+
+    /**
+     * Issue FASTag and process payment.
+     */
+    suspend fun issueTag(
+        journeyId: String,
+        orderId: String,
+        orderItemId: Int,
+        barcode: String,
+        otp: String
+    ): Resource<com.delhivery.axle.api.response.IssueTagResponse> =
+        safeApiCall {
+            fasTAGIssuanceService.issueTag(
+                IssueTagRequest(journeyId, orderId, orderItemId, barcode, otp)
+            ).toResource()
+        }
+
+    /**
      * Submit dispute with multipart form data.
      */
     fun submitDispute(
@@ -132,10 +177,10 @@ class FastagRepository @Inject constructor(
 
     // ---- Coroutine-based methods (Tag Issuance flow) ----
 
-    suspend fun getOrderItems(orderId: String): Resource<OrderItemsResponse> =
+    suspend fun getOrderItems(orderId: String): Resource<List<OrderItem>> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.getOrderItems(orderId)
+                val response = kycService.getOrderItems(orderId)
                 response.toResource()
             }
         }
@@ -148,7 +193,7 @@ class FastagRepository @Inject constructor(
     ): Resource<RcProcessResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.uploadRcImages(rcFront, rcBack, orderId, orderItemId)
+                val response = kycService.uploadRcImages(rcFront, rcBack, orderId, orderItemId)
                 response.toResource()
             }
         }
@@ -156,7 +201,7 @@ class FastagRepository @Inject constructor(
     suspend fun getRcProcessStatus(jobId: String): Resource<RcProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.getRcProcessStatus(jobId)
+                val response = kycService.getRcProcessStatus(jobId)
                 response.toResource()
             }
         }
@@ -165,11 +210,12 @@ class FastagRepository @Inject constructor(
         vehicleFront: MultipartBody.Part,
         vehicleSide: MultipartBody.Part,
         orderId: MultipartBody.Part,
-        orderItemId: MultipartBody.Part
+        orderItemId: MultipartBody.Part,
+        journeyId: MultipartBody.Part
     ): Resource<VehicleImageProcessResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId)
+                val response = kycService.uploadVehicleImages(vehicleFront, vehicleSide, orderId, orderItemId, journeyId)
                 response.toResource()
             }
         }
@@ -177,18 +223,20 @@ class FastagRepository @Inject constructor(
     suspend fun getVehicleImageProcessStatus(jobId: String): Resource<VehicleImageProcessStatusResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.getVehicleImageProcessStatus(jobId)
+                val response = kycService.getVehicleImageProcessStatus(jobId)
                 response.toResource()
             }
         }
 
     suspend fun uploadFastagImage(
         fastagImage: MultipartBody.Part,
-        journeyId: MultipartBody.Part
+        journeyId: MultipartBody.Part,
+        orderId: MultipartBody.Part,
+        orderItemId: MultipartBody.Part
     ): Resource<FastagImageUploadResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val response = fastagService.uploadFastagImage(fastagImage, journeyId)
+                val response = kycService.uploadFastagImage(fastagImage, journeyId, orderId, orderItemId)
                 response.toResource()
             }
         }
@@ -197,7 +245,7 @@ class FastagRepository @Inject constructor(
         withContext(ioDispatcher) {
             safeApiCall {
                 val request = com.delhivery.axle.api.request.FastagImageValidateRequest(journeyId = journeyId)
-                val response = fastagService.validateFastagImage(request)
+                val response = kycService.validateFastagImage(request)
                 response.toResource()
             }
         }
@@ -215,12 +263,6 @@ class FastagRepository @Inject constructor(
      * GET /fastag/tag-issuance/v1/pending-actions
      */
     suspend fun getPendingActions(): Resource<PendingActionsResponse> = safeApiCall {
-
-        /*
-        * TODO : update with real vendor ID / pass header only after discussion with BE
-        *
-        * */
-        val vendorId = "a1e38d7a-7001-7073-d3e4-320e007ddaad" //userPrefs.userId()
-        fastagService.getPendingActions(vendorId).toResource()
+        fastagService.getPendingActions().toResource()
     }
 }

@@ -20,6 +20,8 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
     private var salesCode = ""
     private var paymentMethod = ""
     private var items: List<com.delhivery.axle.api.request.PaymentBreakupItem> = emptyList()
+    private var orderId = ""
+    private var grandTotalAmount = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,7 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         // Fetch payment breakup from API
         salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
         paymentMethod = intent.getStringExtra(EXTRA_PAYMENT_METHOD) ?: "FULL_PAYMENT"
+        orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
         @Suppress("DEPRECATION")
         items = intent.getSerializableExtra(EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem> ?: arrayListOf()
 
@@ -68,18 +71,40 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         viewModel.breakupState.observe(this) { resource ->
             when (resource) {
                 is com.delhivery.axle.api.repository.Resource.Loading -> {
-                    // TODO: Show loading
+                    // Loading handled by BaseActivity
                 }
                 is com.delhivery.axle.api.repository.Resource.Success -> {
                     resource.data?.let { data ->
                         binding.rvBreakup.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
                         binding.rvBreakup.adapter = BreakupLineAdapter(data.breakup)
+                        grandTotalAmount = data.grandTotal
                     }
                 }
                 is com.delhivery.axle.api.repository.Resource.Failure -> {
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
-                    android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
+                    dialogUtils.showErrorDialog(message)
+                }
+            }
+        }
+
+        viewModel.checkoutState.observe(this) { resource ->
+            when (resource) {
+                is com.delhivery.axle.api.repository.Resource.Loading -> {
+                    // Loading handled by BaseActivity
+                }
+                is com.delhivery.axle.api.repository.Resource.Success -> {
+                    val data = resource.data ?: return@observe
+                    if (data.paymentStatus == "PAID" || data.paymentStatus == "FULL_PAYMENT") {
+                        showPaymentSuccessBottomSheet()
+                    } else {
+                        binding.slideToConfirm.reset()
+                        showPaymentFailedBottomSheet()
+                    }
+                }
+                is com.delhivery.axle.api.repository.Resource.Failure -> {
+                    binding.slideToConfirm.reset()
+                    showPaymentFailedBottomSheet()
                 }
             }
         }
@@ -103,8 +128,8 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         }
 
         binding.slideToConfirm.setOnSlideCompleteListener {
-            // Payment deducted from wallet — show success bottom sheet
-            showPaymentSuccessBottomSheet()
+            // Call payment checkout API
+            viewModel.paymentCheckout(orderId, grandTotalAmount)
         }
     }
 
@@ -112,9 +137,17 @@ class PaymentBreakupActivity : BaseActivity<ActivityPaymentBreakupBinding, Payme
         PaymentSuccessBottomSheet.newInstance {
             val intent = Intent(this, FastagCollectionActivity::class.java).apply {
                 putExtra("extra_sales_code", salesCode)
+                putExtra("extra_order_id", orderId)
             }
             startActivity(intent)
             finish()
+        }.show(supportFragmentManager, PaymentSuccessBottomSheet.TAG)
+    }
+
+    private fun showPaymentFailedBottomSheet() {
+        PaymentSuccessBottomSheet.newFailedInstance {
+            // Retry — reset slide so user can try again
+            binding.slideToConfirm.reset()
         }.show(supportFragmentManager, PaymentSuccessBottomSheet.TAG)
     }
 

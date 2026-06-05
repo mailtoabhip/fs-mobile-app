@@ -28,6 +28,10 @@
         android:theme="@style/CustomSplashScreenTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
+            android:name=".ui.fastag.tagMapping.TagMappingActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ui.fastag.issuance.BuyFasTagActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
@@ -239,7 +243,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.kyc.pan.PanVerificationActivity"
             android:screenOrientation="portrait"
@@ -340,7 +344,7 @@
             android:name=".ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.tagAssignment.assign.FastagAssignmentActivity"
+            android:name=".ui.fastag.tagAssignment.assign.RCUploadActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fastag.tagAssignment.assign.VehicleDetailsActivity"
@@ -353,7 +357,7 @@
             android:name=".ui.fastag.tagAssignment.assign.VehicleImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity"
+            android:name=".ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.fastag.trucks.FastagSearchActivity"

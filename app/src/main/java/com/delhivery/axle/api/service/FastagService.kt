@@ -2,7 +2,9 @@ package com.delhivery.axle.api.service
 
 import com.delhivery.axle.api.request.FastagLeadRequest
 import com.delhivery.axle.api.request.FastagRechargeRequest
+import com.delhivery.axle.api.request.IssueTagRequest
 import com.delhivery.axle.api.response.*
+import com.google.gson.JsonObject
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsResponse
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -65,7 +67,7 @@ interface FastagService {
     /**
      * Recharge FASTag from wallet.
      */
-    @POST("/finance/users/wallet/fastag/recharge")
+    @POST("/fastag/v1/recharge")
     fun rechargeFastag(
         @Body request: FastagRechargeRequest
     ): Single<BaseResponse<FastagRechargeResponse>>
@@ -116,6 +118,40 @@ interface FastagService {
     ): Single<BaseResponse<List<FormField>>>
 
     /**
+     * Lookup barcode from dispatch table.
+     */
+    @GET("v1/barcode")
+    suspend fun barcodeLookup(
+        @Query("order_id") orderId: String,
+        @Query("order_item_id") orderItemId: Int,
+        @Query("vehicle_class") vehicleClass: String
+    ): BaseResponse<BarcodeLookupResponse>
+
+    /**
+     * Search products and barcodes from IDFC.
+     */
+    @POST("finance/fastag/issuance/product-barcode")
+    suspend fun searchProductBarcode(
+        @Body request: com.delhivery.axle.api.request.ProductBarcodeRequest
+    ): BaseResponse<ProductBarcodeResponse>
+
+    /**
+     * Generate consent OTP for tag mapping.
+     */
+    @POST("finance/fastag/issuance/generate-otp")
+    suspend fun generateOtp(
+        @Body request: com.delhivery.axle.api.request.GenerateOtpRequest
+    ): BaseResponse<Any>
+
+    /**
+     * Issue FASTag and process payment.
+     */
+    @POST("finance/fastag/issuance/issue-tag")
+    suspend fun issueTag(
+        @Body request: IssueTagRequest
+    ): BaseResponse<IssueTagResponse>
+
+    /**
      * Submit dispute with multipart form data.
      */
     @Multipart
@@ -132,60 +168,13 @@ interface FastagService {
         @Part uploadDoc3: MultipartBody.Part? = null
     ): Single<BaseResponse<DisputeSubmissionResponse>>
 
-    // ---- Coroutine-based endpoints (Tag Issuance flow) ----
-
-    @GET("/fastag/tag-issuance/v1/order/{order_id}/items")
-    suspend fun getOrderItems(
-        @Path("order_id") orderId: String
-    ): BaseResponse<OrderItemsResponse>
-
-    @Multipart
-    @POST("/issuance/rc-process")
-    suspend fun uploadRcImages(
-        @Part rcFront: MultipartBody.Part,
-        @Part rcBack: MultipartBody.Part,
-        @Part orderId: MultipartBody.Part,
-        @Part orderItemId: MultipartBody.Part
-    ): BaseResponse<RcProcessResponse>
-
-    @GET("/issuance/rc-process/{job_id}/status")
-    suspend fun getRcProcessStatus(
-        @Path("job_id") jobId: String
-    ): BaseResponse<RcProcessStatusResponse>
-
-    @Multipart
-    @POST("/issuance/vehicle-images-process")
-    suspend fun uploadVehicleImages(
-        @Part vehicleFront: MultipartBody.Part,
-        @Part vehicleSide: MultipartBody.Part,
-        @Part orderId: MultipartBody.Part,
-        @Part orderItemId: MultipartBody.Part
-    ): BaseResponse<VehicleImageProcessResponse>
-
-    @GET("/issuance/vehicle-images-process/{job_id}/status")
-    suspend fun getVehicleImageProcessStatus(
-        @Path("job_id") jobId: String
-    ): BaseResponse<VehicleImageProcessStatusResponse>
-
-    @Multipart
-    @POST("/issuance/fastag-image")
-    suspend fun uploadFastagImage(
-        @Part fastagImage: MultipartBody.Part,
-        @Part journeyId: MultipartBody.Part
-    ): BaseResponse<FastagImageUploadResponse>
-
-    @POST("/issuance/fastag-image/validate")
-    suspend fun validateFastagImage(
-        @Body request: com.delhivery.axle.api.request.FastagImageValidateRequest
-    ): BaseResponse<FastagImageValidateResponse>
-
     /**
      * Fetch recharge status.
      */
     @POST("/api/v1/wallet/recharge-status")
     fun fetchRechargeStatus(
         @Header("x-user-id") userId: String,
-        @Body request: com.google.gson.JsonObject
+        @Body request: JsonObject
     ): Single<BaseResponse<RechargeStatusResponse>>
 
 
@@ -196,7 +185,5 @@ interface FastagService {
      * TODO : update the endpoints with correctly mapped BE url
      */
     @GET("https://financial-fastag-dev.delhivery.com/fastag/tag-issuance/v1/pending-actions")
-    suspend fun getPendingActions(
-        @Header("X-Vendor-Id") vendorId: String
-    ): BaseResponse<PendingActionsResponse>
+    suspend fun getPendingActions(): BaseResponse<PendingActionsResponse>
 }

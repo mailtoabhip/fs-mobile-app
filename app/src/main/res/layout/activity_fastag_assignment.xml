@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentViewModel" />
+            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.RCUploadViewModel" />
     </data>
 
     <LinearLayout
@@ -16,34 +16,17 @@
         android:orientation="vertical">
 
         <!-- Toolbar -->
-        <LinearLayout
-            android:id="@+id/layoutHeader"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/white"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
             android:elevation="2dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/size_16dp">
-
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="@dimen/size_16dp"
-                android:layout_height="@dimen/size_16dp"
-                android:contentDescription="@string/action_continue"
-                android:src="@drawable/icon_back_button" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_16dp"
-                android:layout_weight="1"
-                android:text="@string/fastag_assignment_title"
-                android:textColor="@color/black_title"
-                android:textSize="@dimen/text_14sp"
-                />
-
-        </LinearLayout>
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:navigationIcon="@drawable/ic_back_arrow"
+            app:title="@string/fastag_assignment_title"
+            app:titleTextColor="@android:color/black"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
         <!-- Scrollable Content -->
         <ScrollView
@@ -60,7 +43,7 @@
                 android:padding="@dimen/size_16dp">
 
                 <!-- Section Title -->
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/upload_rc_image_title"
@@ -78,7 +61,7 @@
                     android:paddingHorizontal="@dimen/size_16dp"
                     android:paddingVertical="@dimen/size_14dp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvVehicleNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -86,7 +69,7 @@
                         android:textSize="@dimen/text_14sp"
                         tools:text="Vehicle Number: DL01CA1268" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"

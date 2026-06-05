@@ -13,15 +13,15 @@ import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
-class FastagAssignmentViewModel @Inject constructor(
+class RCUploadViewModel @Inject constructor(
     private val fastagRepository: FastagRepository
 ) : BaseViewModel() {
 
     private val _rcUploadState = MutableLiveData<Resource<RcProcessResponse>>()
     val rcUploadState: LiveData<Resource<RcProcessResponse>> = _rcUploadState
 
-    private val _rcProcessStatus = MutableLiveData<Resource<RcProcessStatusResponse>>()
-    val rcProcessStatus: LiveData<Resource<RcProcessStatusResponse>> = _rcProcessStatus
+    private val _rcProcessStatus = MutableLiveData<Resource<RcProcessStatusResponse>?>()
+    val rcProcessStatus: LiveData<Resource<RcProcessStatusResponse>?> = _rcProcessStatus
 
     companion object {
         private const val POLL_INTERVAL_MS = 5_000L
@@ -34,6 +34,8 @@ class FastagAssignmentViewModel @Inject constructor(
         orderId: String,
         orderItemId: Int
     ) {
+        // Reset previous states to avoid stale observers firing
+        _rcProcessStatus.value = null
         viewModelScope.launch {
             _rcUploadState.value = Resource.Loading
             val orderIdPart = MultipartBody.Part.createFormData("order_id", orderId)
@@ -65,9 +67,9 @@ class FastagAssignmentViewModel @Inject constructor(
                 delay(POLL_INTERVAL_MS)
             }
 
-            // Timeout
+            // Timeout — polling exhausted while still pending
             _rcProcessStatus.postValue(
-                Resource.Success(RcProcessStatusResponse(status = "TIMEOUT", currentStep = null, completedSteps = null, data = null))
+                Resource.Success(RcProcessStatusResponse(status = "TIMEOUT", currentStep = null, completedSteps = null, journeyId = null, skipVehicleImageUpload = null))
             )
         }
     }

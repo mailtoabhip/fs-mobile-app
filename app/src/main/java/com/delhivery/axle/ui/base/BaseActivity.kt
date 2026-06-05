@@ -147,6 +147,10 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       window.statusBarColor = StatusBarColor
     }
+
+    // Automatically set status bar icon color based on background luminance
+    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+    insetsController.isAppearanceLightStatusBars = isColorLight(StatusBarColor)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -393,6 +397,19 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
       }
       else -> super.onOptionsItemSelected(item)
     }
+
+  /**
+   * Determines if a color is light based on its luminance.
+   * Uses the W3C relative luminance formula.
+   * @return true if the color is light (should use dark icons), false if dark (should use light icons)
+   */
+  private fun isColorLight(color: Int): Boolean {
+    val red = Color.red(color) / 255.0
+    val green = Color.green(color) / 255.0
+    val blue = Color.blue(color) / 255.0
+    val luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+    return luminance > 0.5
+  }
 
   /**
    * Check permission granted

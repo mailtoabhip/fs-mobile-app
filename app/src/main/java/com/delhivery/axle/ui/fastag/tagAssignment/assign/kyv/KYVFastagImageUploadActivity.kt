@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
@@ -36,9 +37,9 @@ import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
-class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding, FastagImageUploadViewModel>() {
+class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding, KYVFastagImageUploadViewModel>() {
 
-    override fun getViewModelClass() = FastagImageUploadViewModel::class.java
+    override fun getViewModelClass() = KYVFastagImageUploadViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_image_upload
     override fun requireConnection() = true
 
@@ -54,11 +55,15 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
     companion object {
         private const val EXTRA_VEHICLE_NUMBER = "extra_vehicle_number"
         private const val EXTRA_JOURNEY_ID = "extra_journey_id"
+        private const val EXTRA_ORDER_ID = "extra_order_id"
+        private const val EXTRA_ITEM_ID = "extra_item_id"
 
-        fun newIntent(context: Context, vehicleNumber: String, journeyId: String = ""): Intent {
-            return Intent(context, FastagImageUploadActivity::class.java).apply {
+        fun newIntent(context: Context, vehicleNumber: String, journeyId: String = "", orderId:String = "",itemId:String =""): Intent {
+            return Intent(context, KYVFastagImageUploadActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_NUMBER, vehicleNumber)
                 putExtra(EXTRA_JOURNEY_ID, journeyId)
+                putExtra(EXTRA_ORDER_ID, orderId)
+                putExtra(EXTRA_ITEM_ID, itemId)
             }
         }
     }
@@ -105,9 +110,37 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
     }
 
     private fun setupToolbar() {
-        binding.ivBack.setOnClickListener { finish() }
-        binding.ivHelp.setOnClickListener {
-            // TODO: Open help/support
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { navigateToHome() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateToHome()
+            }
+        })
+    }
+
+    private fun navigateToHome() {
+        val homeIntent = Intent(this, HomeActivity::class.java)
+        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(homeIntent)
+        finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_help, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_help -> {
+                // TODO: Open help/support
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -212,7 +245,7 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
                     val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
                     val converted = documentUtils.convertPngToJpg(
                         sourcePath = documentUtils.getPathFromUri(
-                            context = this@FastagImageUploadActivity,
+                            context = this@KYVFastagImageUploadActivity,
                             uri = uri
                         ),
                         destPath = destPath
@@ -238,7 +271,7 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
         } else {
             try {
                 val filePath = documentUtils.getPathFromUri(
-                    context = this@FastagImageUploadActivity,
+                    context = this@KYVFastagImageUploadActivity,
                     uri = uri
                 )
                 val compressedFile = fileCompressor.compressToFile(
@@ -271,6 +304,8 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
     private fun uploadFastagImageToServer() {
         val file = fastagImageFile ?: return
         val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
+        val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        val orderItemId = intent.getStringExtra(EXTRA_ITEM_ID) ?: ""
 
         val mediaType = MediaType.parse("image/jpeg")
         val imagePart = MultipartBody.Part.createFormData(
@@ -279,7 +314,7 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
             RequestBody.create(mediaType, file)
         )
 
-        viewModel.uploadFastagImage(imagePart, journeyId)
+        viewModel.uploadFastagImage(imagePart, journeyId, orderId, orderItemId)
         observeUpload()
     }
 
@@ -298,11 +333,12 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
+                    val errorMessage = if (resource.isNetworkError) {
+                        "Network error. Please check your connection."
                     } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "FASTag image upload failed. Please try again.")
+                        resource.errorMessage ?: "FASTag image upload failed. Please try again."
                     }
+                    dialogUtils.showErrorDialog(errorMessage, 3L)
                 }
             }
         })
@@ -319,11 +355,12 @@ class FastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding,
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
+                    val errorMessage = if (resource.isNetworkError) {
+                        "Network error. Please check your connection."
                     } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "FASTag image validation failed. Please try again.")
+                        resource.errorMessage ?: "FASTag image validation failed. Please try again."
                     }
+                    dialogUtils.showErrorDialog(errorMessage, 3L)
                 }
             }
         })

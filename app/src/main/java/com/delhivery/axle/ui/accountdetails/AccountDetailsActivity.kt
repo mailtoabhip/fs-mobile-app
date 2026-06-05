@@ -55,8 +55,6 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
           WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentCl)
         }
-        title = ""
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         startTime = System.currentTimeMillis()
         trackEvent()
         //onLocationButtonClicked()
@@ -90,7 +88,10 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
             viewModel.createAccount()
         }
 
-        binding.icBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.editName.focusClick()
         if (activitySetupTrace != null && isFirstResume) {
             activitySetupTrace?.stop()

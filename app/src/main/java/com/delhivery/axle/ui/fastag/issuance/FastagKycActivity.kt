@@ -3,51 +3,45 @@ package com.delhivery.axle.ui.fastag.issuance
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityFastagKycBinding
+import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.common.OtpBottomSheetFragment
-import com.delhivery.axle.utils.ViewModelFactory
-import dagger.android.support.DaggerAppCompatActivity
+import com.delhivery.axle.utils.prefs.UserPrefs
 import javax.inject.Inject
 
-class FastagKycActivity : DaggerAppCompatActivity() {
+class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewModel>() {
+
+    override fun getViewModelClass() = FastagKycViewModel::class.java
+    override fun layoutId() = R.layout.activity_fastag_kyc
+    override fun requireConnection() = true
 
     @Inject
-    lateinit var viewModelFactory: ViewModelFactory
+    lateinit var userPrefs: UserPrefs
 
-    @Inject
-    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
-
-    @Inject
-    lateinit var userPrefs: com.delhivery.axle.utils.prefs.UserPrefs
-
-    private lateinit var binding: ActivityFastagKycBinding
-    private lateinit var viewModel: FastagKycViewModel
     private var isOtherKycExpanded = false
 
-    // Track available KYC types from API
     private var hasFullKyc = false
     private var hasExpressKyc = false
     private var hasEkyc = false
 
-    private var bankCode = "IDFC" // Will be set from intent or API response
+    private var bankCode = "IDFC"
     private var journeyId = ""
     private var selectedKycType = ""
     private var salesCode = ""
+    private var orderId = ""
+    private var items: ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_fastag_kyc)
+
+        binding.lifecycleOwner = this
         binding.hasSelection = false
-        viewModel = ViewModelProvider(this, viewModelFactory)[FastagKycViewModel::class.java]
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -60,10 +54,12 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         setupClickListeners()
         observeViewModel()
 
-        // Read sales code from intent
         salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
+        orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        @Suppress("DEPRECATION", "UNCHECKED_CAST")
+        items = intent.getSerializableExtra(PaymentBreakupActivity.EXTRA_ITEMS) as? ArrayList<com.delhivery.axle.api.request.PaymentBreakupItem>
+            ?: arrayListOf()
 
-        // Fetch KYC types from API
         viewModel.fetchKycTypes(bankCode)
     }
 
@@ -78,9 +74,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     private fun observeViewModel() {
         viewModel.kycTypesState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
@@ -104,9 +98,7 @@ class FastagKycActivity : DaggerAppCompatActivity() {
 
         viewModel.kycInitiateState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading on button
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
@@ -122,6 +114,8 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                         "TagIssuance" -> {
                             startActivity(Intent(this, PaymentBreakupActivity::class.java).apply {
                                 putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
+                                putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, orderId)
+                                putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
                             })
                         }
                     }
@@ -137,15 +131,12 @@ class FastagKycActivity : DaggerAppCompatActivity() {
 
         viewModel.kycVerifyState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
-                    // Dismiss OTP bottom sheet on success
-                    val otpSheet = supportFragmentManager.findFragmentByTag(com.delhivery.axle.ui.common.OtpBottomSheetFragment.TAG)
-                    (otpSheet as? com.delhivery.axle.ui.common.OtpBottomSheetFragment)?.dismiss()
+                    val otpSheet = supportFragmentManager.findFragmentByTag(OtpBottomSheetFragment.TAG)
+                    (otpSheet as? OtpBottomSheetFragment)?.dismiss()
 
                     when (data.nextStage) {
                         "TagIssuance" -> {
@@ -155,15 +146,13 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                 }
 
                 is Resource.Failure -> {
-                    val otpSheet = supportFragmentManager.findFragmentByTag(com.delhivery.axle.ui.common.OtpBottomSheetFragment.TAG)
-                        as? com.delhivery.axle.ui.common.OtpBottomSheetFragment
+                    val otpSheet = supportFragmentManager.findFragmentByTag(OtpBottomSheetFragment.TAG)
+                        as? OtpBottomSheetFragment
 
                     if (resource.errorCode == 400) {
-                        // Invalid OTP — show inline error on the bottom sheet
                         val errorMsg = resource.errorMessage ?: "Incorrect OTP"
                         otpSheet?.showOtpError(errorMsg)
                     } else {
-                        // Server error — dismiss sheet and show error dialog
                         otpSheet?.dismiss()
                         val message = resource.errorMessage
                             ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
@@ -175,13 +164,8 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     }
 
     private fun updateKycOptionsVisibility() {
-        // Full KYC card - always shown but greyed out
         binding.cardFullKyc.visibility = if (hasFullKyc) View.VISIBLE else View.GONE
-
-        // Other options section - show if eKYC or Express KYC available
         binding.cardOtherKyc.visibility = if (hasEkyc || hasExpressKyc) View.VISIBLE else View.GONE
-
-        // Individual options inside the dropdown
         binding.ekycContent.visibility = if (hasEkyc) View.VISIBLE else View.GONE
         binding.expressKycContent.visibility = if (hasExpressKyc) View.VISIBLE else View.GONE
     }
@@ -191,14 +175,18 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         binding.cardFullKyc.isClickable = false
         binding.cardFullKyc.isFocusable = false
 
-        // Other KYC options dropdown toggle
-        binding.otherKycHeader.setOnClickListener {
-            toggleOtherKycOptions()
-        }
+        // eKYC is disabled
+        binding.rbEkyc.isEnabled = false
+        binding.ekycContent.isClickable = false
+        binding.ekycContent.alpha = 0.5f
 
-        // eKYC selection
-        binding.rbEkyc.setOnClickListener { selectEkyc() }
-        binding.ekycContent.setOnClickListener { selectEkyc() }
+        // Expand the dropdown by default
+        isOtherKycExpanded = true
+        binding.expandedKycContent.visibility = View.VISIBLE
+        binding.ivDropdown.rotation = 180f
+
+        // Other KYC options dropdown toggle
+        binding.otherKycHeader.setOnClickListener { toggleOtherKycOptions() }
 
         // Express KYC selection
         binding.rbExpressKyc.setOnClickListener { selectExpressKyc() }
@@ -231,7 +219,6 @@ class FastagKycActivity : DaggerAppCompatActivity() {
         binding.bottomButtons.btnPrimary.text = "Proceed"
         binding.bottomButtons.btnSecondary.text = "Cancel"
 
-        // Disable Proceed until a KYC type is selected
         binding.bottomButtons.btnPrimary.isEnabled = false
         binding.bottomButtons.btnPrimary.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
 
@@ -241,13 +228,10 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                 binding.rbEkyc.isChecked -> "EKYC"
                 else -> return@setOnClickListener
             }
-            android.util.Log.d("FastagKyc", "Initiating KYC: bankCode=$bankCode, kycType=$selectedKycType")
             viewModel.initiateKyc(bankCode, selectedKycType)
         }
 
-        binding.bottomButtons.btnSecondary.setOnClickListener {
-            finish()
-        }
+        binding.bottomButtons.btnSecondary.setOnClickListener { finish() }
     }
 
     private fun showOtpBottomSheet(maskedNumber: String) {
@@ -257,7 +241,6 @@ class FastagKycActivity : DaggerAppCompatActivity() {
                 viewModel.verifyAndCreateKyc(journeyId, otp, bankCode, selectedKycType)
             },
             onResend = {
-                // Re-initiate KYC to resend OTP
                 viewModel.initiateKyc(bankCode, selectedKycType)
             }
         )
@@ -265,11 +248,15 @@ class FastagKycActivity : DaggerAppCompatActivity() {
     }
 
     private fun showIdentityVerificationSuccessBottomSheet() {
-        val bottomSheet = DocumentVerificationBottomSheet.newInstance()
+        val bottomSheet = DocumentVerificationBottomSheet.newInstance(
+            salesCode = salesCode,
+            orderId = orderId
+        )
         bottomSheet.show(supportFragmentManager, DocumentVerificationBottomSheet.TAG)
     }
 
     companion object {
         const val EXTRA_SALES_CODE = "extra_sales_code"
+        const val EXTRA_ORDER_ID = "extra_order_id"
     }
 }

@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.issuance.FastagKycViewModel" />
+
+        <variable
             name="hasSelection"
             type="Boolean" />
 
@@ -27,7 +31,7 @@
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIcon="@drawable/ic_back_arrow"
             app:title="KYC"
             app:titleTextAppearance="@style/Toolbar.TitleText" />
 

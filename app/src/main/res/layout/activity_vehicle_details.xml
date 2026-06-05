@@ -17,37 +17,20 @@
         android:orientation="vertical">
 
         <!-- Toolbar -->
-        <LinearLayout
-            android:id="@+id/layoutHeader"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/white"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
             android:elevation="2dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/size_16dp">
-
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="@dimen/size_16dp"
-                android:layout_height="@dimen/size_16dp"
-                android:contentDescription="@string/action_continue"
-                android:src="@drawable/icon_back_button" />
-
-            <TextView
-                android:id="@+id/tvToolbarTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_16dp"
-                android:layout_weight="1"
-                android:textColor="@color/black_title"
-                android:textSize="@dimen/text_14sp"
-                tools:text="MH01CA1234" />
-
-        </LinearLayout>
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:navigationIcon="@drawable/ic_close"
+            app:titleTextColor="@android:color/black"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
         <!-- Content -->
         <ScrollView
+            android:id="@+id/scrollContent"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -61,7 +44,7 @@
                 android:padding="@dimen/size_16dp">
 
                 <!-- Section Title -->
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/vehicle_details_title"
@@ -88,14 +71,14 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/vehicle_number_label"
                                 android:textColor="@color/neutral_black_200"
                                 android:textSize="@dimen/text_14sp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvVehicleNumber"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -105,13 +88,6 @@
                                 tools:text="MH01CA1234" />
 
                         </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/ivEditVehicle"
-                            android:layout_width="@dimen/size_20dp"
-                            android:layout_height="@dimen/size_20dp"
-                            android:contentDescription="@string/action_edit_truck"
-                            android:src="@drawable/ic_fs_edit_pencil" />
 
                     </LinearLayout>
 
@@ -130,14 +106,14 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/commercial_vehicle_label"
                         android:textColor="@color/neutral_black_200"
                         android:textSize="@dimen/text_14sp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvCommercialVehicle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -161,14 +137,14 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/exempted_vehicle_status_label"
                         android:textColor="@color/neutral_black_200"
                         android:textSize="@dimen/text_14sp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvExemptedStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -192,14 +168,14 @@
                     android:layout_marginTop="@dimen/size_16dp"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/vehicle_class_label"
                         android:textColor="@color/neutral_black_200"
                         android:textSize="@dimen/text_14sp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvVehicleClass"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

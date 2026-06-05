@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import com.bumptech.glide.Glide
 import com.delhivery.axle.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PaymentSuccessBottomSheet : BottomSheetDialogFragment() {
 
-    private var onCollectFastags: (() -> Unit)? = null
+    private var onAction: (() -> Unit)? = null
+    private var isSuccess: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,15 +29,36 @@ class PaymentSuccessBottomSheet : BottomSheetDialogFragment() {
 
         isCancelable = false
 
-        view.findViewById<View>(R.id.btnCollectFastags).setOnClickListener {
-            dismiss()
-            onCollectFastags?.invoke()
+        val ivIcon = view.findViewById<ImageView>(R.id.ivSuccessIcon)
+        val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
+        val tvDescription = view.findViewById<TextView>(R.id.tvDescription)
+        val btnAction = view.findViewById<AppCompatButton>(R.id.btnCollectFastags)
+
+        if (isSuccess) {
+            Glide.with(this)
+                .asGif()
+                .load(R.raw.successful_check)
+                .into(ivIcon)
+            tvTitle.text = "Payment done successfully!"
+            tvDescription.text = "Payment has been successfully done."
+            btnAction.text = "Collect FASTags"
+            btnAction.visibility = View.VISIBLE
+        } else {
+            Glide.with(this)
+                .asGif()
+                .load(R.raw.ic_payment_failed)
+                .into(ivIcon)
+            tvTitle.text = "Payment Failed"
+            tvDescription.text = "We're unable to proceed with your payment\n" +
+                    "due to a technical issue. Please try again later."
+            btnAction.visibility = View.GONE
+            isCancelable = true
         }
-        val imageView = view.findViewById<ImageView>(R.id.ivSuccessIcon)
-        Glide.with(this)
-            .asGif()
-            .load(R.raw.successful_check)
-            .into(imageView)
+
+        btnAction.setOnClickListener {
+            dismiss()
+            onAction?.invoke()
+        }
     }
 
     companion object {
@@ -42,7 +66,15 @@ class PaymentSuccessBottomSheet : BottomSheetDialogFragment() {
 
         fun newInstance(onCollectFastags: () -> Unit): PaymentSuccessBottomSheet {
             return PaymentSuccessBottomSheet().apply {
-                this.onCollectFastags = onCollectFastags
+                this.isSuccess = true
+                this.onAction = onCollectFastags
+            }
+        }
+
+        fun newFailedInstance(onRetry: () -> Unit): PaymentSuccessBottomSheet {
+            return PaymentSuccessBottomSheet().apply {
+                this.isSuccess = false
+                this.onAction = onRetry
             }
         }
     }

@@ -46,7 +46,10 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
     }
 
     private fun setupToolbar() {
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupRecyclerView() {
@@ -62,7 +65,9 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
                     barcodeId = vehicle.barcodeId,
                     salesCode = vehicle.salesCode,
                     orderId = vehicle.orderId,
-                    journeyId = vehicle.journeyId
+                    itemId = vehicle.itemId,
+                    journeyId = vehicle.journeyId,
+                    items = vehicle.items
                 )
             )
         }

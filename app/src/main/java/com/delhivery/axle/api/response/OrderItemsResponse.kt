@@ -20,11 +20,17 @@ data class OrderItem(
     @SerializedName("vrn")
     val vrn: String? = null,
 
-    @SerializedName("commercial_vehicle")
-    val commercialVehicle: Boolean? = null,
+    @SerializedName("is_commercial")
+    val isCommercial: Boolean? = null,
 
-    @SerializedName("exempted_status")
-    val exemptedStatus: String? = null,
+    @SerializedName("exempted_state")
+    val exemptedState: String? = null,
+
+    @SerializedName("tag_color")
+    val tagColor: String? = null,
+
+    @SerializedName("bank")
+    val bank: String? = null,
 
     @SerializedName("status")
     val status: String? = null

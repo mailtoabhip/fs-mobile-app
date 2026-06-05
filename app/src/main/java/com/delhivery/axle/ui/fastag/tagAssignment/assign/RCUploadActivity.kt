@@ -19,6 +19,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityFastagAssignmentBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.dialogs.RcUploadFailedBottomSheetDialogFragment
 import com.delhivery.axle.ui.dialogs.UploadOptionsBottomSheetDialogFragment
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
@@ -34,9 +35,9 @@ import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
-class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, FastagAssignmentViewModel>() {
+class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadViewModel>() {
 
-    override fun getViewModelClass() = FastagAssignmentViewModel::class.java
+    override fun getViewModelClass() = RCUploadViewModel::class.java
     override fun layoutId() = R.layout.activity_fastag_assignment
     override fun requireConnection() = true
 
@@ -49,6 +50,7 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
     private var rcBackUploaded = false
     private var rcFrontFile: File? = null
     private var rcBackFile: File? = null
+    private var lastJobId: String? = null
 
     private var currentUploadTarget: UploadTarget = UploadTarget.RC_FRONT
     private var mPhotoFile: File? = null
@@ -62,19 +64,26 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         private const val EXTRA_CHASSIS_NUMBER = "extra_chassis_number"
         private const val EXTRA_ORDER_ID = "extra_order_id"
         private const val EXTRA_ORDER_ITEM_ID = "extra_order_item_id"
+        private const val EXTRA_TAG_COLOR = "extra_tag_color"
+        private const val EXTRA_BANK = "extra_bank"
+        private const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
 
         fun newIntent(
             context: Context,
             vehicleNumber: String,
-            chassisNumber: String,
             orderId: String = "",
-            orderItemId: Int = 0
+            orderItemId: Int = 0,
+            tagColor: String = "",
+            bank: String = "",
+            vehicleClass: String = ""
         ): Intent {
-            return Intent(context, FastagAssignmentActivity::class.java).apply {
+            return Intent(context, RCUploadActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_NUMBER, vehicleNumber)
-                putExtra(EXTRA_CHASSIS_NUMBER, chassisNumber)
                 putExtra(EXTRA_ORDER_ID, orderId)
                 putExtra(EXTRA_ORDER_ITEM_ID, orderItemId)
+                putExtra(EXTRA_TAG_COLOR, tagColor)
+                putExtra(EXTRA_BANK, bank)
+                putExtra(EXTRA_VEHICLE_CLASS, vehicleClass)
             }
         }
     }
@@ -108,22 +117,27 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
         val chassisNumber = intent.getStringExtra(EXTRA_CHASSIS_NUMBER) ?: ""
 
-        setupToolbar()
+
         setupVehicleInfo(vehicleNumber)
         setupUploadCards()
         updateContinueButton()
+        setupObservers()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
             WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
         }
+        setupToolbar()
     }
 
     private fun setupToolbar() {
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupVehicleInfo(vehicleNumber: String) {
@@ -248,7 +262,7 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
                     val destPath = File(cacheDir, "converted_${System.currentTimeMillis()}.jpg").absolutePath
                     val converted = documentUtils.convertPngToJpg(
                         sourcePath = documentUtils.getPathFromUri(
-                            context = this@FastagAssignmentActivity,
+                            context = this@RCUploadActivity,
                             uri = uri
                         ),
                         destPath = destPath
@@ -274,7 +288,7 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         } else {
             try {
                 val filePath = documentUtils.getPathFromUri(
-                    context = this@FastagAssignmentActivity,
+                    context = this@RCUploadActivity,
                     uri = uri
                 )
                 val compressedFile = fileCompressor.compressToFile(
@@ -333,10 +347,9 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         )
 
         viewModel.uploadRcImages(rcFrontPart, rcBackPart, orderId, orderItemId)
-        observeRcUpload()
     }
 
-    private fun observeRcUpload() {
+    private fun setupObservers() {
         viewModel.rcUploadState.observe(this, Observer { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -345,50 +358,118 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
                 is Resource.Success -> {
                     val jobId = resource.data?.jobId
                     if (!jobId.isNullOrEmpty()) {
+                        lastJobId = jobId
                         // Start polling — keep progress showing
                         viewModel.startRcPolling(jobId)
-                        observeRcProcessStatus()
                     } else {
                         uiUtils.hideProgress()
-                        navigateToVehicleImageUpload()
+                        navigateToVehicleImageUpload("")
                     }
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
-                    } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "RC upload failed. Please try again.")
-                    }
+                    dialogUtils.showErrorDialog(
+                        if (resource.isNetworkError) "Network error. Please check your connection."
+                        else resource.errorMessage ?: "RC upload failed. Please try again.", 3L
+                    )
                 }
             }
         })
-    }
 
-    private fun observeRcProcessStatus() {
         viewModel.rcProcessStatus.observe(this, Observer { resource ->
+            if (resource == null) return@Observer
             when (resource) {
                 is Resource.Success -> {
                     uiUtils.hideProgress()
                     val status = resource.data?.status?.uppercase()
                     when (status) {
-                        "COMPLETED", "TIMEOUT" -> navigateToVehicleImageUpload()
-                        "FAILED", "NOT_FOUND" -> {
-                            uiUtils.showSnackbar("RC processing failed. Please try again.")
+                        "COMPLETED" -> {
+                            val journeyId = resource.data.journeyId ?: ""
+                            val skipVehicleUpload = resource.data.skipVehicleImageUpload == true
+                            Toast.makeText(this, "RC uploaded successfully", Toast.LENGTH_SHORT).show()
+                            if (skipVehicleUpload) {
+                                navigateToTagMapping(journeyId)
+                            } else {
+                                navigateToVehicleImageUpload(journeyId)
+                            }
+                        }
+                        "FAILED" -> {
+                            showRcUploadFailedBottomSheet()
+                        }
+                        "TIMEOUT" -> {
+                            showRcProcessingTimeoutBottomSheet()
+                        }
+                        "NOT_FOUND" -> {
+                            dialogUtils.showErrorDialog("RC processing not found. Please try again.", 3L)
                         }
                     }
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    uiUtils.showSnackbar("Processing check failed. Please try again.")
+                    dialogUtils.showErrorDialog("Processing check failed. Please try again.", 3L)
                 }
                 is Resource.Loading -> { /* no-op */ }
             }
         })
     }
 
-    private fun navigateToVehicleImageUpload() {
+    private fun navigateToVehicleImageUpload(journeyId: String) {
         val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
-        startActivity(VehicleImageUploadActivity.newIntent(this, vehicleNumber))
+        val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+        val tagColor = intent.getStringExtra(EXTRA_TAG_COLOR) ?: ""
+        val bank = intent.getStringExtra(EXTRA_BANK) ?: ""
+        val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
+        startActivity(VehicleImageUploadActivity.newIntent(this, vehicleNumber, orderId, orderItemId, journeyId, tagColor, bank, vehicleClass))
+    }
+
+    private fun navigateToTagMapping(journeyId: String) {
+        val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
+        val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+        val tagColor = intent.getStringExtra(EXTRA_TAG_COLOR) ?: ""
+        val bank = intent.getStringExtra(EXTRA_BANK) ?: ""
+        val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
+        val intent = android.content.Intent(this, com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity::class.java).apply {
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ID, orderId)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ITEM_ID, orderItemId)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_CLASS, vehicleClass)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_JOURNEY_ID, journeyId)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_NUMBER, vehicleNumber)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_TAG_COLOR, tagColor)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_BANK, bank)
+        }
+        navigationUtils.navigate(intent, false)
+    }
+
+    private fun showRcUploadFailedBottomSheet() {
+        val bottomSheet = RcUploadFailedBottomSheetDialogFragment.newInstance(
+            title = getString(R.string.rc_upload_failed_title),
+            subtitle = getString(R.string.rc_upload_failed_subtitle),
+            showButtons = false
+        )
+        bottomSheet.show(supportFragmentManager, "rc_upload_failed")
+    }
+
+    private fun showRcProcessingTimeoutBottomSheet() {
+        val bottomSheet = RcUploadFailedBottomSheetDialogFragment.newInstance(
+            title = getString(R.string.rc_processing_timeout_title),
+            subtitle = getString(R.string.rc_processing_timeout_subtitle),
+            iconRes = R.drawable.fs_payment_pending,
+            showButtons = true,
+            onTryAgain = {
+                lastJobId?.let { jobId ->
+                    uiUtils.showProgress()
+                    viewModel.startRcPolling(jobId)
+                }
+            },
+            onMaybeLater = {
+                val intent = Intent(this, com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
+            }
+        )
+        bottomSheet.show(supportFragmentManager, "rc_processing_timeout")
     }
 }

@@ -493,7 +493,7 @@ class NetworkModule {
     fun provideKycService(
         gson: Gson,
         okHttpClient: OkHttpClient
-    ) = getRetrofit(gson, okHttpClient, UrlConfig.KycService).create(
+    ) = getRetrofitForCoroutines(gson, okHttpClient, UrlConfig.KycService).create(
         FasTAGKycService::class.java
     )
 

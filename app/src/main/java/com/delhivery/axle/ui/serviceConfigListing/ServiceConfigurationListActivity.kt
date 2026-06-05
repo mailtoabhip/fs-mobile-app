@@ -211,7 +211,10 @@ class ServiceConfigurationListActivity : AppCompatActivity() {
     }
 
     private fun setupBackButton() {
-        findViewById<android.view.View>(R.id.btn_back).setOnClickListener {
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar).setNavigationOnClickListener {
             onBackPressed()
         }
     }

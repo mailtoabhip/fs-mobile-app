@@ -2,40 +2,31 @@ package com.delhivery.axle.ui.fastag.issuance
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityAddVehicleBinding
-import com.delhivery.axle.utils.ViewModelFactory
-import dagger.android.support.DaggerAppCompatActivity
-import javax.inject.Inject
+import com.delhivery.axle.ui.base.BaseActivity
 
-class AddVehicleActivity : DaggerAppCompatActivity() {
+class AddVehicleActivity : BaseActivity<ActivityAddVehicleBinding, AddVehicleViewModel>() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var dialogUtils: com.delhivery.axle.utils.DialogUtils
-
-    private lateinit var binding: ActivityAddVehicleBinding
-    private lateinit var viewModel: AddVehicleViewModel
+    override fun getViewModelClass() = AddVehicleViewModel::class.java
+    override fun layoutId() = R.layout.activity_add_vehicle
+    override fun requireConnection() = true
 
     private var isVehicleEligible = false
     private var hasNavigatedFromCheck = false
+    private var currentOrderId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_vehicle)
+
+        binding.lifecycleOwner = this
         binding.truckNumber = ""
-        viewModel = ViewModelProvider(this, viewModelFactory)[AddVehicleViewModel::class.java]
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -63,10 +54,19 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             hasNavigatedFromCheck = false
 
             val truckNumber = text?.toString()?.trim() ?: ""
-            if (isValidVehicleNumber(truckNumber)) {
+            if (truckNumber.isEmpty()) {
+                binding.tvError.visibility = android.view.View.GONE
+                binding.etTruckNumber.setBackgroundResource(R.drawable.bg_edit_text_outline)
+                binding.btnContinue.isEnabled = false
+                binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
+            } else if (isValidVehicleNumber(truckNumber)) {
+                binding.tvError.visibility = android.view.View.GONE
+                binding.etTruckNumber.setBackgroundResource(R.drawable.bg_edit_text_outline)
                 binding.btnContinue.isEnabled = true
                 binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_solid_black)
             } else {
+                binding.tvError.visibility = android.view.View.VISIBLE
+                binding.etTruckNumber.setBackgroundResource(R.drawable.bg_edit_text_error)
                 binding.btnContinue.isEnabled = false
                 binding.btnContinue.setBackgroundResource(R.drawable.bg_all_round_corner_light_grey)
             }
@@ -86,9 +86,7 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
     private fun observeViewModel() {
         viewModel.vehicleCheckState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // Optionally show a small loader on the input field
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
@@ -100,8 +98,6 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
                             if (hasNavigatedFromCheck) return@observe
 
-                            // Always navigate to SelectFasTagActivity
-                            // If npciVehicleClass is known, pre-select it; otherwise user picks manually
                             hasNavigatedFromCheck = true
                             val intent = Intent(this, SelectFasTagActivity::class.java).apply {
                                 putExtra(SelectFasTagActivity.EXTRA_VRN, data.vrn)
@@ -141,18 +137,15 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
 
         viewModel.kycValidateState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
                     val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
                     if (data.fastagCustomerExists) {
-                        // Existing customer — skip KYC, go directly to payment
                         val items = arrayListOf(
                             com.delhivery.axle.api.request.PaymentBreakupItem(
-                                vehicleClass = "VC5", // TODO: Use actual vehicle class
+                                vehicleClass = "VC5",
                                 quantity = 1
                             )
                         )
@@ -160,12 +153,13 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
                             putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
                             putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
                             putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                            putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, currentOrderId)
                         }
                         startActivity(navIntent)
                     } else {
-                        // New customer — needs KYC
                         val navIntent = Intent(this, FastagKycActivity::class.java).apply {
                             putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                            putExtra(FastagKycActivity.EXTRA_ORDER_ID, currentOrderId)
                         }
                         startActivity(navIntent)
                     }
@@ -179,17 +173,14 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             }
         }
 
-        // Create order observer — on success, call KYC validate to decide next screen
         viewModel.createOrderState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {
-                    // TODO: Show loading
-                }
+                is Resource.Loading -> {}
 
                 is Resource.Success -> {
                     val data = resource.data ?: return@observe
-                    // Order created — now check KYC status
-                    viewModel.kycOnboardValidate("IDFC") // TODO: Use actual bank_code
+                    currentOrderId = data.orderId
+                    viewModel.kycOnboardValidate("IDFC")
                 }
 
                 is Resource.Failure -> {
@@ -206,23 +197,11 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             .uppercase()
             .replace(" ", "")
             .replace("-", "")
-
-        val regex = Regex(
-            "^(?:[A-Z]{2}\\d{1,2}[A-Z]{1,3}\\d{4}|\\d{2}BH\\d{4}[A-Z]{2})$"
-        )
+        val regex = Regex("^(?:[A-Z]{2}\\d{1,2}[A-Z]{1,3}\\d{4}|\\d{2}BH\\d{4}[A-Z]{2})$")
         return regex.matches(normalized)
     }
 
-    // Kept for potential future use - navigation to SelectFasTagActivity
-    // private fun navigateToSelectFasTag(truckNumber: String) {
-    //     val intent = Intent(this, SelectFasTagActivity::class.java).apply {
-    //         putExtra(EXTRA_TRUCK_NUMBER, truckNumber)
-    //     }
-    //     startActivity(intent)
-    // }
-
     private fun showVehicleBottomSheet(data: com.delhivery.axle.api.response.VehicleCheckResponse) {
-        // Prevent duplicate bottom sheets
         val existing = supportFragmentManager.findFragmentByTag(VehicleDetailsBottomSheet.TAG)
         if (existing != null) return
 
@@ -231,21 +210,20 @@ class AddVehicleActivity : DaggerAppCompatActivity() {
             issuerPhone = "",
             onAction = if (data.eligible) {
                 {
-                    // Create order on confirm
                     val salesCode = intent.getStringExtra(EXTRA_SALES_CODE) ?: ""
                     val customerName = intent.getStringExtra(EXTRA_CUSTOMER_NAME) ?: ""
                     val request = com.delhivery.axle.api.request.CreateOrderRequest(
                         salesCode = salesCode,
                         customerName = customerName,
-                        customerMobile = "", // TODO: Pass from validate sales code API if available
+                        customerMobile = "",
                         vehicles = listOf(
                             com.delhivery.axle.api.request.OrderVehicleItem(
                                 vrn = data.vrn,
                                 vehicleClass = data.vehicleClass?.vehicleClass ?: data.npciVehicleClass ?: "VC5",
-                                unitPrice = "100.00" // TODO: Get from API/config
+                                unitPrice = "100.00"
                             )
                         ),
-                        totalAmount = "100.00", // TODO: Calculate
+                        totalAmount = "100.00",
                         idempotencyKey = "ORD-${java.util.UUID.randomUUID()}"
                     )
                     viewModel.createOrder(request)

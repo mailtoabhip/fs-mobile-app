@@ -17,7 +17,7 @@ import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityVehicleImageUploadBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.SampleImageBottomSheetDialogFragment
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
+import com.delhivery.axle.ui.dialogs.UploadOptionsBottomSheetDialogFragment
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -27,7 +27,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
-class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBinding, VehicleImageUploadViewModel>() {
+class VehicleImageUploadActivity :
+    BaseActivity<ActivityVehicleImageUploadBinding, VehicleImageUploadViewModel>() {
 
     override fun getViewModelClass() = VehicleImageUploadViewModel::class.java
     override fun layoutId() = R.layout.activity_vehicle_image_upload
@@ -35,6 +36,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
 
     @Inject
     lateinit var documentUtils: DocumentUtils
+
     @Inject
     lateinit var fileCompressor: FileCompressor
 
@@ -42,6 +44,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
     private var vehicleSideUploaded = false
     private var vehicleFrontFile: File? = null
     private var vehicleSideFile: File? = null
+    private var lastJobId: String? = null
 
     private var currentUploadTarget: UploadTarget = UploadTarget.VEHICLE_FRONT
     private var mPhotoFile: File? = null
@@ -54,17 +57,29 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         private const val EXTRA_VEHICLE_NUMBER = "extra_vehicle_number"
         private const val EXTRA_ORDER_ID = "extra_order_id"
         private const val EXTRA_ORDER_ITEM_ID = "extra_order_item_id"
+        private const val EXTRA_JOURNEY_ID = "extra_journey_id"
+        private const val EXTRA_TAG_COLOR = "extra_tag_color"
+        private const val EXTRA_BANK = "extra_bank"
+        private const val EXTRA_VEHICLE_CLASS = "extra_vehicle_class"
 
         fun newIntent(
             context: Context,
             vehicleNumber: String,
             orderId: String = "",
-            orderItemId: Int = 0
+            orderItemId: Int = 0,
+            journeyId: String = "",
+            tagColor: String = "",
+            bank: String = "",
+            vehicleClass: String = ""
         ): Intent {
             return Intent(context, VehicleImageUploadActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_NUMBER, vehicleNumber)
                 putExtra(EXTRA_ORDER_ID, orderId)
                 putExtra(EXTRA_ORDER_ITEM_ID, orderItemId)
+                putExtra(EXTRA_JOURNEY_ID, journeyId)
+                putExtra(EXTRA_TAG_COLOR, tagColor)
+                putExtra(EXTRA_BANK, bank)
+                putExtra(EXTRA_VEHICLE_CLASS, vehicleClass)
             }
         }
     }
@@ -81,6 +96,17 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         }
     }
 
+    // TODO: Remove file picker once temp testing is done — use camera only
+    private val filePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let { uri ->
+                handleFileResult(uri)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -90,18 +116,22 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         setupVehicleInfo(vehicleNumber)
         setupUploadCards()
         updateContinueButton()
+        setupObservers()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
             WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
         }
     }
 
     private fun setupToolbar() {
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupVehicleInfo(vehicleNumber: String) {
@@ -122,7 +152,8 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         }
         binding.uploadVehicleFront.setOnUploadClickListener {
             currentUploadTarget = UploadTarget.VEHICLE_FRONT
-            requestCameraPermissions()
+            // TODO: Remove this drawer and use camera directly once temp testing is done
+            showUploadOptionsBottomSheet(getString(R.string.upload_vehicle_front))
         }
         binding.uploadVehicleFront.setOnRemoveClickListener {
             binding.uploadVehicleFront.resetUploadState()
@@ -144,7 +175,8 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         }
         binding.uploadVehicleSide.setOnUploadClickListener {
             currentUploadTarget = UploadTarget.VEHICLE_SIDE
-            requestCameraPermissions()
+            // TODO: Remove this drawer and use camera directly once temp testing is done
+            showUploadOptionsBottomSheet(getString(R.string.upload_vehicle_side))
         }
         binding.uploadVehicleSide.setOnRemoveClickListener {
             binding.uploadVehicleSide.resetUploadState()
@@ -158,6 +190,35 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
             if (vehicleFrontUploaded && vehicleSideUploaded) {
                 uploadVehicleImagesToServer()
             }
+        }
+    }
+
+    // ---- Upload Options Bottom Sheet ----
+    // TODO: Remove this method and use camera directly once temp testing is done
+
+    private fun showUploadOptionsBottomSheet(title: String) {
+        val bottomSheet = UploadOptionsBottomSheetDialogFragment.newInstance(
+            title = title,
+            onUploadFile = { launchFilePicker() },
+            onTakePhoto = { requestCameraPermissions() }
+        )
+        bottomSheet.show(supportFragmentManager, "upload_options")
+    }
+
+    private fun launchFilePicker() {
+        val chooserIntent = com.delhivery.axle.utils.extensions.filePickerChooser(
+            "Select file",
+            com.delhivery.axle.utils.extensions.MimeTypes.IMAGE_JPG,
+            com.delhivery.axle.utils.extensions.MimeTypes.IMAGE_JPEG
+        )
+        try {
+            filePickerLauncher.launch(chooserIntent)
+        } catch (e: Exception) {
+            android.widget.Toast.makeText(
+                this,
+                "No file picker app found",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -283,6 +344,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
                 vehicleFrontFile = file
                 vehicleFrontUploaded = true
             }
+
             UploadTarget.VEHICLE_SIDE -> {
                 binding.uploadVehicleSide.setUploadedFile(file, "Vehicle_Side.jpg")
                 vehicleSideFile = file
@@ -305,6 +367,7 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
         val sideFile = vehicleSideFile ?: return
         val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
         val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+        val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
 
         val mediaType = okhttp3.MediaType.parse("image/jpeg")
         val frontPart = okhttp3.MultipartBody.Part.createFormData(
@@ -318,63 +381,157 @@ class VehicleImageUploadActivity : BaseActivity<ActivityVehicleImageUploadBindin
             okhttp3.RequestBody.create(mediaType, sideFile)
         )
 
-        viewModel.uploadVehicleImages(frontPart, sidePart, orderId, orderItemId)
-        observeUpload()
+        viewModel.uploadVehicleImages(frontPart, sidePart, orderId, orderItemId, journeyId)
     }
 
-    private fun observeUpload() {
+    private fun setupObservers() {
         viewModel.uploadState.observe(this, androidx.lifecycle.Observer { resource ->
             when (resource) {
                 is com.delhivery.axle.api.repository.Resource.Loading -> {
                     uiUtils.showProgress()
                 }
+
                 is com.delhivery.axle.api.repository.Resource.Success -> {
                     val jobId = resource.data?.jobId
                     if (!jobId.isNullOrEmpty()) {
+                        lastJobId = jobId
                         // Start polling — keep progress showing
                         viewModel.startPolling(jobId)
-                        observeProcessStatus()
                     } else {
                         uiUtils.hideProgress()
-                        navigateToFastagImageUpload()
+                        navigateToTagMapping()
                     }
                 }
+
                 is com.delhivery.axle.api.repository.Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
-                    } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "Upload failed. Please try again.")
-                    }
+                    dialogUtils.showErrorDialog(
+                        if (resource.isNetworkError) "Network error. Please check your connection."
+                        else resource.errorMessage ?: "Upload failed. Please try again.", 3L
+                    )
                 }
             }
         })
-    }
 
-    private fun observeProcessStatus() {
         viewModel.processStatus.observe(this, androidx.lifecycle.Observer { resource ->
+            if (resource == null) return@Observer
             when (resource) {
                 is com.delhivery.axle.api.repository.Resource.Success -> {
                     uiUtils.hideProgress()
                     val status = resource.data?.status?.uppercase()
                     when (status) {
-                        "COMPLETED", "TIMEOUT" -> navigateToFastagImageUpload()
-                        "FAILED", "NOT_FOUND" -> {
-                            uiUtils.showSnackbar("Vehicle image processing failed. Please try again.")
+                        "COMPLETED" -> {
+                            android.widget.Toast.makeText(
+                                this,
+                                "Vehicle images uploaded successfully",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                            navigateToTagMapping()
+                        }
+
+                        "FAILED" -> {
+                            showVehicleUploadFailedBottomSheet()
+                        }
+
+                        "TIMEOUT" -> {
+                            showVehicleProcessingTimeoutBottomSheet()
+                        }
+
+                        "NOT_FOUND" -> {
+                            dialogUtils.showErrorDialog(
+                                "Vehicle image processing not found. Please try again.",
+                                3L
+                            )
                         }
                     }
                 }
+
                 is com.delhivery.axle.api.repository.Resource.Failure -> {
                     uiUtils.hideProgress()
-                    uiUtils.showSnackbar("Processing check failed. Please try again.")
+                    dialogUtils.showErrorDialog("Processing check failed. Please try again.", 3L)
                 }
-                is com.delhivery.axle.api.repository.Resource.Loading -> { /* no-op */ }
+
+                is com.delhivery.axle.api.repository.Resource.Loading -> { /* no-op */
+                }
             }
         })
     }
 
-    private fun navigateToFastagImageUpload() {
+    private fun showVehicleUploadFailedBottomSheet() {
+        val bottomSheet =
+            com.delhivery.axle.ui.dialogs.RcUploadFailedBottomSheetDialogFragment.newInstance(
+                title = getString(R.string.vehicle_upload_failed_title),
+                subtitle = getString(R.string.vehicle_upload_failed_subtitle),
+                showButtons = false
+            )
+        bottomSheet.show(supportFragmentManager, "vehicle_upload_failed")
+    }
+
+    private fun showVehicleProcessingTimeoutBottomSheet() {
+        val bottomSheet =
+            com.delhivery.axle.ui.dialogs.RcUploadFailedBottomSheetDialogFragment.newInstance(
+                title = getString(R.string.rc_processing_timeout_title),
+                subtitle = getString(R.string.vehicle_processing_timeout_subtitle),
+                iconRes = R.drawable.fs_payment_pending,
+                showButtons = true,
+                onTryAgain = {
+                    lastJobId?.let { jobId ->
+                        uiUtils.showProgress()
+                        viewModel.startPolling(jobId)
+                    }
+                },
+                onMaybeLater = {
+                    val intent = android.content.Intent(
+                        this,
+                        com.delhivery.axle.ui.home.activity.home.HomeActivity::class.java
+                    )
+                    intent.flags =
+                        android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            )
+        bottomSheet.show(supportFragmentManager, "vehicle_processing_timeout")
+    }
+
+    private fun navigateToTagMapping() {
         val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
-        startActivity(FastagImageUploadActivity.newIntent(this, vehicleNumber))
+        val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+        val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
+        val tagColor = intent.getStringExtra(EXTRA_TAG_COLOR) ?: ""
+        val bank = intent.getStringExtra(EXTRA_BANK) ?: ""
+        val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
+        val navIntent = android.content.Intent(
+            this,
+            com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity::class.java
+        ).apply {
+            putExtra(
+                com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ID,
+                orderId
+            )
+            putExtra(
+                com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ITEM_ID,
+                orderItemId
+            )
+            putExtra(
+                com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_CLASS,
+                vehicleClass
+            )
+            putExtra(
+                com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_JOURNEY_ID,
+                journeyId
+            )
+            putExtra(
+                com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_NUMBER,
+                vehicleNumber
+            )
+            putExtra(
+                com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_TAG_COLOR,
+                tagColor
+            )
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_BANK, bank)
+        }
+        navigationUtils.navigate(navIntent, false)
     }
 }

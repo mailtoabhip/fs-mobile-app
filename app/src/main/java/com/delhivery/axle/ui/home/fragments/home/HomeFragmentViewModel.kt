@@ -32,16 +32,22 @@ class HomeFragmentViewModel @Inject constructor(
     private val _fastagPendingCount = MutableLiveData<Int>(0)
     val fastagPendingCount: LiveData<Int> = _fastagPendingCount
 
+    private val _fastagPendingLoading = MutableLiveData<Boolean>(false)
+    val fastagPendingLoading: LiveData<Boolean> = _fastagPendingLoading
+
     /**
      * Fetch FASTag pending actions count from API.
      */
     fun fetchFastagPendingCount() {
+        _fastagPendingLoading.value = true
         viewModelScope.launch {
             when (val result = fastagRepository.getPendingActions()) {
                 is Resource.Success -> {
+                    _fastagPendingLoading.value = false
                     _fastagPendingCount.value = result.data?.count ?: 0
                 }
                 is Resource.Failure -> {
+                    _fastagPendingLoading.value = false
                     _fastagPendingCount.value = 0
                 }
                 Resource.Loading -> { /* no-op */ }

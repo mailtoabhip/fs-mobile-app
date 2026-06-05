@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadViewModel" />
+            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadViewModel" />
     </data>
 
     <LinearLayout
@@ -17,40 +17,17 @@
         android:orientation="vertical">
 
         <!-- Toolbar -->
-        <LinearLayout
-            android:id="@+id/layoutHeader"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/white"
+            android:layout_height="@dimen/height_toolbar"
+            android:background="@android:color/white"
             android:elevation="2dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/size_16dp">
-
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="@dimen/size_16dp"
-                android:layout_height="@dimen/size_16dp"
-                android:contentDescription="@string/action_continue"
-                android:src="@drawable/icon_back_button" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_16dp"
-                android:layout_weight="1"
-                android:text="@string/know_your_vehicle_title"
-                android:textColor="@color/black_title"
-                android:textSize="@dimen/text_14sp" />
-
-            <ImageView
-                android:id="@+id/ivHelp"
-                android:layout_width="@dimen/size_24dp"
-                android:layout_height="@dimen/size_24dp"
-                android:contentDescription="@string/title_support"
-                android:src="@drawable/ic_help_outline" />
-
-        </LinearLayout>
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:navigationIcon="@drawable/ic_close"
+            app:title="@string/know_your_vehicle_title"
+            app:titleTextColor="@android:color/black"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
         <!-- Scrollable Content -->
         <ScrollView
@@ -67,7 +44,7 @@
                 android:padding="@dimen/size_16dp">
 
                 <!-- Section Title -->
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/upload_fastag_image_title"
@@ -85,7 +62,7 @@
                     android:paddingHorizontal="@dimen/size_12dp"
                     android:paddingVertical="@dimen/size_12dp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvVehicleNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

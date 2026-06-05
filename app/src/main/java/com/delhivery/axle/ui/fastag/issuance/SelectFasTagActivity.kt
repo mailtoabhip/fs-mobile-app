@@ -12,6 +12,7 @@ import com.delhivery.axle.api.request.CreateOrderRequest
 import com.delhivery.axle.api.response.VehicleClassData
 import com.delhivery.axle.databinding.ActivitySelectFastagBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity.Companion.EXTRA_ITEMS
 
 class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFasTagViewModel>() {
 
@@ -20,6 +21,7 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
     override fun requireConnection() = true
 
     private var adapter: VehicleClassAdapter? = null
+    private var currentOrderId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +84,8 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
                     // Loading handled by BaseActivity
                 }
                 is Resource.Success -> {
+                    val orderData = resource.data
+                    currentOrderId = orderData?.orderId ?: ""
                     viewModel.kycOnboardValidate("IDFC")
                 }
                 is Resource.Failure -> {
@@ -111,11 +115,20 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
                             putExtra(PaymentBreakupActivity.EXTRA_SALES_CODE, salesCode)
                             putExtra(PaymentBreakupActivity.EXTRA_PAYMENT_METHOD, "FULL_PAYMENT")
                             putExtra(PaymentBreakupActivity.EXTRA_ITEMS, items)
+                            putExtra(PaymentBreakupActivity.EXTRA_ORDER_ID, currentOrderId)
                         }
                         startActivity(navIntent)
                     } else {
+                        val items = arrayListOf(
+                            com.delhivery.axle.api.request.PaymentBreakupItem(
+                                vehicleClass = adapter?.getSelectedItem()?.classId ?: "",
+                                quantity = 1
+                            )
+                        )
                         val navIntent = Intent(this, FastagKycActivity::class.java).apply {
                             putExtra(FastagKycActivity.EXTRA_SALES_CODE, salesCode)
+                            putExtra(FastagKycActivity.EXTRA_ORDER_ID, currentOrderId)
+                            putExtra(EXTRA_ITEMS, items)
                         }
                         startActivity(navIntent)
                     }

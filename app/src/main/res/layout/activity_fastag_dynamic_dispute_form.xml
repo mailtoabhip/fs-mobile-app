@@ -9,36 +9,18 @@
         android:fitsSystemWindows="true">
 
         <!-- Header -->
-        <LinearLayout
-            android:id="@+id/layoutHeader"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            android:orientation="horizontal"
-            android:padding="@dimen/size_16dp"
-            android:gravity="center_vertical"
             android:elevation="2dp"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="@dimen/size_24dp"
-                android:layout_height="@dimen/size_24dp"
-                android:contentDescription="@string/back_button"
-                android:src="@drawable/ic_back_arrow" />
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/size_16dp"
-                android:text="Dispute Submission"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#615655" />
-
-        </LinearLayout>
+            app:contentInsetStartWithNavigation="@dimen/size_8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_back_arrow"
+            app:title="Dispute Submission"
+            app:titleTextColor="@android:color/black"
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
         <!-- Scroll View for Form Fields -->
         <ScrollView
@@ -47,7 +29,7 @@
             android:layout_height="0dp"
             android:fillViewport="true"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintBottom_toTopOf="@id/llFooter">
 
             <LinearLayout

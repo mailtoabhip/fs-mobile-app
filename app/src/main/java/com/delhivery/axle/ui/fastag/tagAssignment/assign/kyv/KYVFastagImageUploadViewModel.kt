@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
-class FastagImageUploadViewModel @Inject constructor(
+class KYVFastagImageUploadViewModel @Inject constructor(
     private val fastagRepository: FastagRepository
 ) : BaseViewModel() {
 
@@ -24,12 +24,16 @@ class FastagImageUploadViewModel @Inject constructor(
 
     fun uploadFastagImage(
         fastagImage: MultipartBody.Part,
-        journeyId: String
+        journeyId: String,
+        orderId: String,
+        orderItemId: String
     ) {
         viewModelScope.launch {
             _uploadState.value = Resource.Loading
             val journeyIdPart = MultipartBody.Part.createFormData("journey_id", journeyId)
-            val result = fastagRepository.uploadFastagImage(fastagImage, journeyIdPart)
+            val orderIdPart = MultipartBody.Part.createFormData("order_id", orderId)
+            val orderItemIdPart = MultipartBody.Part.createFormData("order_item_id", orderItemId)
+            val result = fastagRepository.uploadFastagImage(fastagImage, journeyIdPart, orderIdPart, orderItemIdPart)
             _uploadState.value = result
         }
     }

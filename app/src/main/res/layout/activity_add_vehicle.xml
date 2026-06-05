@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="viewModel"
+            type="com.delhivery.axle.ui.fastag.issuance.AddVehicleViewModel" />
+
+        <variable
             name="truckNumber"
             type="String" />
 
@@ -29,7 +33,7 @@
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIcon="@drawable/ic_back_arrow"
             app:title="Add Vehicle"
             app:titleTextAppearance="@style/Toolbar.TitleText" />
 
@@ -81,6 +85,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvLabel" />
 
+        <!-- Error Text -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_4dp"
+            android:drawableStart="@drawable/ic_close_red"
+            android:drawablePadding="@dimen/size_4dp"
+            android:text="Invalid  Enter a valid vehicle or chassis number"
+            android:textColor="@color/error_red"
+            android:textSize="@dimen/text_12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etTruckNumber" />
+
         <!-- Continue Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnContinue"
@@ -88,8 +108,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/size_16dp"
             android:layout_marginBottom="@dimen/size_16dp"
-            android:background="@{TextUtils.isEmpty(truckNumber) ? @drawable/bg_all_round_corner_light_grey : @drawable/bg_all_round_corner_solid_black}"
-            android:enabled="@{!TextUtils.isEmpty(truckNumber)}"
+            android:background="@drawable/bg_all_round_corner_light_grey"
+            android:enabled="false"
             android:text="Continue"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

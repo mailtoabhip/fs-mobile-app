@@ -193,7 +193,6 @@ class LoadWalletViewModel @Inject constructor(
         if (reset) transactionInitialLoadingLiveData.postValue(true)
 
         transactionDisposable = walletApiService.fetchTransactions(
-            userId = userPrefs.userId(),
             start = start,
             end = end,
             type = type,
@@ -272,7 +271,6 @@ class LoadWalletViewModel @Inject constructor(
         if (reset) rechargeInitialLoadingLiveData.postValue(true)
 
         rechargeDisposable = walletApiService.fetchRechargeHistory(
-            userId = userPrefs.userId(),
             start = start,
             end = end,
             limit = pageSize,
@@ -323,7 +321,6 @@ class LoadWalletViewModel @Inject constructor(
      */
     fun fetchWalletDetails() {
         compositeDisposable += walletApiService.fetchWalletInfo(
-            userId = userPrefs.userId()
         )
             .convertResponse()
             .onBackground()
@@ -353,7 +350,6 @@ class LoadWalletViewModel @Inject constructor(
            // addProperty("email", email)
         }
         compositeDisposable += walletApiService.createWallet(
-            userId = userPrefs.userId(),
             request = request
         )
             .convertResponse()
@@ -381,7 +377,6 @@ class LoadWalletViewModel @Inject constructor(
      */
     fun refreshTransactionStatus(txnId: String, createdAt: String) {
         compositeDisposable += walletApiService.fetchTransactions(
-            userId = userPrefs.userId(),
             txnId = txnId,
             limit = 1
         )
@@ -407,7 +402,6 @@ class LoadWalletViewModel @Inject constructor(
             addProperty("recharge_id", rechargeId)
         }
         compositeDisposable += walletApiService.fetchRechargeStatus(
-            userId = userPrefs.userId(),
             request = request
         )
             .convertResponse()

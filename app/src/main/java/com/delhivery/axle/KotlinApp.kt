@@ -64,6 +64,26 @@ class KotlinApp : DaggerApplication() {
     CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
       deviceInfoProvider.fetchPublicIp()
     }
+
+    // Re-fetch public IP whenever network connectivity changes
+    registerNetworkChangeListener()
+  }
+
+  private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+  private fun registerNetworkChangeListener() {
+    try {
+      val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
+          ?: return
+      val callback = object : android.net.ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: android.net.Network) {
+          appScope.launch { deviceInfoProvider.refreshPublicIp() }
+        }
+      }
+      connectivityManager.registerDefaultNetworkCallback(callback)
+    } catch (e: Exception) {
+      Log.w("KotlinApp", "Failed to register network change listener: ${e.message}")
+    }
   }
 
   /**

@@ -64,14 +64,15 @@ import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
 import com.delhivery.axle.ui.fastag.trucks.FastagTrucksViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AssignVehicleViewModel
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.RCUploadViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadViewModel
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadViewModel
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadViewModel
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogViewmodel
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesViewModel
 import com.delhivery.axle.ui.fastag.qdr.FastagTransactionSelectionViewModel
 import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormViewModel
+import com.delhivery.axle.ui.fastag.tagMapping.TagMappingViewModel
 import com.delhivery.axle.ui.profile.BankDetailsViewModel
 import com.delhivery.axle.ui.searchCity.SearchCityViewModel
 import com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel
@@ -499,8 +500,8 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(FastagAssignmentViewModel::class)
-  abstract fun bindFastagAssignmentViewModel(viewModel: FastagAssignmentViewModel): ViewModel
+  @ViewModelScope(RCUploadViewModel::class)
+  abstract fun bindFastagAssignmentViewModel(viewModel: RCUploadViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -509,8 +510,8 @@ abstract class ViewModelFactoryModule {
 
   @Binds
   @IntoMap
-  @ViewModelScope(FastagImageUploadViewModel::class)
-  abstract fun bindFastagImageUploadViewModel(viewModel: FastagImageUploadViewModel): ViewModel
+  @ViewModelScope(KYVFastagImageUploadViewModel::class)
+  abstract fun bindFastagImageUploadViewModel(viewModel: KYVFastagImageUploadViewModel): ViewModel
 
   @Binds
   @IntoMap
@@ -606,4 +607,9 @@ abstract class ViewModelFactoryModule {
   @IntoMap
   @ViewModelScope(FastagKycViewModel::class)
   abstract fun bindFastagKycViewModel(viewModel: FastagKycViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelScope(TagMappingViewModel::class)
+  abstract fun bindTagMappingViewModel(viewModel: TagMappingViewModel): ViewModel
 }

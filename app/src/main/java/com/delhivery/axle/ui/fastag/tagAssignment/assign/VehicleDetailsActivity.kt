@@ -3,12 +3,15 @@ package com.delhivery.axle.ui.fastag.tagAssignment.assign
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.response.OrderItem
 import com.delhivery.axle.databinding.ActivityVehicleDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, VehicleDetailsViewModel>() {
@@ -19,11 +22,16 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
 
     private var fastagVehicleNumber: String = ""
     private var chassisNumber: String = ""
+    private var orderId: String = ""
+    private var orderItemId: Int = 0
+    private var tagColor: String = ""
+    private var bank: String = ""
+    private var vehicleClass: String = ""
 
     companion object {
-        private const val VEHICLE_NUMBER = "vehicle_number"
-        private const val CHASSIS_NUMBER = "chassis_number"
-        private const val ORDER_ID = "order_id"
+        private const val VEHICLE_NUMBER = "extra_vehicle_class"
+        private const val CHASSIS_NUMBER = "extra_chassis_number"
+        private const val ORDER_ID = "extra_order_id"
 
         fun newIntent(
             context: Context,
@@ -43,19 +51,20 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
         super.onCreate(savedInstanceState)
 
         fastagVehicleNumber = intent.getStringExtra(VEHICLE_NUMBER) ?: ""
-        chassisNumber = intent.getStringExtra(CHASSIS_NUMBER) ?: ""
         val orderId = intent.getStringExtra(ORDER_ID) ?: ""
 
         setupToolbar()
         setupButton()
         setupObservers()
 
-        // Fetch order items from API
+        // Hide content and button until API responds
+        binding.scrollContent.visibility = View.GONE
+        binding.btnContinue.visibility = View.GONE
+
         if (orderId.isNotEmpty()) {
             viewModel.fetchOrderItems(orderId)
         } else {
-            // Fallback: show vehicle number from intent
-            populateVehicleDetails(fastagVehicleNumber, "True", "Exempted", "VC4")
+            dialogUtils.showErrorDialog("Order ID not available. Please try again.", 3L)
         }
     }
 
@@ -68,21 +77,38 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
     }
 
     private fun setupToolbar() {
-        binding.tvToolbarTitle.text = fastagVehicleNumber
-        binding.ivBack.setOnClickListener { finish() }
+        binding.toolbar.title = fastagVehicleNumber
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { navigateToHome() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateToHome()
+            }
+        })
+    }
+
+    private fun navigateToHome() {
+        val homeIntent = Intent(this, HomeActivity::class.java)
+        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(homeIntent)
+        finish()
     }
 
     private fun setupButton() {
-        binding.ivEditVehicle.setOnClickListener {
-            // TODO: Edit vehicle number
-        }
 
         binding.btnContinue.setOnClickListener {
             startActivity(
-                FastagAssignmentActivity.newIntent(
+                RCUploadActivity.newIntent(
                     context = this,
                     vehicleNumber = fastagVehicleNumber,
-                    chassisNumber = chassisNumber
+                    orderId = orderId,
+                    orderItemId = orderItemId,
+                    tagColor = tagColor,
+                    bank = bank,
+                    vehicleClass = vehicleClass
                 )
             )
         }
@@ -96,24 +122,25 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
                 }
                 is Resource.Success -> {
                     uiUtils.hideProgress()
-                    val orderItems = resource.data?.orderItems
+                    val orderItems = resource.data
                     if (!orderItems.isNullOrEmpty()) {
-                        // Find the item matching this vehicle number, or use first item
                         val item = orderItems.find { it.vrn == fastagVehicleNumber } ?: orderItems[0]
                         populateFromOrderItem(item)
+                        // Show content after successful load
+                        binding.scrollContent.visibility = View.VISIBLE
+                        binding.btnContinue.visibility = View.VISIBLE
                     } else {
-                        populateVehicleDetails(fastagVehicleNumber, "True", "Exempted", "VC4")
+                        dialogUtils.showErrorDialog("No vehicle details found for this order.", 3L)
                     }
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
+                    val errorMessage = if (resource.isNetworkError) {
+                        "Network error. Please check your connection and try again."
                     } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "Failed to fetch vehicle details")
+                        resource.errorMessage ?: "Failed to fetch vehicle details. Please try again."
                     }
-                    // Fallback to intent data
-                    populateVehicleDetails(fastagVehicleNumber, "True", "Exempted", "VC4")
+                    dialogUtils.showErrorDialog(errorMessage, 3L)
                 }
             }
         })
@@ -121,23 +148,24 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
 
     private fun populateFromOrderItem(item: OrderItem) {
         fastagVehicleNumber = item.vrn ?: fastagVehicleNumber
-        val commercialVehicle = if (item.commercialVehicle == true) "True" else "False"
-        val exemptedStatus = item.exemptedStatus ?: "NA"
-        val vehicleClass = item.vehicleClass ?: "VC4"
+        orderId = item.orderId ?: intent.getStringExtra(ORDER_ID) ?: ""
+        orderItemId = item.orderItemId ?: 0
+        tagColor = item.tagColor ?: ""
+        bank = item.bank ?: ""
+        vehicleClass = item.vehicleClass ?: ""
 
-        binding.tvToolbarTitle.text = fastagVehicleNumber
-        populateVehicleDetails(fastagVehicleNumber, commercialVehicle, exemptedStatus, vehicleClass)
-    }
+        val commercialVehicle = when (item.isCommercial) {
+            true -> "True"
+            false -> "False"
+            null -> "NA"
+        }
+        val exemptedState = item.exemptedState ?: "NA"
+        val vehicleClass = item.vehicleClass ?: ""
 
-    private fun populateVehicleDetails(
-        vrn: String,
-        commercialVehicle: String,
-        exemptedStatus: String,
-        vehicleClass: String
-    ) {
-        binding.tvVehicleNumber.text = vrn
+        binding.toolbar.title = fastagVehicleNumber
+        binding.tvVehicleNumber.text = fastagVehicleNumber
         binding.tvCommercialVehicle.text = commercialVehicle
-        binding.tvExemptedStatus.text = exemptedStatus
+        binding.tvExemptedStatus.text = exemptedState
         binding.tvVehicleClass.text = vehicleClass
     }
 }

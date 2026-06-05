@@ -165,8 +165,8 @@ enum class UrlConfig(
     ),
   SaleCodeService(
       "https://financial-api.delhiveryfinserv.com",
-      "https://financial-fastag-dev.delhivery.com",
-      "https://financial-fastag-dev.delhivery.com"
+      "https://financial-fastag-staging.delhivery.com",
+      "https://financial-fastag-staging.delhivery.com"
   ),
   KycService(
       "https://financial-fastag-staging.delhivery.com",

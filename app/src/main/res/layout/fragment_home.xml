@@ -128,6 +128,46 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- FASTag Pending Actions Shimmer -->
+            <com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
+                android:id="@+id/fastagPendingShimmer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/size_16dp"
+                android:layout_marginTop="@dimen/size_24dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_fastag_pending_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/size_16dp"
+                    android:paddingVertical="@dimen/size_14dp">
+
+                    <View
+                        android:layout_width="@dimen/size_20dp"
+                        android:layout_height="@dimen/size_20dp"
+                        android:background="@color/colorShimmerPrimary" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/size_14dp"
+                        android:layout_marginStart="@dimen/size_10dp"
+                        android:layout_weight="1"
+                        android:background="@color/colorShimmerPrimary" />
+
+                    <View
+                        android:layout_width="@dimen/size_20dp"
+                        android:layout_height="@dimen/size_20dp"
+                        android:layout_marginStart="@dimen/size_10dp"
+                        android:background="@color/colorShimmerSecondary" />
+
+                </LinearLayout>
+
+            </com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
+
             <!-- FASTag Pending Actions Card -->
             <LinearLayout
                 android:id="@+id/fastagPendingCard"

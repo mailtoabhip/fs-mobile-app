@@ -51,7 +51,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
 
         /* Handle window insets for edge-to-edge display (API 35+) */
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
     }
 
@@ -63,11 +63,11 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         disputeTypeCode = intent.getStringExtra(EXTRA_DISPUTE_CODE) ?: ""
         txnId = intent.getStringExtra(EXTRA_TXN_ID) ?: ""
 
-        binding.tvTitle.text = "Fastag related issues"
-
-        binding.ivBack.setOnClickListener {
-            finish()
-        }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.title = "Fastag related issues"
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         adapter = TransactionSelectionAdapter { transaction ->
             onTransactionSelected(transaction)

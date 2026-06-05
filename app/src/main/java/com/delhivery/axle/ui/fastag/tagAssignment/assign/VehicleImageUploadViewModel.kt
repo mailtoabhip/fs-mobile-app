@@ -32,13 +32,15 @@ class VehicleImageUploadViewModel @Inject constructor(
         vehicleFront: MultipartBody.Part,
         vehicleSide: MultipartBody.Part,
         orderId: String,
-        orderItemId: Int
+        orderItemId: Int,
+        journeyId: String
     ) {
         viewModelScope.launch {
             _uploadState.value = Resource.Loading
             val orderIdPart = MultipartBody.Part.createFormData("order_id", orderId)
             val orderItemIdPart = MultipartBody.Part.createFormData("order_item_id", orderItemId.toString())
-            val result = fastagRepository.uploadVehicleImages(vehicleFront, vehicleSide, orderIdPart, orderItemIdPart)
+            val journeyIdPart = MultipartBody.Part.createFormData("journey_id", journeyId)
+            val result = fastagRepository.uploadVehicleImages(vehicleFront, vehicleSide, orderIdPart, orderItemIdPart, journeyIdPart)
             _uploadState.value = result
         }
     }

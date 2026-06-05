@@ -92,12 +92,21 @@ class VehicleDetailsBottomSheet : BottomSheetDialogFragment() {
 
         btnAction.setOnClickListener {
             dismiss()
-            if ((status == "HOTLISTED" || status == "ALREADY_ISSUED") && issuerPhone.isNotEmpty()) {
+            if (status == "HOTLISTED" && issuerPhone.isNotEmpty()) {
                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$issuerPhone"))
+                startActivity(intent)
+            } else if (status == "ALREADY_ISSUED") {
+                val intent = Intent(requireContext(), com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity::class.java)
                 startActivity(intent)
             } else {
                 onAction?.invoke()
             }
+        }
+
+        // For ALREADY_ISSUED, override button text
+        if (status == "ALREADY_ISSUED") {
+            btnAction.visibility = View.VISIBLE
+            btnAction.text = "Go to FASTag List"
         }
     }
 

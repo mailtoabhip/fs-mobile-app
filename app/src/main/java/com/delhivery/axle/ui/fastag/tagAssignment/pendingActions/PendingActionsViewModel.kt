@@ -27,8 +27,6 @@ class PendingActionsViewModel @Inject constructor(
     fun fetchPendingOrders() {
         _isLoading.value = true
         _error.value = null
-        _pendingOrders.value = getMockPendingOrders()
-        return
         viewModelScope.launch {
             when (val result = fastagRepository.getPendingActions()) {
                 is Resource.Success -> {
@@ -43,8 +41,6 @@ class PendingActionsViewModel @Inject constructor(
                 is Resource.Failure -> {
                     _isLoading.value = false
                     _error.value = "Unable to fetch pending actions"
-                    // Fallback to mock data for development
-                    _pendingOrders.value = getMockPendingOrders()
                 }
                 Resource.Loading -> { /* no-op */ }
             }
@@ -56,6 +52,12 @@ class PendingActionsViewModel @Inject constructor(
      */
     private fun mapResponseToOrders(orders: List<PendingActionOrder>): List<PendingOrder> {
         return orders.map { order ->
+            val breakupItems = order.vehicleClassSummary?.map { summary ->
+                com.delhivery.axle.api.request.PaymentBreakupItem(
+                    vehicleClass = summary.vehicleClass,
+                    quantity = summary.count
+                )
+            }?.let { ArrayList(it) }
             PendingOrder(
                 orderId = order.orderId,
                 date = formatDate(order.orderDate),
@@ -68,10 +70,12 @@ class PendingActionsViewModel @Inject constructor(
                         actionType = mapActionType(item.nextAction.key),
                         actionLabel = item.nextAction.label,
                         colorCode = item.colorCode,
-                        barcodeId = item.barcodeId,
+                        barcodeId = item.barcode,
                         salesCode = order.salesCode,
                         orderId = order.orderId,
-                        journeyId = item.journeyId
+                        journeyId = item.journeyId,
+                        itemId = item.itemId,
+                        items = breakupItems
                     )
                 },
                 isExpanded = true
@@ -101,26 +105,30 @@ class PendingActionsViewModel @Inject constructor(
             "FULL_PAYMENT/PARTIAL_PAYMENT" -> PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT
             "HOTO_DONE" -> PendingActionType.HOTO_DONE
             "TAG_ASSIGNMENT" -> PendingActionType.TAG_ASSIGNMENT
-            "KYV" -> PendingActionType.KYV
+            "KYV_DONE" -> PendingActionType.KYV
             else -> PendingActionType.ADD_VEHICLE
         }
     }
 
 
     private fun getMockPendingOrders(): List<PendingOrder> {
+        val orderItems = arrayListOf(
+            com.delhivery.axle.api.request.PaymentBreakupItem("VC4", 2),
+            com.delhivery.axle.api.request.PaymentBreakupItem("VC5", 1)
+        )
         return listOf(
             PendingOrder(
-                orderId = "DLVec4a9113",
+                orderId = "DLV4dbeb855",
                 date = "03 Jun 2026",
-                pendingCount = 8,
+                pendingCount = 7,
                 vehicles = listOf(
-                    PendingVehicle("Vehicle Class 4", null, "UP16CP4301", PendingActionType.ADD_VEHICLE, "Add Vehicle", "BLUE"),
-                    PendingVehicle("Vehicle Class 5", null, "DL01CA1269", PendingActionType.ORDER_CREATED, "Order Created", "ORANGE"),
-                    PendingVehicle("Vehicle Class 7", null, "MH02XY9876", PendingActionType.KYC_DONE, "KYC", "GREEN"),
-                    PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW"),
-                    PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK"),
-                    PendingVehicle("Vehicle Class 4", null, "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", "348934587348578347534"),
-                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KVY", "ORANGE"),
+                    PendingVehicle("Vehicle Class 4", null, "UP16CP4301", PendingActionType.ADD_VEHICLE, "Add Vehicle", "BLUE", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 5", null, "DL01CA1269", PendingActionType.ORDER_CREATED, "Order Created", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 7", null, "MH02XY9876", PendingActionType.KYC_DONE, "KYC", "GREEN", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 6", null, "KA03AB4567", PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT, "Payment Pending", "YELLOW", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 12", null, "TN04CD7890", PendingActionType.HOTO_DONE, "FASTag Collection", "PINK", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 4", "TAG123456", "HR38AL2395", PendingActionType.TAG_ASSIGNMENT, "Vehicle Assignment", "BLUE", barcodeId = "348934587348578347534", salesCode = "TP7472", orderId = "DLV4dbeb855", items = orderItems),
+                    PendingVehicle("Vehicle Class 5", null, "RJ14CP6543", PendingActionType.KYV, "KYV", "ORANGE", salesCode = "TP7472", orderId = "DLV4dbeb855", journeyId = "JRN001", items = orderItems),
                 ),
                 isExpanded = true
             )

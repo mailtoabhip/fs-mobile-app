@@ -123,7 +123,7 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
         super.onPostCreate(savedInstanceState)
 
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
     }
 
@@ -145,7 +145,10 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
             else -> R.drawable.trailer
         }
 
-        binding.ivBack.setOnClickListener { finish() }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.btnRaiseDispute.setOnClickListener {
             val intent = Intent(this, FastagDisputeIssuesActivity::class.java).apply {
