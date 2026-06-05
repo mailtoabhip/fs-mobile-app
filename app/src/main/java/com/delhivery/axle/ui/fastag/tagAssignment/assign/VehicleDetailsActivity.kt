@@ -72,7 +72,6 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLl)
-            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
         }
     }
 

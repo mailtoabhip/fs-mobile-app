@@ -46,7 +46,7 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
             confirmCollection()
         }
 
-        viewModel.fetchOrders(intent.getStringExtra("extra_sales_code") ?: "", intent.getStringExtra("extra_order_id") ?: "")
+        viewModel.fetchOrders(intent.getStringExtra(EXTRA_SALES_CODE) ?: "", intent.getStringExtra(EXTRA_ORDER_ID) ?: "")
     }
 
     private var currentOrderId: String = ""
@@ -125,7 +125,7 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
             // Assign FASTags — navigate to vehicle details
             val intent = Intent(this, VehicleDetailsActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                putExtra("order_id", currentOrderId)
+                putExtra(EXTRA_ORDER_ID, currentOrderId)
             }
             startActivity(intent)
             finish()
