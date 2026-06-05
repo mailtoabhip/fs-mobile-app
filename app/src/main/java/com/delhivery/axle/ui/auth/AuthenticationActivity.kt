@@ -279,7 +279,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           OTP -> {
             binding.icBack.visibility = View.VISIBLE
-            uiUtils.hideDelhiveryProgress()
             resetVerifyButton()
             binding.otpView.text?.clear()
             Handler(Looper.getMainLooper()).postDelayed({
@@ -323,7 +322,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                     mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED , PROPERTY_USER_ID , PROPERTY_OTP_SEND_COUNT),
                     mutableListOf(viewModel.phoneNo , userPrefs.userId() , viewModel.otpSendCount.toString())
             )
-            uiUtils.hideDelhiveryProgress()
             userPrefs.isFirstOpenRate=true
             navigationUtils.navigate(HomeActivity::class.java, true)
           }
@@ -350,7 +348,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               analyticsUtil.moEngageUserAttribute(USER_ATTRIBUTE_USER_MOBILE,it)
               analyticsUtil.moEngageUserAttribute(USER_PROPERTY_PHONE_NO,it)
             }
-            uiUtils.hideDelhiveryProgress()
             dialogUtils.showBasicConfirmDialog(string.title_dialog_supplier_disabled,
                     string.msg_dialog_supplier_disabled,
                     getString(string.label_call_us), getString(string.label_mail_us),

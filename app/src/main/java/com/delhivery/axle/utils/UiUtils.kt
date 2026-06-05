@@ -23,7 +23,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.delhivery.axle.R
 import com.delhivery.axle.config.AWSConfig
 import com.delhivery.axle.databinding.DialogKycSubmittedBinding
-import com.delhivery.axle.databinding.LayoutDelhiveryProgressBinding
 import com.delhivery.axle.databinding.LayoutFabCardMenuBinding
 import com.delhivery.axle.databinding.LayoutProgressBinding
 import com.delhivery.axle.injection.scope.ActivityScope
@@ -51,13 +50,6 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
     binding
   }
 
-  /* delhivery progress binding */
-  private val delhiveryProgressBinding: LayoutDelhiveryProgressBinding by lazy {
-    val binding =
-      LayoutDelhiveryProgressBinding.inflate(LayoutInflater.from(activity), activityRoot, false)
-    binding.root.consumeTouch()
-    binding
-  }
 
   // Snackbar instance
   private var snackbar: Snackbar? = null
@@ -113,40 +105,6 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
     }
   }
 
-  /**
-   * Show delhivery progress
-   */
-  fun showDelhiveryProgress(
-    title: String,
-    message: String,
-    proTip: String
-  ) {
-    activity.runOnUiThread {
-      toggleKeyboard()
-      //remove progress layout if exist
-      delhiveryProgressBinding.root.parent?.let {
-        (it as ViewGroup).removeView(progressBinding.root)
-      }
-
-      activityRoot.addView(delhiveryProgressBinding.root)
-      delhiveryProgressBinding.title = title
-      delhiveryProgressBinding.message = message
-      // Pro tip hidden right now
-      delhiveryProgressBinding.tip = proTip
-
-      delhiveryProgressBinding.progress.startAnim()
-    }
-  }
-
-  /**
-   * Hide delhivery progress
-   */
-  fun hideDelhiveryProgress() {
-    activity.runOnUiThread {
-      delhiveryProgressBinding.progress.stopAnim()
-      activityRoot.removeView(delhiveryProgressBinding.root)
-    }
-  }
 
   /**
    * Show Snackbar with string message

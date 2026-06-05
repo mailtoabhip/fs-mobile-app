@@ -10,11 +10,11 @@ import androidx.fragment.app.FragmentPagerAdapter
 class HomeFragmentsAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
     fragmentManager
 ) {
-  override fun getItem(position: Int) = HomeFragmentType.pos(position)!!.fragment
+  override fun getItem(position: Int) = HomeFragmentType.NewHomeFragment.fragment
 
-  override fun getCount() = HomeFragmentType.count()
+  override fun getCount() = 1  // Only show HomeFragment
 
-  override fun getPageTitle(position: Int) = HomeFragmentType.pos(position)!!.title
+  override fun getPageTitle(position: Int) = HomeFragmentType.NewHomeFragment.title
 }
 
 
