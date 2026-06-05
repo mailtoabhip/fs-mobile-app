@@ -17,6 +17,10 @@
             name="isOtpFilled"
             type="Boolean" />
 
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

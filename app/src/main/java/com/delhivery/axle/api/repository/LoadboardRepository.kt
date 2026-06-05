@@ -3,7 +3,6 @@ package com.delhivery.axle.api.repository
 import com.delhivery.axle.api.request.AddAddressModel
 import com.delhivery.axle.api.request.BankValidationRequest
 import com.delhivery.axle.api.request.FastagLeadRequest
-import com.delhivery.axle.api.request.FastagRechargeRequest
 import com.delhivery.axle.api.request.GstDetailRequest
 import com.delhivery.axle.api.request.GstNumberRequest
 import com.delhivery.axle.api.request.GstOrAadhaarDocRequest
@@ -198,11 +197,6 @@ class LoadboardRepository @Inject constructor(
      * Submit FASTag lead request
      */
     fun submitFastagLead(fastagLeadRequest: FastagLeadRequest) = loadboardService.submitFastagLead(fastagLeadRequest).convertResponse()
-
-    /**
-     * Recharge FASTag from wallet
-     */
-    fun rechargeFastag(vendorId: String, fastagRechargeRequest: FastagRechargeRequest) = loadboardService.rechargeFastag(vendorId, fastagRechargeRequest).convertResponse()
 
     /**
      * Fetch FASTag status

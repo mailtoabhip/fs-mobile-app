@@ -41,6 +41,8 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
     private fun populateVehicleCard() {
         binding.tvVehicleNumber.text = intent.getStringExtra(EXTRA_VEHICLE_NUMBER).orEmpty()
         binding.tvVehicleClass.text = intent.getStringExtra(EXTRA_VEHICLE_CLASS).orEmpty()
+        binding.tvTagColor.text = intent.getStringExtra(EXTRA_TAG_COLOR).orEmpty()
+        binding.tvProvider.text = intent.getStringExtra(EXTRA_BANK).orEmpty()
     }
 
     private fun setupHeader() {
@@ -167,17 +169,19 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
         }
 
         viewModel.issueTagData.observe(this) { resource ->
+            val otpSheet = supportFragmentManager.findFragmentByTag(OtpBottomSheetFragment.TAG)
+                as? OtpBottomSheetFragment
             when (resource) {
                 is Resource.Loading -> {
-                    // Tag issuance in progress
+                    otpSheet?.showLoading()
                 }
                 is Resource.Success -> {
-                    // Dismiss OTP bottom sheet and show success
-                    supportFragmentManager.findFragmentByTag(OtpBottomSheetFragment.TAG)
-                        ?.let { (it as? OtpBottomSheetFragment)?.dismiss() }
+                    otpSheet?.hideLoading()
+                    otpSheet?.dismiss()
                     showTagMappingSuccessBottomSheet()
                 }
                 is Resource.Failure -> {
+                    otpSheet?.hideLoading()
                     Toast.makeText(this, resource.errorMessage ?: "Failed to issue FASTag", Toast.LENGTH_SHORT).show()
                 }
             }

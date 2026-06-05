@@ -2,14 +2,8 @@ package com.delhivery.axle.ui.home.fragments.trucks
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.delhivery.axle.SyncOfferData.MyWorker
 import com.delhivery.axle.api.repository.LoadCycleRepository
 import com.delhivery.axle.api.repository.LoadboardRepository
 import com.delhivery.axle.api.repository.TruckRepository
@@ -29,7 +23,6 @@ import com.delhivery.axle.utils.extensions.plusAssign
 import com.delhivery.axle.utils.prefs.UserPrefs
 import com.google.gson.JsonObject
 import io.reactivex.disposables.SerialDisposable
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
