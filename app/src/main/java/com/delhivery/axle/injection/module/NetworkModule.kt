@@ -2,6 +2,7 @@ package com.delhivery.axle.injection.module
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.api.service.*
 import com.delhivery.axle.config.UrlConfig
 import com.delhivery.axle.utils.DocumentUtils
@@ -18,6 +19,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Singleton
 
@@ -59,21 +61,60 @@ class NetworkModule {
    *
    * @return [OkHttpClient]
    */
+//  @Provides
+//  @Singleton
+//  fun provideOkHttpClient(
+//    chuckerInterceptor: ChuckerInterceptor,
+//    authInterceptor: DelhiveryNetworkInterceptor,
+//    tokenAuthenticator: TokenAuthenticator
+//  ): OkHttpClient = OkHttpClient.Builder()
+//      .connectTimeout(30, SECONDS)
+//      .readTimeout(30, SECONDS)
+//      .writeTimeout(60, SECONDS)
+//      .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//      .addInterceptor(chuckerInterceptor)
+//      .addInterceptor(authInterceptor)
+//      .authenticator(tokenAuthenticator)
+//      .build()
+
+
   @Provides
   @Singleton
   fun provideOkHttpClient(
     chuckerInterceptor: ChuckerInterceptor,
-    authInterceptor: DelhiveryNetworkInterceptor,
+    headerInterceptor: DelhiveryNetworkInterceptor,
     tokenAuthenticator: TokenAuthenticator
-  ): OkHttpClient = OkHttpClient.Builder()
-      .connectTimeout(30, SECONDS)
-      .readTimeout(30, SECONDS)
-      .writeTimeout(15, SECONDS)
-      .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-      .addInterceptor(chuckerInterceptor)
-      .addInterceptor(authInterceptor)
+  ): OkHttpClient {
+
+    return OkHttpClient.Builder()
+      .connectTimeout(60, TimeUnit.SECONDS)
+      .readTimeout(60, TimeUnit.SECONDS)
+      .writeTimeout(60, TimeUnit.SECONDS)
+
+      // Add auth token before any logging/debugging
+      .addInterceptor(headerInterceptor)
+
+      .apply {
+        if (BuildConfig.DEBUG) {
+          val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+            // Avoid BODY logging for auth/PII data
+          }
+
+          //adding logging interceptor
+          addInterceptor(loggingInterceptor)
+
+          //adding chucker interceptor
+          addInterceptor(chuckerInterceptor)
+        }
+      }
+
+      //adding token authenticator
       .authenticator(tokenAuthenticator)
+
+      //build
       .build()
+  }
 
   /**
    * Get retrofit instance for RxJava-based services
