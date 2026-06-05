@@ -3,7 +3,8 @@
     android:id="@+id/slideTrack"
     android:layout_width="match_parent"
     android:layout_height="56dp"
-    android:background="@drawable/bg_slide_track">
+    android:background="@drawable/bg_slide_track"
+    android:padding="@dimen/size_6dp">
 
     <!-- Label -->
     <TextView
@@ -21,9 +22,8 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="4dp"
         android:background="@drawable/bg_slide_thumb"
-        android:padding="12dp"
-        android:src="@drawable/ic_chevron_right" />
+        android:scaleType="center"
+        android:src="@drawable/ic_chevron_right_v2" />
 
 </FrameLayout>
