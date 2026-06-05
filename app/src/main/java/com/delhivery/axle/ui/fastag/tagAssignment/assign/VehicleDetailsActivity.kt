@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.response.OrderItem
 import com.delhivery.axle.databinding.ActivityVehicleDetailsBinding
 import com.delhivery.axle.ui.base.BaseActivity
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.WindowInsetsUtils
 
 class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, VehicleDetailsViewModel>() {
@@ -79,7 +81,20 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { navigateToHome() }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateToHome()
+            }
+        })
+    }
+
+    private fun navigateToHome() {
+        val homeIntent = Intent(this, HomeActivity::class.java)
+        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(homeIntent)
+        finish()
     }
 
     private fun setupButton() {
