@@ -99,6 +99,7 @@
 
                         <!-- Green left border indicator -->
                         <View
+                            android:id="@+id/viewTagColorIndicator"
                             android:layout_width="4dp"
                             android:layout_height="match_parent"
                             android:background="@color/class_green" />

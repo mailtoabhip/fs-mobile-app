@@ -10,11 +10,15 @@ import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.ActivityTagMappingBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.common.OtpBottomSheetFragment
+import com.delhivery.axle.utils.prefs.UserPrefs
+import javax.inject.Inject
 
 class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingViewModel>() {
 
     override fun getViewModelClass() = TagMappingViewModel::class.java
     override fun layoutId() = R.layout.activity_tag_mapping
+
+    @Inject lateinit var userPrefs: UserPrefs
 
     private var selectedBarcode: String? = null
     private var lastTagId: String? = null
@@ -41,8 +45,21 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
     private fun populateVehicleCard() {
         binding.tvVehicleNumber.text = intent.getStringExtra(EXTRA_VEHICLE_NUMBER).orEmpty()
         binding.tvVehicleClass.text = intent.getStringExtra(EXTRA_VEHICLE_CLASS).orEmpty()
-        binding.tvTagColor.text = intent.getStringExtra(EXTRA_TAG_COLOR).orEmpty()
+        val tagColor = intent.getStringExtra(EXTRA_TAG_COLOR).orEmpty()
+        binding.tvTagColor.text = tagColor
         binding.tvProvider.text = intent.getStringExtra(EXTRA_BANK).orEmpty()
+        binding.viewTagColorIndicator.setBackgroundColor(mapTagColor(tagColor))
+    }
+
+    private fun mapTagColor(colorCode: String): Int {
+        return when (colorCode.uppercase()) {
+            "ORANGE" -> getColor(R.color.class_red)
+            "YELLOW" -> getColor(R.color.class_yellow)
+            "GREEN" -> getColor(R.color.class_green)
+            "PINK" -> getColor(R.color.class_pink)
+            "BLUE" -> getColor(R.color.class_blue)
+            else -> getColor(R.color.class_green)
+        }
     }
 
     private fun setupHeader() {
@@ -126,12 +143,12 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
         viewModel.productBarcodeData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
+                    uiUtils.showProgress()
                     binding.btnContinue.isEnabled = false
-                    binding.btnContinue.text = "Loading..."
                 }
                 is Resource.Success -> {
+                    uiUtils.hideProgress()
                     binding.btnContinue.isEnabled = true
-                    binding.btnContinue.text = "Continue"
                     resource.data?.let { response ->
                         // Capture tagId from first barcode item for generate-otp
                         lastTagId = response.barcodes?.firstOrNull()?.tagId
@@ -139,8 +156,8 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
                     }
                 }
                 is Resource.Failure -> {
+                    uiUtils.hideProgress()
                     binding.btnContinue.isEnabled = true
-                    binding.btnContinue.text = "Continue"
                     Toast.makeText(this, resource.errorMessage ?: "Failed to search product barcode", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -158,7 +175,12 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
                     if (existingSheet != null && existingSheet.isAdded) {
                         existingSheet.clearOtp()
                     } else {
-                        val maskedNumber = intent.getStringExtra(EXTRA_MASKED_PHONE).orEmpty()
+                        val phone = userPrefs.phoneNumber.orEmpty()
+                        val maskedNumber = if (phone.length >= 4) {
+                            "******" + phone.takeLast(4)
+                        } else {
+                            phone
+                        }
                         showOtpBottomSheet(maskedNumber)
                     }
                 }
@@ -255,7 +277,6 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
         const val EXTRA_VEHICLE_CLASS = "vehicle_class"
         const val EXTRA_JOURNEY_ID = "journey_id"
         const val EXTRA_VEHICLE_NUMBER = "vehicle_number"
-        const val EXTRA_MASKED_PHONE = "masked_phone"
         const val EXTRA_TAG_COLOR = "tag_color"
         const val EXTRA_BANK = "bank"
     }

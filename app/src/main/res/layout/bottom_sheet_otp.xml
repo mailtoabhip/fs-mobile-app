@@ -240,22 +240,37 @@
             android:layout_marginTop="@dimen/size_16dp"/>
 
         <!-- Submit Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSubmit"
+        <FrameLayout
+            android:id="@+id/layoutSubmit"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_48dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_12dp"
             android:layout_marginEnd="@dimen/size_16dp"
-            android:background="@{isOtpFilled ? @drawable/bg_all_round_corner_solid_black : @drawable/bg_all_round_corner_light_grey}"
-            android:enabled="@{isOtpFilled}"
-            android:text="Submit"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider2" />
+            app:layout_constraintTop_toBottomOf="@id/divider2">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@{isOtpFilled &amp;&amp; !isLoading ? @drawable/bg_all_round_corner_solid_black : @drawable/bg_all_round_corner_light_grey}"
+                android:enabled="@{isOtpFilled &amp;&amp; !isLoading}"
+                android:text="@{isLoading ? `` : `Submit`}"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_16sp" />
+
+            <ProgressBar
+                android:id="@+id/progressSubmit"
+                android:layout_width="@dimen/size_24dp"
+                android:layout_height="@dimen/size_24dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@android:color/white"
+                android:visibility="@{isLoading ? android.view.View.VISIBLE : android.view.View.GONE}" />
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
