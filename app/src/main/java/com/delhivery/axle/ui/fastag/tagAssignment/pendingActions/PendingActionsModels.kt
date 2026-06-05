@@ -28,6 +28,7 @@ data class PendingVehicle(
     val barcodeId: String? = null,
     val salesCode: String? = null,
     val orderId: String? = null,
+    val itemId: String? = null,
     val journeyId: String? = null
 )
 
@@ -66,7 +67,7 @@ data class PendingActionOrder(
 )
 
 data class PendingActionItem(
-    @SerializedName("item_id") val itemId: Int,
+    @SerializedName("item_id") val itemId: String,
     @SerializedName("vrn") val vrn: String,
     @SerializedName("vehicle_class") val vehicleClass: String,
     @SerializedName("display_name") val displayName: String,

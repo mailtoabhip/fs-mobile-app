@@ -41,8 +41,8 @@ class TagMappingSuccessBottomSheetFragment : BottomSheetDialogFragment() {
         isCancelable = false
 
         binding.btnContinueToKyv.setOnClickListener {
-            onContinueToKyv?.invoke()
             dismiss()
+                onContinueToKyv?.invoke()
         }
     }
 

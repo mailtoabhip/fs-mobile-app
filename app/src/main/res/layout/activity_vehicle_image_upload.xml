@@ -26,14 +26,14 @@
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/size_16dp">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivBack"
                 android:layout_width="@dimen/size_16dp"
                 android:layout_height="@dimen/size_16dp"
                 android:contentDescription="@string/action_continue"
                 android:src="@drawable/icon_back_button" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_16dp"
@@ -59,7 +59,7 @@
                 android:padding="@dimen/size_16dp">
 
                 <!-- Section Title -->
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/upload_vehicle_images_title"
@@ -77,7 +77,7 @@
                     android:paddingHorizontal="@dimen/size_12dp"
                     android:paddingVertical="@dimen/size_12dp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvVehicleNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                         android:textSize="@dimen/text_14sp"
                         tools:text="Vehicle Number: DL01CA1268" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"

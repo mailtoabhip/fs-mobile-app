@@ -62,7 +62,8 @@ class PendingActionsActivity : BaseActivity<ActivityPendingActionsBinding, Pendi
                     barcodeId = vehicle.barcodeId,
                     salesCode = vehicle.salesCode,
                     orderId = vehicle.orderId,
-                    journeyId = vehicle.journeyId
+                    journeyId = vehicle.journeyId,
+                    itemId = vehicle.itemId
                 )
             )
         }

@@ -71,7 +71,8 @@ class PendingActionsViewModel @Inject constructor(
                         barcodeId = item.barcodeId,
                         salesCode = order.salesCode,
                         orderId = order.orderId,
-                        journeyId = item.journeyId
+                        journeyId = item.journeyId,
+                        itemId = item.itemId
                     )
                 },
                 isExpanded = true
@@ -110,7 +111,7 @@ class PendingActionsViewModel @Inject constructor(
     private fun getMockPendingOrders(): List<PendingOrder> {
         return listOf(
             PendingOrder(
-                orderId = "DLVec4a9113",
+                orderId = "DLV22222",
                 date = "03 Jun 2026",
                 pendingCount = 8,
                 vehicles = listOf(

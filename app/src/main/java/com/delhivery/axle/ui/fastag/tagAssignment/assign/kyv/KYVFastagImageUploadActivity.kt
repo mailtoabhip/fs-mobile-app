@@ -1,4 +1,4 @@
-package com.delhivery.axle.ui.fastag.tagAssignment.assign
+package com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv
 
 import android.Manifest
 import android.content.Context
@@ -17,9 +17,11 @@ import androidx.lifecycle.lifecycleScope
 import com.delhivery.axle.BuildConfig
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
-import com.delhivery.axle.databinding.ActivityFastagAssignmentBinding
+import com.delhivery.axle.databinding.ActivityFastagImageUploadBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.UploadOptionsBottomSheetDialogFragment
+import com.delhivery.axle.ui.dialogs.VehicleVerifiedBottomSheetDialogFragment
+import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.FileCompressor
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -34,10 +36,10 @@ import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
-class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, FastagAssignmentViewModel>() {
+class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBinding, KYVFastagImageUploadViewModel>() {
 
-    override fun getViewModelClass() = FastagAssignmentViewModel::class.java
-    override fun layoutId() = R.layout.activity_fastag_assignment
+    override fun getViewModelClass() = KYVFastagImageUploadViewModel::class.java
+    override fun layoutId() = R.layout.activity_fastag_image_upload
     override fun requireConnection() = true
 
     @Inject
@@ -45,41 +47,27 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
     @Inject
     lateinit var fileCompressor: FileCompressor
 
-    private var rcFrontUploaded = false
-    private var rcBackUploaded = false
-    private var rcFrontFile: File? = null
-    private var rcBackFile: File? = null
-
-    private var currentUploadTarget: UploadTarget = UploadTarget.RC_FRONT
+    private var fastagImageUploaded = false
+    private var fastagImageFile: File? = null
     private var mPhotoFile: File? = null
-
-    private enum class UploadTarget {
-        RC_FRONT, RC_BACK
-    }
 
     companion object {
         private const val EXTRA_VEHICLE_NUMBER = "extra_vehicle_number"
-        private const val EXTRA_CHASSIS_NUMBER = "extra_chassis_number"
+        private const val EXTRA_JOURNEY_ID = "extra_journey_id"
         private const val EXTRA_ORDER_ID = "extra_order_id"
-        private const val EXTRA_ORDER_ITEM_ID = "extra_order_item_id"
+        private const val EXTRA_ITEM_ID = "extra_item_id"
 
-        fun newIntent(
-            context: Context,
-            vehicleNumber: String,
-            chassisNumber: String,
-            orderId: String = "",
-            orderItemId: Int = 0
-        ): Intent {
-            return Intent(context, FastagAssignmentActivity::class.java).apply {
+        fun newIntent(context: Context, vehicleNumber: String, journeyId: String = "", orderId:String = "",itemId:String =""): Intent {
+            return Intent(context, KYVFastagImageUploadActivity::class.java).apply {
                 putExtra(EXTRA_VEHICLE_NUMBER, vehicleNumber)
-                putExtra(EXTRA_CHASSIS_NUMBER, chassisNumber)
+                putExtra(EXTRA_JOURNEY_ID, journeyId)
                 putExtra(EXTRA_ORDER_ID, orderId)
-                putExtra(EXTRA_ORDER_ITEM_ID, orderItemId)
+                putExtra(EXTRA_ITEM_ID, itemId)
             }
         }
     }
 
-    // File picker launcher (same pattern as FastagDynamicDisputeFormActivity)
+    // File picker launcher
     private val filePickerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -96,8 +84,7 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             mPhotoFile?.let { file ->
-                val uri = Uri.fromFile(file)
-                handleFileResult(uri)
+                handleFileResult(Uri.fromFile(file))
             }
         }
     }
@@ -106,19 +93,18 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         super.onCreate(savedInstanceState)
 
         val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
-        val chassisNumber = intent.getStringExtra(EXTRA_CHASSIS_NUMBER) ?: ""
 
         setupToolbar()
         setupVehicleInfo(vehicleNumber)
-        setupUploadCards()
-        updateContinueButton()
+        setupUploadCard()
+        updateSubmitButton()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.layoutHeader)
-            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnContinue)
+            WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentLl)
+            WindowInsetsUtils.applyBottomSystemWindowInsets(binding.btnSubmit)
         }
     }
 
@@ -130,50 +116,36 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         binding.tvVehicleNumber.text = "Vehicle Number: $vehicleNumber"
     }
 
-    private fun setupUploadCards() {
-        binding.uploadRcFront.setTitle(getString(R.string.upload_rc_front))
-        binding.uploadRcFront.setSubtitle(getString(R.string.upload_file_format_info))
-        binding.uploadRcFront.setOnUploadClickListener {
-            currentUploadTarget = UploadTarget.RC_FRONT
-            showUploadOptionsBottomSheet(getString(R.string.upload_rc_front))
+    private fun setupUploadCard() {
+        binding.uploadFastagImage.setOnUploadClickListener {
+            showUploadOptionsBottomSheet()
         }
-        binding.uploadRcFront.setOnRemoveClickListener {
-            binding.uploadRcFront.resetUploadState()
-            rcFrontUploaded = false
-            updateContinueButton()
+        binding.uploadFastagImage.setOnRemoveClickListener {
+            binding.uploadFastagImage.resetUploadState()
+            fastagImageUploaded = false
+            fastagImageFile = null
+            updateSubmitButton()
         }
 
-        binding.uploadRcBack.setTitle(getString(R.string.upload_rc_back))
-        binding.uploadRcBack.setSubtitle(getString(R.string.upload_file_format_info))
-        binding.uploadRcBack.setOnUploadClickListener {
-            currentUploadTarget = UploadTarget.RC_BACK
-            showUploadOptionsBottomSheet(getString(R.string.upload_rc_back))
-        }
-        binding.uploadRcBack.setOnRemoveClickListener {
-            binding.uploadRcBack.resetUploadState()
-            rcBackUploaded = false
-            updateContinueButton()
-        }
-
-        binding.btnContinue.setOnClickListener {
-            if (rcFrontUploaded && rcBackUploaded) {
-                uploadRcToServer()
+        binding.btnSubmit.setOnClickListener {
+            if (fastagImageUploaded) {
+                uploadFastagImageToServer()
             }
         }
     }
 
-    private fun showUploadOptionsBottomSheet(title: String) {
+    private fun showUploadOptionsBottomSheet() {
         val bottomSheet = UploadOptionsBottomSheetDialogFragment.newInstance(
-            title = title,
-            onUploadFile = { requestFilePickerPermissions() },
+            title = getString(R.string.upload_fastag_image_label),
+            onUploadFile = { launchFilePicker() },
             onTakePhoto = { requestCameraPermissions() }
         )
         bottomSheet.show(supportFragmentManager, "upload_options")
     }
 
-    // ---- File Picker (same pattern as FastagDynamicDisputeFormActivity) ----
+    // ---- File Picker ----
 
-    private fun requestFilePickerPermissions() {
+    private fun launchFilePicker() {
         val chooserIntent = filePickerChooser(
             "Select file",
             MimeTypes.IMAGE_JPG,
@@ -186,7 +158,7 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         }
     }
 
-    // ---- Camera (same pattern as ShareRateActivity) ----
+    // ---- Camera ----
 
     private fun requestCameraPermissions() {
         compositeDisposable += requestPermission(
@@ -221,15 +193,11 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
     }
 
     private fun createImageFile(): File {
-        val prefix = when (currentUploadTarget) {
-            UploadTarget.RC_FRONT -> "rc_front_"
-            UploadTarget.RC_BACK -> "rc_back_"
-        }
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(prefix, ".jpg", storageDir)
+        return File.createTempFile("fastag_image_", ".jpg", storageDir)
     }
 
-    // ---- Handle file result (same compression pattern as DynamicDispute) ----
+    // ---- Handle file result ----
 
     private fun handleFileResult(uri: Uri) {
         val mimeType = contentResolver.getType(uri) ?: "application/octet-stream"
@@ -237,18 +205,15 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
             .getExtensionFromMimeType(mimeType) ?: "bin"
 
         val timestamp = System.currentTimeMillis()
-        val outputFileName = when (currentUploadTarget) {
-            UploadTarget.RC_FRONT -> "RC_Front_${timestamp}.jpg"
-            UploadTarget.RC_BACK -> "RC_Back_${timestamp}.jpg"
-        }
+        val outputFileName = "FASTag_Image_${timestamp}.jpg"
 
         if (extension.lowercase() == "png") {
             lifecycleScope.launch {
                 try {
-                    val destPath = File(cacheDir, "converted_${System.currentTimeMillis()}.jpg").absolutePath
+                    val destPath = File(cacheDir, "converted_${timestamp}.jpg").absolutePath
                     val converted = documentUtils.convertPngToJpg(
                         sourcePath = documentUtils.getPathFromUri(
-                            context = this@FastagAssignmentActivity,
+                            context = this@KYVFastagImageUploadActivity,
                             uri = uri
                         ),
                         destPath = destPath
@@ -274,7 +239,7 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
         } else {
             try {
                 val filePath = documentUtils.getPathFromUri(
-                    context = this@FastagAssignmentActivity,
+                    context = this@KYVFastagImageUploadActivity,
                     uri = uri
                 )
                 val compressedFile = fileCompressor.compressToFile(
@@ -291,104 +256,94 @@ class FastagAssignmentActivity : BaseActivity<ActivityFastagAssignmentBinding, F
     }
 
     private fun onFileReady(file: File) {
-        when (currentUploadTarget) {
-            UploadTarget.RC_FRONT -> {
-                binding.uploadRcFront.setUploadedFile(file, "RC_Front.jpg")
-                rcFrontFile = file
-                rcFrontUploaded = true
-            }
-            UploadTarget.RC_BACK -> {
-                binding.uploadRcBack.setUploadedFile(file, "RC_Back.jpg")
-                rcBackFile = file
-                rcBackUploaded = true
-            }
-        }
-        updateContinueButton()
+        binding.uploadFastagImage.setUploadedFile(file, "FASTag_Image.jpg")
+        fastagImageFile = file
+        fastagImageUploaded = true
+        updateSubmitButton()
     }
 
-    private fun updateContinueButton() {
-        val enabled = rcFrontUploaded && rcBackUploaded
-        binding.btnContinue.isEnabled = enabled
-        binding.btnContinue.alpha = if (enabled) 1.0f else 0.5f
+    private fun updateSubmitButton() {
+        binding.btnSubmit.isEnabled = fastagImageUploaded
+        binding.btnSubmit.alpha = if (fastagImageUploaded) 1.0f else 0.5f
     }
 
-    // ---- RC Upload API ----
+    // ---- FASTag Image Upload + Validate API Chain ----
 
-    private fun uploadRcToServer() {
-        val frontFile = rcFrontFile ?: return
-        val backFile = rcBackFile ?: return
+    private fun uploadFastagImageToServer() {
+        val file = fastagImageFile ?: return
+        val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
         val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
-        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+        val orderItemId = intent.getStringExtra(EXTRA_ITEM_ID) ?: ""
 
         val mediaType = MediaType.parse("image/jpeg")
-        val rcFrontPart = MultipartBody.Part.createFormData(
-            "rc_front",
-            frontFile.name,
-            RequestBody.create(mediaType, frontFile)
-        )
-        val rcBackPart = MultipartBody.Part.createFormData(
-            "rc_back",
-            backFile.name,
-            RequestBody.create(mediaType, backFile)
+        val imagePart = MultipartBody.Part.createFormData(
+            "fastag_image",
+            file.name,
+            RequestBody.create(mediaType, file)
         )
 
-        viewModel.uploadRcImages(rcFrontPart, rcBackPart, orderId, orderItemId)
-        observeRcUpload()
+        viewModel.uploadFastagImage(imagePart, journeyId, orderId, orderItemId)
+        observeUpload()
     }
 
-    private fun observeRcUpload() {
-        viewModel.rcUploadState.observe(this, Observer { resource ->
+    private fun observeUpload() {
+        viewModel.uploadState.observe(this, Observer { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     uiUtils.showProgress()
                 }
                 is Resource.Success -> {
-                    val jobId = resource.data?.jobId
-                    if (!jobId.isNullOrEmpty()) {
-                        // Start polling — keep progress showing
-                        viewModel.startRcPolling(jobId)
-                        observeRcProcessStatus()
-                    } else {
-                        uiUtils.hideProgress()
-                        navigateToVehicleImageUpload()
-                    }
+                    // Upload succeeded — now call validate
+                    val journeyId = resource.data?.journeyId
+                        ?: intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
+                    viewModel.validateFastagImage(journeyId)
+                    observeValidation()
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    if (resource.isNetworkError) {
-                        uiUtils.showSnackbar("Network error. Please check your connection.")
+                    val errorMessage = if (resource.isNetworkError) {
+                        "Network error. Please check your connection."
                     } else {
-                        uiUtils.showSnackbar(resource.errorMessage ?: "RC upload failed. Please try again.")
+                        resource.errorMessage ?: "FASTag image upload failed. Please try again."
                     }
+                    dialogUtils.showErrorDialog(errorMessage, 3L)
                 }
             }
         })
     }
 
-    private fun observeRcProcessStatus() {
-        viewModel.rcProcessStatus.observe(this, Observer { resource ->
+    private fun observeValidation() {
+        viewModel.validateState.observe(this, Observer { resource ->
             when (resource) {
+                is Resource.Loading -> { /* progress already showing */ }
                 is Resource.Success -> {
                     uiUtils.hideProgress()
-                    val status = resource.data?.status?.uppercase()
-                    when (status) {
-                        "COMPLETED", "TIMEOUT" -> navigateToVehicleImageUpload()
-                        "FAILED", "NOT_FOUND" -> {
-                            uiUtils.showSnackbar("RC processing failed. Please try again.")
-                        }
-                    }
+                    val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
+                    showVehicleVerifiedBottomSheet(vehicleNumber)
                 }
                 is Resource.Failure -> {
                     uiUtils.hideProgress()
-                    uiUtils.showSnackbar("Processing check failed. Please try again.")
+                    val errorMessage = if (resource.isNetworkError) {
+                        "Network error. Please check your connection."
+                    } else {
+                        resource.errorMessage ?: "FASTag image validation failed. Please try again."
+                    }
+                    dialogUtils.showErrorDialog(errorMessage, 3L)
                 }
-                is Resource.Loading -> { /* no-op */ }
             }
         })
     }
 
-    private fun navigateToVehicleImageUpload() {
-        val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
-        startActivity(VehicleImageUploadActivity.newIntent(this, vehicleNumber))
+    private fun showVehicleVerifiedBottomSheet(vehicleNumber: String) {
+        val bottomSheet = VehicleVerifiedBottomSheetDialogFragment.newInstance(
+            vehicleNumber = vehicleNumber,
+            onGoToHomepage = {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish()
+            }
+        )
+        bottomSheet.show(supportFragmentManager, "vehicle_verified")
     }
 }

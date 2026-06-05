@@ -26,8 +26,8 @@ import com.delhivery.axle.ui.fastag.issuance.PaymentMethodActivity
 import com.delhivery.axle.ui.fastag.issuance.SelectFasTagActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.PendingActionsActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.FastagAssignmentActivity
-import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.RCUploadActivity
+import com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleImageUploadActivity
 import com.delhivery.axle.ui.fastag.qdr.FastagDisputeIssuesActivity
@@ -424,7 +424,7 @@ abstract class ActivityBindingModule {
   /* FASTag Assignment activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagAssignmentActivityModule::class])
-  internal abstract fun bindFastagAssignmentActivity(): FastagAssignmentActivity
+  internal abstract fun bindFastagAssignmentActivity(): RCUploadActivity
 
   /* Vehicle Image Upload activity */
   @ActivityScope
@@ -434,7 +434,7 @@ abstract class ActivityBindingModule {
   /* FASTag Image Upload activity */
   @ActivityScope
   @ContributesAndroidInjector(modules = [AbsFastagImageUploadActivityModule::class])
-  internal abstract fun bindFastagImageUploadActivity(): FastagImageUploadActivity
+  internal abstract fun bindFastagImageUploadActivity(): KYVFastagImageUploadActivity
 
   /* Vehicle Details activity */
   @ActivityScope
@@ -725,13 +725,13 @@ internal abstract class AbsPendingActionsActivityModule : ActivityModule<Pending
 internal abstract class AbsAssignVehicleActivityModule : ActivityModule<AssignVehicleActivity>()
 
 @Module
-internal abstract class AbsFastagAssignmentActivityModule : ActivityModule<FastagAssignmentActivity>()
+internal abstract class AbsFastagAssignmentActivityModule : ActivityModule<RCUploadActivity>()
 
 @Module
 internal abstract class AbsVehicleImageUploadActivityModule : ActivityModule<VehicleImageUploadActivity>()
 
 @Module
-internal abstract class AbsFastagImageUploadActivityModule : ActivityModule<FastagImageUploadActivity>()
+internal abstract class AbsFastagImageUploadActivityModule : ActivityModule<KYVFastagImageUploadActivity>()
 
 @Module
 internal abstract class AbsVehicleDetailsActivityModule : ActivityModule<VehicleDetailsActivity>()

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.FastagImageUploadViewModel" />
+            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadViewModel" />
     </data>
 
     <LinearLayout
@@ -27,14 +27,14 @@
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/size_16dp">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivBack"
                 android:layout_width="@dimen/size_16dp"
                 android:layout_height="@dimen/size_16dp"
                 android:contentDescription="@string/action_continue"
                 android:src="@drawable/icon_back_button" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_16dp"
@@ -42,13 +42,6 @@
                 android:text="@string/know_your_vehicle_title"
                 android:textColor="@color/black_title"
                 android:textSize="@dimen/text_14sp" />
-
-            <ImageView
-                android:id="@+id/ivHelp"
-                android:layout_width="@dimen/size_24dp"
-                android:layout_height="@dimen/size_24dp"
-                android:contentDescription="@string/title_support"
-                android:src="@drawable/ic_help_outline" />
 
         </LinearLayout>
 
@@ -67,7 +60,7 @@
                 android:padding="@dimen/size_16dp">
 
                 <!-- Section Title -->
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/upload_fastag_image_title"
@@ -85,7 +78,7 @@
                     android:paddingHorizontal="@dimen/size_12dp"
                     android:paddingVertical="@dimen/size_12dp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvVehicleNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
