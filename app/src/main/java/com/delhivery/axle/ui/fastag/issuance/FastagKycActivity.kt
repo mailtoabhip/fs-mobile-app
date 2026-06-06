@@ -49,6 +49,9 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
             insets
         }
 
+        // Show loading state initially
+        showLoading()
+
         setupToolbar()
         setupSelection()
         setupClickListeners()
@@ -74,9 +77,12 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
     private fun observeViewModel() {
         viewModel.kycTypesState.observe(this) { resource ->
             when (resource) {
-                is Resource.Loading -> {}
+                is Resource.Loading -> {
+                    showLoading()
+                }
 
                 is Resource.Success -> {
+                    hideLoading()
                     val data = resource.data ?: return@observe
                     bankCode = data.bankCode
                     val types = data.kycTypes.map { it.kycType }
@@ -86,9 +92,15 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
                     hasEkyc = types.contains("EKYC")
 
                     updateKycOptionsVisibility()
+
+                    // Preselect Express KYC if available
+                    if (hasExpressKyc) {
+                        selectExpressKyc()
+                    }
                 }
 
                 is Resource.Failure -> {
+                    hideLoading()
                     val message = resource.errorMessage
                         ?: if (resource.isNetworkError) "No internet connection" else "Something went wrong"
                     dialogUtils.showErrorDialog(message)
@@ -253,6 +265,16 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
             orderId = orderId
         )
         bottomSheet.show(supportFragmentManager, DocumentVerificationBottomSheet.TAG)
+    }
+
+    private fun showLoading() {
+        binding.progressLayout.root.visibility = View.VISIBLE
+        binding.contentContainer.visibility = View.GONE
+    }
+
+    private fun hideLoading() {
+        binding.progressLayout.root.visibility = View.GONE
+        binding.contentContainer.visibility = View.VISIBLE
     }
 
     companion object {
