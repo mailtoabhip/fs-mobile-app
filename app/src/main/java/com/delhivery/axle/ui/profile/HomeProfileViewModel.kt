@@ -87,20 +87,24 @@ class HomeProfileViewModel @Inject constructor(
     userPrefs.lastLoggedInUserId = userPrefs.userId()
     Log.i("LoggedInUser", userPrefs.lastLoggedInUserId)
 
+    progressLiveData.value = true
     viewModelScope.launch {
       try {
         when (val result = fsAuthRepository.logout()) {
           is Resource.Success -> {
+            progressLiveData.value = false
             userPrefs.clearPrefs()
             logoutResultLiveData.postValue(true)
           }
           is Resource.Failure -> {
+            progressLiveData.value = false
             Log.e("HomeProfileVM", "Logout API failed: code=${result.errorCode}")
             logoutResultLiveData.postValue(false)
           }
           Resource.Loading -> { /* no-op */ }
         }
       } catch (e: Exception) {
+        progressLiveData.value = false
         Log.e("HomeProfileVM", "Logout API call failed", e)
         logoutResultLiveData.postValue(false)
       }

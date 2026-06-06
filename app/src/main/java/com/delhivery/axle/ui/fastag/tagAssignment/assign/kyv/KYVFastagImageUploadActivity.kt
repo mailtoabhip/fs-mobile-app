@@ -10,7 +10,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
@@ -113,21 +112,6 @@ class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBindi
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.setNavigationOnClickListener { navigationUtils.navigateToHome() }
-    }
-
-    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_help, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_help -> {
-                // TODO: Open help/support
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun setupVehicleInfo(vehicleNumber: String) {
@@ -314,7 +298,9 @@ class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBindi
                     // Upload succeeded — now call validate
                     val journeyId = resource.data?.journeyId
                         ?: intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
-                    viewModel.validateFastagImage(journeyId)
+                    val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
+                    val orderItemId = intent.getStringExtra(EXTRA_ITEM_ID) ?: ""
+                    viewModel.validateFastagImage(journeyId, orderId, orderItemId)
                     observeValidation()
                 }
                 is Resource.Failure -> {

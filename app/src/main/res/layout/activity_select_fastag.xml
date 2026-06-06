@@ -21,7 +21,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_screen_white"
+        android:background="@android:color/white"
         android:fitsSystemWindows="true"
         tools:context=".ui.fastag.issuance.SelectFasTagActivity">
 
@@ -33,9 +33,17 @@
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_back_arrow"
+            app:navigationIcon="@drawable/ic_close"
             app:title="Select FASTag"
             style="@style/Toolbar.TitleText" />
+
+        <View
+            android:id="@+id/dividerTop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            android:background="#E6E6E6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
         <!-- Subtitle -->
         <com.google.android.material.textview.MaterialTextView
@@ -49,7 +57,7 @@
             android:textSize="@dimen/text_14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/dividerTop" />
 
         <!-- RecyclerView for vehicle classes -->
         <androidx.recyclerview.widget.RecyclerView

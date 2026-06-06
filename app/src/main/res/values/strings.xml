@@ -1285,7 +1285,7 @@
     <string name="collection_success_subtitle">You can now continue to assign FASTags\nto your vehicles</string>
     <string name="collection_success_primary_btn">Assign FASTags</string>
     <string name="collection_success_secondary_btn">Maybe Later</string>
-    <string name="collection_failed_title">FASTags collection failed</string>
+    <string name="collection_failed_title">FASTag collection failed</string>
     <string name="collection_failed_subtitle">Unable to proceed to FASTag collection\nWe\'re having trouble loading the next step.\nPlease try again.</string>
     <string name="collection_failed_primary_btn">Try again</string>
     <string name="collection_failed_secondary_btn">Maybe later</string>

@@ -38,10 +38,10 @@ class KYVFastagImageUploadViewModel @Inject constructor(
         }
     }
 
-    fun validateFastagImage(journeyId: String) {
+    fun validateFastagImage(journeyId: String, orderId: String, orderItemId: String) {
         viewModelScope.launch {
             _validateState.value = Resource.Loading
-            val result = fastagRepository.validateFastagImage(journeyId)
+            val result = fastagRepository.validateFastagImage(journeyId, orderId, orderItemId)
             _validateState.value = result
         }
     }

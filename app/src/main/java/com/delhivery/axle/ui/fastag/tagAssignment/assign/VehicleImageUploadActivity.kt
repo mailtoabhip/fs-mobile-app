@@ -511,7 +511,7 @@ class VehicleImageUploadActivity :
             )
             putExtra(
                 com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ITEM_ID,
-                orderItemId
+                orderItemId.toString()
             )
             putExtra(
                 com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_CLASS,

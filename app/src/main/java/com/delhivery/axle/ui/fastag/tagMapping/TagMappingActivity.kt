@@ -215,10 +215,9 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
 
     private fun fetchBarcodeLookup() {
         val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: return
-        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, -1)
+        val orderItemIdStr = intent.getStringExtra(EXTRA_ORDER_ITEM_ID) ?: return
+        val orderItemId = orderItemIdStr.toIntOrNull() ?: return
         val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: return
-
-        if (orderItemId == -1) return
 
         viewModel.fetchBarcodeLookup(orderId, orderItemId, vehicleClass)
     }
@@ -236,9 +235,9 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
             val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
             val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
             val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
-            val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, 0)
+            val orderItemId = intent.getStringExtra(EXTRA_ORDER_ITEM_ID) ?: ""
             val navIntent = com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity.newIntent(
-                this, vehicleNumber, journeyId, orderId, orderItemId.toString()
+                this, vehicleNumber, journeyId, orderId, orderItemId
             )
             startActivity(navIntent)
             finish()
@@ -269,14 +268,14 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
     private fun callIssueTag(otp: String) {
         val journeyId = intent.getStringExtra(EXTRA_JOURNEY_ID) ?: ""
         val orderId = intent.getStringExtra(EXTRA_ORDER_ID) ?: ""
-        val orderItemId = intent.getIntExtra(EXTRA_ORDER_ITEM_ID, -1)
+        val orderItemId = (intent.getStringExtra(EXTRA_ORDER_ITEM_ID) ?: "").toIntOrNull() ?: -1
         val barcode = selectedBarcode?.replace(" ", "") ?: return
         viewModel.issueTag(journeyId, orderId, orderItemId, barcode, otp)
     }
 
     companion object {
-        const val EXTRA_ORDER_ID = "order_id"
-        const val EXTRA_ORDER_ITEM_ID = "order_item_id"
+        const val EXTRA_ORDER_ID = "extra_order_id"
+        const val EXTRA_ORDER_ITEM_ID = "extra_item_id"
         const val EXTRA_VEHICLE_CLASS = "vehicle_class"
         const val EXTRA_JOURNEY_ID = "journey_id"
         const val EXTRA_VEHICLE_NUMBER = "vehicle_number"
