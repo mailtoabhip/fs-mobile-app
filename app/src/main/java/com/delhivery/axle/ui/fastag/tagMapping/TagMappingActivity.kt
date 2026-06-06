@@ -34,7 +34,7 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
             insets
         }
 
-        setupHeader()
+        setupToolbar()
         setupDropdown()
         setupContinueButton()
         observeViewModel()
@@ -62,8 +62,11 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
         }
     }
 
-    private fun setupHeader() {
-        binding.ivBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
     private fun setupDropdown() {

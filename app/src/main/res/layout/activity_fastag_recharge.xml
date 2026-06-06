@@ -26,8 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:title="@string/recharge_fastag"
-            app:titleTextColor="@android:color/black"
-            app:titleTextAppearance="@style/Toolbar.TitleText" />
+            style="@style/Toolbar.TitleText" />
 
         <ScrollView
             android:id="@+id/scrollContent"

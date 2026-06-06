@@ -77,12 +77,27 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
     }
 
     private fun setupToolbar() {
-        binding.ivBack.setOnClickListener { finish() }
-        binding.ivSearch.setOnClickListener {
-            val vehicleNumbers = ArrayList(
-                adapter.currentList.mapNotNull { it.fastagVrn }
-            )
-            searchLauncher.launch(FastagSearchActivity.newIntent(this, vehicleNumbers))
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+    }
+
+    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search_icon, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_search -> {
+                val vehicleNumbers = ArrayList(
+                    adapter.currentList.mapNotNull { it.fastagVrn }
+                )
+                searchLauncher.launch(FastagSearchActivity.newIntent(this, vehicleNumbers))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -153,16 +168,15 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
             if (trucks.isNullOrEmpty()) {
                 binding.rvFastagTrucks.visibility = View.GONE
                 binding.emptyState.visibility = View.VISIBLE
-                binding.ivSearch.visibility = View.GONE
+                binding.toolbar.menu.findItem(R.id.action_search)?.isVisible = false
                 binding.tvSectionTitle.visibility = View.GONE
                 binding.bannerCard.visibility = View.GONE
             } else {
-                binding.ivSearch.visibility = View.VISIBLE
+                binding.toolbar.menu.findItem(R.id.action_search)?.isVisible = true
                 binding.bannerCard.visibility = View.VISIBLE
                 binding.rvFastagTrucks.visibility = View.VISIBLE
                 binding.emptyState.visibility = View.GONE
                 binding.tvSectionTitle.visibility = View.VISIBLE
-                binding.bannerCard.visibility = View.VISIBLE
                 adapter.submitList(trucks)
             }
         })

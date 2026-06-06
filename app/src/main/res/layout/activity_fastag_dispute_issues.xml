@@ -19,8 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:title="Fastag related issues"
-            app:titleTextColor="@android:color/black"
-            app:titleTextAppearance="@style/Toolbar.TitleText" />
+            style="@style/Toolbar.TitleText" />
 
         <!-- Content -->
         <LinearLayout

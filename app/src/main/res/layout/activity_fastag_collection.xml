@@ -37,7 +37,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_close"
             app:title="FASTag Collection"
-            app:titleTextAppearance="@style/Toolbar.TitleText" />
+            style="@style/Toolbar.TitleText" />
 
         <!-- Title -->
         <com.google.android.material.textview.MaterialTextView

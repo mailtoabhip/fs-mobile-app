@@ -35,7 +35,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_close"
             app:title="Select FASTag"
-            app:titleTextAppearance="@style/Toolbar.TitleText" />
+            style="@style/Toolbar.TitleText" />
 
         <View
             android:id="@+id/dividerTop"

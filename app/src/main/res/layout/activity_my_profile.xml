@@ -26,6 +26,7 @@
             android:background="@color/white"
             android:layout_width="match_parent"
             bind:shadow="@{ @dimen/size_2dp }"
+            style="@style/Toolbar.TitleText"
             android:layout_height="@dimen/height_toolbar"
             />
 

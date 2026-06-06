@@ -29,8 +29,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_back_arrow"
         app:title="Account Details"
-        app:titleTextColor="@android:color/black"
-        app:titleTextAppearance="@style/Toolbar.TitleText" />
+        style="@style/Toolbar.TitleText" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/horizontalDivider"
