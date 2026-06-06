@@ -19,6 +19,7 @@ import com.delhivery.axle.ui.contractDetails.PlacementsContractDetailsActivity
 import com.delhivery.axle.ui.fastag.fastag_details.FastagTransactionDetailsActivity
 import com.delhivery.axle.ui.fastag.issuance.AddVehicleActivity
 import com.delhivery.axle.ui.fastag.issuance.BuyFasTagActivity
+import com.delhivery.axle.ui.fastag.issuance.BuyFasTagFragmentsBindingModule
 import com.delhivery.axle.ui.fastag.issuance.FastagCollectionActivity
 import com.delhivery.axle.ui.fastag.issuance.FastagKycActivity
 import com.delhivery.axle.ui.fastag.issuance.PaymentBreakupActivity
@@ -482,7 +483,7 @@ abstract class ActivityBindingModule {
 
   /* Buy FASTag activity */
   @ActivityScope
-  @ContributesAndroidInjector(modules = [AbsBuyFasTagActivityModule::class])
+  @ContributesAndroidInjector(modules = [AbsBuyFasTagActivityModule::class, BuyFasTagFragmentsBindingModule::class])
   internal abstract fun bindBuyFasTagActivity(): BuyFasTagActivity
 
   /* Select FASTag activity */
