@@ -213,6 +213,10 @@
 
     <!-- Profile view colors -->
     <color name="neutral_white_300">#E6E6E6</color>
+    <color name="bg_screen_gradient">#F6F6F6</color>
+    <color name="bg_screen_white">#FAFAFA</color>
+    <color name="bg_screen_white_v2">#FBFBF9</color>
+    <color name="bg_screen_white_v3">#FEFEFE</color>
 
 
 </resources>
