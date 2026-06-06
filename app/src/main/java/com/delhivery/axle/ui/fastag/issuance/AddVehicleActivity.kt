@@ -78,6 +78,7 @@ class AddVehicleActivity : BaseActivity<ActivityAddVehicleBinding, AddVehicleVie
             val truckNumber = binding.etTruckNumber.text?.toString()?.trim() ?: ""
             val normalized = truckNumber.uppercase().replace(" ", "").replace("-", "")
             if (isValidVehicleNumber(truckNumber)) {
+                hasNavigatedFromCheck = false
                 viewModel.checkVehicle(normalized)
             }
         }
