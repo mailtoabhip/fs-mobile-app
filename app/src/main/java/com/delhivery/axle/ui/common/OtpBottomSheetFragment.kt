@@ -20,7 +20,14 @@ class OtpBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState).also { dialog ->
             dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
     }
 
     override fun onStart() {
@@ -29,6 +36,7 @@ class OtpBottomSheetFragment : BottomSheetDialogFragment() {
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.isFitToContents = true
         behavior.skipCollapsed = true
+        behavior.isDraggable = false
     }
 
     private var _binding: BottomSheetOtpBinding? = null

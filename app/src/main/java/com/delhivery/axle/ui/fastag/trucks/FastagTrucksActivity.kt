@@ -96,6 +96,14 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
                 }
                 startActivity(intent)
             },
+            onDetailsClick = { truck ->
+                val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
+                    putExtra(FastagTransactionDetailsActivity.EXTRA_TAG_ID, truck.fastagId)
+                    putExtra(FastagTransactionDetailsActivity.EXTRA_VEHICLE_NUMBER, truck.fastagVrn)
+                    putExtra(FastagTransactionDetailsActivity.BALANCE, truck.fastagBalance ?: "0")
+                }
+                startActivity(intent)
+            },
             onRefreshClick = { truck ->
                 truck.fastagId?.let { tagId ->
                     uiUtils.showProgress()

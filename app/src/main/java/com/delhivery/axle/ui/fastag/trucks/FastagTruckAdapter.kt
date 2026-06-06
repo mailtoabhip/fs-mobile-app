@@ -18,6 +18,7 @@ import com.delhivery.axle.api.response.FastagVehicle
  */
 class FastagTruckAdapter(
     private val onRechargeClick: (FastagVehicle) -> Unit,
+    private val onDetailsClick: (FastagVehicle) -> Unit,
     private val onRefreshClick: (FastagVehicle) -> Unit,
     private val onItemClick: (FastagVehicle) -> Unit
 ) : ListAdapter<FastagVehicle, FastagTruckAdapter.FastagTruckViewHolder>(DiffCallback()) {
@@ -39,6 +40,7 @@ class FastagTruckAdapter(
         private val ivRefresh: ImageView = itemView.findViewById(R.id.ivRefresh)
         private val lowBalanceWarning: LinearLayout = itemView.findViewById(R.id.lowBalanceWarning)
         private val btnRecharge: TextView = itemView.findViewById(R.id.btnRecharge)
+        private val btnDetails: TextView = itemView.findViewById(R.id.btnDetails)
 
         fun bind(item: FastagVehicle) {
             tvVehicleNumber.text = item.fastagVrn ?: ""
@@ -50,6 +52,7 @@ class FastagTruckAdapter(
             lowBalanceWarning.visibility = if (balance < 100) View.VISIBLE else View.GONE
 
             btnRecharge.setOnClickListener { onRechargeClick(item) }
+            btnDetails.setOnClickListener { onDetailsClick(item) }
             ivRefresh.setOnClickListener { onRefreshClick(item) }
             itemView.setOnClickListener { onItemClick(item) }
         }
