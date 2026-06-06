@@ -20,7 +20,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             app:title="@string/title_account_setup"
-            app:titleTextAppearance="@style/Toolbar.TitleText"
+            style="@style/Toolbar.TitleText"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             app:layout_constraintStart_toStartOf="parent"

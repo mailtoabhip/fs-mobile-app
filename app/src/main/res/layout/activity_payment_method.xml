@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:title="Payment Method"
-            app:titleTextAppearance="@style/Toolbar.TitleText" />
+            style="@style/Toolbar.TitleText" />
 
         <!-- Title -->
         <com.google.android.material.textview.MaterialTextView

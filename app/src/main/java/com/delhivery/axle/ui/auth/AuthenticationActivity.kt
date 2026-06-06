@@ -101,7 +101,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       }
     })
 
-    binding.icBack.setOnClickListener {
+    binding.toolbar.setNavigationOnClickListener {
       when (binding.state) {
         PhoneNo -> onBackPressedDispatcher.onBackPressed()
         OTP, LoginProgress -> viewModel.state = PhoneNo
@@ -270,7 +270,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         when (state) {
           PhoneNo -> {
             //show keyboard
-            binding.icBack.visibility = View.INVISIBLE
+            binding.toolbar.navigationIcon = null
             Handler(Looper.getMainLooper()).postDelayed({
               binding.editPhoneNo.requestFocus()
               val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
@@ -278,7 +278,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             }, 300)
           }
           OTP -> {
-            binding.icBack.visibility = View.VISIBLE
+            binding.toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
             resetVerifyButton()
             binding.otpView.text?.clear()
             Handler(Looper.getMainLooper()).postDelayed({
@@ -306,7 +306,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
           }
           LoginProgress -> {
             // Show loading inside the verify button instead of a full-screen overlay
-            binding.icBack.visibility = View.VISIBLE
+            binding.toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
             binding.btnVerifyOtp.text = ""
             binding.btnVerifyOtp.isEnabled = false
             binding.progressVerifyOtp.visibility = View.VISIBLE

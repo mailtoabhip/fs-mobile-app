@@ -23,23 +23,17 @@
       android:background="@color/white"
       android:orientation="vertical"
       android:fitsSystemWindows="true">
-    <androidx.appcompat.widget.AppCompatImageView
 
-        android:id="@+id/ic_back"
-        android:layout_width="@dimen/size_28dp"
-        android:layout_height="@dimen/size_28dp"
-        android:gravity="center"
-        android:padding="@dimen/size_8dp"
-        android:layout_marginHorizontal="@dimen/size_24dp"
-        android:layout_marginVertical="@dimen/size_18dp"
-        android:src="@drawable/icon_back_button"
-        android:tint="@color/background_dark_grey"
-        />
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/horizontalDivider"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/size_1dp"
-        android:padding="0dp" />
+        android:layout_height="@dimen/height_toolbar"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        app:contentInsetStartWithNavigation="@dimen/size_8dp"
+        app:navigationIcon="@drawable/ic_back_arrow"
+        style="@style/Toolbar.TitleText" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
