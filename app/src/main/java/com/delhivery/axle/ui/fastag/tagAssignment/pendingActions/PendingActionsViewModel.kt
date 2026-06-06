@@ -102,7 +102,7 @@ class PendingActionsViewModel @Inject constructor(
             "ADD_VEHICLE" -> PendingActionType.ADD_VEHICLE
             "ORDER_CREATED" -> PendingActionType.ORDER_CREATED
             "KYC_DONE" -> PendingActionType.KYC_DONE
-            "FULL_PAYMENT/PARTIAL_PAYMENT" -> PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT
+            "FULL_PAYMENT" -> PendingActionType.FULL_PAYMENT_PARTIAL_PAYMENT
             "HOTO_DONE" -> PendingActionType.HOTO_DONE
             "TAG_ASSIGNMENT" -> PendingActionType.TAG_ASSIGNMENT
             "KYV_DONE" -> PendingActionType.KYV

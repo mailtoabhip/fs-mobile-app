@@ -26,7 +26,7 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setupBackPressToHome()
+        //setupBackPressToHome()
         binding.lifecycleOwner = this
         binding.hasSelection = false
 
@@ -49,7 +49,7 @@ class SelectFasTagActivity : BaseActivity<ActivitySelectFastagBinding, SelectFas
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = "Select FASTag"
-        binding.toolbar.setNavigationOnClickListener { navigationUtils.navigateToHome() }
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun setupClickListeners() {
