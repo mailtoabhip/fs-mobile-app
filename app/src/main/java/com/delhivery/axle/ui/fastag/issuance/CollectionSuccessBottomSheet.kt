@@ -1,6 +1,5 @@
 package com.delhivery.axle.ui.fastag.issuance
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,7 +25,7 @@ class CollectionSuccessBottomSheet : BottomSheetDialogFragment() {
         return inflater.inflate(R.layout.bottom_sheet_collection_success, container, false)
     }
 
-    @SuppressLint("SetTextI18n")
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

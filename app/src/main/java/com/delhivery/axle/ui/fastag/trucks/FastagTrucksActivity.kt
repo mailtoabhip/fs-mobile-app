@@ -38,7 +38,7 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
                     val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
                         putExtra(FastagTransactionDetailsActivity.EXTRA_TAG_ID, it.fastagId)
                         putExtra(FastagTransactionDetailsActivity.EXTRA_VEHICLE_NUMBER, it.fastagVrn)
-                        putExtra(FastagTransactionDetailsActivity.BALANCE, it.fastagBalance ?: "0")
+                        putExtra(FastagTransactionDetailsActivity.BALANCE, it.fastagBalance ?: "")
                     }
                     startActivity(intent)
                 }
