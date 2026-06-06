@@ -241,10 +241,14 @@ class FastagRepository @Inject constructor(
             }
         }
 
-    suspend fun validateFastagImage(journeyId: String): Resource<FastagImageValidateResponse> =
+    suspend fun validateFastagImage(journeyId: String, orderId: String, orderItemId: String): Resource<FastagImageValidateResponse> =
         withContext(ioDispatcher) {
             safeApiCall {
-                val request = com.delhivery.axle.api.request.FastagImageValidateRequest(journeyId = journeyId)
+                val request = com.delhivery.axle.api.request.FastagImageValidateRequest(
+                    journeyId = journeyId,
+                    orderId = orderId,
+                    orderItemId = orderItemId
+                )
                 val response = kycService.validateFastagImage(request)
                 response.toResource()
             }

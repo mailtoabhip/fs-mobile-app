@@ -24,7 +24,7 @@ class RCUploadViewModel @Inject constructor(
     val rcProcessStatus: LiveData<Resource<RcProcessStatusResponse>?> = _rcProcessStatus
 
     companion object {
-        private const val POLL_INTERVAL_MS = 5_000L
+        private const val POLL_INTERVAL_MS = 2_000L
         private const val POLL_TIMEOUT_MS = 30_000L
     }
 

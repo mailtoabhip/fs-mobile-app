@@ -431,7 +431,7 @@ class RCUploadActivity : BaseActivity<ActivityFastagAssignmentBinding, RCUploadV
         val vehicleClass = intent.getStringExtra(EXTRA_VEHICLE_CLASS) ?: ""
         val intent = android.content.Intent(this, com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity::class.java).apply {
             putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ID, orderId)
-            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ITEM_ID, orderItemId)
+            putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_ORDER_ITEM_ID, orderItemId.toString())
             putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_CLASS, vehicleClass)
             putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_JOURNEY_ID, journeyId)
             putExtra(com.delhivery.axle.ui.fastag.tagMapping.TagMappingActivity.EXTRA_VEHICLE_NUMBER, vehicleNumber)
