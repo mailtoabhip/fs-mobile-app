@@ -67,7 +67,7 @@
                 android:layout_height="@dimen/size_24dp"
                 android:layout_marginStart="@dimen/size_8dp"
                 android:contentDescription="@string/fastag_refresh_balance"
-                android:src="@drawable/ic_refresh_icon" />
+                android:src="@drawable/sync" />
         </LinearLayout>
 
         <!-- Low Balance Warning -->
@@ -87,7 +87,7 @@
                 android:layout_width="@dimen/size_16dp"
                 android:layout_height="@dimen/size_16dp"
                 android:contentDescription="@string/fastag_balance_low"
-                android:src="@drawable/ic_warning_amber" />
+                android:src="@drawable/low_balance_alert" />
 
             <TextView
                 android:id="@+id/tvWarningText"
@@ -95,21 +95,45 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_6dp"
                 android:text="@string/fastag_balance_low"
-                android:textColor="#8B6914"
+                android:textColor="#52430D"
                 android:textSize="@dimen/text_12sp" />
         </LinearLayout>
 
-        <!-- Recharge Button -->
-        <TextView
-            android:id="@+id/btnRecharge"
+        <!-- Action Buttons Row -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_12dp"
-            android:background="@drawable/bg_edittext_outline"
-            android:gravity="center"
-            android:paddingVertical="@dimen/size_12dp"
-            android:text="@string/fastag_recharge"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/text_14sp" />
+            android:orientation="horizontal">
+
+            <!-- Details Button -->
+            <TextView
+                android:id="@+id/btnDetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/size_6dp"
+                android:background="@drawable/bg_edittext_outline"
+                android:gravity="center"
+                android:paddingVertical="@dimen/size_8dp"
+                android:text="Details"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_14sp" />
+
+            <!-- Recharge Button -->
+            <TextView
+                android:id="@+id/btnRecharge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/size_6dp"
+                android:background="@drawable/bg_btn_fastag_recharge_filled"
+                android:gravity="center"
+                android:paddingVertical="@dimen/size_8dp"
+                android:text="@string/fastag_recharge"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_14sp" />
+
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

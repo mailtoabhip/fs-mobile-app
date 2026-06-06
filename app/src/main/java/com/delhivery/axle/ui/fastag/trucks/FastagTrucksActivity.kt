@@ -38,7 +38,7 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
                     val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
                         putExtra(FastagTransactionDetailsActivity.EXTRA_TAG_ID, it.fastagId)
                         putExtra(FastagTransactionDetailsActivity.EXTRA_VEHICLE_NUMBER, it.fastagVrn)
-                        putExtra(FastagTransactionDetailsActivity.BALANCE, it.fastagBalance ?: "0")
+                        putExtra(FastagTransactionDetailsActivity.BALANCE, it.fastagBalance ?: "")
                     }
                     startActivity(intent)
                 }
@@ -93,6 +93,14 @@ class FastagTrucksActivity : BaseActivity<ActivityFastagTrucksBinding, FastagTru
                     putExtra(FastagRechargeActivity.TAG_ID, truck.fastagId)
                     putExtra(FastagRechargeActivity.VEHICLE_NUMBER, truck.fastagVrn)
                     putExtra(FastagRechargeActivity.FASTAG_BALANCE, truck.fastagBalance ?: "0")
+                }
+                startActivity(intent)
+            },
+            onDetailsClick = { truck ->
+                val intent = Intent(this, FastagTransactionDetailsActivity::class.java).apply {
+                    putExtra(FastagTransactionDetailsActivity.EXTRA_TAG_ID, truck.fastagId)
+                    putExtra(FastagTransactionDetailsActivity.EXTRA_VEHICLE_NUMBER, truck.fastagVrn)
+                    putExtra(FastagTransactionDetailsActivity.BALANCE, truck.fastagBalance ?: "0")
                 }
                 startActivity(intent)
             },
