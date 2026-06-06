@@ -2,6 +2,7 @@ package com.delhivery.axle.ui.home.fragments.home
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -94,7 +95,19 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         }
 
         binding.myLoadsCard.setOnClickListener {
-            action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+            val packageName = "com.delhivery.axle"
+            val intent = requireContext().packageManager.getLaunchIntentForPackage(packageName)
+            if (intent != null) {
+                startActivity(intent)
+            } else {
+                val playStoreIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=$packageName")
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(playStoreIntent)
+            }
         }
 
         viewModel.kycUiModel.observe(viewLifecycleOwner) { model ->

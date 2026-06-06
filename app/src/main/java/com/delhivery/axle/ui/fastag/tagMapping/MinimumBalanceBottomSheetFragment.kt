@@ -16,6 +16,7 @@ class MinimumBalanceBottomSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private var onContinueClick: (() -> Unit)? = null
+    private var isLoading = false
 
     companion object {
         fun newInstance(onContinue: () -> Unit): MinimumBalanceBottomSheetFragment {
@@ -39,11 +40,11 @@ class MinimumBalanceBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.ivClose.setOnClickListener { dismiss() }
+        binding.ivClose.visibility = View.GONE
 
         binding.cbAcknowledge.setOnCheckedChangeListener { _, isChecked ->
-            binding.btnContinue.isEnabled = isChecked
-            if (isChecked) {
+            binding.btnContinue.isEnabled = isChecked && !isLoading
+            if (isChecked && !isLoading) {
                 binding.btnContinue.setBackgroundResource(R.drawable.bg_tag_mapping_continue_enabled)
                 binding.btnContinue.setTextColor(resources.getColor(android.R.color.white, null))
             } else {
@@ -53,8 +54,9 @@ class MinimumBalanceBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         binding.btnContinue.setOnClickListener {
-            onContinueClick?.invoke()
-            dismiss()
+            if (!isLoading) {
+                onContinueClick?.invoke()
+            }
         }
     }
 
@@ -63,6 +65,26 @@ class MinimumBalanceBottomSheetFragment : BottomSheetDialogFragment() {
         val behavior = (dialog as? BottomSheetDialog)?.behavior ?: return
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.skipCollapsed = true
+        behavior.isDraggable = false
+        isCancelable = false
+    }
+
+    fun showLoading() {
+        isLoading = true
+        _binding?.btnContinue?.isEnabled = false
+        _binding?.btnContinue?.text = ""
+        _binding?.progressBar?.visibility = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        isLoading = false
+        _binding?.progressBar?.visibility = View.GONE
+        _binding?.btnContinue?.text = "Continue"
+        _binding?.btnContinue?.isEnabled = _binding?.cbAcknowledge?.isChecked == true
+    }
+
+    fun dismissSheet() {
+        dismiss()
     }
 
     override fun onDestroyView() {
