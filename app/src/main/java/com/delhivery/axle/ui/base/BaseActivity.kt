@@ -147,14 +147,13 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       window.statusBarColor = StatusBarColor
     }
-
-    // Automatically set status bar icon color based on background luminance
-    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
-    insetsController.isAppearanceLightStatusBars = isColorLight(StatusBarColor)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
+    // Automatically set status bar icon color based on background luminance
+    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+    insetsController.isAppearanceLightStatusBars = isColorLight(StatusBarColor)
 
     /* Observe on toast live data and show toast */
     viewModel.toastLiveData.observe(this, Observer {

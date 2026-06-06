@@ -289,7 +289,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             /* show masked phone no */
             viewModel.phoneNo.let {
               if (it.length > 2) {
-                val fullText = getString(string.msg_otp_sent_to_phone_no, maskPhoneNumber(it))
+                val fullText = getString(string.msg_otp_sent_to_phone_no, it.replace(" ", ""))
                 val spannable = android.text.SpannableString(fullText)
                 val newlineIndex = fullText.indexOf('\n')
                 if (newlineIndex >= 0) {

@@ -2,11 +2,14 @@ package com.delhivery.axle.ui.fastag.trucks
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.delhivery.axle.api.repository.FastagRepository
+import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.response.FastagVehicle
 import com.delhivery.axle.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FastagTrucksViewModel @Inject constructor(
@@ -35,27 +38,19 @@ class FastagTrucksViewModel @Inject constructor(
 
     fun fetchFastagPendingCount() {
         _fastagPendingLoading.value = true
-        compositeDisposable.add(
-            io.reactivex.Single.fromCallable {
-                kotlinx.coroutines.runBlocking {
-                    fastagRepository.getPendingActions()
-                }
-            }
-                .subscribeOn(io.reactivex.schedulers.Schedulers.io())
-                .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
-                .subscribe({ result ->
+        viewModelScope.launch {
+            when (val result = fastagRepository.getPendingActions()) {
+                is Resource.Success -> {
                     _fastagPendingLoading.value = false
-                    when (result) {
-                        is com.delhivery.axle.api.repository.Resource.Success -> {
-                            _fastagPendingCount.value = result.data?.count ?: 0
-                        }
-                        else -> _fastagPendingCount.value = 0
-                    }
-                }, {
+                    _fastagPendingCount.value = result.data?.count ?: 0
+                }
+                is Resource.Failure -> {
                     _fastagPendingLoading.value = false
                     _fastagPendingCount.value = 0
-                })
-        )
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
     }
 
     /**
