@@ -14,16 +14,17 @@ class SalesCodeViewModel @Inject constructor(
     private val salesCodeRepository: SalesCodeRepository
 ) : BaseViewModel() {
 
-    private val _validateState = MutableLiveData<Resource<ValidateSalesCodeResponse>>()
-    val validateState: LiveData<Resource<ValidateSalesCodeResponse>> = _validateState
+    var salesCode: String = ""
+    private val _validateState = MutableLiveData<Resource<ValidateSalesCodeResponse>?>()
+    val validateState: LiveData<Resource<ValidateSalesCodeResponse>?> = _validateState
 
     fun validateSalesCode(salesCode: String) {
         viewModelScope.launch {
             showProgress()
             _validateState.value = Resource.Loading
             val result = salesCodeRepository.validateSalesCode(salesCode)
-            _validateState.value = result
             showProgress(false)
+            _validateState.value = result
         }
     }
 

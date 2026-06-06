@@ -1,40 +1,18 @@
 package com.delhivery.axle.ui.fastag.issuance
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.databinding.FragmentSalesCodeBinding
+import com.delhivery.axle.ui.home.fragments.HomeBaseFragment
 
-class SalesCodeFragment : Fragment() {
-
-    private var _binding: FragmentSalesCodeBinding? = null
-    private val binding get() = _binding!!
-
-    private val viewModel: SalesCodeViewModel by viewModels {
-        (requireActivity() as BuyFasTagActivity).viewModelFactory
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentSalesCodeBinding.inflate(inflater, container, false)
-        binding.salesCode = ""
-        return binding.root
-    }
+class SalesCodeFragment : HomeBaseFragment<FragmentSalesCodeBinding, SalesCodeViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initUI()
         setupClickListeners()
         observeViewModel()
 
@@ -42,12 +20,31 @@ class SalesCodeFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener("change_sales_code", viewLifecycleOwner) { _, _ ->
             hasNavigatedToAgent = false
             viewModel.resetValidateState()
+            viewModel.salesCode = ""
             binding.salesCode = ""
             binding.etSalesCode.requestFocus()
             val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
             imm.showSoftInput(binding.etSalesCode, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
         }
     }
+
+    private fun initUI() {
+        // Restore sales code from ViewModel (survives view recreation on back navigation)
+        binding.salesCode = viewModel.salesCode
+        val hasText = !binding.salesCode.isNullOrBlank()
+        binding.bottomButtons.btnPrimary.isEnabled = hasText
+        binding.bottomButtons.btnPrimary.setBackgroundResource(
+            if (hasText) R.drawable.bg_all_round_corner_solid_black
+            else R.drawable.bg_all_round_corner_light_grey
+        )
+        // Reset navigation guard and stale state so user can validate and navigate again
+        hasNavigatedToAgent = false
+        viewModel.resetValidateState()
+    }
+
+    override fun getViewModelClass() = SalesCodeViewModel::class.java
+
+    override fun layoutId() = R.layout.fragment_sales_code
 
     private fun setupClickListeners() {
         binding.bottomButtons.btnPrimary.text = "Validate code"
@@ -65,7 +62,7 @@ class SalesCodeFragment : Fragment() {
             bottomSheet.show(parentFragmentManager, RequestReceivedBottomSheet.TAG)
         }
 
-        // Update primary button state based on sales code input
+        // Update primary button state based on sales code input and persist to ViewModel
         binding.etSalesCode.addTextChangedListener { text ->
             val hasText = !text.isNullOrBlank()
             binding.bottomButtons.btnPrimary.isEnabled = hasText
@@ -73,6 +70,7 @@ class SalesCodeFragment : Fragment() {
                 if (hasText) R.drawable.bg_all_round_corner_solid_black
                 else R.drawable.bg_all_round_corner_light_grey
             )
+            viewModel.salesCode = text?.toString() ?: ""
         }
     }
 
@@ -121,11 +119,6 @@ class SalesCodeFragment : Fragment() {
             .replace(R.id.fragmentContainer, fragment)
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {
