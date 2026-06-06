@@ -8,13 +8,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.delhivery.axle.R
 import com.delhivery.axle.api.repository.Resource
-import com.delhivery.axle.api.response.FastagOrdersResponse
 import com.delhivery.axle.api.response.FastagInventoryItem
+import com.delhivery.axle.api.response.FastagOrdersResponse
 import com.delhivery.axle.databinding.ActivityFastagCollectionBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsActivity
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
-import javax.inject.Inject
 
 class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, FastagCollectionViewModel>() {
     companion object {
@@ -104,13 +102,13 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
                         showCollectionSuccessBottomSheet()
                     } else {
                         binding.slideToConfirm.reset()
-                        showCollectionFailedBottomSheet()
+                        showCollectionFailedBottomSheet(null)
                     }
                 }
 
                 is Resource.Failure -> {
                     binding.slideToConfirm.reset()
-                    showCollectionFailedBottomSheet()
+                    showCollectionFailedBottomSheet(resource.errorMessage)
                 }
             }
         }
@@ -128,8 +126,8 @@ class FastagCollectionActivity : BaseActivity<ActivityFastagCollectionBinding, F
         }.show(supportFragmentManager, CollectionSuccessBottomSheet.TAG)
     }
 
-    private fun showCollectionFailedBottomSheet() {
-        CollectionSuccessBottomSheet.newFailedInstance {
+    private fun showCollectionFailedBottomSheet(errorMessage: String?) {
+        CollectionSuccessBottomSheet.newFailedInstance(errorMessage) {
             // Try again — reset slide and retry
             binding.slideToConfirm.reset()
             confirmCollection()
