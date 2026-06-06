@@ -31,7 +31,7 @@
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_back_arrow"
+            app:navigationIcon="@drawable/ic_close"
             app:title="KYC"
             app:titleTextAppearance="@style/Toolbar.TitleText" />
 

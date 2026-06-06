@@ -49,7 +49,7 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setupBackPressToHome()
         fastagVehicleNumber = intent.getStringExtra(VEHICLE_NUMBER) ?: ""
         val orderId = intent.getStringExtra(ORDER_ID) ?: ""
 
@@ -80,20 +80,7 @@ class VehicleDetailsActivity : BaseActivity<ActivityVehicleDetailsBinding, Vehic
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { navigateToHome() }
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigateToHome()
-            }
-        })
-    }
-
-    private fun navigateToHome() {
-        val homeIntent = Intent(this, HomeActivity::class.java)
-        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(homeIntent)
-        finish()
+        binding.toolbar.setNavigationOnClickListener { navigationUtils.navigateToHome() }
     }
 
     private fun setupButton() {

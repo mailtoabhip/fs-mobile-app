@@ -80,7 +80,7 @@ class PendingOrdersAdapter(
             // Build reference text: vrn | barcodeId (show what's available)
             val refParts = mutableListOf<String>()
             vehicle.vehicleNumber?.let { if (it.isNotEmpty()) refParts.add(it) }
-            vehicle.barcodeId?.let { if (it.isNotEmpty()) refParts.add(it) }
+            vehicle.barcodeId?.let { if (it.isNotEmpty()) refParts.add("#$it") }
             tvVehicleRef.text = refParts.joinToString("  |  ")
             tvVehicleRef.visibility = if (refParts.isEmpty()) View.GONE else View.VISIBLE
 

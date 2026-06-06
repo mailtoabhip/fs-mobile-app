@@ -2,11 +2,14 @@ package com.delhivery.axle.ui.fastag.trucks
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.delhivery.axle.api.repository.FastagRepository
+import com.delhivery.axle.api.repository.Resource
 import com.delhivery.axle.api.response.FastagVehicle
 import com.delhivery.axle.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FastagTrucksViewModel @Inject constructor(
@@ -24,6 +27,31 @@ class FastagTrucksViewModel @Inject constructor(
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
+
+    // ── FASTag Pending Actions ──────────────────────────────────────────
+
+    private val _fastagPendingCount = MutableLiveData<Int>(0)
+    val fastagPendingCount: LiveData<Int> = _fastagPendingCount
+
+    private val _fastagPendingLoading = MutableLiveData<Boolean>(false)
+    val fastagPendingLoading: LiveData<Boolean> = _fastagPendingLoading
+
+    fun fetchFastagPendingCount() {
+        _fastagPendingLoading.value = true
+        viewModelScope.launch {
+            when (val result = fastagRepository.getPendingActions()) {
+                is Resource.Success -> {
+                    _fastagPendingLoading.value = false
+                    _fastagPendingCount.value = result.data?.count ?: 0
+                }
+                is Resource.Failure -> {
+                    _fastagPendingLoading.value = false
+                    _fastagPendingCount.value = 0
+                }
+                Resource.Loading -> { /* no-op */ }
+            }
+        }
+    }
 
     /**
      * Fetch all vehicles that have FASTag linked using v2/fastag/listing API.

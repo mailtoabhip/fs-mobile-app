@@ -39,7 +39,7 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        setupBackPressToHome()
         binding.lifecycleOwner = this
         binding.hasSelection = false
 
@@ -68,7 +68,7 @@ class FastagKycActivity : BaseActivity<ActivityFastagKycBinding, FastagKycViewMo
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = "KYC"
-        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { navigationUtils.navigateToHome() }
     }
 
     private fun observeViewModel() {

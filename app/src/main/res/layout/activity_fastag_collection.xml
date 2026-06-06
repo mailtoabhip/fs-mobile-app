@@ -35,7 +35,7 @@
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIcon="@drawable/ic_close"
             app:title="FASTag Collection"
             app:titleTextAppearance="@style/Toolbar.TitleText" />
 

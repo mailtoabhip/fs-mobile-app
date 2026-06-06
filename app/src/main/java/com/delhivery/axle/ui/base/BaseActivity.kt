@@ -147,14 +147,13 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       window.statusBarColor = StatusBarColor
     }
-
-    // Automatically set status bar icon color based on background luminance
-    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
-    insetsController.isAppearanceLightStatusBars = isColorLight(StatusBarColor)
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
+    // Automatically set status bar icon color based on background luminance
+    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+    insetsController.isAppearanceLightStatusBars = isColorLight(StatusBarColor)
 
     /* Observe on toast live data and show toast */
     viewModel.toastLiveData.observe(this, Observer {
@@ -409,6 +408,19 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
     val blue = Color.blue(color) / 255.0
     val luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
     return luminance > 0.5
+  }
+
+  /**
+   * Registers a back press callback that navigates to HomeActivity (clearing the back stack)
+   * instead of the default back behavior. Call in onCreate of activities that should
+   * go directly home on back press (e.g., screens deep in a flow).
+   */
+  protected fun setupBackPressToHome() {
+    onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        navigationUtils.navigateToHome()
+      }
+    })
   }
 
   /**

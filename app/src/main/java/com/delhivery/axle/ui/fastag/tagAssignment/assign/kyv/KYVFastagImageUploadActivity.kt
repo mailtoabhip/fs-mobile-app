@@ -92,7 +92,7 @@ class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBindi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setupBackPressToHome()
         val vehicleNumber = intent.getStringExtra(EXTRA_VEHICLE_NUMBER) ?: ""
 
         setupToolbar()
@@ -112,20 +112,7 @@ class KYVFastagImageUploadActivity : BaseActivity<ActivityFastagImageUploadBindi
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { navigateToHome() }
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigateToHome()
-            }
-        })
-    }
-
-    private fun navigateToHome() {
-        val homeIntent = Intent(this, HomeActivity::class.java)
-        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(homeIntent)
-        finish()
+        binding.toolbar.setNavigationOnClickListener { navigationUtils.navigateToHome() }
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
