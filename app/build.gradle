@@ -15,7 +15,7 @@ android {
     }
   }
   defaultConfig {
-    applicationId "com.delhivery.axle"
+    applicationId "com.dfd.delfin"
     minSdkVersion 24
     targetSdkVersion 35
     versionCode 144
