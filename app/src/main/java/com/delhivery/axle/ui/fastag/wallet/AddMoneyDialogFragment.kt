@@ -156,7 +156,7 @@ class AddMoneyDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.exceptionLiveData.observe(viewLifecycleOwner) { throwable ->
             throwable?.let {
-                // Do nothing
+                (activity as? BaseActivity<*, *>)?.errorUtils?.handle(it)
             }
         }
     }
