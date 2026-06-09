@@ -2,7 +2,6 @@ package com.delhivery.axle.ui.fastag.qdr
 
 import android.Manifest
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
@@ -315,7 +314,6 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
                         when (item.status?.lowercase()) {
                             "settled - full refund" -> {
                                 itemBinding.ivStatusIcon.setImageResource(R.drawable.ic_check_circle_green)
-                                itemBinding.ivStatusIcon.imageTintList = ColorStateList.valueOf("#10B981".toColorInt())
                             }
                             "rejected" -> {
                                 itemBinding.ivStatusIcon.setImageResource(R.drawable.dispute_rejected)
@@ -332,7 +330,6 @@ class FastagRaiseDisputeActivity : BaseActivity<ActivityFastagTransactionDetailB
                         }
                     } else {
                         itemBinding.ivStatusIcon.setImageResource(R.drawable.ic_check_circle_green)
-                        itemBinding.ivStatusIcon.imageTintList = ColorStateList.valueOf("#10B981".toColorInt())
                     }
 
                     // Hide connector line for last item
