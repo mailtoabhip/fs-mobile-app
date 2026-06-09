@@ -108,7 +108,7 @@ class TransactionDetailsActivity :
 
         // Reason & Date
         binding.textReason.text = data.transactionReason?.takeIf { it.isNotBlank() } ?: data.title
-        binding.textDate.text = DateUtils.formatISODate(data.dateTime, "dd MMM yy, h:mm a")
+        binding.textDate.text = DateUtils.getUtcToIstFormatTime(data.dateTime) ?: ""
 
         // Message text and color per status
         when {

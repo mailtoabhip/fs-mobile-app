@@ -38,7 +38,7 @@ data class WalletHistoryItemData(
     /**
      * @return formatted date string
      */
-    fun dateFormatted(): String = DateUtils.formatISODate(dateTime, "dd MMM yyyy | hh:mm a")
+    fun dateFormatted(): String = DateUtils.getUtcToIstFormatTime(dateTime) ?: ""
 
     /**
      * @return transaction number label

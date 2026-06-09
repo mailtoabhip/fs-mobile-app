@@ -6,17 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.PaymentStatusCountdownBinding
-import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
 import com.delhivery.axle.utils.extensions.viewModelFactoryExtension
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import javax.inject.Inject
 import kotlin.getValue
 
 class PaymentCountdownBottomSheetFragment : BottomSheetDialogFragment() {

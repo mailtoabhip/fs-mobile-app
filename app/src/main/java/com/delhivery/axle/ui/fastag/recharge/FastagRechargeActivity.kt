@@ -19,7 +19,6 @@ import com.delhivery.axle.databinding.ActivityFastagRechargeBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.dialogs.PaymentStatus
 import com.delhivery.axle.ui.dialogs.PaymentStatusDialogFragment
-import com.delhivery.axle.ui.fastag.recharge.FastagRechargeViewModel
 import com.delhivery.axle.ui.fastag.wallet.AddMoneyDialogFragment
 import com.delhivery.axle.utils.StringUtils
 import com.delhivery.axle.utils.WindowInsetsUtils
@@ -69,8 +68,12 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         supportFragmentManager.setFragmentResultListener("PaymentStatusResult", this) { _, bundle ->
             val status = bundle.getString("STATUS")
             if (status == PaymentStatus.SUCCESS.name) {
-                // Or the string "SUCCESS" depending on what your Enum passes
                 viewModel.fetchWalletDetails()
+                // Navigate to FASTag Trucks screen
+                val intent = com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity.newIntent(this)
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+                startActivity(intent)
+                finish()
             }
         }
 
@@ -356,6 +359,12 @@ class FastagRechargeActivity : BaseActivity<ActivityFastagRechargeBinding, Fasta
         currentBottomSheet = PaymentStatusDialogFragment.Companion.show(
             fragmentManager = supportFragmentManager,
             initialStatus = status,
+            description = if(status== PaymentStatus.SUCCESS){"Your FASTag is recharged successfully"}
+            else if(status == PaymentStatus.PENDING){
+                "Your recharge request has been received and is being processed. The FASTag balance will update shortly."}
+            else{
+                "If money was deducted, it will be refunded soon."
+            },
             onDismiss = {
                 resetSlider()
                 currentBottomSheet = null
