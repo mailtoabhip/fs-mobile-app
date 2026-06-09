@@ -19,6 +19,19 @@
         <package android:name="com.delhivery.axle" />
     </queries>
 
+    <queries>
+        <!-- UPI payment apps -->
+        <package android:name="com.google.android.apps.nbu.paisa.user" /> <!-- GPay -->
+        <package android:name="com.phonepe.app" />                        <!-- PhonePe -->
+        <package android:name="net.one97.paytm" />                        <!-- Paytm -->
+        <package android:name="in.org.npci.upiapp" />                     <!-- BHIM -->
+        <package android:name="com.amazon.mShop.android.shopping" />      <!-- Amazon Pay -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="upi" />
+        </intent>
+    </queries>
+
     <application
         android:name=".KotlinApp"
         android:allowBackup="false"

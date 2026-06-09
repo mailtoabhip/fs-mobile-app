@@ -137,8 +137,8 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             // Enable caching for better performance
             cacheMode = android.webkit.WebSettings.LOAD_DEFAULT
-            // Set user agent to ensure proper rendering
-            userAgentString = userAgentString + " Mobile"
+            // Set Chrome user agent so payment gateways (e.g. Razorpay) show UPI options
+            userAgentString = "Mozilla/5.0 (Linux; Android ${android.os.Build.VERSION.RELEASE}; ${android.os.Build.MODEL}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
         }
         
         // Enable vertical scrolling to see all options including "Enter UPI ID"
@@ -164,11 +164,11 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             ): Boolean {
                 request?.url?.let { url ->
                     val currentUrl = url.toString()
-                    
+
                     if (BuildConfig.DEBUG) {
                         android.util.Log.d("PaymentWebView", "shouldOverrideUrlLoading: $currentUrl")
                     }
-                    
+
                     // Check for special exit URL from JavaScript
                     if (currentUrl == "android-app://exit-payment") {
                         runOnUiThread {
@@ -176,14 +176,17 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
                         }
                         return true
                     }
-                    
+
                     // Check if current URL matches the redirect URL
                     if (checkRedirectUrl(currentUrl)) {
                         return true
                     }
-                    
-                    // Handle custom URL schemes (gpay://, phonepe://, paytm://, etc.)
+
+                    // Handle custom URL schemes (gpay://, phonepe://, paytm://, intent://, etc.)
                     if (isCustomUrlScheme(currentUrl)) {
+                        if (BuildConfig.DEBUG) {
+                            android.util.Log.d("PaymentWebView", "UPI/Custom scheme detected: $currentUrl")
+                        }
                         openCustomUrlScheme(currentUrl)
                         return true
                     }
@@ -718,16 +721,64 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
      */
     private fun openCustomUrlScheme(url: String) {
         try {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            
-            // Try to open the payment app
-            // In test mode, Razorpay intercepts and redirects to mock page
-            // In production, if no app is found, the exception will be caught
-            if (intent.resolveActivity(packageManager) != null) {
-                startActivity(intent)
+            // intent:// scheme (used by UPI apps) must be parsed with URI_INTENT_SCHEME
+            val intent = if (url.startsWith("intent://")) {
+                if (BuildConfig.DEBUG) {
+                    android.util.Log.d("PaymentWebView", "Parsing intent:// URL with URI_INTENT_SCHEME: $url")
+                }
+                Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    if (BuildConfig.DEBUG) {
+                        android.util.Log.d("PaymentWebView", "Parsed intent: action=$action, data=$data, package=$`package`, component=$component")
+                    }
+                }
+            } else if (url.startsWith("gpay://")) {
+                // GPay uses gpay://upi/pay - convert to standard upi://pay
+                if (BuildConfig.DEBUG) {
+                    android.util.Log.d("PaymentWebView", "Converting gpay:// to explicit GPay intent: $url")
+                }
+                val upiUrl = url.replace("gpay://upi/", "upi://")
+                Intent(Intent.ACTION_VIEW, Uri.parse(upiUrl)).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    `package` = "com.google.android.apps.nbu.paisa.user"
+                }
+            } else if (url.startsWith("phonepe://")) {
+                // PhonePe uses phonepe://upi/pay - convert to standard upi://pay
+                if (BuildConfig.DEBUG) {
+                    android.util.Log.d("PaymentWebView", "Converting phonepe:// to explicit PhonePe intent: $url")
+                }
+                val upiUrl = url.replace("phonepe://upi/", "upi://")
+                Intent(Intent.ACTION_VIEW, Uri.parse(upiUrl)).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    `package` = "com.phonepe.app"
+                }
+            } else if (url.startsWith("paytm://")) {
+                // Paytm uses paytm://upi/pay - convert to standard upi://pay
+                if (BuildConfig.DEBUG) {
+                    android.util.Log.d("PaymentWebView", "Converting paytm:// to explicit Paytm intent: $url")
+                }
+                val upiUrl = url.replace("paytm://upi/", "upi://")
+                Intent(Intent.ACTION_VIEW, Uri.parse(upiUrl)).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    `package` = "net.one97.paytm"
+                }
+            } else {
+                if (BuildConfig.DEBUG) {
+                    android.util.Log.d("PaymentWebView", "Parsing standard URL scheme: $url")
+                }
+                Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             }
-            // If no app found, silently fail - Razorpay may handle it or user will see Razorpay's error
+
+            if (BuildConfig.DEBUG) {
+                android.util.Log.d("PaymentWebView", "Starting activity with intent: $intent")
+            }
+            startActivity(intent)
+        } catch (e: android.content.ActivityNotFoundException) {
+            if (BuildConfig.DEBUG) {
+                android.util.Log.w("PaymentWebView", "No app installed to handle: $url")
+            }
         } catch (e: Exception) {
             // Only show error if it's a real exception, not just missing app
             if (BuildConfig.DEBUG) {
