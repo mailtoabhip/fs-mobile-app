@@ -303,13 +303,35 @@ class FastagTransactionDetailsActivity : BaseActivity<FastagTransactionDetailsBi
                 try {
                     // Save file to device
                     val filename = "FASTag_Statement_${System.currentTimeMillis()}.pdf"
-                    val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-                    storageDir?.mkdirs()
-                    val file = File(storageDir, filename)
 
-                    it.byteStream().use { input ->
-                        file.outputStream().use { output ->
-                            input.copyTo(output)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                        // API 29+ — use MediaStore to save to public Downloads
+                        val contentValues = android.content.ContentValues().apply {
+                            put(android.provider.MediaStore.Downloads.DISPLAY_NAME, filename)
+                            put(android.provider.MediaStore.Downloads.MIME_TYPE, "application/pdf")
+                            put(android.provider.MediaStore.Downloads.IS_PENDING, 1)
+                        }
+                        val resolver = contentResolver
+                        val uri = resolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                        uri?.let { downloadUri ->
+                            resolver.openOutputStream(downloadUri)?.use { output ->
+                                it.byteStream().use { input ->
+                                    input.copyTo(output)
+                                }
+                            }
+                            contentValues.clear()
+                            contentValues.put(android.provider.MediaStore.Downloads.IS_PENDING, 0)
+                            resolver.update(downloadUri, contentValues, null, null)
+                        }
+                    } else {
+                        // Below API 29 — save directly to public Downloads folder
+                        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        storageDir?.mkdirs()
+                        val file = File(storageDir, filename)
+                        it.byteStream().use { input ->
+                            file.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
                         }
                     }
                     sendSuccessfulDownloadEvent()

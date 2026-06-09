@@ -87,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_all_rounded_black"
-            android:text="Go to loads"
+            android:text="Go to home"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"

@@ -23,6 +23,6 @@ fun UserWalletResponse.balanceFormatted(): String = "₹${StringUtils.formatAmou
 
 
 enum class TransactionType(val type: String) {
-    Debit("Debit"),
-    Credit("Credit")
+    Debit("debit"),
+    Credit("credit")
 }

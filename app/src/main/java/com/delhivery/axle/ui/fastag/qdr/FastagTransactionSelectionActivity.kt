@@ -66,7 +66,7 @@ class FastagTransactionSelectionActivity : BaseActivity<ActivityFastagTransactio
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.toolbar.title = "Fastag related issues"
+        supportActionBar?.title = "Fastag related issues"
         binding.toolbar.setNavigationOnClickListener { finish() }
 
         adapter = TransactionSelectionAdapter { transaction ->

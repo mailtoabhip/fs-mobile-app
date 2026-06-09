@@ -172,6 +172,10 @@ class TagMappingActivity : BaseActivity<ActivityTagMappingBinding, TagMappingVie
                     // OTP generation in progress
                 }
                 is Resource.Success -> {
+                    // Dismiss minimum balance bottom sheet if showing
+                    (supportFragmentManager.findFragmentByTag("MinimumBalanceBottomSheet")
+                        as? com.google.android.material.bottomsheet.BottomSheetDialogFragment)?.dismiss()
+
                     val existingSheet = supportFragmentManager
                         .findFragmentByTag(OtpBottomSheetFragment.TAG)
                         as? OtpBottomSheetFragment

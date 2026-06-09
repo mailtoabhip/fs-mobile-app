@@ -103,7 +103,7 @@ class RechargeDetailsActivity :
         }
 
         // Recharge Date
-        binding.textDate.text = DateUtils.formatISODate(data.dateTime, "dd MMM yy, h:mm a")
+        binding.textDate.text = DateUtils.getUtcToIstFormatTime(data.dateTime) ?: ""
 
         // Bank Reference no
         binding.textBankRef.text = data.bankReferenceNo?.takeIf { it.isNotBlank() } ?: "-"

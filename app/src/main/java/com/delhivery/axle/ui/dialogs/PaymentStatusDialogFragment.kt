@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import com.delhivery.axle.R
@@ -30,16 +28,19 @@ class PaymentStatusDialogFragment : BottomSheetDialogFragment() {
 
         const val TAG = "PaymentStatusDialog"
         private const val ARG_STATUS = "arg_status"
+        private const val ARG_DESCRIPTION = "arg_description"
 
         /** Show the payment status bottom sheet. Returns the fragment so you can call [updateStatus] later. */
         fun show(
             fragmentManager: FragmentManager,
             initialStatus: PaymentStatus,
-            onDismiss: (() -> Unit)? = null
+            onDismiss: (() -> Unit)? = null,
+            description: String? = null
         ): PaymentStatusDialogFragment {
             val fragment = PaymentStatusDialogFragment()
             fragment.arguments = Bundle().apply {
                 putString(ARG_STATUS, initialStatus.name)
+                putString(ARG_DESCRIPTION, description)
             }
             fragment.onDismissCallback = onDismiss
             fragment.show(fragmentManager, TAG)
@@ -112,21 +113,26 @@ class PaymentStatusDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun renderState(status: PaymentStatus) {
+        val customDescription = arguments?.getString(ARG_DESCRIPTION)?.takeIf { it.isNotEmpty() }
+
         when (status) {
             PaymentStatus.SUCCESS -> {
                 binding.statusIv.setImageResource(R.drawable.fs_payment_success)
                 binding.tvStatusTitle.text = "Payment Successful!"
-                binding.tvStatusDesc.text = "Your money has been added to your Delhivery wallet."
+                binding.tvStatusDesc.text = customDescription
+                    ?: "Your money has been added to your Delhivery wallet."
             }
             PaymentStatus.FAILURE -> {
                 binding.statusIv.setImageResource(R.drawable.fs_payment_failed)
                 binding.tvStatusTitle.text = "Payment failed"
-                binding.tvStatusDesc.text = "If money was deducted, it will be refunded by your bank soon."
+                binding.tvStatusDesc.text = customDescription
+                    ?: "If money was deducted, it will be refunded by your bank soon."
             }
             PaymentStatus.PENDING -> {
                 binding.statusIv.setImageResource(R.drawable.fs_payment_pending)
                 binding.tvStatusTitle.text = "Payment in process"
-                binding.tvStatusDesc.text = "Your payment is being processed. The amount will reflect in your wallet shortly."
+                binding.tvStatusDesc.text = customDescription
+                    ?: "Your payment is being processed. The amount will reflect in your wallet shortly."
             }
         }
     }

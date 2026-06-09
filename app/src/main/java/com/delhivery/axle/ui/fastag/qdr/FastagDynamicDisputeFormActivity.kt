@@ -25,8 +25,6 @@ import com.delhivery.axle.databinding.DialogDisputeSuccessBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.customviews.DynamicFileUploadView
 import com.delhivery.axle.ui.customviews.DynamicTextInputView
-import com.delhivery.axle.ui.fastag.qdr.FastagDynamicDisputeFormViewModel
-import com.delhivery.axle.ui.home.activity.home.HomeActivity
 import com.delhivery.axle.utils.DateUtils
 import com.delhivery.axle.utils.DocumentUtils
 import com.delhivery.axle.utils.EVENT_FASTAG_DISPUTE_SUBMITTED
@@ -583,9 +581,8 @@ class FastagDynamicDisputeFormActivity : BaseActivity<ActivityFastagDynamicDispu
 
         dialogBinding.btnGoToLoads.setOnClickListener {
             bottomSheetDialog.dismiss()
-            val intent = Intent(this, HomeActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                putExtra("fragment_type", "load")
+            val intent = com.delhivery.axle.ui.fastag.trucks.FastagTrucksActivity.newIntent(this).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
             startActivity(intent)
             finish()
