@@ -749,6 +749,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
      * Note: In Razorpay test mode, UPI apps will redirect to Razorpay mock page instead of real apps
      */
     private fun openCustomUrlSchemeNew(url: String): Boolean {
+        
         return try {
             Log.d("PaymentWebView", "Launching payment URL: $url")
             //
