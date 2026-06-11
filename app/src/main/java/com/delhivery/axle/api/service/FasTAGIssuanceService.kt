@@ -50,7 +50,6 @@ interface FasTAGIssuanceService {
         @Query("vrn") vrn: String
     ): BaseResponse<VehicleCheckResponse>
 
-    @Headers("No-Request-Id: true")
     @POST("/fastag/v1/payment/breakup")
     suspend fun getPaymentBreakup(
         @Body request: PaymentBreakupRequest
@@ -61,7 +60,6 @@ interface FasTAGIssuanceService {
         @Body request: CreateOrderRequest
     ): BaseResponse<CreateOrderResponse>
 
-    @Headers("No-Request-Id: true")
     @POST("/fastag/v1/payment/checkout")
     suspend fun paymentCheckout(
         @Body request: PaymentCheckoutRequest
