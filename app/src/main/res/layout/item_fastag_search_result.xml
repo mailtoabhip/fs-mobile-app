@@ -9,20 +9,21 @@
     android:paddingHorizontal="@dimen/size_16dp"
     android:paddingVertical="@dimen/size_14dp">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="@dimen/size_18dp"
         android:layout_height="@dimen/size_18dp"
         android:contentDescription="@string/fastag_search_hint"
         android:src="@drawable/ic_search_black"
         app:tint="@color/text_grey" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvVehicleNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_12dp"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/text_16sp"
+        style="@style/TextAppearance.Delfin.B16"
+        android:textSize="@dimen/text_14sp"
         tools:text="DL02NB6724" />
 
 </LinearLayout>

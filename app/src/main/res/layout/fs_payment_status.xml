@@ -51,7 +51,7 @@
                 android:text="Payment Successful!"
                 android:textColor="@color/heading_black"
                 android:textSize="@dimen/text_24sp"
-                android:textStyle="bold"
+                style="@style/TextAppearance.Delfin.B16"
                 tools:text="Payment Successful!" />
 
             <!-- ── Status Description ── -->
@@ -65,6 +65,7 @@
                 android:lineSpacingMultiplier="1.4"
                 android:text="Your money has been added to your Delhivery wallet."
                 android:textColor="@color/background_dark_grey"
+                style="@style/TextAppearance.Delfin.R14"
                 android:textSize="@dimen/text_16sp"
                 tools:text="Your money has been added to your Delhivery wallet." />
 

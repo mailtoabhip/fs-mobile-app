@@ -29,8 +29,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:title="@string/toolbar_heading"
-            style="@style/Toolbar.TitleText" />
-
+            app:titleTextColor="@color/text_primary"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            />
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"/>
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="0dp"
@@ -38,7 +44,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

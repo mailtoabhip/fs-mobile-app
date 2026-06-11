@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/white">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/bgFastag"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,12 +44,12 @@
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_16dp"
             android:text="@string/sales_code_title"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/text_body_secondary"
+            style="@style/TextAppearance.Delfin.M14"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bgFastag" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/etSalesCode"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_48dp"
@@ -57,14 +57,15 @@
             android:layout_marginTop="@dimen/size_8dp"
             android:layout_marginEnd="@dimen/size_16dp"
             android:background="@drawable/bg_edit_text_outline"
-            android:hint="Enter your agent sales code"
+            android:hint="e.g. VRLE145"
             android:paddingHorizontal="@dimen/size_12dp"
             android:singleLine="true"
             android:text="@={salesCode}"
             android:textAllCaps="true"
-            android:textColor="@color/heading_black"
-            android:textColorHint="@color/color_hint"
-            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/text_body_primary"
+            android:textColorHint="@color/text_body_base"
+            style="@style/TextAppearance.Delfin.M14"
+            android:textSize="@dimen/text_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/salesCodeTitle" />

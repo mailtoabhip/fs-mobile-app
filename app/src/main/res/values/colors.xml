@@ -105,7 +105,7 @@
   <color name="bid_under_review">#7C3AED</color>
   <color name="bid_under_review_bg">#F5F3FF</color>
 
-  <color name="grey_500">#666666</color>
+
   <color name="light_grey_bg">#F9F9FB</color>
 
   <color name="custom_blue">#5B80F7</color>
@@ -184,7 +184,7 @@
     <color name="surface_failed_light">#FDF2F4</color>
     <color name="surface_failed_dark">#FCE9ED</color>
   <color name="grey_text">#9CA3AF</color>
-  <color name="black_text">#1E293B</color>
+
 
     <color name="blue_100">#DBEAFE</color>
     <color name="blue_700">#1D4ED8</color>
@@ -208,8 +208,6 @@
     <color name="class_pink">#DF1096</color>
     <color name="class_blue">#0078BA</color>
   <color name="black_title">#121212</color>
-  <color name="text_body_primary">#2B2B2B</color>
-  <color name="text_body_base">#737373</color>
 
     <!-- Profile view colors -->
     <color name="neutral_white_300">#E6E6E6</color>
@@ -218,5 +216,23 @@
     <color name="bg_screen_white_v2">#FBFBF9</color>
     <color name="bg_screen_white_v3">#FEFEFE</color>
 
+
+  <!--FS Colors-->
+  <color name="text_primary">#121212</color>
+  <color name="text_body_primary">#2B2B2B</color>
+  <color name="text_body_primary_inverse">#E6E6E6</color>
+  <color name="text_body_secondary_v2">#3B3B3B</color>
+  <color name="text_body_base">#737373</color>
+  <color name="text_caption_primary">#454545</color>
+  <color name="text_caption_secondary">#666666</color>
+  <color name="text_info_blue_primary">#2396FB</color>
+  <color name="text_error_primary">#DC143C</color>
+  <color name="text_warning_primary">#7B6414</color>
+  <color name="text_warning_secondary">#52430D</color>
+  <color name="grey_500">#666666</color>
+
+
+  <!--Fastag Recharge-->
+  <color name="black_text">#1E293B</color>
 
 </resources>

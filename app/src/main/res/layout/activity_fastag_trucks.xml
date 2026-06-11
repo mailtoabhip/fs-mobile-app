@@ -22,12 +22,16 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            android:elevation="2dp"
+            app:titleTextColor="@color/text_primary"
+            app:titleTextAppearance="@style/TextAppearance.Delfin.SB14"
+            style="@style/TextAppearance.Delfin.SB14"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:navigationIcon="@drawable/ic_back_arrow"
-            app:title="@string/label_fastag_title"
-            style="@style/Toolbar.TitleText" />
+            app:title="@string/label_fastag_title" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"/>
         <!-- Content -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
@@ -65,20 +69,19 @@
                             android:minHeight="120dp"
                             android:padding="@dimen/size_16dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvBannerTitle"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/size_8dp"
                                 android:text="@string/fastag_banner_title"
-                                android:textColor="@android:color/black"
-                                android:textSize="@dimen/text_16sp"
-                                android:textStyle="bold"
+                                android:textColor="@color/text_primary"
+                                style="@style/TextAppearance.Delfin.M12"
                                 app:layout_constraintEnd_toStartOf="@id/ivBannerImage"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/btnBuyFastag"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -88,11 +91,11 @@
                                 android:paddingVertical="@dimen/size_8dp"
                                 android:text="@string/fastag_buy_cta"
                                 android:textColor="@android:color/white"
-                                android:textSize="@dimen/text_12sp"
+                                style="@style/TextAppearance.Delfin.M12"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/tvBannerTitle" />
 
-                            <ImageView
+                            <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/ivBannerImage"
                                 android:layout_width="120dp"
                                 android:layout_height="80dp"
@@ -163,24 +166,24 @@
                         android:visibility="gone"
                         tools:visibility="visible">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_20dp"
                             android:layout_height="@dimen/size_20dp"
                             android:contentDescription="@string/label_fastag_title"
                             android:src="@drawable/fs_pending_clock" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvFastagPendingText"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/size_10dp"
                             android:layout_weight="1"
-                            android:textColor="#7B6414"
+                            android:textColor="@color/text_warning_primary"
+                            style="@style/TextAppearance.Delfin.B16"
                             android:textSize="@dimen/text_14sp"
-                            android:textStyle="bold"
                             tools:text="FASTag pending actions (8)" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_20dp"
                             android:layout_height="@dimen/size_20dp"
                             android:contentDescription="@string/action_continue"
@@ -190,7 +193,7 @@
                     </LinearLayout>
 
                     <!-- Your FASTags Section Title -->
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvSectionTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -198,9 +201,9 @@
                         android:layout_marginTop="@dimen/size_24dp"
                         android:layout_marginBottom="@dimen/size_12dp"
                         android:text="@string/fastag_your_fastags"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/text_primary"
+                        style="@style/TextAppearance.Delfin.B16"
                         android:textSize="@dimen/text_18sp"
-                        android:textStyle="bold"
                         android:visibility="gone"
                         tools:visibility="visible"/>
 
@@ -243,32 +246,32 @@
                         android:visibility="gone"
                         tools:visibility="visible">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_96dp"
                             android:layout_height="@dimen/size_96dp"
                             android:layout_marginBottom="@dimen/size_16dp"
                             android:src="@drawable/fastag_empty_box" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/fastag_no_fastags_heading"
                             android:textAlignment="center"
-                            android:textColor="@color/black_title"
-                            android:textSize="@dimen/text_20sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/text_primary"
+                            style="@style/TextAppearance.Delfin.B16"
+                            android:textSize="@dimen/text_20sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/size_16dp"
                             android:text="@string/fastag_no_fastags_description"
                             android:textAlignment="center"
-                            android:textColor="#2B2B2B"
-                            android:textSize="@dimen/text_12sp"
+                            android:textColor="@color/text_body_primary"
+                            style="@style/TextAppearance.Delfin.M12"
                             android:lineSpacingExtra="4dp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/btnEmptyBuyFastag"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -279,8 +282,7 @@
                             android:text="@string/fastag_buy_cta"
                             android:paddingHorizontal="@dimen/size_16dp"
                             android:textColor="@android:color/white"
-                            android:textSize="@dimen/text_16sp"
-                            android:textStyle="bold" />
+                            style="@style/TextAppearance.Delfin.B16" />
 
                     </LinearLayout>
 

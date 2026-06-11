@@ -23,12 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            android:elevation="2dp"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:navigationIcon="@drawable/ic_close"
             app:title="@string/know_your_vehicle_title"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"/>
         <!-- Scrollable Content -->
         <ScrollView
             android:layout_width="match_parent"
@@ -48,9 +50,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/upload_fastag_image_title"
-                    android:textColor="@color/neutral_black_200"
-                    android:textSize="@dimen/text_16sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/text_body_primary"
+                    style="@style/TextAppearance.Delfin.M14"
+                    android:textSize="@dimen/text_16sp" />
 
                 <!-- Vehicle Info Card -->
                 <LinearLayout
@@ -66,8 +68,8 @@
                         android:id="@+id/tvVehicleNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/neutral_black_200"
-                        android:textSize="@dimen/text_14sp"
+                        android:textColor="@color/text_body_primary"
+                        style="@style/TextAppearance.Delfin.R14"
                         tools:text="Vehicle Number: DL01CA1268" />
 
                 </LinearLayout>
@@ -100,8 +102,7 @@
             android:text="@string/submit_for_verification"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_16sp"
-            android:textStyle="bold" />
+            style="@style/TextAppearance.Delfin.M14" />
 
     </LinearLayout>
 </layout>

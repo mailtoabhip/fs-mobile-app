@@ -49,18 +49,18 @@
                     android:orientation="vertical"
                     android:padding="@dimen/size_16dp">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/label_fastag_no_space"
                         android:src="@drawable/ic_fastag_home" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_10dp"
-                        android:text="@string/label_fastag_no_space"
+                        android:text="@string/financial_service_fastag_title"
                         android:textColor="@color/black_title"
                         style="@style/TextAppearance.Delfin.M12"/>
                 </LinearLayout>
@@ -79,7 +79,7 @@
                     android:orientation="vertical"
                     android:padding="@dimen/size_16dp">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="@dimen/size_48dp"
                         android:layout_height="@dimen/size_48dp"
                         android:layout_marginVertical="@dimen/size_6dp"
@@ -87,7 +87,7 @@
                         android:contentDescription="@string/label_gps"
                         android:src="@drawable/ic_gps_icon" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_10dp"
@@ -110,7 +110,7 @@
                     android:orientation="vertical"
                     android:padding="@dimen/size_16dp">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="@dimen/size_56dp"
                         android:layout_height="@dimen/size_56dp"
                         android:layout_marginVertical="@dimen/size_2dp"
@@ -118,7 +118,7 @@
                         android:contentDescription="@string/label_fuel_card_home"
                         android:src="@drawable/card" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_10dp"
@@ -186,13 +186,13 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/size_20dp"
                     android:layout_height="@dimen/size_20dp"
                     android:contentDescription="@string/label_fastag_title"
                     android:src="@drawable/fs_pending_clock" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvFastagPendingText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
                     tools:text="FASTag pending actions (8)"
                     style="@style/TextAppearance.Delfin.SB12"/>
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/size_20dp"
                     android:layout_height="@dimen/size_20dp"
                     android:contentDescription="@string/action_continue"
@@ -212,7 +212,7 @@
             </LinearLayout>
 
             <!-- Configure Service Onboarding Section -->
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sectionOnboardingTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -252,7 +252,7 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_72dp"
                             android:layout_height="@dimen/size_72dp"
                             android:contentDescription="@string/label_my_trucks"
@@ -263,7 +263,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_20dp"
                             android:layout_height="@dimen/size_20dp"
                             android:contentDescription="@string/action_continue"
@@ -271,7 +271,7 @@
                     </LinearLayout>
 
                     <!-- Title -->
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_8dp"
@@ -280,7 +280,7 @@
                         style="@style/TextAppearance.Delfin.SB14"/>
 
                     <!-- Subtitle -->
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
@@ -309,7 +309,7 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_72dp"
                             android:layout_height="@dimen/size_64dp"
                             android:contentDescription="@string/label_my_loads"
@@ -321,7 +321,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/size_20dp"
                             android:layout_height="@dimen/size_20dp"
                             android:contentDescription="@string/action_continue"
@@ -329,7 +329,7 @@
                     </LinearLayout>
 
                     <!-- Title -->
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_12dp"
@@ -338,7 +338,7 @@
                         style="@style/TextAppearance.Delfin.SB14"/>
 
                     <!-- Subtitle -->
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/size_4dp"
@@ -351,7 +351,7 @@
 
 
             <!-- We @Delhivery Section -->
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sectionWeAtDelhivery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -422,14 +422,14 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <ImageView
+                            <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/bidHammerIv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:contentDescription="@string/label_bidding"
                                 android:src="@drawable/ic_bid_hammer" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/kycHeading"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -439,7 +439,7 @@
                                 android:textStyle="bold"
                                 tools:text="You're all set to start bidding" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/kycMessage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -484,7 +484,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/btnTv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

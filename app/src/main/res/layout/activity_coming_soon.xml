@@ -21,10 +21,11 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            android:elevation="2dp"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:navigationIcon="@drawable/ic_back_arrow"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextColor="@color/text_primary"
+            app:titleTextAppearance="@style/TextAppearance.Delfin.SB14"
+            style="@style/TextAppearance.Delfin.SB14" />
 
         <View
             android:background="@color/light_grey"
@@ -43,20 +44,21 @@
             android:paddingVertical="@dimen/size_10dp"
             android:visibility="visible">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="@dimen/size_16dp"
                 android:layout_height="@dimen/size_16dp"
                 android:contentDescription="@string/label_coming_soon"
                 android:src="@drawable/info"
+                android:fontFamily="@font/noto_sans_condensed_medium"
                 app:tint="#1BA86E" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvSuccessMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_8dp"
                 android:textColor="#1BA86E"
-                android:textSize="@dimen/text_12sp" />
+                style="@style/TextAppearance.Delfin.M12" />
         </LinearLayout>
 
         <!-- Content -->
@@ -68,43 +70,37 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/size_32dp">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivFeatureIcon"
                 android:layout_width="@dimen/size_120dp"
                 android:layout_height="@dimen/size_120dp"
                 android:contentDescription="@string/label_coming_soon" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvFeatureTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_24dp"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_24sp"
-                android:textStyle="bold" />
+                android:textFontWeight="700"
+                style="@style/TextAppearance.Delfin.B16"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_24sp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvFeatureSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:gravity="center"
-                android:textColor="@color/black_title"
-                android:textSize="@dimen/text_14sp" />
+                style="@style/TextAppearance.Delfin.M14"
+                android:textColor="@color/text_primary" />
         </LinearLayout>
-
-        <View
-            android:background="@color/light_grey"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="@dimen/size_12dp"
-            android:layout_height="1dp"/>
         <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/size_16dp"
-            android:paddingBottom="@dimen/size_24dp">
+            android:padding="@dimen/size_12dp">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnPrimary"

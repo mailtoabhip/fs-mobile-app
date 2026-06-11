@@ -29,10 +29,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_toolbar"
         android:background="@android:color/white"
-        android:elevation="2dp"
         app:contentInsetStartWithNavigation="@dimen/size_8dp"
         app:navigationIcon="@drawable/ic_back_arrow"
         style="@style/Toolbar.TitleText" />
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/horizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_1dp"
+        bind:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:padding="0dp" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -57,10 +62,10 @@
             android:layout_marginHorizontal="@dimen/size_24dp"
             android:layout_marginTop="@dimen/size_16dp"
             android:text="@string/label_phone_number"
-            android:textColor="@color/heading_black"
+            android:textColor="@color/text_primary"
+            android:textFontWeight="600"
+            style="@style/TextAppearance.Delfin.SB14"
             android:textSize="28sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif"
             />
 
         <!-- Subtitle -->
@@ -70,16 +75,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/labelPhone"
             android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/size_12dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:text="@string/sub_label_phone_number"
-            android:textColor="@color/text_body_primary"
-            android:textSize="@dimen/text_16sp"
             android:layout_marginHorizontal="@dimen/size_24dp"
-            android:fontFamily="sans-serif"
-            android:lineSpacingMultiplier="1.4"
+            android:textColor="@color/text_body_primary"
+            style="@style/TextAppearance.Delfin.R14"
             />
 
-        <!-- "Enter your phone number" label -->
+        <!-- "Phone number" label -->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/labelEnterPhone"
             android:layout_width="wrap_content"
@@ -87,10 +90,9 @@
             android:layout_below="@+id/sub_label_phone"
             android:layout_marginTop="28dp"
             android:layout_marginHorizontal="@dimen/size_24dp"
-            android:text="Enter your phone number"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_14sp"
-            android:fontFamily="sans-serif"
+            android:text="@string/str_phone_number"
+            android:textColor="@color/text_body_secondary_v2"
+            style="@style/TextAppearance.Delfin.M14"
             />
 
         <!-- Phone input row: +91 prefix + number field -->
@@ -113,10 +115,9 @@
               android:gravity="center"
               android:padding="@dimen/size_12dp"
               android:text="+91"
-              android:textColor="@color/heading_black"
+              android:textColor="@color/text_body_primary"
+              style="@style/TextAppearance.Delfin.M14"
               android:textSize="@dimen/text_16sp"
-              android:textStyle="bold"
-              android:fontFamily="sans-serif"
               android:background="@drawable/bg_phone_prefix"
               />
 
@@ -127,14 +128,12 @@
               android:layout_height="match_parent"
               android:layout_weight="1"
               android:background="@null"
-              android:digits="1234567890 "
+              android:digits="1234567890"
               android:imeOptions="actionDone"
               android:inputType="phone"
-              android:maxLength="11"
-              android:layout_marginEnd="1dp"
-              android:layout_marginVertical="@dimen/size_2dp"
-              android:padding="@dimen/size_12dp"
-              android:hint="00000 00000"
+              android:maxLength="10"
+              android:paddingHorizontal="@dimen/size_12dp"
+              android:hint="@string/str_10_digit_mobile_number"
               android:textColorHint="@color/text_body_base"
               android:text="@={ viewModel.phoneNo }"
               android:textColor="@color/heading_black"
@@ -160,6 +159,7 @@
             android:layout_marginHorizontal="@dimen/size_24dp"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
+            android:textColor="@color/text_body_primary_inverse"
             android:text="@string/action_send_otp"
             android:textAllCaps="false"
             />
@@ -180,14 +180,14 @@
             android:id="@+id/labelotp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_16dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:fontFamily="sans-serif"
             android:layout_marginHorizontal="@dimen/size_24dp"
             android:lineSpacingExtra="@dimen/text_6sp"
             android:text="@string/label_otp"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_24sp"
-            android:textStyle="bold"
+            android:textFontWeight="600"
+            style="@style/TextAppearance.Delfin.SB14"
+            android:textSize="28sp"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -199,9 +199,11 @@
             android:layout_marginHorizontal="@dimen/size_24dp"
             android:layout_marginTop="@dimen/size_12dp"
             android:layout_below="@+id/labelotp"
+            style="@style/TextAppearance.Delfin.R14"
             android:gravity="start"
             android:textSize="@dimen/text_16sp"
-            android:textColor="@color/sub_heading_black"
+            android:textFontWeight="400"
+            android:textColor="@color/text_body_primary"
             tools:text="to 8695900493"
             />
 
@@ -209,16 +211,15 @@
             android:id="@+id/tv_enter_otp_here"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            bind:autoSizeTextType="uniform"
-            android:fontFamily="sans-serif"
             android:layout_marginHorizontal="@dimen/size_24dp"
             android:layout_marginTop="@dimen/size_32dp"
             android:layout_below="@+id/text_otp_sent_to_phone_no"
             android:gravity="start"
             android:textSize="@dimen/text_16sp"
-            android:text="Enter OTP here"
-            android:textColor="@color/sub_heading_black"
-            tools:text="Enter OTP here"
+            android:text="@string/str_enter_otp"
+            android:textFontWeight="500"
+            android:textColor="@color/text_body_secondary_v2"
+            style="@style/TextAppearance.Delfin.M14"
             />
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -230,44 +231,44 @@
             android:layout_marginTop="@dimen/size_8dp"
             android:inputType="number"
             android:maxLength="8"
-            android:fontFamily="sans-serif"
-            android:hint="Enter OTP"
-            android:textSize="@dimen/text_16sp"
+            android:hint="@string/str_enter_otp"
+            android:textColorHint="@color/text_body_base"
+            android:textColor="@color/text_body_primary"
             android:padding="@dimen/size_12dp"
             android:background="@drawable/bg_edit_text_outlined"
+            style="@style/TextAppearance.Delfin.M14"
+            android:textFontWeight="500"
             />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/otpError"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/otp_view"
-            android:layout_marginTop="16dp"
-            android:visibility="gone"
-            android:layout_marginHorizontal="@dimen/size_24dp"
-            android:fontFamily="sans-serif"
-            android:text="@string/error_incorrect_otp"
-            android:textColor="@color/error_red"
-            android:textSize="@dimen/text_14sp" />
-
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/otpError"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/otp_view"
             android:orientation="horizontal"
-            android:gravity="center"
+            android:gravity="start"
             android:layout_marginHorizontal="@dimen/size_24dp"
-            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginTop="@dimen/size_8dp"
             android:layout_height="wrap_content">
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/label_resend"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:fontFamily="sans-serif"
-              android:textSize="@dimen/text_16sp"
-              android:textColor="@color/sub_heading_black"
+              android:layout_weight="1"
+              style="@style/TextAppearance.Delfin.M12"
+              android:textFontWeight="500"
+              android:textColor="@color/text_caption_secondary"
               android:text="@string/label_resend"
               />
+          <androidx.appcompat.widget.AppCompatTextView
+              android:id="@+id/otpError"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/otp_view"
+              android:layout_weight="1"
+              android:visibility="gone"
+              android:text="@string/error_incorrect_otp"
+              style="@style/TextAppearance.Delfin.M12"
+              android:textColor="@color/text_error_primary" />
 
           <androidx.appcompat.widget.AppCompatTextView
               android:id="@+id/btn_resend_otp"
@@ -275,9 +276,9 @@
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
               android:layout_marginStart="@dimen/size_8dp"
-              android:textSize="@dimen/text_16sp"
-              android:textStyle="bold"
-              android:textColor="@color/colorAccent"
+              android:textFontWeight="500"
+              style="@style/TextAppearance.Delfin.M12"
+              android:textColor="@color/text_info_blue_primary"
               tools:text="Resend OTP"
               />
         </LinearLayout>

@@ -10,7 +10,7 @@
     <!-- ===== DEFAULT STATE ===== -->
 
     <!-- Camera Icon (default state) -->
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivUploadIcon"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -21,25 +21,26 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Title (default state) -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvUploadTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_8dp"
-        android:textColor="@color/neutral_black_200"
-        android:textSize="@dimen/text_14sp"
+        android:textColor="@color/text_body_primary"
+        style="@style/TextAppearance.Delfin.M14"
         app:layout_constraintEnd_toStartOf="@id/tvSampleImage"
         app:layout_constraintStart_toEndOf="@id/ivUploadIcon"
         app:layout_constraintTop_toTopOf="@id/ivUploadIcon"
         tools:text="Upload RC Front" />
 
     <!-- Sample Image link (optional, hidden by default) -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSampleImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sample_image_link"
         android:textColor="#2396FB"
+        style="@style/TextAppearance.Delfin.R14"
         android:textSize="@dimen/text_10sp"
         android:visibility="gone"
         app:layout_constraintBaseline_toBaselineOf="@id/tvUploadTitle"
@@ -47,13 +48,14 @@
         tools:visibility="gone" />
 
     <!-- Subtitle (default state) -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvUploadSubtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_8dp"
         android:layout_marginTop="@dimen/size_4dp"
-        android:textColor="@color/text_body_secondary"
+        android:textColor="@color/text_caption_primary"
+        style="@style/TextAppearance.Delfin.R14"
         android:textSize="@dimen/text_12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivUploadIcon"
@@ -84,7 +86,7 @@
     <!-- ===== UPLOADED STATE ===== -->
 
     <!-- Thumbnail (uploaded state) -->
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivThumbnail"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -96,14 +98,14 @@
         tools:visibility="gone" />
 
     <!-- File name (uploaded state) -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvFileName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_8dp"
         android:layout_marginEnd="@dimen/size_8dp"
-        android:textColor="@color/neutral_black_200"
-        android:textSize="@dimen/text_14sp"
+        android:textColor="@color/text_body_primary"
+        style="@style/TextAppearance.Delfin.M14"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/layoutStatus"
         app:layout_constraintStart_toEndOf="@id/ivThumbnail"
@@ -124,21 +126,22 @@
         app:layout_constraintTop_toTopOf="@id/ivThumbnail"
         tools:visibility="gone">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:contentDescription="@string/upload_status_uploaded"
             android:src="@drawable/icon_upload_success_check"
             />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_4dp"
             android:text="@string/upload_status_uploaded"
-            android:textColor="@color/neutral_black_200"
-            android:textSize="@dimen/text_12sp" />
+            android:textColor="@color/text_body_primary"
+            style="@style/TextAppearance.Delfin.M14"
+            android:textSize="@dimen/text_12sp"/>
 
     </LinearLayout>
 
