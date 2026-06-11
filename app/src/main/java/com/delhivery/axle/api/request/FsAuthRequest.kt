@@ -27,6 +27,7 @@ data class FsVerifyRequest(
  */
 data class FsUpdateProfileRequest(
     @SerializedName("first_name") val firstName: String? = null,
+    @SerializedName("middle_name") val middleName: String? = null,
     @SerializedName("last_name") val lastName: String? = null,
     @SerializedName("comm_consent") val commConsent: Boolean? = null
 )

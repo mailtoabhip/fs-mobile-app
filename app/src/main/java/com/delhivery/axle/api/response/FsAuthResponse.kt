@@ -13,6 +13,7 @@ data class FsUserProfile(
     @SerializedName("user_id") val id: String,
     @SerializedName("phone") val phone: String,
     @SerializedName("first_name") val firstName: String?,
+    @SerializedName("middle_name") val middleName: String?,
     @SerializedName("last_name") val lastName: String?,
     @SerializedName("is_active") val isActive: Boolean?,
     @SerializedName("comm_consent") val commConsent: Boolean?,

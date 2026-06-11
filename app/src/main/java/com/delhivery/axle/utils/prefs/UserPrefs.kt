@@ -49,6 +49,10 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
             .apply()
         get() = prefs.getString(PrefKeys.FirstName, null)
 
+    var middleName: String?
+        set(value) = editor.putString(PrefKeys.MiddleName, value)
+            .apply()
+        get() = prefs.getString(PrefKeys.MiddleName, null)
     var lastName: String?
         set(value) = editor.putString(PrefKeys.LastName, value)
             .apply()
@@ -539,7 +543,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
   }
 
     fun isProfilePending(): Boolean{
-        return firstName.isNullOrEmpty() || lastName.isNullOrEmpty() || !commConsent
+        return firstName.isNullOrEmpty() || !commConsent
     }
 
 
@@ -922,6 +926,8 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
       editor.remove(PrefKeys.RefreshToken)
           .apply()
       editor.remove(PrefKeys.FirstName)
+          .apply()
+      editor.remove(PrefKeys.MiddleName)
           .apply()
       editor.remove(PrefKeys.LastName)
           .apply()
@@ -1337,6 +1343,7 @@ class UserPrefs @Inject constructor(@ApplicationContext private val context: Con
     const val JWTToken = "jwt_token"
     const val RefreshToken = "refresh_token"
     const val FirstName = "first_name"
+    const val MiddleName = "middle_name"
     const val LastName = "last_name"
     const val CommConsent = "comm_consent"
     const val CityCode = "city_code"

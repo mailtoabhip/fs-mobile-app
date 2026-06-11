@@ -166,12 +166,12 @@ enum class UrlConfig(
   SaleCodeService(
       "https://financial-api.delhiveryfinserv.com",
       "https://financial-fastag-staging.delhivery.com",
-      "https://financial-fastag-staging.delhivery.com"
+      "https://api.devfinserv.com"
   ),
   KycService(
       "https://financial-fastag-staging.delhivery.com",
       "https://financial-fastag-staging.delhivery.com",
-      "https://financial-fastag-staging.delhivery.com"
+      "https://api.devfinserv.com"
   ),
   AppID(
   "83", "371", "371"

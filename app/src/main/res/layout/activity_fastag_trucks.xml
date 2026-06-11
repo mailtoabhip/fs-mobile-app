@@ -115,6 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/size_16dp"
                         android:layout_marginTop="@dimen/size_24dp"
+                        android:paddingBottom="@dimen/size_16dp"
                         android:visibility="gone">
 
                         <LinearLayout

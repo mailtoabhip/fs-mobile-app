@@ -93,6 +93,10 @@ class UserRepository @Inject constructor(
     phoneNo = phone,
     userName = buildString {
       if (!firstName.isNullOrEmpty()) append(firstName)
+      if (!middleName.isNullOrEmpty()) {
+        if (isNotEmpty()) append(" ")
+        append(middleName)
+      }
       if (!lastName.isNullOrEmpty()) {
         if (isNotEmpty()) append(" ")
         append(lastName)

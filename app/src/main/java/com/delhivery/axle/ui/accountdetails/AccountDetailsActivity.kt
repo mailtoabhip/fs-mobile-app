@@ -64,10 +64,6 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())
 
-        viewModel.lastName.observe(this, Observer {
-            checkEnable()
-        })
-
         viewModel.firstName.observe(this, Observer {
             checkEnable()
         })
@@ -94,7 +90,7 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = ""
+        supportActionBar?.title = "Profile Details"
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.editName.focusClick()
         if (activitySetupTrace != null && isFirstResume) {

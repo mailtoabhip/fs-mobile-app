@@ -35,6 +35,7 @@ class AccountDetailsViewModel @Inject constructor(
 
     /* binding vars — username maps to first_name in the new contract */
     var firstName = MutableLiveData<String>()
+    var middleName = MutableLiveData<String>()
     var lastName = MutableLiveData<String>()
     var commConsent = MutableLiveData<Boolean>()
     var locationOption = MutableLiveData<Boolean>()
@@ -48,6 +49,7 @@ class AccountDetailsViewModel @Inject constructor(
         if (!isConnected) return
 
         val firstName = firstName.value?.trim()
+        val middleName = middleName.value?.trim()
         val lastName = lastName.value?.trim()
         val commConsent = commConsent.value ?: false
 
@@ -58,6 +60,7 @@ class AccountDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = fsAuthRepository.updateProfile(
                 firstName = firstName,
+                middleName = middleName?.ifEmpty { null },
                 lastName = lastName?.ifEmpty { null },
                 commConsent = commConsent
             )) {

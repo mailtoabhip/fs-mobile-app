@@ -48,7 +48,7 @@ enum class PendingActionType(val displayName: String) {
 
 
 // ---------------------------------------------------------------------------
-// API Response Models — GET /fastag/tag-issuance/v1/pending-actions
+// API Response Models — GET /fastag/v1/pending-actions
 // ---------------------------------------------------------------------------
 
 data class PendingActionsResponse(
