@@ -1,0 +1,123 @@
+package com.dfd.delfin.utils
+
+import com.dfd.delfin.BuildConfig
+import com.dfd.delfin.api.repository.AuthenticationRepository
+import com.dfd.delfin.api.response.ErrorResponseBody
+import com.dfd.delfin.exception.HttpErrorCode
+import com.dfd.delfin.exception.HttpErrorCode.Forbidden
+import com.dfd.delfin.exception.HttpErrorCode.Unauthorized
+import com.dfd.delfin.injection.scope.ActivityScope
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.gson.Gson
+import dagger.android.support.DaggerAppCompatActivity
+import retrofit2.HttpException
+import javax.inject.Inject
+
+@ActivityScope
+class ErrorUtils @Inject constructor(
+  private val activity: DaggerAppCompatActivity,
+  private val authRepository: AuthenticationRepository,
+  private val uiUtils: UiUtils,
+  private val dialogUtils: DialogUtils,
+  private val gson: Gson,
+  private val navigationUtils: NavigationUtils,
+  private val analyticsUtil: AnalyticsUtil,
+  private val userPrefs: UserPrefs
+) {
+
+  /**
+   * Handle exception
+   */
+  fun handle(throwable: Throwable) {
+    when (throwable) {
+      is HttpException -> throwable.handle()
+      else -> dialogUtils.showErrorDialog(
+          throwable.message ?: "Error: ${throwable.javaClass.simpleName}",
+          ErrorDialogDismissTimeout
+      )
+    }
+    if (BuildConfig.DEBUG) {
+      /* print stack trace */
+      throwable.printStackTrace()
+    }
+  }
+
+  /**
+   * Handle http exception
+   */
+  private fun HttpException.handle() {
+    val errorCode = HttpErrorCode.exceptionFromCode(code())
+    val errorResponseBody = try {
+      gson.fromJson(
+          response()?.errorBody()?.string(), ErrorResponseBody::class.java
+      )
+    } catch (e: Exception) {
+      //parsing exception
+      e.printStackTrace()
+      null
+    }
+
+    val errorMessage = try {
+      errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
+    } catch (e: Exception) {
+      HttpErrorCode.UnknownError.errorMessage
+    }
+
+    when (errorCode) {
+      Unauthorized ->{
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_TOKEN_EXPIRED_401,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,PROPERTY_ERROR_MESSAGE),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",errorMessage?:"")
+        )
+        navigationUtils.logout(errorMessage)
+      }
+      Forbidden -> {
+        analyticsUtil.moEngageTrackEvent(
+            EVENT_TOKEN_EXPIRED_403,
+          mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO,PROPERTY_ERROR_MESSAGE),
+          mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy",errorMessage?:"")
+          )
+        navigationUtils.logout(errorMessage)
+      }
+      else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
+    }
+  }
+
+  /**
+   * Handle error repsonse body
+   */
+  fun handleErrorResponseBody(
+    httpException: HttpException,
+    errorResponseBody: ErrorResponseBody?
+  ) {
+    val errorCode = HttpErrorCode.exceptionFromCode(httpException.code())
+    val errorMessage = errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
+    when (errorCode) {
+      Unauthorized, Forbidden -> navigationUtils.logout(errorMessage)
+      else -> dialogUtils.showErrorDialog(errorMessage, ErrorDialogDismissTimeout)
+    }
+  }
+
+  /**
+   * Handle error repsonse body
+   */
+  fun getErrorResponseBody(
+    httpException: HttpException,
+    errorResponseBody: ErrorResponseBody?
+  ):String {
+    val errorCode = HttpErrorCode.exceptionFromCode(httpException.code())
+    val errorMessage = errorResponseBody?.errorBody?.errorMessage ?: errorCode.errorMessage
+    when (errorCode) {
+      Unauthorized, Forbidden ->{ navigationUtils.logout(errorMessage)
+                                  return ""
+      }
+      else -> return errorMessage
+    }
+
+  }
+
+}
+
+/* dialog dismiss timeout in sec */
+private const val ErrorDialogDismissTimeout = 3L

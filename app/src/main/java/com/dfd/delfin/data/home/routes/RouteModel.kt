@@ -1,0 +1,91 @@
+package com.dfd.delfin.data.home.routes
+
+import com.dfd.delfin.data.BaseKeyTypeModel
+import com.dfd.delfin.data.RouteMappingModel
+import com.dfd.delfin.data.StateModel
+import com.dfd.delfin.data.UserCity
+import java.io.Serializable
+
+/**
+ * Route model
+ */
+data class RouteModel(
+  var origin: UserCity,
+  var destinations: MutableSet<StateModel> = mutableSetOf()
+) : BaseKeyTypeModel<String>(),Serializable {
+
+  override fun key() = origin.city
+
+  fun statesCount() = "${destinations.size} States"
+
+  fun stateNames() = if (destinations.size > 0) {
+    val destinationString = java.lang.StringBuilder()
+    var stateString = ""
+    var count =0
+    for (destination in destinations) {
+      if(count<3){
+        count++
+      }else{
+        break
+      }
+      destinationString.append(destination.state)
+      destinationString.append(", ")
+    }
+    stateString = destinationString.toString()
+    if (stateString.endsWith(", ")) {
+      stateString = stateString.substring(0, destinationString.length - 2)
+    }
+    if(destinations.size>3) {
+      stateString + " +${destinations.size - 3}"
+    }else{
+      stateString
+    }
+
+  } else {
+    ""
+  }
+
+  fun destinationCount() = "${destinations.size}"
+
+  /**
+   * Source/Destination route mapping / list of [RouteMappingModel]
+   */
+  fun toMapping() = mutableSetOf<RouteMappingModel>().apply {
+    destinations.forEach { _destination ->
+      add(RouteMappingModel(origin, _destination))
+    }
+  }
+
+  /**
+   * Add origin destination to list of [RouteModel]
+   */
+  fun expandLocations(): List<RouteModel> = mutableListOf<RouteModel>().apply {
+    add(RouteModel(origin, destinations))
+  }
+}
+
+/**
+ * Expand routes from nearby locations
+ */
+//fun List<RouteModel>.expandRoutes(): List<RouteModel> {
+//  val routes = mutableMapOf<String, RouteModel>()
+//  map { route ->
+//    for (i in -1 until route.nearByLocation.size) {
+//      when (i) {
+//        -1 -> route.origin
+//        else -> route.nearByLocation[i]
+//      }.let { _origin ->
+//        if (!routes.containsKey(_origin.key()) || routes[_origin.key()] == null) {
+//          routes[_origin.key()] = RouteModel(_origin)
+//        }
+//        routes[_origin.key()]!!.destinations = route.destinations
+//      }
+//    }
+//  }
+//  return routes.values.toList()
+//}
+
+/* actions */
+const val RoutesAction_ViewDetails = "routes_detail"
+const val RoutesAction_DeleteRoute = "delete_route"
+const val RoutesAction_ViewOptions = "view_route_options"

@@ -1,0 +1,2018 @@
+package com.dfd.delfin.ui.contractDetails
+
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.database.Cursor
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
+import android.provider.ContactsContract
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dfd.delfin.R
+import com.dfd.delfin.R.string
+import com.dfd.delfin.api.repository.ContractType
+import com.dfd.delfin.api.repository.RequestType
+import com.dfd.delfin.api.repository.TransactionStatus
+import com.dfd.delfin.api.request.UpdateVehicleDetailsRequest
+import com.dfd.delfin.data.bids.TransactionBidStatus.Accepted
+import com.dfd.delfin.data.bids.TransactionBidStatus.Cancelled
+import com.dfd.delfin.data.bids.TransactionBidStatus.Open
+import com.dfd.delfin.data.bids.TransactionBidStatus.Rejected
+import com.dfd.delfin.data.home.bids.HaltCenters
+import com.dfd.delfin.data.home.bids.HomeBidsRequestItemData
+import com.dfd.delfin.data.home.bids.PaymentSlabs
+import com.dfd.delfin.data.home.bids.SecondaryReportingCenters
+import com.dfd.delfin.data.home.placements.HomePlacementsItemData
+import com.dfd.delfin.databinding.ActivityContractDetailsBinding
+import com.dfd.delfin.databinding.DialogContractsBidSuccessBinding
+import com.dfd.delfin.databinding.DialogPlacementDetailsEditBinding
+import com.dfd.delfin.ui.base.BaseActivity
+import com.dfd.delfin.ui.biddetails.BidDetailsContractCancelled
+import com.dfd.delfin.ui.biddetails.BidDetailsUserBidState
+import com.dfd.delfin.ui.biddetails.BidDetailsUserBidState_ContractResult
+import com.dfd.delfin.ui.biddetails.BidDetailsUserBidState_EditBid
+import com.dfd.delfin.ui.biddetails.BidDetailsUserBidState_LoadingBids
+import com.dfd.delfin.ui.biddetails.BidDetailsUserBidState_PlaceBid
+import com.dfd.delfin.ui.biddetails.BidDetailsUserBidState_PlaceBidFirst
+import com.dfd.delfin.ui.dialogs.AddTruckBottomSheetDialogFragment
+import com.dfd.delfin.ui.home.activity.home.homeActivityIntent
+import com.dfd.delfin.ui.home.fragments.contracts.REFRESH_ON_BACK
+import com.dfd.delfin.ui.home.fragments.placements.LoadTypes
+import com.dfd.delfin.ui.home.fragments.placements.PlacementTypes
+import com.dfd.delfin.ui.placementdetails.REFRESH_ON_BACK_PLACEMENT
+import com.dfd.delfin.ui.profile.PlacementsActivity
+import com.dfd.delfin.utils.AutoCompleteUtils
+import com.dfd.delfin.utils.BidSuccessInterface
+import com.dfd.delfin.utils.DateUtils
+import com.dfd.delfin.utils.DetailsSubmittedSuccessInterface
+import com.dfd.delfin.utils.EVENT_HOME_CONTRACT_CARD_CLICK
+import com.dfd.delfin.utils.EVENT_INTERCITY_CONTRACTS_BID_SUBMIT
+import com.dfd.delfin.utils.EVENT_INTRACITY_CONTRACTS_BID_SUBMIT
+import com.dfd.delfin.utils.EVENT_REVISE_CONTRACT_BID
+import com.dfd.delfin.utils.EVENT_SUBMIT_CONTRACT_BID
+import com.dfd.delfin.utils.PROPERTY_BID_AMOUNT_DIFF
+import com.dfd.delfin.utils.PROPERTY_CONTRACT_TYPE
+import com.dfd.delfin.utils.PROPERTY_DEMAND_TYPE
+import com.dfd.delfin.utils.PROPERTY_IS_FLEXIBLE
+import com.dfd.delfin.utils.PROPERTY_ORDER_ID
+import com.dfd.delfin.utils.PROPERTY_PAGE_NAME
+import com.dfd.delfin.utils.PROPERTY_PHONE_NO
+import com.dfd.delfin.utils.PROPERTY_SOURCE
+import com.dfd.delfin.utils.PROPERTY_STATUS
+import com.dfd.delfin.utils.PROPERTY_USER_ID
+import com.dfd.delfin.utils.StringUtils
+import com.dfd.delfin.utils.StringUtils.capitalize
+import com.dfd.delfin.utils.VALUE_APP_FLOW
+import com.dfd.delfin.utils.VALUE_LISTING
+import com.dfd.delfin.utils.VALUE_LOAD_PAGE_CONTRACTS_BIDS
+import com.dfd.delfin.utils.VALUE_ORDER_LISTING
+import com.dfd.delfin.utils.VALUE_SEARCH
+import com.dfd.delfin.utils.VALUE_SEARCH_LISITING
+import com.dfd.delfin.utils.WindowInsetsUtils
+import com.dfd.delfin.utils.extensions.focusClick
+import com.dfd.delfin.utils.extensions.getSerializableExtra
+import com.dfd.delfin.utils.prefs.APPROVED
+import com.dfd.delfin.utils.prefs.DISABLED
+import com.dfd.delfin.utils.prefs.UNAPPROVED
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import com.google.gson.Gson
+import java.text.DecimalFormat
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.math.abs
+
+class ContractDetailsActivity: BaseActivity<ActivityContractDetailsBinding, ContractDetailsViewModel>(),BidSuccessInterface {
+
+  init {
+    hasInlineProgress = true
+  }
+  companion object {
+    private const val REQCODE_PICK_CONTACT = 2001
+  }
+  @Inject lateinit var userPrefs: UserPrefs
+  @Inject
+  lateinit var autoCompleteUtils: AutoCompleteUtils
+  var routesArray:ArrayList<HaltCenters> = ArrayList()
+  var flexibleReportingCentersArray:ArrayList<SecondaryReportingCenters> = ArrayList()
+  var paymentSlabsArray:ArrayList<PaymentSlabs> = ArrayList()
+  var source= VALUE_APP_FLOW
+  private var activitySetupTrace: Trace? = null
+  private var isFirstResume = true
+  private var amount = 0
+  private var pmtRate = 0
+  private var isChecked = false
+  private var isValidBidAmount = false
+  private var isValidTripCommit = false
+  private var isValidVehicleNumber = false
+  private var isValidPlacementDays = false
+  private var forPlacement = false
+  private var isValidDriverNumber = false
+  private var isValidDriverName = false
+  private var hasUserInteractedWithDriverName = false
+  private var isDriverSelectionInProgress = false
+  private var lastValidationTime = 0L
+  private var isValidationDisabled = false
+  private var lastEnableSubmitTime = 0L
+  private var homePlacementsItemData:HomePlacementsItemData?=null
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    // Force hide driver name error on initial load
+    binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+    
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("ContractDetailsActivity_SetupTime")
+    activitySetupTrace?.start()
+    try {
+      require(
+        !(intent == null || !intent.hasExtra(TransactionIdIntentKey))
+      ) { "Required data $TransactionIdIntentKey not found" }
+    } catch (e: Exception) {
+      finish()
+    }
+
+    /* set transaction id */
+    viewModel.transactionId = intent.getStringExtra(TransactionIdIntentKey) ?: ""
+    viewModel.requestType = RequestType.Contract.type
+    source = intent.getStringExtra(PROPERTY_SOURCE) ?: VALUE_APP_FLOW
+    forPlacement = intent.getBooleanExtra(ForPlacementKey,false)
+    if( intent?.extras?.getSerializableExtra(PlacementData, HomePlacementsItemData::class.java)!=null)
+      homePlacementsItemData =  intent.extras?.getSerializableExtra(PlacementData,HomePlacementsItemData::class.java)
+   /* binding.backArrow.setOnClickListener {
+      onBackPressedDispatcher.onBackPressed()
+    }*/
+
+  }
+
+  private fun setBiddingInput(transaction:HomeBidsRequestItemData) {
+
+    val items= resources.getStringArray(R.array.placementDaysItems)
+
+    val spinnerAdapter= object : ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, items) {
+
+      override fun isEnabled(position: Int): Boolean {
+        return position != 0
+      }
+
+      override fun getDropDownView(
+        position: Int,
+        convertView: View?,
+        parent: ViewGroup
+      ): View {
+        val view: TextView = super.getDropDownView(position, convertView, parent) as TextView
+        if(position == 0) {
+          view.setTextColor(Color.GRAY)
+        }
+        return view
+      }
+
+    }
+
+    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    binding.cardInput.spinnerPlacementDays.adapter = spinnerAdapter
+   //  set binding params
+    binding.apply {
+      binding.cardInput.request = transaction
+      Log.i("transaction",transaction.key())
+      transaction.transactionBid?.bidAmount?.let {
+        isValidBidAmount= true
+        showBidAmountPerDayTrip(it.toInt(),transaction)
+       /* binding.title.text = "Revise Your Bid"
+        binding.bidAmountLbl.text = "Revised Bid Amount"*/
+        binding.cardInput.etBidAmount?.setText(DecimalFormat("#########").format(it))
+        if(transaction.isPMTIndent()){
+          pmtRate = it.toInt()
+          amount = (it*transaction.requestedCapacityMg).toInt()
+        }else{
+          amount = it.toInt()
+        }
+      }
+      transaction.transactionBid?.tentativeTripCount?.let {
+        isValidTripCommit = true
+        binding.cardInput.etTripNumber?.setText(DecimalFormat("#########").format(it))
+      }
+      transaction.transactionBid?.vehicleNumber?.let {
+        isValidVehicleNumber = true
+        binding.cardInput.etVehicleNumber?.setText(it)
+      }
+      transaction.transactionBid?.placementDays?.let {
+        isValidPlacementDays = true
+        if(it.equals("1-2 Days")) {
+          binding.cardInput.spinnerPlacementDays.setSelection(1)
+        }else if(it.equals("3-5 Days")) {
+          binding.cardInput.spinnerPlacementDays.setSelection(2)
+        }else if(it.equals("6-8 Days")) {
+          binding.cardInput.spinnerPlacementDays.setSelection(3)
+        }
+      }
+      enableSubmit(transaction)
+    }
+
+
+
+
+    binding.cardInput.etBidAmount?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          try {
+            val input = s.trim()
+              .toString()
+              .toInt()
+            var lowerPercentage = 0
+            var upperPercentage = 0
+            if(transaction.isItLHContract()){
+              lowerPercentage  = 30
+              upperPercentage  = 20
+            }else if(transaction.isItFRContract()){
+              lowerPercentage  = 20
+              upperPercentage  = 10
+            }else if(transaction.isItIntraCityContract()){
+              lowerPercentage  = 20
+              upperPercentage  = 20
+            }
+            if (transaction.isPMTIndent()) {
+              pmtRate = input
+              amount = (input * transaction.requestedCapacityMg).toInt()
+              if(amount<250){
+                showInvalidBidAmountError()
+              }else{
+                if(transaction.targetPrice!=null&&(amount>(transaction.targetPrice!!+transaction.targetPrice!!*upperPercentage/100)|| amount<(transaction.targetPrice!!-transaction.targetPrice!!*lowerPercentage/100))){
+                  showInvalidBidAmountError()
+                }else{
+                  removeInvalidBidAmountError(transaction,amount)
+                }
+              }
+              enableSubmit(transaction)
+            }else{
+              amount = input
+              if(amount<250){
+                showInvalidBidAmountError()
+              }else{
+                if (transaction.targetPrice!=null&&(amount > (transaction.targetPrice!! + transaction.targetPrice!! * upperPercentage / 100) || amount <(transaction.targetPrice!! - transaction.targetPrice!! * lowerPercentage / 100))) {
+                  showInvalidBidAmountError()
+                } else {
+                  if (transaction.transactionBid != null) {
+                    if(transaction.isItIntraCityContract()){
+                      if (abs(amount-transaction.transactionBid!!.bidAmount.toInt()) >=100 && abs(amount-transaction.transactionBid!!.bidAmount.toInt()) %100==0) {
+                        removeInvalidBidAmountError(transaction,amount)
+                      }else{
+                        showInvalidBidAmountError("100")
+                      }
+                    }else{
+                      if(amount<12000){
+                        if (abs(amount-transaction.transactionBid!!.bidAmount.toInt()) >=50 && abs(amount-transaction.transactionBid!!.bidAmount.toInt()) %50==0) {
+                          removeInvalidBidAmountError(transaction,amount)
+                        }else{
+                          showInvalidBidAmountError("50")
+                        }
+                      }else{
+                        if (abs(amount-transaction.transactionBid!!.bidAmount.toInt()) >=250 && abs(amount-transaction.transactionBid!!.bidAmount.toInt()) %250==0) {
+                          removeInvalidBidAmountError(transaction,amount)
+                        }else{
+                          showInvalidBidAmountError("250")
+                        }
+                      }
+                    }
+                  }else{
+                    removeInvalidBidAmountError(transaction,amount)
+                  }
+                }
+
+                enableSubmit(transaction)
+              }
+            }
+
+          } catch (e: NumberFormatException) {
+            amount = 0
+          } catch (e: Exception) {
+            amount = 0
+          }
+        }else{
+          amount = 0
+          isValidBidAmount = false
+          enableSubmit(transaction)
+        }
+      }
+    })
+
+    binding.cardInput.etTripNumber?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim()
+            .toString()
+            .toInt()
+          if(transaction.isItFRContract()) {
+            if(input==0){
+              binding.cardInput.tripError.visibility = View.VISIBLE
+              binding.cardInput.tripError.text ="Invalid trip count"
+              isValidTripCommit = false
+            }else if (input > 0 && input > transaction.tentativeTripCount!!) {
+              binding.cardInput.tripError.text =getString(R.string.exceeds_tentative_trip_count)
+              binding.cardInput.tripError.visibility = View.VISIBLE
+              isValidTripCommit = false
+
+            } else {
+              isValidTripCommit = true
+              binding.cardInput.tripError.visibility = View.GONE
+
+            }
+            enableSubmit(transaction)
+          }else{
+            isValidTripCommit = true
+            enableSubmit(transaction)
+          }
+        }else{
+          if(transaction.isItFRContract()){
+            isValidTripCommit = false
+            enableSubmit(transaction)
+          }
+        }
+      }
+    })
+
+
+    binding.cardInput.etVehicleNumber?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim()
+            .toString()
+          if(transaction.isItIntraCityContract()) {
+            if(validateTruckNumber(input)){
+              isValidVehicleNumber = true
+              binding.cardInput.vehicleError.visibility = View.GONE
+            } else {
+              binding.cardInput.vehicleError.visibility = View.VISIBLE
+              binding.cardInput.vehicleError.text ="Invalid Vehicle Number"
+              isValidVehicleNumber = false
+
+            }
+            enableSubmit(transaction)
+          }else{
+            isValidVehicleNumber = true
+            enableSubmit(transaction)
+          }
+        }else{
+          if(transaction.isItIntraCityContract()){
+            isValidVehicleNumber = false
+            enableSubmit(transaction)
+          }
+        }
+      }
+    })
+
+
+
+
+    binding.cardInput.spinnerPlacementDays.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+      override fun onNothingSelected(parent: AdapterView<*>?) {
+      }
+
+      override fun onItemSelected(
+        parent: AdapterView<*>?,
+        view: View?,
+        position: Int,
+        id: Long
+      ) {
+        val value = parent!!.getItemAtPosition(position).toString()
+        if(value == items[0]){
+          (view as TextView).setTextColor(Color.GRAY)
+          isValidPlacementDays = false
+          enableSubmit(transaction)
+        }else{
+          isValidPlacementDays = true
+          enableSubmit(transaction)
+        }
+      }
+
+    }
+
+    binding.cardInput.placeBidButton.setOnClickListener {
+     // binding.editBidAmount.clearFocus()
+      when (viewModel.userPrefs.canBid()) {
+        APPROVED -> {
+          submit(transaction)
+        }
+        UNAPPROVED -> {
+          dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_not_approved,
+            string.msg_dialog_supplier_not_approved,
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
+          )
+        }
+        DISABLED -> {
+          dialogUtils.showBasicConfirmDialog(
+            string.title_dialog_supplier_disabled,
+            string.msg_dialog_supplier_disabled,
+            getString(string.label_call_us), getString(string.label_mail_us),
+            { callHelpline() }, { sendMail() }
+          )
+        }
+      }
+
+
+    }
+
+   // binding.buttonCancel.setOnClickListener { dismiss() }
+  }
+
+  private fun  enableSubmit(transaction:HomeBidsRequestItemData){
+    if(transaction.isItLHContract()){
+      isValidTripCommit = true
+      isValidVehicleNumber=true
+      isValidPlacementDays = true
+    }else if (transaction.isItFRContract()){
+      isValidVehicleNumber=true
+      isValidPlacementDays = true
+    }else if (transaction.isItIntraCityContract()){
+      isValidTripCommit = true
+    }
+    if(isValidBidAmount&&isValidTripCommit&&isValidVehicleNumber&&isValidPlacementDays) {
+      if (transaction.transactionBid != null) {
+        // checking if value has changed
+        if(checkValueChangesForLHFTL(transaction)||checkValueChangeForFRC(transaction)||checkValueChangesForIntraCity(transaction)) {
+          disableSubmitButton()
+        }else{
+          enableSubmitButton()
+        }
+      } else {
+        enableSubmitButton()
+      }
+    }else{
+      disableSubmitButton()
+    }
+  }
+
+  private fun validateTruckNumber(number: String): Boolean{
+    val pattern = Pattern.compile(
+      "^[a-zA-Z]{2}(((0?[1-9]{1}|[1-9]{1}[0-9]{1})[a-zA-Z]{1,3})|(0[1-9]{1}|[1-9]{1}[0-9]{1}))[0-9]{4}$|^[a-zA-Z]{3}[0-9]{4}$"
+    )
+    return pattern.matcher(number).matches()
+  }
+
+  private fun showInvalidBidAmountError(amount:String?=null){
+    isValidBidAmount = false
+    binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.bid_error))
+    if(amount!=null){
+      binding.cardInput.bidError.text = getString(string.bid_revise_error,amount)
+    }else{
+      binding.cardInput.bidError.text =  "Invalid bid: Amount outside the allowed range."
+    }
+    binding.cardInput.bidError.visibility = View.VISIBLE
+  }
+
+  private fun removeInvalidBidAmountError(transaction: HomeBidsRequestItemData, amount:Int){
+    isValidBidAmount = true
+    showBidAmountPerDayTrip(amount,transaction)
+   // binding.cardInput.bidError.visibility = View.GONE
+  }
+
+  private fun showBidAmountPerDayTrip(bidAmount:Int, transaction: HomeBidsRequestItemData){
+    try {
+//      if(transaction.isItLHContract()){
+//        binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
+//        binding.cardInput.bidError.visibility = View.VISIBLE
+//        val amount = bidAmount/((transaction.operatingDays!!/7)*30)
+//        binding.cardInput.bidError.text = "Your bid price per day: ₹${StringUtils.formatDecimalAmount(
+//          amount.toDouble()
+//        )}"
+//      }else
+        if (transaction.isItIntraCityContract()) {
+            binding.cardInput.bidError.setTextColor(ContextCompat.getColor(this,R.color.text_grey))
+            binding.cardInput.bidError.visibility = View.VISIBLE
+            val amount = bidAmount/transaction.intracityDays!!.toInt()
+            binding.cardInput.bidError.text = "Your bid price per day: ₹${StringUtils.formatDecimalAmount(amount.toDouble())}"
+        }else{
+            binding.cardInput.bidError.visibility = View.GONE
+        }
+    } catch (e:Exception){
+      Log.i("Error", e.toString())
+    }
+
+  }
+  private fun checkValueChangeForFRC(transaction:HomeBidsRequestItemData): Boolean{
+    return if (transaction.transactionBid != null) (transaction.isItFRContract()&&Integer.parseInt(binding.cardInput.etTripNumber.text.toString()) == viewModel.transaction.transactionBid!!.tentativeTripCount
+            && if(transaction.isPMTIndent())amount == (transaction.transactionBid!!.bidAmount*transaction.requestedCapacityMg).toInt() else amount==viewModel.transaction.transactionBid!!.bidAmount.toInt())
+    else false
+  }
+
+  private fun checkValueChangesForLHFTL(transaction:HomeBidsRequestItemData): Boolean{
+    return if (transaction.transactionBid != null)(transaction.isItLHContract() && if(transaction.isPMTIndent())amount == (viewModel.transaction.transactionBid!!.bidAmount*viewModel.transaction.requestedCapacityMg).toInt() else amount==transaction.transactionBid!!.bidAmount.toInt())
+    else false
+  }
+
+  private fun checkValueChangesForIntraCity(transaction:HomeBidsRequestItemData): Boolean{
+    return if (transaction.transactionBid != null)(transaction.isItIntraCityContract() &&if(transaction.isPMTIndent())amount == (viewModel.transaction.transactionBid!!.bidAmount*viewModel.transaction.requestedCapacityMg).toInt() else amount==transaction.transactionBid!!.bidAmount.toInt() && binding.cardInput.etVehicleNumber.text.toString() == transaction.transactionBid!!.vehicleNumber && binding.cardInput.spinnerPlacementDays.selectedItem.toString() == transaction.transactionBid!!.placementDays)
+    else false
+  }
+
+  private fun disableSubmitButton(){
+    binding.cardInput.placeBidButton.isEnabled = false
+  }
+  private fun enableSubmitButton(){
+    binding.cardInput.placeBidButton.isEnabled = true
+
+  }
+  private fun submit(transaction: HomeBidsRequestItemData) {
+    try {
+      uiUtils.showProgress()
+      if (transaction.transactionBid == null) {
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_SUBMIT_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
+            PROPERTY_PHONE_NO,
+            PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS,PROPERTY_ORDER_ID, PROPERTY_SOURCE,
+            PROPERTY_IS_FLEXIBLE),
+          mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",viewModel.transaction.contractEventStatusText()?:"", transaction.key(),source,transaction.isFlexible.toString()))
+
+          if(source == VALUE_SEARCH_LISITING || source == VALUE_ORDER_LISTING) {
+              analyticsUtil.moEngageTrackEvent(
+                  if (transaction.contractType == ContractType.INTRACITY.type) EVENT_INTRACITY_CONTRACTS_BID_SUBMIT else EVENT_INTERCITY_CONTRACTS_BID_SUBMIT,
+                  listOf(
+                      PROPERTY_ORDER_ID,
+                      PROPERTY_USER_ID,
+                      PROPERTY_PAGE_NAME,
+                      PROPERTY_SOURCE,
+                      PROPERTY_DEMAND_TYPE
+                  ),
+                  listOf(
+                      transaction.transactionId?:"" ,
+                      userPrefs.userId(),
+                      VALUE_LOAD_PAGE_CONTRACTS_BIDS,
+                      if(source == VALUE_SEARCH_LISITING) VALUE_LISTING else VALUE_SEARCH,
+                      transaction.demandType ?: ""
+                  )
+              )
+          }
+       /* viewModel.createBid(
+          transaction.isPMTIndent(), transaction.key(), amount, pmtRate,
+          transaction.biddingType
+            ?: "FTL", 0,if(binding.cardInput.etTripNumber.text.isNullOrEmpty())null else Integer.parseInt(binding.cardInput.etTripNumber.text.toString()),if(binding.cardInput.etVehicleNumber.text.isNullOrEmpty())null else binding.cardInput.etVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.cardInput.spinnerPlacementDays.selectedItem.toString() else null
+        )*/
+      } else {
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_REVISE_CONTRACT_BID,mutableListOf(PROPERTY_USER_ID,
+            PROPERTY_PHONE_NO,
+            PROPERTY_CONTRACT_TYPE, PROPERTY_STATUS, PROPERTY_ORDER_ID, PROPERTY_BID_AMOUNT_DIFF, PROPERTY_SOURCE,
+            PROPERTY_IS_FLEXIBLE),
+          mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",transaction.contractType?:"",transaction.contractEventStatusText()?:"", transaction.key(), (amount-transaction.transactionBid?.bidAmount!!).toString(),source,transaction.isFlexible.toString()))
+
+      /*  viewModel.editBid(
+          viewModel.transaction.isPMTIndent(), transaction.key(), transaction.transactionBid!!.key(),
+          amount, pmtRate, transaction.biddingType ?: "FTL", 0,if(binding.cardInput.etTripNumber.text.isNullOrEmpty())null else Integer.parseInt(binding.cardInput.etTripNumber.text.toString()),if(binding.cardInput.etVehicleNumber.text.isNullOrEmpty())null else binding.cardInput.etVehicleNumber.text.toString().uppercase(),if(transaction.isItIntraCityContract())binding.cardInput.spinnerPlacementDays.selectedItem.toString() else null
+        )*/
+      }
+
+    } catch (e: IllegalArgumentException) {
+        uiUtils.hideProgress()
+    }
+  }
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+
+    setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    title = ""//""Order ID - " + viewModel.transactionId
+    if(homePlacementsItemData?.status==PlacementTypes.Delayed.name){
+      binding.toolbarEndText.visibility = View.VISIBLE
+      binding.toolbarEndText.text =
+        "Delayed"
+      binding.toolbarEndText.background =
+        ContextCompat.getDrawable(this, R.drawable.bg_all_rounded_delayed)
+    }else{
+      binding.toolbarEndText.visibility = View.GONE
+
+    }
+
+    /* setup live data observers */
+    viewModel.progressLiveData.observe(this, ProgressObserver())
+    viewModel.transactionLiveData.observe(this, TransactionObserver())
+   viewModel.transactionBidLiveData.observe(this, TransactionBidObserver())
+    viewModel.bidPriceLiveData.observe(this, Observer {
+      if (it != null) {
+        binding.transaction?.transactionBid = it
+        val visibility =
+          if (binding.transaction?.bidAmount()
+              .isNullOrEmpty()
+          ) View.GONE else View.VISIBLE
+      }
+    })
+    viewModel.errorBiddingLiveData.observe(this) {
+      uiUtils.hideProgress()
+    }
+    // show Success Bid Dialog
+    viewModel.successBidLiveData.observe(this) {
+      if (it.first) {
+        uiUtils.hideProgress()
+        val dialog = dialogUtils.showSuccessBidDialog(this,
+          resources.getString(R.string.bid_placed_sucessfully),
+          resources.getString(R.string.check_your_bid_status)
+        )
+        navigateToBid(dialog)
+
+      }else if(it.second){
+        uiUtils.hideProgress()
+        val dialog =   dialogUtils.showSuccessBidDialog(this,
+          resources.getString(R.string.bid_revised_sucessfully),
+          resources.getString(R.string.check_your_bid_revise_status)
+        )
+        navigateToBid(dialog)
+
+      }
+    }
+    viewModel.hideProgress.observe(this, Observer {
+      if(it){
+      uiUtils.hideProgress()
+ //       binding.bottomLay.visibility = View.VISIBLE
+      }
+    })
+
+    binding.refreshLayout.setOnRefreshListener {
+      binding.mainCl.visibility = View.GONE
+      refreshData()
+    }
+  /*  binding.buttonConfirm.setOnClickListener {
+      bidDialog()
+    }*/
+
+    binding.containerError.btnAction.setOnClickListener {
+      binding.mainCl.visibility = View.GONE
+      refreshData()
+    }
+
+    //setBiddingInput()
+    refreshData()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
+
+  var countDownTimer: CountDownTimer? = null
+  // timer for under 1 hrs slot
+/* fun setTimer(bidEndingTime:String){
+
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        format.setTimeZone(TimeZone.getTimeZone("IST"));
+        val date1: Date = format.parse(format.format(Date()))
+        val date2: Date = format.parse(bidEndingTime)
+        if (date2.compareTo(date1) > 0) {
+          val mills: Long = date2.getTime() - date1.getTime()
+          countDownTimer?.cancel()
+          countDownTimer = object : CountDownTimer(mills, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+              try {
+                val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+                val mins = (millisUntilFinished / (1000 * 60)).toInt() % 60
+                val secs = ((millisUntilFinished / 1000).toInt() % 60).toLong()
+                val format = "%1$02d"
+                val hrs = String.format(format, hours)
+                val ms = String.format(format, mins)
+                val sec = String.format(format, secs)
+                val diff = ms + "m $sec" + "s"
+                if (hours == 0) {
+                  binding.tvBidTime.visibility = View.VISIBLE
+                  binding.tvBidTime.setText("Closes in $diff")
+                  binding.bidClosingStatusTime.visibility = View.VISIBLE
+                  binding.bidClosingStatusTime.text = diff
+                  binding.bidClosingStatusTime.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                }else  if(hours<=12){
+                  binding.bidClosingStatusTime.visibility = View.VISIBLE
+                  binding.bidClosingStatusTime.text = hrs+ " hrs"
+                  binding.bidClosingStatusTime.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.heading_black))
+                }else{
+                  if(viewModel.transaction.transactionStatus==TransactionStatus.Cancelled.statusId){
+                    binding.bidClosingStatusTime.visibility = View.VISIBLE
+                  }else{
+                    binding.bidClosingStatusTime.visibility = View.GONE
+                    binding.bidClosingStatus.text = viewModel.transaction.bidEndTime()
+                  }
+
+                }
+
+              } catch (e: Exception) {
+                e.printStackTrace()
+              }
+            }
+
+            override fun onFinish() {
+              binding.tvBidTime.visibility = View.GONE
+              binding.bottomLay.visibility = View.GONE
+              refreshData()
+            }
+          }.start()
+        } else {
+          binding.tvBidTime.visibility = View.GONE
+          binding.bottomLay.visibility = View.GONE
+        }
+
+ }*/
+
+/*  private fun bidDialog(bid: TransactionBid? = null) {
+    when (viewModel.userPrefs.canBid()) {
+      APPROVED -> {
+        binding.transaction?.let {
+            ContractDetailsCreateEditDialog(
+              this, it, bid, viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs,
+               source= source
+            ).show()
+
+        }
+      }
+      UNAPPROVED -> {
+        dialogUtils.showBasicConfirmDialog(
+          string.title_dialog_supplier_not_approved,
+          string.msg_dialog_supplier_not_approved,
+          getString(string.label_call_us), getString(string.label_mail_us),
+          { callHelpline() }, { sendMail() }
+        )
+      }
+      DISABLED -> {
+        dialogUtils.showBasicConfirmDialog(
+          string.title_dialog_supplier_disabled,
+          string.msg_dialog_supplier_disabled,
+          getString(string.label_call_us), getString(string.label_mail_us),
+          { callHelpline() }, { sendMail() }
+        )
+      }
+    }
+  }*/
+
+  fun enableKeyboard(){
+    binding.cardInput.etBidAmount.requestFocus()
+
+    // Delay to ensure the window is ready before showing the keyboard
+    binding.cardInput.etBidAmount.post {
+      val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+      imm.showSoftInput(binding.cardInput.etBidAmount, InputMethodManager.SHOW_IMPLICIT)
+    }
+  }
+  inner class ProgressObserver : Observer<Boolean?> {
+    override fun onChanged(t: Boolean?) {
+      t?.let {
+        when (t) {
+          true -> {
+            binding.refreshLayout.isRefreshing = true
+            binding.refreshing = true
+          }
+          false -> {
+            binding.refreshLayout.isRefreshing = false
+          }
+        }
+      }
+      binding.executePendingBindings()
+    }
+  }
+
+  /**
+   * Transaction details and UI updation Observer
+   */
+  inner class TransactionObserver : Observer<HomeBidsRequestItemData?> {
+    override fun onChanged(t: HomeBidsRequestItemData?) {
+
+      if (t != null) {
+        t.let { _transaction ->
+          binding.error = false
+          binding.transaction = _transaction
+          binding.routeDetails.nonExpRouteDetails.visibility = t.isFRCContract()
+          binding.routeDetails.routeDetails.visibility =  t.isLHContract()
+          binding.routeDetails.intraCityRouteDetails.visibility =  t.isIntraCityFixedContract()
+          binding.routeDetails.intraCityAdHocRouteDetails.visibility =  t.isIntraCityFlexibleContract()
+
+          binding.vehicleDetails.visibility = View.VISIBLE
+
+          // Capture event
+          analyticsUtil.moEngageTrackEvent(
+            EVENT_HOME_CONTRACT_CARD_CLICK,
+            mutableListOf(
+              PROPERTY_USER_ID,
+              PROPERTY_PHONE_NO, PROPERTY_ORDER_ID, PROPERTY_STATUS, PROPERTY_CONTRACT_TYPE,
+              PROPERTY_SOURCE, PROPERTY_IS_FLEXIBLE
+            ),
+            mutableListOf(userPrefs.userId(),userPrefs.phoneNumber?:"",
+              _transaction.uuid ?: " ",_transaction.contractEventStatusText(),
+              _transaction.contractType?:"",source,_transaction.isFlexible.toString()
+            )
+          )
+          // for FRC contract
+          if(t.isItFRContract()){
+            if(t.transactionStatus==TransactionStatus.Cancelled.statusId){
+              binding.routeDetails.nonExpHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
+              binding.routeDetails.nonExpHubIcon2.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
+              binding.routeDetails.clNonExpTimeInterval1.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_round_corner_light_grey)
+              binding.routeDetails.nonExpTimeInterval1.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.heading_black))
+            }else{
+              binding.routeDetails.nonExpHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_hub_route))
+              binding.routeDetails.nonExpHubIcon2.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_hub_route))
+              binding.routeDetails.clNonExpTimeInterval1.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_round_corner_light_blue)
+              binding.routeDetails.nonExpTimeInterval1.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.dark_blue))
+            }
+            binding.routeDetails.nonExpTvHubCity.text = t.clientName()
+            binding.routeDetails.nonExpTvCity.text =  t.originCityName()
+            binding.routeDetails.nonExpTvState.text =  ", "+t.originState
+            binding.routeDetails.nonExpTvHubCity2.text = t.destinationCityName()
+            binding.routeDetails.nonExpTvState2.text = t.destinationState
+            binding.routeDetails.nonExpTimeInterval1.text  =
+              t.tentativeTripCount?.let { Integer.toString(it) } +" Trips in "+ t.contractValidity+" weeks"
+          }else if(t.isItIntraCityContract() && !t.isFlexible){
+            if(t.transactionStatus== TransactionStatus.Cancelled.statusId){
+              binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_black_hub))
+              binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_time_grey))
+            }else{
+              binding.routeDetails.intraCityHubIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_hub_route))
+              binding.routeDetails.intraCityReportingIcon.setImageDrawable(ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.ic_time))
+            }
+            binding.routeDetails.intraCityReportingTime.text = DateUtils.getFormattedTimeIn12Hrs(t.reportingTime?:"")
+            binding.routeDetails.intraCityTvState.text = t.originState
+            binding.routeDetails.intraCityTvCity.text = capitalize(t.originCity)
+            binding.routeDetails.intraCityTvHubCity.text = t.origin
+            binding.routeDetails.intraCityTvMapView.setOnClickListener{
+              try {
+                val gmmIntentUri = Uri.parse("geo:0,0?q=${t.latitude},${t.longitude}"+"(" + t.origin+ ")")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                startActivity(mapIntent)
+              } catch (e: Exception) {
+                Toast.makeText(this@ContractDetailsActivity, "Unable to open map", Toast.LENGTH_SHORT).show()
+              }
+            }
+          }
+          binding.contractRules.nonExpRules.visibility = t.isFRCContract()
+          binding.contractRules.rules.visibility = t.isLHContract()
+          binding.contractRules.intraCityRules.visibility = t.isIntraCityContract()
+          binding.tripDetails.visibility = t.isLHContract()
+          // For LH contract listing recycleview with halt centers
+          if(_transaction.haltCenters!=null) {
+            for (item in _transaction.haltCenters!!) {
+             routesArray.add(item)
+            }
+            val contractsRouteDetailsAdapter  = ContractsRouteDetailsAdapter(routesArray,_transaction,this@ContractDetailsActivity)
+            binding.routeDetails.rvContracts.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = contractsRouteDetailsAdapter
+            }
+          }
+          if(_transaction.secondaryReportingCenters!=null) {
+            val originReportingCenters = SecondaryReportingCenters(_transaction.origin,_transaction.originCityName(),_transaction.originState,_transaction.longitude,_transaction.latitude)
+            flexibleReportingCentersArray.add(originReportingCenters)
+            for (item in _transaction.secondaryReportingCenters!!) {
+              flexibleReportingCentersArray.add(item)
+            }
+            val contractIntracityFlexibleRCAdapter  = ContractIntracityFlexibleRCAdapter(flexibleReportingCentersArray,_transaction,this@ContractDetailsActivity)
+            binding.routeDetails.rvIntracityFlexibleContracts.apply {
+              layoutManager = LinearLayoutManager(applicationContext)
+              adapter = contractIntracityFlexibleRCAdapter
+            }
+          }
+         // binding.seperator.visibility = View.VISIBLE
+        }
+        binding.executePendingBindings()
+      } else {
+        binding.error = true
+        binding.containerError.title = "Session Time Out"
+        binding.containerError.subTitle =
+          "Unfortunately, we couldn't fetch the data you are looking for. Kindly refresh."
+        binding.containerError.actionLabel = "REFRESH"
+      }
+    }
+  }
+
+  /**
+   * Transaction bid details UI updation observer
+   */
+  inner class TransactionBidObserver : Observer<BidDetailsUserBidState?> {
+    override fun onChanged(t: BidDetailsUserBidState?) {
+      binding.refreshing = false
+      t?.let { state ->
+        when (state) {
+          // Transaction Cancel
+          is BidDetailsContractCancelled ->{
+            binding.cardInput.request = viewModel.transaction
+            binding.cardInput.root.visibility = View.VISIBLE
+            binding.cardInput.editBidCl.visibility = View.GONE
+            binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
+            binding.cardInput.rejectedBidCl.title = "Demand cancelled"
+            binding.cardInput.rejectedBidCl.subTitle = "The demand was cancelled by the client"
+            binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
+            binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
+              // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+              startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+              //action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+            }
+            binding.mainCl.visibility = View.VISIBLE
+            /*  binding.bottomLay.visibility = View.VISIBLE
+              binding.confirmedText.text = getString(string.place_your_bid)
+              binding.confirmedText.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.color_hint))
+              binding.clBidYet.visibility = View.GONE
+              binding.biddingIcon.setImageDrawable( ContextCompat.getDrawable(
+                this@ContractDetailsActivity,
+                R.drawable.ic_cancel_icon
+              ))
+              binding.bidClosingStatus.visibility = View.VISIBLE
+              binding.bidClosingStatus.text = getString(string.bidding_cancelled)
+              binding.confirmedText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_money_grey, 0, 0, 0)
+              binding.buttonConfirm.background = ContextCompat.getDrawable(
+                this@ContractDetailsActivity,
+                R.drawable.bg_all_round_corner_light_grey
+              )
+              binding.buttonConfirm.isClickable = false
+              binding.clBidStatus.visibility = View.VISIBLE
+              binding.tvBidStatus.text = getString(string.cancelled)
+              binding.tvBidTime.visibility = View.GONE
+              binding.tvBidStatus.setTextColor(
+                 ContextCompat.getColor(
+                   this@ContractDetailsActivity,
+                   R.color.heading_black
+                 )
+               )
+              binding.statusImage.setImageDrawable(
+                 ContextCompat.getDrawable(
+                   this@ContractDetailsActivity,
+                   R.drawable.ic_cancel_contract
+                 )
+               )
+              binding.clBidStatus.background = ContextCompat.getDrawable(
+                 this@ContractDetailsActivity,
+                 R.drawable.bg_all_round_corner_light_grey
+               )
+  */
+           }
+          //Placed first bid
+          is BidDetailsUserBidState_PlaceBidFirst -> {
+            setBiddingInput(viewModel.transaction)
+            binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
+            /* binding.bottomLay.visibility = View.VISIBLE
+             binding.confirmedText.text = getString(string.place_your_bid)
+             binding.clBidYet.visibility = View.VISIBLE
+             binding.buttonConfirm.setOnClickListener {
+               bidDialog()
+             }
+             setBidStatusHeaderLayout(viewModel.transaction)*/
+          }
+          //Placed your first bid
+          is BidDetailsUserBidState_PlaceBid -> {
+            binding.cardInput.placeBidButton.text = "Place Bid"
+            setBiddingInput(viewModel.transaction)
+            binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
+            /*  binding.bottomLay.visibility = View.VISIBLE
+              binding.confirmedText.text = getString(string.place_your_bid)
+              binding.clBidYet.visibility = View.VISIBLE
+              binding.bidPmtFtl.visibility = View.GONE
+              binding.buttonConfirm.setOnClickListener {
+                bidDialog()
+              }
+              setBidStatusHeaderLayout(viewModel.transaction)*/
+          }
+          //Edit bid
+          is BidDetailsUserBidState_EditBid -> {
+            binding.cardInput.placeBidButton.text = "Revise Bid"
+            viewModel.transaction.transactionBid = state.lowestAndUserBidPair.first
+            setBiddingInput(viewModel.transaction)
+            binding.cardInput.root.visibility = View.VISIBLE
+            enableKeyboard()
+            /*    binding.bottomLay.visibility = View.VISIBLE
+                 binding.confirmedText.text = getString(string.revise_your_bid)
+                 val data = viewModel.transaction
+                 data.numBids = state.bidsCount
+                 data.transactionBid = state.lowestAndUserBidPair.first
+                 val userBid = state.lowestAndUserBidPair.first
+                 val lowestTBid = state.lowestAndUserBidPair.second
+                 data.lowestBid = lowestTBid?.bidAmount
+
+                 // For intracity payment slabs if user has bids
+                   showPayoutSlabs(data)
+                 //for more than 1 bids and within live bidding
+                 if(state.bidsCount>1 && data.isUnderOneHour()){
+                   binding.clBidYet.visibility = View.GONE
+                   binding.clExpressBidStatus.visibility = data.isLHIntraCityContract()
+                   binding.clNonExpressBidStatus.visibility = data.isFRCContract()
+                   //LH contract within live bidding
+                   if(data.isItLHContract() || data.isItIntraCityContract()){
+                     binding.bidPmtFtlStatus.visibility = View.VISIBLE
+                     binding.bidReceived.text = state.bidsCount.toString()+" "+ getString(string.bid_received)
+                     binding.bidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
+                     if (lowestTBid?.bidAmount != null) {
+                       // user bid same as Lowest bid
+                       if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
+                         binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
+                         binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
+                         binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_low_bid, 0, 0, 0)
+                         binding.bidStatus.text = " Your bid is the lowest"
+                       }else{
+                         binding.bidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                         binding.bidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                         binding.bidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                         binding.bidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
+                       }
+                     }
+                   }else{
+                     // FRC contract within live bidding
+                     binding.tripCommitted.text = userBid?.tentativeTripCount.toString()
+                     binding.nonExpressBidReceived.text = state.bidsCount.toString()+ " Bids Received"
+                     binding.nonExpressBidAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
+                     binding.nonExpressBidPmtFtlStatus.visibility = data.isFRCContract()
+                     if(data.biddingType?.lowercase()=="pmt"){
+                            binding.nonExpressBidPmtFtlStatus.text = getString(string.your_pmt_rate)
+                             }else{
+                            binding.nonExpressBidPmtFtlStatus.text = getString(string.your_ftl_rate)
+                             }
+                     // user bid same as Lowest bid
+                     if (lowestTBid?.bidAmount != null) {
+                       if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true ) {
+                         binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.bid_placed_green))
+                         binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_won)
+                         binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_low_bid, 0, 0, 0)
+                         binding.nonExpressBidStatus.text = " Your bid is the lowest"
+                       }else{
+                         binding.nonExpressBidStatus.setTextColor(ContextCompat.getColor(this@ContractDetailsActivity,R.color.destructive_red))
+                         binding.nonExpressBidStatus.background = ContextCompat.getDrawable(this@ContractDetailsActivity,R.drawable.bg_all_rounded_lost_red)
+                         binding.nonExpressBidStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                         binding.nonExpressBidStatus.text = getString(string.higher_than)+" "+data.contractLowestbidDifference()
+                       }
+                     }
+                   }
+                 }else{
+                         // if only 1 bid -> no target price or bid amount < Lowest bid
+                         binding.clExpressBidStatus.visibility = View.GONE
+                         binding.clNonExpressBidStatus.visibility =View.GONE
+                         binding.clBidYet.visibility = View.VISIBLE
+                         binding.bidUserStatusOrAmount.text = "₹ "+StringUtils.formatAmount(userBid?.bidAmount!!)
+                         binding.bidPmtFtl.visibility = View.VISIBLE
+                         if(data.isItLHContract()|| data.isItIntraCityContract()){
+                           binding.bidPmtFtl.text =getString(string.your_bid)
+                         }else{
+                           if(data.biddingType?.lowercase()=="pmt"){
+                             binding.bidPmtFtl.text = getString(string.your_pmt_rate)
+                           }else{
+                             binding.bidPmtFtl.text = getString(string.your_ftl_rate)
+                           }
+                         }
+
+
+
+                 }
+                 binding.buttonConfirm.setOnClickListener {
+                   bidDialog(userBid)
+                 }
+                 setBidStatusHeaderLayout(data)*/
+          }
+          is BidDetailsUserBidState_LoadingBids -> {
+            binding.cardInput.root.visibility = View.GONE
+            binding.mainCl.visibility = View.GONE
+            /*  binding.bottomLay.visibility = View.GONE
+              uiUtils.showProgress()*/
+          }
+          //Result for closed bidding time
+          is BidDetailsUserBidState_ContractResult -> {
+            binding.cardInput.request = viewModel.transaction
+            viewModel.transaction.transactionBid = state.lowestAndUserBidPair.first
+            val data = viewModel.transaction
+            data.transactionBid =  state.lowestAndUserBidPair.first
+            data.numBids = state.bidsCount
+            val userBid = state.lowestAndUserBidPair.first
+            val lowestTBid = state.lowestAndUserBidPair.second
+            //data.lowestBid =lowestTBid?.bidAmount
+            showPayoutSlabs(data)
+            if(userBid?.status()==Open){
+              binding.cardInput.editBidCl.visibility = View.GONE
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.awaitingBidCl.root.visibility = View.VISIBLE
+              binding.cardInput.awaitingBidCl.title = "Awaiting Result"
+              binding.cardInput.awaitingBidCl.subTitle = "We’ll notify you once the results are out"
+              binding.cardInput.awaitingBidCl.actionLabel = "Explore New Bids"
+              binding.cardInput.awaitingBidCl.btnAction.setOnClickListener {
+                startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+
+                // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+              }
+            }else if(userBid?.status()==Accepted){
+              Log.i("forPlacement", forPlacement.toString())
+              if(forPlacement){
+                binding.cardInput.editBidCl.visibility = View.GONE
+                binding.cardInput.root.visibility = View.VISIBLE
+                binding.cardInput.placementCl.root.visibility = View.VISIBLE
+                placementInput()
+
+              }else{
+                binding.cardInput.editBidCl.visibility = View.GONE
+                binding.cardInput.root.visibility = View.VISIBLE
+                binding.cardInput.confirmedBidCl.root.visibility = View.VISIBLE
+                binding.cardInput.confirmedBidCl.title = "Bid Confirmed for ₹"+ binding.transaction?.transactionBid?.bidAmount?.let {
+                  StringUtils.formatDecimalAmount(
+                    it
+                  )
+                }
+                binding.cardInput.confirmedBidCl.subTitle = "Provide the driver and vehicle details"
+                binding.cardInput.confirmedBidCl.actionLabel = "Go To Placement Tab"
+                binding.cardInput.confirmedBidCl.btnAction.setOnClickListener {
+                navigationUtils.navigate(PlacementsActivity::class.java)
+
+                  // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+                }
+              }
+
+            }else if (userBid?.status()==Cancelled){
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.editBidCl.visibility = View.GONE
+              binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
+              binding.cardInput.rejectedBidCl.title = "Demand cancelled"
+              binding.cardInput.rejectedBidCl.subTitle = "The demand was cancelled by the client"
+              binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
+              binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
+                // homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+                startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+                //action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+              }
+            }else if (userBid?.status()==Rejected){
+              binding.cardInput.root.visibility = View.VISIBLE
+              binding.cardInput.editBidCl.visibility = View.GONE
+              binding.cardInput.rejectedBidCl.root.visibility = View.VISIBLE
+              binding.cardInput.rejectedBidCl.title = "Bid not selected"
+              try{
+                binding.cardInput.rejectedBidCl.subTitle = "Winning bid price is ₹${DecimalFormat("#########").format(state.lowestAndUserBidPair.second?.second?.bidAmount?.toInt())}"
+              }catch (e:Exception){
+              }
+              binding.cardInput.rejectedBidCl.actionLabel = "Explore New Bids"
+              binding.cardInput.rejectedBidCl.btnAction.setOnClickListener {
+                //   homeActivityIntent(HomeFragmentType.LoadsTruckFragment.title,this@BidDetailsActivity)
+                startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+
+                // fragmentAction(NavigateHomeFragmentAction(HomeFragmentType.PlacementsFragment))
+              }
+              }else{
+
+              }
+            binding.mainCl.visibility = View.VISIBLE
+            binding.cardInput.root.visibility = View.VISIBLE
+          //  setBiddingInput(viewModel.transaction)
+            /*val data = viewModel.transaction
+            data.transactionBid =  state.lowestAndUserBidPair.first
+            data.numBids = state.bidsCount
+            val userBid = state.lowestAndUserBidPair.first
+            val lowestTBid = state.lowestAndUserBidPair.second
+             data.lowestBid =lowestTBid?.bidAmount
+             showPayoutSlabs(data)
+            binding.bottomLay.visibility = View.GONE
+            binding.viewMarginResult.visibility = View.VISIBLE
+
+            binding.viewMarginRoute.visibility = View.VISIBLE
+            binding.viewMarginRule.visibility = View.VISIBLE
+
+            binding.contractResult.bidAmountLayout.visibility = View.VISIBLE
+            binding.contractResult.seperator.visibility = data.isFRCContract()
+            binding.contractResult.yourTripCommitment.visibility =data.isFRCContract()
+            binding.contractResult.yourTripCommitmentValue.visibility =data.isFRCContract()
+            binding.contractRulesWithResult.rules.visibility = data.isLHContract()
+            binding.contractRulesWithResult.intraCityRules.visibility = data.isIntraCityContract()
+            binding.contractRulesWithResult.nonExpRules.visibility = data.isFRCContract()
+            binding.contractRules.rules.visibility = View.GONE
+            binding.contractRules.nonExpRules.visibility = View.GONE
+            binding.contractRules.intraCityRules.visibility = View.GONE
+            if(data.isItFRContract()){
+              binding.contractResult.yourTripCommitmentValue.text = data.transactionBid?.tentativeTripCount?.toString()
+            }
+            binding.viewMarginWithoutResult.visibility = View.GONE
+              if(userBid?.bidAmount==null){
+              binding.contractResult.haveNoBid.visibility = View.VISIBLE
+                binding.contractResult.contractBidResultLayout.visibility = View.GONE
+            }else{
+              binding.contractResult.haveNoBid.visibility = View.GONE
+                binding.contractResult.contractBidResultLayout.visibility = View.VISIBLE
+            }
+            if(userBid?.status()==Open){
+              binding.contractResult.resultDescribe.visibility = View.VISIBLE
+              binding.contractResult.yourBidAmountValue.text = "₹"+StringUtils.formatAmount(userBid?.bidAmount!!)
+            }else if(userBid?.status()==Accepted){
+              binding.contractResult.resultDescribe.visibility = View.VISIBLE
+              binding.contractResult.resultDescribe.text = getString(string.won_contracts)
+              binding.contractResult.yourBidAmountValue.text = "₹"+StringUtils.formatAmount(userBid?.bidAmount!!)
+            }else{
+              if(userBid?.bidAmount!=null) {
+                binding.contractResult.resultDescribe.visibility = View.VISIBLE
+                binding.contractResult.yourBidAmountValue.text =
+                  "₹" + StringUtils.formatAmount(userBid?.bidAmount!!)
+                if (lowestTBid?.bidAmount != null) {
+                  if (userBid?.bidAmount?.equals(lowestTBid?.bidAmount) == true) {
+                    binding.contractResult.resultDescribe.text =
+                      getString(string.not_meeting_expectation)
+                  } else {
+                    if (data.userBidLessThanFivePercentage()) {
+                      binding.contractResult.resultDescribe.text =
+                        getString(string.less_than_5_percentage)
+                    } else {
+                      binding.contractResult.resultDescribe.text =
+                        getString(string.more_than_5_percentage)
+
+                    }
+
+                  }
+                } else {
+                  binding.contractResult.resultDescribe.visibility = View.GONE
+                }
+              }
+            }
+            if(userBid?.status()==Open) {
+              binding.clBidStatus.visibility = View.VISIBLE
+              binding.tvBidTime.text = getString(string.awaiting_results)
+              binding.tvBidStatus.text=getString(string.bidding_closed)
+              binding.tvBidTime.visibility = View.VISIBLE
+              binding.tvBidStatus.setTextColor(
+                ContextCompat.getColor(
+                  this@ContractDetailsActivity,
+                  R.color.dark_blue
+                )
+              )
+              binding.statusImage.setImageDrawable(
+                ContextCompat.getDrawable(
+                  this@ContractDetailsActivity,
+                  R.drawable.ic_awaiting_bid
+                )
+              )
+              binding.clBidStatus.background = ContextCompat.getDrawable(
+                this@ContractDetailsActivity,
+                R.drawable.bg_all_rounded_under_review
+              )
+            }else{
+
+              binding.clBidStatus.visibility = View.VISIBLE
+              binding.tvBidStatus.text = getString(string.result_declared)
+              binding.tvBidTime.visibility = View.GONE
+              binding.tvBidStatus.setTextColor(
+                ContextCompat.getColor(
+                  this@ContractDetailsActivity,
+                  R.color.bid_placed_green
+                )
+              )
+              binding.statusImage.setImageDrawable(
+                ContextCompat.getDrawable(
+                  this@ContractDetailsActivity,
+                  R.drawable.ic_bid_result
+                )
+              )
+              binding.clBidStatus.background = ContextCompat.getDrawable(
+                this@ContractDetailsActivity,
+                R.drawable.bg_all_rounded_won
+              )
+            }*/
+          }
+
+          else -> null
+        }
+        }
+      }
+    }
+
+  private fun showPayoutSlabs(data:HomeBidsRequestItemData) {
+    if(data.paymentSlabs!=null && data.isItIntraCityContract()&& data.transactionStatus!=TransactionStatus.Cancelled.statusId) {
+      val keys = data.paymentSlabs!!.keySet()
+      binding.transaction = data
+      paymentSlabsArray = ArrayList()
+      paymentSlabsArray.add(PaymentSlabs("Kms","Monthly Payout"))
+      for (key in keys) {
+        val value = data.paymentSlabs!!.get(key).asString
+        paymentSlabsArray.add(PaymentSlabs(key,"₹ "+value))
+      }
+        binding.paymentSlabsMoreSlab.visibility = if(data.isPaymentSlabsVisible()&&keys.size>3) View.VISIBLE else View.GONE
+
+      val contractPaymentSlabsAdapter  = ContractPaymentSlabsAdapter(paymentSlabsArray,data,this@ContractDetailsActivity)
+      binding.rvPaymentSlabs.apply {
+        layoutManager = LinearLayoutManager(applicationContext)
+        adapter = contractPaymentSlabsAdapter
+      }
+      var isExpanded = false
+      binding.paymentSlabsMoreSlab.text = getString(string.see_full_slabs_list)
+      binding.paymentSlabsMoreSlab.setOnClickListener {
+        isExpanded = !isExpanded
+        contractPaymentSlabsAdapter.expand(isExpanded)
+        if(isExpanded){
+          binding.paymentSlabsMoreSlab.text = getString(string.hide_slabs)
+        }else{
+          binding.paymentSlabsMoreSlab.text = getString(string.see_full_slabs_list)
+        }
+
+      }
+    }
+  }
+
+  // set header status and bottom button
+/*   fun setBidStatusHeaderLayout(data:HomeBidsRequestItemData) {
+     if (data.isContractBiddingOpen()) {
+     if (data.isUnderOneHour()) {
+       binding.clBidStatus.visibility = View.VISIBLE
+       binding.tvBidStatus.text = getString(string.live_bidding)
+       binding.tvBidStatus.setTextColor(
+         ContextCompat.getColor(
+           this@ContractDetailsActivity,
+           R.color.destructive_red
+         )
+       )
+       GlideApp.with(this@ContractDetailsActivity)
+         .load(R.raw.livebidding)
+         .apply(RequestOptions().override(40, 40))
+         .into(binding.statusImage)
+
+       binding.clBidStatus.background = ContextCompat.getDrawable(
+         this@ContractDetailsActivity,
+         R.drawable.bg_all_rounded_lost_red
+       )
+     } else {
+       binding.clBidStatus.visibility = View.VISIBLE
+       binding.tvBidStatus.text = getString(string.collecting_bids)
+       binding.tvBidTime.text = data.bidEndDate()
+
+       binding.tvBidTime.visibility = View.VISIBLE
+       binding.tvBidStatus.setTextColor(
+         ContextCompat.getColor(
+           this@ContractDetailsActivity,
+           R.color.pending_status
+         )
+       )
+       binding.statusImage.setImageDrawable(
+         ContextCompat.getDrawable(
+           this@ContractDetailsActivity,
+           R.drawable.ic_money_pending
+         )
+       )
+       binding.clBidStatus.background = ContextCompat.getDrawable(
+         this@ContractDetailsActivity,
+         R.drawable.bg_all_rounded_pending
+       )
+     }
+       setTimer(data.contractBiddingEndTime!!)
+
+   }else{
+       binding.clBidStatus.visibility = View.VISIBLE
+       binding.tvBidTime.text = getString(string.awaiting_results)
+       binding.tvBidStatus.text=getString(string.bidding_closed)
+       binding.tvBidTime.visibility = View.VISIBLE
+       binding.tvBidStatus.setTextColor(
+         ContextCompat.getColor(
+           this@ContractDetailsActivity,
+           R.color.dark_blue
+         )
+       )
+       binding.statusImage.setImageDrawable(
+         ContextCompat.getDrawable(
+           this@ContractDetailsActivity,
+           R.drawable.ic_awaiting_bid
+         )
+       )
+       binding.clBidStatus.background = ContextCompat.getDrawable(
+         this@ContractDetailsActivity,
+         R.drawable.bg_all_rounded_under_review
+       )
+            binding.bottomLay.visibility = View.GONE
+            binding.viewMarginResult.visibility = View.VISIBLE
+            binding.contractResult.haveNoBid.visibility = View.VISIBLE
+            binding.viewMarginRoute.visibility = View.VISIBLE
+            binding.viewMarginRule.visibility = View.VISIBLE
+            binding.contractResult.contractBidResultLayout.visibility = View.GONE
+            binding.contractResult.bidAmountLayout.visibility = View.GONE
+            binding.contractResult.seperator.visibility = View.GONE
+            binding.contractResult.yourTripCommitment.visibility = View.GONE
+            binding.contractResult.yourTripCommitmentValue.visibility =View.GONE
+            binding.contractRulesWithResult.rules.visibility = data.isLHContract()
+            binding.contractRulesWithResult.nonExpRules.visibility = data.isFRCContract()
+            binding.contractRulesWithResult.intraCityRules.visibility = data.isIntraCityContract()
+            binding.contractRules.rules.visibility = View.GONE
+            binding.contractRules.nonExpRules.visibility = View.GONE
+            binding.contractRules.intraCityRules.visibility = View.GONE
+            if(data.isItFRContract()){
+              binding.contractResult.yourTripCommitmentValue.text = data.transactionBid?.tentativeTripCount?.toString()
+            }
+            binding.viewMarginWithoutResult.visibility = View.GONE
+    }
+   }*/
+  fun placementInput(){
+    binding.cardInput.placementCl.editAutoCompleteTrucks.visibility =  View.GONE
+    if(homePlacementsItemData?.loadType==LoadTypes.intracityAdhoc.name || homePlacementsItemData?.loadType==LoadTypes.intracityRegular.name){
+      viewModel.getFacilityAddress(homePlacementsItemData?.originCenterCode)
+      binding.cardInput.routeAddress.visibility = View.VISIBLE
+      binding.cardInput.mapText.visibility = View.VISIBLE
+      binding.cardInput.mapText.setOnClickListener {
+        navigateToMap()
+      }
+
+    }else{
+      binding.cardInput.routeAddress.visibility = View.GONE
+      binding.cardInput.mapText.visibility = View.GONE
+    }
+    viewModel.addressLiveData.observe(this, Observer {
+      binding.cardInput.routeAddress.text = it.propertyAddressDetails?.address
+    })
+    viewModel.updateVehicleDetails.observe(this, Observer {
+      if(it){
+        REFRESH_ON_BACK_PLACEMENT = true
+        uiUtils.hideProgress()
+       // pushMoengageEvent(true)
+        //show newly added success dialog incase of adhoc intracity only
+        when(homePlacementsItemData?.loadType){
+
+          LoadTypes.intracityAdhoc.name -> showIntracityAdhocSuccessDialog()
+
+          else -> showSuccessEditDialog("Submitted successfully!")
+        }
+
+      }else{
+        uiUtils.hideProgress()
+      }
+    })
+    autoCompleteUtils.autoCompleteTruck(binding.cardInput.placementCl.editAutoCompleteTrucks){
+      if(it=="Add New Truck"){
+        // Existing input is preserved by DelhiveryTrucksAutoEditText
+        this?.let {showAddTruckBottomSheet()}
+      }else if(validateTruckNumber(it)){
+        isValidVehicleNumber = true
+        binding.cardInput.placementCl.vehicleError.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.text = it
+        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.VISIBLE
+        enableSubmitPlacement()
+      } else {
+        binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+        binding.cardInput.placementCl.vehicleError.text ="Please enter valid vehicle Number"
+        isValidVehicleNumber = false
+        enableSubmitPlacement()
+      }
+    }
+    binding.cardInput.placementCl.editTextVehicleNumber.setOnClickListener {
+      binding.cardInput.placementCl.editTextVehicleNumber.visibility =  View.GONE
+      binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.VISIBLE
+      binding.cardInput.placementCl.editAutoCompleteTrucks.focusClick()
+      isValidVehicleNumber = false
+      enableSubmitPlacement()
+    }
+
+    
+    // Add text change listener for vehicle number to trigger driver data loading
+    binding.cardInput.placementCl.editTextVehicleNumber.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        // Trigger driver data loading when vehicle number changes
+        // The autoCompleteDriverNameWithPhone will handle this automatically
+        enableSubmitPlacement()
+      }
+    })
+    // Driver name field click handling - no need to force focus
+    binding.cardInput.placementCl.editAutoCompleteDriverName.setOnClickListener {
+      hasUserInteractedWithDriverName = true
+      // Don't call enableSubmitPlacement here - let TextWatcher handle it
+    }
+    
+    // Simple TextWatcher for manual typing validation
+    binding.cardInput.placementCl.editAutoCompleteDriverName.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        val text = s?.toString() ?: ""
+        if (text.length >= 2) {
+          isValidDriverName = true
+          binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+        } else {
+          isValidDriverName = false
+          if (hasUserInteractedWithDriverName && text.isNotEmpty()) {
+            binding.cardInput.placementCl.driverNameError.visibility = View.VISIBLE
+            binding.cardInput.placementCl.driverNameError.text = "Please enter valid driver name"
+          } else {
+            binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+          }
+        }
+        enableSubmitPlacement()
+      }
+    })
+
+    
+    // Text change handling is now managed by the AutoCompleteUtils
+    homePlacementsItemData?.vehicleNumber?.let {
+      Log.i("vehicleNumber",it)
+      isValidVehicleNumber = true
+      binding.cardInput.placementCl.editTextVehicleNumber.text = it
+      binding.cardInput.placementCl.editAutoCompleteTrucks.setText(it)
+      binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+      binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
+    }
+    homePlacementsItemData?.driverName?.let {
+      Log.i("DriverNameValidation", "Initial setup: Found existing driver name: '${it}'")
+      isValidDriverName = true
+      binding.cardInput.placementCl.editAutoCompleteDriverName.setText(it)
+      binding.cardInput.placementCl.driverNameError.visibility = View.GONE
+    }
+    homePlacementsItemData?.driverPhone?.let {
+      isValidDriverNumber = true
+      val trimmedNumber = it?.replace("+91", "")?.replaceFirst("^0+".toRegex(), "")?.trim()
+      binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
+    }
+    
+    // Call enableSubmitPlacement after initial data setup
+    enableSubmitPlacement()
+    if (homePlacementsItemData?.status=="Marked-in"){
+      binding.cardInput.placementCl.editTextVehicleNumber.isEnabled = false
+      binding.cardInput.placementCl.editAutoCompleteDriverName.isEnabled = false
+      binding.cardInput.placementCl.editDriverNumber.isEnabled = false
+      binding.cardInput.placementCl.btnContactPicker.isEnabled = false
+      disableSubmitPlcButton()
+    }
+    binding.cardInput.placementCl.btnSubmit.setOnClickListener{
+      submitPlacementDetails()
+    }
+    // Simple driver name autocomplete
+    autoCompleteUtils.autoCompleteDriverNameWithPhone(
+        binding.cardInput.placementCl.editAutoCompleteDriverName,
+        { binding.cardInput.placementCl.editTextVehicleNumber.text.toString() }
+    ){ driverData ->
+
+      driverData.driverName?.let {
+        isValidDriverName = it.length>=2
+      }
+      // Populate phone number when driver is selected from dropdown
+      driverData.driverPhone?.let {
+        binding.cardInput.placementCl.editDriverNumber.setText(it)
+        isValidDriverNumber = validatePhoneNumber(it)
+      }
+      enableSubmitPlacement()
+    }
+
+
+    binding.cardInput.placementCl.editDriverNumber?.addTextChangedListener(object : TextWatcher {
+      override fun afterTextChanged(s: Editable?) = Unit
+      override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int
+      ) = Unit
+
+      override fun onTextChanged(
+        s: CharSequence?,
+        start: Int,
+        before: Int,
+        count: Int
+      ) {
+        if (s != null && s.isNotEmpty() && s.isNotBlank()) {
+          val input = s.trim()
+            .toString()
+          if(input.length==10 && validatePhoneNumber(input)){
+            isValidDriverNumber = true
+           // binding.cardInput.placementCl.driverNumberError.visibility = View.GONE
+          } else {
+          //  binding.cardInput.placementCl.driverNumberError.visibility = View.VISIBLE
+          //  binding.cardInput.placementCl.driverNumberError.text ="Please enter a valid driver number"
+            isValidDriverNumber = false
+
+          }
+          enableSubmitPlacement()
+
+        }else{
+          isValidDriverNumber = false
+          enableSubmitPlacement()
+
+        }
+      }
+    })
+
+    // Contact picker functionality
+    binding.cardInput.placementCl.btnContactPicker.setOnClickListener {
+
+      val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+      startActivityForResult(pickContactIntent, REQCODE_PICK_CONTACT)
+    }
+  }
+  private fun showAddTruckBottomSheet() {
+    val dialog = AddTruckBottomSheetDialogFragment.newInstance(
+      truckNumber= binding.cardInput.placementCl.editAutoCompleteTrucks.text?.toString()?:"",
+      viewModelFactory,
+      userPrefs,
+      autoCompleteUtils,
+      onTruckAdded = { truckNumber ->
+        showSuccessEditDialog("Truck added successfully!")
+        // Populate the vehicle number field with the newly added truck
+        binding.cardInput.placementCl.editTextVehicleNumber.text = truckNumber
+        binding.cardInput.placementCl.editAutoCompleteTrucks.visibility = View.GONE
+        binding.cardInput.placementCl.editTextVehicleNumber.visibility = View.VISIBLE
+        isValidVehicleNumber = true
+        enableSubmitPlacement()
+      }
+    )
+    dialog.show(supportFragmentManager, "AddTruckBottomSheetDialogFragment")
+  }
+  private fun  enableSubmitPlacement(){
+    // DEBOUNCE PROTECTION - Prevent rapid calls to enableSubmitPlacement (reduced from 500ms to 100ms)
+   /* val currentTime = System.currentTimeMillis()
+    val timeSinceLastCall = currentTime - lastEnableSubmitTime
+    if (timeSinceLastCall < 100) { // Less than 100ms since last call
+      Log.i("validate", "Skipping enableSubmitPlacement - too frequent (${timeSinceLastCall}ms since last)")
+      return
+    }
+    lastEnableSubmitTime = currentTime*/
+    
+    // Re-validate all conditions
+    isValidVehicleNumber = validateTruckNumber(binding.cardInput.placementCl.editTextVehicleNumber.text.toString())
+    
+    // Re-validate driver name
+    val driverNameText = binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString()
+    isValidDriverName = driverNameText.length >= 2
+    
+    // Re-validate driver phone
+    val driverPhoneText = binding.cardInput.placementCl.editDriverNumber.text.toString()
+    isValidDriverNumber = driverPhoneText.length == 10 && validatePhoneNumber(driverPhoneText)
+    
+    val errorVisibility = if(binding.cardInput.placementCl.driverNameError.visibility == View.VISIBLE) "VISIBLE" else "GONE"
+    Log.i("validate", "DriverName: '$driverNameText', length: ${driverNameText.length}, isValidDriverName: $isValidDriverName, isValidVehicleNumber: $isValidVehicleNumber, isValidDriverNumber: $isValidDriverNumber, hasUserInteracted: $hasUserInteractedWithDriverName, errorVisibility: $errorVisibility")
+    
+    val isMarkedIn = homePlacementsItemData?.status == "Marked-in"
+    val allValid = isValidDriverName && isValidVehicleNumber && isValidDriverNumber && !isMarkedIn
+    
+    Log.i("validate", "All conditions: driverName=$isValidDriverName, vehicle=$isValidVehicleNumber, phone=$isValidDriverNumber, markedIn=$isMarkedIn, allValid=$allValid")
+    
+    if(allValid){
+      enableSubmitPlcButton()
+    }else{
+      disableSubmitPlcButton()
+    }
+  }
+  private fun disableSubmitPlcButton(){
+    binding.cardInput.placementCl.btnSubmit.isEnabled = false
+  }
+  private fun enableSubmitPlcButton(){
+    binding.cardInput.placementCl.btnSubmit.isEnabled = true
+  }
+
+  private fun validatePhoneNumber(number:String):Boolean{
+    val sameDigitsReg = "^([0-9])\\1*$"
+    var result = false
+    val sameDigitsPattern = Pattern.compile(
+      sameDigitsReg
+    )
+    if(!sameDigitsPattern.matcher(number).matches()){
+      val standardNumberPattern = Pattern.compile(
+        "^[6-9]{1}[0-9]{9}$"
+      )
+      result = standardNumberPattern.matcher(number).matches()
+    }
+
+    return result
+  }
+  private fun submitPlacementDetails() {
+    if (binding.cardInput.placementCl.editAutoCompleteTrucks.visibility == View.VISIBLE) {
+      binding.cardInput.placementCl.vehicleError.visibility = View.VISIBLE
+      binding.cardInput.placementCl.vehicleError.text = "Please select a valid vehicle number"
+      isValidVehicleNumber = false
+      binding.cardInput.placementCl.editAutoCompleteTrucks.errorAnimate()
+      // Don't call enableSubmitPlacement here - let TextWatcher handle it
+    } else {
+     binding.cardInput.placementCl.vehicleError.visibility = View.GONE
+
+      try {
+        val isOrionType =  homePlacementsItemData?.loadType!!.toLowerCase().contains("orion")
+
+        val vehicleType = if (isOrionType ) {null} else if (homePlacementsItemData?.loadType!!.toLowerCase().contains("adhoc")) {
+          "adhoc"
+        } else {
+          "regular"
+        }
+        val contractType = if (isOrionType ) {null} else if  (homePlacementsItemData?.loadType!!.toLowerCase().contains("ftl")) {
+          "ftl"
+        } else {
+          "intracity"
+        }
+        val action = if(isOrionType) {
+          "placement_on_orion"
+        } else if (homePlacementsItemData?.vehicleNumber == null) {
+          "add_placement"
+        } else {
+          "update_placement"
+
+        }
+        try {
+          uiUtils.showProgress()
+        //  pushMoengageEvent(false)
+          val updateVehicleDetailsRequest = UpdateVehicleDetailsRequest(binding.cardInput.placementCl.editTextVehicleNumber.text.toString(), binding.cardInput.placementCl.editAutoCompleteDriverName.text.toString(), binding.cardInput.placementCl.editDriverNumber.text.toString(), contractType, vehicleType, homePlacementsItemData?.vehicleType!!, homePlacementsItemData?.transporterSupplierId!!, if(isOrionType) null else homePlacementsItemData?.contractId, homePlacementsItemData?.transporterId!!, action, if(isOrionType) null else homePlacementsItemData?.reportingTime!!, if(isOrionType)null else homePlacementsItemData?.originCenterCode!!,  if(isOrionType)null else homePlacementsItemData?.vehicleNumber, if(isOrionType)null else homePlacementsItemData?.vehicleId,  if(isOrionType)null else homePlacementsItemData?.driverName,  if(isOrionType)null else homePlacementsItemData?.driverPhone, homePlacementsItemData?.transactionId)
+          viewModel.updateVehicleDetails(updateVehicleDetailsRequest)
+        }catch (e:Exception){
+          uiUtils.showToast("Something went wrong")
+          uiUtils.hideProgress()
+        }
+      } catch (e: IllegalArgumentException) {
+        uiUtils.hideProgress()
+        Log.e("AcceptAdhocBid", e.toString())
+      }
+    }
+  }
+  override fun getViewModelClass()= ContractDetailsViewModel::class.java
+
+  override fun layoutId(): Int= R.layout.activity_contract_details
+  override fun requireConnection(): Boolean = true
+
+  private fun refreshData() {
+    binding.error = false
+    viewModel.fetchTransactionDetails()
+    binding.executePendingBindings()
+    routesArray.clear()
+    flexibleReportingCentersArray.clear()
+  }
+
+  fun navigateToBid(dialog: Dialog){
+    var dialogCancelled = false
+    dialog.setOnCancelListener {
+      dialogCancelled = true
+    }
+
+    dialog.setOnDismissListener {
+      dialogCancelled = true
+    }
+    Handler(Looper.getMainLooper()).postDelayed({
+      if (dialog.isShowing) {
+        dialog.dismiss()
+      }
+
+      if (!dialogCancelled && !isFinishing && !isDestroyed) {
+        dialog.dismiss()
+        startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+        finish()
+      }
+    }, 5000)
+  }
+  private fun showSuccessPlaceReviseDialog(bidInfo:Triple<Pair<String,String>,String?,Pair<Boolean,Boolean>>){
+       REFRESH_ON_BACK = true
+      val dialog = Dialog(this)
+      val bindingDialog = DialogContractsBidSuccessBinding.inflate(this.layoutInflater)
+      bindingDialog.transaction = viewModel.transaction
+      bindingDialog.buttonCancel.setOnClickListener {
+        dialog.cancel()
+        uiUtils.hideProgress()
+         refreshData()
+      }
+       dialog.setCancelable(false)
+      if(bidInfo.third.second){
+        bindingDialog.title.text = getString(string.bid_revise_successfully)
+      }else{
+        bindingDialog.title.text = getString(string.bid_placed_sucessfully)
+      }
+       if(viewModel.transaction.isItLHContract()){
+         bindingDialog.yourBidAmountValue.text = "₹ "+bidInfo.first.first
+       }else if(viewModel.transaction.isItFRContract()){
+         bindingDialog.yourTripValue.text = bidInfo.second
+         if(bidInfo.third.first){
+         bindingDialog.yourBidAmountValue.text = "₹ "+bidInfo.first.second+ "\n (PMT)"
+         }
+         else{
+           bindingDialog.yourBidAmountValue.text= "₹ "+bidInfo.first.first+ "\n (FTL)"
+         }
+       }else if(viewModel.transaction.isItIntraCityContract()){
+         bindingDialog.yourVehicleValue.text = bidInfo.second
+         bindingDialog.yourBidAmountValue.text= "₹ "+bidInfo.first.first
+       }
+
+      dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+      dialog.setContentView(bindingDialog.root)
+      dialog.show()
+      dialog.window!!.setLayout(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+      )
+  }
+
+  private fun showIntracityAdhocSuccessDialog(){
+    // prepare dialog UI's and whatsapp share data
+    val title = getString(R.string.title_dialog_success)
+    val subTittle = getString(R.string.sub_title_dialog_success)
+    val playStoreLink = getString(R.string.driver_app_link)
+    val hindiVideoLink = getString(R.string.hindi_video_link)
+    val englishVideoLink = getString(R.string.english_video_link)
+
+    // Extract data from the placement item
+    val placementData = homePlacementsItemData
+    Log.d("placementData=====>>>>", Gson().toJson(placementData))
+    val ticketId = placementData?.transactionId ?: ""
+    val reportingCentre = generateReportingCentreLink(placementData!!)
+    val reportingTime = formatReportingTime(placementData?.reportingTime)
+    //val hindiVideoLink = "https://youtube.com/watch?v=hindi_video_id"
+    //val englishVideoLink = "https://youtube.com/watch?v=english_video_id"
+
+    // Show the dialog
+    dialogUtils.showDetailsSubmittedSuccessDialog(
+      title = title,
+      subTittle = subTittle,
+      playStoreLink = playStoreLink,
+      ticketId = ticketId,
+      reportingCentre = reportingCentre,
+      reportingTime = reportingTime,
+      hindiVideoLink = hindiVideoLink,
+      englishVideoLink = englishVideoLink,
+      dialogInterface = object : DetailsSubmittedSuccessInterface {
+        override fun onDialogDismissed() {
+          REFRESH_ON_BACK_PLACEMENT = true
+          // Handle dialog dismissal if needed
+//          Log.d("onDialogDismissed===>>>","Dialog dismissed")
+//          Handler(Looper.myLooper()!!).postDelayed({
+//            REFRESH_ON_BACK_PLACEMENT = true
+//            finish()
+//          }, 100)
+        }
+      }
+    )
+  }
+
+  /**
+   * Generate Google Maps link for reporting centre based on placement data
+   */
+  private fun generateReportingCentreLink(placementData: HomePlacementsItemData): String {
+    return if (placementData.originCenterLat != null && placementData.originCenterLong != null) {
+      // Use GPS coordinates if available
+      "https://maps.google.com/?q=${placementData.originCenterLat},${placementData.originCenterLong}"
+    } else {
+      // Fallback to origin center name
+      val location = placementData.originCenterName ?: ""
+      if (location.isNotEmpty()) {
+        "https://maps.google.com/?q=$location"
+      } else {
+        ""
+      }
+    }
+  }
+
+  private fun navigateToMap(){
+    try {
+      val gmmIntentUri = Uri.parse("geo:0,0?q=${homePlacementsItemData?.originCenterLat},${homePlacementsItemData?.originCenterLong}"+"(" + homePlacementsItemData?.originCenterName+ ")")
+      val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+      mapIntent.setPackage("com.google.android.apps.maps")
+      startActivity(mapIntent)
+    } catch (e: Exception) {
+      Toast.makeText(this, "Unable to open map", Toast.LENGTH_SHORT).show()
+    }
+  }
+  /**
+   * Format reporting time from placement data
+   */
+  private fun formatReportingTime(reportingTime: String?): String {
+    return if (!reportingTime.isNullOrEmpty()) {
+      try {
+        // Parse the time and format it
+        val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+        val outputFormat = java.text.SimpleDateFormat("dd MMM, hh:mm a")
+        val date = inputFormat.parse(reportingTime)
+        outputFormat.format(date ?: java.util.Date())
+      } catch (e: Exception) {
+        "--:--" // Default time if parsing fails
+      }
+    } else {
+      "--:--" // Default time if no reporting time available
+    }
+  }
+
+  private fun showSuccessEditDialog(msg:String){
+
+    val dialog = Dialog(this)
+    val bindingDialog= DialogPlacementDetailsEditBinding.inflate(layoutInflater)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(bindingDialog.root)
+    bindingDialog.titleText.text = msg
+    bindingDialog.closeBtn.setOnClickListener {
+      dialog.dismiss()
+    }
+    if(!this.isFinishing)
+      dialog.show()
+  /*  if(!this.isFinishing)
+      Handler(Looper.myLooper()!!).postDelayed({
+        dialog.dismiss()
+        REFRESH_ON_BACK_PLACEMENT = true
+        finish()
+      }, 2000)*/
+    dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+    dialog.window?.setGravity(Gravity.BOTTOM)
+  }
+
+  override fun bidPlacedSuccess(success: Boolean) {
+    if(success)
+      startActivity(homeActivityIntent("load", this@ContractDetailsActivity))
+
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      REQCODE_PICK_CONTACT -> {
+        if (resultCode == RESULT_OK && data != null) {
+          val contactUri: Uri? = data.data
+          contactUri?.let {
+            val cursor: Cursor? = contentResolver.query(it, null, null, null, null)
+            cursor?.use { c ->
+              if (c.moveToFirst()) {
+                val numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                if (numberIndex != -1) {
+                  val phoneNumber = c.getString(numberIndex)
+                  val trimmedNumber = phoneNumber?.replace("+91", "")?.trim()
+                  binding.cardInput.placementCl.editDriverNumber.setText(trimmedNumber)
+                  enableSubmitPlacement()
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+
+}
+
+/* intent keys */
+private const val TransactionIdIntentKey = "transaction_id"
+
+/* intent keys */
+private const val RequestTypeIntentKey = "request_type"
+/**
+ * Bid details intent
+ */
+private const val ForPlacementKey = "for_placement"
+
+private const val PlacementData = "placement_data"
+
+
+fun contractDetailsIntent(
+  transactionId: String,
+  context: Context,
+  source: String?= VALUE_APP_FLOW,
+  forPlacement:Boolean=false,
+  homePlacementsItemData: HomePlacementsItemData?=null
+
+) = Intent(context, ContractDetailsActivity::class.java).apply {
+  putExtra(TransactionIdIntentKey, transactionId)
+  putExtra(PROPERTY_SOURCE,source)
+  putExtra(ForPlacementKey, forPlacement)
+  putExtra(PlacementData, homePlacementsItemData)
+
+}

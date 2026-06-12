@@ -1,0 +1,193 @@
+package com.dfd.delfin.ui.base.adapter
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
+import com.dfd.delfin.data.BaseKeyTypeModel
+import com.dfd.delfin.data.indexById
+import com.dfd.delfin.ui.base.BaseViewHolder
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.Add
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.NoOp
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.Update
+import com.dfd.delfin.ui.home.activity.home.orderRank
+import com.dfd.delfin.utils.extensions.safeEquals
+
+abstract class BaseDataRVAdapter<
+    D : BaseKeyTypeModel<out Any>,
+    B : ViewDataBinding,
+    VH : BaseViewHolder<*>>(private val clickListener: ItemClickListener<D>) : androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
+
+  /* List of items */
+  protected val items: MutableList<D> = mutableListOf()
+
+  /**
+   * Clear data set and set items and notifyDataSetChanged()
+   *
+   * @param items [List] of [D] items
+   */
+  @SuppressLint("NotifyDataSetChanged")
+  open fun setItems(items: List<D>) {
+    this.items.clear()
+    this.items.addAll(items)
+    notifyDataSetChanged()
+  }
+
+  /**
+   * Remove all items off the list and update adapter for same
+   */
+  @SuppressLint("NotifyDataSetChanged")
+  fun clearItems() {
+    this.items.clear()
+    notifyDataSetChanged()
+  }
+
+  override fun getItemCount() = itemsList().size
+
+  override fun onBindViewHolder(
+    holder: VH,
+    position: Int
+  ) {
+    itemsList()[position].let { item ->
+      bindVH(holder, item)
+      holder.binding.root.setOnClickListener {
+        orderRank=position
+        clickListener.onItemClicked(item)
+      }
+    }
+  }
+
+
+  override fun onCreateViewHolder(
+    parent: ViewGroup,
+    viewType: Int
+  ) = parent.let {
+    getBinding(LayoutInflater.from(it.context), it, viewType)
+  }.let {
+    createVH(it)
+  }
+
+  /**
+   * Items list for further expansion
+   */
+  open fun itemsList(): List<D> = items
+
+  /**
+   * Get VH Binding as [B]
+   *
+   * @param inflater LayoutInflater
+   * @param parent View Holder parent
+   *
+   * @return [ViewDataBinding] of type [B]
+   */
+  abstract fun getBinding(
+    inflater: LayoutInflater,
+    parent: ViewGroup,
+    viewType: Int
+  ): B
+
+  /**
+   * Create View Holder with binding [B]
+   *
+   * @param binding of type [B]
+   *
+   * @return [VH] View Holder
+   */
+  abstract fun createVH(binding: B): VH
+
+  /**
+   * Bind View Holder with [D] data item
+   *
+   * @param holder View Holder of type [VH]
+   * @param item [D] data item
+   */
+  abstract fun bindVH(
+    holder: VH,
+    item: D
+  )
+
+  /**
+   * Update item in list
+   *
+   * @param updatedItem [D] type item
+   *
+   * @return [Boolean] to consider if updated item is added to list or not, as matching is taking cared on key
+   */
+  fun updateItem(updatedItem: D?): Boolean {
+    if (updatedItem == null) return false
+    items.forEach {
+      if (it.key().safeEquals(updatedItem.key())) {
+        val index = items.indexOf(it)
+        items[index] = updatedItem
+        notifyItemChanged(index)
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Perform [DataRVAdapterOperationType] on [items]
+   */
+  fun operation(items: List<Pair<D, DataRVAdapterOperationType>>) {
+    items.forEach {
+      operation(it.first, it.second)
+    }
+  }
+
+  /**
+   * Perform [DataRVAdapterOperationType] on [item]
+   */
+  fun operation(
+    item: D,
+    operationType: DataRVAdapterOperationType
+  ) {
+    when (operationType) {
+      NoOp -> {/* nothing */
+      }
+      Add -> {
+        items.add(item)
+        notifyItemInserted(items.size-1)
+      }
+      else -> {
+        val _itemIndex = items.indexById(item.key())
+        when (operationType) {
+          Remove -> {
+            if (_itemIndex != -1) {
+              items.removeAt(_itemIndex)
+              notifyItemRemoved(_itemIndex)
+            }
+          }
+          AddUpdate, Update -> {
+            if (_itemIndex != -1) {
+              items[_itemIndex] = item
+              notifyItemChanged(_itemIndex)
+            } else if (operationType == AddUpdate) {
+              items.add(item)
+              notifyItemInserted(items.size)
+            }
+          }
+          else -> {/* do nothing */
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * RV Adapter item click listener of data item [D]
+   */
+  interface ItemClickListener<D> {
+    fun onItemClicked(item: D)
+  }
+}
+
+enum class DataRVAdapterOperationType {
+  Add,
+  Remove,
+  Update,
+  AddUpdate,
+  NoOp
+}

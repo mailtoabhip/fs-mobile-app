@@ -1,0 +1,355 @@
+package com.dfd.delfin.ui.bids
+
+import androidx.lifecycle.MutableLiveData
+import com.dfd.delfin.api.repository.*
+import com.dfd.delfin.api.request.FuelPayoutRequest
+import com.dfd.delfin.api.request.OMCRequest
+import com.dfd.delfin.api.request.SearchRequest
+import com.dfd.delfin.api.response.OMCResponse
+import com.dfd.delfin.api.response.TripSummaryResponse
+import com.dfd.delfin.data.home.trips.FuelUserSpinnerOptions
+import com.dfd.delfin.data.home.trips.TripStatus
+import com.dfd.delfin.ui.base.BaseViewModel
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.dfd.delfin.ui.bids.TripType.AwaitingArrival
+import com.dfd.delfin.ui.bids.TripType.AwaitingLoading
+import com.dfd.delfin.ui.bids.TripType.AwaitingUnloading
+import com.dfd.delfin.ui.bids.TripType.InTransit
+import com.dfd.delfin.ui.bids.TripType.Unknown
+import com.dfd.delfin.ui.bids.ViewPaymentType.NA
+import com.dfd.delfin.ui.dialogs.ChangePaymentModeInterface
+import com.dfd.delfin.ui.dialogs.FilterTripsInterface
+import com.dfd.delfin.ui.home.fragments.trips.BaseHomeTripsRVAdapterItem
+import com.dfd.delfin.ui.home.fragments.trips.HomeTripsProgressItem
+import com.dfd.delfin.utils.extensions.not
+import com.dfd.delfin.utils.extensions.onBackground
+import com.dfd.delfin.utils.extensions.plusAssign
+import com.dfd.delfin.utils.prefs.UserPrefs
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import javax.inject.Inject
+
+/**
+ * Created by saurabh
+ * for Delhivery Private Limited
+ **
+ *
+ * View model class for [TripsActivity]
+ *
+ **
+ */
+class TripsViewModel @Inject constructor(
+  private val expenseRepository: ExpenseRepository,
+  private val tripsRepository: TripsRepository,
+  private val loadCycleRepository: LoadCycleRepository,
+  private val userRepository: UserRepository,
+  private val omcRepository: OMCRepository,
+  private val transactionsRepository: TransactionsRepository,
+  private val loadboardRepository: LoadboardRepository,
+  private val userPrefs: UserPrefs
+) : BaseViewModel(), FilterTripsInterface, ChangePaymentModeInterface{
+
+  /* user trips live data */
+  var userTripsData =
+    MutableLiveData<List<Pair<BaseHomeTripsRVAdapterItem<*>, DataRVAdapterOperationType>>>()
+
+  /* trips count live data */
+  var tripsCountLiveData = MutableLiveData<Int>()
+
+
+
+  /* data loading live data */
+  var dataLoadingLiveData = MutableLiveData<Boolean>()
+
+  var summaryLiveData = MutableLiveData<TripSummaryResponse>()
+
+  var filterAppliedLiveData = MutableLiveData<Boolean>()
+
+  /* pagination params */
+  var hasMoreData = true
+  var offset = 0
+
+  var request = SearchRequest()
+  var tripType: TripType = Unknown
+  var viewPaymentType: ViewPaymentType = NA
+  var viewType: String ?= "all"
+  var total = 0
+  var issueTripsCount = 0
+  var tripsCount = 0
+  var currentTripsCount = -1
+  var tripsFilter = ""
+  var tripsCountText = ""
+  var filterList: List<String> = listOf()
+  var filterKey: String = ""
+  var loadingDateFilter: Boolean = false
+  var loadingDate: String = ""
+  var isSettledFilter: Boolean = false
+
+  var date = -1
+  var month = -1
+  var year = -1
+
+  var advancePendingTotal = 0.0
+  var balancePendingTotal = 0.0
+  var recoveryPendingTotal = 0.0
+
+  var fuelCardNumber = ""
+  var fuelCardAmt = ""
+  var omcID : String = ""
+  var tripId: String = ""
+  var fuelUserSpinnerOptions = mutableListOf<FuelUserSpinnerOptions>()
+  var teamMembersLiveData = MutableLiveData<List<FuelUserSpinnerOptions>>()
+
+  var omcLiveData = MutableLiveData<Triple<String,Int,OMCResponse>>()
+  var omcGetLiveData = MutableLiveData<Pair<String,Int>>()
+  var fuelPayoutLiveData = MutableLiveData<Triple<String,Int,Pair<Double,String>>>()
+
+  /**
+   * Fetch user trips
+   */
+  fun fetchTrips(paginate: Boolean) {
+    if (!paginate) {
+      offset = 0
+      tripsCount = 0
+      balancePendingTotal = 0.0
+    } else if (paginate && !hasMoreData) {
+      return
+    }
+    currentTripsCount = -1
+
+    if (paginate) {
+      showProgress()
+      /* add progress if not paginating */
+      Pair(HomeTripsProgressItem(), AddUpdate).let { userTripsData.postValue(listOf(it)) }
+    }
+
+    dataLoadingLiveData.postValue(true)
+
+    val statuses = mutableListOf<String>().apply {
+      add(TripStatus.In_Transit.statusKey)
+      add(TripStatus.TruckArrived.statusKey)
+      add(TripStatus.TruckConfirmed.statusKey)
+      add(TripStatus.TruckLoaded.statusKey)
+      add(TripStatus.TruckReached.statusKey)
+      add(TripStatus.TruckUnloaded.statusKey)
+      add(TripStatus.EPodUploaded.statusKey)
+      add(TripStatus.TripCompleted.statusKey)
+    }
+        .joinToString(separator = ",") { it }
+
+    request.offset = offset
+    request.limit = UserSearchLimit
+    request.vendorId = userRepository.userId()
+    when (tripsFilter) {
+      "issue_trips" -> {
+        request.issueTrips = true
+      }
+      "less_than_1_day", "1_day", "2_days", "more_than_3_days" -> {
+        if (filterKey == "arrived_ageing") {
+          request.arrivedAgeing = tripsFilter
+        } else {
+          request.reachedAgeing = tripsFilter
+        }
+      }
+      "delayed" -> {
+        request.delayed = true
+      }
+      else -> {
+
+      }
+    }
+    if (loadingDateFilter) {
+      request.loadedAfter = generateDateString(date, month, year.toString())
+    }
+//    if (isSettledFilter) {
+//      request.settledTrips = true
+//    }
+    when {
+      viewType.equals("all") -> {
+        request.tripStatus = statuses
+        request.sortBy = "confirmed"
+        request.sortDir = "desc"
+      }
+      viewType.equals("payment_view") -> {
+        request.tripStatus = viewPaymentType.status.joinToString(separator = ",") {it}
+        request.sortBy = "confirmed"
+        request.sortDir = "desc"
+      }
+      else -> {
+        // request.tripStatus = tripType.status.joinToString(separator = ",") { it }
+        request.operationTripStatus = tripType.status[0]
+        when (tripType) {
+          AwaitingArrival -> {
+            request.sortBy = "confirmed"
+            request.sortDir = "asc"
+          }
+          InTransit -> {
+            request.sortBy = "loaded"
+            request.sortDir = "desc"
+          }
+          AwaitingLoading -> {
+            request.sortBy = "arrival"
+            request.sortDir = "desc"
+          }
+          AwaitingUnloading -> {
+            request.sortBy = "reached"
+            request.sortDir = "desc"
+          }
+          else -> {
+            request.sortBy = "loaded"
+            request.sortDir = "desc"
+          }
+        }
+      }
+    }
+  }
+
+  fun loadMore(){
+    if(currentTripsCount != -1 && currentTripsCount < UserSearchLimit && hasMoreData){
+      fetchTrips(true)
+    }
+  }
+
+  /**
+   * generate date string
+   */
+  private fun generateDateString(day: Int, monthNumber: Int, year: String): String {
+    val parser = SimpleDateFormat("yy")
+    val formatter = SimpleDateFormat("yyyy")
+    var fullYear = formatter.format(parser.parse(year)).toInt()
+
+    val calendar = Calendar.getInstance()
+    calendar.set(fullYear, monthNumber, day)
+
+    var endDay = calendar.getActualMaximum(Calendar.DATE).toString()
+    var startDay = "01"
+
+    var month = "" + (monthNumber + 1)
+    if (month.length == 1) {
+      month = "0$month"
+    }
+
+    var finalDate = ""
+    if (date != -1) {
+      endDay = date.toString()
+      if(endDay.length == 1){
+        endDay = "0$endDay"
+      }
+      // date = -1
+    }
+    finalDate = "" + fullYear + "-" + month + "-" + endDay + "T23:59:59"
+    return finalDate
+  }
+
+  override fun onConfirmClick(filter: String) {
+    tripsFilter = filter
+    filterAppliedLiveData.postValue(true)
+  }
+
+  override fun done(
+      transactionId: String,
+      omcRequest: OMCRequest,
+      omcType: String,
+      fuelNumber: String,
+      fuelAmt: String,
+      position: Int
+  ) {
+    fuelCardAmt= fuelAmt
+    fuelCardNumber = fuelNumber
+    tripId = transactionId
+    compositeDisposable += omcRepository.omcCard(omcRequest)
+        .onBackground()
+        .progress()
+        .subscribe{ _res ,error ->
+          if(!error && _res != null){
+            omcLiveData.postValue(Triple(omcType, position, _res))
+          }
+          else{
+            error.handle()
+            omcLiveData.postValue(null)
+          }
+        }
+  }
+
+  fun getOMCResult(
+    omcType: String,
+    position: Int){
+    compositeDisposable += userRepository.getOMCs(0, 100, "omc")
+        .onBackground()
+        .progress()
+        .subscribe{ _res, error ->
+          if(!error && _res!= null){
+            for(item in _res.responseData!!.omcDetailsList){
+              if (omcType == item.name){
+                omcID = item.uuid
+              }
+            }
+            if(omcID!= "") {
+              omcGetLiveData.postValue(Pair(omcType, position))
+            }
+            else
+              omcGetLiveData.postValue(Pair("",position))
+          }
+          else{
+            error.handle()
+            omcGetLiveData.postValue(null)
+          }
+        }
+  }
+
+  fun updateTripWithFuelPayout(
+    omcType: String,
+    pos: Int
+  ){
+    val fuelPayoutRequest = FuelPayoutRequest("virtual", fuelCardNumber, fuelCardAmt, omcType, omcID, "allocation_update","advance_pending_app")
+    compositeDisposable += transactionsRepository.updateTripWithFuelCardUser(tripId, fuelPayoutRequest)
+          .onBackground()
+          .progress()
+          .subscribe(){_res, error ->
+            if(!error && _res!= null){
+              fuelPayoutLiveData.postValue(Triple(_res.message, pos, Pair(fuelCardAmt.toDouble(),fuelCardNumber)))
+            }
+            else{
+              error.handle()
+              fuelPayoutLiveData.postValue(null)
+            }
+
+          }
+
+  }
+
+  fun fetchTeamMembers()
+  {
+    compositeDisposable += loadboardRepository.getUserTeamMembers(userRepository.userId())
+        .onBackground()
+        .progress()
+        .subscribe { _res, error ->
+          if (!error && _res != null) {
+            fuelUserSpinnerOptions.clear()
+            if (_res.count > 0) {
+              for (user in _res.users) {
+                if (user.phoneNumber != null) {
+                  if (user.phoneNumber == userPrefs.phoneNumber)
+                  {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNumber!!, "(Your No.)"))
+                  }
+                  else if (user.isParent()) {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNumber!!, "(Admin)"))
+                  }
+                  else {
+                    fuelUserSpinnerOptions.add(FuelUserSpinnerOptions(user.phoneNumber!!, "(Child)"))
+                  }
+                }
+              }
+              teamMembersLiveData.postValue(fuelUserSpinnerOptions)
+            }
+          }
+          else{
+            teamMembersLiveData.postValue(null)
+            error.handle()
+          }
+        }
+  }
+
+}
