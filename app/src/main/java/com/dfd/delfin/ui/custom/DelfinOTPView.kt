@@ -29,7 +29,7 @@ class DelfinOTPView(
     ViewDelhiveryOtpBinding.inflate(LayoutInflater.from(context), this, true)
 
   /* View interface */
-  var otpViewInterface: DelhiveryOTPViewInterface? = null
+  var otpViewInterface: DelfinOTPViewInterface? = null
 
   init {
     addOTPFields()
@@ -216,7 +216,7 @@ class DelfinOTPView(
 /**
  * Delhivery OTP View Interface
  */
-interface DelhiveryOTPViewInterface {
+interface DelfinOTPViewInterface {
 
   /**
    * OTP Submitted,

@@ -24,7 +24,7 @@ import io.reactivex.disposables.CompositeDisposable
 /**
  * Custom implementation of [EditText] matching view_bids_searchbar_new_item design
  */
-class DelhiveryBidAnimatedSearchBar(
+class DelfinBidAnimatedSearchBar(
   context: Context,
   attrs: AttributeSet? = null
 ) : AppCompatEditText(context, attrs) {

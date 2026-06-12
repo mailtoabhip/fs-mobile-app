@@ -411,16 +411,16 @@ class DelfinAutofitHelper private constructor(
 
         val ta = context.obtainStyledAttributes(
             attrs,
-            R.styleable.DelhiveryAutoFitTextView,
+            R.styleable.DelfinAutoFitTextView,
             defStyle,
             0
         )
-        sizeToFit = ta.getBoolean(R.styleable.DelhiveryAutoFitTextView_sizeToFit, sizeToFit)
+        sizeToFit = ta.getBoolean(R.styleable.DelfinAutoFitTextView_sizeToFit, sizeToFit)
         minTextSize = ta.getDimensionPixelSize(
-            R.styleable.DelhiveryAutoFitTextView_minTextSize,
+            R.styleable.DelfinAutoFitTextView_minTextSize,
             minTextSize
         )
-        precision = ta.getFloat(R.styleable.DelhiveryAutoFitTextView_precision, precision)
+        precision = ta.getFloat(R.styleable.DelfinAutoFitTextView_precision, precision)
         ta.recycle()
 
         helper.setMinTextSize(TypedValue.COMPLEX_UNIT_PX, minTextSize.toFloat())

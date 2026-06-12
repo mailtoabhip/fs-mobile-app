@@ -36,9 +36,9 @@ class DelfinOnboardingArcView(
     /* get attributes */
     attrs?.let { a ->
       val typedArray =
-        context.obtainStyledAttributes(a, R.styleable.DelhiveryOnboardingArcView, 0, 0)
+        context.obtainStyledAttributes(a, R.styleable.DelfinOnboardingArcView, 0, 0)
       direction =
-        ArcDirection.byId(typedArray.getInt(R.styleable.DelhiveryOnboardingArcView_direction, 0))
+        ArcDirection.byId(typedArray.getInt(R.styleable.DelfinOnboardingArcView_direction, 0))
       typedArray.recycle()
     }
 

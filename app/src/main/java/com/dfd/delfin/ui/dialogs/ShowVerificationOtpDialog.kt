@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.dfd.delfin.R
 import com.dfd.delfin.databinding.DialogVerifyAadharOtpBinding
-import com.dfd.delfin.ui.custom.DelhiveryOTPViewInterfaceSix
+import com.dfd.delfin.ui.custom.DelfinOTPViewInterfaceSix
 import com.dfd.delfin.ui.kyc.aadhaar.AadhaarVerificationActivity
 import com.dfd.delfin.ui.kyc.aadhaar.AadhaarVerificationViewModel
 import com.dfd.delfin.utils.DialogUtils
@@ -38,7 +38,7 @@ class ShowVerificationOtpDialog @Inject constructor(
     private val viewModel: AadhaarVerificationViewModel,
     private val aadhaarVerificationActivity: AadhaarVerificationActivity
 
-) : Dialog(context),DelhiveryOTPViewInterfaceSix {
+) : Dialog(context),DelfinOTPViewInterfaceSix {
 
     /* dialog binding */
     private lateinit var binding: DialogVerifyAadharOtpBinding

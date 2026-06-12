@@ -11,8 +11,8 @@ import com.dfd.delfin.R
 import com.dfd.delfin.databinding.LayoutFabCardMenuBinding
 import com.dfd.delfin.databinding.LayoutProgressBinding
 import com.dfd.delfin.injection.scope.ActivityScope
-import com.dfd.delfin.ui.custom.DelhiveryFabCardMenuInterface
-import com.dfd.delfin.ui.custom.DelhiveryFabCardMenuItem
+import com.dfd.delfin.ui.custom.DelfinFabCardMenuInterface
+import com.dfd.delfin.ui.custom.DelfinFabCardMenuItem
 import com.dfd.delfin.utils.extensions.consumeTouch
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -171,9 +171,9 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
    * Show fab card menu
    */
   fun fabCardMenu(
-    fab: FloatingActionButton,
-    items: List<DelhiveryFabCardMenuItem>,
-    itemSelected: (DelhiveryFabCardMenuItem) -> Unit
+      fab: FloatingActionButton,
+      items: List<DelfinFabCardMenuItem>,
+      itemSelected: (DelfinFabCardMenuItem) -> Unit
   ) {
     val parent = (fab.parent as ViewGroup)
     val cardMenuBinding =
@@ -195,8 +195,8 @@ class UiUtils @Inject constructor(private val activity: DaggerAppCompatActivity)
       this.anchorView = fab
       setMenuItems(items)
       /* menu interface - close + pass action */
-      menuInterface = object : DelhiveryFabCardMenuInterface {
-        override fun onItemSelected(item: DelhiveryFabCardMenuItem) {
+      menuInterface = object : DelfinFabCardMenuInterface {
+        override fun onItemSelected(item: DelfinFabCardMenuItem) {
           cardMenuBinding.fabMenu.animateClose {
             parent.removeView(cardMenuBinding.root)
             itemSelected(item)

@@ -8,7 +8,7 @@ package com.dfd.delfin.utils
 object Config {
   const val AppDatabaseName = "db_name"   //<---todo database name
   const val BaseUrl = "https://demo5995716.mockable.io"
-  const val AxleSupportEmail = "vendorhelpdesk@delhivery.com"
-  const val AxleOnboardingEmail = "axle-onboarding@delhivery.com"
-  const val AxleCallSupport = "01246719699"
+  const val DelfinSupportEmail = "vendorhelpdesk@delhivery.com"
+  const val DelfinOnboardingEmail = "axle-onboarding@delhivery.com"
+  const val DelfinCallSupport = "01246719699"
 }

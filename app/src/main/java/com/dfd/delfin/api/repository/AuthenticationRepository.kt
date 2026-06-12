@@ -4,7 +4,7 @@ import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.dfd.delfin.api.service.LoadBoardService
 import com.dfd.delfin.api.service.UMSService
-import com.dfd.delfin.network.DelhiveryNetworkInterceptor
+import com.dfd.delfin.network.DelfinNetworkInterceptor
 import com.dfd.delfin.utils.ErrorLogger
 import com.dfd.delfin.utils.extensions.isNotNullOrEmpty
 import com.dfd.delfin.utils.prefs.UserPrefs
@@ -17,11 +17,11 @@ import javax.inject.Singleton
  */
 @Singleton
 class AuthenticationRepository @Inject constructor(
-  private val umsService: UMSService,
-  private val loadBoardService: LoadBoardService,
-  private val userPrefs: UserPrefs,
-  private val networkInterceptor: DelhiveryNetworkInterceptor,
-  errorLogger: ErrorLogger
+    private val umsService: UMSService,
+    private val loadBoardService: LoadBoardService,
+    private val userPrefs: UserPrefs,
+    private val networkInterceptor: DelfinNetworkInterceptor,
+    errorLogger: ErrorLogger
 ) : BaseRepository(errorLogger) {
 
   init {

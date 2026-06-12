@@ -19,7 +19,7 @@ import com.dfd.delfin.ui.biddetails.MarketPlaceBidDetailsActivity
 import com.dfd.delfin.ui.bids.BidType
 import com.dfd.delfin.ui.bids.BulkBidDetailsDialog
 import com.dfd.delfin.ui.contractDetails.contractDetailsIntent
-import com.dfd.delfin.ui.custom.DelhiveryBidAnimatedSearchBar
+import com.dfd.delfin.ui.custom.DelfinBidAnimatedSearchBar
 import com.dfd.delfin.ui.home.activity.home.OFF_SET_LIMIT
 import com.dfd.delfin.ui.home.fragments.HomeFragmentType
 import com.dfd.delfin.ui.home.fragments.NavigateHomeFragmentAction
@@ -37,7 +37,7 @@ import javax.inject.Inject
  * All bids screen on home
  */
 class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
-    HomeBidsRVAdapterInterface, DelhiveryBidAnimatedSearchBar.ToolbarElevationChangeListener {
+    HomeBidsRVAdapterInterface, DelfinBidAnimatedSearchBar.ToolbarElevationChangeListener {
 
   var _title: String = "My Bids"
   var launch : Boolean =true
@@ -478,8 +478,8 @@ class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, Hom
   }
 
   inner class HomeBidsRVScrollListener(
-    private val stickyView: DelhiveryBidAnimatedSearchBar,
-    private val elevation: Float = 12f
+      private val stickyView: DelfinBidAnimatedSearchBar,
+      private val elevation: Float = 12f
   ) : OnScrollListener() {
 
     private var toolbarElevation = -1f

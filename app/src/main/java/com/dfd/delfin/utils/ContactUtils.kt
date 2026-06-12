@@ -3,7 +3,7 @@ package com.dfd.delfin.utils
 import android.content.Intent
 import android.net.Uri
 import com.dfd.delfin.injection.scope.ActivityScope
-import com.dfd.delfin.utils.Config.AxleCallSupport
+import com.dfd.delfin.utils.Config.DelfinCallSupport
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ class ContactUtils @Inject constructor(private val activity: DaggerAppCompatActi
 
   fun callHelpline() = try {
     val callIntent = Intent(Intent.ACTION_CALL).apply {
-      data = Uri.parse("tel:$AxleCallSupport")
+      data = Uri.parse("tel:$DelfinCallSupport")
     }
     activity.startActivity(callIntent)
     true

@@ -25,11 +25,11 @@ class DelfinTextInputLayout(
 
   init {
     attrs.let { a ->
-      val typedArray = context.obtainStyledAttributes(a, R.styleable.DelhiveryTextInputLayout, 0, 0)
+      val typedArray = context.obtainStyledAttributes(a, R.styleable.DelfinTextInputLayout, 0, 0)
       minLength =
-        typedArray.getInteger(R.styleable.DelhiveryTextInputLayout_min_length, Int.MIN_VALUE)
-      maxVal = typedArray.getInt(R.styleable.DelhiveryTextInputLayout_max_val, Int.MAX_VALUE)
-      minVal = typedArray.getInt(R.styleable.DelhiveryTextInputLayout_min_value, Int.MIN_VALUE)
+        typedArray.getInteger(R.styleable.DelfinTextInputLayout_min_length, Int.MIN_VALUE)
+      maxVal = typedArray.getInt(R.styleable.DelfinTextInputLayout_max_val, Int.MAX_VALUE)
+      minVal = typedArray.getInt(R.styleable.DelfinTextInputLayout_min_value, Int.MIN_VALUE)
       typedArray.recycle()
     }
   }

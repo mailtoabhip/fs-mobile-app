@@ -18,8 +18,8 @@ class DelfinPanViewEditText(
   init {
     /* get attributes */
     attrs?.let { a ->
-      val typedArray = context.obtainStyledAttributes(a, R.styleable.DelhiveryOTPViewEditText, 0, 0)
-      error = typedArray.getBoolean(R.styleable.DelhiveryOTPViewEditText_state_error, false)
+      val typedArray = context.obtainStyledAttributes(a, R.styleable.DelfinOTPViewEditText, 0, 0)
+      error = typedArray.getBoolean(R.styleable.DelfinOTPViewEditText_state_error, false)
       typedArray.recycle()
     }
 

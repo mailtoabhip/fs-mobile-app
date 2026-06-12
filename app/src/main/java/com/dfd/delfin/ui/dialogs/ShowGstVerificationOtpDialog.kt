@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.dfd.delfin.R
 import com.dfd.delfin.databinding.DialogVerifyGstOtpBinding
-import com.dfd.delfin.ui.custom.DelhiveryOTPViewInterface
+import com.dfd.delfin.ui.custom.DelfinOTPViewInterface
 import com.dfd.delfin.ui.kyc.gst.GstVerificationActivity
 import com.dfd.delfin.ui.kyc.gst.GstVerificationViewModel
 import com.dfd.delfin.utils.DialogUtils
@@ -41,7 +41,7 @@ class ShowGstVerificationOtpDialog @Inject constructor(
         private val userPrefs: UserPrefs,
         private val currSelectedGst:String
 
-) : Dialog(context),DelhiveryOTPViewInterface {
+) : Dialog(context),DelfinOTPViewInterface {
 
     /* dialog binding */
     private lateinit var binding: DialogVerifyGstOtpBinding

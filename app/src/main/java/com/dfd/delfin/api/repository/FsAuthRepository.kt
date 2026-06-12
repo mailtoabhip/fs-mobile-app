@@ -12,7 +12,7 @@ import com.dfd.delfin.api.response.FsUserProfile
 import com.dfd.delfin.api.response.FsVerifyData
 import com.dfd.delfin.api.response.toResource
 import com.dfd.delfin.api.service.FsAuthService
-import com.dfd.delfin.network.DelhiveryNetworkInterceptor
+import com.dfd.delfin.network.DelfinNetworkInterceptor
 import com.dfd.delfin.utils.ErrorLogger
 import com.dfd.delfin.utils.extensions.isNotNullOrEmpty
 import com.dfd.delfin.utils.prefs.UserPrefs
@@ -29,7 +29,7 @@ import javax.inject.Singleton
 class FsAuthRepository @Inject constructor(
     private val fsAuthService: FsAuthService,
     private val userPrefs: UserPrefs,
-    private val networkInterceptor: DelhiveryNetworkInterceptor,
+    private val networkInterceptor: DelfinNetworkInterceptor,
     errorLogger: ErrorLogger
 ) : BaseRepository(errorLogger) {
 

@@ -9,7 +9,7 @@ import androidx.work.WorkerParameters
 import com.dfd.delfin.BuildConfig
 import com.dfd.delfin.config.UrlConfig.AppID
 import com.dfd.delfin.injection.module.DaggerWorkerFactory
-import com.dfd.delfin.network.DelhiveryNetworkInterceptor
+import com.dfd.delfin.network.DelfinNetworkInterceptor
 import com.dfd.delfin.utils.extensions.isNotNullOrEmpty
 import com.dfd.delfin.utils.prefs.UserPrefs
 import com.auth0.android.jwt.JWT
@@ -33,7 +33,7 @@ class RefreshTokenWorker(
     params: WorkerParameters,
     private val userPrefs: UserPrefs,
     private val okHttpClient: OkHttpClient,
-    private val authInterceptor: DelhiveryNetworkInterceptor
+    private val authInterceptor: DelfinNetworkInterceptor
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -319,7 +319,7 @@ class RefreshTokenWorker(
     class Factory @Inject constructor(
         private val userPrefs: UserPrefs,
         private val okHttpClient: OkHttpClient,
-        private val authInterceptor: DelhiveryNetworkInterceptor
+        private val authInterceptor: DelfinNetworkInterceptor
     ) : DaggerWorkerFactory.ChildWorkerFactory {
 
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker =

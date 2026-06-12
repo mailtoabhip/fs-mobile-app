@@ -8,7 +8,7 @@ import com.dfd.delfin.config.UrlConfig
 import com.dfd.delfin.utils.DocumentUtils
 import com.dfd.delfin.injection.qualifier.ApplicationContext
 import com.dfd.delfin.network.ConnectionLiveData
-import com.dfd.delfin.network.DelhiveryNetworkInterceptor
+import com.dfd.delfin.network.DelfinNetworkInterceptor
 import com.dfd.delfin.network.TokenAuthenticator
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -80,9 +80,9 @@ class NetworkModule {
   @Provides
   @Singleton
   fun provideOkHttpClient(
-    chuckerInterceptor: ChuckerInterceptor,
-    headerInterceptor: DelhiveryNetworkInterceptor,
-    tokenAuthenticator: TokenAuthenticator
+      chuckerInterceptor: ChuckerInterceptor,
+      headerInterceptor: DelfinNetworkInterceptor,
+      tokenAuthenticator: TokenAuthenticator
   ): OkHttpClient {
 
     return OkHttpClient.Builder()

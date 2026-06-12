@@ -1,13 +1,13 @@
 package com.dfd.delfin.ui.bids
 
-import com.dfd.delfin.ui.custom.DelhiveryFabCardMenuItem
+import com.dfd.delfin.ui.custom.DelfinFabCardMenuItem
 
 /**
  * Bids fab card menu items
  */
 val BidsFabCardMenuItems by lazy {
-  mutableListOf<DelhiveryFabCardMenuItem>().apply {
-    add(0, DelhiveryFabCardMenuItem(0, "Active Bids"))
-    add(1, DelhiveryFabCardMenuItem(1, "Lost Bids"))
+  mutableListOf<DelfinFabCardMenuItem>().apply {
+    add(0, DelfinFabCardMenuItem(0, "Active Bids"))
+    add(1, DelfinFabCardMenuItem(1, "Lost Bids"))
   }
 }

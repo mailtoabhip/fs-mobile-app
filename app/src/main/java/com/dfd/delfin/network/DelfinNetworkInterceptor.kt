@@ -15,7 +15,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class DelhiveryNetworkInterceptor @Inject constructor(
+class DelfinNetworkInterceptor @Inject constructor(
   var userPrefs: UserPrefs,
   var connectionLiveData: ConnectionLiveData,
   private val deviceInfoProvider: DeviceInfoProvider

@@ -23,13 +23,13 @@ class DelfinAadhaarFormattedEditText(context: Context,
     private var initCompleted = false
     init {
         if (attrs != null) {
-            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.DelhiveryAadhaarMaskedEditText, 0, 0)
-            val separatorStr = a.getString(R.styleable.DelhiveryAadhaarMaskedEditText_groupSeparator)
+            val a = context.theme.obtainStyledAttributes(attrs, R.styleable.DelfinAadhaarMaskedEditText, 0, 0)
+            val separatorStr = a.getString(R.styleable.DelfinAadhaarMaskedEditText_groupSeparator)
             if (!separatorStr.isNullOrEmpty()) {
                 groupSeparator = separatorStr[0]
             }
-            numberOfGroups = a.getInteger(R.styleable.DelhiveryAadhaarMaskedEditText_numberOfGroups, numberOfGroups)
-            groupLength = a.getInteger(R.styleable.DelhiveryAadhaarMaskedEditText_groupLength, groupLength)
+            numberOfGroups = a.getInteger(R.styleable.DelfinAadhaarMaskedEditText_numberOfGroups, numberOfGroups)
+            groupLength = a.getInteger(R.styleable.DelfinAadhaarMaskedEditText_groupLength, groupLength)
         }
 
         inputLength = numberOfGroups * (groupLength + 1) - 1

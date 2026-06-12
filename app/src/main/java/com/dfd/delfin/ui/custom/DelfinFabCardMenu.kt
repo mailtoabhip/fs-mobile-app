@@ -30,10 +30,10 @@ class DelfinFabCardMenu(
   /* anchor view */
   var anchorView: FloatingActionButton? = null
   /* fab card menu interface */
-  var menuInterface: DelhiveryFabCardMenuInterface? = null
+  var menuInterface: DelfinFabCardMenuInterface? = null
 
   /* menu items list */
-  private var menuItems: List<DelhiveryFabCardMenuItem> = listOf()
+  private var menuItems: List<DelfinFabCardMenuItem> = listOf()
 
   /* draw params */
   private var factor = 0.0f
@@ -54,7 +54,7 @@ class DelfinFabCardMenu(
   /**
    * Add Menu items
    */
-  fun setMenuItems(_menuItems: List<DelhiveryFabCardMenuItem>) {
+  fun setMenuItems(_menuItems: List<DelfinFabCardMenuItem>) {
     this.menuItems = _menuItems
     menuItems.mapIndexed { index, item ->
       val itemBinding = LayoutFabCardMenuItemBinding.inflate(
@@ -171,7 +171,7 @@ const val FabMenuCardMenuTitleItem = -1
 /**
  * Fab card menu item
  */
-data class DelhiveryFabCardMenuItem(
+data class DelfinFabCardMenuItem(
   val id: Int,
   val text: String
 )
@@ -179,6 +179,6 @@ data class DelhiveryFabCardMenuItem(
 /**
  * Card menu interface
  */
-interface DelhiveryFabCardMenuInterface {
-  fun onItemSelected(item: DelhiveryFabCardMenuItem)
+interface DelfinFabCardMenuInterface {
+  fun onItemSelected(item: DelfinFabCardMenuItem)
 }

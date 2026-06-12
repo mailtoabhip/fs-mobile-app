@@ -30,7 +30,7 @@ import com.dfd.delfin.R.string
 import com.dfd.delfin.network.ConnectionLiveData
 import com.dfd.delfin.network.SessionManager
 import com.dfd.delfin.utils.AnalyticsUtil
-import com.dfd.delfin.utils.Config.AxleSupportEmail
+import com.dfd.delfin.utils.Config.DelfinSupportEmail
 import com.dfd.delfin.utils.ContactUtils
 import com.dfd.delfin.utils.DialogUtils
 import com.dfd.delfin.utils.ErrorUtils
@@ -339,7 +339,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   /**
    * Send emal
    */
-  fun sendMail(email: String = AxleSupportEmail) {
+  fun sendMail(email: String = DelfinSupportEmail) {
     when (contactUtils.openGmail(receiver = email)) {
       false -> {
         uiUtils.showSnackbar("Sorry...You don't have any mail app installed")

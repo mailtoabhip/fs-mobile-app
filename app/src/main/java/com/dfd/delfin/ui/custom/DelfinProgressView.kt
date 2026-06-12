@@ -17,7 +17,7 @@ import com.dfd.delfin.R
  *
  * #Zeplin: https://app.zeplin.io/project/5c77996f826def6250138e25/screen/5c779b3479fda9bda447890f
  */
-class DelhiveryProgressView(
+class DelfinProgressView(
   context: Context,
   attrs: AttributeSet? = null
 ) : View(context, attrs) {

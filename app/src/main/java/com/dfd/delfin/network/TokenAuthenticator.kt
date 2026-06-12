@@ -32,7 +32,7 @@ import javax.inject.Singleton
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val userPrefs: UserPrefs,
-    private val networkInterceptor: DelhiveryNetworkInterceptor,
+    private val networkInterceptor: DelfinNetworkInterceptor,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val sessionManager: SessionManager
 ) : Authenticator {
