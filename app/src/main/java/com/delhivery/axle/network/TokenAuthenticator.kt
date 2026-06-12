@@ -45,6 +45,12 @@ class TokenAuthenticator @Inject constructor(
         private val tokenMutex = Mutex()
 
         private val JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8")
+
+        // Reuse a single OkHttpClient for all refresh calls to avoid creating
+        // new thread pools and connection pools on every 401.
+        private val refreshClient: OkHttpClient by lazy {
+            OkHttpClient.Builder().build()
+        }
     }
 
     private val refreshUrl: String = "${UrlConfig.FsAuthService.url().trimEnd('/')}/$REFRESH_ENDPOINT"
@@ -117,8 +123,8 @@ class TokenAuthenticator @Inject constructor(
             Log.d(TAG, "Refresh URL: $refreshUrl")
             Log.d(TAG, "Refresh token (first 20 chars): ${refreshToken.take(20)}...")
 
-            // Use a plain OkHttpClient to avoid circular interceptor calls
-            val client = OkHttpClient.Builder().build()
+            // Reuse the shared OkHttpClient to avoid allocating new pools per refresh
+            val client = refreshClient
 
             val body = JSONObject().apply {
                 put("refresh_token", refreshToken)
@@ -129,6 +135,8 @@ class TokenAuthenticator @Inject constructor(
             val requestBody = RequestBody.create(JSON_MEDIA_TYPE, body.toString())
 
             val requestId = java.util.UUID.randomUUID().toString()
+            // Use cached IP — don't block refresh on a network call for metadata
+            val clientIp = deviceInfoProvider.cachedPublicIp()
             val request = Request.Builder()
                 .url(refreshUrl)
                 .post(requestBody)
@@ -140,63 +148,69 @@ class TokenAuthenticator @Inject constructor(
                 .addHeader("X-Platform", deviceInfoProvider.platform)
                 .addHeader("X-Os-Version", deviceInfoProvider.osVersion)
                 .addHeader("X-Request-Id", requestId)
-                .addHeader("X-Client-Ip", deviceInfoProvider.awaitPublicIp())
+                .apply {
+                    if (clientIp.isNotEmpty()) {
+                        addHeader("X-Client-Ip", clientIp)
+                    }
+                }
                 .addHeader("Authorization", "Bearer ${userPrefs.jwtToken ?: ""}")
                 .build()
 
             val response = client.newCall(request).execute()
-            val code = response.code()
-            val responseBody = response.body()?.string().orEmpty()
+            response.use { resp ->
+                val code = resp.code()
+                val responseBody = resp.body()?.string().orEmpty()
 
-            Log.d(TAG, "Refresh response code: $code")
-            Log.d(TAG, "Refresh response body: $responseBody")
+                Log.d(TAG, "Refresh response code: $code")
+                Log.d(TAG, "Refresh response body: $responseBody")
 
-            if (code == 200) {
-                val json = JSONObject(responseBody)
+                if (code == 200) {
+                    val json = JSONObject(responseBody)
 
-                val success = json.optBoolean("success", false)
-                if (!success) {
-                    Log.w(TAG, "Refresh response success=false")
-                    return null
-                }
-
-                val data = json.optJSONObject("data")
-                val accessToken = data?.optString("access_token")
-                val refreshToken = data?.optString("refresh_token")
-
-                if (!accessToken.isNullOrEmpty()) {
-                    // Store the new tokens
-                    userPrefs.jwtToken = accessToken
-                    if (!refreshToken.isNullOrEmpty()) {
-                        userPrefs.refreshToken = refreshToken
+                    val success = json.optBoolean("success", false)
+                    if (!success) {
+                        Log.w(TAG, "Refresh response success=false")
+                        return null
                     }
-                    networkInterceptor.updateJWT(accessToken)
-                    Log.d(TAG, "Access token refreshed successfully (first 20 chars): ${accessToken.take(20)}...")
-                    accessToken
+
+                    val data = json.optJSONObject("data")
+                    val accessToken = data?.optString("access_token")
+                    val newRefreshToken = data?.optString("refresh_token")
+
+                    if (!accessToken.isNullOrEmpty()) {
+                        // Store the new tokens
+                        userPrefs.jwtToken = accessToken
+                        if (!newRefreshToken.isNullOrEmpty()) {
+                            userPrefs.refreshToken = newRefreshToken
+                        }
+                        networkInterceptor.updateJWT(accessToken)
+                        Log.d(TAG, "Access token refreshed successfully (first 20 chars): ${accessToken.take(20)}...")
+                        accessToken
+                    } else {
+                        Log.w(TAG, "Refresh response missing access_token in data")
+                        null
+                    }
                 } else {
-                    Log.w(TAG, "Refresh response missing access_token in data")
+                    Log.w(TAG, "Token refresh failed with HTTP $code")
+
+                    // Parse error response for detailed logging
+                    try {
+                        val errorJson = JSONObject(responseBody)
+                        val error = errorJson.optJSONObject("error")
+                        val errorMessage = error?.optString("message") ?: errorJson.optString("message", "Unknown error")
+                        Log.w(TAG, "Refresh error message: $errorMessage")
+                    } catch (_: Exception) {
+                        Log.w(TAG, "Refresh error body (raw): $responseBody")
+                    }
+
+                    // Refresh failed — clear local session so user is forced to re-login
+                    Log.w(TAG, "Clearing local session due to refresh failure")
+                    networkInterceptor.updateJWT(null)
+                    userPrefs.clearPrefs()
+                    sessionManager.onSessionExpired()
+
                     null
                 }
-            } else {
-                Log.w(TAG, "Token refresh failed with HTTP $code")
-
-                // Parse error response for detailed logging
-                try {
-                    val errorJson = JSONObject(responseBody)
-                    val error = errorJson.optJSONObject("error")
-                    val errorMessage = error?.optString("message") ?: errorJson.optString("message", "Unknown error")
-                    Log.w(TAG, "Refresh error message: $errorMessage")
-                } catch (_: Exception) {
-                    Log.w(TAG, "Refresh error body (raw): $responseBody")
-                }
-
-                // Refresh failed — clear local session so user is forced to re-login
-                Log.w(TAG, "Clearing local session due to refresh failure")
-                networkInterceptor.updateJWT(null)
-                userPrefs.clearPrefs()
-                sessionManager.onSessionExpired()
-
-                null
             }
         } catch (e: Exception) {
             Log.e(TAG, "Exception during token refresh: ${e.javaClass.simpleName}: ${e.message}", e)

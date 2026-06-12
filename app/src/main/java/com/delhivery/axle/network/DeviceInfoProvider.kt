@@ -121,6 +121,14 @@ class DeviceInfoProvider @Inject constructor(
         }
     }
 
+    /**
+     * Returns the cached public IP immediately without blocking.
+     * Returns empty string if the IP hasn't been fetched yet.
+     * Use this in performance-critical paths (e.g., token refresh) where
+     * blocking on a network call is unacceptable.
+     */
+    fun cachedPublicIp(): String = publicIp
+
     companion object {
         private const val TAG = "DeviceInfoProvider"
     }

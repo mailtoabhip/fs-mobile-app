@@ -31,7 +31,7 @@
         android:background="@android:color/white"
         app:contentInsetStartWithNavigation="@dimen/size_8dp"
         app:navigationIcon="@drawable/ic_back_arrow"
-        style="@style/Toolbar.TitleText" />
+        bind:titleTextAppearance="@style/Toolbar.TitleText" />
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/horizontalDivider"
         android:layout_width="match_parent"

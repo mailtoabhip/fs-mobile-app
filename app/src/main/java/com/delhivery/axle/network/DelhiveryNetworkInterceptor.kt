@@ -45,7 +45,10 @@ class DelhiveryNetworkInterceptor @Inject constructor(
       builder.header("X-App-Version", deviceInfoProvider.appVersion)
       builder.header("X-Platform", deviceInfoProvider.platform)
       builder.header("X-OS-Version", deviceInfoProvider.osVersion)
-      builder.header("X-Client-Ip", deviceInfoProvider.awaitPublicIp())
+      val clientIp = deviceInfoProvider.awaitPublicIp()
+      if (clientIp.isNotEmpty()) {
+        builder.header("X-Client-Ip", clientIp)
+      }
       builder.header("X-Request-Id", requestId)
 
       val path = chain.request().url().encodedPath()
@@ -69,8 +72,8 @@ class DelhiveryNetworkInterceptor @Inject constructor(
             "X-App-Version=${deviceInfoProvider.appVersion}, " +
             "X-Platform=${deviceInfoProvider.platform}, " +
             "X-OS-Version=${deviceInfoProvider.osVersion}, " +
-            "X-Request-Id=$requestId, " +
-            "X-Client-Ip=${deviceInfoProvider.awaitPublicIp()}")
+            "X-Request-Id=$requestId" +
+            (if (clientIp.isNotEmpty()) ", X-Client-Ip=$clientIp" else ""))
       }
 
       chain.proceed(builder.build())

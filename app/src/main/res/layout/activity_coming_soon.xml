@@ -24,8 +24,7 @@
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:titleTextColor="@color/text_primary"
-            app:titleTextAppearance="@style/TextAppearance.Delfin.SB14"
-            style="@style/TextAppearance.Delfin.SB14" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
         <View
             android:background="@color/light_grey"

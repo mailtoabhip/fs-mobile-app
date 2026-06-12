@@ -22,9 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            app:titleTextColor="@color/text_primary"
-            app:titleTextAppearance="@style/TextAppearance.Delfin.SB14"
-            style="@style/TextAppearance.Delfin.SB14"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:title="@string/label_fastag_title" />
