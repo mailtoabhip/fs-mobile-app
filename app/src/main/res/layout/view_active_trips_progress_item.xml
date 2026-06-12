@@ -16,7 +16,7 @@
       app:cardElevation="@dimen/size_2dp"
       >
 
-    <com.dfd.delfin.ui.custom.DelhiveryShimmerLayout
+    <com.dfd.delfin.ui.custom.DelfinShimmerLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -167,6 +167,6 @@
             app:layout_constraintTop_toBottomOf="@+id/view"
             />
       </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.dfd.delfin.ui.custom.DelhiveryShimmerLayout>
+    </com.dfd.delfin.ui.custom.DelfinShimmerLayout>
   </androidx.cardview.widget.CardView>
 </layout>

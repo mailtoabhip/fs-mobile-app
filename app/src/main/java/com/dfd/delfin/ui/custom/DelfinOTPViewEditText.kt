@@ -12,7 +12,7 @@ import com.dfd.delfin.utils.extensions.raisedFocus
 /**
  * Custom implementation of [AppCompatEditText] for OTP enter
  */
-class DelhiveryOTPViewEditText(
+class DelfinOTPViewEditText(
   context: Context,
   attrs: AttributeSet? = null
 ) : AppCompatEditText(context, attrs) {

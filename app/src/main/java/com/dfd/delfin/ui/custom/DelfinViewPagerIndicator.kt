@@ -13,7 +13,7 @@ import com.dfd.delfin.R
 /**
  * ViewPagerIndicator for [ViewPager]
  */
-class DelhiveryViewPagerIndicator(
+class DelfinViewPagerIndicator(
   context: Context,
   attrs: AttributeSet? = null
 ) : View(context, attrs) {
@@ -93,7 +93,7 @@ class DelhiveryViewPagerIndicator(
           positionOffsetPixels: Int
         ) {
           activeDotCx = startCx() + ((2 * DotRadius + DotsGap) * (position + positionOffset))
-          this@DelhiveryViewPagerIndicator.invalidate()
+          this@DelfinViewPagerIndicator.invalidate()
         }
 
         override fun onPageSelected(p0: Int) {

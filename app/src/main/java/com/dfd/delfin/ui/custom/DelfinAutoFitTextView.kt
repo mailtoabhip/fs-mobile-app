@@ -13,12 +13,12 @@ import android.widget.TextView
  * @attr ref R.styleable.AutofitTextView_minTextSize
  * @attr ref R.styleable.AutofitTextView_precision
  */
-class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTextSizeChangeListener {
+class DelfinAutoFitTextView : AppCompatTextView, DelfinAutofitHelper.OnTextSizeChangeListener {
 
   /**
-   * Returns the [DelhiveryAutofitHelper] for this View.
+   * Returns the [DelfinAutofitHelper] for this View.
    */
-  var delhiveryAutofitHelper: DelhiveryAutofitHelper? = null
+  var delfinAutofitHelper: DelfinAutofitHelper? = null
     private set
 
   /**
@@ -29,9 +29,9 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
    * act like a normal TextView.
    */
   var isSizeToFit: Boolean
-    get() = delhiveryAutofitHelper!!.isEnabled()
+    get() = delfinAutofitHelper!!.isEnabled()
     set(sizeToFit) {
-      delhiveryAutofitHelper!!.setEnabled(sizeToFit)
+      delfinAutofitHelper!!.setEnabled(sizeToFit)
     }
 
   /**
@@ -45,16 +45,16 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
    * @attr ref android.R.styleable#TextView_textSize
    */
   var maxTextSize: Float
-    get() = delhiveryAutofitHelper!!.getMaxTextSize()
+    get() = delfinAutofitHelper!!.getMaxTextSize()
     set(size) {
-      delhiveryAutofitHelper!!.setMaxTextSize(size)
+      delfinAutofitHelper!!.setMaxTextSize(size)
     }
 
   /**
    * Returns the minimum size (in pixels) of the text in this View.
    */
   val minTextSize: Float
-    get() = delhiveryAutofitHelper!!.getMinTextSize()
+    get() = delfinAutofitHelper!!.getMinTextSize()
 
   /**
    * Returns the amount of precision used to calculate the correct text size to fit within its
@@ -67,9 +67,9 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
    * @param precision The amount of precision.
    */
   var precision: Float
-    get() = delhiveryAutofitHelper!!.getPrecision()
+    get() = delfinAutofitHelper!!.getPrecision()
     set(precision) {
-      delhiveryAutofitHelper!!.setPrecision(precision)
+      delfinAutofitHelper!!.setPrecision(precision)
     }
 
   constructor(context: Context) : super(context) {
@@ -96,7 +96,7 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
     attrs: AttributeSet?,
     defStyle: Int
   ) {
-    delhiveryAutofitHelper = DelhiveryAutofitHelper.create(this, attrs, defStyle)
+    delfinAutofitHelper = DelfinAutofitHelper.create(this, attrs, defStyle)
         .addOnTextSizeChangeListener(this)
   }
 
@@ -110,8 +110,8 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
     size: Float
   ) {
     super.setTextSize(unit, size)
-    if (delhiveryAutofitHelper != null) {
-      delhiveryAutofitHelper!!.setTextSize(unit, size)
+    if (delfinAutofitHelper != null) {
+      delfinAutofitHelper!!.setTextSize(unit, size)
     }
   }
 
@@ -120,8 +120,8 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
    */
   override fun setLines(lines: Int) {
     super.setLines(lines)
-    if (delhiveryAutofitHelper != null) {
-      delhiveryAutofitHelper!!.setMaxLines(lines)
+    if (delfinAutofitHelper != null) {
+      delfinAutofitHelper!!.setMaxLines(lines)
     }
   }
 
@@ -130,8 +130,8 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
    */
   override fun setMaxLines(maxLines: Int) {
     super.setMaxLines(maxLines)
-    if (delhiveryAutofitHelper != null) {
-      delhiveryAutofitHelper!!.setMaxLines(maxLines)
+    if (delfinAutofitHelper != null) {
+      delfinAutofitHelper!!.setMaxLines(maxLines)
     }
   }
 
@@ -155,7 +155,7 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
     unit: Int,
     size: Float
   ) {
-    delhiveryAutofitHelper!!.setMaxTextSize(unit, size)
+    delfinAutofitHelper!!.setMaxTextSize(unit, size)
   }
 
   /**
@@ -166,7 +166,7 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
    * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
    */
   fun setMinTextSize(minSize: Int) {
-    delhiveryAutofitHelper!!.setMinTextSize(TypedValue.COMPLEX_UNIT_SP, minSize.toFloat())
+    delfinAutofitHelper!!.setMinTextSize(TypedValue.COMPLEX_UNIT_SP, minSize.toFloat())
   }
 
   /**
@@ -181,7 +181,7 @@ class DelhiveryAutoFitTextView : AppCompatTextView, DelhiveryAutofitHelper.OnTex
     unit: Int,
     minSize: Float
   ) {
-    delhiveryAutofitHelper!!.setMinTextSize(unit, minSize)
+    delfinAutofitHelper!!.setMinTextSize(unit, minSize)
   }
 
   override fun onTextSizeChange(

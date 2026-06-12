@@ -147,7 +147,7 @@
                             android:visibility="gone"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toBottomOf="@+id/text_cin">
-                            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                            <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                                 android:id="@+id/edit_cin"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/edit_text_height"
@@ -231,7 +231,7 @@
                             android:visibility="gone"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toBottomOf="@+id/text_udyog">
-                            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                            <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                                 android:id="@+id/edit_udyog"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/edit_text_height"
@@ -314,7 +314,7 @@
                             android:visibility="gone"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toBottomOf="@+id/text_shop">
-                            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                            <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                                 android:id="@+id/edit_shop"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/edit_text_height"

@@ -15,7 +15,7 @@ import com.dfd.delfin.R
 /**
  * Shimmer layout
  */
-class DelhiveryShimmerLayout(
+class DelfinShimmerLayout(
   context: Context,
   attrs: AttributeSet?
 ) : FrameLayout(context, attrs) {

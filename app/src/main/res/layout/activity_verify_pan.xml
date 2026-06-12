@@ -99,7 +99,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.dfd.delfin.ui.custom.DelhiveryPanViewEditText
+                    <com.dfd.delfin.ui.custom.DelfinPanViewEditText
                         android:id="@+id/edit_pan"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edit_text_height"

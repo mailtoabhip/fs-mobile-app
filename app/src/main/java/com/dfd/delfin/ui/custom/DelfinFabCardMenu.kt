@@ -18,7 +18,7 @@ import com.dfd.delfin.R
 import com.dfd.delfin.databinding.LayoutFabCardMenuItemBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class DelhiveryFabCardMenu(
+class DelfinFabCardMenu(
   context: Context,
   attrs: AttributeSet? = null
 ) : LinearLayoutCompat(context, attrs) {
@@ -58,7 +58,7 @@ class DelhiveryFabCardMenu(
     this.menuItems = _menuItems
     menuItems.mapIndexed { index, item ->
       val itemBinding = LayoutFabCardMenuItemBinding.inflate(
-          LayoutInflater.from(context), this@DelhiveryFabCardMenu, false
+          LayoutInflater.from(context), this@DelfinFabCardMenu, false
       )
 
       /* set binding params */

@@ -33,7 +33,7 @@
     </queries>
 
     <application
-        android:name="com.dfd.delfin.KotlinApp"
+        android:name=".KotlinApp"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:hardwareAccelerated="true"
@@ -45,43 +45,43 @@
         android:theme="@style/CustomSplashScreenTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagMapping.TagMappingActivity"
+            android:name=".ui.fastag.tagMapping.TagMappingActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.BuyFasTagActivity"
+            android:name=".ui.fastag.issuance.BuyFasTagActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.SelectFasTagActivity"
+            android:name=".ui.fastag.issuance.SelectFasTagActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.AddVehicleActivity"
+            android:name=".ui.fastag.issuance.AddVehicleActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.FastagKycActivity"
+            android:name=".ui.fastag.issuance.FastagKycActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.PaymentMethodActivity"
+            android:name=".ui.fastag.issuance.PaymentMethodActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.PaymentBreakupActivity"
+            android:name=".ui.fastag.issuance.PaymentBreakupActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.issuance.FastagCollectionActivity"
+            android:name=".ui.fastag.issuance.FastagCollectionActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.serviceConfigListing.ServiceConfigurationListActivity"
+            android:name=".ui.serviceConfigListing.ServiceConfigurationListActivity"
             android:exported="false" />
 
         <service
-            android:name="com.dfd.delfin.fcm.DelhiveryFCMService"
+            android:name=".fcm.DelfinFCMService"
             android:exported="false"
             android:stopWithTask="false">
             <intent-filter>
@@ -129,12 +129,12 @@
             android:value="@bool/FIREBASE_ACTIVATED" />
 
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.home.HomeActivity"
+            android:name=".ui.home.activity.home.HomeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.dfd.delfin.ui.splash.StartRoutingActivity"
+            android:name=".ui.splash.StartRoutingActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -149,278 +149,278 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="axledelhivery.page.link"
+                    android:host="delfindfd.page.link"
                     android:scheme="http" />
                 <data
-                    android:host="axledelhivery.page.link"
+                    android:host="delfindfd.page.link"
                     android:scheme="https" />
                 <data
-                    android:host="dlvry.page.link"
+                    android:host="delfin.page.link"
                     android:scheme="https" />
                 <data
-                    android:host="dlvry.page.link"
+                    android:host="delfin.page.link"
                     android:scheme="http" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dfd.delfin.ui.auth.AuthenticationActivity"
+            android:name=".ui.auth.AuthenticationActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.selectroutewelcome.SelectRouteWelcomeActivity"
+            android:name=".ui.selectroutewelcome.SelectRouteWelcomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.selectroute.activity.SelectRouteActivity"
+            android:name=".ui.selectroute.activity.SelectRouteActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.onboarding.OnboardingActivity"
+            android:name=".ui.onboarding.OnboardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.biddetails.MarketPlaceBidDetailsActivity"
+            android:name=".ui.biddetails.MarketPlaceBidDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.searchload.SearchLoadActivity"
+            android:name=".ui.searchload.SearchLoadActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="com.dfd.delfin.ui.bids.TripsActivity"
+            android:name=".ui.bids.TripsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.tripdetails.TripDetailsActivity"
+            android:name=".ui.tripdetails.TripDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.tripdetails.ImageViewActivity"
+            android:name=".ui.tripdetails.ImageViewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.transactionlist.TransactionsActivity"
+            android:name=".ui.home.activity.transactionlist.TransactionsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.transactiondetail.TransactionDetailActivity"
+            android:name=".ui.home.activity.transactiondetail.TransactionDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.fuel.ActiveTripsActivity"
+            android:name=".ui.home.activity.fuel.ActiveTripsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.bank.BankTransferActivity"
+            android:name=".ui.home.activity.bank.BankTransferActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.fuelcard.CreateFuelCardActivity"
+            android:name=".ui.home.activity.fuelcard.CreateFuelCardActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.wallet.WalletOnboardingActivity"
+            android:name=".ui.home.activity.wallet.WalletOnboardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.tripdetails.UploadImageActivity"
+            android:name=".ui.tripdetails.UploadImageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.home.activity.docket.DocketUpdateActivity"
+            android:name=".ui.home.activity.docket.DocketUpdateActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.searchtrip.SearchActivity"
+            android:name=".ui.searchtrip.SearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.ledger.ConsolidatedPageActivity"
+            android:name=".ui.ledger.ConsolidatedPageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.team.TeamMembersActivity"
+            android:name=".ui.team.TeamMembersActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.userroutes.UserRoutesActivity"
+            android:name=".ui.userroutes.UserRoutesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.searchongoingtrip.SearchOngoingTripActivity"
+            android:name=".ui.searchongoingtrip.SearchOngoingTripActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.trucks.TruckActivity"
+            android:name=".ui.trucks.TruckActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.searchCity.SearchCity"
+            android:name=".ui.searchCity.SearchCity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.auth.InvalidActivity"
+            android:name=".ui.auth.InvalidActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.trucks.AddTruckPathwayActivity"
+            android:name=".ui.trucks.AddTruckPathwayActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.HelpSupportActivity"
+            android:name=".ui.profile.HelpSupportActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.profiledetails.ProfileDetailsActivity"
+            android:name=".ui.profile.profiledetails.ProfileDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.kycdetails.ProfileKYCDetailsActivity"
+            android:name=".ui.profile.kycdetails.ProfileKYCDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.BankDetailsActivity"
+            android:name=".ui.profile.BankDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.dashboard.KycDashboardActivity"
+            android:name=".ui.kyc.dashboard.KycDashboardActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.pan.PanVerificationActivity"
+            android:name=".ui.kyc.pan.PanVerificationActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.gst.GstVerificationActivity"
+            android:name=".ui.kyc.gst.GstVerificationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.aadhaar.AadhaarVerificationActivity"
+            android:name=".ui.kyc.aadhaar.AadhaarVerificationActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.address.CommunicationAddressActivity"
+            android:name=".ui.kyc.address.CommunicationAddressActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.MyProfileActivity"
+            android:name=".ui.profile.MyProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.accountrole.AccountRoleActivity"
+            android:name=".ui.accountrole.AccountRoleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.accountdetails.AccountDetailsActivity"
+            android:name=".ui.accountdetails.AccountDetailsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.accountaction.AccountActionActivity"
+            android:name=".ui.accountaction.AccountActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.address.AddressActivity"
+            android:name=".ui.kyc.address.AddressActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.businessverification.BusinessVerificationActivity"
+            android:name=".ui.businessverification.BusinessVerificationActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.identityverification.IdentityVerificationActivity"
+            android:name=".ui.kyc.identityverification.IdentityVerificationActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.onboarding.BasicDetailsActivity"
+            android:name=".ui.onboarding.BasicDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.searchcitystate.SearchCityStateActivity"
+            android:name=".ui.searchcitystate.SearchCityStateActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.searchcitystate.SearchOriginCityActivity"
+            android:name=".ui.searchcitystate.SearchOriginCityActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.paymentdetails.VendorPolicyActivity"
+            android:name=".ui.paymentdetails.VendorPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.paymentdetails.PaymentDetailsActivity"
+            android:name=".ui.paymentdetails.PaymentDetailsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.payment.PaymentWebViewActivity"
+            android:name=".ui.payment.PaymentWebViewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.userroutes.ManageRouteActivity"
+            android:name=".ui.userroutes.ManageRouteActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.raterewards.ShareRateGetRewardsActivity"
+            android:name=".ui.profile.raterewards.ShareRateGetRewardsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.sharerate.ShareRateActivity"
+            android:name=".ui.sharerate.ShareRateActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.contractDetails.ContractDetailsActivity"
+            android:name=".ui.contractDetails.ContractDetailsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
-            android:name="com.dfd.delfin.ui.contractDetails.PlacementsContractDetailsActivity"
+            android:name=".ui.contractDetails.PlacementsContractDetailsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
-            android:name="com.dfd.delfin.ui.auth.AccountDeletionActivity"
+            android:name=".ui.auth.AccountDeletionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.placementdetails.PlacementDetailsActivity"
+            android:name=".ui.placementdetails.PlacementDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.fastag_details.FastagTransactionDetailsActivity"
+            android:name=".ui.fastag.fastag_details.FastagTransactionDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.recharge.FastagRechargeActivity"
+            android:name=".ui.fastag.recharge.FastagRechargeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.trucks.FastagTrucksActivity"
+            android:name=".ui.fastag.trucks.FastagTrucksActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagAssignment.pendingActions.PendingActionsActivity"
+            android:name=".ui.fastag.tagAssignment.pendingActions.PendingActionsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity"
+            android:name=".ui.fastag.tagAssignment.pendingActions.AssignVehicleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagAssignment.assign.RCUploadActivity"
+            android:name=".ui.fastag.tagAssignment.assign.RCUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagAssignment.assign.VehicleDetailsActivity"
+            android:name=".ui.fastag.tagAssignment.assign.VehicleDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.common.ImagePreviewActivity"
+            android:name=".ui.common.ImagePreviewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagAssignment.assign.VehicleImageUploadActivity"
+            android:name=".ui.fastag.tagAssignment.assign.VehicleImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity"
+            android:name=".ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.trucks.FastagSearchActivity"
+            android:name=".ui.fastag.trucks.FastagSearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.loadwallet.LoadWalletActivity"
+            android:name=".ui.loadwallet.LoadWalletActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.loadwallet.TransactionDetailsActivity"
+            android:name=".ui.loadwallet.TransactionDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.loadwallet.RechargeDetailsActivity"
+            android:name=".ui.loadwallet.RechargeDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.profile.PlacementsActivity"
+            android:name=".ui.profile.PlacementsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.qdr.FastagRaiseDisputeActivity"
+            android:name=".ui.fastag.qdr.FastagRaiseDisputeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.qdr.FastagDisputeIssuesActivity"
+            android:name=".ui.fastag.qdr.FastagDisputeIssuesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.qdr.FastagTransactionSelectionActivity"
+            android:name=".ui.fastag.qdr.FastagTransactionSelectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.fastag.qdr.FastagDynamicDisputeFormActivity"
+            android:name=".ui.fastag.qdr.FastagDynamicDisputeFormActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.documentverification.DocumentVerificationActivity"
+            android:name=".ui.kyc.documentverification.DocumentVerificationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.kyc.documentverification.DocumentVerificationActivity"
+            android:name=".ui.kyc.documentverification.DocumentVerificationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.invoicereview.InvoiceReviewActivity"
+            android:name=".ui.invoicereview.InvoiceReviewActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.dfd.delfin.ui.comingsoon.ComingSoonActivity"
+            android:name=".ui.comingsoon.ComingSoonActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.dfd.delfin.ui.comingsoon.ComingSoonActivity"
+            android:name=".ui.comingsoon.ComingSoonActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.dfd.delfin.R
 
-class DelhiveryAadhaarFormattedEditText(context: Context,
-attrs: AttributeSet? = null) : AppCompatEditText(context, attrs) {
+class DelfinAadhaarFormattedEditText(context: Context,
+                                     attrs: AttributeSet? = null) : AppCompatEditText(context, attrs) {
     var groupSeparator = ' '
     var numberOfGroups = 3
     var groupLength = 4

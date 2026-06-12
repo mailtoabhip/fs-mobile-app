@@ -71,7 +71,7 @@
           android:text="@string/label_member_name"
           android:textSize="@dimen/text_14sp"
           android:textColor="@color/heading_black"/>
-      <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+      <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
           android:layout_width="match_parent"
           android:layout_marginTop="@dimen/size_6dp"
           android:layout_height="@dimen/edit_text_height"
@@ -97,7 +97,7 @@
           android:text="@string/label_mobile_number"
           android:textSize="@dimen/text_14sp"
           android:textColor="@color/heading_black"/>
-      <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+      <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
           android:layout_width="match_parent"
           android:layout_marginTop="@dimen/size_6dp"
           android:layout_height="@dimen/edit_text_height"

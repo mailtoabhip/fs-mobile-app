@@ -25,7 +25,7 @@ import java.util.ArrayList
  * @attr ref R.styleable.AutofitTextView_minTextSize
  * @attr ref R.styleable.AutofitTextView_precision
  */
-class DelhiveryAutofitHelper private constructor(
+class DelfinAutofitHelper private constructor(
   private val mTextView: TextView
 ) {
   private val mPaint: TextPaint
@@ -78,7 +78,7 @@ class DelhiveryAutofitHelper private constructor(
    * Adds an [OnTextSizeChangeListener] to the list of those whose methods are called
    * whenever the [TextView]'s `textSize` changes.
    */
-  fun addOnTextSizeChangeListener(listener: OnTextSizeChangeListener): DelhiveryAutofitHelper {
+  fun addOnTextSizeChangeListener(listener: OnTextSizeChangeListener): DelfinAutofitHelper {
     if (mListeners == null) {
       mListeners = ArrayList()
     }
@@ -90,7 +90,7 @@ class DelhiveryAutofitHelper private constructor(
    * Removes the specified [OnTextSizeChangeListener] from the list of those whose methods
    * are called whenever the [TextView]'s `textSize` changes.
    */
-  fun removeOnTextSizeChangeListener(listener: OnTextSizeChangeListener): DelhiveryAutofitHelper {
+  fun removeOnTextSizeChangeListener(listener: OnTextSizeChangeListener): DelfinAutofitHelper {
     if (mListeners != null) {
       mListeners!!.remove(listener)
     }
@@ -111,7 +111,7 @@ class DelhiveryAutofitHelper private constructor(
    *
    * @param precision The amount of precision.
    */
-  fun setPrecision(precision: Float): DelhiveryAutofitHelper {
+  fun setPrecision(precision: Float): DelfinAutofitHelper {
     if (mPrecision != precision) {
       mPrecision = precision
 
@@ -135,7 +135,7 @@ class DelhiveryAutofitHelper private constructor(
    *
    * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
    */
-  fun setMinTextSize(size: Float): DelhiveryAutofitHelper {
+  fun setMinTextSize(size: Float): DelfinAutofitHelper {
     return setMinTextSize(TypedValue.COMPLEX_UNIT_SP, size)
   }
 
@@ -151,7 +151,7 @@ class DelhiveryAutofitHelper private constructor(
   fun setMinTextSize(
     unit: Int,
     size: Float
-  ): DelhiveryAutofitHelper {
+  ): DelfinAutofitHelper {
     val context = mTextView.context
     var r = Resources.getSystem()
 
@@ -186,7 +186,7 @@ class DelhiveryAutofitHelper private constructor(
    *
    * @attr ref android.R.styleable#TextView_textSize
    */
-  fun setMaxTextSize(size: Float): DelhiveryAutofitHelper {
+  fun setMaxTextSize(size: Float): DelfinAutofitHelper {
     return setMaxTextSize(TypedValue.COMPLEX_UNIT_SP, size)
   }
 
@@ -202,7 +202,7 @@ class DelhiveryAutofitHelper private constructor(
   fun setMaxTextSize(
     unit: Int,
     size: Float
-  ): DelhiveryAutofitHelper {
+  ): DelfinAutofitHelper {
     val context = mTextView.context
     var r = Resources.getSystem()
 
@@ -232,7 +232,7 @@ class DelhiveryAutofitHelper private constructor(
   /**
    * @see TextView.setMaxLines
    */
-  fun setMaxLines(lines: Int): DelhiveryAutofitHelper {
+  fun setMaxLines(lines: Int): DelfinAutofitHelper {
     if (mMaxLines != lines) {
       mMaxLines = lines
 
@@ -251,7 +251,7 @@ class DelhiveryAutofitHelper private constructor(
   /**
    * Set the enabled state of automatically resizing text.
    */
-  fun setEnabled(enabled: Boolean): DelhiveryAutofitHelper {
+  fun setEnabled(enabled: Boolean): DelfinAutofitHelper {
     if (mEnabled != enabled) {
       mEnabled = enabled
 
@@ -400,8 +400,8 @@ class DelhiveryAutofitHelper private constructor(
       view: TextView,
       attrs: AttributeSet? = null,
       defStyle: Int = 0
-    ): DelhiveryAutofitHelper {
-      val helper = DelhiveryAutofitHelper(view)
+    ): DelfinAutofitHelper {
+      val helper = DelfinAutofitHelper(view)
       var sizeToFit = true
       if (attrs != null) {
         val context = view.context

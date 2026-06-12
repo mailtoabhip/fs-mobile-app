@@ -23,7 +23,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.dfd.delfin.ui.home.activity.home.HomeActivity
-import com.dfd.delfin.utils.*
 import com.dfd.delfin.utils.prefs.UserPrefs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -37,14 +36,14 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Created by saurabhdhillon
- * for Delhivery Private Limited
+ * for Delfin Private Limited
  **
  *
  * Implementation of [FirebaseMessagingService] to handle notifications
  *
  **
  */
-class DelhiveryFCMService : FirebaseMessagingService() {
+class DelfinFCMService : FirebaseMessagingService() {
 
   @Inject lateinit var userPrefs: UserPrefs
   //@Inject lateinit var analyticsUtil : AnalyticsUtil
@@ -187,7 +186,7 @@ class DelhiveryFCMService : FirebaseMessagingService() {
 
           with(NotificationManagerCompat.from(this)) {
             if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
-                this@DelhiveryFCMService,
+                this@DelfinFCMService,
                 permission.POST_NOTIFICATIONS
               ) == PackageManager.PERMISSION_GRANTED)
               ||Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU

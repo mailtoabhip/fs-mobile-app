@@ -367,7 +367,7 @@
               app:srcCompat="@drawable/ic_tick"
               />
 
-          <com.dfd.delfin.ui.custom.DelhiveryAutoFitTextView
+          <com.dfd.delfin.ui.custom.DelfinAutoFitTextView
               android:id="@+id/text_bid_amount"
               android:layout_width="0dp"
               android:layout_height="wrap_content"

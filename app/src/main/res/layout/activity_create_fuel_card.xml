@@ -350,7 +350,7 @@
 
               </RadioGroup>
 
-              <com.dfd.delfin.ui.custom.DelhiveryTextInputLayout
+              <com.dfd.delfin.ui.custom.DelfinTextInputLayout
                   android:id="@+id/til_mobile"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -374,7 +374,7 @@
                     android:inputType="number"
                     android:maxLines="1"
                     />
-              </com.dfd.delfin.ui.custom.DelhiveryTextInputLayout>
+              </com.dfd.delfin.ui.custom.DelfinTextInputLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -433,7 +433,7 @@
                   />
 
 
-              <com.dfd.delfin.ui.custom.DelhiveryTextInputLayout
+              <com.dfd.delfin.ui.custom.DelfinTextInputLayout
                   android:id="@+id/til_amount"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -455,7 +455,7 @@
                     android:inputType="number"
                     android:maxLines="1"
                     />
-              </com.dfd.delfin.ui.custom.DelhiveryTextInputLayout>
+              </com.dfd.delfin.ui.custom.DelfinTextInputLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
           </androidx.cardview.widget.CardView>

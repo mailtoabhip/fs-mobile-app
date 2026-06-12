@@ -3,10 +3,7 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     >
   <data>
-    <!--<variable
-        name="viewModel"
-        type="com.delhivery.axle.ui.home.fragments.bids.HomeBidsViewModel"
-        />-->
+
   </data>
   <FrameLayout
       android:layout_width="match_parent"

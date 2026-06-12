@@ -107,7 +107,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <!-- FASTag Pending Actions Shimmer -->
-                    <com.dfd.delfin.ui.custom.DelhiveryShimmerLayout
+                    <com.dfd.delfin.ui.custom.DelfinShimmerLayout
                         android:id="@+id/fastagPendingShimmer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
 
                         </LinearLayout>
 
-                    </com.dfd.delfin.ui.custom.DelhiveryShimmerLayout>
+                    </com.dfd.delfin.ui.custom.DelfinShimmerLayout>
 
                     <!-- FASTag Pending Actions Card -->
                     <LinearLayout

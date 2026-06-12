@@ -129,7 +129,7 @@
             </LinearLayout>
 
             <!-- FASTag Pending Actions Shimmer -->
-            <com.dfd.delfin.ui.custom.DelhiveryShimmerLayout
+            <com.dfd.delfin.ui.custom.DelfinShimmerLayout
                 android:id="@+id/fastagPendingShimmer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -166,7 +166,7 @@
 
                 </LinearLayout>
 
-            </com.dfd.delfin.ui.custom.DelhiveryShimmerLayout>
+            </com.dfd.delfin.ui.custom.DelfinShimmerLayout>
 
             <!-- FASTag Pending Actions Card -->
             <LinearLayout
@@ -350,9 +350,9 @@
 
 
 
-            <!-- We @Delhivery Section -->
+            <!-- We @Delfin Section -->
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sectionWeAtDelhivery"
+                android:id="@+id/sectionWeAtDelfin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/size_16dp"

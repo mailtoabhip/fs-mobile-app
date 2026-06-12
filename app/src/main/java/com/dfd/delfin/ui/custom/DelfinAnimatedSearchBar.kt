@@ -23,7 +23,7 @@ import io.reactivex.disposables.CompositeDisposable
 /**
  * Custom implementation of [EditText]
  */
-class DelhiveryAnimatedSearchBar(
+class DelfinAnimatedSearchBar(
   context: Context,
   attrs: AttributeSet? = null
 ) : AppCompatEditText(context, attrs) {

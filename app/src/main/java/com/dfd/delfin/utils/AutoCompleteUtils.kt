@@ -5,9 +5,9 @@ import com.dfd.delfin.api.service.CityService
 import com.dfd.delfin.api.service.TPSService
 import com.dfd.delfin.data.CityModel
 import com.dfd.delfin.injection.scope.ActivityScope
-import com.dfd.delfin.ui.custom.DelhiveryCityAutoEditText
-import com.dfd.delfin.ui.custom.DelhiveryDriverNameAutoEditText
-import com.dfd.delfin.ui.custom.DelhiveryTrucksAutoEditText
+import com.dfd.delfin.ui.custom.DelfinCityAutoEditText
+import com.dfd.delfin.ui.custom.DelfinDriverNameAutoEditText
+import com.dfd.delfin.ui.custom.DelfinTrucksAutoEditText
 import com.dfd.delfin.utils.extensions.not
 import com.dfd.delfin.utils.extensions.onBackground
 import com.dfd.delfin.utils.prefs.UserPrefs
@@ -38,9 +38,9 @@ class AutoCompleteUtils @Inject constructor(
    * Attach auto complete for cities
    */
   fun autoCompleteCity(
-    editText: DelhiveryCityAutoEditText,
-    cities: List<CityModel>,
-    action: (CityModel) -> Unit
+      editText: DelfinCityAutoEditText,
+      cities: List<CityModel>,
+      action: (CityModel) -> Unit
   ) {
     this.cities = cities
     val d = RxTextView.textChanges(editText)
@@ -53,8 +53,8 @@ class AutoCompleteUtils @Inject constructor(
   }
 
   fun autoCompleteCity(
-    editText: DelhiveryCityAutoEditText,
-    action: (CityModel) -> Unit
+      editText: DelfinCityAutoEditText,
+      action: (CityModel) -> Unit
   ) {
     val d = RxTextView.textChanges(editText)
         .filter { it.length >= 3 }
@@ -66,8 +66,8 @@ class AutoCompleteUtils @Inject constructor(
   }
 
     fun autoCompleteTruck(
-            editText: DelhiveryTrucksAutoEditText,
-            action: (String) -> Unit
+        editText: DelfinTrucksAutoEditText,
+        action: (String) -> Unit
     ) {
         val d = RxTextView.textChanges(editText)
                 .filter { it.length >= 2 }
@@ -81,7 +81,7 @@ class AutoCompleteUtils @Inject constructor(
     // Load drivers for a specific vehicle
     private fun loadDriversForVehicle(
         vehicleNumber: String,
-        editText: DelhiveryDriverNameAutoEditText,
+        editText: DelfinDriverNameAutoEditText,
         action: (DriverDataResponse) -> Unit
     ) {
         disposable?.dispose()
@@ -131,7 +131,7 @@ class AutoCompleteUtils @Inject constructor(
 
 
     fun autoCompleteDriverName(
-        editText: DelhiveryDriverNameAutoEditText,
+        editText: DelfinDriverNameAutoEditText,
         action: (String) -> Unit
     ) {
         val d = RxTextView.textChanges(editText)
@@ -145,7 +145,7 @@ class AutoCompleteUtils @Inject constructor(
 
     // Simple driver name autocomplete with phone number
     fun autoCompleteDriverNameWithPhone(
-        editText: DelhiveryDriverNameAutoEditText,
+        editText: DelfinDriverNameAutoEditText,
         vehicleNumberProvider: () -> String,
         action: (DriverDataResponse) -> Unit
     ) {
@@ -173,8 +173,8 @@ class AutoCompleteUtils @Inject constructor(
 
 
   fun skipFirstAutoCompleteCity(
-    editText: DelhiveryCityAutoEditText,
-    action: (CityModel) -> Unit
+      editText: DelfinCityAutoEditText,
+      action: (CityModel) -> Unit
   ) {
     val d = RxTextView.textChanges(editText)
       .filter { it.length >= 3 }
@@ -190,9 +190,9 @@ class AutoCompleteUtils @Inject constructor(
    * Re-fetch suggestions
    */
   private fun resetStaticSuggestions(
-    query: String,
-    editText: DelhiveryCityAutoEditText,
-    action: (CityModel) -> Unit
+      query: String,
+      editText: DelfinCityAutoEditText,
+      action: (CityModel) -> Unit
   ) {
     val d = RxTextView.textChanges(editText)
         .filter { it.length >= 3 }
@@ -212,9 +212,9 @@ class AutoCompleteUtils @Inject constructor(
   }
 
   private fun resetNetworkSuggestions(
-    query: String,
-    editText: DelhiveryCityAutoEditText,
-    action: (CityModel) -> Unit
+      query: String,
+      editText: DelfinCityAutoEditText,
+      action: (CityModel) -> Unit
   ) {
     val parentJsonObject = JsonObject()
     val jsonObject = JsonObject()
@@ -267,7 +267,7 @@ class AutoCompleteUtils @Inject constructor(
 
     private fun resetNetworkDriverNameSuggestions(
         query: String,
-        editText: DelhiveryDriverNameAutoEditText,
+        editText: DelfinDriverNameAutoEditText,
         action: (String) -> Unit
     ) {
         disposable?.dispose()
@@ -316,7 +316,7 @@ class AutoCompleteUtils @Inject constructor(
     private fun resetNetworkDriverNameSuggestionsWithPhone(
         driverNameQuery: String,
         vehicleNumber: String,
-        editText: DelhiveryDriverNameAutoEditText,
+        editText: DelfinDriverNameAutoEditText,
         action: (DriverDataResponse) -> Unit
     ) {
         disposable?.dispose()

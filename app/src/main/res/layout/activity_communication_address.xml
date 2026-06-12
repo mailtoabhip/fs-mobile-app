@@ -111,7 +111,7 @@
                     bind:layout_constraintTop_toBottomOf="@+id/address_error"
                     android:orientation="vertical"
       android:fitsSystemWindows="true">
-                        <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                        <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                             android:id="@+id/edit_flat"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/edit_text_height"
@@ -133,7 +133,7 @@
                   bind:layout_constraintStart_toStartOf="parent"
                   bind:layout_constraintTop_toBottomOf="parent"
                   android:layout_height="wrap_content">
-                        <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                        <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                             android:id="@+id/edit_area"
                             android:layout_marginTop="@dimen/size_24dp"
                             android:layout_width="match_parent"
@@ -171,7 +171,7 @@
                   android:paddingStart="@dimen/size_12dp"
                   android:paddingEnd="@dimen/size_12dp" />
               </androidx.constraintlayout.widget.ConstraintLayout>
-                        <com.dfd.delfin.ui.custom.DelhiveryCityAutoEditText
+                        <com.dfd.delfin.ui.custom.DelfinCityAutoEditText
                             android:id="@+id/auto_complete_city"
                             android:layout_width="match_parent"
                             android:layout_marginTop="@dimen/size_24dp"
@@ -189,7 +189,7 @@
                             android:textSize="@dimen/text_16sp"
                             android:text="@={ viewModel.cityAddress }"
                             />
-                        <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                        <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                             android:id="@+id/edit_pincode"
                             android:layout_width="match_parent"
                             android:layout_marginTop="@dimen/size_24dp"

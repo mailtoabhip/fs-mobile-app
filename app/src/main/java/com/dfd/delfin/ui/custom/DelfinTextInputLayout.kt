@@ -14,7 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 /**
  * Custom implementation of [TextInputLayout]
  */
-class DelhiveryTextInputLayout(
+class DelfinTextInputLayout(
   context: Context,
   attrs: AttributeSet
 ) : TextInputLayout(context, attrs), TextWatcher {

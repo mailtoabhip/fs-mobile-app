@@ -203,7 +203,7 @@
               android:padding="@dimen/size_12dp"
               >
 
-            <com.dfd.delfin.ui.custom.DelhiveryTextInputLayout
+            <com.dfd.delfin.ui.custom.DelfinTextInputLayout
                 android:id="@+id/til_amount"
                 style="@style/TextInputLayoutAppearance"
                 android:layout_width="0dp"
@@ -225,7 +225,7 @@
                   android:inputType="number"
                   android:maxLines="1"
                   />
-            </com.dfd.delfin.ui.custom.DelhiveryTextInputLayout>
+            </com.dfd.delfin.ui.custom.DelfinTextInputLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_transfer"

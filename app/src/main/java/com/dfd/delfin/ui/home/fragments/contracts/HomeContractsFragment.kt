@@ -28,7 +28,7 @@ import com.dfd.delfin.databinding.DialogBottomVehicleFilterBinding
 import com.dfd.delfin.databinding.DialogContractsTypeInfoBinding
 import com.dfd.delfin.databinding.FragmentHomeContractsBinding
 import com.dfd.delfin.ui.contractDetails.contractDetailsIntent
-import com.dfd.delfin.ui.custom.DelhiveryAnimatedSearchBar
+import com.dfd.delfin.ui.custom.DelfinAnimatedSearchBar
 import com.dfd.delfin.ui.home.activity.home.TitleProvider
 import com.dfd.delfin.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
 import com.dfd.delfin.ui.home.fragments.loads_truck.HomeLoadsTruckFragment
@@ -366,8 +366,8 @@ class HomeContractsFragment :HomeLoadsTruckBaseFragment<FragmentHomeContractsBin
    * Home contracts rv scroll listener for search bar animation related stuff
    */
   inner class HomeContractsRVScrollListener(
-    private val stickyView: DelhiveryAnimatedSearchBar,
-    private val elevation: Float = 12f
+      private val stickyView: DelfinAnimatedSearchBar,
+      private val elevation: Float = 12f
   ) : OnScrollListener() {
     /* Current toolbar elevation */
     private var toolbarElevation = -1f

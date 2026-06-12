@@ -46,7 +46,7 @@
             android:background="@drawable/bg_login_edit"
             android:elevation="@dimen/size_2dp"
             android:layout_height="@dimen/size_42dp"/>
-        <com.dfd.delfin.ui.custom.DelhiveryTrucksAutoEditText
+        <com.dfd.delfin.ui.custom.DelfinTrucksAutoEditText
             android:id="@+id/edit_auto_complete_trucks"
             android:layout_width="match_parent"
             android:visibility="gone"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toBottomOf="@+id/vehicleError"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp" />
-    <com.dfd.delfin.ui.custom.DelhiveryDriverNameAutoEditText
+    <com.dfd.delfin.ui.custom.DelfinDriverNameAutoEditText
         android:id="@+id/edit_auto_complete_driver_name"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_42dp"

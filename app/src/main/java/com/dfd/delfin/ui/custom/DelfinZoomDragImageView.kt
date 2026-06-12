@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView
 /**
  * Custom implementation of [AppCompatImageView] with zoom/drag/rotate features
  */
-class DelhiveryZoomDragImageView(
+class DelfinZoomDragImageView(
   internal var context: Context,
   attr: AttributeSet
 ) : AppCompatImageView(context, attr) {

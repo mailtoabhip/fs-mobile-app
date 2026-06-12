@@ -35,8 +35,8 @@ import com.dfd.delfin.databinding.FragmentHomePodBinding
 import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType
 import com.dfd.delfin.ui.common.UiEvent
 import com.dfd.delfin.ui.common.UiState
-import com.dfd.delfin.ui.custom.DelhiveryAnimatedSearchBar
-import com.dfd.delfin.ui.custom.DelhiveryAnimatedSearchBar.ToolbarElevationChangeListener
+import com.dfd.delfin.ui.custom.DelfinAnimatedSearchBar
+import com.dfd.delfin.ui.custom.DelfinAnimatedSearchBar.ToolbarElevationChangeListener
 import com.dfd.delfin.ui.home.activity.docket.docketUpdateIntent
 import com.dfd.delfin.ui.home.fragments.HomeBaseFragment
 import com.dfd.delfin.ui.home.fragments.HomeFragmentType
@@ -537,8 +537,8 @@ class HomePodsFragment : HomeBaseFragment<FragmentHomePodBinding, HomePodViewMod
   }
 
   inner class HomePODRVScrollListener(
-    private val stickyView: DelhiveryAnimatedSearchBar,
-    private val elevation: Float = 12f
+      private val stickyView: DelfinAnimatedSearchBar,
+      private val elevation: Float = 12f
   ) : OnScrollListener() {
 
     private var toolbarElevation = -1f

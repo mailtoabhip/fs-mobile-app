@@ -16,7 +16,7 @@ import com.dfd.delfin.ui.custom.AnimationType.RevealOpen
 /**
  * Custom implementation of View to make arc
  */
-class DelhiveryOnboardingArcView(
+class DelfinOnboardingArcView(
   context: Context,
   attrs: AttributeSet? = null
 ) : View(context, attrs) {

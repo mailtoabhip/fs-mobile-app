@@ -15,7 +15,7 @@
       app:cardCornerRadius="6dp"
       app:cardElevation="0dp">
 
-    <com.dfd.delfin.ui.custom.DelhiveryShimmerLayout
+    <com.dfd.delfin.ui.custom.DelfinShimmerLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -54,6 +54,6 @@
             />
 
       </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.dfd.delfin.ui.custom.DelhiveryShimmerLayout>
+    </com.dfd.delfin.ui.custom.DelfinShimmerLayout>
   </androidx.cardview.widget.CardView>
 </layout>

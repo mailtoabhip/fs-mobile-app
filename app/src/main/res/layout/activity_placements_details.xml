@@ -124,7 +124,7 @@
             android:background="@drawable/bg_login_edit"
             android:elevation="@dimen/size_2dp"
             android:layout_height="@dimen/size_42dp"/>
-        <com.dfd.delfin.ui.custom.DelhiveryTrucksAutoEditText
+        <com.dfd.delfin.ui.custom.DelfinTrucksAutoEditText
             android:id="@+id/edit_auto_complete_trucks"
             android:layout_width="match_parent"
             android:textSize="@dimen/text_16sp"

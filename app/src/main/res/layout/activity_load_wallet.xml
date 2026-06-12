@@ -97,7 +97,7 @@
                         </FrameLayout>
                     </LinearLayout>
 
-                    <com.dfd.delfin.ui.custom.DelhiveryShimmerLayout
+                    <com.dfd.delfin.ui.custom.DelfinShimmerLayout
                         android:id="@+id/balance_shimmer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                                 android:background="@color/transparent_grey" />
 
                         </LinearLayout>
-                    </com.dfd.delfin.ui.custom.DelhiveryShimmerLayout>
+                    </com.dfd.delfin.ui.custom.DelfinShimmerLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_add_money"

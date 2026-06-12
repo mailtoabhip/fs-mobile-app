@@ -1,6 +1,6 @@
 package com.dfd.delfin.injection.module
 
-import com.dfd.delfin.fcm.DelhiveryFCMService
+import com.dfd.delfin.fcm.DelfinFCMService
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -9,5 +9,5 @@ import dagger.android.ContributesAndroidInjector
 internal abstract class ServiceModule {
 
   @ContributesAndroidInjector
-  internal abstract fun contributeDelhiveryFCMService(): DelhiveryFCMService
+  internal abstract fun contributeDelfinFCMService(): DelfinFCMService
 }

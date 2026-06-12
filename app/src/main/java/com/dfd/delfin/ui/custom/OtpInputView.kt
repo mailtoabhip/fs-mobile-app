@@ -40,7 +40,7 @@ class OtpInputView @JvmOverloads constructor(
     var onOtpComplete: ((CharArray) -> Unit)? = null
 
     private val binding = ViewOtpInputBinding.inflate(LayoutInflater.from(context), this, true)
-    private val cells = mutableListOf<DelhiveryOTPViewEditText>()
+    private val cells = mutableListOf<DelfinOTPViewEditText>()
 
     // Tracks whether we're in error state so focus changes don't prematurely clear it
     private var isInErrorState = false

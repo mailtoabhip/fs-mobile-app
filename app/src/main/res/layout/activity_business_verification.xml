@@ -126,7 +126,7 @@
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"
                 />
-            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+            <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                 android:id="@+id/owned_trucks_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_text_height"
@@ -176,7 +176,7 @@
                 android:textColor="@color/sub_heading_black"
                 android:textSize="@dimen/text_16sp"
                 />
-            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+            <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                 android:id="@+id/attached_trucks_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_text_height"
@@ -300,7 +300,7 @@
                     >
 
 
-                <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+                <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                     android:id="@+id/edit_truck"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"

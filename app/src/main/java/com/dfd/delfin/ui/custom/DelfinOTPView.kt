@@ -17,7 +17,7 @@ import com.dfd.delfin.utils.extensions.errorVibrate
 /**
  * Custom implementation of [FrameLayout] for OTP enter view
  */
-class DelhiveryOTPView(
+class DelfinOTPView(
   context: Context,
   attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
@@ -170,7 +170,7 @@ class DelhiveryOTPView(
    * View at index
    */
   private fun viewAtIndex(index: Int) = otp[index]?.viewId?.let { viewId ->
-    binding.container.findViewById<View>(viewId) as DelhiveryOTPViewEditText
+    binding.container.findViewById<View>(viewId) as DelfinOTPViewEditText
   }
 
   /**

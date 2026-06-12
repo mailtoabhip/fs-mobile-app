@@ -7,10 +7,10 @@ import android.animation.ValueAnimator
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.dfd.delfin.R
-import com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
+import com.dfd.delfin.ui.custom.DelfinOTPViewEditText
 
 /**
- * Show error vibration with error state for [DelhiveryOTPViewEditText]
+ * Show error vibration with error state for [DelfinOTPViewEditText]
  */
 fun View.errorVibrate(start: Boolean = true): ObjectAnimator = resources.getDimension(R.dimen.distance_otp_vibrate)
     .let { distance ->
@@ -18,7 +18,7 @@ fun View.errorVibrate(start: Boolean = true): ObjectAnimator = resources.getDime
           this, "translationX", 0f, distance, -distance, distance, -distance, 0f
       )
           .apply {
-            if (this@errorVibrate is DelhiveryOTPViewEditText) {
+            if (this@errorVibrate is DelfinOTPViewEditText) {
               addListener(object : AnimatorListener {
                 override fun onAnimationRepeat(animation: Animator) {}
 

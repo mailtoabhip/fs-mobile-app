@@ -11,7 +11,7 @@ import com.dfd.delfin.R
 /**
  * Custom implementation of [AppCompatEditText] for OTP enter
  */
-class DelhiveryPanViewEditText(
+class DelfinPanViewEditText(
   context: Context,
   attrs: AttributeSet? = null
 ) : AppCompatEditText(context, attrs) {

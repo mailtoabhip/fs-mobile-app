@@ -18,7 +18,7 @@ import com.dfd.delfin.data.names
 /**
  * Custom implementation of [AppCompatAutoCompleteTextView]
  */
-class DelhiveryCityAutoEditText(
+class DelfinCityAutoEditText(
   context: Context,
   attrs: AttributeSet? = null
 ) : AppCompatAutoCompleteTextView(context, attrs) {
