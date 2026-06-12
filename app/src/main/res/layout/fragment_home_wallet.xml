@@ -57,7 +57,7 @@
             android:layout_above="@+id/pager_indicator"
             />
 
-        <com.delhivery.axle.ui.custom.DelhiveryViewPagerIndicator
+        <com.dfd.delfin.ui.custom.DelhiveryViewPagerIndicator
             android:id="@+id/pager_indicator"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/size_24dp"

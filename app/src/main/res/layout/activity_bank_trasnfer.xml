@@ -6,7 +6,7 @@
   <data>
     <variable
         name="wallet"
-        type="com.delhivery.axle.api.response.WalletData"
+        type="com.dfd.delfin.api.response.WalletData"
         />
 
     <variable
@@ -203,7 +203,7 @@
               android:padding="@dimen/size_12dp"
               >
 
-            <com.delhivery.axle.ui.custom.DelhiveryTextInputLayout
+            <com.dfd.delfin.ui.custom.DelhiveryTextInputLayout
                 android:id="@+id/til_amount"
                 style="@style/TextInputLayoutAppearance"
                 android:layout_width="0dp"
@@ -225,7 +225,7 @@
                   android:inputType="number"
                   android:maxLines="1"
                   />
-            </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
+            </com.dfd.delfin.ui.custom.DelhiveryTextInputLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_transfer"

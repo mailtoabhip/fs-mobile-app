@@ -48,7 +48,7 @@
 
         <variable
             name="data"
-            type="com.delhivery.axle.api.response.ChargesResponse"
+            type="com.dfd.delfin.api.response.ChargesResponse"
             />
 
         <import type="android.view.View" />

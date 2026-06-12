@@ -6,7 +6,7 @@
   <data>
     <variable
         name="data"
-        type="com.delhivery.axle.api.response.TripChargesResponse"
+        type="com.dfd.delfin.api.response.TripChargesResponse"
         />
   </data>
 

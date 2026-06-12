@@ -7,10 +7,10 @@
   <data>
     <variable
         name="trip"
-        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
         />
     <import type="android.view.View" />
-    <import type="com.delhivery.axle.data.home.trips.TripStatus" />
+    <import type="com.dfd.delfin.data.home.trips.TripStatus" />
     <import type="androidx.core.content.ContextCompat" />
   </data>
 

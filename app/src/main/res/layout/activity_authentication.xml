@@ -6,14 +6,14 @@
     >
 
   <data>
-    <import type="com.delhivery.axle.ui.auth.AuthenticationUIState" />
+    <import type="com.dfd.delfin.ui.auth.AuthenticationUIState" />
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.auth.AuthenticationViewModel"
+        type="com.dfd.delfin.ui.auth.AuthenticationViewModel"
         />
     <variable
         name="state"
-        type="com.delhivery.axle.ui.auth.AuthenticationUIState"
+        type="com.dfd.delfin.ui.auth.AuthenticationUIState"
         />
   </data>
 

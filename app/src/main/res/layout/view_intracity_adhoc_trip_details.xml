@@ -3,17 +3,17 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.tripdetails.TripDetailsViewModel"
+            type="com.dfd.delfin.ui.tripdetails.TripDetailsViewModel"
             />
 
         <variable
             name="tripDetails"
-            type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+            type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
             />
 
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
             />
         <variable
             name="tripSettled"
@@ -21,7 +21,7 @@
             />
         <variable
             name="ctaConfig"
-            type="com.delhivery.axle.data.tripdetail.TripCtaConfig"
+            type="com.dfd.delfin.data.tripdetail.TripCtaConfig"
             />
         <import type="android.view.View" />
         <import type="androidx.core.content.ContextCompat" />

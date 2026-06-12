@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.payment.PaymentWebViewViewModel" />
+            type="com.dfd.delfin.ui.payment.PaymentWebViewViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

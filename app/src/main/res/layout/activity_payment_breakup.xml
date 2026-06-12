@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.issuance.PaymentBreakupViewModel" />
+            type="com.dfd.delfin.ui.fastag.issuance.PaymentBreakupViewModel" />
 
         <import type="android.view.View" />
 
@@ -245,7 +245,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Slide to Continue (visible when wallet sufficient) -->
-        <com.delhivery.axle.ui.custom.SlideToConfirmView
+        <com.dfd.delfin.ui.custom.SlideToConfirmView
             android:id="@+id/slideToConfirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

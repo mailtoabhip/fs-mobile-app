@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
-  namespace 'com.delhivery.axle'
+  namespace 'com.dfd.delfin'
   compileSdk 35
   signingConfigs {
     release {

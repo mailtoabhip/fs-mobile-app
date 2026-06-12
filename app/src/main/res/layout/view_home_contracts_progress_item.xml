@@ -11,7 +11,7 @@
       android:foreground="?attr/selectableItemBackgroundBorderless"
       app:cardCornerRadius="@dimen/size_6dp"
       app:cardElevation="@dimen/size_2dp">
-    <com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
+    <com.dfd.delfin.ui.custom.DelhiveryShimmerLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -193,6 +193,6 @@
           app:layout_constraintTop_toBottomOf="@+id/view_source_state"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
+    </com.dfd.delfin.ui.custom.DelhiveryShimmerLayout>
   </androidx.cardview.widget.CardView>
 </layout>

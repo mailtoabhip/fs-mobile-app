@@ -7,12 +7,12 @@
   <data>
     <variable
         name="trip"
-        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
         />
 
     <variable
         name="fuel"
-        type="com.delhivery.axle.data.fuelcards.FuelCardData"
+        type="com.dfd.delfin.data.fuelcards.FuelCardData"
         />
 
     <variable
@@ -350,7 +350,7 @@
 
               </RadioGroup>
 
-              <com.delhivery.axle.ui.custom.DelhiveryTextInputLayout
+              <com.dfd.delfin.ui.custom.DelhiveryTextInputLayout
                   android:id="@+id/til_mobile"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -374,7 +374,7 @@
                     android:inputType="number"
                     android:maxLines="1"
                     />
-              </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
+              </com.dfd.delfin.ui.custom.DelhiveryTextInputLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -433,7 +433,7 @@
                   />
 
 
-              <com.delhivery.axle.ui.custom.DelhiveryTextInputLayout
+              <com.dfd.delfin.ui.custom.DelhiveryTextInputLayout
                   android:id="@+id/til_amount"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -455,7 +455,7 @@
                     android:inputType="number"
                     android:maxLines="1"
                     />
-              </com.delhivery.axle.ui.custom.DelhiveryTextInputLayout>
+              </com.dfd.delfin.ui.custom.DelhiveryTextInputLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
           </androidx.cardview.widget.CardView>

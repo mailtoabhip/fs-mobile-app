@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.RCUploadViewModel" />
+            type="com.dfd.delfin.ui.fastag.tagAssignment.assign.RCUploadViewModel" />
     </data>
 
     <LinearLayout
@@ -86,7 +86,7 @@
                 </LinearLayout>
 
                 <!-- Upload RC Front -->
-                <com.delhivery.axle.ui.common.UploadCardView
+                <com.dfd.delfin.ui.common.UploadCardView
                     android:id="@+id/uploadRcFront"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                     app:uploadSubtitle="@string/upload_file_format_info" />
 
                 <!-- Upload RC Back -->
-                <com.delhivery.axle.ui.common.UploadCardView
+                <com.dfd.delfin.ui.common.UploadCardView
                     android:id="@+id/uploadRcBack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

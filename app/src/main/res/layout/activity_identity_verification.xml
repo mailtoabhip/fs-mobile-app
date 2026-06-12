@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.kyc.identityverification.IdentityVerificationViewModel"
+            type="com.dfd.delfin.ui.kyc.identityverification.IdentityVerificationViewModel"
             />
         <import type="android.view.View" />
 
@@ -147,7 +147,7 @@
                             android:visibility="gone"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toBottomOf="@+id/text_cin">
-                            <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
                                 android:id="@+id/edit_cin"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/edit_text_height"
@@ -231,7 +231,7 @@
                             android:visibility="gone"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toBottomOf="@+id/text_udyog">
-                            <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
                                 android:id="@+id/edit_udyog"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/edit_text_height"
@@ -314,7 +314,7 @@
                             android:visibility="gone"
                             bind:layout_constraintStart_toStartOf="parent"
                             bind:layout_constraintTop_toBottomOf="@+id/text_shop">
-                            <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                            <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
                                 android:id="@+id/edit_shop"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/edit_text_height"

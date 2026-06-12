@@ -25,7 +25,7 @@
           />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+    <com.dfd.delfin.ui.custom.DelhiveryAnimatedSearchBar
         android:id="@+id/edit_sticky_search"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_72dp"

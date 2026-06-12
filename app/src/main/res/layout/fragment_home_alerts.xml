@@ -5,7 +5,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.home.fragments.alerts.HomeAlertsViewModel"
+        type="com.dfd.delfin.ui.home.fragments.alerts.HomeAlertsViewModel"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat

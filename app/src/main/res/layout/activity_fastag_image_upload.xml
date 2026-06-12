@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadViewModel" />
+            type="com.dfd.delfin.ui.fastag.tagAssignment.assign.kyv.KYVFastagImageUploadViewModel" />
     </data>
 
     <LinearLayout
@@ -75,7 +75,7 @@
                 </LinearLayout>
 
                 <!-- Upload FASTag Image -->
-                <com.delhivery.axle.ui.common.UploadCardView
+                <com.dfd.delfin.ui.common.UploadCardView
                     android:id="@+id/uploadFastagImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

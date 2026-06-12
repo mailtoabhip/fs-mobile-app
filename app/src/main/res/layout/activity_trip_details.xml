@@ -7,17 +7,17 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.tripdetails.TripDetailsViewModel"
+        type="com.dfd.delfin.ui.tripdetails.TripDetailsViewModel"
         />
 
     <variable
         name="tripDetails"
-        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
         />
 
     <variable
         name="transaction"
-        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+        type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
         />
 
     <variable
@@ -36,7 +36,7 @@
         />
 
     <import type="android.view.View" />
-    <import type="com.delhivery.axle.ui.bids.TripType" />
+    <import type="com.dfd.delfin.ui.bids.TripType" />
     <import type="androidx.core.content.ContextCompat" />
   </data>
 

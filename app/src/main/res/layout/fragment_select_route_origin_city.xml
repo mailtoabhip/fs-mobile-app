@@ -4,7 +4,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel"
+        type="com.dfd.delfin.ui.selectroute.fragments.origincity.SelectRouteOriginCityViewModel"
         />
   </data>
 
@@ -29,7 +29,7 @@
         android:textStyle="bold"
         />
 
-    <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+    <com.dfd.delfin.ui.custom.DelhiveryCityAutoEditText
         android:id="@+id/edit_origin_city"
         android:layout_marginEnd="@dimen/size_24dp"
         android:layout_marginStart="@dimen/size_24dp"

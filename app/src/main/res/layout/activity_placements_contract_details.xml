@@ -7,16 +7,16 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel"
+        type="com.dfd.delfin.ui.contractDetails.ContractDetailsViewModel"
         />
     <variable
         name="activity"
-        type="com.delhivery.axle.ui.contractDetails.ContractDetailsActivity"
+        type="com.dfd.delfin.ui.contractDetails.ContractDetailsActivity"
         />
 
     <variable
         name="transaction"
-        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+        type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
         />
 
     <variable

@@ -6,7 +6,7 @@
 <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel"
+        type="com.dfd.delfin.ui.kyc.pan.PanVerificationViewModel"
         />
     <import type="android.view.View" />
 
@@ -99,7 +99,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.delhivery.axle.ui.custom.DelhiveryPanViewEditText
+                    <com.dfd.delfin.ui.custom.DelhiveryPanViewEditText
                         android:id="@+id/edit_pan"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edit_text_height"

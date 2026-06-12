@@ -50,7 +50,7 @@
             android:text="@string/label_enter_unloading_destination"
             android:textColor="@color/black"/>
 
-        <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+        <com.dfd.delfin.ui.custom.DelhiveryCityAutoEditText
             android:id="@+id/edit_unloading_city"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"

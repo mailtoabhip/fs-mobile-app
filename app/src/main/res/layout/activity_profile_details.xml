@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.profile.profiledetails.ProfileDetailsViewModel"
+            type="com.dfd.delfin.ui.profile.profiledetails.ProfileDetailsViewModel"
             />
     </data>
 
@@ -111,7 +111,7 @@
                         android:text="@string/label_business_name"
                         android:textSize="@dimen/text_14sp"
                         android:textColor="@color/heading_black"/>
-                    <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                    <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
                         android:layout_width="match_parent"
                         android:layout_marginTop="@dimen/size_6dp"
                         android:layout_height="@dimen/edit_text_height"
@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/label_my_name"
                         android:textColor="@color/heading_black"/>
-                    <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                    <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
                         android:layout_width="match_parent"
                         android:layout_marginTop="@dimen/size_6dp"
                         android:layout_height="@dimen/edit_text_height"
@@ -165,7 +165,7 @@
                         android:textSize="@dimen/text_14sp"
                         android:text="@string/label_mobile_number"
                         android:textColor="@color/heading_black"/>
-                    <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+                    <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
                         android:layout_width="match_parent"
                         android:layout_marginTop="@dimen/size_6dp"
                         android:layout_height="@dimen/edit_text_height"

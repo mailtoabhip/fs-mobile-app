@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.loadwallet.TransactionDetailsViewModel" />
+            type="com.dfd.delfin.ui.loadwallet.TransactionDetailsViewModel" />
 
         <import type="android.view.View" />
         <import type="androidx.core.content.ContextCompat" />

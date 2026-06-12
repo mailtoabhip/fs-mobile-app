@@ -152,7 +152,7 @@
     <import type="android.view.View" />
     <variable
         name="ledger"
-        type="com.delhivery.axle.data.ledger.ConsolidatedLedgerItemData"
+        type="com.dfd.delfin.data.ledger.ConsolidatedLedgerItemData"
         />
   </data>
 </layout>

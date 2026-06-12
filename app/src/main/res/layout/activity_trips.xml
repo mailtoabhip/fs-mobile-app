@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
   <data>
-    <import type="com.delhivery.axle.ui.bids.TripType"/>
+    <import type="com.dfd.delfin.ui.bids.TripType"/>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.bids.TripsViewModel"
+        type="com.dfd.delfin.ui.bids.TripsViewModel"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat

@@ -4,7 +4,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.selectroute.activity.SelectRouteViewModel"
+        type="com.dfd.delfin.ui.selectroute.activity.SelectRouteViewModel"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat

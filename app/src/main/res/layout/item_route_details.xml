@@ -8,7 +8,7 @@
 
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData" />
+            type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

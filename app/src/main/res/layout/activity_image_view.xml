@@ -5,7 +5,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.tripdetails.ImageViewModel"
+        type="com.dfd.delfin.ui.tripdetails.ImageViewModel"
         />
   </data>
 
@@ -25,7 +25,7 @@
         bind:shadow="@{ @dimen/size_4dp }"
         />
 
-    <com.delhivery.axle.ui.custom.DelhiveryZoomDragImageView
+    <com.dfd.delfin.ui.custom.DelhiveryZoomDragImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

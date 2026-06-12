@@ -16,7 +16,7 @@
         app:tabIndicatorColor="@color/colorDelhiveryRed"
         app:tabIconTint="@drawable/selector_bottom_nav_colors"
         android:id="@+id/tabLayout"/>
-    <com.delhivery.axle.ui.custom.DelhiverViewPager
+    <com.dfd.delfin.ui.custom.DelhiverViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

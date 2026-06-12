@@ -5,7 +5,7 @@
     <data>
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.placements.HomePlacementsFilterItemData"
+            type="com.dfd.delfin.data.home.placements.HomePlacementsFilterItemData"
             />
 
         <import type="android.view.View" />

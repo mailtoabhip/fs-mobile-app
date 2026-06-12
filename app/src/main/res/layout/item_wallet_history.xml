@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.delhivery.axle.ui.loadwallet.WalletHistoryItemData" />
+            type="com.dfd.delfin.ui.loadwallet.WalletHistoryItemData" />
 
         <import type="android.view.View" />
         <import type="androidx.core.content.ContextCompat" />

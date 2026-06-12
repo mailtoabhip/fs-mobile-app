@@ -6,7 +6,7 @@
   <data>
      <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.accountdetails.AccountDetailsViewModel"
+        type="com.dfd.delfin.ui.accountdetails.AccountDetailsViewModel"
         />
   </data>
 
@@ -96,7 +96,7 @@
               style="@style/TextAppearance.Delfin.M14"
               android:textColor="@color/text_body_primary"
               />
-          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+          <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
               android:id="@+id/edit_name"
               android:layout_width="match_parent"
               android:layout_height="@dimen/edit_text_height"
@@ -163,7 +163,7 @@
             />
 
 
-          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+          <com.dfd.delfin.ui.custom.DelhiveryOTPViewEditText
               android:id="@+id/edit_last_name"
               android:layout_width="match_parent"
               android:layout_height="@dimen/edit_text_height"
