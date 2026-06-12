@@ -85,20 +85,20 @@ class HomePlacementsFragment : HomeBaseFragment<FragmentHomePlacementsV3Binding,
         // Set initial selected tab styling
         if (tab1?.isSelected == true) {
             tab1.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorRed))
             }
             tab1.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorRed))
             }
         }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
-                    textView.setTextColor(ContextCompat.getColor(context!!, R.color.colorDelhiveryRed))
+                    textView.setTextColor(ContextCompat.getColor(context!!, R.color.colorRed))
                 }
                 tab?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorRed))
                 }
             }
 

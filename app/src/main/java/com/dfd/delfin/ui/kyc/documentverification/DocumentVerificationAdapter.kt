@@ -105,7 +105,7 @@ class DocumentVerificationAdapter(
             if (item.isRequired) {
                 val spannable = SpannableString("${item.name} *")
                 spannable.setSpan(
-                    ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorDelhiveryRed)),
+                    ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorRed)),
                     item.name.length,
                     spannable.length,
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

@@ -122,7 +122,7 @@ class HomeNewPodFragment : HomeBaseFragment<FragmentHomeNewPodBinding, HomePodVi
 
     private fun updateTabStyle(tab: TabLayout.Tab, isSelected: Boolean) {
         val color = if (isSelected) {
-            ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed)
+            ContextCompat.getColor(requireContext(), R.color.colorRed)
         } else {
             ContextCompat.getColor(requireContext(), R.color.grey_500)
         }

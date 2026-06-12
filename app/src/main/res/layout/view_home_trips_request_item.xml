@@ -51,7 +51,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/colorDelhiveryRed"
+            android:textColor="@color/colorRed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="No Stamp POD"/>
@@ -214,7 +214,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
-              android:textColor="@color/colorDelhiveryRed"
+              android:textColor="@color/colorRed"
               android:text="(Delayed)"
               android:visibility="@{trip.delayedVisibility()}"
               android:layout_marginStart="@dimen/size_8dp"
@@ -231,7 +231,7 @@
               android:layout_height="wrap_content"
               app:layout_constraintEnd_toEndOf="parent"
               android:fontFamily="sans-serif"
-              android:textColor="@color/colorDelhiveryRed"
+              android:textColor="@color/colorRed"
               android:paddingBottom="@dimen/size_4dp"
               android:text="@{ trip.showAgeing() }"
               android:layout_marginTop="@dimen/size_4dp"
@@ -388,7 +388,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/colorDelhiveryRed"
+            android:textColor="@color/colorRed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

@@ -85,7 +85,7 @@
                 android:paddingEnd="@dimen/size_8dp"
                 android:paddingBottom="@dimen/size_2dp"
                 android:text="ePOD"
-                android:textColor="@color/colorDelhiveryRed"
+                android:textColor="@color/colorRed"
                 android:textSize="@dimen/text_14sp"
                 android:fontFamily="sans-serif-medium"
                 android:clickable="true"

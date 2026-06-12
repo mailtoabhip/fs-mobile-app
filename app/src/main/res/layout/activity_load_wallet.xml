@@ -191,7 +191,7 @@
                     bind:tabGravity="fill"
                     bind:tabMode="fixed"
                     android:textSize="@dimen/text_14sp"
-                    bind:tabIndicatorColor="@color/colorDelhiveryRed"
+                    bind:tabIndicatorColor="@color/colorRed"
                     bind:tabSelectedTextColor="#1E293B"
                     bind:tabTextColor="#94A3B8"
                     bind:tabTextAppearance="@style/CustomTextAppearanceTab"

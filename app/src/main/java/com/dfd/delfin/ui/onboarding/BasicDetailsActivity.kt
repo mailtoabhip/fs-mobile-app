@@ -123,7 +123,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
     ) {
         card.strokeColor = ContextCompat.getColor(
             this,
-            if (isSelected) R.color.colorDelhiveryRed else R.color.light_grey
+            if (isSelected) R.color.colorRed else R.color.light_grey
         )
         card.strokeWidth = if (isSelected) 4 else 2
         card.setCardBackgroundColor(
@@ -135,7 +135,7 @@ class BasicDetailsActivity: BaseActivity<ActivityBasicDetailsBinding, BasicDetai
         titleView.setTextColor(
             ContextCompat.getColor(
                 this,
-                if (isSelected) R.color.colorDelhiveryRed else R.color.heading_black
+                if (isSelected) R.color.colorRed else R.color.heading_black
             )
         )
         subtitleView.setTextColor(ContextCompat.getColor(this, R.color.sub_details_grey))

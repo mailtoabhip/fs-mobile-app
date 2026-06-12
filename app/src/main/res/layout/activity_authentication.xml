@@ -312,7 +312,7 @@
               android:layout_height="24dp"
               android:layout_gravity="center"
               android:visibility="gone"
-              android:indeterminateTint="@color/colorDelhiveryRed" />
+              android:indeterminateTint="@color/colorRed" />
 
         </FrameLayout>
 

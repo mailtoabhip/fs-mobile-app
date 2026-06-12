@@ -129,7 +129,7 @@
   </style>
 
   <style name="ErrorText" parent="TextAppearance.AppCompat">
-    <item name="android:textColor">@color/colorDelhiveryRed</item>
+    <item name="android:textColor">@color/colorRed</item>
     <item name="android:textSize">@dimen/text_12sp</item>
   </style>
 

@@ -1191,7 +1191,7 @@ data class HomeTripsItemData(
         val diffMillis = date.time - Date().time
         
         when {
-          diffMillis < 0 -> R.color.colorDelhiveryRed // Overdue
+          diffMillis < 0 -> R.color.colorRed // Overdue
           else -> R.color.sub_details_grey // Still time left
         }
       } catch (e: Exception) {

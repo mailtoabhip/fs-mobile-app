@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="@{request.relativeDurationStatus()}"
                 android:textSize="@dimen/text_size_12sp"
-                android:textColor="@color/colorDelhiveryRed"
+                android:textColor="@color/colorRed"
                 android:contentDescription="@string/delay_status_content_description"
                 tool:text="Delayed by 2 hrs" />
 

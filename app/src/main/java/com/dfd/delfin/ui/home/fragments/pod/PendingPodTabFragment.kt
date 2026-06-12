@@ -163,13 +163,13 @@ class PendingPodTabFragment : HomeBaseFragment<FragmentPendingPodTabBinding, Pen
         when (type) {
             PodType.EPOD -> {
                 binding.tagEpod.setBackgroundResource(R.drawable.bg_pod_tag_selected)
-                binding.tagEpod.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+                binding.tagEpod.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorRed))
                 binding.tagHpod.setBackgroundResource(R.drawable.bg_pod_tag_unselected)
                 binding.tagHpod.setTextColor(ContextCompat.getColor(requireContext(), R.color.font_labels))
             }
             PodType.HPOD -> {
                 binding.tagHpod.setBackgroundResource(R.drawable.bg_pod_tag_selected)
-                binding.tagHpod.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorDelhiveryRed))
+                binding.tagHpod.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorRed))
                 binding.tagEpod.setBackgroundResource(R.drawable.bg_pod_tag_unselected)
                 binding.tagEpod.setTextColor(ContextCompat.getColor(requireContext(), R.color.font_labels))
             }

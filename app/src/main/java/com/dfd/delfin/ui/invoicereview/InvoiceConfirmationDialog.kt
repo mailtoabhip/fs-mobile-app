@@ -54,7 +54,7 @@ class InvoiceConfirmationDialog(
             }
             ConfirmationType.REJECT -> {
                 binding.ivIcon.setImageResource(R.drawable.ic_close)
-                binding.ivIcon.imageTintList = ContextCompat.getColorStateList(context, R.color.colorDelhiveryRed)
+                binding.ivIcon.imageTintList = ContextCompat.getColorStateList(context, R.color.colorRed)
                 binding.ivIcon.backgroundTintList = ContextCompat.getColorStateList(context, R.color.light_red)
                 binding.tvTitle.text = context.getString(R.string.dialog_reject_invoice_title)
                 binding.tvMessage.text = context.getString(R.string.dialog_reject_invoice_message, centerContactNumber?:"")

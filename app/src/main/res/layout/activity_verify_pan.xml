@@ -168,7 +168,7 @@
                     bind:layout_constraintStart_toStartOf="parent"
                     bind:layout_constraintTop_toBottomOf="@+id/text_pan_name"
                     android:text="@string/error_duplicate_pan"
-                    android:textColor="@color/colorDelhiveryRed"
+                    android:textColor="@color/colorRed"
                     android:textSize="@dimen/text_16sp"
                     android:visibility="gone"
                     />

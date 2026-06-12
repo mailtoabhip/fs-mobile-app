@@ -69,17 +69,17 @@ class PlacementsActivity : BaseActivity<ActivityPlacementsBinding, HomePlacement
         // Set initial selected tab styling
         if (tab1?.isSelected == true) {
             val textView1 = tab1.customView?.findViewById<TextView>(android.R.id.text1)
-            textView1?.setTextColor(ContextCompat.getColor(this, R.color.colorDelhiveryRed))
+            textView1?.setTextColor(ContextCompat.getColor(this, R.color.colorRed))
             val textView2 = tab1.customView?.findViewById<TextView>(R.id.tvCount)
-            textView2?.setTextColor(ContextCompat.getColor(this, R.color.colorDelhiveryRed))
+            textView2?.setTextColor(ContextCompat.getColor(this, R.color.colorRed))
         }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val textView1 = tab?.customView?.findViewById<TextView>(android.R.id.text1)
-                textView1?.setTextColor(ContextCompat.getColor(this@PlacementsActivity, R.color.colorDelhiveryRed))
+                textView1?.setTextColor(ContextCompat.getColor(this@PlacementsActivity, R.color.colorRed))
                 val textView2 = tab?.customView?.findViewById<TextView>(R.id.tvCount)
-                textView2?.setTextColor(ContextCompat.getColor(this@PlacementsActivity, R.color.colorDelhiveryRed))
+                textView2?.setTextColor(ContextCompat.getColor(this@PlacementsActivity, R.color.colorRed))
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {

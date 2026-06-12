@@ -95,10 +95,10 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         tab1?.setCustomView(R.layout.badge_tab)?.setText("Loads")?.view?.isSelected = true
         if(tab1?.isSelected == true){
             tab1?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
-                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorRed))
             }
             binding.tabLayout.getTabAt(0)?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
-                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+                textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorRed))
             }
         }
 //            ?.setIcon(R.drawable.ic_load_home_icon)
@@ -115,10 +115,10 @@ class HomeLoadsTruckFragment : HomeBaseFragment<FragmentHomeLoadsTruckBinding, H
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.customView?.findViewById<TextView>(android.R.id.text1)?.let { textView ->
-                    textView.setTextColor(ContextCompat.getColor(context!!,R.color.colorDelhiveryRed))
+                    textView.setTextColor(ContextCompat.getColor(context!!,R.color.colorRed))
                 }
                 tab?.customView?.findViewById<TextView>(R.id.tvCount)?.let { textView ->
-                    textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorDelhiveryRed))
+                    textView.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorRed))
                 }
                 if(tab?.position==0){
                    // userPrefs.currentNavigationTab = HomeLoadsFragment::class.java.name
