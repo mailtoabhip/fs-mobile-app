@@ -88,6 +88,7 @@ class FsAuthRepository @Inject constructor(
         userPrefs.refreshToken = data.refreshToken
         networkInterceptor.updateJWT(data.accessToken)
         userPrefs.firstName = data.profileDetails.firstName
+        userPrefs.middleName = data.profileDetails.middleName
         userPrefs.lastName = data.profileDetails.lastName
         userPrefs.commConsent = data.profileDetails.commConsent?:false
         data
@@ -110,6 +111,7 @@ class FsAuthRepository @Inject constructor(
     suspend fun getProfile(): Resource<FsUserProfile> = safeApiCall {
         val data = fsAuthService.getProfile().toResource()
         userPrefs.firstName = data.firstName
+        userPrefs.middleName = data.middleName
         userPrefs.lastName = data.lastName
         userPrefs.commConsent = data.commConsent?:false
         data
@@ -124,15 +126,17 @@ class FsAuthRepository @Inject constructor(
      */
     suspend fun updateProfile(
         firstName: String? = null,
+        middleName: String? = null,
         lastName: String? = null,
         commConsent: Boolean? = null
     ): Resource<FsUpdateProfileData> = safeApiCall {
-        require(firstName != null && lastName != null && commConsent != null) {
+        require(firstName != null && commConsent != null) {
             "Name and Communication Consent is required"
         }
         val data = fsAuthService.updateProfile(
             FsUpdateProfileRequest(
                 firstName = firstName,
+                middleName = middleName,
                 lastName = lastName,
                 commConsent = commConsent
             )

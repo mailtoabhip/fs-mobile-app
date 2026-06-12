@@ -36,10 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_16dp"
-            android:text="Enter OTP"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
-            android:textStyle="bold"
+            android:text="@string/str_enter_otp"
+            android:textColor="@color/text_body_primary"
+            style="@style/TextAppearance.Delfin.SB14"
             app:layout_constraintEnd_toStartOf="@id/ivClose"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +52,7 @@
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             android:layout_marginTop="@dimen/size_16dp"/>
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivClose"
             android:layout_width="@dimen/size_24dp"
             android:layout_height="@dimen/size_24dp"
@@ -72,8 +71,8 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:layout_marginEnd="@dimen/size_16dp"
             android:text="@{`OTP is sent on the linked mobile number\ni.e. ` + maskedNumber}"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_16sp"
+            android:textColor="@color/text_body_primary"
+            style="@style/TextAppearance.Delfin.M14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider1"
@@ -93,7 +92,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDescription">
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etOtp1"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size_48dp"
@@ -107,7 +106,7 @@
                 android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etOtp2"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size_48dp"
@@ -121,7 +120,7 @@
                 android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etOtp3"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size_48dp"
@@ -135,7 +134,7 @@
                 android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etOtp4"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size_48dp"
@@ -149,7 +148,7 @@
                 android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etOtp5"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size_48dp"
@@ -163,7 +162,7 @@
                 android:textSize="@dimen/text_18sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etOtp6"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size_48dp"
@@ -186,9 +185,9 @@
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_12dp"
             android:layout_marginEnd="@dimen/size_16dp"
-            android:text="Incorrect OTP. Resend OTP"
+            android:text="@string/str_incorrect_otp_resend_otp"
             android:textColor="#E53935"
-            android:textSize="@dimen/text_12sp"
+            style="@style/TextAppearance.Delfin.M12"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -203,8 +202,7 @@
             android:layout_marginTop="@dimen/size_16dp"
             android:text="@{`Resend in ` + timerText}"
             android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_14sp"
-            android:textStyle="bold"
+            style="@style/TextAppearance.Delfin.SB14"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvOtpError" />
 
@@ -215,10 +213,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_16dp"
-            android:text="Resend OTP"
+            android:text="@string/action_resend_otp"
             android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_14sp"
-            android:textStyle="bold"
+            style="@style/TextAppearance.Delfin.SB14"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvOtpError" />

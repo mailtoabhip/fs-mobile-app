@@ -37,8 +37,13 @@
             app:title="Add Vehicle"
             app:titleTextAppearance="@style/Toolbar.TitleText" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"/>
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivNumberPlate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -47,7 +52,7 @@
                 android:src="@drawable/img_add_vehicle_new"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar" />
+                app:layout_constraintTop_toBottomOf="@id/divider" />
 
 
         <!-- Label -->
@@ -57,14 +62,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_28dp"
-            android:text="Enter your truck number here"
-            android:textColor="@color/heading_black"
-            android:textSize="@dimen/text_14sp"
+            android:text="@string/str_enter_your_truck_number_here"
+            android:textColor="@color/text_body_secondary_v2"
+            style="@style/TextAppearance.Delfin.M14"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivNumberPlate" />
 
         <!-- Input Field -->
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/etTruckNumber"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_48dp"
@@ -79,9 +84,9 @@
             android:singleLine="true"
             android:textAllCaps="true"
             android:text="@={truckNumber}"
-            android:textColor="@color/heading_black"
-            android:textColorHint="@color/color_hint"
-            android:textSize="@dimen/text_14sp"
+            android:textColor="@color/text_body_primary"
+            android:textColorHint="@color/text_body_base"
+            style="@style/TextAppearance.Delfin.M14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvLabel" />
@@ -95,8 +100,9 @@
             android:layout_marginTop="@dimen/size_4dp"
             android:drawableStart="@drawable/ic_close_red"
             android:drawablePadding="@dimen/size_4dp"
-            android:text="Invalid  Enter a valid vehicle or chassis number"
+            android:text="@string/str_invalid_enter_a_valid_vehicle_or_chassis_number"
             android:textColor="@color/error_red"
+            style="@style/TextAppearance.Delfin.R14"
             android:textSize="@dimen/text_12sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
@@ -111,10 +117,10 @@
             android:layout_marginBottom="@dimen/size_16dp"
             android:background="@drawable/bg_all_round_corner_light_grey"
             android:enabled="false"
-            android:text="Continue"
+            android:text="@string/str_continue"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/text_14sp"
+            style="@style/TextAppearance.Delfin.M14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

@@ -31,7 +31,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_close"
             app:title="Payment Breakup"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
+
+        <View
+            android:id="@+id/dividerTop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            android:background="#E6E6E6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
         <!-- Content ScrollView -->
         <ScrollView
@@ -42,7 +50,7 @@
             app:layout_constraintBottom_toTopOf="@id/btnProceedToPay"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toBottomOf="@id/dividerTop">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,7 +66,7 @@
                     android:text="Payment Breakup"
                     android:textColor="@color/heading_black"
                     android:textSize="@dimen/text_18sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B16" />
 
                 <!-- Breakup Items RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -85,9 +93,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Grand Total"
-                        android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_16sp"
-                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        style="@style/TextAppearance.Delfin.B16"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -98,8 +105,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{`₹` + viewModel.grandTotal}"
                         android:textColor="@color/heading_black"
-                        android:textSize="@dimen/text_16sp"
-                        android:textStyle="bold"
+                        style="@style/TextAppearance.Delfin.B16"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -131,7 +137,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <ImageView
+                            <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/ivWalletIcon"
                                 android:layout_width="@dimen/size_24dp"
                                 android:layout_height="@dimen/size_24dp"
@@ -153,17 +159,17 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Paying via wallet"
-                                    android:textColor="@color/heading_black"
-                                    android:textSize="@dimen/text_14sp" />
+                                    android:text="@string/stR_paying_via_wallet"
+                                    android:textColor="@color/text_primary"
+                                    style="@style/TextAppearance.Delfin.M14" />
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/tvWalletBalance"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@{`Wallet Balance: ₹` + viewModel.walletBalance}"
-                                    android:textColor="@color/background_dark_grey"
-                                    android:textSize="@dimen/text_12sp"
+                                    android:textColor="@color/text_caption_primary"
+                                    style="@style/TextAppearance.Delfin.M12"
                                     tools:text="Wallet Balance: ₹0" />
 
                             </LinearLayout>
@@ -174,8 +180,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Add Money"
                                 android:textColor="#1E88E5"
-                                android:textSize="@dimen/text_14sp"
-                                android:textStyle="bold"
+                                style="@style/TextAppearance.Delfin.SB14"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -194,7 +199,7 @@
                             android:padding="@dimen/size_8dp"
                             android:visibility="@{(viewModel.isDataLoaded &amp;&amp; !viewModel.isWalletSufficient) ? View.VISIBLE : View.GONE}">
 
-                            <ImageView
+                            <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="@dimen/size_16dp"
                                 android:layout_height="@dimen/size_16dp"
                                 android:src="@drawable/ic_error_circle_red" />
@@ -206,6 +211,7 @@
                                 android:layout_marginStart="@dimen/size_8dp"
                                 android:text="@{viewModel.warningMessage}"
                                 android:textColor="#E53935"
+                                style="@style/TextAppearance.Delfin.R14"
                                 android:textSize="@dimen/text_12sp"
                                 tools:text="Wallet balance is lower than the item value" />
 
@@ -228,9 +234,10 @@
             android:layout_marginBottom="@dimen/size_16dp"
             android:background="@drawable/bg_all_round_corner_light_grey"
             android:enabled="false"
-            android:text="Proceed to pay"
+            android:text="@string/stR_proceed_to_pay"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
+            style="@style/TextAppearance.Delfin.SB14"
             android:textSize="@dimen/text_16sp"
             android:visibility="@{(viewModel.isDataLoaded &amp;&amp; !viewModel.isWalletSufficient) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"

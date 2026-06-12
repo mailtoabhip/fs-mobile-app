@@ -207,9 +207,9 @@
     <!--Label (label_)-->
     <string name="label_hello_world">Label Hello World</string>
     <string name="label_which_routes_you_serve">Which all routes do you serve ?</string>
-    <string name="label_otp">OTP Verification</string>
+    <string name="label_otp">Verify OTP</string>
     <string name="label_powered_by_delhivery">Powered by Delhivery Limited</string>
-    <string name="label_phone_number">Phone Number</string>
+    <string name="label_phone_number">Enter phone number</string>
     <string name="label_isd_code">+91</string>
     <string name="label_live_load_requests">Live load requests (%1$d)</string>
     <string name="label_inr">₹ %1$d</string>
@@ -448,7 +448,7 @@
 
     <!--Label (label_)-->
     <string name="sub_label_otp">Enter the 4-digit code we have sent by SMS to 7011514267. Change number</string>
-    <string name="sub_label_phone_number">We\'ll send you an OTP via SMS to confirm your phone number.</string>
+    <string name="sub_label_phone_number">We\'ll send an OTP via SMS to verify your number</string>
     <string name="label_resend_otp_done">Resend OTP</string>
     <string name="label_otp_text">Enter the 4-digit code we have sent by SMS</string>
     <string name="label_resend">Haven\'t received the OTP?</string>
@@ -561,7 +561,7 @@
   <string name="error_location_permission_denied">Location Permission Denied</string>
   <string name="error_search_missing_origin">Please select origin</string>
   <string name="error_search_missing_reporting_center">Please select reporting center</string>
-  <string name="error_incorrect_otp">Incorrect OTP. Please try again.</string>
+  <string name="error_incorrect_otp">Incorrect OTP.</string>
   <string name="error_invalid_otp">Invalid OTP. Please try again.</string>
   <string name="error_upload">Oops! Something went wrong</string>
   <string name="error_upload_document">Try uploading the document once again</string>
@@ -1215,7 +1215,7 @@
 
     <!-- Buy FasTAG -->
     <string name="toolbar_heading">Buy FASTag</string>
-    <string name="sales_code_title">Sales Code</string>
+    <string name="sales_code_title">Enter your agent sales code</string>
     <string name="no_sales_code_btn">I don\u0027t have sales code</string>
     <string name="sales_confirm_btn_title">Confirm</string>
     <string name="sales_change_btn_title">Change</string>
@@ -1232,8 +1232,10 @@
 
 
     <string name="str_get_to_know_you">Let’s get to know you</string>
-    <string name="str_tell_us_your_name">Tell us your name to personalize your experience</string>
+    <string name="str_tell_us_your_name">Tell us your name to create profile</string>
     <string name="str_first_name">First Name</string>
+    <string name="str_first_name_required"><![CDATA[First Name <font color="#FF0000">*</font>]]></string>
+    <string name="str_middle_name">Middle Name</string>
     <string name="str_last_name">Last Name</string>
     <string name="str_enter_here">Enter Here</string>
     <string name="str_communication_consent_note">I agree to receive app updates and communications via my contact details.</string>
@@ -1289,5 +1291,33 @@
     <string name="collection_failed_subtitle">Unable to proceed to FASTag collection\nWe\'re having trouble loading the next step.\nPlease try again.</string>
     <string name="collection_failed_primary_btn">Try again</string>
     <string name="collection_failed_secondary_btn">Maybe later</string>
+    <string name="str_phone_number">Phone Number</string>
+    <string name="str_enter_middle_name">Enter middle name</string>
+    <string name="str_enter_first_name">Enter first name</string>
+    <string name="str_enter_last_name">Enter last name</string>
+    <string name="str_enter_your_name">Enter your name</string>
+    <string name="str_enter_otp">Enter OTP</string>
+    <string name="str_10_digit_mobile_number">10-digit mobile number</string>
+    <string name="str_assigned_agent">Assigned Agent</string>
+    <string name="str_active">Active</string>
+    <string name="str_enter_your_truck_number_here">Enter your truck number here</string>
+    <string name="str_continue">Continue</string>
+    <string name="str_invalid_enter_a_valid_vehicle_or_chassis_number">Invalid Enter a valid vehicle or chassis number</string>
+    <string name="str_add_vehicle_class_quantities_for_fleet_expansion">Add vehicle class quantities for fleet expansion</string>
+    <string name="stR_paying_via_wallet">Paying via wallet</string>
+    <string name="stR_proceed_to_pay">Proceed to pay</string>
+    <string name="str_select_barcode_number">Select barcode number</string>
+    <string name="str_vehicle_class">Vehicle Class</string>
+    <string name="str_tag_color">Tag Color</string>
+    <string name="str_provider">Provider</string>
+    <string name="str_select_16_digit_fastag_barcode">Select 16 digit FASTag barcode</string>
+    <string name="str_select_barcode">Select barcode</string>
+    <string name="str_minimum_balance_alert">Minimum balance alert</string>
+    <string name="str_fastag_minimum_balance_description">Please maintain a minimum balance of ₹100 to avoid FASTag hotlisting and ensure uninterrupted toll payments.</string>
+    <string name="str_i_understand_that_low_balance_may_lead_to_hotlisting">I understand that low balance may lead to hotlisting.</string>
+    <string name="str_incorrect_otp_resend_otp">Incorrect OTP. Resend OTP</string>
+    <string name="str_fastag_mapping">FASTag mapping</string>
+    <string name="str_fastag_mapped_successfully">FASTag mapped successfully</string>
+    <string name="str_you_can_now_continue_to_know_your_vehicle">You can now continue to know your vehicle</string>
 
 </resources>

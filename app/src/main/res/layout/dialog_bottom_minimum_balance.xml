@@ -9,7 +9,7 @@
     android:paddingBottom="@dimen/size_24dp">
 
     <!-- Close button -->
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivClose"
         android:layout_width="@dimen/size_24dp"
         android:layout_height="@dimen/size_24dp"
@@ -19,7 +19,7 @@
         android:src="@drawable/ic_close" />
 
     <!-- Info icon -->
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -29,28 +29,27 @@
         android:src="@drawable/minimum_balance_iv" />
 
     <!-- Title -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_20dp"
         android:gravity="center"
-        android:text="Minimum balance alert"
-        android:textColor="@color/black_title"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:text="@string/str_minimum_balance_alert"
+        android:textColor="@color/text_primary"
+        style="@style/TextAppearance.Delfin.B20" />
 
     <!-- Description -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_8dp"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
-        android:text="Please maintain a minimum balance of ₹100 to avoid FASTag hotlisting and ensure uninterrupted toll payments."
-        android:textColor="@color/text_body_secondary"
-        android:textSize="14sp" />
+        android:text="@string/str_fastag_minimum_balance_description"
+        android:textColor="@color/grey_500"
+        style="@style/TextAppearance.Delfin.M14" />
 
     <!-- Checkbox -->
     <LinearLayout
@@ -65,13 +64,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="I understand that low balance may lead to hotlisting."
-            android:textColor="@color/text_body_primary"
-            android:textSize="14sp" />
+            android:text="@string/str_i_understand_that_low_balance_may_lead_to_hotlisting"
+            android:textColor="@color/text_caption_primary"
+            style="@style/TextAppearance.Delfin.M14" />
 
     </LinearLayout>
 

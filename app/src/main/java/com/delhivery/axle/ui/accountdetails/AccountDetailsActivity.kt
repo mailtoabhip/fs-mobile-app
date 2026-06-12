@@ -3,6 +3,7 @@ package com.delhivery.axle.ui.accountdetails
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Observer
 import com.delhivery.axle.R
 import com.delhivery.axle.databinding.ActivityAccountDetailsBinding
@@ -26,9 +27,6 @@ import com.google.firebase.perf.metrics.Trace
 import javax.inject.Inject
 
 class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, AccountDetailsViewModel>() {
-    init {
-        StatusBarColor = Color.parseColor("#ededff")
-    }
 
     override fun getViewModelClass() = AccountDetailsViewModel::class.java
 
@@ -55,15 +53,16 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
           WindowInsetsUtils.applyTopSystemWindowInsets(binding.parentCl)
         }
+        binding.tvFirstName.text = HtmlCompat.fromHtml(
+            getString(R.string.str_first_name_required),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+
         startTime = System.currentTimeMillis()
         trackEvent()
         //onLocationButtonClicked()
         /* observe and update ui state */
         viewModel.stateLiveData.observe(this, StateObserver())
-
-        viewModel.lastName.observe(this, Observer {
-            checkEnable()
-        })
 
         viewModel.firstName.observe(this, Observer {
             checkEnable()
@@ -91,6 +90,7 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = "Profile Details"
         binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding.editName.focusClick()
         if (activitySetupTrace != null && isFirstResume) {
@@ -100,7 +100,10 @@ class AccountDetailsActivity :BaseActivity<ActivityAccountDetailsBinding, Accoun
     }
 
     fun checkEnable() {
-        binding.btnCreateAccount.isEnabled = (viewModel.firstName.value?.trim().isNotNullOrEmpty() && viewModel.lastName.value?.trim().isNotNullOrEmpty() && viewModel.commConsent.value == true)
+        binding.btnCreateAccount.isEnabled = (
+                viewModel.firstName.value?.trim().isNotNullOrEmpty()
+                        //&& viewModel.lastName.value?.trim().isNotNullOrEmpty()
+                        && viewModel.commConsent.value == true)
     }
 
     fun trackEvent(){

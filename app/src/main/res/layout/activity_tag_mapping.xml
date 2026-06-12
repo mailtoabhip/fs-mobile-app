@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:title="Tag Mapping"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
         <!-- Header divider -->
         <View
             android:id="@+id/headerDivider"
@@ -52,9 +52,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Select barcode number"
+                    android:text="@string/str_select_barcode_number"
                     android:textColor="@color/text_body_primary"
-                    android:textSize="16sp" />
+                    style="@style/TextAppearance.Delfin.M14"
+                    android:textSize="@dimen/text_16sp"
+                    />
 
                 <!-- Vehicle Info Card -->
                 <LinearLayout
@@ -92,7 +94,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-medium"
                                 android:textColor="@color/text_body_primary"
-                                android:textSize="14sp"
+                                style="@style/TextAppearance.Delfin.R14"
                                 tools:text="MH01CA1234" />
 
                         </LinearLayout>
@@ -117,18 +119,18 @@
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Vehicle Class"
-                                android:textColor="@color/text_body_secondary"
-                                android:textSize="12sp" />
+                                android:text="@string/str_vehicle_class"
+                                android:textColor="@color/text_caption_primary"
+                                style="@style/TextAppearance.Delfin.R14"
+                                android:textSize="@dimen/text_12sp"/>
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvVehicleClass"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:textColor="@color/text_body_secondary"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
+                                android:textColor="@color/text_caption_primary"
+                                style="@style/TextAppearance.Delfin.B16"
                                 tools:text="7" />
 
                         </LinearLayout>
@@ -144,18 +146,18 @@
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Tag Color"
-                                android:textColor="@color/text_body_secondary"
-                                android:textSize="12sp" />
+                                android:text="@string/str_tag_color"
+                                android:textColor="@color/text_caption_primary"
+                                style="@style/TextAppearance.Delfin.R14"
+                                android:textSize="@dimen/text_12sp" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvTagColor"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:textColor="@color/text_body_secondary"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
+                                android:textColor="@color/text_caption_primary"
+                                style="@style/TextAppearance.Delfin.B16"
                                 tools:text="Green" />
 
                         </LinearLayout>
@@ -171,18 +173,18 @@
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Provider"
-                                android:textColor="@color/text_body_secondary"
-                                android:textSize="12sp" />
+                                android:text="@string/str_provider"
+                                android:textColor="@color/text_caption_primary"
+                                style="@style/TextAppearance.Delfin.R14"
+                                android:textSize="@dimen/text_12sp" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvProvider"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:textColor="@color/text_body_secondary"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
+                                android:textColor="@color/text_caption_primary"
+                                style="@style/TextAppearance.Delfin.B16"
                                 tools:text="IDFC" />
 
                         </LinearLayout>
@@ -197,10 +199,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Select 16 digit FASTag barcode"
-                    android:textColor="#3B3B3B"
-                    android:textSize="14sp" />
+                    android:text="@string/str_select_16_digit_fastag_barcode"
+                    android:textColor="@color/text_body_secondary_v2"
+                    style="@style/TextAppearance.Delfin.M14" />
 
                 <!-- Dropdown Input Field -->
                 <FrameLayout
@@ -220,11 +221,11 @@
                         android:layout_gravity="center_vertical|start"
                         android:layout_marginEnd="@dimen/size_32dp"
                         android:ellipsize="end"
-                        android:fontFamily="sans-serif-medium"
-                        android:hint="Select barcode"
+                        style="@style/TextAppearance.Delfin.M14"
+                        android:hint="@string/str_select_barcode"
                         android:maxLines="1"
                         android:textColor="@color/text_body_primary"
-                        android:textColorHint="@color/transparent_grey"
+                        android:textColorHint="@color/text_body_base"
                         android:textSize="16sp" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -233,7 +234,7 @@
                         android:layout_height="@dimen/size_24dp"
                         android:layout_gravity="center_vertical|end"
                         android:contentDescription="Dropdown arrow"
-                        android:src="@drawable/drop_dwn_arrow_down_iv" />
+                        android:src="@drawable/ic_chevron_down" />
 
                 </FrameLayout>
 
@@ -256,8 +257,8 @@
                 android:layout_height="44dp"
                 android:background="@drawable/bg_tag_mapping_continue_disabled"
                 android:enabled="false"
-                android:fontFamily="sans-serif-medium"
-                android:text="Continue"
+                style="@style/TextAppearance.Delfin.M14"
+                android:text="@string/str_continue"
                 android:textAllCaps="false"
                 android:textColor="#CDCBCB"
                 android:textSize="16sp" />

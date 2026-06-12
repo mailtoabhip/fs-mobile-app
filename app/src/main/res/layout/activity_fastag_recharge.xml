@@ -21,20 +21,24 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_toolbar"
             android:background="@android:color/white"
-            android:elevation="2dp"
             app:contentInsetStartWithNavigation="@dimen/size_8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back_arrow"
             app:title="@string/recharge_fastag"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
         <ScrollView
             android:id="@+id/scrollContent"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:fillViewport="true"
             android:overScrollMode="never"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintTop_toBottomOf="@id/divider"
             app:layout_constraintBottom_toTopOf="@id/layoutSlideToRecharge"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -66,7 +70,7 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvVehicleNumber"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -74,28 +78,28 @@
                         android:layout_marginEnd="@dimen/size_8dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textSize="@dimen/text_18sp"
-                        android:textStyle="bold"
-                        android:textColor="#1E293B"
+                        style="@style/TextAppearance.Delfin.B16"
+                        android:textSize="@dimen/size_18dp"
+                        android:textColor="@color/black_text"
                         tools:text="DL79FL7982" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvFastagBalance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_14sp"
+                        style="@style/TextAppearance.Delfin.R14"
                         android:textColor="#6B7280"
                         tools:text="FASTag Balance: ₹0" />
                 </LinearLayout>
 
                 <!-- Add Amount Section -->
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_20dp"
                     android:text="@string/add_amount"
                     android:textColor="#4B5563"
-                    android:textSize="@dimen/text_14sp" />
+                    style="@style/TextAppearance.Delfin.M14" />
 
                 <!-- Amount Input -->
                 <LinearLayout
@@ -106,7 +110,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_amount_prefix"
@@ -115,6 +119,7 @@
                         android:paddingEnd="17dp"
                         android:text="₹"
                         android:textColor="#4B5563"
+                        style="@style/TextAppearance.Delfin.M14"
                         android:textSize="@dimen/text_16sp" />
 
                     <View
@@ -134,18 +139,18 @@
                         android:inputType="numberDecimal"
                         android:paddingHorizontal="@dimen/size_16dp"
                         android:textColor="#1E293B"
-                        android:textSize="@dimen/text_18sp"
-                        android:textStyle="bold" />
+                        style="@style/TextAppearance.Delfin.SB14"
+                        android:textSize="@dimen/text_18sp" />
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvAmountError"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_4dp"
                     android:text="Please enter amount between ₹1 to ₹100000"
                     android:textColor="#DC2626"
-                    android:textSize="@dimen/text_12sp"
+                    style="@style/TextAppearance.Delfin.M12"
                     android:visibility="gone" />
 
                 <!-- Quick Amount Chips -->
@@ -153,10 +158,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_20dp"
-                    android:paddingTop="@dimen/size_4dp"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/chip500"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -165,9 +169,9 @@
                         android:paddingVertical="@dimen/size_8dp"
                         android:text="₹500"
                         android:textColor="#334155"
-                        android:textSize="@dimen/text_14sp" />
+                        style="@style/TextAppearance.Delfin.M14" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/chip1000"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -177,9 +181,9 @@
                         android:paddingVertical="@dimen/size_8dp"
                         android:text="₹1000"
                         android:textColor="#334155"
-                        android:textSize="@dimen/text_14sp" />
+                        style="@style/TextAppearance.Delfin.M14" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/chip1500"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -189,7 +193,7 @@
                         android:paddingVertical="@dimen/size_8dp"
                         android:text="₹1500"
                         android:textColor="#334155"
-                        android:textSize="@dimen/text_14sp" />
+                        style="@style/TextAppearance.Delfin.M14" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -214,7 +218,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/ivWalletIcon"
                         android:layout_width="@dimen/size_36dp"
                         android:layout_height="@dimen/size_36dp"
@@ -232,36 +236,35 @@
                         android:layout_toEndOf="@id/ivWalletIcon"
                         android:orientation="vertical">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Paying via: Delhivery Wallet"
                             android:textColor="#1E293B"
-                            android:textSize="@dimen/text_14sp"
-                            android:textStyle="bold"
+                            style="@style/TextAppearance.Delfin.SB14"
                             android:ellipsize="end"
                             android:maxLines="1" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvWalletBalance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#6B7280"
-                            android:textSize="@dimen/text_12sp"
+                            style="@style/TextAppearance.Delfin.M12"
                             tools:text="₹0" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tvLowBalance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#DC2626"
+                            style="@style/TextAppearance.Delfin.B16"
                             android:textSize="@dimen/text_12sp"
-                            android:textStyle="bold"
                             android:visibility="gone"
                             tools:text="LOW BALANCE: ₹250" />
                     </LinearLayout>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvAddMoney"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -270,8 +273,8 @@
                         android:text="@string/add_money"
                         android:textAllCaps="true"
                         android:textColor="#2563EB"
-                        android:textSize="@dimen/text_12sp"
-                        android:textStyle="bold" />
+                        style="@style/TextAppearance.Delfin.B16"
+                        android:textSize="@dimen/text_12sp" />
                 </RelativeLayout>
 
                 <!-- Low Balance Warning Banner -->
@@ -286,20 +289,20 @@
                     android:padding="@dimen/size_12dp"
                     android:visibility="gone">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="@dimen/size_20dp"
                         android:layout_height="@dimen/size_20dp"
                         android:layout_marginEnd="@dimen/size_8dp"
                         android:src="@drawable/ic_warning_amber"
                         android:contentDescription="Warning" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvInsufficientMessage"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textColor="#D97706"
-                        android:textSize="@dimen/text_12sp"
+                        style="@style/TextAppearance.Delfin.M12"
                         tools:text="Please add at least ₹750 to your Delhivery Wallet to recharge your FASTag" />
                 </LinearLayout>
             </LinearLayout>
@@ -322,13 +325,12 @@
                 android:orientation="vertical"
                 android:padding="@dimen/size_20dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/payment_summary"
                     android:textColor="#1E293B"
-                    android:textSize="@dimen/text_16sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B16" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -337,24 +339,24 @@
                     android:paddingTop="@dimen/size_12dp"
                     android:paddingBottom="13dp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:text="@string/recharge_amount"
                         android:textColor="#4B5563"
-                        android:textSize="@dimen/text_16sp" />
+                        style="@style/TextAppearance.Delfin.M14"
+                        android:textSize="@dimen/text_16sp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvRechargeAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:textColor="#1E293B"
-                        android:textSize="@dimen/text_16sp"
-                        android:textStyle="bold"
+                        style="@style/TextAppearance.Delfin.B16"
                         tools:text="₹500" />
                 </RelativeLayout>
 
@@ -368,17 +370,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/size_16dp">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:text="@string/payable_amount"
                         android:textColor="#1E293B"
-                        android:textSize="@dimen/text_16sp"
-                        android:textStyle="bold" />
+                        style="@style/TextAppearance.Delfin.B16" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvPayableAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -386,7 +387,7 @@
                         android:layout_centerVertical="true"
                         android:textColor="#1E293B"
                         android:textSize="@dimen/text_18sp"
-                        android:textStyle="bold"
+                        style="@style/TextAppearance.Delfin.B16"
                         tools:text="₹500" />
                 </RelativeLayout>
             </LinearLayout>
@@ -427,7 +428,7 @@
                 android:layout_marginBottom="@dimen/size_12dp"
                 android:visibility="gone">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="@dimen/size_20dp"
                     android:layout_height="@dimen/size_20dp"
                     android:layout_marginEnd="@dimen/size_8dp"
@@ -435,14 +436,14 @@
                     android:contentDescription="Warning"
                     app:tint="#212121" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvBlacklistMessage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     tools:text="Your FASTag is currently blacklisted. Recharge request may be decline by the bank."
                     android:textColor="#212121"
-                    android:textSize="@dimen/text_14sp" />
+                    style="@style/TextAppearance.Delfin.M14" />
             </LinearLayout>
 
             <FrameLayout
@@ -451,16 +452,17 @@
                 android:layout_height="@dimen/size_56dp"
                 android:background="@drawable/bg_slide_to_pay">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvSlideLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/slide_to_pay"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/text_18sp" />
+                    style="@style/TextAppearance.Delfin.SB14"
+                    android:textSize="@dimen/size_18dp"/>
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivSlideThumb"
                     android:layout_width="@dimen/size_56dp"
                     android:layout_height="@dimen/size_36dp"
@@ -471,7 +473,7 @@
                     android:src="@drawable/ic_chevron_right_double"
                     android:contentDescription="Slide" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivCheckIcon"
                     android:layout_width="@dimen/size_56dp"
                     android:layout_height="@dimen/size_36dp"

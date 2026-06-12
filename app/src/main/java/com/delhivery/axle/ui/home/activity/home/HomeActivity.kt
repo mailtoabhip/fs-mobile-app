@@ -79,7 +79,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           return
         }
         backPressedOnce = true
-        com.google.android.material.snackbar.Snackbar.make(
+        Snackbar.make(
           binding.root,
           "Press back again to exit",
           com.google.android.material.snackbar.Snackbar.LENGTH_SHORT

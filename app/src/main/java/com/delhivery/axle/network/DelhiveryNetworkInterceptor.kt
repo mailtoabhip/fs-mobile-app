@@ -45,17 +45,13 @@ class DelhiveryNetworkInterceptor @Inject constructor(
       builder.header("X-App-Version", deviceInfoProvider.appVersion)
       builder.header("X-Platform", deviceInfoProvider.platform)
       builder.header("X-OS-Version", deviceInfoProvider.osVersion)
-      builder.header("X-Client-Ip", deviceInfoProvider.awaitPublicIp())
-
-      /* Skip X-Request-Id if "No-Request-Id" marker header is present or for specific paths */
-      val path = chain.request().url().encodedPath()
-      val skipRequestId = chain.request().header("No-Request-Id") != null
-          || path.contains("/payment/breakup")
-      if (skipRequestId) {
-        builder.removeHeader("No-Request-Id")
-      } else {
-        builder.header("X-Request-Id", requestId)
+      val clientIp = deviceInfoProvider.awaitPublicIp()
+      if (clientIp.isNotEmpty()) {
+        builder.header("X-Client-Ip", clientIp)
       }
+      builder.header("X-Request-Id", requestId)
+
+      val path = chain.request().url().encodedPath()
 
       /* Attach Bearer token for all authenticated endpoints */
       val isUnauthenticated = path == "/api/v1/auth/initiate"
@@ -76,8 +72,8 @@ class DelhiveryNetworkInterceptor @Inject constructor(
             "X-App-Version=${deviceInfoProvider.appVersion}, " +
             "X-Platform=${deviceInfoProvider.platform}, " +
             "X-OS-Version=${deviceInfoProvider.osVersion}, " +
-            (if (!skipRequestId) "X-Request-Id=$requestId, " else "") +
-            "X-Client-Ip=${deviceInfoProvider.awaitPublicIp()}")
+            "X-Request-Id=$requestId" +
+            (if (clientIp.isNotEmpty()) ", X-Client-Ip=$clientIp" else ""))
       }
 
       chain.proceed(builder.build())

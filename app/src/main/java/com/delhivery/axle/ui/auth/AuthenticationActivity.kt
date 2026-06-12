@@ -69,10 +69,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
 
   @Inject lateinit var userPrefs: UserPrefs
 
-  init {
-    StatusBarColor = Color.parseColor("#ededff")
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySetupTrace = FirebasePerformance.getInstance().newTrace("AuthenticationActivity_SetupTime")
@@ -112,36 +108,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     /* phone no edit button setup */
     binding.editPhoneNo.apply {
       // raisedFocus()
-      onLengthReached(11) { reached ->
+      onLengthReached(10) { reached ->
         binding.btnSendOtp.isEnabled = reached
         binding.ivCheck.visibility = if (reached) View.VISIBLE else View.GONE
       }
-
-      // Auto-insert space after 5 digits (format: XXXXX XXXXX)
-      addTextChangedListener(object : android.text.TextWatcher {
-        private var isFormatting = false
-
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-        override fun afterTextChanged(s: android.text.Editable?) {
-          if (isFormatting || s == null) return
-          isFormatting = true
-
-          val digits = s.toString().replace(" ", "")
-          val formatted = if (digits.length > 5) {
-            digits.substring(0, 5) + " " + digits.substring(5)
-          } else {
-            digits
-          }
-
-          if (s.toString() != formatted) {
-            s.replace(0, s.length, formatted)
-          }
-
-          isFormatting = false
-        }
-      })
     }
 
     binding.btnSendOtp.setOnClickListener {
@@ -161,7 +131,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                 .onBackground()
                 .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe { tick ->
-                  val timeLeft = 15L - tick
+                  val timeLeft = 30L - tick
                   when {
                     timeLeft > 0 -> {
                       val f: NumberFormat = DecimalFormat("00")
@@ -172,7 +142,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
                     else -> {
                       // timeLeft <= 0: countdown done, enable resend and stop the timer
                       binding.btnResendOtp.text = getString(string.label_resend_otp_done)
-                      binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorAccent))
+                      binding.btnResendOtp.setTextColor(ContextCompat.getColor(applicationContext, R.color.text_info_blue_primary))
                       binding.btnResendOtp.isEnabled = true
                       timeoutDisposable.safeDispose()
                     }
@@ -199,7 +169,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
         val len = s?.length ?: 0
         binding.btnVerifyOtp.isEnabled = (len == 6 || len == 8)
         // Spacing only for entered text, not hint
-        binding.otpView.letterSpacing = if (len > 0) 0.3f else 0f
+        //binding.otpView.letterSpacing = if (len > 0) 0.3f else 0f
       }
     })
 
@@ -214,6 +184,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
       )
       viewModel.otpSendCount +=1
       binding.otpView.text?.clear()
+      binding.otpView.background = ContextCompat.getDrawable(this, R.drawable.bg_edittext_outline)
+      binding.labelResend.visibility = View.VISIBLE
       binding.otpError.visibility = View.GONE
       viewModel.resendOTP()
     }
@@ -225,6 +197,8 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
               mutableListOf(PROPERTY_MOBILE_NUMBER_ENTERED),
               mutableListOf(viewModel.phoneNo)
       )
+      binding.otpView.background = ContextCompat.getDrawable(this, R.drawable.bg_edittext_outline)
+      binding.labelResend.visibility = View.VISIBLE
       binding.otpError.visibility = View.GONE
       viewModel.sendOTP()
     }
@@ -246,13 +220,6 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
     viewModel.verifyOTP(otp.toCharArray())
   }
 
-  fun maskPhoneNumber(phone: String): String {
-    return if (phone.length >= 6) {
-      "X".repeat(6) + phone.substring(6)
-    } else {
-      "X".repeat(phone.length)
-    }
-  }
 
   private fun resetVerifyButton() {
     binding.progressVerifyOtp.visibility = View.GONE
@@ -273,7 +240,7 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             binding.toolbar.navigationIcon = null
             Handler(Looper.getMainLooper()).postDelayed({
               binding.editPhoneNo.requestFocus()
-              val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+              val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
               imm.showSoftInput(binding.editPhoneNo, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
             }, 300)
           }
@@ -283,10 +250,10 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             binding.otpView.text?.clear()
             Handler(Looper.getMainLooper()).postDelayed({
               binding.otpView.requestFocus()
-              val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+              val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
               imm.showSoftInput(binding.otpView, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
             }, 300)
-            /* show masked phone no */
+            /* show  phone no */
             viewModel.phoneNo.let {
               if (it.length > 2) {
                 val fullText = getString(string.msg_otp_sent_to_phone_no, it.replace(" ", ""))
@@ -375,12 +342,15 @@ class AuthenticationActivity : BaseActivity<ActivityAuthenticationBinding, Authe
             binding.editPhoneNo.errorVibrate()
           }
           InvalidOTP -> {
+            binding.labelResend.visibility = View.GONE
             binding.otpError.visibility = View.VISIBLE
-            binding.otpView.text?.clear()
+            binding.otpView.background = ContextCompat.getDrawable(this@AuthenticationActivity, R.drawable.bg_doc_card_highlighted_rejected)
             resetVerifyButton()
             uiUtils.hideProgress()
           }
           None -> {
+            binding.labelResend.visibility = View.VISIBLE
+            binding.otpView.background = ContextCompat.getDrawable(this@AuthenticationActivity, R.drawable.bg_edittext_outline)
             binding.otpError.visibility = View.GONE
             resetVerifyButton()
             uiUtils.hideProgress()

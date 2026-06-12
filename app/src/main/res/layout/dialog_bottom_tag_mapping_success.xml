@@ -6,14 +6,14 @@
     android:orientation="vertical">
 
     <!-- Header -->
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/size_16dp"
-        android:text="FASTag mapping"
-        android:textColor="@color/black_title"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:text="@string/str_fastag_mapping"
+        android:textColor="@color/text_body_primary"
+        style="@style/TextAppearance.Delfin.B16"
+        android:textSize="@dimen/text_14sp"/>
 
     <!-- Divider -->
     <View
@@ -32,7 +32,7 @@
         android:paddingBottom="@dimen/size_24dp">
 
         <!-- Green check icon -->
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:background="@drawable/bg_circle_green"
@@ -41,25 +41,24 @@
             android:src="@drawable/ic_check_white" />
 
         <!-- Title -->
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_20dp"
             android:gravity="center"
-            android:text="FASTag mapped successfully"
-            android:textColor="@color/black_title"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:text="@string/str_fastag_mapped_successfully"
+            android:textColor="@color/text_primary"
+            style="@style/TextAppearance.Delfin.B20" />
 
         <!-- Subtitle -->
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_8dp"
             android:gravity="center"
-            android:text="You can now continue to know your vehicle"
-            android:textColor="@color/text_body_secondary"
-            android:textSize="14sp" />
+            android:text="@string/str_you_can_now_continue_to_know_your_vehicle"
+            android:textColor="@color/grey_500"
+            style="@style/TextAppearance.Delfin.M14" />
 
     </LinearLayout>
 

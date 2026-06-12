@@ -37,8 +37,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_close"
             app:title="FASTag Collection"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_1dp"/>
         <!-- Title -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvTitle"
@@ -49,11 +54,11 @@
             android:layout_marginEnd="@dimen/size_16dp"
             android:text="Collect your tag from the agent"
             android:textColor="@color/heading_black"
+            style="@style/TextAppearance.Delfin.SB14"
             android:textSize="@dimen/text_16sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
         <!-- Subtitle -->
         <com.google.android.material.textview.MaterialTextView
@@ -61,11 +66,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4dp"
-            android:layout_marginEnd="@dimen/size_16dp"
+            android:layout_marginHorizontal="@dimen/size_16dp"
             android:text="@{`Verify inventory against Order ID #` + orderId + ` and mark received items.`}"
             android:textColor="@color/head_black"
-            android:textSize="@dimen/text_12sp"
-            android:layout_marginStart="@dimen/size_16dp"
+            style="@style/TextAppearance.Delfin.M12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
@@ -99,8 +103,9 @@
                     android:layout_height="wrap_content"
                     android:background="#F5F5F5"
                     android:padding="@dimen/size_16dp"
+                    style="@style/TextAppearance.Delfin.SB12"
                     android:text="Your FASTag Inventory"
-                    android:textColor="@color/heading_black"
+                    android:textColor="@color/text_primary"
                     android:textSize="@dimen/text_12sp"
                     android:textStyle="bold" />
 

@@ -26,9 +26,8 @@
         android:layout_marginEnd="@dimen/size_16dp"
         android:gravity="center"
         android:text="Payment done successfully!"
-        android:textColor="@color/heading_black"
-        android:textSize="@dimen/text_20sp"
-        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        style="@style/TextAppearance.Delfin.B20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivSuccessIcon" />
@@ -44,7 +43,7 @@
         android:gravity="center"
         android:text="Your FASTag payment is complete."
         android:textColor="@color/background_dark_grey"
-        android:textSize="@dimen/text_14sp"
+        style="@style/TextAppearance.Delfin.M14"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
@@ -61,7 +60,7 @@
         android:text="Collect FASTags"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/text_16sp"
+        style="@style/TextAppearance.Delfin.M14"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvDescription" />

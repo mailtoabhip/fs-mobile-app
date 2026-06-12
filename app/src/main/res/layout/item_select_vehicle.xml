@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:layout_marginHorizontal="@dimen/size_16dp"
     android:foreground="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
@@ -13,7 +12,7 @@
     android:paddingVertical="@dimen/size_14dp">
 
     <!-- Vehicle icon -->
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="@dimen/size_24dp"
         android:layout_height="@dimen/size_24dp"
         android:contentDescription="@string/label_my_trucks"
@@ -27,21 +26,21 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvVehicleNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/neutral_black_200"
-            android:textSize="@dimen/text_14sp"
-            android:textStyle="bold"
+            android:textColor="@color/text_body_primary"
+            style="@style/TextAppearance.Delfin.M14"
             tools:text="MH01CA1234" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvChassisNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_2dp"
-            android:textColor="@color/text_body_secondary"
+            android:textColor="@color/text_caption_primary"
+            style="@style/TextAppearance.Delfin.R14"
             android:textSize="@dimen/text_12sp"
             android:visibility="gone"
             tools:text="MEXKRCPA5PG019" />

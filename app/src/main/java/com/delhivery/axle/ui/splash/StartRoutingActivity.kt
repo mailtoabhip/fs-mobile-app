@@ -51,9 +51,6 @@ import kotlin.system.exitProcess
  * Splash screen
  */
 class StartRoutingActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
-  init {
-    StatusBarColor = Color.parseColor("#FFFFFF")
-  }
 
   override fun getViewModelClass() = SplashViewModel::class.java
 

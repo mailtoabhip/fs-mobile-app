@@ -76,7 +76,7 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel> : DaggerApp
   }
 
     /* override in init if required for specific activity */
-  protected var StatusBarColor = Color.parseColor("#F9F9F9")
+  protected var StatusBarColor = Color.parseColor("#FFFFFF")
 
   /* set true if inline progress */
   protected var hasInlineProgress = false

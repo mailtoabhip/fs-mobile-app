@@ -146,8 +146,8 @@ class AuthenticationViewModel @Inject constructor(
                         userPrefs.lastLoginTime = Date().time
 
                         // verify() already saves firstName/lastName to prefs — use them directly
-                        if (userPrefs.firstName.isNotNullOrEmpty() && userPrefs.lastName.isNotNullOrEmpty()) {
-                            userPrefs.userName = "${userPrefs.firstName} ${userPrefs.lastName.orEmpty()}".trim()
+                        if (userPrefs.firstName.isNotNullOrEmpty()) {
+                            userPrefs.userName = "${userPrefs.firstName} ${userPrefs.lastName.orEmpty()} ${userPrefs.lastName.orEmpty()}".trim()
                             state = HomePage
                         } else {
                             state = AccountDetails

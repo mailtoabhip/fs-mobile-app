@@ -1,6 +1,7 @@
 package com.delhivery.axle.ui.fastag.issuance
 
 import android.view.LayoutInflater
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.delhivery.axle.R
@@ -67,6 +68,7 @@ class VehicleClassAdapter(
                     isCheckable = false
                     setChipBackgroundColorResource(R.color.bg_grey)
                     textSize = 12f
+                    textAlignment = TEXT_ALIGNMENT_CENTER
                     setEnsureMinTouchTargetSize(false)
                     chipMinHeight = 0f
                 }

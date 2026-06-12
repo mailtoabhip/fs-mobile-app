@@ -22,6 +22,7 @@
         android:layout_height="@dimen/size_48dp"
         android:layout_marginHorizontal="@dimen/size_16dp"
         android:layout_marginTop="@dimen/size_8dp"
+        android:layout_marginBottom="@dimen/size_4dp"
         android:background="@drawable/bg_all_round_corner_grey_boundary"
         android:textAllCaps="false"
         android:textColor="@color/heading_black"

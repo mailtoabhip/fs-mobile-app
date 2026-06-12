@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -73,6 +75,8 @@ class HomeFragment : HomeBaseFragment<FragmentHomeBinding, HomeFragmentViewModel
         }
 
         viewModel.fastagPendingCount.observe(viewLifecycleOwner) { count ->
+            val transition = AutoTransition().apply { duration = 300 }
+            TransitionManager.beginDelayedTransition(binding.root as android.view.ViewGroup, transition)
             if (count > 0) {
                 binding.fastagPendingCard.visibility = View.VISIBLE
                 binding.tvFastagPendingText.text =

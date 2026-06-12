@@ -33,8 +33,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_close"
             app:title="KYC"
-            style="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_height="@dimen/size_1dp"/>
         <!-- Progress Bar Layout -->
         <include
             android:id="@+id/progressLayout"
@@ -55,7 +60,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toBottomOf="@id/divider">
 
         <!-- Title -->
         <com.google.android.material.textview.MaterialTextView

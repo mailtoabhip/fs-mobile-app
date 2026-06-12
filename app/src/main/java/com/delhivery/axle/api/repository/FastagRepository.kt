@@ -264,7 +264,7 @@ class FastagRepository @Inject constructor(
 
     /**
      * Get pending actions for FASTag tag issuance.
-     * GET /fastag/tag-issuance/v1/pending-actions
+     * GET /fastag/v1/pending-actions
      */
     suspend fun getPendingActions(): Resource<PendingActionsResponse> = safeApiCall {
         fastagService.getPendingActions().toResource()

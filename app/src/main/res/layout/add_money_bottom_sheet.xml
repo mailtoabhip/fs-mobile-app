@@ -39,8 +39,8 @@
                 android:layout_centerVertical="true"
                 android:text="Add money to Delhivery wallet"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_18sp"
-                android:textStyle="bold" />
+                style="@style/TextAppearance.Delfin.B16"
+                android:textSize="@dimen/text_18sp"/>
 
             <!-- ── Amount Input Label ── -->
             <androidx.appcompat.widget.AppCompatTextView
@@ -49,8 +49,8 @@
                 android:layout_marginTop="@dimen/size_24dp"
                 android:text="Enter amount"
                 android:textColor="@color/heading_black"
-                android:textSize="@dimen/text_14sp"
-                android:textStyle="bold" />
+                style="@style/TextAppearance.Delfin.B16"
+                android:textSize="@dimen/text_14sp"/>
 
             <!-- ── Amount Input Field ── -->
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -70,8 +70,7 @@
                     android:layout_marginEnd="@dimen/size_6dp"
                     android:text="₹"
                     android:textColor="@color/heading_black"
-                    android:textSize="@dimen/text_20sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B20" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/et_amount"
@@ -84,8 +83,7 @@
                     android:maxLength="9"
                     android:textColor="@color/heading_black"
                     android:textColorHint="@color/color_hint"
-                    android:textSize="@dimen/text_20sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B20" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <!-- ── Amount Validation Error ── -->
@@ -97,7 +95,7 @@
                 android:layout_marginStart="@dimen/size_4dp"
                 android:text="Please enter amount between ₹1 to ₹100000"
                 android:textColor="@color/error_red"
-                android:textSize="@dimen/text_12sp"
+                style="@style/TextAppearance.Delfin.M12"
                 tools:visibility="visible"
                 android:visibility="gone" />
 
@@ -121,8 +119,8 @@
                     android:paddingEnd="@dimen/size_20dp"
                     android:text="+ ₹500"
                     android:textColor="#475569"
-                    android:textSize="@dimen/text_14sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B16"
+                    android:textSize="@dimen/text_14sp"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_quick_1000"
@@ -137,8 +135,8 @@
                     android:paddingEnd="@dimen/size_20dp"
                     android:text="+ ₹1000"
                     android:textColor="#475569"
-                    android:textSize="@dimen/text_14sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B16"
+                    android:textSize="@dimen/text_14sp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_quick_5000"
@@ -152,8 +150,8 @@
                     android:paddingEnd="@dimen/size_20dp"
                     android:text="+ ₹5000"
                     android:textColor="#475569"
-                    android:textSize="@dimen/text_14sp"
-                    android:textStyle="bold" />
+                    style="@style/TextAppearance.Delfin.B16"
+                    android:textSize="@dimen/text_14sp" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -170,8 +168,7 @@
                 android:text="Proceed to Pay"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_16sp"
-                android:textStyle="bold" />
+                style="@style/TextAppearance.Delfin.B16" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
