@@ -33,7 +33,7 @@
     static void checkParameterIsNotNull(java.lang.Object, java.lang.String);
 }
 
--keep class com.delhivery.axle.data.** { *; }
+-keep class com.dfd.delfin.data.** { *; }
 
 -keep class com.squareup.okhttp.** { *; }
 -keep interface com.squareup.okhttp.** { *; }
@@ -55,8 +55,8 @@
 -keepattributes *Annotation*
 # Gson specific classes
 -keep class sun.misc.Unsafe { *; }
--keep class com.delhivery.axle.api.response.** { *; }
--keep class com.delhivery.axle.api.request.** { *; }
+-keep class com.dfd.delfin.api.response.** { *; }
+-keep class com.dfd.delfin.api.request.** { *; }
 
 
 
@@ -64,17 +64,17 @@
 
 
 
--keep class com.delhivery.axle.api.response.** { *; }
+-keep class com.dfd.delfin.api.response.** { *; }
 
 # CRITICAL: Keep response classes WITHOUT obfuscation for Gson to work with Kotlin data classes
 # The allowobfuscation flag breaks Kotlin data class constructor parameter matching
--keepclassmembers class com.delhivery.axle.api.response.** {
+-keepclassmembers class com.dfd.delfin.api.response.** {
   <fields>;
   <init>(...);
 }
 
 # Ensure @SerializedName annotations are preserved and fields are NOT obfuscated
--keepclassmembers class com.delhivery.axle.api.response.** {
+-keepclassmembers class com.dfd.delfin.api.response.** {
   @com.google.gson.annotations.SerializedName <fields>;
 }
 
@@ -84,26 +84,26 @@
 
 
 # Keep LoginResponse and ensure Gson can deserialize it
--keep class com.delhivery.axle.api.response.LoginResponse { *; }
--keepclassmembers class com.delhivery.axle.api.response.LoginResponse {
+-keep class com.dfd.delfin.api.response.LoginResponse { *; }
+-keepclassmembers class com.dfd.delfin.api.response.LoginResponse {
     <init>(...);
     <fields>;
 }
 
 # Ensure BaseResponse generic type information is preserved
--keep class com.delhivery.axle.api.response.BaseResponse { *; }
--keepclassmembers class com.delhivery.axle.api.response.BaseResponse {
+-keep class com.dfd.delfin.api.response.BaseResponse { *; }
+-keepclassmembers class com.dfd.delfin.api.response.BaseResponse {
     <init>(...);
     <fields>;
 }
 
 # Additional rule: Keep all constructors for response classes (critical for Gson)
--keepclassmembers class com.delhivery.axle.api.response.** {
+-keepclassmembers class com.dfd.delfin.api.response.** {
     <init>(...);
 }
 
 # Keep all fields in response classes (Gson needs these for reflection)
--keepclassmembers class com.delhivery.axle.api.response.** {
+-keepclassmembers class com.dfd.delfin.api.response.** {
     <fields>;
 }
 
@@ -159,7 +159,7 @@
 
 -dontwarn javax.xml.stream.events.**
 
--keepnames class com.delhivery.axle.ui.home.fragments.** { *; }
+-keepnames class com.dfd.delfin.ui.home.fragments.** { *; }
 
 -keepclassmembers enum * { *; }
 -keep class com.google.code.gson.* { *; }
@@ -169,10 +169,10 @@
 #}
 
 # Keep Retrofit service interfaces
--keep interface com.delhivery.axle.api.service.** { *; }
+-keep interface com.dfd.delfin.api.service.** { *; }
 
 # Keep Retrofit service method signatures
--keepclassmembers,allowobfuscation interface com.delhivery.axle.api.service.** {
+-keepclassmembers,allowobfuscation interface com.dfd.delfin.api.service.** {
     <methods>;
 }
 
@@ -243,12 +243,12 @@
 }
 
 # Additional rule: Keep lambda classes in ViewModels
--keepclassmembers class com.delhivery.axle.ui.**.*ViewModel {
+-keepclassmembers class com.dfd.delfin.ui.**.*ViewModel {
     <methods>;
 }
 
 # Keep all classes in the auth package that might contain lambdas
--keep class com.delhivery.axle.ui.auth.** { *; }
+-keep class com.dfd.delfin.ui.auth.** { *; }
 
 
 
@@ -256,20 +256,20 @@
 
 #New proguard rules - v2
 # Keep all data classes used by Gson (already have this, but ensure it's comprehensive)
--keep class com.delhivery.axle.data.** { *; }
+-keep class com.dfd.delfin.data.** { *; }
 
 # Keep UserModel and related classes with all properties
--keep class com.delhivery.axle.data.UserModel { *; }
--keep class com.delhivery.axle.data.SupplierModel { *; }
--keep class com.delhivery.axle.data.ClientModel { *; }
+-keep class com.dfd.delfin.data.UserModel { *; }
+-keep class com.dfd.delfin.data.SupplierModel { *; }
+-keep class com.dfd.delfin.data.ClientModel { *; }
 
 # Keep all fields in data classes (critical for Gson and property access)
--keepclassmembers class com.delhivery.axle.data.** {
+-keepclassmembers class com.dfd.delfin.data.** {
     <fields>;
 }
 
 # Keep Kotlin data class component methods (for destructuring)
--keepclassmembers class com.delhivery.axle.data.** {
+-keepclassmembers class com.dfd.delfin.data.** {
     public <methods>;
 }
 
@@ -283,8 +283,8 @@
 }
 
 # Keep all classes in ViewModels (they contain the lambda callbacks)
--keep class com.delhivery.axle.ui.**.*ViewModel { *; }
--keepclassmembers class com.delhivery.axle.ui.**.*ViewModel {
+-keep class com.dfd.delfin.ui.**.*ViewModel { *; }
+-keepclassmembers class com.dfd.delfin.ui.**.*ViewModel {
     <methods>;
 }
 
@@ -295,11 +295,11 @@
 
 #======
 # Keep Kotlin lambda classes (they're named like ClassName$functionName$lambda$number)
--keep class com.delhivery.axle.ui.auth.AuthenticationViewModel$* { *; }
--keep class com.delhivery.axle.ui.**.*ViewModel$* { *; }
+-keep class com.dfd.delfin.ui.auth.AuthenticationViewModel$* { *; }
+-keep class com.dfd.delfin.ui.**.*ViewModel$* { *; }
 
 # Keep all inner classes in ViewModels (lambdas become inner classes)
--keep class com.delhivery.axle.ui.**.*ViewModel$*$* { *; }
+-keep class com.dfd.delfin.ui.**.*ViewModel$*$* { *; }
 
 
 #=====
@@ -314,7 +314,7 @@
 #}
 
 # Keep all data classes used by Gson
--keep class com.delhivery.axle.data.** { *; }
+-keep class com.dfd.delfin.data.** { *; }
 
 #jwt
 # Keep auth0 JWT classes
@@ -341,19 +341,19 @@
 
 # Keep companion object TypeToken fields to prevent ProGuard/R8 obfuscation issues
 # These are static fields that hold TypeToken instances for generic types
--keepclassmembers class com.delhivery.axle.utils.prefs.UserPrefs$Companion {
+-keepclassmembers class com.dfd.delfin.utils.prefs.UserPrefs$Companion {
     <fields>;
 }
 
--keepclassmembers class com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel$Companion {
+-keepclassmembers class com.dfd.delfin.ui.contractDetails.ContractDetailsViewModel$Companion {
     <fields>;
 }
 
 # Keep anonymous inner classes that extend TypeToken (created by object : TypeToken<...>() {})
 # These are critical for TypeToken.getSuperclassTypeParameter() to work correctly
 # The generic type information must be preserved via Signature attribute
--keep class com.delhivery.axle.utils.prefs.UserPrefs$Companion$* extends com.google.gson.reflect.TypeToken { *; }
--keep class com.delhivery.axle.ui.contractDetails.ContractDetailsViewModel$Companion$* extends com.google.gson.reflect.TypeToken { *; }
+-keep class com.dfd.delfin.utils.prefs.UserPrefs$Companion$* extends com.google.gson.reflect.TypeToken { *; }
+-keep class com.dfd.delfin.ui.contractDetails.ContractDetailsViewModel$Companion$* extends com.google.gson.reflect.TypeToken { *; }
 
 # Additional safety: Keep all anonymous classes in companion objects that might extend TypeToken
 # This ensures TypeToken.getSuperclassTypeParameter() can access the generic type via reflection

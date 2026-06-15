@@ -6,7 +6,7 @@
   <data>
    <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.accountaction.AccountActionViewModel"
+        type="com.dfd.delfin.ui.accountaction.AccountActionViewModel"
         />
    </data>
 

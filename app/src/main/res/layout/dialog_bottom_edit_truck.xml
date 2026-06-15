@@ -6,7 +6,7 @@
     <data>
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData" />
+            type="com.dfd.delfin.data.home.trucks.HomeTrucksRequestItemData" />
     </data>
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

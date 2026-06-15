@@ -8,7 +8,7 @@
   <data>
     <variable
         name="detail_item"
-        type="com.delhivery.axle.data.tripdetail.TripPaymentSummaryDetailItemData"
+        type="com.dfd.delfin.data.tripdetail.TripPaymentSummaryDetailItemData"
         />
 
     <variable

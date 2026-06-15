@@ -1,0 +1,581 @@
+package com.dfd.delfin.ui.home.fragments.bids
+
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import com.dfd.delfin.R
+import com.dfd.delfin.R.string
+import com.dfd.delfin.api.repository.RequestType
+import com.dfd.delfin.data.home.bids.*
+import com.dfd.delfin.databinding.FragmentHomeBidsBinding
+import com.dfd.delfin.ui.biddetails.MarketPlaceBidDetailsActivity
+import com.dfd.delfin.ui.bids.BidType
+import com.dfd.delfin.ui.bids.BulkBidDetailsDialog
+import com.dfd.delfin.ui.contractDetails.contractDetailsIntent
+import com.dfd.delfin.ui.custom.DelfinBidAnimatedSearchBar
+import com.dfd.delfin.ui.home.activity.home.OFF_SET_LIMIT
+import com.dfd.delfin.ui.home.fragments.HomeFragmentType
+import com.dfd.delfin.ui.home.fragments.NavigateHomeFragmentAction
+import com.dfd.delfin.ui.home.fragments.loads_truck.HomeLoadsTruckBaseFragment
+import com.dfd.delfin.ui.sharerate.ShareRateActivity
+import com.dfd.delfin.utils.*
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import java.util.Date
+import java.util.concurrent.Executors
+import javax.inject.Inject
+
+/**
+ * All bids screen on home
+ */
+class HomeBidsFragment : HomeLoadsTruckBaseFragment<FragmentHomeBidsBinding, HomeBidsViewModel>(),
+    HomeBidsRVAdapterInterface, DelfinBidAnimatedSearchBar.ToolbarElevationChangeListener {
+
+  var _title: String = "My Bids"
+  var launch : Boolean =true
+  @Inject lateinit var userPrefs: UserPrefs
+  @Inject lateinit var dialogUtils: DialogUtils
+  // In any existing activity
+  @Inject
+  lateinit var dialogUsageExample: DialogUsageExample
+
+  // Track if any call is currently loading
+  private var isAnyCallLoading = false
+
+  override val title: CharSequence
+    get() = _title
+
+  init {
+    toolbarElevationLiveData = MutableLiveData()
+    hasInlineProgress = true
+  }
+
+  private var fragmentSetupTrace: Trace? = null
+  private var isFirstResume = true
+
+  companion object {
+    /* singleton instance */
+    val _instance: HomeBidsFragment by lazy { HomeBidsFragment() }
+  }
+
+  override fun getViewModelClass() = HomeBidsViewModel::class.java
+
+  override fun layoutId() = R.layout.fragment_home_bids
+
+  /* RV adapter */
+  private val adapter: HomeBidsRVAdapter by lazy { HomeBidsRVAdapter(this) }
+  var limit = OFF_SET_LIMIT
+  override fun onViewCreated(
+    view: View,
+    savedInstanceState: Bundle?
+  ) {
+    super.onViewCreated(view, savedInstanceState)
+    fragmentSetupTrace = FirebasePerformance.getInstance().newTrace("HomeBidsFragment_SetupTime")
+    fragmentSetupTrace?.start()
+    binding.refreshLayout.setOnRefreshListener {
+      binding.refreshLayout.isRefreshing = false
+      /* remove user transactions and fetch again */
+      refreshData()
+    }
+
+    viewModel.offerLiveData.observe(viewLifecycleOwner, Observer {
+      adapter.notifyDataSetChanged()
+    })
+
+    /* setup recycler view */
+    binding.rvBids.apply {
+      layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+      adapter = this@HomeBidsFragment.adapter
+      //addOnScrollListener(HomeBidsRVScrollListener(binding.editStickySearch))
+      addOnScrollListener(PaginationInterface())
+    }
+
+    adapter.setItems(getStaticData())
+
+    /* observe and update adapter items */
+    viewModel.userBidsData.reobserve(this, Observer {
+      userPrefs.activeBidCount=viewModel.activeBids
+      userPrefs.lostBidCount=viewModel.lostBids
+      userPrefs.confirmedBidCount=viewModel.confirmedBids
+     if(launch) {
+       analyticsUtil.moEngageTrackEvent(
+               EVENT_VIEW_BIDS_SCREEN,
+               mutableListOf(PROPERTY_USER_ID, PROPERTY_ACTIVE_BIDS, PROPERTY_CONFIRMED_BIDS, PROPERTY_LOST_BIDS),
+               mutableListOf(userPrefs.userId(), viewModel.activeBids, viewModel.confirmedBids, viewModel.lostBids)
+       )
+
+       val c = Date()
+       val date = c.toString()
+       analyticsUtil.moEngageTrackEvent(
+         EVENT_VIEW_BIDS_SCREEN_OFFERS,
+         mutableListOf(
+           PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_NUMBER_OF_OFFERS,
+           PROPERTY_DATE
+         ),
+         mutableListOf(
+           userPrefs.userId(), userPrefs.phoneNumber!!,
+           userPrefs.bidOfferCount.toString(), date
+         )
+       )
+       launch=false
+     }
+      it?.let { _items -> adapter.operation(_items) }
+    })
+
+    viewModel.bidsCountLiveData.reobserve(this, Observer {
+      userPrefs.totalBidCount=it.toString()
+      _title = when (it) {
+        0, null -> getString(string.label_my_bids)
+        else -> "${getString(string.label_my_bids)}($it)"
+      }
+    })
+
+    viewModel.dataLoadingLiveData.reobserve(this, Observer {
+      isLoadingData = it ?: false
+      // Pass loading state to adapter to disable tab clicks during data fetch
+      adapter.setLoadingState(isLoadingData)
+    })
+
+    // Observe marketplace call loading state
+    viewModel.callLoadingStateLiveData.reobserve(this, Observer { loadingStateMap ->
+      loadingStateMap?.forEach { (transactionId, isLoading) ->
+        adapter.updateCallLoadingState(transactionId, isLoading)
+      }
+      
+      // Check if any call is currently loading
+      val anyCallLoading = loadingStateMap?.values?.any { it == true } ?: false
+      updateLoadingOverlay(anyCallLoading)
+    })
+
+    // Observe marketplace call initiation success
+    viewModel.callInitiationLiveData.reobserve(this, Observer { response ->
+      // Hide loading overlay on success
+      updateLoadingOverlay(false)
+      
+      response.data?.firstOrNull()?.let { bridgeData ->
+        bridgeData.bridgeNumber?.let { number ->
+          // Make phone call with bridge number
+          makePhoneCall(number)
+          
+          // Track analytics
+          analyticsUtil.moEngageTrackEvent(
+            "EVENT_MARKETPLACE_CALL_SUCCESS",
+            mutableListOf(PROPERTY_USER_ID, "bridge_number_received"),
+            mutableListOf(userPrefs.userId(), "true")
+          )
+        }
+      }
+    })
+
+    // Observe marketplace call initiation errors
+    viewModel.callInitiationErrorLiveData.reobserve(this, Observer { errorMessage ->
+      // Hide loading overlay on error
+      updateLoadingOverlay(false)
+      
+      // Show error dialog with countdown
+      dialogUtils.showErrorDialog(
+        errorMessage,
+        5L // 5 seconds countdown
+      )
+      
+      // Track analytics
+      analyticsUtil.moEngageTrackEvent(
+        "EVENT_MARKETPLACE_CALL_ERROR",
+        mutableListOf(PROPERTY_USER_ID, "error_message"),
+        mutableListOf(userPrefs.userId(), errorMessage)
+      )
+    })
+
+    /* attach sticky search with adapter */
+    //binding.editStickySearch.attachWithAdapter(adapter, this)
+
+    /* fetch bids data*/
+    fetchBidsData(BidType.ActiveBid)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (fragmentSetupTrace != null && isFirstResume) {
+      fragmentSetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
+  private fun fetchBidsData(bidType: BidType) {
+    //set bidType
+    viewModel.bidType = bidType
+    //
+   // viewModel.fetchBidsSummary(bidType = bidType) // bids counts are fetched from this api
+    //
+    viewModel.fetchBids(bidType = bidType) //pass specific status to fetch ongoing/ won/ lost
+  }
+
+  private fun refreshData() {
+    /* remove user transactions */
+    adapter.resetStaticData(activeBidCount = viewModel.activeBids, confirmedBidCount = viewModel.confirmedBids, lostBidCount = viewModel.lostBids, bidType = viewModel.bidType)
+    /* fetch again */
+    fetchBidsData(viewModel.bidType)
+  }
+
+  private fun getStaticData() = mutableListOf<BaseHomeBidsRVAdapterItem<*>>().apply {
+    add(0, HomeBidsHeaderItem())
+    add(1, HomeBidsSearchItem(HomeBidsSearchItemData()))
+    add(2, HomeBidsProgressItem())
+  }
+
+  override fun handleAction(
+    actionId: String,
+    item: BaseHomeBidsRVAdapterItem<*>
+  ) {
+    when (actionId) {
+      HomeBidsRequestAction_ViewDetails -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        //
+        context?.let { ctx ->
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          
+          // Check if this is a marketplace load
+            if (_item.isMarketplaceLoad()) {
+                // Open MarketPlaceBidDetailsActivity for marketplace loads
+                MarketPlaceBidDetailsActivity.start(
+                    ctx,
+                    _item.transactionId ?: _item.uuid ?: "",
+                    _item.origin ?: "",
+                    _item.destination ?: ""
+                )
+            } else if(_item.requestType==RequestType.Contract.type){
+                startActivity(_item.transactionId?.let {
+                    contractDetailsIntent(it, ctx)
+                } as Intent)
+            }
+        }
+      }
+
+      HomeBidsRequestAction_PlaceBid -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+      }
+
+      HomeBidsRequestAction_ReviseBid -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Capture event
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID),
+          mutableListOf(VALUE_BID, _item.transactionId ?: "")
+        )
+        Log.i("itemDailog", "clicked")
+        
+        context?.let { ctx ->
+          userPrefs.setPreviousScreen(this.javaClass.name)
+          
+          // Check if this is a marketplace load
+            if (_item.isMarketplaceLoad()) {
+                // Open MarketPlaceBidDetailsActivity for marketplace loads
+                MarketPlaceBidDetailsActivity.start(
+                    ctx,
+                    _item.transactionId ?: _item.uuid ?: "",
+                    _item.origin ?: "",
+                    _item.destination ?: ""
+                )
+            } else if(_item.requestType==RequestType.Contract.type){
+                startActivity(_item.transactionId?.let {
+                    contractDetailsIntent(it, ctx)
+                } as Intent)
+            }
+        }
+      }
+
+      HomeBidsRequestAction_InitiateCall -> {
+        val _item = item.data as HomeBidsRequestItemData
+        // Validate transaction ID and bid ID
+        val transactionId = _item.transactionId
+        val bidId = _item.transactionBid?.id
+        
+        if (transactionId.isNullOrEmpty() || bidId.isNullOrEmpty()) {
+          dialogUtils.showErrorDialog(
+            "Unable to initiate call. Missing information.",
+            3L // 3 seconds countdown
+          )
+          return@handleAction
+        }
+        
+        // Track analytics
+        analyticsUtil.moEngageTrackEvent(
+          EVENT_LIST_ITEM,
+          mutableListOf(PROPERTY_TRANSACTION_TYPE, PROPERTY_TRANSACTION_ID, "action"),
+          mutableListOf(VALUE_BID, transactionId, "initiate_call")
+        )
+        
+        // Initiate marketplace call
+        viewModel.initiateMarketplaceCall(transactionId, bidId)
+      }
+
+      HomeBidsHeaderAction_TabChangeActive -> {
+        // Handle tab change to active bids
+        if (isLoadingData) {
+          // Prevent tab change when data is loading
+          Log.d("TabDebug", "Tab change blocked - data is loading")
+          return@handleAction
+        }
+        viewModel.bidType = BidType.ActiveBid
+        refreshData()
+      }
+
+      HomeBidsHeaderAction_TabChangeConfirmed -> {
+        // Handle tab change to confirmed bids
+        if (isLoadingData) {
+          // Prevent tab change when data is loading
+          Log.d("TabDebug", "Tab change blocked - data is loading")
+          return@handleAction
+        }
+        viewModel.bidType = BidType.ConfirmedBid
+        refreshData()
+      }
+
+      HomeBidsHeaderAction_TabChangeLost -> {
+        // Handle tab change to lost bids
+        if (isLoadingData) {
+          // Prevent tab change when data is loading
+          Log.d("TabDebug", "Tab change blocked - data is loading")
+          return@handleAction
+        }
+        viewModel.bidType = BidType.LostBid
+        refreshData()
+      }
+
+      HomeBidsSearchAction_Search -> {
+        // Handle search action - get query and apply filter
+        val searchItem = item as HomeBidsSearchItem
+        val query = searchItem.data.query
+        Log.d("SearchDebug", "Search action triggered with query: $query")
+        
+        if (!query.isNullOrEmpty()) {
+          // Only filter if the query has changed to avoid unnecessary updates
+          if (!adapter.checkFiltering() || adapter.getCurrentFilterQuery() != query) {
+            Log.d("SearchDebug", "Applying filter with query: $query")
+            val result = adapter.filter(query)
+            Log.d("SearchDebug", "Filter result: $result, filtered items: ${adapter.itemsList().size}")
+            
+            // Test: Show a toast with the result
+            //android.widget.Toast.makeText(context, "Search: $query, Results: ${adapter.itemsList().size}", android.widget.Toast.LENGTH_SHORT).show()
+          } else {
+            Log.d("SearchDebug", "Skipping filter - same query")
+          }
+        } else {
+          Log.d("SearchDebug", "Query is null or empty")
+        }
+      }
+
+      HomeBidsSearchAction_Clear -> {
+        // Handle clear search action
+        Log.d("SearchDebug", "Clearing search")
+        adapter.cancelFilter()
+        //android.widget.Toast.makeText(context, "Search cleared", android.widget.Toast.LENGTH_SHORT).show()
+      }
+
+      HomeBidsWarningAction_NoBids -> {
+        action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+      }
+
+      HomeBidsTimeOutAction -> {
+        refreshData()
+      }
+
+      else -> {
+        // Handle other actions
+      }
+    }
+  }
+
+  private fun bidDialog(transaction: HomeBidsRequestItemData? = null) {
+      //  binding.transaction?.let {
+          BulkBidDetailsDialog(
+            requireContext(), transaction!!,transaction.bulkTransactionBids,viewModel, analyticsUtil = analyticsUtil, userPrefs = userPrefs
+          ).show()
+      //  }
+  }
+  override fun postElevation(elevation: Float) {
+    toolbarElevationLiveData!!.postValue(elevation)
+  }
+
+  override fun onActivityResult(
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?
+  ) {
+    super.onActivityResult(requestCode, resultCode, data)
+    when (requestCode) {
+      REQCODE_NO_ROUTES -> {
+        if (resultCode == RESULT_OK) {
+          action(NavigateHomeFragmentAction(HomeFragmentType.LoadsTruckFragment))
+        }
+      }
+      else -> {
+
+      }
+    }
+  }
+
+  override fun getTotalOffers(data: HomeBidsRequestItemData?) {
+
+    Executors.newSingleThreadExecutor().execute(Runnable {
+      viewModel.fetchDatabaseOffers(data)
+    })
+
+  }
+
+  override fun callShareRate(data: HomeBidsRequestItemData?, itemTD: String?, offerTD: String?, occ:String?, dcc:String?, offerid:String?,amount:String?) {
+    val bundle = Bundle()
+    bundle.putString("originname", data?.origin)
+    bundle.putString("destname", data?.destination)
+    bundle.putString("occ", occ)
+    bundle.putString("dcc", dcc)
+    bundle.putString("truckNumber", data?.transactionBid?.vehicleNumber)
+    bundle.putString("truckType", data?.truckSpecification?.truckDispName)
+    bundle.putString("truckCapacity", data?.truckCapacity())
+    bundle.putString("itemTD", itemTD)
+    bundle.putString("offerTD", offerTD)
+    bundle.putString("offerid", offerid)
+    bundle.putString("amt", amount)
+
+    analyticsUtil.moEngageTrackEvent(
+            EVENT_CLICKED_OFFER,
+            mutableListOf(PROPERTY_USER_ID, PROPERTY_PHONE_NO, PROPERTY_SOURCE, PROPERTY_OFFER_ID),
+            mutableListOf(userPrefs.userId(), userPrefs.phoneNumber?:"dummy", "bid_screen", offerid?:"")
+    )
+    navigationUtils.navigate(ShareRateActivity::class.java, false, bundle)
+  }
+
+  /**
+   * Pagination interface
+   */
+  inner class PaginationInterface : PaginationScrollListener(10) {
+      //
+    override fun hasMore() = viewModel.hasMoreData
+
+    override fun isLoading() = isLoadingData
+  }
+
+  inner class HomeBidsRVScrollListener(
+      private val stickyView: DelfinBidAnimatedSearchBar,
+      private val elevation: Float = 12f
+  ) : OnScrollListener() {
+
+    private var toolbarElevation = -1f
+
+    override fun onScrolled(
+      recyclerView: RecyclerView,
+      dx: Int,
+      dy: Int
+    ) {
+      super.onScrolled(recyclerView, dx, dy)
+
+      if (!adapter.checkFiltering()) {
+        val layoutManager =
+          (recyclerView.layoutManager as androidx.recyclerview.widget.LinearLayoutManager)
+        try {
+        val pos = layoutManager.findFirstVisibleItemPosition()
+        val _toolbarElevation = if (pos == 0) {
+          stickyView.translationY = 0f
+          stickyView.visibility = View.GONE
+          stickyView.alpha = 0f
+          stickyView.setRatio(1f)
+          defToolbarElevation
+        } else if (pos == 1) {
+          stickyView.visibility = View.VISIBLE
+          val childView = recyclerView.findViewHolderForAdapterPosition(1)!!.itemView
+          val viewTopGap = childView.height - stickyView.height * 1f
+          val viewTop = childView.top + viewTopGap
+          if (viewTop > 0) {
+            val factor = viewTop / viewTopGap
+            val invFactor = 1f - factor
+            stickyView.translationY = viewTop
+            stickyView.alpha = invFactor
+            ViewCompat.setElevation(stickyView, elevation * invFactor)
+          } else {
+            stickyView.translationY = stickyView.top * 1f
+            stickyView.alpha = 1f
+            ViewCompat.setElevation(stickyView, elevation)
+          }
+          val factor =
+            (childView.height.toFloat() - childView.bottom.toFloat()) / childView.height.toFloat()
+          stickyView.setRatio((1 - factor))
+          factor * defToolbarElevation
+        } else {
+          stickyView.visibility = View.VISIBLE
+          stickyView.translationY = 0f
+          stickyView.alpha = 1f
+          stickyView.setRatio(0f)
+          0f
+        }
+        if (_toolbarElevation != toolbarElevation) {
+          toolbarElevation = _toolbarElevation
+          toolbarElevationLiveData!!.postValue(toolbarElevation)
+        }
+      }catch (e:Exception){
+
+      }
+
+      }
+    }
+  }
+
+  /**
+   * Make phone call with the provided phone number
+   */
+  private fun makePhoneCall(phoneNumber: String) {
+    val intent = Intent(Intent.ACTION_DIAL).apply {
+      data = android.net.Uri.parse("tel:$phoneNumber")
+    }
+    startActivity(intent)
+  }
+
+  /**
+   * Format expiry timestamp to readable time
+   */
+  private fun formatExpiryTime(timestamp: Long): String {
+    val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
+  }
+
+  /**
+   * Update loading overlay visibility to block/unblock user interactions
+   * @param isLoading true to show overlay and block interactions, false to hide overlay
+   */
+  private fun updateLoadingOverlay(isLoading: Boolean) {
+    isAnyCallLoading = isLoading
+    binding.loadingOverlay.visibility = if (isLoading) View.VISIBLE else View.GONE
+    
+    // Disable swipe refresh when call is loading
+    binding.refreshLayout.isEnabled = !isLoading
+    
+    Log.d("CallLoading", "Loading overlay ${if (isLoading) "shown" else "hidden"}")
+  }
+  
+  override fun onDestroyView() {
+    super.onDestroyView()
+    // Clear ViewHolder references to prevent memory leaks
+    adapter.clearViewHolderReferences()
+  }
+}

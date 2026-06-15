@@ -6,7 +6,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.accountrole.AccountRoleViewModel"
+        type="com.dfd.delfin.ui.accountrole.AccountRoleViewModel"
         />
   </data>
 

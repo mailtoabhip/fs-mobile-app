@@ -1,0 +1,172 @@
+package com.dfd.delfin.ui.searchload
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
+import com.dfd.delfin.R
+import com.dfd.delfin.databinding.ActivitySearchLoadBinding
+import com.dfd.delfin.ui.base.BaseActivity
+import com.dfd.delfin.ui.searchload.fragments.BaseSearchLoadFragmentAction
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadAction
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadFragmentActionType.Progress
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadFragmentActionType.Search
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadFragmentType
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadFragmentType.LoadFragment
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadFragmentType.ResultsFragment
+import com.dfd.delfin.ui.searchload.fragments.searchresults.SearchResultsFragment
+import com.dfd.delfin.utils.EVENT_SEARCH_DETAILS_SUBMIT
+import com.dfd.delfin.utils.PROPERTY_SEARCH_BODY_TYPE
+import com.dfd.delfin.utils.PROPERTY_SEARCH_DESTINATION_CITY
+import com.dfd.delfin.utils.PROPERTY_SEARCH_ORIGIN_CITY
+import com.dfd.delfin.utils.WindowInsetsUtils
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import javax.inject.Inject
+
+/**
+ * Search load screen
+ */
+class SearchLoadActivity : BaseActivity<ActivitySearchLoadBinding, SearchLoadViewModel>() {
+
+  @Inject lateinit var userPrefs: UserPrefs
+  override fun getViewModelClass() = SearchLoadViewModel::class.java
+
+  override fun layoutId() = R.layout.activity_search_load
+
+  override fun requireConnection() = true
+
+  /* current Fragment type */
+  private var currentFragmentType: SearchLoadFragmentType? = null
+
+   var intentRequestType:String? = ""
+   var intentContractType:String? =" "
+   private var activitySetupTrace: Trace? = null
+   private var isFirstResume = true
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchLoadActivity_SetupTime")
+    activitySetupTrace?.start()
+  }
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+
+    try {
+      intentRequestType = intent?.getStringExtra(
+        RequestTypeIntentKey
+      )
+      intentContractType = intent?.getStringExtra(ContractTypeIntentKey)
+    } catch (e: Exception) {
+    }
+
+    /* setup toolbar */
+    setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
+    title = if(intentRequestType =="load"){
+      "Search Load"
+    }else {
+      "Search Contract"
+    }
+
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        userPrefs.setPreviousScreen(this.javaClass.name)
+        when (currentFragmentType) {
+          ResultsFragment -> navigate(LoadFragment)
+          else -> { finish() }
+        }
+
+      }
+    })
+
+    /* start with load fragment */
+    navigate(LoadFragment)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    if (activitySetupTrace != null && isFirstResume) {
+      activitySetupTrace?.stop()
+      isFirstResume = false
+    }
+  }
+
+  /**
+   * Navigate to [SearchLoadFragmentType] fragment
+   */
+  private fun navigate(fragmentType: SearchLoadFragmentType) {
+    if (currentFragmentType == fragmentType) return
+    currentFragmentType = fragmentType
+    navigationUtils.addReplaceFragment(
+        R.id.container, fragmentType.fragment, SearchLoadFragmentTag
+    )
+   // title = currentFragmentType?.title
+  }
+
+  /**
+   * Fragment action observer
+   */
+  fun fragmentAction(action: BaseSearchLoadFragmentAction) {
+    when (action.type) {
+      /* Progress action - loading UI removed */
+      Progress -> {
+        // Blue progress bar removed - API calls continue normally
+      }
+      Search -> {
+        (action as SearchLoadAction).apply {
+          analyticsUtil.moEngageTrackEvent(
+              EVENT_SEARCH_DETAILS_SUBMIT,
+              mutableListOf(PROPERTY_SEARCH_ORIGIN_CITY, PROPERTY_SEARCH_DESTINATION_CITY,
+                  PROPERTY_SEARCH_BODY_TYPE),
+              mutableListOf( originCity.cityName() ?: "Anywhere",
+                  destinationCity?.cityName() ?: "Anywhere", truckType ?: "null")
+          )
+          userPrefs.setPreviousScreen(SearchLoadActivity::class.java.name)
+         /* navigate to search results fragment */
+            navigate(ResultsFragment)
+            /* search query */
+            (ResultsFragment.fragment as SearchResultsFragment).search(
+              originCity,
+              destinationCity,
+              truckType,
+              truckDisplayName,
+              status,
+              saveToHistory,
+              requestType,
+              contractType,
+              truckDisplayNames,
+              false,
+              isFlexible,
+              includeFlexibleContracts
+            )
+          }
+        }
+      }
+  }
+
+}
+
+fun searchLoadContractsIntent(
+  context: Context,
+  requestType:String?=null,
+  contractType:String?=null
+) = Intent(context, SearchLoadActivity::class.java).apply {
+  if(requestType!=null)
+    putExtra(RequestTypeIntentKey, requestType)
+  if(contractType!=null)
+    putExtra(ContractTypeIntentKey, contractType)
+}
+/* Search load fragment tag */
+private const val SearchLoadFragmentTag = "search_load_fragment_tag"
+private const val RequestTypeIntentKey = "request_type"
+private const val ContractTypeIntentKey = "contract_type"
+
+

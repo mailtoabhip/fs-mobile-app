@@ -6,7 +6,7 @@
   <data>
     <variable
         name="request"
-        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+        type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
         />
 
     <import type="android.view.View" />
@@ -445,7 +445,7 @@
                   android:layout_marginStart="@dimen/size_8dp"
                   android:gravity="center"
                   android:layout_gravity="center"
-                  android:textColor="@color/colorDelhiveryRed"
+                  android:textColor="@color/colorRed"
                   tools:text="You have the lowest bid"
                   />
 
@@ -478,7 +478,7 @@
             android:lineSpacingExtra="@dimen/text_4sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="@color/colorDelhiveryRed"
+            android:textColor="@color/colorRed"
             tools:text="Reducing below the lowest bid will increase your chances of confirmation"
             />
 
@@ -625,7 +625,7 @@
                   android:lineSpacingExtra="@dimen/text_4sp"
                   android:textStyle="bold"
                   android:layout_marginStart="@dimen/size_8dp"
-                  android:textColor="@color/colorDelhiveryRed"
+                  android:textColor="@color/colorRed"
                   tools:text="In-line with Benchmark Price"
                   />
 
@@ -658,7 +658,7 @@
             android:lineSpacingExtra="@dimen/text_4sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="@color/colorDelhiveryRed"
+            android:textColor="@color/colorRed"
             tools:text="Matching our benchmark price will increase your chances of confirmation"
             />
 

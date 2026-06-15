@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.issuance.FastagCollectionViewModel" />
+            type="com.dfd.delfin.ui.fastag.issuance.FastagCollectionViewModel" />
 
         <variable
             name="orderId"
@@ -124,7 +124,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Slide to Confirm -->
-        <com.delhivery.axle.ui.custom.SlideToConfirmView
+        <com.dfd.delfin.ui.custom.SlideToConfirmView
             android:id="@+id/slideToConfirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

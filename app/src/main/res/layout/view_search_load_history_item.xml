@@ -6,7 +6,7 @@
   <data>
     <variable
         name="data"
-        type="com.delhivery.axle.database.entity.SearchLoadHistoryEntity"
+        type="com.dfd.delfin.database.entity.SearchLoadHistoryEntity"
         />
   </data>
   <androidx.cardview.widget.CardView

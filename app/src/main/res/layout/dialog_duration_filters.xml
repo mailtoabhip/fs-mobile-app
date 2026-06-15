@@ -40,7 +40,7 @@
         android:padding="@dimen/size_16dp"
         android:text="Hours"
         android:textSize="@dimen/text_14sp"
-        android:textColor="@color/colorDelhiveryRed"
+        android:textColor="@color/colorRed"
         app:layout_constraintWidth_percent="0.4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"/>

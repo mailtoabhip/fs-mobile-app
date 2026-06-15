@@ -8,7 +8,7 @@
     <data>
         <variable
             name="data"
-            type="com.delhivery.axle.data.home.trucks.TruckFrequentItem"
+            type="com.dfd.delfin.data.home.trucks.TruckFrequentItem"
             />
     </data>
 

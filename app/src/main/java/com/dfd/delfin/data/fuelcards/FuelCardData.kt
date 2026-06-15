@@ -1,0 +1,24 @@
+package com.dfd.delfin.data.fuelcards
+
+import com.dfd.delfin.data.BaseKeyTypeModel
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+
+/**
+ * Fuel card response
+ */
+data class FuelCardData(
+  @SerializedName("pan") val pan: String,
+  @SerializedName("mobile") val mobile: String,
+  @SerializedName("amount") val amount: String = "0",
+  @SerializedName("trip_id") val tripId: String,
+  @SerializedName("wallet_transaction_reference_number") val refNumber: String
+) : BaseKeyTypeModel<String>(), Serializable {
+
+  override fun key() = refNumber
+
+  /**
+   * @return formatted amount
+   */
+  fun amount() = "₹ $amount"
+}

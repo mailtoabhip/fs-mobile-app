@@ -1,0 +1,600 @@
+package com.dfd.delfin.ui.profile
+
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.core.content.FileProvider
+import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.dfd.delfin.R
+import com.dfd.delfin.api.response.FileData
+import com.dfd.delfin.databinding.ActivityBankDetailsBinding
+import com.dfd.delfin.ui.base.BaseActivity
+import com.dfd.delfin.ui.kyc.aadhaar.UploadedItemRVAdapterInterface
+import com.dfd.delfin.ui.kyc.gst.DocUploadAdapter
+import com.dfd.delfin.ui.paymentdetails.PaymentDetailsActivity
+import com.dfd.delfin.utils.DocumentUtils
+import com.dfd.delfin.utils.BitmapUtils
+import com.dfd.delfin.utils.DialogUtilsInterface
+import com.dfd.delfin.utils.EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION
+import com.dfd.delfin.utils.FileCompressor
+import com.dfd.delfin.utils.ImageUtils
+import com.dfd.delfin.utils.constants.FileType
+import com.dfd.delfin.utils.PROPERTY_PHONE_NO
+import com.dfd.delfin.utils.PROPERTY_SOURCE_PAGE
+import com.dfd.delfin.utils.PROPERTY_TYPE_OF_DOC
+import com.dfd.delfin.utils.PROPERTY_USER_ID
+import com.dfd.delfin.utils.REQCODE_CAMERA
+import com.dfd.delfin.utils.REQCODE_FILE_ATTACHMENTS
+import com.dfd.delfin.utils.REQCODE_TAKE_PHOTO
+import com.dfd.delfin.utils.WindowInsetsUtils
+import com.dfd.delfin.utils.extensions.getFileName
+import com.dfd.delfin.utils.extensions.isNotNullOrEmpty
+import com.dfd.delfin.utils.extensions.onBackground
+import com.dfd.delfin.utils.extensions.plusAssign
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import javax.inject.Inject
+
+class BankDetailsActivity : BaseActivity<ActivityBankDetailsBinding, BankDetailsViewModel>(),
+    DialogUtilsInterface, DocumentUtils.DocumentProgressInterface, DocumentUtils.DocumentListInterface,
+    UploadedItemRVAdapterInterface {
+
+
+
+    private var isCamera: Boolean = false
+    private var mPhotoFile: File? = null
+    private lateinit var uploadImageName: String
+    private lateinit var localImageName: String
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+    @Inject
+    lateinit var imageUtils: ImageUtils
+    @Inject
+    lateinit var documentUtils: DocumentUtils
+    @Inject
+    lateinit var fileCompressor: FileCompressor
+    @Inject
+    lateinit var bitmapUtils: BitmapUtils
+    @Inject
+    lateinit var userPrefs: UserPrefs
+
+
+    val docUploadAdapter : DocUploadAdapter by lazy { DocUploadAdapter(this) }
+    var uploadArray:ArrayList<Pair<String, String>> = ArrayList()
+    var uploadArray1:ArrayList<Pair<String, String>> = ArrayList()
+
+
+    lateinit var path:String
+    var showProg:Boolean = false
+    var download=false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("BankDetailsActivity_SetupTime")
+        activitySetupTrace?.start()
+        viewModel.getKycDoc()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title =  "Payment Details"
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
+
+        if (userPrefs.ownedTruck.isNotNullOrEmpty()) {
+            if (userPrefs.ownedTruck.toInt() <= 10) {
+                binding.uploadDoc1.visibility = View.VISIBLE
+            } else {
+                binding.uploadDoc1.visibility = View.GONE
+            }
+        }
+
+        if(userPrefs.paymentRejectReason.isNotNullOrEmpty()){
+            binding.paymentError.visibility=View.VISIBLE
+            binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
+            binding.btnRetry.visibility=View.VISIBLE
+            binding.btnRetry.isEnabled=true
+            binding.uploadDoc1.visibility=View.GONE
+            binding.btnSubmit.visibility=View.GONE
+            if(userPrefs.paymentRejectReason.replace(" ", "").equals("Documentunderverification")){
+                binding.paymentError.text=userPrefs.paymentRejectReason
+                binding.btnRetry.visibility=View.GONE
+                binding.btnSubmit.visibility=View.VISIBLE
+                binding.uploadDoc1.visibility=View.VISIBLE
+            }else {
+                binding.paymentError.text="Payment verification failed due to "+userPrefs.paymentRejectReason
+            }
+        }else{
+            binding.paymentError.visibility=View.GONE
+            binding.btnRetry.visibility=View.GONE
+            binding.btnSubmit.visibility=View.VISIBLE
+            binding.uploadDoc1.visibility=View.VISIBLE
+        }
+
+        // Removed delegation token observer - using direct DocumentUtils upload now
+
+        viewModel.verificationDocUploadMsg.observe(this, Observer {
+            uiUtils.showSnackbar(it)
+            binding.btnSubmit.isEnabled=false
+        })
+        viewModel.accountkycDocuments.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                uploadArray1.add(
+                    Pair(
+                        it.substringAfterLast("/"), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    )
+                )
+             showAccountProof()
+            }
+        })
+        viewModel.nine4CkycDocuments.observe(this, Observer {
+            if(it.isNotNullOrEmpty()){
+                uploadArray.add(
+                    Pair(
+                        it.substringAfterLast("/"), (mPhotoFile?.length()
+                        ?.div(1024)).toString()
+                    )
+                )
+               show194CSelected()
+            }
+        })
+
+        binding.btnRetry.setOnClickListener {
+            userPrefs.retryVerification=true
+            navigationUtils.navigate(PaymentDetailsActivity::class.java,true)
+        }
+
+        binding.docRemove.setOnClickListener {
+            try{
+                // Use the full URL from viewModel's LiveData
+                downloadLogo(viewModel.accountkycDocuments.value)
+                download = true
+            } catch (e: Exception) {
+                //uiUtils.showSnackbar("Error: ${e.message}")
+            }
+        }
+        binding.docDownload1.setOnClickListener {
+            try{
+                // Use the full URL from viewModel's LiveData
+                downloadLogo(viewModel.nine4CkycDocuments.value)
+                download = true
+            } catch (e: Exception) {
+                //uiUtils.showSnackbar("Error: ${e.message}")
+            }
+        }
+        binding.uploadDocLay1.setOnClickListener {
+            val imageName = "194C_" + System.currentTimeMillis()+".jpg"
+            captureImage(imageName, imageName)
+        }
+        binding.docRemove1.setOnClickListener {
+            showUploadImage()
+        }
+        binding.btnSubmit.setOnClickListener {
+            sendDocForVerification(uploadArray)
+        }
+
+
+}
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
+
+    override fun onDocumentSuccess(downloadUrl: String) {
+        if(!download) {
+            uiUtils.hideProgress()
+            // Store downloadUrl (from BE response) instead of filename
+            // This downloadUrl will be sent to /upload_document API for verification
+            uploadArray.add(
+                Pair(
+                    downloadUrl, (mPhotoFile?.length()
+                    ?.div(1024)).toString()
+                )
+            )
+            showFileSelected()
+            resetUploadData()
+        }else{
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Document downloaded successfully")
+            showProg = false
+        }
+    }
+
+    override fun onDocumentFailure(error: String) {
+        uiUtils.hideProgress()
+        uiUtils.showToast("Failed to upload: $error")
+        resetUploadData()
+    }
+
+    override fun onDocumentListSuccess(documents: List<FileData>) {
+        if (!isFinishing && download && documents.isNotEmpty()) {
+            uiUtils.hideProgress()
+
+            val document = documents.first()
+            val localFile = getFile(document.filename)
+
+            localFile?.let { file ->
+                downloadImageFromUrl(document.downloadUrl, file)
+            }
+        }
+    }
+
+    private fun downloadImageFromUrl(downloadUrl: String, localFile: File) {
+        Glide.with(this)
+            .download(downloadUrl)
+            .into(object : CustomTarget<File>() {
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    uiUtils.showSnackbar("Download failed")
+                    showProg = false
+                    download = false
+                }
+
+                override fun onResourceReady(
+                    resource: File,
+                    transition: com.bumptech.glide.request.transition.Transition<in File>?
+                ) {
+                    try {
+                        resource.copyTo(localFile, overwrite = true)
+                        uiUtils.showSnackbar("Document downloaded successfully")
+                        showProg = false
+                        download = false
+                    } catch (e: Exception) {
+                        uiUtils.showSnackbar("Failed to save file: ${e.message}")
+                        showProg = false
+                        download = false
+                    }
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+            })
+    }
+
+    override fun onDocumentListFailure(error: String) {
+        uiUtils.showSnackbar(error)
+    }
+
+    private fun resetUploadData() {
+        mPhotoFile = null
+        uploadImageName = ""
+        localImageName = ""
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQCODE_CAMERA -> {
+                requestImageCapturePermissions(isCamera)
+            }
+        }
+    }
+
+    private fun downloadLogo(fullUrl: String?) {
+        if (fullUrl.isNullOrEmpty()) {
+            uiUtils.showSnackbar("Document URL not available")
+            return
+        }
+        
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            compositeDisposable += requestPermission(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            )
+                .onBackground()
+                .subscribe { granted, error ->
+                    if (error == null && granted) {
+                        performDownload(fullUrl)
+                    } else {
+                        uiUtils.hideProgress()
+                        uiUtils.showSnackbar(getString(R.string.storage_permission))
+                    }
+                }
+        } else {
+            performDownload(fullUrl)
+        }
+    }
+
+    private fun performDownload(fullUrl: String) {
+        showProg = true
+        uiUtils.showProgress()
+        
+        // Extract S3 path from full URL
+        val s3Path = extractS3PathFromUrl(fullUrl)
+        
+        if (s3Path != null) {
+            documentUtils.downloadByS3Path(s3Path, this)
+        } else {
+            uiUtils.hideProgress()
+            uiUtils.showSnackbar("Unable to extract document path from URL")
+        }
+    }
+
+    private fun extractS3PathFromUrl(docUrl: String): String? {
+        return try {
+            // Check if it's already a relative path (no http/https protocol and no .amazonaws.com)
+            if (!docUrl.startsWith("http://") && !docUrl.startsWith("https://") && !docUrl.contains(".amazonaws.com")) {
+                // Already a relative path, return as-is (remove query parameters if any)
+                return docUrl.split("?")[0]
+            }
+            
+            // Fallback: Try to extract path from URL pattern (bucket.s3.region.amazonaws.com/path)
+            val parts = docUrl.split(".amazonaws.com/")
+            if (parts.size > 1) {
+                parts[1].split("?")[0] // Remove query parameters if any
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("BankDetailsActivity", "Error extracting s3_path: ${e.message}")
+            null
+        }
+    }
+    private fun getFile(item: String): File? {
+        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        val basePath = "$storageDir/"+System.currentTimeMillis()
+        val arrString = item.split("/")
+        return File(basePath + arrString[arrString.size - 1])
+    }
+
+    private fun requestImageCapturePermissions(isCamera: Boolean) {
+        this.isCamera = isCamera
+        compositeDisposable += requestPermission(
+            arrayOf(
+                Manifest.permission.CAMERA
+            ).apply {
+              if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+                plus(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        )
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    if (isCamera) {
+                        dispatchTakePictureIntent()
+                    } else {
+                        dispatchFileIntent()
+                    }
+                } else {
+                    uiUtils.showSnackbar(getString(R.string.storage_camera_permission))
+                }
+            }
+
+    }
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            mPhotoFile = createImageFile()
+            val photoURI = FileProvider.getUriForFile(
+                this, com.dfd.delfin.BuildConfig.APPLICATION_ID + ".provider", mPhotoFile!!
+            )
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            startActivityForResult(takePictureIntent, REQCODE_TAKE_PHOTO)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun getRequestAadhaarOtp() {
+    }
+
+    override fun setAccountRoleSelection(selected: String) {
+    }
+
+    override fun navigateToBusinessVerification() {
+    }
+
+    override  fun captureImage(
+        uploadImageName: String,
+        localImageName: String
+    ) {
+        this.uploadImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+        this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+".jpg"
+
+        val items = arrayOf<CharSequence>("Take Photo", "Choose a file", "Cancel")
+        val builder = android.app.AlertDialog.Builder(this,R.style.DatePickerTheme)
+        builder.setItems(items) { dialog, item ->
+            when {
+                items[item] == "Take Photo" -> requestImageCapturePermissions(true)
+                items[item] == "Choose a file" -> requestImageCapturePermissions(false)
+                items[item] == "Cancel" -> dialog.dismiss()
+            }
+        }
+        builder.show()
+    }
+
+    private fun showFileSelected() {
+        binding.uploadDocLay1.visibility=View.GONE
+        binding.docUploadedLay1.visibility=View.VISIBLE
+        binding.docTitle1.setText(uploadArray.get(0).first)
+        binding.docSize1.setText(uploadArray.get(0).second+" KB")
+        binding.btnSubmit.isEnabled=true
+        binding.docRemove1.visibility=View.VISIBLE
+        binding.docDownload1.visibility=View.GONE
+    }
+    private fun show194CSelected() {
+        binding.uploadDocLay1.visibility=View.GONE
+        binding.docUploadedLay1.visibility=View.VISIBLE
+        binding.docTitle1.setText(uploadArray.get(0).first)
+        binding.docSize1.setText(uploadArray.get(0).second+" KB")
+        binding.docRemove1.visibility=View.VISIBLE
+        binding.docDownload1.visibility=View.GONE
+    }
+    private fun showAccountProof() {
+        binding.docUploadedLay.visibility=View.VISIBLE
+        binding.docTitle.setText(uploadArray1.get(0).first)
+        binding.docSize.setText(uploadArray1.get(0).second+" KB")
+    }
+
+    private fun showUploadImage() {
+        binding.uploadDocLay1.visibility=View.VISIBLE
+        binding.docUploadedLay1.visibility=View.GONE
+        if(uploadArray.size>0){
+            uploadArray.clear()
+        }
+        binding.btnSubmit.isEnabled=false
+    }
+
+
+    override fun sendDocForVerification(uploadArray:ArrayList<Pair<String, String>>) {
+        if(uploadArray.isNotEmpty()){
+            // Extract downloadUrls from uploadArray (first element of Pair is downloadUrl from /document/upload)
+            // These downloadUrls will be sent to /upload_document API for verification
+            val downloadUrls = uploadArray.map { it.first }
+            viewModel.verifyByDoc(downloadUrls)
+        }else{
+            uiUtils.showToast("No file selected")
+        }
+        uploadArray.clear()
+    }
+
+
+    private fun createImageFile(): File {
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(localImageName, ".jpg", storageDir)
+    }
+
+    private fun dispatchFileIntent() {
+        val intent = Intent()
+        intent.type = "*/*"
+        val mimetypes = arrayOf("image/*", "application/pdf")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(
+            intent,
+            REQCODE_FILE_ATTACHMENTS
+        )
+    }
+
+    private fun uploadImage(file: File, fileType: FileType) {
+        val docType = "section_194C"
+        documentUtils.uploadDocument(file, fileType, docType, this)
+    }
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQCODE_TAKE_PHOTO -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (mPhotoFile == null) {
+                        uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                        return
+                    }
+
+                    try {
+                        mPhotoFile = imageUtils.compressToFile(mPhotoFile!!, localImageName)
+                        uiUtils.showProgress()
+                        uploadImage(mPhotoFile!!, FileType.IMAGE)
+                    } catch (e: IOException) {
+                        uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                    }
+                } else {
+                    uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                }
+            }
+            REQCODE_FILE_ATTACHMENTS ->{
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        val fileType: FileType
+                        val selectedFile = data?.data
+                        require(selectedFile != null)
+                        val parcelFileDescriptor =
+                            contentResolver?.openFileDescriptor(selectedFile, "r", null)
+                        require(parcelFileDescriptor != null)
+                        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+                        require(
+                            contentResolver != null && contentResolver?.getFileName(selectedFile) != null
+                        )
+                        val imageScopedFile =
+                            File(cacheDir, contentResolver?.getFileName(selectedFile)!!)
+                        val outputStream = FileOutputStream(imageScopedFile)
+                        inputStream.copyTo(outputStream, bufferSize = 16384)
+                        this.uploadImageName = "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        this.localImageName =  "194C_" + System.currentTimeMillis()+"_"+userPrefs.phoneNumber+"."+imageScopedFile.extension
+                        if(imageScopedFile.extension=="jpg" ||imageScopedFile.extension=="png" || imageScopedFile.extension=="jpeg"){
+                            fileType = FileType.IMAGE
+                            mPhotoFile = fileCompressor.compressToFile(File(imageScopedFile.path), localImageName)
+                        }else if (imageScopedFile.extension=="pdf"){
+                            fileType = FileType.PDF
+                            mPhotoFile = imageScopedFile
+                        }else{
+                            analyticsUtil.moEngageTrackEvent(
+                                EVENT_DOC_UPLOADED_WITH_WRONG_EXTENSION,
+                                mutableListOf(
+                                    PROPERTY_USER_ID, PROPERTY_PHONE_NO,
+                                    PROPERTY_TYPE_OF_DOC, PROPERTY_SOURCE_PAGE
+                                ),
+                                mutableListOf(userPrefs.userId() , userPrefs.phoneNumber.toString(),imageScopedFile.extension,"bank_validation")
+                            )
+
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
+                        }
+
+                        if (mPhotoFile == null) {
+                            uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                            return
+                        }
+                        uiUtils.showProgress()
+                        uploadImage(mPhotoFile!!, fileType)
+                    } catch (e: IOException) {
+                        uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                    }
+                } else {
+                    uiUtils.showToast(getString(R.string.msg_image_capture_failed))
+                }
+            }
+        }
+    }
+
+    override fun handleDeleteAction(item: Pair<String, String>) {
+        uploadArray.remove(item)
+    }
+
+
+    override fun getViewModelClass() = BankDetailsViewModel::class.java
+
+    override fun layoutId() = R.layout.activity_bank_details
+
+    override fun requireConnection() = true
+
+}

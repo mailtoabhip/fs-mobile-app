@@ -1,0 +1,36 @@
+package com.dfd.delfin.ui.fastag.wallet
+
+import com.dfd.delfin.api.service.WalletApiService
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.gson.JsonObject
+import javax.inject.Inject
+
+class AddMoneyRepository @Inject constructor(
+    private val walletApiService: WalletApiService,
+    private val userPrefs: UserPrefs
+) {
+
+    fun initiateRecharge(amount: Float, redirectUrl: String, clRequestId: String) =
+        walletApiService.rechargeWallet(
+            request = JsonObject().apply {
+                addProperty("amount", amount)
+                addProperty("redirect_url", redirectUrl)
+                addProperty("cl_request_id", clRequestId)
+            }
+        )
+
+    fun createWallet() =
+        walletApiService.createWallet(
+            request = JsonObject().apply {
+                addProperty("phone", userPrefs.phoneNumber ?: "")
+                addProperty("email", "")
+            }
+        )
+
+    fun checkRechargeStatus(rechargeId: String) =
+        walletApiService.fetchRechargeStatus(
+            request = JsonObject().apply {
+                addProperty("recharge_id", rechargeId)
+            }
+        )
+}

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData"
+            type="com.dfd.delfin.data.home.placements.HomePlacementsItemData"
             />
 
         <import type="android.view.View" />
@@ -109,7 +109,7 @@
                     android:drawableStart="@drawable/ic_map_navigation"
                     android:drawablePadding="@dimen/size_4dp"
                     android:background="@drawable/bg_all_rounded_pending"
-                    android:textColor="@color/colorDelhiveryRed"
+                    android:textColor="@color/colorRed"
                     android:layout_marginEnd="@dimen/size_8dp"
                     android:paddingStart="@dimen/size_4dp"
                     android:paddingEnd="@dimen/size_8dp"

@@ -1,0 +1,252 @@
+package com.dfd.delfin.ui.searchcitystate
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dfd.delfin.R
+import com.dfd.delfin.data.CityModel
+import com.dfd.delfin.data.CitySelected
+import com.dfd.delfin.data.search.SearchTimeOutAction
+import com.dfd.delfin.data.search.SearchWarningAction_NoResult
+import com.dfd.delfin.databinding.ActivitySearchCityStateBinding
+import com.dfd.delfin.ui.base.BaseActivity
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType
+import com.dfd.delfin.utils.REQCODE_DESTINATION_SELECT_CITY
+import com.dfd.delfin.utils.WindowInsetsUtils
+import com.dfd.delfin.utils.extensions.focusClick
+import com.dfd.delfin.utils.extensions.getQueryTextChangeObservable
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import io.reactivex.Observable
+
+class SearchCityStateActivity : BaseActivity<ActivitySearchCityStateBinding, SearchCityStateViewModel>() ,
+    SearchCityStateRVAdapterInterface {
+
+    init {
+        hasInlineProgress = true
+    }
+
+
+    override fun getViewModelClass() = SearchCityStateViewModel::class.java
+
+    override fun layoutId()= R.layout.activity_search_city_state
+
+    override fun requireConnection()= true
+
+    var isLoadingData = true
+
+    @Inject lateinit var userPrefs: UserPrefs
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+
+    init {
+        hasInlineProgress = true
+    }
+
+    private val adapter by lazy { SearchCityStateRvAdapter(this) }
+
+    private val selectedAdapter by lazy { SelectedCityStateRvAdapter(this) }
+
+    private val popularAdapter by lazy { PopularCitiesAdapter(this) }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("SearchCityStateActivity_SetupTime")
+        activitySetupTrace?.start()
+        viewModel.cityType = intent.getStringExtra(CityType) ?: ""
+        viewModel.haveOldDestinations = intent.getBooleanExtra(HaveOldDestinations,false)
+
+    }
+
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+
+        setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
+        title = if(viewModel.cityType == "origin") "Origin Location" else "Destination Location"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                selectedCityStates.clear()
+                for(item in oldSelectedCityStates){
+                    selectedCityStates.add(item)
+                }
+                finish()
+            }
+
+        })
+        binding.rvCityItems.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = this@SearchCityStateActivity.adapter
+
+        }
+        binding.rvSelectedCityItems.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+            adapter = this@SearchCityStateActivity.selectedAdapter
+
+        }
+
+        binding.rvPopularCityItems.apply {
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = this@SearchCityStateActivity.popularAdapter
+
+        }
+
+        viewModel.searchLiveData.observe(this, Observer {
+            if (it != null) {
+                    adapter.clearItems()
+                    adapter.operation(it)
+            }
+        })
+
+        binding.closeIcon.setOnClickListener{
+            binding.editQuery.setQuery("",false)
+        }
+        binding.editQuery.getQueryTextChangeObservable()
+            .debounce(300, TimeUnit.MILLISECONDS)
+            .filter { text ->
+                if (text.length<2) {
+                    this?.runOnUiThread {
+                        binding.popularLl.visibility = View.VISIBLE
+                        binding.rvCityItems.visibility = View.GONE
+                        binding.searchIcon.visibility = View.VISIBLE
+                        binding.closeIcon.visibility = View.GONE
+                    }
+                    return@filter false
+                } else {
+                    return@filter true
+                }
+            }
+            .distinctUntilChanged()
+            .switchMap { query ->
+                dataFromNetwork(query)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                if(result.length>1)
+                    this?.runOnUiThread {
+                        binding.popularLl.visibility = View.GONE
+                        binding.rvCityItems.visibility = View.VISIBLE
+                        binding.searchIcon.visibility = View.GONE
+                        binding.closeIcon.visibility = View.VISIBLE
+                    }
+                viewModel.searchCity(result)
+            }
+
+        if (viewModel.searchText.length in 2..30) {
+            refreshData()
+        }
+        viewModel.getPopularCities()
+        viewModel.popularCitiesLiveData.observe(this, Observer {
+            popularAdapter.operation(it)
+        })
+
+        binding.btnSaveDestination.setOnClickListener{
+            setResult(REQCODE_DESTINATION_SELECT_CITY, Intent().apply {
+                putExtra("City", selectedCityStates)
+                putExtra(CityType, viewModel.cityType)
+            })
+            finish()
+        }
+         if(viewModel.haveOldDestinations) {
+             if (selectedCityStates.size > 0) {
+                 oldSelectedCityStates.clear()
+                 for (item in selectedCityStates) {
+                     oldSelectedCityStates.add(item)
+                     selectedAdapter.operation(SearchDataItem(item), DataRVAdapterOperationType.Add)
+                 }
+                 adapter.notifyDataSetChanged()
+                 selectedAdapter.notifyDataSetChanged()
+                 popularAdapter.notifyDataSetChanged()
+                 binding.btnSaveDestination.isEnabled = true
+             }
+         }else{
+             binding.editQuery.focusClick()
+             selectedCityStates.clear()
+         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
+
+    override fun handleAction(
+        actionId: String,
+        item: BaseCityStateRVAdapterItem<*>) {
+        when(actionId){
+            CitySelected -> {
+                val data = item.data as CityModel
+                    if(selectedCityStates.any{ it.orionDbCityCode.equals(data.orionDbCityCode) && it.cityName() == data.cityName() }){
+                            selectedCityStates.remove(selectedCityStates.find { it.orionDbCityCode.equals(data.orionDbCityCode) && it.cityName() == data.cityName() })
+                            selectedAdapter.operation(item,DataRVAdapterOperationType.Remove)
+                        }else{
+                            selectedAdapter.operation(item,DataRVAdapterOperationType.Add)
+                            selectedCityStates.add(data)
+                        }
+                    popularAdapter.notifyDataSetChanged()
+                    selectedAdapter.notifyDataSetChanged()
+                    adapter.notifyDataSetChanged()
+                binding.btnSaveDestination.isEnabled = selectedCityStates.size>0
+            }
+
+            SearchWarningAction_NoResult -> {
+                refreshData()
+            }
+
+            SearchTimeOutAction -> {
+                refreshData()
+            }
+        }
+    }
+
+
+    private fun refreshData() {
+        adapter.clearItems()
+        viewModel.searchCity(viewModel.searchText)
+    }
+
+    private fun dataFromNetwork(query: String): Observable<String> {
+        return Observable.just(true)
+            .delay(0, TimeUnit.SECONDS)
+            .map {
+                query
+            }
+    }
+
+}
+
+
+private const val FromDialog = "from_dialog"
+const val CityType = "city_type"
+const val SelectedData = "selected_data"
+const val HaveOldDestinations = "have_old_destinations"
+
+
+
+/**
+ * Search City Intent
+ */
+fun searchCityIntent(
+    context: Context
+) = Intent( context, SearchCityStateActivity::class.java)
+var selectedCityStates = ArrayList<CityModel>()
+var oldSelectedCityStates = ArrayList<CityModel>()
+

@@ -6,7 +6,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.home.activity.home.HomeViewModel"
+        type="com.dfd.delfin.ui.home.activity.home.HomeViewModel"
         />
   </data>
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,12 +46,17 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.delhivery.axle.ui.custom.DelhiverViewPager
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_1dp"/>
+    <com.dfd.delfin.ui.custom.DelhiverViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         />
 
   </androidx.constraintlayout.widget.ConstraintLayout>

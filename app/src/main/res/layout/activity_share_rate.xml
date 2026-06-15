@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.sharerate.ShareRateViewModel"
+            type="com.dfd.delfin.ui.sharerate.ShareRateViewModel"
             />
 
         <import type="android.view.View" />

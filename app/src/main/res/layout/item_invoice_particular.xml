@@ -6,7 +6,7 @@
   <data>
     <variable
         name="item"
-        type="com.delhivery.axle.api.response.InvoiceParticular" />
+        type="com.dfd.delfin.api.response.InvoiceParticular" />
   </data>
 
   <androidx.constraintlayout.widget.ConstraintLayout

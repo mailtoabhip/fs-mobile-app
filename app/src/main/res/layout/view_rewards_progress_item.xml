@@ -4,7 +4,7 @@
     >
 
 
-  <com.delhivery.axle.ui.custom.DelhiveryShimmerLayout
+  <com.dfd.delfin.ui.custom.DelfinShimmerLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       >
@@ -109,6 +109,6 @@
           app:layout_constraintTop_toTopOf="@+id/id5"
           />
     </androidx.constraintlayout.widget.ConstraintLayout>
-  </com.delhivery.axle.ui.custom.DelhiveryShimmerLayout>
+  </com.dfd.delfin.ui.custom.DelfinShimmerLayout>
 
 </layout>

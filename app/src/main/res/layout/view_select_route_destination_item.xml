@@ -6,7 +6,7 @@
   <data>
     <variable
         name="state"
-        type="com.delhivery.axle.data.StateModel"
+        type="com.dfd.delfin.data.StateModel"
         />
   </data>
   <androidx.cardview.widget.CardView

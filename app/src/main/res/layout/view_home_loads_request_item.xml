@@ -8,7 +8,7 @@
   <data>
     <variable
         name="request"
-        type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+        type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
         />
 
     <import type="android.view.View" />
@@ -367,7 +367,7 @@
               app:srcCompat="@drawable/ic_tick"
               />
 
-          <com.delhivery.axle.ui.custom.DelhiveryAutoFitTextView
+          <com.dfd.delfin.ui.custom.DelfinAutoFitTextView
               android:id="@+id/text_bid_amount"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
@@ -403,7 +403,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 android:textStyle="bold"
-                android:textColor="@color/colorDelhiveryRed"
+                android:textColor="@color/colorRed"
                 android:text="@{request.lowestbidDifference()}"
                 app:layout_constraintEnd_toStartOf="@+id/img_bid_up_arrow"
                 app:layout_constraintTop_toTopOf="parent"
@@ -423,7 +423,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_close_bracket"
                 android:text=")"
-                android:textColor="@color/colorDelhiveryRed"
+                android:textColor="@color/colorRed"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 visibility="@{request.setCloseText()}"

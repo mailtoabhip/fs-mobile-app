@@ -1,0 +1,130 @@
+package com.dfd.delfin.ui.profile
+
+import android.Manifest
+import android.os.Bundle
+import android.view.View
+import androidx.activity.OnBackPressedCallback
+import com.dfd.delfin.R
+import com.dfd.delfin.config.UrlConfig
+import com.dfd.delfin.databinding.ActivityHelpSupportBinding
+import com.dfd.delfin.ui.base.BaseActivity
+import com.dfd.delfin.utils.WindowInsetsUtils
+import com.dfd.delfin.utils.extensions.onBackground
+import com.dfd.delfin.utils.extensions.plusAssign
+import com.dfd.delfin.utils.prefs.UserPrefs
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.perf.metrics.Trace
+import javax.inject.Inject
+
+class HelpSupportActivity : BaseActivity<ActivityHelpSupportBinding, HomeProfileViewModel>() {
+
+    override fun getViewModelClass() = HomeProfileViewModel::class.java
+
+    override fun layoutId() = R.layout.activity_help_support
+
+    override fun requireConnection() = true
+
+    @Inject lateinit var userPrefs:UserPrefs
+    private var activitySetupTrace: Trace? = null
+    private var isFirstResume = true
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activitySetupTrace = FirebasePerformance.getInstance().newTrace("HelpSupportActivity_SetupTime")
+        activitySetupTrace?.start()
+    }
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+
+        setSupportActionBar(binding.toolbar)
+    
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title =  "Help & Support"
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                userPrefs.setPreviousScreen(this.javaClass.name)
+                finish()
+            }
+        })
+
+        binding.paymentTerms.setOnClickListener {
+            when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/paymentterms")) {
+                false -> uiUtils.showSnackbar("Could not open url")
+                else ->{}
+            }
+        }
+        binding.terms.setOnClickListener {
+            when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/axle-app-conditions")) {
+                false -> uiUtils.showSnackbar("Could not open url")
+                else ->{}
+            }
+        }
+        binding.privacy.setOnClickListener {
+            when (contactUtils.openURL("${UrlConfig.DashboardUrl.url()}/#/axle-app-privacy-policy")) {
+                false -> uiUtils.showSnackbar("Could not open url")
+                else ->{}
+            }
+        }
+
+
+        if(userPrefs.isLoadBoardClient== false || userPrefs.isLoadBoardSupplier == false) {
+            binding.paymentTerms.visibility = View.VISIBLE
+        }else{
+            if(viewModel.userPrefs.userMode.equals("post_load")){
+                binding.paymentTerms.visibility = View.GONE
+            }else{
+                binding.paymentTerms.visibility = View.VISIBLE
+            }
+        }
+
+        binding.deleteLayout.setOnClickListener {
+            confirmDelete()
+        }
+
+//        binding.call.setOnClickListener {
+//            callSupport()
+//        }
+
+    }
+    override fun onResume() {
+        super.onResume()
+        if (activitySetupTrace != null && isFirstResume) {
+            activitySetupTrace?.stop()
+            isFirstResume = false
+        }
+    }
+    private fun confirmDelete() {
+        dialogUtils.showBasicConfirmDialog(
+                R.string.title_dialog_delete,
+                R.string.msg_delete_account,
+                positiveAction = "Delete",
+                negativeAction = "BACK",
+                positiveClickListener = {
+                    it.dismiss()
+                    viewModel.deleteAccountRequest()
+                }
+        )
+    }
+    private fun callSupport() {
+        compositeDisposable += requestPermission(arrayOf(Manifest.permission.CALL_PHONE))
+            .onBackground()
+            .subscribe { granted, error ->
+                if (error == null && granted) {
+                    when (contactUtils.callHelpline()) {
+                        false -> {
+                            uiUtils.showSnackbar("Unable to place call")
+                        }
+                        else -> {
+                        }
+                    }
+                } else {
+                    uiUtils.showSnackbar(getString(R.string.msg_call_permission))
+                }
+            }
+    }
+
+}

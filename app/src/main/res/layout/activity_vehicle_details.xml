@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.fastag.tagAssignment.assign.VehicleDetailsViewModel" />
+            type="com.dfd.delfin.ui.fastag.tagAssignment.assign.VehicleDetailsViewModel" />
     </data>
 
     <LinearLayout

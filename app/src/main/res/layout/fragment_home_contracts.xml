@@ -4,7 +4,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.home.fragments.contracts.HomeContractsViewModel"
+        type="com.dfd.delfin.ui.home.fragments.contracts.HomeContractsViewModel"
         />
   </data>
 

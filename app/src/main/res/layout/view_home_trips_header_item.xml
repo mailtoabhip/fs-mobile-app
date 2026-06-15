@@ -7,19 +7,19 @@
   <data>
     <variable
         name="advancePending"
-        type="com.delhivery.axle.api.response.Summary"
+        type="com.dfd.delfin.api.response.Summary"
         />
     <variable
         name="inTransit"
-        type="com.delhivery.axle.api.response.Summary"
+        type="com.dfd.delfin.api.response.Summary"
         />
     <variable
         name="podPending"
-        type="com.delhivery.axle.api.response.Summary"
+        type="com.dfd.delfin.api.response.Summary"
         />
     <variable
         name="completed"
-        type="com.delhivery.axle.api.response.Summary"
+        type="com.dfd.delfin.api.response.Summary"
         />
   </data>
 

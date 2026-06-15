@@ -1,0 +1,346 @@
+package com.dfd.delfin.ui.searchload.fragments.searchload
+
+import android.R.layout
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import androidx.appcompat.widget.AppCompatSpinner
+import androidx.lifecycle.Observer
+import com.dfd.delfin.R
+import com.dfd.delfin.api.repository.ContractType
+import com.dfd.delfin.data.CityModel
+import com.dfd.delfin.database.entity.SearchLoadHistoryEntity
+import com.dfd.delfin.databinding.FragmentSearchLoadBinding
+import com.dfd.delfin.databinding.ViewSearchLoadHistoryItemBinding
+import com.dfd.delfin.ui.custom.AnimationType.RevealOpen
+import com.dfd.delfin.ui.searchload.SearchLoadActivity
+import com.dfd.delfin.ui.searchload.fragments.ProgressSearchLoadAction
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadAction
+import com.dfd.delfin.ui.searchload.fragments.SearchLoadBaseFragment
+import com.dfd.delfin.utils.AutoCompleteUtils
+import com.dfd.delfin.utils.EVENT_SEARCH_ERROR
+import com.dfd.delfin.utils.extensions.errorVibrate
+import com.dfd.delfin.utils.extensions.setHintColor
+import com.dfd.delfin.utils.extensions.setup
+import com.dfd.delfin.utils.extensions.visible
+import javax.inject.Inject
+
+/**
+ * Search load screen
+ */
+class SearchLoadFragment : SearchLoadBaseFragment<FragmentSearchLoadBinding, SearchLoadFragmentViewModel>() {
+
+  companion object {
+    /* singleton instance */
+    val _instance: SearchLoadFragment by lazy { SearchLoadFragment() }
+  }
+
+  override fun getViewModelClass() = SearchLoadFragmentViewModel::class.java
+
+  override fun layoutId() = R.layout.fragment_search_load
+
+  @Inject lateinit var autoCompleteUtils: AutoCompleteUtils
+
+  private var origin: CityModel? = null
+  private var destination: CityModel? = null
+  private var requestType: String? =  ""
+  private var contractType:String? = ""
+  private var truckDisplayNames: ArrayList<String>? = arrayListOf("Select Vehicle Type")
+  override fun onViewCreated(
+    view: View,
+    savedInstanceState: Bundle?
+  ) {
+    super.onViewCreated(view, savedInstanceState)
+    val activity: SearchLoadActivity? = activity as SearchLoadActivity?
+    requestType = activity?.intentRequestType
+    contractType = activity?.intentContractType
+    binding.intracity = contractType!=null && contractType==ContractType.INTRACITY.type
+
+    if(contractType==ContractType.INTRACITY.type){
+      viewModel.fetchTruckDisplayNames()
+    }
+
+    viewModel.progressLiveData.observe(this, ProgressObserver())
+
+    if(contractType==ContractType.INTRACITY.type){
+      viewModel.loadingProgressLiveData.observe(this){
+        if(it) uiUtils.showProgress()
+        else uiUtils.hideProgress()
+      }
+      viewModel.truckDisplayNamesLiveData.observe(this){
+          truckDisplayNames?.clear()
+          truckDisplayNames?.add("Select Vehicle Type")
+          if(it!=null)
+            truckDisplayNames?.addAll(it)
+          binding.spinnerTruckDisplayName.setTruckDisplayNamesAdapter()
+      }
+    }
+    binding.btnRetry.setOnClickListener {
+      binding.warningItem.visibility = View.GONE
+      binding.warningItem.alpha = 0f
+      //      viewModel.fetchCities()
+    }
+
+    binding.editOriginCity.setText("")
+    binding.editDestinationCity.setText("")
+
+    toggleVisibility(false)
+    binding.arcView.animate(RevealOpen) {
+
+      val alphaAnimator1 = ObjectAnimator.ofFloat(binding.containerHistory, "alpha", 0f,   if(contractType!=ContractType.INTRACITY.type) 1f else 0f)
+      val alphaAnimator2 = ObjectAnimator.ofFloat(binding.textHistoryTitle, "alpha", 0f,  if(contractType!=ContractType.INTRACITY.type) 1f else 0f)
+      val alphaAnimator3 = ObjectAnimator.ofFloat(binding.containerSearchLoadHeaderForm, "alpha", 0f, 1f)
+      val alphaAnimator4 = ObjectAnimator.ofFloat(binding.warningItem, "alpha", 0f, 0f)
+
+      val animatorSet = AnimatorSet()
+      animatorSet.playTogether(alphaAnimator1,alphaAnimator2,alphaAnimator3,alphaAnimator4)
+      animatorSet.start()
+    }
+
+    setupSearchScreen()
+  }
+
+  override fun onResume() {
+    binding.editOriginCity.setText("")
+    binding.editDestinationCity.setText("")
+    binding.editReportingCenter.setText("")
+    super.onResume()
+  }
+
+  private fun toggleVisibility(toggle: Boolean) {
+    when (toggle) {
+      true -> {
+        binding.warningItem.visibility = View.VISIBLE
+        binding.containerHistory.visibility = View.GONE
+        binding.textHistoryTitle.visibility = View.GONE
+        binding.containerSearchLoadHeaderForm.visibility = View.GONE
+        binding.clIntracitySearch.visibility = View.GONE
+      }
+      false -> {
+        binding.warningItem.visibility = View.GONE
+        if(contractType!=null && contractType==ContractType.INTRACITY.type){
+          binding.containerHistory.visibility = View.GONE
+          binding.textHistoryTitle.visibility = View.GONE
+        }else{
+          binding.containerHistory.visibility = View.VISIBLE
+          binding.textHistoryTitle.visibility = View.VISIBLE
+        }
+        binding.containerSearchLoadHeaderForm.visibility = View.VISIBLE
+        binding.clIntracitySearch.visibility = View.VISIBLE
+      }
+    }
+  }
+
+  override fun onPause() {
+    super.onPause()
+    uiUtils.toggleKeyboard()
+    autoCompleteUtils.clearDisposable()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    origin = null
+    destination = null
+  }
+
+  private fun setupSearchScreen() {
+    if(contractType== ContractType.INTRACITY.type){
+      binding.editReportingCenter.setText("")
+      binding.checkBoxFixedIntracity.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkBoxFixedIntracity.isChecked = isChecked
+      }
+      binding.checkBoxFlexibleIntracity.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkBoxFlexibleIntracity.isChecked = isChecked
+      }
+//      binding.spinnerStatus.apply{
+//        setup(R.array.array_status){ p, v ->
+//          if(p==0) setHintColor(v)
+//        }
+//      }
+      autoCompleteUtils.autoCompleteCity(binding.editReportingCenter){
+        origin = it
+      }
+      binding.btnSearch.setOnClickListener{
+        if(binding.checkBoxFixedIntracity.isChecked|| binding.checkBoxFlexibleIntracity.isChecked){
+          searchLoad(false, origin, destination, null, binding.spinnerTruckDisplayName.selectedItem?.toString()
+            ?.takeIf { it != "Select Vehicle Type" },"",if(binding.checkBoxFlexibleIntracity.isChecked&&binding.checkBoxFixedIntracity.isChecked)null else if (binding.checkBoxFixedIntracity.isChecked)false else if (binding.checkBoxFlexibleIntracity.isChecked) true else null, true)
+        }else{
+          uiUtils.showToast("Please select contract type")
+        }
+
+      }
+    }
+    else{
+      autoCompleteUtils.autoCompleteCity(binding.editOriginCity) {
+        origin = it
+        binding.editDestinationCity.requestFocus()
+      }
+
+      autoCompleteUtils.autoCompleteCity(binding.editDestinationCity) {
+        destination = it
+        uiUtils.toggleKeyboard()
+      }
+      /* truck type */
+      binding.spinnerTruckType.setup(R.array.array_truck_type) { p, v -> }
+      binding.btnAction.setOnClickListener{
+          searchLoad(true, origin, destination, binding.spinnerTruckType.selectedItem.toString(),null,null)
+        }
+    }
+
+    /* reverse origin/destination cities */
+    binding.imgForward.setOnClickListener {
+
+      val animator1 = ObjectAnimator.ofFloat(it, "rotation", 0f, 180f)
+      val animator2 = ObjectAnimator.ofFloat(it, "rotation", 180f, 0f)
+
+      val animatorSet = AnimatorSet()
+      animatorSet.playTogether(animator1,animator2)
+      animatorSet.start()
+      val origin = binding.editOriginCity.text.toString()
+      binding.editOriginCity.setText(binding.editDestinationCity.text.toString())
+      binding.editDestinationCity.setText(origin)
+    }
+
+    /* init */
+    initObservers()
+  }
+
+   private fun AppCompatSpinner.setTruckDisplayNamesAdapter() {
+    val truckDisplayAdapter =
+      ArrayAdapter(this.context, layout.simple_spinner_item, truckDisplayNames ?: arrayListOf("Select Vehicle Type")).apply {
+        setDropDownViewResource(layout.simple_spinner_dropdown_item)
+        onItemSelectedListener = object : OnItemSelectedListener {
+          override fun onItemSelected(
+            p0: AdapterView<*>?,
+            p1: View?,
+            p2: Int,
+            p3: Long
+          ) {
+            setHintColor(getItemAtPosition(p2).toString())
+          }
+          override fun onNothingSelected(parent: AdapterView<*>?) {
+            return
+          }
+        }
+      }
+    adapter = truckDisplayAdapter
+  }
+
+  /**
+   * Search load as per user selections
+   */
+  private fun searchLoad(
+    saveToHistory: Boolean = true,
+    origin: CityModel? = null,
+    destination: CityModel? = null,
+    truckType: String?,
+    truckDisplayName: String?,
+    contractStatus: String?,
+    isFlexible: Boolean?=null,
+    includeFlexibleContracts:Boolean?=null
+  ) {
+    uiUtils.toggleKeyboard(true)
+    if(contractType== ContractType.INTRACITY.type){
+      if(origin==null){
+        binding.editReportingCenter.error="Please select reporting center"
+        binding.editReportingCenter.errorAnimate()
+        return
+      }
+//      if(truckDisplayName!!.lowercase().contains("select")) {
+//        binding.spinnerTruckDisplayName.errorVibrate()
+//        return
+//      }
+    }
+    else{
+      if (origin == null) {
+        binding.editOriginCity.error = getString(R.string.error_search_missing_origin)
+        binding.editOriginCity.errorAnimate()
+        analyticsUtil.moEngageTrackEvent(EVENT_SEARCH_ERROR, mutableListOf(), mutableListOf())
+        return
+      }
+
+      if (truckType!!.lowercase().contains("choose")) {
+        binding.spinnerTruckType.errorVibrate()
+        return
+      }
+    }
+    /* save to history if needed */
+    if (saveToHistory) {
+      viewModel.saveToHistory(
+          origin, destination ?: CityModel(
+          city = getString(R.string.label_anywhere),
+          state = getString(R.string.label_anywhere)
+      ),
+          truckType,
+        truckDisplayName,
+        contractStatus,
+        requestType,contractType
+      )
+    }
+    /* searching progress */
+    action(ProgressSearchLoadAction(true,if(requestType=="contract")"Searching contracts" else "Searching loads"))
+    /* delay and search for better UX */
+      Handler(Looper.myLooper()!!).postDelayed({
+        action(SearchLoadAction(origin, destination, truckType,truckDisplayName, contractStatus, requestType,contractType,truckDisplayNames,saveToHistory,isFlexible,includeFlexibleContracts))
+      }, 200)
+  }
+
+  /**
+   * init observers
+   */
+  private fun initObservers() {
+    /* observe live data for search history */
+    viewModel.searchLoadHistoryLiveData(requestType,contractType)
+        ?.observe(viewLifecycleOwner, SearchLoadHistoryObserver())
+  }
+
+  /**
+   * Search load history observer
+   */
+  inner class SearchLoadHistoryObserver : Observer<List<SearchLoadHistoryEntity?>> {
+    override fun onChanged(t: List<SearchLoadHistoryEntity?>) {
+      t?.let { items ->
+        binding.containerHistory.removeAllViews()
+        items.forEachIndexed { index, item ->
+          val itemBinding = historyItemBinding()
+          itemBinding.data = item
+          itemBinding.root.setOnClickListener {
+            searchLoad(false, item?.originCity, item?.destinationCity, item?.truckType, item?.truckDisplayName, item?.status)
+          }
+          itemBinding.root.setOnLongClickListener {
+            item?.let {
+                viewModel.deleteSearchResult(it)
+            }
+            true
+          }
+          binding.containerHistory.addView(itemBinding.root, index)
+        }
+      }
+      /* title as per search results */
+      if(contractType!=ContractType.INTRACITY.type)
+        binding.textHistoryTitle.visible(!t.isNullOrEmpty())
+    }
+  }
+
+  /**
+   * Progress observer - loading UI removed, API calls continue normally
+   */
+  inner class ProgressObserver : Observer<Boolean?> {
+    override fun onChanged(t: Boolean?) {
+      // Blue progress bar removed - data loading continues in background
+    }
+  }
+
+  /**
+   * Create new history item binding
+   */
+  private fun historyItemBinding() = ViewSearchLoadHistoryItemBinding.inflate(
+      layoutInflater, binding.containerHistory, false
+  )
+}

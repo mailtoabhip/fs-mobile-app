@@ -4,14 +4,14 @@
     <data>
         <variable
             name="trip"
-            type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+            type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
             />
         <variable
             name="isHPODSection"
             type="Boolean"
             />
         <import type="android.view.View" />
-        <import type="com.delhivery.axle.data.home.trips.TripStatus" />
+        <import type="com.dfd.delfin.data.home.trips.TripStatus" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel"
+        type="com.dfd.delfin.ui.searchload.fragments.searchload.SearchLoadFragmentViewModel"
         />
     <variable
         name="intracity"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         >
 
-      <com.delhivery.axle.ui.custom.DelhiveryOnboardingArcView
+      <com.dfd.delfin.ui.custom.DelfinOnboardingArcView
           android:id="@+id/arc_view"
           android:layout_width="match_parent"
           android:layout_height="0dp"
@@ -110,7 +110,7 @@
             app:layout_constraintTop_toTopOf="parent"
             >
 
-          <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+          <com.dfd.delfin.ui.custom.DelfinCityAutoEditText
               android:id="@+id/edit_origin_city"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
             app:layout_constraintStart_toEndOf="@id/img_forward"
             >
 
-          <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+          <com.dfd.delfin.ui.custom.DelfinCityAutoEditText
               android:id="@+id/edit_destination_city"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -233,7 +233,7 @@
             app:lineHeight="@dimen/size_20dp"
             />
 
-        <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+        <com.dfd.delfin.ui.custom.DelfinCityAutoEditText
             android:id="@+id/edit_reporting_center"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_48dp"
