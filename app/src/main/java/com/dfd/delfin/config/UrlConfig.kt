@@ -114,7 +114,7 @@ enum class UrlConfig(
   LoadboardService(
           "https://orion-user-loadboard.delhivery.com",
           "https://orion-user-onboarding-api-dev.delhivery.com",
-          "https://api.devfinserv.com"
+          "https://api.devdelhiveryfs.com"
   ),
   PriceService(
           "https://orion-contract-api-mum.delhivery.com/",
@@ -156,22 +156,22 @@ enum class UrlConfig(
   FsAuthService(
       "https://fs-auth.delhivery.com/",
       "https://fs-auth-dev.delhivery.com/",
-      "https://api.devfinserv.com"  // Android emulator loopback → Mac localhost; replace with Mac's LAN IP for physical device
+      "https://api.devdelhiveryfs.com"  // Android emulator loopback → Mac localhost; replace with Mac's LAN IP for physical device
   ),
     FastagService(
         "https://fs-auth.delhivery.com/",
         "https://fs-auth-dev.delhivery.com/",
-        "https://api.devfinserv.com"
+        "https://api.devdelhiveryfs.com"
     ),
   SaleCodeService(
       "https://financial-api.delhiveryfinserv.com",
       "https://financial-fastag-staging.delhivery.com",
-      "https://api.devfinserv.com"
+      "https://api.devdelhiveryfs.com"
   ),
   KycService(
       "https://financial-fastag-staging.delhivery.com",
       "https://financial-fastag-staging.delhivery.com",
-      "https://api.devfinserv.com"
+      "https://api.devdelhiveryfs.com"
   ),
   AppID(
   "83", "371", "371"

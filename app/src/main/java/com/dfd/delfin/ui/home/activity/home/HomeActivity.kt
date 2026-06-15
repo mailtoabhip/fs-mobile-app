@@ -121,7 +121,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
       )
       navigationUtils.navigate(MyProfileActivity::class.java, false)
     }
-
+    setupToolbar()
+    /* Handle window insets for edge-to-edge display (API 35+) */
+    if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
+      WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
+    }
     viewModel.userUpdateLiveData.observe(this, Observer {
       if(it) {
         if (userPrefs.requestedDeletion) {
@@ -131,22 +135,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           navigationUtils.logout("Please login to create account","fromUser")
         } else {
           setUserAttributes()
-          navigationUtils.navigateOnboardingDetails()
-          /* setup toolbar */
-          setSupportActionBar(binding.toolbar)
-          title = ""
-//          if (!userPrefs.userName.isEmpty()) {
-//            binding.profile.text = userPrefs.userName[0].uppercase().toString()
-//          }
-          supportActionBar?.setDisplayShowTitleEnabled(false)
-          binding.toolbarTitle.text = title
-          
-          /* Handle window insets for edge-to-edge display (API 35+) */
-          if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
-            WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
-          }
-
-          observeFragmentLiveData()
 
           binding.profile.setOnClickListener {
             userPrefs.setPreviousScreen(this.javaClass.name)
@@ -170,6 +158,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
       }.show()
 
     }
+  }
+  fun setupToolbar(){
+    setSupportActionBar(binding.toolbar)
+    title = ""
+    supportActionBar?.setDisplayShowTitleEnabled(false)
+    binding.toolbarTitle.text = title
   }
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -275,24 +269,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
           )
         }catch (e:Exception){}
       }
-    }
-  }
-
-  private fun observeFragmentLiveData(pos: Int = 0) {
-    val fragment = (pagerAdapter.getItem(pos) as HomeBaseFragment)
-    val elevationLiveData: MutableLiveData<Float>? = fragment.toolbarElevationLiveData
-    if (elevationLiveData == null) {
-      /* default toolbar elevation */
-      ViewCompat.setElevation(binding.toolbar, resources.getDimension(R.dimen.toolbar_elevation))
-      binding.toolbarTitle.text = title
-    } else {
-      elevationLiveData.observe(this, Observer {
-        binding.toolbarTitle.text = title
-        ViewCompat.setElevation(
-          binding.toolbar,
-          it ?: resources.getDimension(R.dimen.toolbar_elevation)
-        )
-      })
     }
   }
 
