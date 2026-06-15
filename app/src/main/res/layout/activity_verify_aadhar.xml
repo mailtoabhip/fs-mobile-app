@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.kyc.aadhaar.AadhaarVerificationViewModel"
+            type="com.dfd.delfin.ui.kyc.aadhaar.AadhaarVerificationViewModel"
             />
         <import type="android.view.View" />
     </data>
@@ -114,7 +114,7 @@
                 bind:cardCornerRadius="@dimen/size_6dp"
                 bind:layout_constraintStart_toStartOf="parent"
                 bind:layout_constraintTop_toBottomOf="@+id/aadhaar_error">
-                <com.delhivery.axle.ui.custom.DelhiveryAadhaarFormattedEditText
+                <com.dfd.delfin.ui.custom.DelfinAadhaarFormattedEditText
                     android:id="@+id/edit_aadhaar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_text_height"

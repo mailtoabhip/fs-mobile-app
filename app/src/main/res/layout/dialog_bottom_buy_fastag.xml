@@ -111,7 +111,7 @@
                         android:layout_marginTop="@dimen/size_4dp"
                         android:layout_marginEnd="6dp"
                         android:text="MANDATORY"
-                        android:textColor="@color/colorDelhiveryRed"
+                        android:textColor="@color/colorRed"
                         android:textSize="@dimen/text_10sp" />
                 </RelativeLayout>
 

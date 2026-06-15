@@ -5,12 +5,12 @@
     <data>
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
             />
 
         <variable
             name="placementListingData"
-            type="com.delhivery.axle.data.home.placements.HomePlacementsItemData"
+            type="com.dfd.delfin.data.home.placements.HomePlacementsItemData"
             />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout

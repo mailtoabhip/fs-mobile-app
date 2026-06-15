@@ -6,7 +6,7 @@
   <data>
     <variable
         name="route"
-        type="com.delhivery.axle.data.home.routes.RouteModel"
+        type="com.dfd.delfin.data.home.routes.RouteModel"
         />
   </data>
 

@@ -29,7 +29,7 @@
         app:tabPaddingStart="-1dp"
         bind:tabRippleColor="@null"
         android:layout_height="wrap_content"/>
-    <com.delhivery.axle.ui.custom.DelhiverViewPager
+    <com.dfd.delfin.ui.custom.DelhiverViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

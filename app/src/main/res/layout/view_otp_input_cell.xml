@@ -5,7 +5,7 @@
         Width is 0dp + weight=1 so all 4 cells share the parent width equally.
         Background is swapped between bg_login_edit (normal) and bg_otp_cell_error (error).
     -->
-    <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+    <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
         android:id="@+id/otp_cell_edit"
         android:layout_width="0dp"
         android:layout_height="64dp"

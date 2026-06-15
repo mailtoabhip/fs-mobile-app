@@ -5,7 +5,7 @@
   <data>
     <variable
         name="origin"
-        type="com.delhivery.axle.data.UserCity"
+        type="com.dfd.delfin.data.UserCity"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat

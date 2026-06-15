@@ -6,11 +6,11 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.invoicereview.InvoiceReviewViewModel" />
+        type="com.dfd.delfin.ui.invoicereview.InvoiceReviewViewModel" />
 
     <variable
         name="invoice"
-        type="com.delhivery.axle.api.response.InvoiceDetailsResponse" />
+        type="com.dfd.delfin.api.response.InvoiceDetailsResponse" />
 
     <import type="android.view.View" />
   </data>

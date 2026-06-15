@@ -6,7 +6,7 @@
 <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.kyc.pan.PanVerificationViewModel"
+        type="com.dfd.delfin.ui.kyc.pan.PanVerificationViewModel"
         />
     <import type="android.view.View" />
 
@@ -99,7 +99,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.delhivery.axle.ui.custom.DelhiveryPanViewEditText
+                    <com.dfd.delfin.ui.custom.DelfinPanViewEditText
                         android:id="@+id/edit_pan"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/edit_text_height"
@@ -168,7 +168,7 @@
                     bind:layout_constraintStart_toStartOf="parent"
                     bind:layout_constraintTop_toBottomOf="@+id/text_pan_name"
                     android:text="@string/error_duplicate_pan"
-                    android:textColor="@color/colorDelhiveryRed"
+                    android:textColor="@color/colorRed"
                     android:textSize="@dimen/text_16sp"
                     android:visibility="gone"
                     />

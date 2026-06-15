@@ -8,7 +8,7 @@
 
     <variable
         name="item"
-        type="com.delhivery.axle.data.tripdetail.TripPaymentSummaryItemData"
+        type="com.dfd.delfin.data.tripdetail.TripPaymentSummaryItemData"
         />
 
     <variable
@@ -80,7 +80,7 @@
           android:layout_marginBottom="@dimen/size_8dp"
           android:paddingStart="@dimen/size_8dp"
           android:text="@{amount}"
-          android:textColor="@color/colorDelhiveryRed"
+          android:textColor="@color/colorRed"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/text_summary_title"

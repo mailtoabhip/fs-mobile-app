@@ -14,10 +14,10 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:tabTextAppearance="@style/CustomTextAppearanceTab"
-            app:tabIndicatorColor="@color/colorDelhiveryRed"
+            app:tabIndicatorColor="@color/colorRed"
             app:tabRippleColor="@null"
             app:tabTextColor="@color/font_labels"
-            app:tabSelectedTextColor="@color/colorDelhiveryRed"
+            app:tabSelectedTextColor="@color/colorRed"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

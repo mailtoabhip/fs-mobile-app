@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <declare-styleable name="DelhiveryOTPViewEditText">
+  <declare-styleable name="DelfinOTPViewEditText">
     <attr format="boolean" name="state_error" />
   </declare-styleable>
 
@@ -8,14 +8,14 @@
     <attr format="integer" name="otpDigitCount" />
   </declare-styleable>
 
-  <declare-styleable name="DelhiveryOnboardingArcView">
+  <declare-styleable name="DelfinOnboardingArcView">
     <attr format="enum" name="direction">
       <enum name="top" value="0" />
       <enum name="bottom" value="1" />
     </attr>
   </declare-styleable>
 
-  <declare-styleable name="DelhiveryAutoFitTextView">
+  <declare-styleable name="DelfinAutoFitTextView">
     <!-- Minimum size of the text. -->
     <attr format="dimension" name="minTextSize" />
     <!-- Amount of precision used to calculate the correct text size to fit within its
@@ -25,7 +25,7 @@
     <attr format="boolean" name="sizeToFit" />
   </declare-styleable>
 
-  <declare-styleable name="DelhiveryTextInputLayout">
+  <declare-styleable name="DelfinTextInputLayout">
     <attr format="boolean" name="error_state" />
     <attr format="string" name="error_message" />
     <attr format="string" name="max_val" />
@@ -34,13 +34,13 @@
     <attr format="integer" name="max_length" />
   </declare-styleable>
 
-    <declare-styleable name="DelhiveryAadhaarMaskedEditText">
+    <declare-styleable name="DelfinAadhaarMaskedEditText">
       <attr name="numberOfGroups" format="integer" />
       <attr name="groupLength" format="integer" />
       <attr name="groupSeparator" format="string" />
     </declare-styleable>
 
-  <declare-styleable name="DelhiveryCustomEditTextWithError">
+  <declare-styleable name="DelfinCustomEditTextWithError">
     <attr name="error_input" format="string"/>
     <attr format="boolean" name="error_condition" />
     <attr format="integer" name="minimum_lengths" />

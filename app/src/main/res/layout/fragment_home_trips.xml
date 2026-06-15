@@ -7,7 +7,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.home.fragments.trips.HomeTripsViewModel"
+        type="com.dfd.delfin.ui.home.fragments.trips.HomeTripsViewModel"
         />
 
     <import type="android.view.View" />
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 >
 
-              <com.delhivery.axle.ui.custom.DelhiveryAnimatedSearchBar
+              <com.dfd.delfin.ui.custom.DelfinAnimatedSearchBar
                   android:id="@+id/edit_sticky_search"
                   android:layout_width="match_parent"
                   android:layout_height="@dimen/size_72dp"

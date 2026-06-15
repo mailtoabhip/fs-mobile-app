@@ -7,12 +7,12 @@
   <data>
     <variable
         name="trip"
-        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
         />
 
     <import type="androidx.core.content.ContextCompat" />
     <import type="android.view.View" />
-    <import type="com.delhivery.axle.ui.bids.TripType" />
+    <import type="com.dfd.delfin.ui.bids.TripType" />
   </data>
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"

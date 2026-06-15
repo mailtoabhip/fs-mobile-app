@@ -7,17 +7,17 @@
   <data>
     <variable
         name="transaction"
-        type="com.delhivery.axle.data.transactions.TransactionsItemData"
+        type="com.dfd.delfin.data.transactions.TransactionsItemData"
         />
 
     <variable
         name="trip"
-        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
         />
 
     <variable
         name="fuel"
-        type="com.delhivery.axle.data.fuelcards.FuelCardData"
+        type="com.dfd.delfin.data.fuelcards.FuelCardData"
         />
 
   </data>

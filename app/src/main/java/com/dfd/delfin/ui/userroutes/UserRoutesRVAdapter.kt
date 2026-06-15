@@ -1,0 +1,75 @@
+package com.dfd.delfin.ui.userroutes
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
+import com.dfd.delfin.databinding.ViewNoTeamMemberBinding
+import com.dfd.delfin.databinding.ViewUserRoutesItemBinding
+import com.dfd.delfin.databinding.ViewUserRoutesProgressItemBinding
+import com.dfd.delfin.ui.base.BaseViewHolder
+import com.dfd.delfin.ui.base.adapter.BaseDataRVAdapter
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.AddUpdate
+import com.dfd.delfin.ui.base.adapter.DataRVAdapterOperationType.Remove
+import com.dfd.delfin.ui.userroutes.UserRoutesRVAdapterItemType.Route
+import com.dfd.delfin.ui.userroutes.UserRoutesRVAdapterItemType.Warning
+
+/**
+ * Created by Vibhor for Delhivery Pvt Ltd
+ * on 5/1/21
+ */
+
+class UserRoutesRVAdapter(private val _interface: UserRoutesRVAdapterInterface) :
+    BaseDataRVAdapter<BaseUserRouteRVAdapterItem<*>, ViewDataBinding, BaseViewHolder<*>>(
+        _interface
+    ) {
+
+  override fun getItemViewType(position: Int) = itemsList()[position].type.typeId
+
+  override fun getBinding(
+    inflater: LayoutInflater,
+    parent: ViewGroup,
+    viewType: Int
+  ) = when (UserRoutesRVAdapterItemType.byTypeId(viewType)) {
+    Route -> ViewUserRoutesItemBinding.inflate(inflater, parent, false)
+    Warning -> ViewNoTeamMemberBinding.inflate(inflater, parent, false)
+    else -> ViewUserRoutesProgressItemBinding.inflate(inflater, parent, false)
+  }
+
+  override fun createVH(binding: ViewDataBinding) = when (binding) {
+    is ViewUserRoutesItemBinding -> UserRoutesItemVH(binding)
+    is ViewNoTeamMemberBinding -> UserRoutesWarningItemVH(binding)
+    else -> UserRoutesProgressItemVH(binding as ViewUserRoutesProgressItemBinding)
+  }
+
+  override fun bindVH(
+    holder: BaseViewHolder<*>,
+    item: BaseUserRouteRVAdapterItem<*>
+  ) {
+    when (holder) {
+      is UserRoutesItemVH -> holder.bind(item as UserRouteItem, _interface)
+      is UserRoutesProgressItemVH -> holder.bind(item as UserRouteProgressItem, _interface)
+      is UserRoutesWarningItemVH -> holder.bind(item as UserRouteWarningItem, _interface)
+    }
+  }
+
+  /**
+   *
+   * Reset to empty state with progress bar
+   *
+   */
+  fun resetStaticData() {
+    mutableListOf<Pair<BaseUserRouteRVAdapterItem<*>, DataRVAdapterOperationType>>().apply {
+      add(Pair(UserRouteProgressItem(), AddUpdate))
+      items.filter { it.type == Route  || it.type == Warning}
+          .map { Pair(it, Remove) }
+          .let {
+            addAll(it)
+          }
+    }
+        .let {
+          operation(it)
+        }
+  }
+
+}

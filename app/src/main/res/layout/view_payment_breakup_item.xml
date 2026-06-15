@@ -6,7 +6,7 @@
   <data>
     <variable
         name="data"
-        type="com.delhivery.axle.api.response.TripPaymentsResponse"
+        type="com.dfd.delfin.api.response.TripPaymentsResponse"
         />
     <import type="android.view.View" />
   </data>

@@ -8,12 +8,12 @@
   <data>
     <variable
         name="transaction"
-        type="com.delhivery.axle.data.transactions.TransactionsItemData"
+        type="com.dfd.delfin.data.transactions.TransactionsItemData"
         />
 
     <variable
         name="trip"
-        type="com.delhivery.axle.data.home.trips.HomeTripsItemData"
+        type="com.dfd.delfin.data.home.trips.HomeTripsItemData"
         />
 
     <import type="androidx.core.content.ContextCompat" />

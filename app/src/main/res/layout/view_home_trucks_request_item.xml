@@ -8,7 +8,7 @@
         <import type="androidx.core.content.ContextCompat"/>
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.trucks.HomeTrucksRequestItemData" />
+            type="com.dfd.delfin.data.home.trucks.HomeTrucksRequestItemData" />
     </data>
 
     <LinearLayout

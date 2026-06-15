@@ -8,7 +8,7 @@
 
         <variable
             name="trip"
-            type="com.delhivery.axle.data.home.trips.HomeTripsItemData" />
+            type="com.dfd.delfin.data.home.trips.HomeTripsItemData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

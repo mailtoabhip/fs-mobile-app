@@ -70,7 +70,7 @@
             android:textColor="@color/sub_heading_black"
             />
 
-        <com.delhivery.axle.ui.custom.DelhiveryOTPViewSix
+        <com.dfd.delfin.ui.custom.DelfinOTPViewSix
             android:id="@+id/otp_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

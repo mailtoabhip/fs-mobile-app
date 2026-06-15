@@ -9,7 +9,7 @@
 
     <variable
         name="transaction"
-        type="com.delhivery.axle.data.transactions.TransactionsItemData"
+        type="com.dfd.delfin.data.transactions.TransactionsItemData"
         />
 
     <import type="androidx.core.content.ContextCompat" />

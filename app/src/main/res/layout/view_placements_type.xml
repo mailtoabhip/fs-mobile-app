@@ -3,7 +3,7 @@
     <data>
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.placements.HomePlacementsTypeItemData"
+            type="com.dfd.delfin.data.home.placements.HomePlacementsTypeItemData"
             />
 
         <import type="android.view.View" />

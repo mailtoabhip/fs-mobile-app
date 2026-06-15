@@ -4,14 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <import type="com.delhivery.axle.ui.profile.ProfileUIState" />
+        <import type="com.dfd.delfin.ui.profile.ProfileUIState" />
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.profile.HomeProfileViewModel"
+            type="com.dfd.delfin.ui.profile.HomeProfileViewModel"
             />
         <variable
             name="state"
-            type="com.delhivery.axle.ui.profile.ProfileUIState"
+            type="com.dfd.delfin.ui.profile.ProfileUIState"
             />
     </data>
     <androidx.appcompat.widget.LinearLayoutCompat

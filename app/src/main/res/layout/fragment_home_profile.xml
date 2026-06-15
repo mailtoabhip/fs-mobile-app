@@ -46,12 +46,12 @@
 
     <variable
         name="lastMonth"
-        type="com.delhivery.axle.api.response.MonthlyEarning"
+        type="com.dfd.delfin.api.response.MonthlyEarning"
         />
 
     <variable
         name="currentMonth"
-        type="com.delhivery.axle.api.response.MonthlyEarning"
+        type="com.dfd.delfin.api.response.MonthlyEarning"
         />
 
     <import type="android.view.View" />

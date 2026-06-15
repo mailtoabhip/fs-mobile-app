@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.loadwallet.LoadWalletViewModel" />
+            type="com.dfd.delfin.ui.loadwallet.LoadWalletViewModel" />
     </data>
 
     <FrameLayout

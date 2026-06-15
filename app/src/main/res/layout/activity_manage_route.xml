@@ -43,7 +43,7 @@
               android:layout_marginTop="@dimen/size_20dp"
               android:textStyle="normal"
               android:textSize="@dimen/text_14sp"/>
-          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+          <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
               android:id="@+id/edit_origin"
               android:layout_width="match_parent"
               android:layout_height="@dimen/edit_text_height"
@@ -69,7 +69,7 @@
               android:layout_marginTop="@dimen/size_20dp"
               android:textStyle="normal"
               android:textSize="@dimen/text_14sp"/>
-          <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+          <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
               android:id="@+id/edit_destination"
               android:layout_width="match_parent"
               android:layout_height="@dimen/edit_text_height"

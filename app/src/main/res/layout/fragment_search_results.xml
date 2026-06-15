@@ -7,15 +7,15 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.searchload.fragments.searchresults.SearchResultsViewModel"
+        type="com.dfd.delfin.ui.searchload.fragments.searchresults.SearchResultsViewModel"
         />
     <variable
         name="origin"
-        type="com.delhivery.axle.data.CityModel"
+        type="com.dfd.delfin.data.CityModel"
         />
     <variable
         name="destination"
-        type="com.delhivery.axle.data.CityModel"
+        type="com.dfd.delfin.data.CityModel"
         />
     <variable
         name="isIntraCityContract"

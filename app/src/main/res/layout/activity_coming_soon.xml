@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.comingsoon.ComingSoonViewModel" />
+            type="com.dfd.delfin.ui.comingsoon.ComingSoonViewModel" />
     </data>
 
     <LinearLayout

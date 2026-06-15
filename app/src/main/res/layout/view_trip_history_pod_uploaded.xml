@@ -6,12 +6,12 @@
   <data>
     <variable
         name="history"
-        type="com.delhivery.axle.data.TripHistoryItem"
+        type="com.dfd.delfin.data.TripHistoryItem"
         />
 
     <variable
         name="podAction"
-        type="com.delhivery.axle.data.home.trips.PODStatus"
+        type="com.dfd.delfin.data.home.trips.PODStatus"
         />
 
     <variable
@@ -19,7 +19,7 @@
         type="Boolean"
         />
 
-    <import type="com.delhivery.axle.data.home.trips.PODStatus" />
+    <import type="com.dfd.delfin.data.home.trips.PODStatus" />
     <import type="android.view.View" />
 
   </data>

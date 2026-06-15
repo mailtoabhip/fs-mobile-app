@@ -2,7 +2,7 @@
 
 ## Root Directory Layout
 ```
-axle/
+fs-mobile-app/
 ├── app/                          # Main application module
 ├── .gradle/                      # Gradle build cache
 ├── .idea/                        # Android Studio configuration
@@ -13,9 +13,9 @@ axle/
 
 ## Application Module Structure (`app/src/main/`)
 
-### Core Package Organization (`com.delhivery.axle`)
+### Core Package Organization (`com.dfd.delfin`)
 ```
-com.delhivery.axle/
+com.dfd.delfin/
 ├── KotlinApp.kt                  # Application class with Dagger setup
 ├── api/                          # Network layer
 │   ├── repository/               # Repository pattern implementations

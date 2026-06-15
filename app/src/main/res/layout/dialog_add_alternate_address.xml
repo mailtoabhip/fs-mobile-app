@@ -70,7 +70,7 @@
         android:paddingBottom="@dimen/size_24dp"
         bind:layout_constraintTop_toBottomOf="@+id/top_lay"
         android:orientation="vertical">
-        <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+        <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
             android:id="@+id/edit_flat"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
@@ -92,7 +92,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent"
             android:layout_height="wrap_content">
-            <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+            <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
                 android:id="@+id/edit_area"
                 android:layout_marginTop="@dimen/size_24dp"
                 android:layout_width="match_parent"
@@ -130,7 +130,7 @@
             android:paddingEnd="@dimen/size_12dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.delhivery.axle.ui.custom.DelhiveryCityAutoEditText
+        <com.dfd.delfin.ui.custom.DelfinCityAutoEditText
             android:id="@+id/auto_complete_city"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/size_24dp"
@@ -147,7 +147,7 @@
             android:textColor="@color/heading_black"
             android:textSize="@dimen/text_16sp"
             />
-        <com.delhivery.axle.ui.custom.DelhiveryOTPViewEditText
+        <com.dfd.delfin.ui.custom.DelfinOTPViewEditText
             android:id="@+id/edit_pincode"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/size_24dp"

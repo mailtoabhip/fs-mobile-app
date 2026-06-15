@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.delhivery.axle.data.bids.DmtBidSummaryItemData"
+            type="com.dfd.delfin.data.bids.DmtBidSummaryItemData"
             />
     </data>
     <androidx.cardview.widget.CardView

@@ -8,7 +8,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.selectroutewelcome.SelectRouteWelcomeViewModel"
+        type="com.dfd.delfin.ui.selectroutewelcome.SelectRouteWelcomeViewModel"
         />
   </data>
   <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,7 +42,7 @@
         app:srcCompat="@drawable/ic_select_route_header_group"
         />
 
-    <com.delhivery.axle.ui.custom.DelhiveryOnboardingArcView
+    <com.dfd.delfin.ui.custom.DelfinOnboardingArcView
         android:id="@+id/arc_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"

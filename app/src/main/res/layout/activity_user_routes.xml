@@ -6,7 +6,7 @@
   <data>
     <variable
         name="viewModel"
-        type="com.delhivery.axle.ui.userroutes.UserRoutesViewModel"
+        type="com.dfd.delfin.ui.userroutes.UserRoutesViewModel"
         />
   </data>
 

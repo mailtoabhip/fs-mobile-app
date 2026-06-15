@@ -6,15 +6,15 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsViewModel" />
+            type="com.dfd.delfin.ui.biddetails.MarketPlaceBidDetailsViewModel" />
 
         <variable
             name="activity"
-            type="com.delhivery.axle.ui.biddetails.MarketPlaceBidDetailsActivity" />
+            type="com.dfd.delfin.ui.biddetails.MarketPlaceBidDetailsActivity" />
 
         <variable
             name="request"
-            type="com.delhivery.axle.data.home.bids.HomeBidsRequestItemData"
+            type="com.dfd.delfin.data.home.bids.HomeBidsRequestItemData"
             />
 
         <import type="android.view.View" />

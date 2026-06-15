@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.delhivery.axle.ui.kyc.documentverification.DocumentVerificationViewModel" />
+            type="com.dfd.delfin.ui.kyc.documentverification.DocumentVerificationViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

@@ -8,7 +8,7 @@
   <data>
     <variable
         name="data"
-        type="com.delhivery.axle.data.home.loads.HomeLoadsInfoItemData"
+        type="com.dfd.delfin.data.home.loads.HomeLoadsInfoItemData"
         />
   </data>
   <androidx.appcompat.widget.LinearLayoutCompat

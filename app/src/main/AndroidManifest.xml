@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.delhivery.axle">
+    package="com.dfd.delfin">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,7 +16,7 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <queries>
-        <package android:name="com.delhivery.axle" />
+        <package android:name="com.dfd.delfin" />
     </queries>
 
     <queries>
@@ -81,7 +81,7 @@
             android:exported="false" />
 
         <service
-            android:name=".fcm.DelhiveryFCMService"
+            android:name=".fcm.DelfinFCMService"
             android:exported="false"
             android:stopWithTask="false">
             <intent-filter>
@@ -149,16 +149,16 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="axledelhivery.page.link"
+                    android:host="delfindfd.page.link"
                     android:scheme="http" />
                 <data
-                    android:host="axledelhivery.page.link"
+                    android:host="delfindfd.page.link"
                     android:scheme="https" />
                 <data
-                    android:host="dlvry.page.link"
+                    android:host="delfin.page.link"
                     android:scheme="https" />
                 <data
-                    android:host="dlvry.page.link"
+                    android:host="delfin.page.link"
                     android:scheme="http" />
             </intent-filter>
         </activity>

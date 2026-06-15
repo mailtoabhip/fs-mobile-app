@@ -6,7 +6,7 @@
   <data>
     <variable
         name="city"
-        type="com.delhivery.axle.data.CityModel"
+        type="com.dfd.delfin.data.CityModel"
         />
   </data>
   <androidx.cardview.widget.CardView

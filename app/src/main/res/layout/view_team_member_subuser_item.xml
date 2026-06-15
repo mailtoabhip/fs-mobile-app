@@ -5,7 +5,7 @@
   <data>
     <variable
         name="user"
-        type="com.delhivery.axle.data.UserModel"
+        type="com.dfd.delfin.data.UserModel"
         />
 
     <import type="android.view.View" />
