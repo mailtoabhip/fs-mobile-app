@@ -1,5 +1,6 @@
 package com.delhivery.axle.ui.payment
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -20,6 +21,7 @@ import com.delhivery.axle.databinding.ActivityPaymentWebviewBinding
 import com.delhivery.axle.ui.base.BaseActivity
 import com.delhivery.axle.ui.base.BaseViewModel
 import com.delhivery.axle.utils.WindowInsetsUtils
+import androidx.core.graphics.toColorInt
 
 /**
  * Activity to display payment URL in a WebView
@@ -32,8 +34,8 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
         const val EXTRA_REDIRECT_URL = "redirect_url"
         
         // Result constants
-        const val RESULT_SUCCESS = android.app.Activity.RESULT_OK
-        const val RESULT_CANCELLED = android.app.Activity.RESULT_CANCELED
+        const val RESULT_SUCCESS = RESULT_OK
+        const val RESULT_CANCELLED = RESULT_CANCELED
         const val EXTRA_RESULT_MESSAGE = "result_message"
 
         /**
@@ -44,8 +46,8 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             paymentUrl: String,
             redirectUrl: String? = null,
             title: String = "Payment"
-        ): android.content.Intent {
-            return android.content.Intent(context, PaymentWebViewActivity::class.java).apply {
+        ): Intent {
+            return Intent(context, PaymentWebViewActivity::class.java).apply {
                 putExtra(EXTRA_PAYMENT_URL, paymentUrl)
                 putExtra(EXTRA_TITLE, title)
                 redirectUrl?.let { putExtra(EXTRA_REDIRECT_URL, it) }
@@ -58,7 +60,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
     private var pendingJsInjection: Runnable? = null
 
     init {
-        StatusBarColor = Color.parseColor("#ffffff")
+        StatusBarColor = "#ffffff".toColorInt()
     }
 
     override fun getViewModelClass() = PaymentWebViewViewModel::class.java
@@ -83,10 +85,14 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
 
         // Setup toolbar
         setSupportActionBar(binding.toolbar)
+
+        //
         if (WindowInsetsUtils.isEdgeToEdgeEnforced()) {
             WindowInsetsUtils.applyTopSystemWindowInsets(binding.toolbar)
         }
+        //
         this.title = title
+        //
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         // Setup close button
@@ -148,7 +154,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
         
         // Add JavaScript interface to handle exit button clicks
         if (BuildConfig.DEBUG) {
-            android.util.Log.d("PaymentWebView", "Adding JavaScript interface: AndroidInterface")
+            Log.d("PaymentWebView", "Adding JavaScript interface: AndroidInterface")
         }
         binding.webView.addJavascriptInterface(ExitButtonInterface(), "AndroidInterface")
         
@@ -162,38 +168,52 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                request?.url?.let { url ->
-                    val currentUrl = url.toString()
 
-                    if (BuildConfig.DEBUG) {
-                        android.util.Log.d("PaymentWebView", "shouldOverrideUrlLoading: $currentUrl")
-                    }
+                val currentUrl = request?.url?.toString() ?: return false
 
-                    // Check for special exit URL from JavaScript
-                    if (currentUrl == "android-app://exit-payment") {
-                        runOnUiThread {
-                            handleExitConfirmation()
-                        }
-                        return true
-                    }
+                Log.d("PaymentWebView", "shouldOverrideUrlLoading: $currentUrl")
 
-                    // Check if current URL matches the redirect URL
-                    if (checkRedirectUrl(currentUrl)) {
-                        return true
+                // Exit button callback
+                if (currentUrl == "android-app://exit-payment") {
+                    runOnUiThread {
+                        handleExitConfirmation()
                     }
-
-                    // Handle custom URL schemes (gpay://, phonepe://, paytm://, intent://, etc.)
-                    if (isCustomUrlScheme(currentUrl)) {
-                        if (BuildConfig.DEBUG) {
-                            android.util.Log.d("PaymentWebView", "UPI/Custom scheme detected: $currentUrl")
-                        }
-                        openCustomUrlScheme(currentUrl)
-                        return true
-                    }
-                    
-                    // For HTTP/HTTPS URLs, return false to let WebView handle them automatically
-                    // This includes Razorpay navigation, payment pages, redirects, etc.
+                    return true
                 }
+
+                // Payment success redirect
+                if (checkRedirectUrl(currentUrl)) {
+                    return true
+                }
+
+                Log.d("FS_DEBUG::PAYMENT_1", "Received URL: $currentUrl")
+
+                // UPI / payment apps
+                if (isCustomUrlSchemeNew(currentUrl)) {
+
+                    Log.d(
+                        "PaymentWebView",
+                        "Custom payment scheme detected: $currentUrl"
+                    )
+
+                    //manage custom uri
+                    openCustomUrlSchemeNew(currentUrl)
+
+                    // Always consume custom schemes
+                    return true
+
+//                    val launched = openCustomUrlSchemeNew(currentUrl)
+//
+//                    return if (launched) {
+//                        // App opened successfully
+//                        true
+//                    } else {
+//                        // Allow Razorpay/WebView to continue with fallback logic
+//                        false
+//                    }
+                }
+
+                // Let WebView handle HTTP/HTTPS URLs
                 return false
             }
 
@@ -240,7 +260,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
                 super.onReceivedError(view, request, error)
                 binding.progressBar.visibility = View.GONE
                 Log.i("Failed to load page", error?.description.toString())
-                uiUtils.showSnackbar("Failed to load page: ${error?.description}")
+                //uiUtils.showSnackbar("Failed to load page: ${error?.description}")
             }
             
             /**
@@ -299,11 +319,15 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
                 message: String?,
                 result: android.webkit.JsResult?
             ): Boolean {
+
+                Log.d("onJsConfirm",""+message?.lowercase())
+
                 // Check if this is the exit confirmation dialog
                 message?.let { msg ->
                     val lowerMessage = msg.lowercase()
                     
-                    if (lowerMessage.contains("exit") || 
+                    if (lowerMessage.contains("exit") ||
+                        lowerMessage.contains("cancel") ||
                         lowerMessage.contains("sure") || 
                         lowerMessage.contains("taken back") ||
                         lowerMessage.contains("want to exit")) {
@@ -664,18 +688,23 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             }
         }
     }
-    
+
     /**
      * Check if URL is a custom scheme that should be opened externally
      * WebView cannot handle custom schemes (like gpay://, phonepe://), so we intercept them
      * and open with Intent instead of letting WebView fail with ERR_UNKNOWN_URL_SCHEME
      */
-    private fun isCustomUrlScheme(url: String): Boolean {
-        val lowerUrl = url.lowercase()
-        // Any URL with a scheme that's not HTTP/HTTPS needs to be opened externally
-        return !lowerUrl.startsWith("http://") && 
-               !lowerUrl.startsWith("https://") && 
-               lowerUrl.contains("://")
+    private fun isCustomUrlSchemeNew(url: String): Boolean {
+        return url.startsWith("upi://", true) ||
+                url.startsWith("gpay://", true) ||
+                url.startsWith("phonepe://", true) ||
+                url.startsWith("paytmmp://", true) ||
+                url.startsWith("amazonpay://", true) ||
+                url.startsWith("bhim://", true) ||
+                url.startsWith("credpay://", true) ||
+                url.startsWith("super://", true) ||
+                url.startsWith("navipay://", true) ||
+                url.startsWith("intent://", true)
     }
     
     /**
@@ -698,7 +727,7 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             uiUtils.showSnackbar("Payment cancelled")
         } catch (e: Exception) {
             if (BuildConfig.DEBUG) {
-                android.util.Log.e("PaymentWebView", "Error showing snackbar: ${e.message}", e)
+                Log.e("PaymentWebView", "Error showing snackbar: ${e.message}", e)
             }
         }
         
@@ -710,81 +739,103 @@ class PaymentWebViewActivity : BaseActivity<ActivityPaymentWebviewBinding, Payme
             finish()
         } catch (e: Exception) {
             if (BuildConfig.DEBUG) {
-                android.util.Log.e("PaymentWebView", "Error calling finish(): ${e.message}", e)
+                Log.e("PaymentWebView", "Error calling finish(): ${e.message}", e)
             }
         }
     }
-    
+
     /**
      * Open custom URL scheme with external app
      * Note: In Razorpay test mode, UPI apps will redirect to Razorpay mock page instead of real apps
      */
-    private fun openCustomUrlScheme(url: String) {
-        try {
-            // intent:// scheme (used by UPI apps) must be parsed with URI_INTENT_SCHEME
-            val intent = if (url.startsWith("intent://")) {
-                if (BuildConfig.DEBUG) {
-                    android.util.Log.d("PaymentWebView", "Parsing intent:// URL with URI_INTENT_SCHEME: $url")
-                }
-                Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    if (BuildConfig.DEBUG) {
-                        android.util.Log.d("PaymentWebView", "Parsed intent: action=$action, data=$data, package=$`package`, component=$component")
-                    }
-                }
-            } else if (url.startsWith("gpay://")) {
-                // GPay uses gpay://upi/pay - convert to standard upi://pay
-                if (BuildConfig.DEBUG) {
-                    android.util.Log.d("PaymentWebView", "Converting gpay:// to explicit GPay intent: $url")
-                }
-                val upiUrl = url.replace("gpay://upi/", "upi://")
-                Intent(Intent.ACTION_VIEW, Uri.parse(upiUrl)).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    `package` = "com.google.android.apps.nbu.paisa.user"
-                }
-            } else if (url.startsWith("phonepe://")) {
-                // PhonePe uses phonepe://upi/pay - convert to standard upi://pay
-                if (BuildConfig.DEBUG) {
-                    android.util.Log.d("PaymentWebView", "Converting phonepe:// to explicit PhonePe intent: $url")
-                }
-                val upiUrl = url.replace("phonepe://upi/", "upi://")
-                Intent(Intent.ACTION_VIEW, Uri.parse(upiUrl)).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    `package` = "com.phonepe.app"
-                }
-            } else if (url.startsWith("paytm://")) {
-                // Paytm uses paytm://upi/pay - convert to standard upi://pay
-                if (BuildConfig.DEBUG) {
-                    android.util.Log.d("PaymentWebView", "Converting paytm:// to explicit Paytm intent: $url")
-                }
-                val upiUrl = url.replace("paytm://upi/", "upi://")
-                Intent(Intent.ACTION_VIEW, Uri.parse(upiUrl)).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    `package` = "net.one97.paytm"
-                }
-            } else {
-                if (BuildConfig.DEBUG) {
-                    android.util.Log.d("PaymentWebView", "Parsing standard URL scheme: $url")
-                }
-                Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
+    private fun openCustomUrlSchemeNew(url: String): Boolean {
+        
+        return try {
+            Log.d("PaymentWebView", "Launching payment URL: $url")
+            //
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-
-            if (BuildConfig.DEBUG) {
-                android.util.Log.d("PaymentWebView", "Starting activity with intent: $intent")
-            }
+            //
             startActivity(intent)
-        } catch (e: android.content.ActivityNotFoundException) {
-            if (BuildConfig.DEBUG) {
-                android.util.Log.w("PaymentWebView", "No app installed to handle: $url")
-            }
+            //
+            true
+        } catch (e: ActivityNotFoundException) {
+            Log.d("PaymentWebView", "No app found for scheme: ${Uri.parse(url).scheme}")
+            //
+            uiUtils.showSnackbar("App is not available. Please select another app.")
+            // Dismiss the "Processing Payment" overlay by navigating back in the WebView
+            // This returns the user to the payment method selection screen
+            dismissProcessingOverlay()
+            //
+            true
         } catch (e: Exception) {
-            // Only show error if it's a real exception, not just missing app
-            if (BuildConfig.DEBUG) {
-                android.util.Log.d("PaymentWebView", "Could not open payment app: ${e.message}")
-            }
+            Log.d("PaymentWebView", "Failed to launch payment app", e)
+            //
+            uiUtils.showSnackbar("There is an issue with selected upi app. Please select another app.")
+            // Dismiss the "Processing Payment" overlay for any launch failure
+            dismissProcessingOverlay()
+            //
+            true
         }
+    }
+
+    /**
+     * Dismiss the "Processing Payment" overlay shown by Razorpay when a UPI app
+     * cannot be launched. This injects JavaScript to close the overlay/modal,
+     * falling back to WebView goBack() if the JS approach doesn't work.
+     */
+    private fun dismissProcessingOverlay() {
+        handler.postDelayed({
+            if (isFinishing || isDestroyed) return@postDelayed
+
+            // Inject JS to dismiss the Razorpay processing overlay and return to payment options
+            val jsCode = """
+                (function() {
+                    // Try to close Razorpay processing overlay via known selectors
+                    var overlays = document.querySelectorAll(
+                        '[class*="processing"], [class*="overlay"], [class*="loader"], [class*="spinner"], [class*="pending"]'
+                    );
+                    var dismissed = false;
+                    overlays.forEach(function(el) {
+                        var text = (el.textContent || '').toLowerCase();
+                        if (text.includes('processing') || text.includes('waiting') || text.includes('pending')) {
+                            el.style.display = 'none';
+                            el.remove();
+                            dismissed = true;
+                        }
+                    });
+                    
+                    // Try clicking any visible back/cancel button within the payment UI
+                    var backButtons = document.querySelectorAll(
+                        '[class*="back"], [class*="cancel"], [class*="close"], [aria-label*="back"], [aria-label*="close"]'
+                    );
+                    backButtons.forEach(function(btn) {
+                        if (btn.offsetParent !== null) {
+                            btn.click();
+                            dismissed = true;
+                        }
+                    });
+                    
+                    // If nothing was dismissed via DOM, trigger browser back
+                    if (!dismissed) {
+                        window.history.back();
+                    }
+                })();
+            """.trimIndent()
+
+            try {
+                binding.webView.evaluateJavascript(jsCode) { result ->
+                    Log.d("PaymentWebView", "dismissProcessingOverlay JS result: $result")
+                }
+            } catch (e: Exception) {
+                Log.e("PaymentWebView", "Error injecting dismiss JS: ${e.message}", e)
+                // Fallback: use WebView goBack
+                if (binding.webView.canGoBack()) {
+                    binding.webView.goBack()
+                }
+            }
+        }, 1000) // 1 second delay to allow the overlay to appear before dismissing
     }
 
     override fun onDestroy() {
